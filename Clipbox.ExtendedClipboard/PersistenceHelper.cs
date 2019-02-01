@@ -61,6 +61,7 @@ namespace Clipbox.ExtendedClipboard
 
             clipboardItem.IsShrinked = anyCdoShrinked;
 
+            EnsureAppDataCacheSubdirExists();
             // save the persistable item to disk
             AppDataUtils.WriteToApplicationData(Path.Combine(APPDATA_CACHE_SUBDIR, clipboardItem.Id),
                 SerializeObject(persistableClipboardItem));
@@ -69,6 +70,8 @@ namespace Clipbox.ExtendedClipboard
 
         public void RestoreShrinkedClipboardItem(ClipboardItem clipboardItem)
         {
+            EnsureAppDataCacheSubdirExists();
+
             // load from disk
             byte[] clipboardItemBytes = AppDataUtils.ReadBytesFromApplicationData(Path.Combine(APPDATA_CACHE_SUBDIR, clipboardItem.Id));
             PersistableClipboardItem persistableClipboardItem = DeserializeObject<PersistableClipboardItem>(clipboardItemBytes);
@@ -92,6 +95,8 @@ namespace Clipbox.ExtendedClipboard
 
         public IEnumerable<ClipboardItem> ReadStoredClipboardItems(bool unshrink = false)
         {
+            EnsureAppDataCacheSubdirExists();
+
             string cachePath = Path.Combine(AppDataUtils.GetAppDataDir(true), APPDATA_CACHE_SUBDIR);
             foreach (string fileName in Directory.GetFiles(cachePath))
             {
@@ -381,6 +386,15 @@ namespace Clipbox.ExtendedClipboard
                     };
                 }
 
+            }
+        }
+
+        private void EnsureAppDataCacheSubdirExists()
+        {
+            string cachePath = Path.Combine(AppDataUtils.GetAppDataDir(throwIfNotExists: false), APPDATA_CACHE_SUBDIR);
+            if (!Directory.Exists(cachePath))
+            {
+                Directory.CreateDirectory(cachePath);
             }
         }
     }

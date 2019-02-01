@@ -203,7 +203,7 @@ namespace Clipbox
         {
             string appGuid = null;
 
-            string appDataDir = AppDataUtils.GetAppDataDir(throwIfNotExists: true);
+            string appDataDir = AppDataUtils.GetAppDataDir(throwIfNotExists: false); // create the directory if it does not exists...
             string fullPath = Path.Combine(appDataDir, "appGuid");
             if (File.Exists(fullPath))
             {
