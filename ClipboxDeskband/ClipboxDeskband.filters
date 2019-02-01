@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="ClassFactory.cpp" />
+    <ClCompile Include="DeskBand.cpp" />
+    <ClCompile Include="DllMain.cpp" />
+    <ClCompile Include="ToolTip.cpp" />
+    <ClCompile Include="NamedPipeClient.cpp" />
+    <ClCompile Include="Logger.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ClassFactory.h" />
+    <ClInclude Include="DeskBand.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="ToolTip.h" />
+    <ClInclude Include="NamedPipeClient.h" />
+    <ClInclude Include="Logger.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Icons\Shash.metrop">
+      <Filter>Icons</Filter>
+    </None>
+    <None Include="ClipboxDeskband.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Icons">
+      <UniqueIdentifier>{3bdbce6f-7d8b-4ad5-9707-57fd86df4d77}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Icons\Clip-WF.ico">
+      <Filter>Icons</Filter>
+    </Image>
+    <Image Include="icons\icon4.ico" />
+    <Image Include="Icons\Slash.ico">
+      <Filter>Icons</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ClipboxDeskband.rc" />
+  </ItemGroup>
+</Project>

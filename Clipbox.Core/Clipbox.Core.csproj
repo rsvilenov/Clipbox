@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{F4BD7048-4D9F-4036-98AA-DA8232EF2AFB}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Clipbox.Core</RootNamespace>
+    <AssemblyName>Clipbox.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>$(SolutionDir)\Build\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>$(SolutionDir)\Build\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="PresentationCore" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="DisposableObject.cs" />
+    <Compile Include="Enums\ClipboardContentClass.cs" />
+    <Compile Include="Enums\ProcessExitCodes.cs" />
+    <Compile Include="Extensibility\Attributes\ClipboardFormatAttribute.cs" />
+    <Compile Include="Extensibility\Attributes\ClipioExtentionAttribute.cs" />
+    <Compile Include="Extensibility\Attributes\FlowDependencyAttribute.cs" />
+    <Compile Include="Extensibility\Contracts\AnnotatedPreviewData.cs" />
+    <Compile Include="Extensibility\Contracts\BasePreviewData.cs" />
+    <Compile Include="ClipboardContent\Interfaces\IClipboardDataObject.cs" />
+    <Compile Include="ClipboardContent\Interfaces\IClipboardItem.cs" />
+    <Compile Include="ClipboardContent\Interfaces\IClipboardItemSource.cs" />
+    <Compile Include="ClipboardContent\Interfaces\IGeneratedClipboardDataObject.cs" />
+    <Compile Include="ClipboardContent\Interfaces\IGeneratedClipboardItem.cs" />
+    <Compile Include="ClipboardContent\Interfaces\IHaveByteArray.cs" />
+    <Compile Include="ClipboardContent\Interfaces\IHaveClipboardFormat.cs" />
+    <Compile Include="ClipboardContent\Interfaces\IHaveClipboardItemInfo.cs" />
+    <Compile Include="ClipboardContent\Interfaces\IHaveData.cs" />
+    <Compile Include="ClipboardContent\Interfaces\IHaveExtentionInfo.cs" />
+    <Compile Include="Extensibility\Contracts\ExtentionTypes\FormatSupportTypes\ClipboardFormatSupport.cs" />
+    <Compile Include="Extensibility\Contracts\ExtentionTypes\FormatSupportTypes\IPersistableFormat.cs" />
+    <Compile Include="Extensibility\Contracts\ExtentionTypes\FormatSupportTypes\OleClientClipboardFormatSupport.cs" />
+    <Compile Include="Extensibility\Contracts\ExtentionTypes\FormatSupportTypes\OleClipboardFormatSupport.cs" />
+    <Compile Include="Extensibility\Contracts\ExtentionTypes\GeneralTypes\FlowExtention.cs" />
+    <Compile Include="Extensibility\Contracts\ExtentionTypes\GeneralTypes\ParametrizedExtention.cs" />
+    <Compile Include="Extensibility\Contracts\ExtentionTypes\GeneralTypes\UIExtention.cs" />
+    <Compile Include="Extensibility\Contracts\ExtentionTypes\IClipboardFormatSupport.cs" />
+    <Compile Include="Extensibility\Contracts\ExtentionTypes\PreviewGenerationTypes\ManyPreviewHandler.cs" />
+    <Compile Include="Extensibility\Contracts\ExtentionTypes\PreviewGenerationTypes\PreviewHandler.cs" />
+    <Compile Include="Extensibility\Contracts\FlowParameter.cs" />
+    <Compile Include="Extensibility\Contracts\IClipioExtention.cs" />
+    <Compile Include="Extensibility\Contracts\IExtentionInfo.cs" />
+    <Compile Include="Extensibility\Contracts\IHouseKeepingResult.cs" />
+    <Compile Include="Extensibility\Contracts\IPreviewData.cs" />
+    <Compile Include="Extensibility\Contracts\IWindowInfo.cs" />
+    <Compile Include="Extensibility\Contracts\PreviewData\FilePreviewData.cs" />
+    <Compile Include="Extensibility\Contracts\PreviewData\HtmlPreviewData.cs" />
+    <Compile Include="Extensibility\Contracts\PreviewData\ImagePreviewData.cs" />
+    <Compile Include="Extensibility\Contracts\PreviewData\RichTextPreviewData.cs" />
+    <Compile Include="Extensibility\Contracts\PreviewData\TextPreviewData.cs" />
+    <Compile Include="Extensibility\Exceptions\ClipioExtentionException.cs" />
+    <Compile Include="ProductConstants.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Clipbox.Win32\Clipbox.Win32.csproj">
+      <Project>{14442748-d4f5-4a60-a9da-7e0b86d48b73}</Project>
+      <Name>Clipbox.Win32</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,74 @@
+﻿<UserControl x:Class="Clipbox.Views.TrayContextMenu"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Clipbox.Views"
+             xmlns:coreConv="clr-namespace:Clipbox.Infrastructure.UI.Converters;assembly=Clipbox.Infrastructure.UI"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <coreConv:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <ContextMenu x:Key="TrayContextMenu" Placement="MousePoint">
+            <MenuItem Header="Open Clipbox"
+                      IsEnabled="{Binding IsMainWindowOpen, Converter={StaticResource InverseBooleanConverter}}"
+                      Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}}"
+                      Command="{Binding ToggleMainWindowOpen}">
+                <MenuItem.Icon>
+                    <Image Source="pack://application:,,,/Resources/Images/OpenMainWindow.png" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="Close Clipbox"
+                      Visibility="{Binding IsMainWindowOpen, Converter={StaticResource BooleanToVisibilityConverter}}"
+                      Command="{Binding ToggleMainWindowOpen}">
+                <MenuItem.Icon>
+                    <Image Source="pack://application:,,,/Resources/Images/OpenMainWindow.png" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="Disable cloud sync" 
+                      Visibility="{Binding IsCloudSyncEnabled, Converter={StaticResource BooleanToVisibilityConverter}}"
+                      Command="{Binding ToggleCloudSyncEnabled}">
+                <MenuItem.Icon>
+                    <Image Source="pack://application:,,,/Resources/Images/SyncDisabled.png" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="Enable cloud sync"
+                      IsEnabled="{Binding IsCloudSyncEnabled, Converter={StaticResource InverseBooleanConverter}}"
+                      Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}}"
+                      Command="{Binding ToggleCloudSyncEnabled}">
+                <MenuItem.Icon>
+                    <Image Source="pack://application:,,,/Resources/Images/Sync.png" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="Pause" 
+                      IsEnabled="{Binding IsPaused, Converter={StaticResource InverseBooleanConverter}}"
+                      Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}}"
+                      Command="{Binding TogglePaused}">
+                <MenuItem.Icon>
+                    <Image Source="pack://application:,,,/Resources/Images/Pause.png" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="Resume" 
+                      Visibility="{Binding IsPaused, Converter={StaticResource BooleanToVisibilityConverter}}"
+                      Command="{Binding TogglePaused}">
+                <MenuItem.Icon>
+                    <Image Source="pack://application:,,,/Resources/Images/Resume.png" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="Settings"
+                      Command="{Binding OpenSettingsWindow}">
+                <MenuItem.Icon>
+                    <Image Source="pack://application:,,,/Resources/Images/Settings.png" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <Separator />
+            <MenuItem Header="Quit"
+                      Command="{Binding Quit}">
+                <MenuItem.Icon>
+                    <Image Source="pack://application:,,,/Resources/Images/Exit.png" />
+                </MenuItem.Icon>
+            </MenuItem>
+        </ContextMenu>
+    </UserControl.Resources>
+</UserControl>

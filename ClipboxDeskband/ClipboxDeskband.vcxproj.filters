@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="ClassFactory.cpp" />
+    <ClCompile Include="DeskBand.cpp" />
+    <ClCompile Include="DllMain.cpp" />
+    <ClCompile Include="Logger.cpp" />
+    <ClCompile Include="NamedPipeClient.cpp" />
+    <ClCompile Include="ToolTip.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ClassFactory.h" />
+    <ClInclude Include="DeskBand.h" />
+    <ClInclude Include="Logger.h" />
+    <ClInclude Include="NamedPipeClient.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="ToolTip.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ClipboxDeskband.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Icons\Clip-WF.ico">
+      <Filter>Icons</Filter>
+    </Image>
+    <Image Include="Icons\Slash.ico">
+      <Filter>Icons</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClipboxDeskband.def" />
+    <None Include="Icons\Shash.metrop">
+      <Filter>Icons</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Icons">
+      <UniqueIdentifier>{96d0e467-0288-432c-b346-61814fc699b7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

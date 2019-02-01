@@ -1,0 +1,58 @@
+﻿using Clipbox.Core.ClipboardContent.Interfaces;
+using Clipbox.ExtendedClipboard.EventArgs;
+using Clipbox.Infrastructure.Persistence;
+using System;
+using System.Collections.Generic;
+
+namespace Clipbox.ExtendedClipboard.Interfaces
+{
+    public interface IClipboardManager : IDisposable
+    {
+        // TODO: interface segregation principle...
+
+        void PinUnpinItemItem(string clipboardItemId, bool pin);
+
+        void SuspendClipboardForwarding();
+
+        void ResumeClipboardForwarding();
+
+        void DiscardLastClipboardItem();
+
+        void ClearSystemClipboard();
+
+        void RemoveClipboardItem(string id, bool beSilent = false);
+
+        void SetCurrentItem(string id);
+        
+        IEnumerable<string> GetAllItemIds(bool excludeShrinkedItems = false);
+
+        IClipboardItem GetClipboardItem(string id, bool restoreShrinked = false);
+
+        void Clear();
+        
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="concatenated"></param>
+        /// <param name="beSilent"></param>
+        /// <param name="isTemporary">If true, do not store or synchronize this item</param>
+        /// <returns></returns>
+        IClipboardItem AppendFromGenerated(IGeneratedClipboardItem concatenated, bool beSilent = false, bool isTemporary = false);
+
+        void RemoveClipbpardDataObjects(string clipboardItemId, int[] clipboardDataObjectIndices, bool beSilend = false);
+
+        IReadOnlyList<ClipboardSyncObject> GetItemsForCloudSynchronization();
+
+        void AddItemFromCloud(byte[] itemData);
+
+        void SetItemSynchronized(string id);
+
+        event EventHandler<ItemFetchingEventArgs> ItemFetching;
+
+        event EventHandler<ClipboardManagerEventArgs> ItemAdded;
+
+        event EventHandler<ClipboardManagerEventArgs> ItemRemoved;
+
+        event EventHandler<ClipboardManagerEventArgs> ItemChanged;
+    }
+}

@@ -1,0 +1,279 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{47ECD8E8-47C2-4AC8-9400-77CDF52AA2F5}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Clipbox</RootNamespace>
+    <AssemblyName>Clipbox</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>$(SolutionDir)\Build\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>$(SolutionDir)\Build\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Hardcodet.Wpf.TaskbarNotification, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Hardcodet.NotifyIcon.Wpf.1.0.8\lib\net451\Hardcodet.Wpf.TaskbarNotification.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Expression.Blend.Sdk.1.0.2\lib\net45\System.Windows.Interactivity.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="ApplicationSettings.cs" />
+    <Compile Include="Behaviors\FrameworkElementDisableClickBehavior.cs" />
+    <Compile Include="Behaviors\ListViewScrollButtonBehavior.cs" />
+    <Compile Include="Bootstrapper.cs" />
+    <Compile Include="ApplicationSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>ApplicationSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="FailureInfo.cs" />
+    <Compile Include="GlobalConstants.cs" />
+    <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Services\CloudSynchronizationService.cs" />
+    <Compile Include="Services\Enums\TrayIconVisibilityPreference.cs" />
+    <Compile Include="Services\EventArgsClasses\SelectionEventArgs.cs" />
+    <Compile Include="Services\EventArgsClasses\SettingsEventArgs.cs" />
+    <Compile Include="Services\Interfaces\IClipboardListenerService.cs" />
+    <Compile Include="Services\Interfaces\ICloudSynchronizationService.cs" />
+    <Compile Include="Services\Interfaces\IFlowExtentionExecutorService.cs" />
+    <Compile Include="Services\Interfaces\ILowLevelKeyboardService.cs" />
+    <Compile Include="Services\Interfaces\IQuickClipboardViewWindowService.cs" />
+    <Compile Include="Services\Interfaces\ISettingsService.cs" />
+    <Compile Include="Services\Interfaces\ITrayContextMenuService.cs" />
+    <Compile Include="Services\Interfaces\ITrayIconService.cs" />
+    <Compile Include="Services\FlowExtentionExecutorService.cs" />
+    <Compile Include="Services\Interfaces\ITrayBandService.cs" />
+    <Compile Include="Services\Interfaces\IMainClipboardViewWindowService.cs" />
+    <Compile Include="Services\LowLevelKeyboardService.cs" />
+    <Compile Include="Services\MainClipboardViewWindowService.cs" />
+    <Compile Include="Services\QuickClipboardViewWindowService.cs" />
+    <Compile Include="Services\SettingsService.cs" />
+    <Compile Include="Services\TrayBandService.cs" />
+    <Compile Include="Services\TrayContextMenuService.cs" />
+    <Compile Include="Services\TrayIconService.cs" />
+    <Compile Include="Settings\Enums\MainClipboardViewBackgroundRenderMode.cs" />
+    <Compile Include="Settings\SettingsKeys.cs" />
+    <Compile Include="Technical\Converters\ContentClassListContainsConverter.cs" />
+    <Compile Include="ViewModels\BindableObjects\ClipboardViewItemBase.cs" />
+    <Compile Include="ViewModels\BindableObjects\ClipboardViewSubItem.cs" />
+    <Compile Include="ViewModels\BindableObjects\ClipboardViewSubItemBase.cs" />
+    <Compile Include="ViewModels\BindableObjects\ClipboardViewSubItemNMore.cs" />
+    <Compile Include="ViewModels\MainClipboardViewViewModel.cs" />
+    <Compile Include="ViewModels\TrayContextMenuViewModel.cs" />
+    <Compile Include="ViewModels\RequestPreviewDimentionsEventArgs.cs" />
+    <Compile Include="Views\ClipboardListView.xaml.cs">
+      <DependentUpon>ClipboardListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Interfaces\IMainWindow.cs" />
+    <Compile Include="Views\Interfaces\ITrayContextMenu.cs" />
+    <Compile Include="Views\QuickViewClipboardContents.xaml.cs">
+      <DependentUpon>QuickViewClipboardContents.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ClipboardViewControl.cs" />
+    <Compile Include="Views\SettingsWindow.xaml.cs">
+      <DependentUpon>SettingsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ExtentionLoader.cs" />
+    <Compile Include="FlowController.cs" />
+    <Compile Include="Technical\Converters\ObjectTypeStringConverter.cs" />
+    <Compile Include="ViewModels\BindableObjects\ClipboardPreviewItem.cs" />
+    <Compile Include="ViewModels\BindableObjects\ClipboardViewItem.cs" />
+    <Compile Include="ViewModels\BindableObjects\ClipboardViewItemFactory.cs" />
+    <Compile Include="ViewModels\BindableObjects\ClipboardViewItemSingle.cs" />
+    <Compile Include="Services\ClipboardListenerService.cs" />
+    <Compile Include="Technical\Converters\BitmapToBitmapImageConverter.cs" />
+    <Compile Include="ViewModels\BindableObjects\ClipboardViewItemGroup.cs" />
+    <Compile Include="ViewModels\ClipboardViewViewModel.cs" />
+    <Compile Include="Views\ThemePreview.xaml.cs">
+      <DependentUpon>ThemePreview.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TrayContextMenu.xaml.cs">
+      <DependentUpon>TrayContextMenu.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\WallpaperWindow.cs" />
+    <Page Include="Resources\TrayContextMenu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ClipboardListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Views\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Page Include="Views\QuickViewClipboardContents.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SettingsWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ThemePreview.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\TrayContextMenu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="app.manifest">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="ApplicationSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ApplicationSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Clipbox.CloudServices\Clipbox.CloudServices.csproj">
+      <Project>{1B3D8AE2-4822-4970-A4C1-AB73CC33257E}</Project>
+      <Name>Clipbox.CloudServices</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Clipbox.Core\Clipbox.Core.csproj">
+      <Project>{f4bd7048-4d9f-4036-98aa-da8232ef2afb}</Project>
+      <Name>Clipbox.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Clipbox.ExtendedClipboard\Clipbox.ExtendedClipboard.csproj">
+      <Project>{63cda68b-898f-4e68-b436-96dc794ccd62}</Project>
+      <Name>Clipbox.ExtendedClipboard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Clipbox.Infrastructure.UI\Clipbox.Infrastructure.UI.csproj">
+      <Project>{9f5482b0-7101-4473-9629-458693bf38d0}</Project>
+      <Name>Clipbox.Infrastructure.UI</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Clipbox.Infrastructure\Clipbox.Infrastructure.csproj">
+      <Project>{EDD4D662-1F39-415C-9B66-718457922626}</Project>
+      <Name>Clipbox.Infrastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Clipbox.Win32\Clipbox.Win32.csproj">
+      <Project>{14442748-d4f5-4a60-a9da-7e0b86d48b73}</Project>
+      <Name>Clipbox.Win32</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Images\Clip-WF.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="TODO.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Settings.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Images\Clip-WF.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Sync.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\SyncDisabled.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Pause.png" />
+    <Resource Include="Resources\Images\Resume.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Exit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\OpenMainWindow.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
