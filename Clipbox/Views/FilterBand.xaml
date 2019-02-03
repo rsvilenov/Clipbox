@@ -1,0 +1,152 @@
+﻿<UserControl
+    x:Class="Clipbox.Views.FilterBand"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Width="47"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style x:Key="tglButton" TargetType="{x:Type ToggleButton}">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                        <Border
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentControl
+                                Margin="10"
+                                Background="{TemplateBinding Background}"
+                                Foreground="{DynamicResource ControlForegroundBrush}"
+                                Template="{TemplateBinding Content}"
+                                ToolTip="{TemplateBinding ToolTip}" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Border.Background" Value="{DynamicResource ControlHighlightBackgroundBrush}" />
+                                <Setter Property="Border.BorderBrush" Value="{DynamicResource ControlHighlightBorderBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter Property="Border.Background" Value="{DynamicResource AccentDark1Brush}" />
+                                <Setter Property="Border.BorderBrush" Value="{DynamicResource AccentLight1Brush}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style
+            x:Key="textToggleButton"
+            BasedOn="{StaticResource tglButton}"
+            TargetType="{x:Type ToggleButton}">
+            <Setter Property="Content" Value="{DynamicResource ClassTextIcon}" />
+            <Setter Property="ToolTip" Value="Show text items" />
+        </Style>
+
+        <Style
+            x:Key="fileToggleButton"
+            BasedOn="{StaticResource tglButton}"
+            TargetType="{x:Type ToggleButton}">
+            <Setter Property="Content" Value="{DynamicResource ClassFileIcon}" />
+            <Setter Property="ToolTip" Value="Show text items" />
+        </Style>
+
+        <Style
+            x:Key="imageToggleButton"
+            BasedOn="{StaticResource tglButton}"
+            TargetType="{x:Type ToggleButton}">
+            <Setter Property="Content" Value="{DynamicResource ClassImageIcon}" />
+            <Setter Property="ToolTip" Value="Show text items" />
+        </Style>
+
+        <Style
+            x:Key="generalToggleButton"
+            BasedOn="{StaticResource tglButton}"
+            TargetType="{x:Type ToggleButton}">
+            <Setter Property="Content" Value="{DynamicResource ClassGeneralContentIcon}" />
+            <Setter Property="ToolTip" Value="Show text items" />
+        </Style>
+
+        <Style
+            x:Key="sourceWindowToggleButton"
+            BasedOn="{StaticResource tglButton}"
+            TargetType="{x:Type ToggleButton}">
+            <Setter Property="Content" Value="{DynamicResource SourceWindowsIcon}" />
+            <Setter Property="ToolTip" Value="Filter by source application" />
+        </Style>
+
+        <Style
+            x:Key="starredToggleButton"
+            BasedOn="{StaticResource tglButton}"
+            TargetType="{x:Type ToggleButton}">
+            <Setter Property="Content" Value="{DynamicResource StarEmptyIcon}" />
+            <Setter Property="ToolTip" Value="Filter by source application" />
+        </Style>
+
+        <Style
+            x:Key="myMachineToggleButton"
+            BasedOn="{StaticResource tglButton}"
+            TargetType="{x:Type ToggleButton}">
+            <Setter Property="Content" Value="{DynamicResource MyMachineItemsIcon}" />
+            <Setter Property="ToolTip" Value="Show only items from current computer" />
+        </Style>
+
+        <Style
+            x:Key="allMachinesToggleButton"
+            BasedOn="{StaticResource tglButton}"
+            TargetType="{x:Type ToggleButton}">
+            <Setter Property="Content" Value="{DynamicResource AllMachinesItemsIcon}" />
+            <Setter Property="ToolTip" Value="Show only items from all my computers" />
+        </Style>
+    </UserControl.Resources>
+    <StackPanel HorizontalAlignment="Stretch" Orientation="Vertical">
+
+        <ToggleButton Margin="5,10" Style="{StaticResource starredToggleButton}" />
+
+        <Expander
+            Margin="0,10"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Foreground="{DynamicResource ControlForegroundBrush}"
+            Header="Using StretchyExpanderTemp"
+            OverridesDefaultStyle="True"
+            Tag="{DynamicResource CategoriesIcon}"
+            Template="{StaticResource StretchyExpanderTemp}">
+
+            <StackPanel Margin="0,5" Orientation="Vertical">
+                <ToggleButton Margin="5,3" Style="{StaticResource textToggleButton}" />
+                <ToggleButton Margin="5,3" Style="{StaticResource imageToggleButton}" />
+                <ToggleButton Margin="5,3" Style="{StaticResource fileToggleButton}" />
+                <ToggleButton Margin="5,3" Style="{StaticResource generalToggleButton}" />
+            </StackPanel>
+
+        </Expander>
+
+        <Expander
+            Margin="0,10"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Top"
+            Foreground="{DynamicResource ControlForegroundBrush}"
+            Header="Using StretchyExpanderTemp"
+            OverridesDefaultStyle="True"
+            Tag="{DynamicResource SyncedItemsIcon}"
+            Template="{StaticResource StretchyExpanderTemp}">
+
+            <StackPanel Margin="0,5" Orientation="Vertical">
+                <ToggleButton Margin="5,3" Style="{StaticResource myMachineToggleButton}" />
+                <ToggleButton Margin="5,3" Style="{StaticResource allMachinesToggleButton}" />
+            </StackPanel>
+
+        </Expander>
+
+        <ToggleButton Margin="5,10" Style="{StaticResource sourceWindowToggleButton}" />
+
+    </StackPanel>
+</UserControl>
