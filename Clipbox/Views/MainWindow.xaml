@@ -212,24 +212,26 @@
                   VerticalAlignment="Top"
                              Tag="{DynamicResource CategoriesIcon}"
                               Foreground="{DynamicResource ControlForegroundBrush}"
+                              
+                              Margin="0, 10"
                   >
-                        <StackPanel Orientation="Vertical"
+                        <StackPanel Orientation="Vertical" Margin="0, 5"
                                 >
 
                             <ToggleButton
-                        Margin="5,2"
+                        Margin="5,3"
                         Style="{StaticResource textToggleButton}">
                             </ToggleButton>
                             <ToggleButton
-                        Margin="5,2"
+                        Margin="5,3"
                         Style="{StaticResource imageToggleButton}">
                             </ToggleButton>
                             <ToggleButton
-                        Margin="5,2"
+                        Margin="5,3"
                         Style="{StaticResource fileToggleButton}">
                             </ToggleButton>
                             <ToggleButton
-                        Margin="5,2"
+                        Margin="5,3"
                         Style="{StaticResource generalToggleButton}">
                             </ToggleButton>
                         </StackPanel>
@@ -243,14 +245,15 @@
                   VerticalAlignment="Top"
                               Tag="{DynamicResource SyncedItemsIcon}"
                               Foreground="{DynamicResource ControlForegroundBrush}"
+                              Margin="0, 10"
                   >
-                        <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Vertical" Margin="0, 5">
                             <ToggleButton
-                        Margin="5,2"
+                        Margin="5,3"
                         Style="{StaticResource myMachineToggleButton}">
                             </ToggleButton>
                             <ToggleButton
-                        Margin="5,2"
+                        Margin="5,3"
                         Style="{StaticResource allMachinesToggleButton}">
                             </ToggleButton>
                         </StackPanel>

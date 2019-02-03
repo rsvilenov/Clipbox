@@ -10,18 +10,29 @@
                     BorderThickness="{TemplateBinding BorderThickness}"
                     Padding="{TemplateBinding Padding}"
                     >
-            <Grid Margin="5" Width="45" Height="45">
+            <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="30" />
-                    <RowDefinition />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition  Height="Auto" />
                 </Grid.RowDefinitions>
                 <Rectangle Grid.RowSpan="2" Fill="Transparent"/>
-                <ContentControl Grid.Row="0" Width="30" Height="30" Template="{DynamicResource SyncedItemsIcon}" />
-                <Path x:Name="Arrow" Grid.Row="1"
+                <Border HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                    BorderThickness="1" Name="TglBorder" Margin="5" Grid.Row="0" >
+                    <ContentControl 
+                        Name="TglContentControl" 
+                        Width="30" 
+                        Height="30" 
+                        Margin="5"
+                        Template="{DynamicResource SyncedItemsIcon}" />
+                </Border>
+                <Path x:Name="Arrow" 
+                      Margin="0, 5"
+                      Grid.Row="1"
                       Width="Auto"
                       Height="Auto"
                       Data="M 1,1.5 L 4.5,5 8,1.5"
-                      Stroke="{TemplateBinding Foreground}"
+                      Stroke="{DynamicResource ControlBorderBrush}"
                       StrokeThickness="2"
                       HorizontalAlignment="Center"
                       VerticalAlignment="Center"
@@ -59,42 +70,62 @@
                 </Trigger.ExitActions>
             </Trigger>
 
+            <Trigger Property="IsChecked" Value="True">
+                <Setter TargetName="TglBorder" Property="Background" Value="{DynamicResource AccentDark1Brush}" />
+                <Setter TargetName="TglBorder" Property="BorderBrush" Value="{DynamicResource AccentLight1Brush}" />
+                
+            </Trigger>
+
             <!-- MouseOver, Pressed behaviours-->
             <Trigger Property="IsMouseOver"
                                  Value="true">
                 <Setter Property="Stroke"
-                                    Value="{DynamicResource AccentDark1Brush}"
+                                    Value="{DynamicResource ControlHighlightBorderBrush}"
                                     TargetName="Arrow"/>
             </Trigger>
             <Trigger Property="IsPressed"
                                  Value="true">
                 <Setter Property="Stroke"
-                                    Value="{DynamicResource AccentDark1Brush}"
+                                    Value="{DynamicResource ControlHighlightBorderBrush}"
                                     TargetName="Arrow"/>
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
     <ControlTemplate x:Key="StretchyExpanderTemp" TargetType="{x:Type Expander}">
-        <DockPanel>
-            <ToggleButton x:Name="ExpanderButton" 
+        <Border x:Name="ExpanderBorder" BorderBrush="Transparent" BorderThickness="1" SnapsToDevicePixels="True">
+            <StackPanel Orientation="Vertical">
+                <ToggleButton Name="ExpanderButton" 
                               DockPanel.Dock="Top"
                               Template="{StaticResource AnimatedExpanderButtonTemp}"
                               Content="{TemplateBinding Header}"
                               IsChecked="{Binding Path=IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
-                              OverridesDefaultStyle="True"
-                              Padding="1.5,0">
-            </ToggleButton>
-            <ContentPresenter x:Name="ExpanderContent"
+                              OverridesDefaultStyle="True">
+                </ToggleButton>
+                <Border Name="ExpanderSeparator"
+                              BorderBrush="Transparent"
+                              BorderThickness="0, 1, 0, 0"
+                        Margin="5, 0, 5, 5"/>
+                <ContentPresenter Name="ExpanderContent"
                                   ContentSource="Content"
                                   DockPanel.Dock="Bottom"
                                   >
-                <ContentPresenter.LayoutTransform>
-                    <ScaleTransform ScaleY="0"/>
-                </ContentPresenter.LayoutTransform>
-            </ContentPresenter>
-        </DockPanel>
+                    <ContentPresenter.LayoutTransform>
+                        <ScaleTransform ScaleY="0"/>
+                    </ContentPresenter.LayoutTransform>
+                </ContentPresenter>
+            </StackPanel>
+
+        </Border>
         <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="ExpanderBorder" Property="BorderBrush" Value="{DynamicResource ControlHighlightBorderBrush}" />
+            </Trigger>
+            <Trigger Property="IsExpanded" Value="True">
+                <Setter TargetName="ExpanderBorder" Property="BorderBrush" Value="{DynamicResource ControlHighlightBorderBrush}" />
+                <Setter TargetName="ExpanderSeparator" Property="BorderBrush" Value="{DynamicResource ControlHighlightBorderBrush}" />
+                
+            </Trigger>
             <Trigger Property="IsExpanded" Value="True">
                 <Trigger.EnterActions>
                     <BeginStoryboard>
