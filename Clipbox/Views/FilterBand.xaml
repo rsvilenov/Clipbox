@@ -106,47 +106,70 @@
             <Setter Property="ToolTip" Value="Show only items from all my computers" />
         </Style>
     </UserControl.Resources>
-    <StackPanel HorizontalAlignment="Stretch" Orientation="Vertical">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Button
+            Grid.Row="0"
+            Height="10"
+            VerticalAlignment="Center"
+            Style="{DynamicResource BtnArrowUp}" />
+        <Button
+            Grid.Row="2"
+            Height="10"
+            VerticalAlignment="Center"
+            Style="{DynamicResource BtnArrowDown}" />
+        <ScrollViewer
+            Grid.Row="1"
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalScrollBarVisibility="Hidden">
+            <StackPanel HorizontalAlignment="Stretch" Orientation="Vertical">
 
-        <ToggleButton Margin="5,10" Style="{StaticResource starredToggleButton}" />
+                <ToggleButton Margin="5,10" Style="{StaticResource starredToggleButton}" />
 
-        <Expander
-            Margin="0,10"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Foreground="{DynamicResource ControlForegroundBrush}"
-            Header="Using StretchyExpanderTemp"
-            OverridesDefaultStyle="True"
-            Tag="{DynamicResource CategoriesIcon}"
-            Template="{StaticResource StretchyExpanderTemp}">
+                <Expander
+                    Margin="0,10"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Foreground="{DynamicResource ControlForegroundBrush}"
+                    Header="{DynamicResource CategoriesIcon}"
+                    OverridesDefaultStyle="True"
+                    Tag="{DynamicResource CategoriesIcon}"
+                    Template="{StaticResource StretchyExpanderTemp}">
 
-            <StackPanel Margin="0,5" Orientation="Vertical">
-                <ToggleButton Margin="5,3" Style="{StaticResource textToggleButton}" />
-                <ToggleButton Margin="5,3" Style="{StaticResource imageToggleButton}" />
-                <ToggleButton Margin="5,3" Style="{StaticResource fileToggleButton}" />
-                <ToggleButton Margin="5,3" Style="{StaticResource generalToggleButton}" />
+                    <StackPanel Margin="0,5" Orientation="Vertical">
+                        <ToggleButton Margin="5,3" Style="{StaticResource textToggleButton}" />
+                        <ToggleButton Margin="5,3" Style="{StaticResource imageToggleButton}" />
+                        <ToggleButton Margin="5,3" Style="{StaticResource fileToggleButton}" />
+                        <ToggleButton Margin="5,3" Style="{StaticResource generalToggleButton}" />
+                    </StackPanel>
+
+                </Expander>
+
+                <Expander
+                    Margin="0,10"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Foreground="{DynamicResource ControlForegroundBrush}"
+                    Header="{DynamicResource SyncedItemsIcon}"
+                    OverridesDefaultStyle="True"
+                    Tag="{DynamicResource SyncedItemsIcon}"
+                    Template="{StaticResource StretchyExpanderTemp}">
+
+                    <StackPanel Margin="0,5" Orientation="Vertical">
+                        <ToggleButton Margin="5,3" Style="{StaticResource myMachineToggleButton}" />
+                        <ToggleButton Margin="5,3" Style="{StaticResource allMachinesToggleButton}" />
+                    </StackPanel>
+
+                </Expander>
+
+                <ToggleButton Margin="5,10" Style="{StaticResource sourceWindowToggleButton}" />
+
             </StackPanel>
+        </ScrollViewer>
 
-        </Expander>
-
-        <Expander
-            Margin="0,10"
-            HorizontalAlignment="Left"
-            VerticalAlignment="Top"
-            Foreground="{DynamicResource ControlForegroundBrush}"
-            Header="Using StretchyExpanderTemp"
-            OverridesDefaultStyle="True"
-            Tag="{DynamicResource SyncedItemsIcon}"
-            Template="{StaticResource StretchyExpanderTemp}">
-
-            <StackPanel Margin="0,5" Orientation="Vertical">
-                <ToggleButton Margin="5,3" Style="{StaticResource myMachineToggleButton}" />
-                <ToggleButton Margin="5,3" Style="{StaticResource allMachinesToggleButton}" />
-            </StackPanel>
-
-        </Expander>
-
-        <ToggleButton Margin="5,10" Style="{StaticResource sourceWindowToggleButton}" />
-
-    </StackPanel>
+    </Grid>
 </UserControl>

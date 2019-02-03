@@ -25,10 +25,11 @@
                     BorderThickness="1">
                     <ContentControl
                         Name="TglContentControl"
-                        Width="25"
-                        Height="25"
+                        Width="23"
+                        Height="23"
                         Margin="5"
-                        Template="{DynamicResource SyncedItemsIcon}" />
+                        Template="{TemplateBinding Content}" />
+                    <!--  bind the icon of the button to the Content property of ToggleButton, which is the Header property of the Expander  -->
                 </Border>
                 <Path
                     x:Name="Arrow"
