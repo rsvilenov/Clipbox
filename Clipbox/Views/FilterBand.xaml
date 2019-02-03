@@ -12,6 +12,7 @@
         <Style x:Key="tglButton" TargetType="{x:Type ToggleButton}">
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Padding" Value="10" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ToggleButton}">
@@ -20,7 +21,7 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}">
                             <ContentControl
-                                Margin="10"
+                                Margin="{TemplateBinding Padding}"
                                 Background="{TemplateBinding Background}"
                                 Foreground="{DynamicResource ControlForegroundBrush}"
                                 Template="{TemplateBinding Content}"
@@ -41,6 +42,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
 
         <Style
             x:Key="textToggleButton"
@@ -86,8 +88,14 @@
             x:Key="starredToggleButton"
             BasedOn="{StaticResource tglButton}"
             TargetType="{x:Type ToggleButton}">
-            <Setter Property="Content" Value="{DynamicResource StarEmptyIcon}" />
+            <Setter Property="Content" Value="{DynamicResource StarHalfEmptyIcon}" />
             <Setter Property="ToolTip" Value="Filter by source application" />
+            <Setter Property="Padding" Value="7" />
+            <Style.Triggers>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="Content" Value="{DynamicResource StarIcon}" />
+                </Trigger>
+            </Style.Triggers>
         </Style>
 
         <Style
