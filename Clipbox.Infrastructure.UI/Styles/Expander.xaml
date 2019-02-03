@@ -1,7 +1,6 @@
-﻿<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="clr-namespace:Clipbox.Infrastructure.UI.Styles">
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <Duration x:Key="openCloseDuration">0:0:0.2</Duration>
 
     <!--  https://www.codeproject.com/Articles/248112/Templating-WPF-Expander-Control  -->
     <ControlTemplate x:Key="AnimatedExpanderButtonTemp" TargetType="{x:Type ToggleButton}">
@@ -59,7 +58,7 @@
                                 Storyboard.TargetName="Arrow"
                                 Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)"
                                 To="180"
-                                Duration="0:0:0.4" />
+                                Duration="{StaticResource openCloseDuration}" />
                         </Storyboard>
                     </BeginStoryboard>
                 </Trigger.EnterActions>
@@ -70,7 +69,7 @@
                                 Storyboard.TargetName="Arrow"
                                 Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)"
                                 To="0"
-                                Duration="0:0:0.4" />
+                                Duration="{StaticResource openCloseDuration}" />
                         </Storyboard>
                     </BeginStoryboard>
                 </Trigger.ExitActions>
@@ -139,7 +138,7 @@
                                 Storyboard.TargetName="ExpanderContent"
                                 Storyboard.TargetProperty="(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleY)"
                                 To="1"
-                                Duration="0:0:0.4" />
+                                Duration="{StaticResource openCloseDuration}" />
                         </Storyboard>
                     </BeginStoryboard>
                 </Trigger.EnterActions>
@@ -150,7 +149,7 @@
                                 Storyboard.TargetName="ExpanderContent"
                                 Storyboard.TargetProperty="(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleY)"
                                 To="0"
-                                Duration="0:0:0.4" />
+                                Duration="{StaticResource openCloseDuration}" />
                         </Storyboard>
                     </BeginStoryboard>
                 </Trigger.ExitActions>

@@ -1,26 +1,29 @@
-﻿<wnd:AcryllicWindow x:Class="Clipbox.Views.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Clipbox"
-        xmlns:bo="clr-namespace:Clipbox.ViewModels.BindableObjects"
-        xmlns:conv="clr-namespace:Clipbox.Technical.Converters"
-        xmlns:wnd="clr-namespace:Clipbox.Infrastructure.UI.Windows;assembly=Clipbox.Infrastructure.UI"
-        xmlns:coreConv="clr-namespace:Clipbox.Infrastructure.UI.Converters;assembly=Clipbox.Infrastructure.UI" 
-        mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+﻿<wnd:AcryllicWindow
+    x:Class="Clipbox.Views.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:bo="clr-namespace:Clipbox.ViewModels.BindableObjects"
+    xmlns:conv="clr-namespace:Clipbox.Technical.Converters"
+    xmlns:coreConv="clr-namespace:Clipbox.Infrastructure.UI.Converters;assembly=Clipbox.Infrastructure.UI"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Clipbox"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:wnd="clr-namespace:Clipbox.Infrastructure.UI.Windows;assembly=Clipbox.Infrastructure.UI"
+    Title="MainWindow"
+    Width="525"
+    Height="350"
+    mc:Ignorable="d">
     <Window.Resources>
         <coreConv:InverseBooleanConverter x:Key="InverseBooleanConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </Window.Resources>
     <Grid>
         <Grid.Background>
-            <SolidColorBrush Color="Black" Opacity="0.3"/>
+            <SolidColorBrush Opacity="0.3" Color="Black" />
         </Grid.Background>
         <Grid.RowDefinitions>
             <RowDefinition Height="100" />
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="*" />
             <RowDefinition Height="45" />
         </Grid.RowDefinitions>
 
@@ -30,21 +33,22 @@
             <ColumnDefinition Width="50" />
         </Grid.ColumnDefinitions>
         <Grid.Resources>
-            <Style TargetType="{x:Type ToggleButton}" x:Key="tglButton">
+            <Style x:Key="tglButton" TargetType="{x:Type ToggleButton}">
                 <Setter Property="Background" Value="Transparent" />
                 <Setter Property="BorderBrush" Value="Transparent" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type ToggleButton}">
-                            <Border Background="{TemplateBinding Background}"
-                                    BorderBrush="{TemplateBinding BorderBrush}"
-                                    BorderThickness="{TemplateBinding BorderThickness}">
-                                <ContentControl 
+                            <Border
                                 Background="{TemplateBinding Background}"
-                                Template="{TemplateBinding Content}" 
-                                Foreground="{DynamicResource ControlForegroundBrush}" 
-                                ToolTip="{TemplateBinding ToolTip}" 
-                                Margin="10"/>
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                                <ContentControl
+                                    Margin="10"
+                                    Background="{TemplateBinding Background}"
+                                    Foreground="{DynamicResource ControlForegroundBrush}"
+                                    Template="{TemplateBinding Content}"
+                                    ToolTip="{TemplateBinding ToolTip}" />
                             </Border>
                             <ControlTemplate.Triggers>
 
@@ -62,98 +66,137 @@
                 </Setter>
             </Style>
 
-            <Style TargetType="{x:Type ToggleButton}" x:Key="textToggleButton" BasedOn="{StaticResource tglButton}">
+            <Style
+                x:Key="textToggleButton"
+                BasedOn="{StaticResource tglButton}"
+                TargetType="{x:Type ToggleButton}">
                 <Setter Property="Content" Value="{DynamicResource ClassTextIcon}" />
                 <Setter Property="ToolTip" Value="Show text items" />
             </Style>
 
-            <Style TargetType="{x:Type ToggleButton}" x:Key="fileToggleButton" BasedOn="{StaticResource tglButton}">
+            <Style
+                x:Key="fileToggleButton"
+                BasedOn="{StaticResource tglButton}"
+                TargetType="{x:Type ToggleButton}">
                 <Setter Property="Content" Value="{DynamicResource ClassFileIcon}" />
                 <Setter Property="ToolTip" Value="Show text items" />
             </Style>
 
-            <Style TargetType="{x:Type ToggleButton}" x:Key="imageToggleButton" BasedOn="{StaticResource tglButton}">
+            <Style
+                x:Key="imageToggleButton"
+                BasedOn="{StaticResource tglButton}"
+                TargetType="{x:Type ToggleButton}">
                 <Setter Property="Content" Value="{DynamicResource ClassImageIcon}" />
                 <Setter Property="ToolTip" Value="Show text items" />
             </Style>
 
-            <Style TargetType="{x:Type ToggleButton}" x:Key="generalToggleButton" BasedOn="{StaticResource tglButton}">
+            <Style
+                x:Key="generalToggleButton"
+                BasedOn="{StaticResource tglButton}"
+                TargetType="{x:Type ToggleButton}">
                 <Setter Property="Content" Value="{DynamicResource ClassGeneralContentIcon}" />
                 <Setter Property="ToolTip" Value="Show text items" />
             </Style>
 
-            <Style TargetType="{x:Type ToggleButton}" x:Key="sourceWindowToggleButton" BasedOn="{StaticResource tglButton}">
+            <Style
+                x:Key="sourceWindowToggleButton"
+                BasedOn="{StaticResource tglButton}"
+                TargetType="{x:Type ToggleButton}">
                 <Setter Property="Content" Value="{DynamicResource SourceWindowsIcon}" />
                 <Setter Property="ToolTip" Value="Filter by source application" />
             </Style>
 
-            <Style TargetType="{x:Type ToggleButton}" x:Key="starredToggleButton" BasedOn="{StaticResource tglButton}">
+            <Style
+                x:Key="starredToggleButton"
+                BasedOn="{StaticResource tglButton}"
+                TargetType="{x:Type ToggleButton}">
                 <Setter Property="Content" Value="{DynamicResource StarEmptyIcon}" />
                 <Setter Property="ToolTip" Value="Filter by source application" />
             </Style>
 
-            <Style TargetType="{x:Type ToggleButton}" x:Key="myMachineToggleButton" BasedOn="{StaticResource tglButton}">
+            <Style
+                x:Key="myMachineToggleButton"
+                BasedOn="{StaticResource tglButton}"
+                TargetType="{x:Type ToggleButton}">
                 <Setter Property="Content" Value="{DynamicResource MyMachineItemsIcon}" />
                 <Setter Property="ToolTip" Value="Show only items from current computer" />
             </Style>
 
-            <Style TargetType="{x:Type ToggleButton}" x:Key="allMachinesToggleButton" BasedOn="{StaticResource tglButton}">
+            <Style
+                x:Key="allMachinesToggleButton"
+                BasedOn="{StaticResource tglButton}"
+                TargetType="{x:Type ToggleButton}">
                 <Setter Property="Content" Value="{DynamicResource AllMachinesItemsIcon}" />
                 <Setter Property="ToolTip" Value="Show only items from all my computers" />
             </Style>
 
-            
-            
+
+
             <Storyboard x:Key="FadeInBackground">
-                <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)"
-                                 From="0" To="1"
-                                 Duration="0:0:0.4" />
+                <DoubleAnimation
+                    Storyboard.TargetProperty="(UIElement.Opacity)"
+                    From="0"
+                    To="1"
+                    Duration="0:0:0.4" />
             </Storyboard>
 
             <Storyboard x:Key="FadeInItem">
-                <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)"
-                                 From="0" To="1"
-                                 Duration="0:0:0.4" />
+                <DoubleAnimation
+                    Storyboard.TargetProperty="(UIElement.Opacity)"
+                    From="0"
+                    To="1"
+                    Duration="0:0:0.4" />
             </Storyboard>
 
             <Storyboard x:Key="SlideLeft">
                 <ObjectAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetProperty="(UIElement.Visibility)">
-                    <DiscreteObjectKeyFrame KeyTime="00:00:00" Value="{x:Static Visibility.Collapsed}"/>
-                    <DiscreteObjectKeyFrame KeyTime="00:00:00.1" Value="{x:Static Visibility.Visible}"/>
+                    <DiscreteObjectKeyFrame KeyTime="00:00:00" Value="{x:Static Visibility.Collapsed}" />
+                    <DiscreteObjectKeyFrame KeyTime="00:00:00.1" Value="{x:Static Visibility.Visible}" />
                 </ObjectAnimationUsingKeyFrames>
-                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
-                              From="100" To="0" 
-                              Duration="0:0:0.3" />
-                <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)"
-                                 From="0" To="1"
-                                 Duration="0:0:0.4" />
+                <DoubleAnimation
+                    Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
+                    From="100"
+                    To="0"
+                    Duration="0:0:0.3" />
+                <DoubleAnimation
+                    Storyboard.TargetProperty="(UIElement.Opacity)"
+                    From="0"
+                    To="1"
+                    Duration="0:0:0.4" />
             </Storyboard>
 
             <Storyboard x:Key="SlideRight">
                 <ObjectAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetProperty="(UIElement.Visibility)">
-                    <DiscreteObjectKeyFrame KeyTime="00:00:00" Value="{x:Static Visibility.Collapsed}"/>
-                    <DiscreteObjectKeyFrame KeyTime="00:00:00.1" Value="{x:Static Visibility.Visible}"/>
+                    <DiscreteObjectKeyFrame KeyTime="00:00:00" Value="{x:Static Visibility.Collapsed}" />
+                    <DiscreteObjectKeyFrame KeyTime="00:00:00.1" Value="{x:Static Visibility.Visible}" />
                 </ObjectAnimationUsingKeyFrames>
-                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
-                              From="-50" To="0" 
-                              Duration="0:0:0.3" />
-                <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)"
-                                 From="0" To="1"
-                                 Duration="0:0:0.4" />
+                <DoubleAnimation
+                    Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
+                    From="-50"
+                    To="0"
+                    Duration="0:0:0.3" />
+                <DoubleAnimation
+                    Storyboard.TargetProperty="(UIElement.Opacity)"
+                    From="0"
+                    To="1"
+                    Duration="0:0:0.4" />
             </Storyboard>
 
 
             <Storyboard x:Key="ExpandCategories">
                 <ObjectAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetProperty="(UIElement.Visibility)">
-                    <DiscreteObjectKeyFrame KeyTime="00:00:00" Value="{x:Static Visibility.Collapsed}"/>
-                    <DiscreteObjectKeyFrame KeyTime="00:00:00.1" Value="{x:Static Visibility.Visible}"/>
+                    <DiscreteObjectKeyFrame KeyTime="00:00:00" Value="{x:Static Visibility.Collapsed}" />
+                    <DiscreteObjectKeyFrame KeyTime="00:00:00.1" Value="{x:Static Visibility.Visible}" />
                 </ObjectAnimationUsingKeyFrames>
-                <DoubleAnimation Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
-                              To="1" 
-                              Duration="0:0:0.3" />
-                <DoubleAnimation Storyboard.TargetProperty="(UIElement.Opacity)"
-                                 From="0" To="1"
-                                 Duration="0:0:0.4" />
+                <DoubleAnimation
+                    Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
+                    To="1"
+                    Duration="0:0:0.3" />
+                <DoubleAnimation
+                    Storyboard.TargetProperty="(UIElement.Opacity)"
+                    From="0"
+                    To="1"
+                    Duration="0:0:0.4" />
             </Storyboard>
         </Grid.Resources>
 
@@ -162,7 +205,7 @@
                 <Style.Triggers>
                     <Trigger Property="IsVisible" Value="True">
                         <Trigger.EnterActions>
-                            <BeginStoryboard  x:Name="BsFadeInBackground" Storyboard="{StaticResource FadeInBackground}" />
+                            <BeginStoryboard x:Name="BsFadeInBackground" Storyboard="{StaticResource FadeInBackground}" />
                         </Trigger.EnterActions>
                         <Trigger.ExitActions>
                             <RemoveStoryboard BeginStoryboardName="BsFadeInBackground" />
@@ -172,7 +215,11 @@
             </Style>
         </Grid.Style>
 
-        <Border Grid.Row="0" Grid.Column="0" Grid.RowSpan="3" Background="{DynamicResource TaskbarColorBrush}">
+        <Border
+            Grid.Row="0"
+            Grid.RowSpan="3"
+            Grid.Column="0"
+            Background="{DynamicResource TaskbarColorBrush}">
             <Border.RenderTransform>
                 <TranslateTransform />
             </Border.RenderTransform>
@@ -182,7 +229,7 @@
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Grid}, Path=IsVisible}" Value="True">
                             <DataTrigger.EnterActions>
-                                <BeginStoryboard  x:Name="BsSlideRight" Storyboard="{StaticResource SlideRight}" />
+                                <BeginStoryboard x:Name="BsSlideRight" Storyboard="{StaticResource SlideRight}" />
                             </DataTrigger.EnterActions>
                             <DataTrigger.ExitActions>
                                 <RemoveStoryboard BeginStoryboardName="BsSlideRight" />
@@ -200,85 +247,63 @@
                 </Grid.RowDefinitions>
 
                 <StackPanel Grid.Row="0">
-                    <ToggleButton
-                        Margin="5,20"
-                        Style="{StaticResource starredToggleButton}">
-                    </ToggleButton>
+                    <ToggleButton Margin="5,10" Style="{StaticResource starredToggleButton}" />
 
-                    <Expander Template="{StaticResource StretchyExpanderTemp}"
-                  OverridesDefaultStyle="True"
-                  Header="Using StretchyExpanderTemp"
-                  HorizontalAlignment="Left"
-                  VerticalAlignment="Top"
-                             Tag="{DynamicResource CategoriesIcon}"
-                              Foreground="{DynamicResource ControlForegroundBrush}"
-                              
-                              Margin="0, 10"
-                  >
-                        <StackPanel Orientation="Vertical" Margin="0, 5"
-                                >
+                    <Expander
+                        Margin="0,10"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Foreground="{DynamicResource ControlForegroundBrush}"
+                        Header="Using StretchyExpanderTemp"
+                        OverridesDefaultStyle="True"
+                        Tag="{DynamicResource CategoriesIcon}"
+                        Template="{StaticResource StretchyExpanderTemp}">
 
-                            <ToggleButton
-                        Margin="5,3"
-                        Style="{StaticResource textToggleButton}">
-                            </ToggleButton>
-                            <ToggleButton
-                        Margin="5,3"
-                        Style="{StaticResource imageToggleButton}">
-                            </ToggleButton>
-                            <ToggleButton
-                        Margin="5,3"
-                        Style="{StaticResource fileToggleButton}">
-                            </ToggleButton>
-                            <ToggleButton
-                        Margin="5,3"
-                        Style="{StaticResource generalToggleButton}">
-                            </ToggleButton>
+                        <StackPanel Margin="0,5" Orientation="Vertical">
+                            <ToggleButton Margin="5,3" Style="{StaticResource textToggleButton}" />
+                            <ToggleButton Margin="5,3" Style="{StaticResource imageToggleButton}" />
+                            <ToggleButton Margin="5,3" Style="{StaticResource fileToggleButton}" />
+                            <ToggleButton Margin="5,3" Style="{StaticResource generalToggleButton}" />
                         </StackPanel>
 
                     </Expander>
 
-                    <Expander Template="{StaticResource StretchyExpanderTemp}"
-                  OverridesDefaultStyle="True"
-                  Header="Using StretchyExpanderTemp"
-                  HorizontalAlignment="Left"
-                  VerticalAlignment="Top"
-                              Tag="{DynamicResource SyncedItemsIcon}"
-                              Foreground="{DynamicResource ControlForegroundBrush}"
-                              Margin="0, 10"
-                  >
-                        <StackPanel Orientation="Vertical" Margin="0, 5">
-                            <ToggleButton
-                        Margin="5,3"
-                        Style="{StaticResource myMachineToggleButton}">
-                            </ToggleButton>
-                            <ToggleButton
-                        Margin="5,3"
-                        Style="{StaticResource allMachinesToggleButton}">
-                            </ToggleButton>
+                    <Expander
+                        Margin="0,10"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Foreground="{DynamicResource ControlForegroundBrush}"
+                        Header="Using StretchyExpanderTemp"
+                        OverridesDefaultStyle="True"
+                        Tag="{DynamicResource SyncedItemsIcon}"
+                        Template="{StaticResource StretchyExpanderTemp}">
+                        <StackPanel Margin="0,5" Orientation="Vertical">
+                            <ToggleButton Margin="5,3" Style="{StaticResource myMachineToggleButton}" />
+                            <ToggleButton Margin="5,3" Style="{StaticResource allMachinesToggleButton}" />
                         </StackPanel>
 
                     </Expander>
 
 
-                    <ToggleButton
-                        Margin="5,20"
-                        Style="{StaticResource sourceWindowToggleButton}">
-                    </ToggleButton>
+                    <ToggleButton Margin="5,10" Style="{StaticResource sourceWindowToggleButton}" />
                 </StackPanel>
 
-                <Button 
-                    Grid.Row="2" 
-                    BorderBrush="Transparent"
-                    VerticalContentAlignment="Center" 
-                    VerticalAlignment="Bottom">
+                <Button
+                    Grid.Row="2"
+                    VerticalAlignment="Bottom"
+                    VerticalContentAlignment="Center"
+                    BorderBrush="Transparent">
                     <ContentControl Margin="15" Template="{DynamicResource SettingsIcon}" />
                 </Button>
 
             </Grid>
         </Border>
 
-        <Border Grid.Row="0" Grid.Column="2" Grid.RowSpan="3" Background="{DynamicResource TaskbarColorBrush}">
+        <Border
+            Grid.Row="0"
+            Grid.RowSpan="3"
+            Grid.Column="2"
+            Background="{DynamicResource TaskbarColorBrush}">
             <Border.RenderTransform>
                 <TranslateTransform />
             </Border.RenderTransform>
@@ -288,7 +313,7 @@
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Grid}, Path=IsVisible}" Value="True">
                             <DataTrigger.EnterActions>
-                                <BeginStoryboard  x:Name="BsSlideLeft" Storyboard="{StaticResource SlideLeft}" />
+                                <BeginStoryboard x:Name="BsSlideLeft" Storyboard="{StaticResource SlideLeft}" />
                             </DataTrigger.EnterActions>
                             <DataTrigger.ExitActions>
                                 <RemoveStoryboard BeginStoryboardName="BsSlideLeft" />
@@ -299,25 +324,27 @@
             </Border.Style>
         </Border>
 
-        <Grid Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" >
+        <Grid
+            Grid.Row="2"
+            Grid.Column="0"
+            Grid.ColumnSpan="3">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="2*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <TextBox
+                Grid.Column="1"
+                Height="30"
                 HorizontalAlignment="Stretch"
-            Grid.Column="1"
-            Height="30"
-            Background="Black"
-            Foreground="White"
-            VerticalAlignment="Center"
-            VerticalContentAlignment="Center"
+                VerticalAlignment="Center"
                 HorizontalContentAlignment="Center"
-            Text="Type here to search"
-            />
+                VerticalContentAlignment="Center"
+                Background="Black"
+                Foreground="White"
+                Text="Type here to search" />
         </Grid>
-        
+
 
 
     </Grid>
