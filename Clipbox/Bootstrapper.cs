@@ -201,18 +201,20 @@ namespace Clipbox
 
         private string CreateOrGetAppGuid()
         {
-            string appGuid = null;
+            const string APP_GUID_FILENAME = "appGuid";
 
             string appDataDir = AppDataUtils.GetAppDataDir(throwIfNotExists: false); // create the directory if it does not exists...
-            string fullPath = Path.Combine(appDataDir, "appGuid");
+            string fullPath = Path.Combine(appDataDir, APP_GUID_FILENAME);
+            string appGuid = null;
+
             if (File.Exists(fullPath))
             {
-                appGuid = AppDataUtils.ReadTextFromApplicationData("appGuid");
+                appGuid = AppDataUtils.ReadTextFromApplicationData(APP_GUID_FILENAME);
             }
             else
             {
                 appGuid = Guid.NewGuid().ToString();
-                AppDataUtils.WriteToApplicationData("appGuid", appGuid);
+                AppDataUtils.WriteToApplicationData(APP_GUID_FILENAME, appGuid);
             }
 
             return appGuid;
