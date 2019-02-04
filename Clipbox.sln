@@ -46,6 +46,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextFormats", "Extentions\B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClipboxGuard", "ClipboxGuard\ClipboxGuard.csproj", "{B54C386C-EB27-4893-92DD-76FEB1206E0B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Setup", "Setup\Setup.csproj", "{DA7F72A4-3E21-4244-96CD-7A2611710645}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -259,6 +261,18 @@ Global
 		{B54C386C-EB27-4893-92DD-76FEB1206E0B}.Release|x64.Build.0 = Release|Any CPU
 		{B54C386C-EB27-4893-92DD-76FEB1206E0B}.Release|x86.ActiveCfg = Release|Any CPU
 		{B54C386C-EB27-4893-92DD-76FEB1206E0B}.Release|x86.Build.0 = Release|Any CPU
+		{DA7F72A4-3E21-4244-96CD-7A2611710645}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA7F72A4-3E21-4244-96CD-7A2611710645}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA7F72A4-3E21-4244-96CD-7A2611710645}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DA7F72A4-3E21-4244-96CD-7A2611710645}.Debug|x64.Build.0 = Debug|Any CPU
+		{DA7F72A4-3E21-4244-96CD-7A2611710645}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DA7F72A4-3E21-4244-96CD-7A2611710645}.Debug|x86.Build.0 = Debug|Any CPU
+		{DA7F72A4-3E21-4244-96CD-7A2611710645}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA7F72A4-3E21-4244-96CD-7A2611710645}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA7F72A4-3E21-4244-96CD-7A2611710645}.Release|x64.ActiveCfg = Release|Any CPU
+		{DA7F72A4-3E21-4244-96CD-7A2611710645}.Release|x64.Build.0 = Release|Any CPU
+		{DA7F72A4-3E21-4244-96CD-7A2611710645}.Release|x86.ActiveCfg = Release|Any CPU
+		{DA7F72A4-3E21-4244-96CD-7A2611710645}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

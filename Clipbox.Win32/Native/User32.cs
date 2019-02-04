@@ -262,6 +262,5 @@ namespace Clipbox.Win32.Native
 
         [DllImport(ExternDll.User32, SetLastError = true)]
         public static extern IntPtr MonitorFromPoint(Point pt, MonitorOptions dwFlags);
-
     }
 }

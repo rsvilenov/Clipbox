@@ -25,7 +25,7 @@ namespace Clipbox.Win32
                 throw new Win32Exception();
             }
 
-            IntPtr hMonitor = User32.MonitorFromPoint(p, MonitorOptions.MONITOR_DEFAULTTONEAREST);
+            IntPtr hMonitor = User32.MonitorFromPoint(p, NativeEnums.MonitorOptions.MONITOR_DEFAULTTONEAREST);
             
             return GetDisplayMonitor(hMonitor);
         }

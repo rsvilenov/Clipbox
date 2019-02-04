@@ -11,5 +11,6 @@
         public const string Wer = "wer.dll";
         public const string UxTheme = "uxtheme.dll";
         public const string WtsApi32 = "wtsapi32.dll";
+        public const string Shell32 = "Shell32.dll";
     }
 }
