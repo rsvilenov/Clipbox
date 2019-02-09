@@ -71,6 +71,8 @@
     <Compile Include="ApplicationSettings.cs" />
     <Compile Include="Behaviors\FrameworkElementDisableClickBehavior.cs" />
     <Compile Include="Behaviors\ListViewScrollButtonBehavior.cs" />
+    <Compile Include="Behaviors\ScrollButtonBehavior.cs" />
+    <Compile Include="Behaviors\ScrollViewerContentScrollButtonsBehavior.cs" />
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="ApplicationSettings.Designer.cs">
       <AutoGen>True</AutoGen>
