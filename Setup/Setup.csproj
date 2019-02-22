@@ -55,6 +55,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="KnownSetupException.cs" />
+    <Compile Include="SetupActions\Deskband.cs" />
     <Compile Include="SetupActions\DeskbandShellNotify.cs" />
     <Compile Include="SetupActions\Interfaces\ISetupAction.cs" />
     <Page Include="MainWindow.xaml">

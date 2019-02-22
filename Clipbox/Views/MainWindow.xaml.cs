@@ -30,6 +30,8 @@ namespace Clipbox.Views
 
         private MainClipboardViewBackgroundRenderMode _backgroundRenderMode;
 
+        private MainViewClipboardContents _mainViewClipboardContents;
+
         public MainWindow(ISettingsService settingsService, MonitorUtils.DisplayMonitor monitor)
         {
             _settingsService = settingsService;
@@ -41,6 +43,9 @@ namespace Clipbox.Views
             }
 
             InitializeComponent();
+
+            _mainViewClipboardContents = new MainViewClipboardContents(new ViewModels.MainClipboardViewViewModel(), null, settingsService);
+            clipboardContents.Content = _mainViewClipboardContents;
 
             _backgroundRenderMode = (MainClipboardViewBackgroundRenderMode)_settingsService.GetSetting<int>(SettingsKeys.MainClipboardViewBackgroundRenderMode);
 

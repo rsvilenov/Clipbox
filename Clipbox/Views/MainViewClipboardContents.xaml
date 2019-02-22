@@ -1,0 +1,796 @@
+﻿<local:ClipboardViewControl x:Class="Clipbox.Views.MainViewClipboardContents"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"            
+             xmlns:bo="clr-namespace:Clipbox.ViewModels.BindableObjects"
+             xmlns:conv="clr-namespace:Clipbox.Technical.Converters"
+             xmlns:coreConv="clr-namespace:Clipbox.Infrastructure.UI.Converters;assembly=Clipbox.Infrastructure.UI"
+             xmlns:local="clr-namespace:Clipbox.Views"
+             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+             xmlns:infEnums="clr-namespace:Clipbox.Core.Enums;assembly=Clipbox.Core"
+             xmlns:infPropAp="clr-namespace:Clipbox.Infrastructure.UI.AttachedProperties;assembly=Clipbox.Infrastructure.UI"
+             xmlns:infWindows="clr-namespace:Clipbox.Infrastructure.UI.Windows;assembly=Clipbox.Infrastructure.UI"
+             xmlns:localBeh="clr-namespace:Clipbox.Behaviors"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <conv:BitmapToBitmapImageConverter x:Key="BitmapToBitmapImageConverter" />
+        <conv:ObjectToTypeStringConverter x:Key="ObjectToTypeStringConverter" />
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <coreConv:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+        <coreConv:OrMultiValueConverter x:Key="OrMultiValueConverter" />
+        <coreConv:AndMultiValueConverter x:Key="AndMultiValueConverter" />
+        <coreConv:MathAddConverter x:Key="MathAddConverter" />
+        <coreConv:IsEqualOrGreaterThanConverter x:Key="IsEqualOrGreaterThanConverter" />
+        <coreConv:NullOrEmptyCollectionToBoolConverter x:Key="NullOrEmptyCollectionToBoolConverter" />
+        <conv:ContentClassListContainsConverter x:Key="ContentClassListContainsConverter" />
+    </UserControl.Resources>
+    <Grid>
+        <Grid.Resources>
+            <Storyboard x:Key="FadeInItem">
+                <DoubleAnimation
+                    Storyboard.TargetProperty="(UIElement.Opacity)"
+                    From="0"
+                    To="1"
+                    Duration="0:0:2.0" />
+            </Storyboard>
+        </Grid.Resources>
+        <ListView
+                Name="MainListView"
+                Grid.Row="1"
+                Margin="10"
+                VerticalAlignment="Stretch"
+                VerticalContentAlignment="Top"
+                Background="Transparent"
+                BorderThickness="0"
+                ItemsSource="{Binding ClipboardViewItems}"
+                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                ScrollViewer.VerticalScrollBarVisibility="Visible">
+
+            <!--  Remove the default highlighting on mouse over  -->
+            <ListView.ItemContainerStyle>
+                <Style TargetType="{x:Type ListViewItem}">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                <Border
+                                        x:Name="Bd"
+                                        Margin="5"
+                                        Background="Transparent"
+                                        BorderBrush="Green"
+                                        BorderThickness="1"
+                                        SnapsToDevicePixels="True">
+                                    
+                                    <ContentPresenter
+                                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <MultiTrigger>
+                                        <MultiTrigger.Conditions>
+                                            <Condition Property="IsMouseOver" Value="True" />
+                                        </MultiTrigger.Conditions>
+                                        <Setter TargetName="Bd" Property="BorderBrush" Value="DarkGray" />
+                                    </MultiTrigger>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True" />
+                                            <Condition Binding="{Binding IsSelected}" Value="True" />
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter TargetName="Bd" Property="Background" Value="{DynamicResource AccentBrush}" />
+                                        <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource AccentLight3Brush}" />
+                                    </MultiDataTrigger>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True" />
+                                            <Condition Binding="{Binding IsSelected}" Value="True" />
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter TargetName="Bd" Property="Background" Value="{DynamicResource AccentBrush}" />
+                                        <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource AccentLight3Brush}" />
+                                    </MultiDataTrigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListView.ItemContainerStyle>
+
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel />
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Border Background="Transparent" BorderThickness="0" Opacity="0">
+                        
+                        <Border.Style>
+
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="IsManipulationEnabled" Value="False" />
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="IsManipulationEnabled" Value="True" />
+                                    </Trigger>
+                                    <DataTrigger Binding="{Binding MarkAsUnselectable}" Value="True">
+                                        <DataTrigger.EnterActions>
+                                            <BeginStoryboard Name="Flash">
+                                                <Storyboard FillBehavior="Stop">
+                                                    <!--
+                                                            since wpf wants to freeze the storyboard, we cannot use dynamic resources here...
+                                                            From="{DynamicResource AccentBrush}"
+                                                            To="{DynamicResource AccentLight3Brush}"
+                                                        -->
+                                                    <ColorAnimation
+                                                            AutoReverse="True"
+                                                            FillBehavior="HoldEnd"
+                                                            RepeatBehavior="1x"
+                                                            Storyboard.TargetProperty="Background.Color"
+                                                            To="Red"
+                                                            Duration="0:0:0.3" />
+                                                </Storyboard>
+                                            </BeginStoryboard>
+                                        </DataTrigger.EnterActions>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+
+                        <Grid
+                                MinWidth="100"
+                                MinHeight="100"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Background="Transparent">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="40" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid
+                                    Grid.Row="0"
+                                    Margin="5,0,0,0"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Center">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <ItemsControl
+                                        Grid.Column="0"
+                                        MaxHeight="30"
+                                        ItemsSource="{Binding ContentClasses}"
+                                        Tag="{x:Static infWindows:PerMonitorDpiWindow.SCALE_ELEMENT_TAG}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Horizontal" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Grid>
+                                                <ContentControl
+                                                        MaxHeight="17"
+                                                        Margin="5,0,0,0"
+                                                        Foreground="#e4e4e6"
+                                                        Template="{DynamicResource ClassImageIcon}"
+                                                        ToolTip="Image">
+                                                    <ContentControl.Style>
+                                                        <Style TargetType="ContentControl">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding}" Value="{x:Static infEnums:ClipboardContentClass.Image}">
+                                                                    <Setter Property="Visibility" Value="Visible" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </ContentControl.Style>
+                                                </ContentControl>
+
+                                                <ContentControl
+                                                        MaxHeight="17"
+                                                        Margin="5,0,0,0"
+                                                        Foreground="#e4e4e6"
+                                                        Template="{DynamicResource ClassFileIcon}"
+                                                        ToolTip="File/Folder">
+                                                    <ContentControl.Style>
+                                                        <Style TargetType="ContentControl">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                            <Style.Triggers>
+                                                                <MultiDataTrigger>
+                                                                    <MultiDataTrigger.Conditions>
+                                                                        <Condition Binding="{Binding}" Value="{x:Static infEnums:ClipboardContentClass.File}" />
+                                                                        <Condition Binding="{Binding Path=DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListViewItem}, Converter={StaticResource ObjectToTypeStringConverter}}" Value="ClipboardViewItemSingle" />
+                                                                    </MultiDataTrigger.Conditions>
+                                                                    <Setter Property="Visibility" Value="Visible" />
+                                                                </MultiDataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </ContentControl.Style>
+                                                </ContentControl>
+
+                                                <ContentControl
+                                                        MaxHeight="20"
+                                                        Margin="5,0,0,0"
+                                                        Foreground="#e4e4e6"
+                                                        Template="{DynamicResource ClassFileCollectionIcon}"
+                                                        ToolTip="File/Folder collection">
+                                                    <ContentControl.Style>
+                                                        <Style TargetType="ContentControl">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                            <Style.Triggers>
+                                                                <MultiDataTrigger>
+                                                                    <MultiDataTrigger.Conditions>
+                                                                        <Condition Binding="{Binding}" Value="{x:Static infEnums:ClipboardContentClass.File}" />
+                                                                        <Condition Binding="{Binding Path=DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListViewItem}, Converter={StaticResource ObjectToTypeStringConverter}}" Value="ClipboardViewItemGroup" />
+                                                                    </MultiDataTrigger.Conditions>
+                                                                    <Setter Property="Visibility" Value="Visible" />
+                                                                </MultiDataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </ContentControl.Style>
+                                                </ContentControl>
+
+                                                <ContentControl
+                                                        MaxHeight="16"
+                                                        Margin="5,0,0,0"
+                                                        Foreground="#e4e4e6"
+                                                        Template="{DynamicResource ClassTextIcon}"
+                                                        ToolTip="Text">
+                                                    <ContentControl.Style>
+                                                        <Style TargetType="ContentControl">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding}" Value="{x:Static infEnums:ClipboardContentClass.Text}">
+                                                                    <Setter Property="Visibility" Value="Visible" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </ContentControl.Style>
+                                                </ContentControl>
+
+                                                <ContentControl
+                                                        MaxHeight="17"
+                                                        Margin="5,0,0,0"
+                                                        Foreground="#e4e4e6"
+                                                        Template="{DynamicResource ClassGeneralContentIcon}"
+                                                        ToolTip="Content">
+                                                    <ContentControl.Style>
+                                                        <Style TargetType="ContentControl">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                            <Style.Triggers>
+                                                                <MultiDataTrigger>
+                                                                    <MultiDataTrigger.Conditions>
+                                                                        <Condition Binding="{Binding}" Value="{x:Static infEnums:ClipboardContentClass.GeneralContent}" />
+                                                                        <Condition Binding="{Binding Path=DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListViewItem}, Converter={StaticResource ObjectToTypeStringConverter}}" Value="ClipboardViewItemSingle" />
+                                                                    </MultiDataTrigger.Conditions>
+                                                                    <Setter Property="Visibility" Value="Visible" />
+                                                                </MultiDataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </ContentControl.Style>
+                                                </ContentControl>
+
+                                                <ContentControl
+                                                        MaxHeight="20"
+                                                        Margin="5,0,0,0"
+                                                        Foreground="#e4e4e6"
+                                                        Template="{DynamicResource ClassGeneralContentCollectionIcon}"
+                                                        ToolTip="Content collection">
+                                                    <ContentControl.Style>
+                                                        <Style TargetType="ContentControl">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                            <Style.Triggers>
+                                                                <MultiDataTrigger>
+                                                                    <MultiDataTrigger.Conditions>
+                                                                        <Condition Binding="{Binding}" Value="{x:Static infEnums:ClipboardContentClass.GeneralContent}" />
+                                                                        <Condition Binding="{Binding Path=DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListViewItem}, Converter={StaticResource ObjectToTypeStringConverter}}" Value="ClipboardViewItemGroup" />
+                                                                    </MultiDataTrigger.Conditions>
+                                                                    <Setter Property="Visibility" Value="Visible" />
+                                                                </MultiDataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </ContentControl.Style>
+                                                </ContentControl>
+                                            </Grid>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <!--<Rectangle HorizontalAlignment="Center" VerticalAlignment="Center" Width="1" Height="15" Fill="#e4e4e6" Margin="5,0,0,0" />
+
+
+                                        <Image MaxHeight="17" Margin="5"  HorizontalAlignment="Center" VerticalAlignment="Center"
+                                            Source="{Binding SourceWindowIcon}" ToolTip="{Binding SourceWindowCaption}" Tag="{x:Static infWindows:PerMonitorDpiWindow.SCALE_ELEMENT_TAG}" />-->
+
+
+
+                                <ToggleButton
+                                        Grid.Column="2"
+                                        MaxWidth="25"
+                                        Margin="0,0,5,0"
+                                        Command="{Binding Path=DataContext.PinUnpinClipboardEntry, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
+                                        CommandParameter="{Binding}"
+                                        IsChecked="{Binding IsPinned}"
+                                        Style="{DynamicResource ToggleBtnStar}"
+                                        Tag="{x:Static infWindows:PerMonitorDpiWindow.SCALE_ELEMENT_TAG}">
+                                    <!--  Visible only if the ListViewItem is highlighted or selected (IsManipulationEnabled = true) OR the toggle button is checked  -->
+                                    <ToggleButton.IsEnabled>
+                                        <MultiBinding Converter="{StaticResource OrMultiValueConverter}">
+                                            <Binding Path="IsManipulationEnabled" RelativeSource="{RelativeSource AncestorType={x:Type Border}}" />
+                                            <Binding Path="IsChecked" RelativeSource="{RelativeSource Self}" />
+                                        </MultiBinding>
+                                    </ToggleButton.IsEnabled>
+                                    <ToggleButton.Visibility>
+                                        <Binding
+                                                Converter="{StaticResource BooleanToVisibilityConverter}"
+                                                Path="IsEnabled"
+                                                RelativeSource="{RelativeSource Self}" />
+                                    </ToggleButton.Visibility>
+                                </ToggleButton>
+
+                                <Button
+                                        Grid.Column="3"
+                                        MaxWidth="25"
+                                        Margin="0,0,5,0"
+                                        Command="{Binding Path=DataContext.DeleteClipboardEntry, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
+                                        CommandParameter="{Binding}"
+                                        Style="{DynamicResource BtnClose}"
+                                        Tag="{x:Static infWindows:PerMonitorDpiWindow.SCALE_ELEMENT_TAG}"
+                                        Visibility="{Binding Path=IsManipulationEnabled, RelativeSource={RelativeSource AncestorType={x:Type Border}}, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            </Grid>
+
+                            <Rectangle
+                                    Grid.Row="1"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    Fill="{DynamicResource TaskbarColorBrush}"
+                                    IsEnabled="{Binding Path=IsManipulationEnabled, RelativeSource={RelativeSource AncestorType={x:Type Border}}, Converter={StaticResource InverseBooleanConverter}}"
+                                    Opacity="0.3"
+                                    Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+
+                            <!--  single item  -->
+                            <ContentControl Grid.Row="1">
+                                <ContentControl.Style>
+                                    <Style TargetType="{x:Type ContentControl}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Converter={StaticResource ObjectToTypeStringConverter}}" Value="ClipboardViewItemSingle">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                                <Setter Property="Content">
+                                                    <Setter.Value>
+                                                        <Grid>
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition Height="Auto" />
+                                                                <RowDefinition Height="40" />
+                                                            </Grid.RowDefinitions>
+
+                                                            <!--  In order to access the PreviewItem property, we need to cast (in XAML) the ClipboardViewItem to ClipboardViewItemSingle  -->
+                                                            <Image
+                                                                    Grid.Row="0"
+                                                                    Margin="10"
+                                                                    HorizontalAlignment="Stretch"
+                                                                    VerticalAlignment="Stretch"
+                                                                    Source="{Binding Path=(bo:ClipboardViewItemSingle.PreviewItem).(bo:ClipboardPreviewItem.Image)}"
+                                                                    Stretch="Uniform"
+                                                                    ToolTip="{Binding PreviewItem.Description}" />
+
+                                                            <Rectangle
+                                                                    Grid.Row="0"
+                                                                    HorizontalAlignment="Stretch"
+                                                                    VerticalAlignment="Stretch"
+                                                                    Fill="Black"
+                                                                    Opacity="0.3"
+                                                                    Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                                <Rectangle.IsEnabled>
+                                                                    <MultiBinding Converter="{StaticResource AndMultiValueConverter}">
+                                                                        <Binding
+                                                                                Converter="{StaticResource InverseBooleanConverter}"
+                                                                                Path="IsManipulationEnabled"
+                                                                                RelativeSource="{RelativeSource AncestorType={x:Type Border}}" />
+                                                                        <Binding Path="DimNonFocusedItems" RelativeSource="{RelativeSource AncestorType={x:Type local:ClipboardViewControl}}" />
+                                                                        <Binding
+                                                                                Converter="{StaticResource InverseBooleanConverter}"
+                                                                                Path="DataContext.IsSelected"
+                                                                                RelativeSource="{RelativeSource AncestorType={x:Type ListViewItem}}" />
+                                                                    </MultiBinding>
+                                                                </Rectangle.IsEnabled>
+                                                            </Rectangle>
+
+
+                                                            <Label
+                                                                    Grid.Row="1"
+                                                                    HorizontalContentAlignment="Center"
+                                                                    VerticalContentAlignment="Center"
+                                                                    FontSize="12"
+                                                                    Foreground="White"
+                                                                    Tag="{x:Static infWindows:PerMonitorDpiWindow.SCALE_ELEMENT_TAG}">
+                                                                <Label.Content>
+                                                                    <!--  TODO: calculate the MaxWidth dynamically  -->
+                                                                    <TextBlock
+                                                                            MaxWidth="200"
+                                                                            Text="{Binding PreviewItem.Text}"
+                                                                            TextBlock.TextTrimming="CharacterEllipsis"
+                                                                            ToolTipService.Placement="Center">
+                                                                        <TextBlock.ToolTip>
+                                                                            <!--  the tooltip won't scale with the textblock, probably because it is not part of its visual tree  -->
+                                                                            <ToolTip>
+                                                                                <ToolTip.Content>
+                                                                                    <TextBlock FontSize="12" Text="{Binding PreviewItem.Text}">
+                                                                                            <!--<TextBlock.LayoutTransform>
+                                                                                                <ScaleTransform CenterX="0" CenterY="0" ScaleX="{Binding Path=ScaleFactor, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=infWindows:PerMonitorDpiWindow}}" ScaleY="{Binding}" />
+                                                                                            </TextBlock.LayoutTransform>-->
+                                                                                    </TextBlock>
+                                                                                </ToolTip.Content>
+                                                                            </ToolTip>
+                                                                        </TextBlock.ToolTip>
+                                                                        </TextBlock>
+                                                                </Label.Content>
+                                                            </Label>
+
+                                                        </Grid>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ContentControl.Style>
+                            </ContentControl>
+
+                            <!--  multiple items  -->
+                            <Grid Grid.Row="1" Margin="0,0,0,0">
+                                <Grid.Height>
+                                    <MultiBinding Converter="{StaticResource MathAddConverter}">
+                                        <Binding Path="ClipboardViewItemHeight" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=UserControl}" />
+                                        <Binding>
+                                            <Binding.Source>
+                                                <!--  pad the height so that it matches the total height of the single view items  -->
+                                                <sys:Double>60</sys:Double>
+                                            </Binding.Source>
+                                        </Binding>
+                                    </MultiBinding>
+                                </Grid.Height>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="15" />
+                                    <RowDefinition />
+                                    <RowDefinition Height="15" />
+                                    <RowDefinition Height="25" />
+                                </Grid.RowDefinitions>
+                                <Grid.Style>
+                                    <Style TargetType="Grid">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Converter={StaticResource ObjectToTypeStringConverter}}" Value="ClipboardViewItemGroup">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Grid.Style>
+
+                                <Button
+                                        Name="BtnScrollUpSubItem"
+                                        Grid.Row="0"
+                                        Grid.Column="2"
+                                        Height="15"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Center"
+                                        Style="{DynamicResource BtnArrowUp}"
+                                        Tag="{Binding ElementName=subItemsListView}">
+                                    <i:Interaction.Behaviors>
+                                        <localBeh:ListViewScrollButtonBehavior IsScrollUpButton="True" />
+                                    </i:Interaction.Behaviors>
+                                </Button>
+                                <Button
+                                        Name="BtnScrollDownSubItem"
+                                        Grid.Row="2"
+                                        Grid.Column="2"
+                                        Height="15"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Center"
+                                        Style="{DynamicResource BtnArrowDown}"
+                                        Tag="{Binding ElementName=subItemsListView}">
+                                    <i:Interaction.Behaviors>
+                                        <localBeh:ListViewScrollButtonBehavior IsScrollUpButton="False" />
+                                    </i:Interaction.Behaviors>
+                                </Button>
+
+                                <Label
+                                        Grid.Row="3"
+                                        Height="25"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center">
+                                    <Label.Content>
+                                        <TextBlock Foreground="White">
+                                            <TextBlock.Text>
+                                                <MultiBinding StringFormat="{}{0} of {1} selected">
+                                                    <Binding ElementName="subItemsListView" Path="SelectedItems.Count" />
+                                                    <Binding Path="TotalClipboardItemsCount" />
+                                                </MultiBinding>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                    </Label.Content>
+                                    <Label.Style>
+                                        <Style TargetType="Label">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Path=SelectedItems.Count, ElementName=subItemsListView}" Value="0">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Label.Style>
+                                </Label>
+
+                                <Label
+                                        Grid.Row="3"
+                                        Height="25"
+                                        HorizontalAlignment="Stretch"
+                                        HorizontalContentAlignment="Center"
+                                        VerticalContentAlignment="Center">
+                                    <Label.Content>
+                                        <TextBlock Foreground="White" Text="{Binding Path=TotalClipboardItemsCount, StringFormat={}{0} items}" />
+                                    </Label.Content>
+                                    <Label.Style>
+                                        <Style TargetType="Label">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Path=SelectedItems.Count, ElementName=subItemsListView}" Value="0">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Label.Style>
+                                </Label>
+
+                                <ListView
+                                        Name="subItemsListView"
+                                        Grid.Row="1"
+                                        Background="Transparent"
+                                        BorderThickness="1"
+                                        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                        ScrollViewer.VerticalScrollBarVisibility="Hidden"
+                                        SelectionChanged="subItemsListView_SelectionChanged">
+                                    <ListView.ItemContainerStyle>
+                                        <Style TargetType="{x:Type ListViewItem}">
+                                            <Setter Property="Background" Value="Transparent" />
+                                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                                        <Border
+                                                                x:Name="Bd"
+                                                                Margin="5"
+                                                                Background="Transparent"
+                                                                BorderBrush="Transparent"
+                                                                BorderThickness="1"
+                                                                SnapsToDevicePixels="True">
+                                                            <Border.Height>
+                                                                <MultiBinding Converter="{StaticResource MathAddConverter}">
+                                                                    <Binding Path="ActualHeight" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=ListBox}" />
+                                                                    <Binding>
+                                                                        <Binding.Source>
+                                                                            <!--  take into account the margin of the border (5 on top and 5 on bottom + 1 for border top and 1 for border bottom)  -->
+                                                                            <sys:Double>-15</sys:Double>
+                                                                        </Binding.Source>
+                                                                    </Binding>
+                                                                </MultiBinding>
+                                                            </Border.Height>
+                                                            <!--  BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}"  -->
+
+                                                            <ContentPresenter
+                                                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                    VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            
+                                                            <DataTrigger Binding="{Binding Converter={StaticResource ObjectToTypeStringConverter}}" Value="ClipboardViewSubItemNMore">
+                                                                <!--
+                                                                        Make the "+N" indicator non-selectable. Despite this, the item can still be selected via click, so we will use a behavior on the content (see the ListViewItem template below).
+                                                                        Note that we cannot just set IsEnabled to False, because this will also disable the tooltips and we do not want that.
+                                                                    -->
+                                                                <Setter Property="Focusable" Value="False" />
+                                                            </DataTrigger>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
+                                                                    <!--  show the border only for real subitems, not for the "+N" indicator  -->
+                                                                    <Condition Binding="{Binding Converter={StaticResource ObjectToTypeStringConverter}}" Value="ClipboardViewSubItem" />
+                                                                </MultiDataTrigger.Conditions>
+                                                                <!--<Setter Property="Background" TargetName="Bd" Value="Blue"/>-->
+                                                                <Setter TargetName="Bd" Property="BorderBrush" Value="DarkGray" />
+                                                                <!--<Setter Property="BorderThickness" TargetName="Bd" Value="2"/>-->
+
+                                                            </MultiDataTrigger>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <!--<Condition Binding="{Binding Selector.IsSelectionActive, RelativeSource={RelativeSource Self}}" Value="False" />-->
+                                                                    <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True" />
+                                                                    <Condition Binding="{Binding IsSelected}" Value="True" />
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource AccentBrush}" />
+                                                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource AccentLight3Brush}" />
+                                                            </MultiDataTrigger>
+                                                            <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                    <!--<Condition Binding="{Binding Selector.IsSelectionActive, RelativeSource={RelativeSource Self}}" Value="True" />-->
+                                                                    <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True" />
+                                                                    <Condition Binding="{Binding IsSelected}" Value="True" />
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource AccentBrush}" />
+                                                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource AccentLight3Brush}" />
+                                                            </MultiDataTrigger>
+                                                            <!--<Trigger Property="IsEnabled" Value="False">
+                                        <Setter Property="TextElement.Foreground" TargetName="Bd" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                                    </Trigger>-->
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </ListView.ItemContainerStyle>
+                                    <ListView.Style>
+                                        <Style TargetType="{x:Type ListView}">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                            <Setter Property="ItemsSource" Value="{x:Null}" />
+                                            <Setter Property="infPropAp:ListViewUnselectAllAttachedProperty.UnselectAll" Value="False" />
+                                            <Setter Property="BorderBrush" Value="{DynamicResource AccentLight3Brush}" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=SelectedItems.Count}" Value="0">
+                                                    <Setter Property="BorderBrush" Value="Transparent" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Converter={StaticResource ObjectToTypeStringConverter}}" Value="ClipboardViewItemGroup">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                    <!--  cast the ClipboardViewItem to ClipboardViewItemGroup  -->
+                                                    <Setter Property="ItemsSource" Value="{Binding Path=(bo:ClipboardViewItemGroup.PreviewItems)}" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Path=IsSelected}" Value="True">
+                                                    <Setter Property="infPropAp:ListViewUnselectAllAttachedProperty.UnselectAll" Value="True" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ListView.Style>
+                                    <ListView.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <!--<WrapPanel />-->
+                                            <UniformGrid Columns="2" />
+                                        </ItemsPanelTemplate>
+                                    </ListView.ItemsPanel>
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <ContentControl x:Name="ccSubItem">
+                                                <ContentControl.Style>
+                                                    <Style TargetType="ContentControl">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Converter={StaticResource ObjectToTypeStringConverter}}" Value="ClipboardViewSubItem">
+
+                                                                <Setter Property="Template">
+                                                                    <Setter.Value>
+                                                                        <ControlTemplate>
+                                                                            <Grid>
+                                                                                <Grid.Background>
+                                                                                    <SolidColorBrush Opacity="0.1" Color="DarkGray" />
+                                                                                </Grid.Background>
+                                                                                <Grid.RowDefinitions>
+                                                                                    <RowDefinition Height="*" />
+                                                                                    <RowDefinition Height="30" />
+                                                                                </Grid.RowDefinitions>
+                                                                                <Image
+                                                                                        Name="subItemPreviewImage"
+                                                                                        Grid.Row="0"
+                                                                                        Margin="5"
+                                                                                        HorizontalAlignment="Stretch"
+                                                                                        VerticalAlignment="Stretch"
+                                                                                        Source="{Binding Path=PreviewItem.Image}"
+                                                                                        Stretch="Uniform"
+                                                                                        ToolTip="{Binding Path=PreviewItem.Description}" />
+                                                                                <Label
+                                                                                        Grid.Row="1"
+                                                                                        HorizontalContentAlignment="Center"
+                                                                                        VerticalContentAlignment="Center"
+                                                                                        FontSize="12"
+                                                                                        Foreground="White"
+                                                                                        Tag="{x:Static infWindows:PerMonitorDpiWindow.SCALE_ELEMENT_TAG}">
+                                                                                    <Label.Content>
+                                                                                        <TextBlock
+                                                                                                MaxWidth="{Binding ElementName=subItemPreviewImage, Path=ActualWidth}"
+                                                                                                Text="{Binding PreviewItem.Text}"
+                                                                                                TextBlock.TextTrimming="CharacterEllipsis"
+                                                                                                ToolTip="{Binding PreviewItem.Text}"
+                                                                                                ToolTipService.Placement="Center" />
+                                                                                    </Label.Content>
+                                                                                </Label>
+                                                                            </Grid>
+                                                                        </ControlTemplate>
+                                                                    </Setter.Value>
+                                                                </Setter>
+
+                                                            </DataTrigger>
+
+                                                            <DataTrigger Binding="{Binding Converter={StaticResource ObjectToTypeStringConverter}}" Value="ClipboardViewSubItemNMore">
+
+                                                                <Setter Property="Template">
+                                                                    <Setter.Value>
+                                                                        <ControlTemplate>
+                                                                            <Grid Width="{Binding Path=Height, RelativeSource={RelativeSource Self}}" Height="{Binding Path=ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Border}}">
+                                                                                <i:Interaction.Behaviors>
+                                                                                    <!--  ClipboardViewSubItemNMore elements are still selectable with a click despite ListViewItem.Focusable=False, so we need a behavior to cancel the click events  -->
+                                                                                    <localBeh:FrameworkElementDisableClickBehavior AncestorElement="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListViewItem}}" />
+                                                                                </i:Interaction.Behaviors>
+                                                                                <Grid.ToolTip>
+                                                                                    <TextBlock Text="{Binding Path=(bo:ClipboardViewSubItemNMore.NumberOfItems), StringFormat='{}{0:#} more files.'}" />
+                                                                                </Grid.ToolTip>
+                                                                                <Grid.Background>
+                                                                                    <SolidColorBrush Opacity="0.1" Color="DarkGray" />
+                                                                                </Grid.Background>
+
+                                                                                <TextBlock
+                                                                                        HorizontalAlignment="Center"
+                                                                                        VerticalAlignment="Center"
+                                                                                        FontSize="16"
+                                                                                        FontWeight="Bold"
+                                                                                        Foreground="White"
+                                                                                        Tag="{x:Static infWindows:PerMonitorDpiWindow.SCALE_ELEMENT_TAG}"
+                                                                                        Text="{Binding Path=(bo:ClipboardViewSubItemNMore.NumberOfItems), StringFormat={}{0:+#}}" />
+                                                                            </Grid>
+                                                                        </ControlTemplate>
+                                                                    </Setter.Value>
+                                                                </Setter>
+
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+
+                                                </ContentControl.Style>
+                                            </ContentControl>
+
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+
+                                </ListView>
+
+                                <Rectangle
+                                        Grid.Row="1"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        Fill="Black"
+                                        IsHitTestVisible="False"
+                                        Opacity="0.3">
+                                    <Rectangle.Style>
+                                        <Style TargetType="Rectangle">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Path=IsManipulationEnabled, RelativeSource={RelativeSource AncestorType={x:Type Border}}}" Value="True">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Path=DataContext.IsSelected, RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}}" Value="True">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Path=SelectedItems.Count, ElementName=subItemsListView, Converter={StaticResource IsEqualOrGreaterThanConverter}, ConverterParameter=1}" Value="True">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Path=DimNonFocusedItems, RelativeSource={RelativeSource AncestorType={x:Type local:ClipboardViewControl}}}" Value="False">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Rectangle.Style>
+                                </Rectangle>
+                            </Grid>
+
+                        </Grid>
+                    </Border>
+
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</local:ClipboardViewControl>
