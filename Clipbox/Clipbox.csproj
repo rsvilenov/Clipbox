@@ -122,6 +122,9 @@
     </Compile>
     <Compile Include="Views\Interfaces\IMainWindow.cs" />
     <Compile Include="Views\Interfaces\ITrayContextMenu.cs" />
+    <Compile Include="Views\MainViewClipboardContents.xaml.cs">
+      <DependentUpon>MainViewClipboardContents.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\QuickViewClipboardContents.xaml.cs">
       <DependentUpon>QuickViewClipboardContents.xaml</DependentUpon>
     </Compile>
@@ -156,6 +159,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\FilterBand.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MainViewClipboardContents.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

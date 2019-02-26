@@ -187,6 +187,8 @@
             </Border.Style>
         </Border>
 
+        <ContentPresenter Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" x:Name="clipboardContents" />
+
         <Grid
             Grid.Row="2"
             Grid.Column="0"
