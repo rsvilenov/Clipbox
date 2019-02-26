@@ -46,20 +46,35 @@
                    ViewportSize="NaN">
 
                 <Track.Thumb>
-                    <Thumb Style="{StaticResource ScrollBarThumb}" Height="Auto" Microsoft_Windows_Themes:ScrollChrome.ScrollGlyph="VerticalGripper"/>
+                    <Thumb Style="{StaticResource ScrollBarThumb}" Microsoft_Windows_Themes:ScrollChrome.ScrollGlyph="VerticalGripper"/>
                 </Track.Thumb>
             </Track>
         </Grid>
     </ControlTemplate>
     
     <ControlTemplate x:Key="HorizontalScrollBar" TargetType="{x:Type ScrollBar}">
-        <Track Name="PART_Track"
-                Grid.Column="1"
-                IsDirectionReversed="false">
-            <Track.Thumb>
-                <Thumb Style="{StaticResource ScrollBarThumb}"/>
-            </Track.Thumb>
-        </Track>
+        <Grid x:Name="Bg" Background="Transparent" SnapsToDevicePixels="True">
+            <Grid.Style>
+                <Style TargetType="{x:Type Grid}">
+                    <Style.Triggers>
+                        <Trigger Property="Border.IsMouseOver" Value="True">
+                            <Setter Property="Effect">
+                                <Setter.Value>
+                                    <DropShadowEffect ShadowDepth="0" BlurRadius="10" Color="White" />
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            <Border Height="1" Background="#FFFFFF" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
+            <Track x:Name="PART_Track" IsEnabled="{TemplateBinding IsMouseOver}"
+                   ViewportSize="NaN">
+                <Track.Thumb>
+                    <Thumb Style="{StaticResource ScrollBarThumb}" Microsoft_Windows_Themes:ScrollChrome.ScrollGlyph="HorizontalGripper"/>
+                </Track.Thumb>
+            </Track>
+        </Grid>
     </ControlTemplate>
     <Style x:Key="MinimalisticScrollBarStyle" TargetType="{x:Type ScrollBar}">
         <Setter Property="SnapsToDevicePixels" Value="True"/>
