@@ -6,6 +6,7 @@
     xmlns:conv="clr-namespace:Clipbox.Technical.Converters"
     xmlns:coreConv="clr-namespace:Clipbox.Infrastructure.UI.Converters;assembly=Clipbox.Infrastructure.UI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:infWindows="clr-namespace:Clipbox.Infrastructure.UI.Windows;assembly=Clipbox.Infrastructure.UI"
     xmlns:local="clr-namespace:Clipbox"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:views="clr-namespace:Clipbox.Views"
@@ -29,7 +30,7 @@
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="47" />
+            <ColumnDefinition Width="Auto" />
             <ColumnDefinition />
             <ColumnDefinition Width="50" />
         </Grid.ColumnDefinitions>
@@ -121,7 +122,8 @@
             Grid.Row="0"
             Grid.RowSpan="3"
             Grid.Column="0"
-            Background="{DynamicResource TaskbarColorBrush}">
+            Background="{DynamicResource TaskbarColorBrush}"
+            Tag="{x:Static infWindows:PerMonitorDpiWindow.SCALE_ELEMENT_TAG}">
             <Border.RenderTransform>
                 <TranslateTransform />
             </Border.RenderTransform>
@@ -203,6 +205,7 @@
                 VerticalContentAlignment="Center"
                 Background="Black"
                 Foreground="White"
+                Tag="{x:Static infWindows:PerMonitorDpiWindow.SCALE_ELEMENT_TAG}"
                 Text="Type here to search" />
         </Grid>
 
