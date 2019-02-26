@@ -28,6 +28,11 @@
         <coreConv:IsEqualOrGreaterThanConverter x:Key="IsEqualOrGreaterThanConverter" />
         <coreConv:NullOrEmptyCollectionToBoolConverter x:Key="NullOrEmptyCollectionToBoolConverter" />
         <conv:ContentClassListContainsConverter x:Key="ContentClassListContainsConverter" />
+        <ResourceDictionary x:Key="Styles">
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Clipbox.Infrastructure.UI;component/Styles/Style.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
         <Grid.Resources>
@@ -50,6 +55,47 @@
             ItemsSource="{Binding ClipboardViewItems}"
             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
             ScrollViewer.VerticalScrollBarVisibility="Visible">
+            <ListView.Resources>
+                <ControlTemplate x:Key="MinimalisticScrollViewerControlTemplate" TargetType="{x:Type ScrollViewer}">
+                    <Grid x:Name="Grid" Background="{TemplateBinding Background}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <ScrollContentPresenter x:Name="PART_ScrollContentPresenter" CanContentScroll="{TemplateBinding CanContentScroll}" CanHorizontallyScroll="False" CanVerticallyScroll="False" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" Grid.Column="0" Margin="{TemplateBinding Padding}" />
+                        <ScrollBar x:Name="PART_VerticalScrollBar" AutomationProperties.AutomationId="VerticalScrollBar" Cursor="Arrow" Grid.Column="1" Maximum="{TemplateBinding ScrollableHeight}" Minimum="0" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportHeight}" Style="{DynamicResource MinimalisticScrollBarStyle}"/>
+                    </Grid>
+                </ControlTemplate>
+            </ListView.Resources>
+            <ListView.Style>
+                <Style TargetType="{x:Type ListView}">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="BorderBrush" Value="Transparent"/>
+                    <Setter Property="BorderThickness" Value="1"/>
+                    <Setter Property="Foreground" Value="White"/>
+                    <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+                    <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+                    <Setter Property="ScrollViewer.CanContentScroll" Value="true"/>
+                    <Setter Property="ScrollViewer.PanningMode" Value="Both"/>
+                    <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ListBox}">
+                                <Grid>
+                                    <Rectangle Fill="Pink" RadiusX="10" RadiusY="10" Opacity="0.195" />
+                                    <Border CornerRadius="10" x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="1" SnapsToDevicePixels="true">
+                                        <ScrollViewer Focusable="false" Padding="{TemplateBinding Padding}" Template="{DynamicResource MinimalisticScrollViewerControlTemplate}" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+                                            <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                        </ScrollViewer>
+                                    </Border>
+                                </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListView.Style>
 
             <!--  Remove the default highlighting on mouse over  -->
             <ListView.ItemContainerStyle>
