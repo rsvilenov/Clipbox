@@ -41,7 +41,7 @@
                     </Style.Triggers>
                 </Style>
             </Grid.Style>
-            <Border Width="1" Background="#FFFFFF" HorizontalAlignment="Center" />
+            <Border Width="1" Background="{TemplateBinding Foreground}" HorizontalAlignment="Center" />
             <Track x:Name="PART_Track" IsDirectionReversed="true" IsEnabled="{TemplateBinding IsMouseOver}"
                    ViewportSize="NaN">
 

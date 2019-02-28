@@ -126,6 +126,9 @@
       <DependentUpon>QuickViewClipboardContents.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ClipboardViewControl.cs" />
+    <Compile Include="Views\ScrollBarEx.xaml.cs">
+      <DependentUpon>ScrollBarEx.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
@@ -172,6 +175,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Views\QuickViewClipboardContents.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ScrollBarEx.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
