@@ -1,41 +1,79 @@
-﻿<ScrollBar x:Class="Clipbox.Views.ScrollBarEx"
-             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:Clipbox.Views"
-             xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-             xmlns:localBeh="clr-namespace:Clipbox.Behaviors"
-             mc:Ignorable="d" 
-             Width="Auto"
-             d:DesignHeight="300" d:DesignWidth="120">
+﻿<ScrollBar
+    x:Class="Clipbox.Views.ScrollBarEx"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Width="Auto"
+    d:DesignHeight="300"
+    d:DesignWidth="120"
+    mc:Ignorable="d">
     <ScrollBar.Resources>
+        <Style x:Key="ScrollBarPageButton" TargetType="{x:Type RepeatButton}">
+            <Setter Property="Visibility" Value="Visible" />
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="IsTabStop" Value="False" />
+            <Setter Property="Focusable" Value="False" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RepeatButton}">
+                        <!--  make the actual width bigger so that clicks arround but not exactly on the line be registered  -->
+                        <Grid Width="15" Background="Transparent">
+                            <Border
+                                Width="2"
+                                Margin="-1,0,0,0"
+                                Background="{TemplateBinding Foreground}" />
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <Style x:Key="ScrollBarThumb" TargetType="{x:Type Thumb}">
-            <Setter Property="OverridesDefaultStyle" Value="true"/>
-            <Setter Property="IsTabStop" Value="false"/>
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="IsTabStop" Value="False" />
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Thumb}">
                         <Grid>
-                            <Label HorizontalContentAlignment="Right"
-                                   VerticalContentAlignment="Top"
-                                   Height="30" 
-                                            Width="95"
-                                            Margin="-120, 0, 0, -10"
-                                            Foreground="{TemplateBinding Foreground}" 
-                                            FontSize="{TemplateBinding FontSize}"
-                                            FontFamily="{TemplateBinding FontFamily}"
-                                            Content="Some text">
-                            </Label>
-                            <Canvas Height="20" Width="20">
-                                <Ellipse Width="20" Height="20" Stroke="White" Fill="Black">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Label
+                                Grid.Column="0"
+                                MaxWidth="120"
+                                Margin="-140,-10,0,-10"
+                                HorizontalContentAlignment="Right"
+                                VerticalContentAlignment="Center"
+                                Background="Transparent"
+                                BorderThickness="1"
+                                Content="Sep 20 2018"
+                                FontFamily="{TemplateBinding FontFamily}"
+                                FontSize="{TemplateBinding FontSize}"
+                                Foreground="{TemplateBinding Foreground}" />
+                            <Canvas
+                                Grid.Column="1"
+                                Width="20"
+                                Height="20">
+                                <Ellipse
+                                    Name="thumbHandler"
+                                    Width="20"
+                                    Height="20"
+                                    Fill="Transparent"
+                                    Stroke="{TemplateBinding Foreground}"
+                                    StrokeThickness="2">
                                     <Ellipse.Style>
                                         <Style TargetType="Ellipse">
                                             <Style.Triggers>
-                                                <Trigger Property="Rectangle.IsMouseOver" Value="True">
+                                                <Trigger Property="Ellipse.IsMouseOver" Value="True">
                                                     <Setter Property="Effect">
                                                         <Setter.Value>
-                                                            <DropShadowEffect ShadowDepth="0" BlurRadius="20" Color="White" />
+                                                            <!--  TODO: find out why this binding failes just after showing the scrollbar, but then works normally  -->
+                                                            <DropShadowEffect
+                                                                BlurRadius="20"
+                                                                ShadowDepth="0"
+                                                                Color="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Ellipse}, Path=Stroke.Color}" />
                                                         </Setter.Value>
                                                     </Setter>
                                                 </Trigger>
@@ -43,100 +81,95 @@
                                         </Style>
                                     </Ellipse.Style>
                                 </Ellipse>
-                                
-                                
+
+
                             </Canvas>
                         </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsDragging" Value="True">
+                                <Setter TargetName="thumbHandler" Property="Fill" Value="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Foreground}" />
+                                <Setter TargetName="thumbHandler" Property="Effect">
+                                    <Setter.Value>
+                                        <!--  TODO: find out why this binding failes just after showing the scrollbar, but then works normally  -->
+                                        <DropShadowEffect
+                                            BlurRadius="20"
+                                            ShadowDepth="0"
+                                            Color="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Foreground.Color}" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
         <ControlTemplate x:Key="VerticalScrollBar" TargetType="{x:Type ScrollBar}">
-            <!-- to make the thumb auto-size, remove ViewportSize="NaN"-->
+            <!--  to make the thumb auto-size, remove ViewportSize="NaN"  -->
 
-            <Grid x:Name="Bg" Background="Transparent" SnapsToDevicePixels="true">
-                
+            <Grid Background="Transparent" SnapsToDevicePixels="true">
+
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="55" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <Grid Grid.Column="1" HorizontalAlignment="Stretch" Background="Transparent" Margin="2" >
-                    <Grid Background="Transparent" HorizontalAlignment="Stretch">
-                        <Grid.Style>
-                            <Style TargetType="{x:Type Grid}">
-                                <Style.Triggers>
-                                    <Trigger Property="Border.IsMouseOver" Value="True">
-                                        <Setter Property="Effect">
-                                            <Setter.Value>
-                                                <DropShadowEffect ShadowDepth="0" BlurRadius="10" Color="White" />
-                                            </Setter.Value>
-                                        </Setter>
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </Grid.Style>
-                        <Border Width="1" ToolTip="Test" Background="{TemplateBinding Foreground}" HorizontalAlignment="Center"/>
-                    </Grid>
-                    
-                    <Track x:Name="PART_Track" IsDirectionReversed="true" IsEnabled="{TemplateBinding IsMouseOver}"
-                   ViewportSize="NaN">
-                            <Track.Thumb>
-                                <Thumb Style="{StaticResource ScrollBarThumb}" />
-                            </Track.Thumb>
-                        </Track>
+                <Grid
+                    Grid.Column="1"
+                    Margin="2"
+                    HorizontalAlignment="Stretch"
+                    Background="Transparent">
+
+                    <Track
+                        x:Name="PART_Track"
+                        IsDirectionReversed="true"
+                        IsEnabled="{TemplateBinding IsMouseOver}"
+                        ViewportSize="NaN">
+                        <Track.DecreaseRepeatButton>
+                            <!--  Command="ScrollBar.PageUpCommand"  -->
+                            <RepeatButton Command="ScrollBar.LineUpCommand" Style="{StaticResource ScrollBarPageButton}" />
+                        </Track.DecreaseRepeatButton>
+                        <Track.Thumb>
+                            <Thumb Style="{StaticResource ScrollBarThumb}" />
+                        </Track.Thumb>
+                        <Track.IncreaseRepeatButton>
+                            <!--  Command="ScrollBar.PageDownCommand"  -->
+                            <RepeatButton Command="ScrollBar.LineDownCommand" Style="{StaticResource ScrollBarPageButton}" />
+                        </Track.IncreaseRepeatButton>
+                    </Track>
                 </Grid>
 
-                <Grid Grid.Column="0" VerticalAlignment="Stretch" Margin="5, 0, 5, 0">
-                    <TextBlock Text="Now" VerticalAlignment="Top" HorizontalAlignment="Right" Foreground="{TemplateBinding Foreground}" />
-                    <TextBlock Text="End" VerticalAlignment="Bottom" HorizontalAlignment="Right" Foreground="{TemplateBinding Foreground}" />
+                <Grid
+                    Grid.Column="0"
+                    Margin="5,0,10,0"
+                    VerticalAlignment="Stretch">
+                    <TextBlock
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        FontFamily="{TemplateBinding FontFamily}"
+                        FontSize="{TemplateBinding FontSize}"
+                        Foreground="{TemplateBinding Foreground}"
+                        Text="Now" />
+                    <TextBlock
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Bottom"
+                        FontFamily="{TemplateBinding FontFamily}"
+                        FontSize="{TemplateBinding FontSize}"
+                        Foreground="{TemplateBinding Foreground}"
+                        Text="End" />
                 </Grid>
-            </Grid>
-        </ControlTemplate>
-
-        <ControlTemplate x:Key="HorizontalScrollBar" TargetType="{x:Type ScrollBar}">
-            <Grid x:Name="Bg" Background="Transparent" SnapsToDevicePixels="True">
-                <Grid Background="Transparent" HorizontalAlignment="Stretch">
-                    <Grid.Style>
-                        <Style TargetType="{x:Type Grid}">
-                            <Style.Triggers>
-                                <Trigger Property="Grid.IsMouseOver" Value="True">
-                                    <Setter Property="Effect">
-                                        <Setter.Value>
-                                            <DropShadowEffect ShadowDepth="0" BlurRadius="10" Color="White" />
-                                        </Setter.Value>
-                                    </Setter>
-                                </Trigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Grid.Style>
-                    <Border Height="1" Background="#FFFFFF" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
-                </Grid>
-                
-                <Track x:Name="PART_Track" IsEnabled="{TemplateBinding IsMouseOver}"
-                   ViewportSize="NaN">
-                    <Track.Thumb>
-                        <Thumb Style="{StaticResource ScrollBarThumb}" />
-                    </Track.Thumb>
-                </Track>
             </Grid>
         </ControlTemplate>
 
     </ScrollBar.Resources>
     <ScrollBar.Style>
         <Style TargetType="{x:Type ScrollBar}">
-            <Setter Property="SnapsToDevicePixels" Value="True"/>
-            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="OverridesDefaultStyle" Value="true" />
             <Style.Triggers>
                 <Trigger Property="Orientation" Value="Vertical">
-                    <Setter Property="Width" Value="Auto"/>
+                    <Setter Property="Width" Value="Auto" />
                     <Setter Property="Height" Value="Auto" />
                     <Setter Property="Template" Value="{StaticResource VerticalScrollBar}" />
-                </Trigger>
-                <Trigger Property="Orientation" Value="Horizontal">
-                    <Setter Property="Height" Value="Auto"/>
-                    <Setter Property="Width" Value="Auto" />
-                    <Setter Property="Template" Value="{StaticResource HorizontalScrollBar}" />
                 </Trigger>
             </Style.Triggers>
         </Style>
