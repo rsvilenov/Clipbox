@@ -1,5 +1,5 @@
 ﻿<ScrollBar
-    x:Class="Clipbox.Views.ScrollBarEx"
+    x:Class="Clipbox.Views.VerticalScrollBarEx"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -41,14 +41,14 @@
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
                             <Label
+                                x:Name="floatingLabel"
                                 Grid.Column="0"
                                 MaxWidth="120"
                                 Margin="-140,-10,0,-10"
                                 HorizontalContentAlignment="Right"
                                 VerticalContentAlignment="Center"
                                 Background="Transparent"
-                                BorderThickness="1"
-                                Content="Sep 20 2018"
+                                Content="{Binding FloatingLabelText}"
                                 FontFamily="{TemplateBinding FontFamily}"
                                 FontSize="{TemplateBinding FontSize}"
                                 Foreground="{TemplateBinding Foreground}" />
@@ -98,6 +98,14 @@
                                     </Setter.Value>
                                 </Setter>
                             </Trigger>
+
+                            <!--  do not take up any space if the text is null or empty  -->
+                            <DataTrigger Binding="{Binding FloatingLabelText}" Value="{x:Null}">
+                                <Setter TargetName="floatingLabel" Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding FloatingLabelText}" Value="">
+                                <Setter TargetName="floatingLabel" Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
@@ -142,20 +150,82 @@
                     Grid.Column="0"
                     Margin="5,0,10,0"
                     VerticalAlignment="Stretch">
-                    <TextBlock
+                    <Button
                         HorizontalAlignment="Right"
                         VerticalAlignment="Top"
+                        Command="ScrollBar.ScrollToTopCommand"
                         FontFamily="{TemplateBinding FontFamily}"
                         FontSize="{TemplateBinding FontSize}"
-                        Foreground="{TemplateBinding Foreground}"
-                        Text="Now" />
-                    <TextBlock
+                        Foreground="{TemplateBinding Foreground}">
+                        <Button.Style>
+                            <Style TargetType="{x:Type Button}">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate>
+                                            <TextBlock
+                                                x:Name="topLabelTextBlock"
+                                                FontFamily="{TemplateBinding FontFamily}"
+                                                FontSize="{TemplateBinding FontSize}"
+                                                Foreground="{TemplateBinding Foreground}"
+                                                Text="{Binding TopLabelText}" />
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="Button.IsMouseOver" Value="True">
+                                                    <Setter TargetName="topLabelTextBlock" Property="Effect">
+                                                        <Setter.Value>
+                                                            <!--  TODO: find out why this binding failes just after showing the scrollbar, but then works normally  -->
+                                                            <DropShadowEffect
+                                                                BlurRadius="20"
+                                                                ShadowDepth="0"
+                                                                Color="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Foreground.Color}" />
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+
+                    <Button
                         HorizontalAlignment="Right"
                         VerticalAlignment="Bottom"
+                        Command="ScrollBar.ScrollToBottomCommand"
                         FontFamily="{TemplateBinding FontFamily}"
                         FontSize="{TemplateBinding FontSize}"
-                        Foreground="{TemplateBinding Foreground}"
-                        Text="End" />
+                        Foreground="{TemplateBinding Foreground}">
+                        <Button.Style>
+                            <Style TargetType="{x:Type Button}">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate>
+                                            <TextBlock
+                                                x:Name="bottomLabelTextBlock"
+                                                FontFamily="{TemplateBinding FontFamily}"
+                                                FontSize="{TemplateBinding FontSize}"
+                                                Foreground="{TemplateBinding Foreground}"
+                                                Text="{Binding BottomLabelText}" />
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="Button.IsMouseOver" Value="True">
+                                                    <Setter TargetName="bottomLabelTextBlock" Property="Effect">
+                                                        <Setter.Value>
+                                                            <!--  TODO: find out why this binding failes just after showing the scrollbar, but then works normally  -->
+                                                            <DropShadowEffect
+                                                                BlurRadius="20"
+                                                                ShadowDepth="0"
+                                                                Color="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Foreground.Color}" />
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+
                 </Grid>
             </Grid>
         </ControlTemplate>

@@ -73,15 +73,18 @@
                             CanVerticallyScroll="False"
                             Content="{TemplateBinding Content}"
                             ContentTemplate="{TemplateBinding ContentTemplate}" />
-                        <local:ScrollBarEx
+                        <local:VerticalScrollBarEx
                             x:Name="PART_VerticalScrollBar"
                             Grid.Column="1"
                             AutomationProperties.AutomationId="VerticalScrollBar"
+                            BottomLabelText="End"
                             Cursor="Arrow"
+                            FloatingLabelText="20 Feb 2019"
                             FontSize="14"
                             Foreground="White"
                             Maximum="{TemplateBinding ScrollableHeight}"
                             Minimum="0"
+                            TopLabelText="Now"
                             ViewportSize="{TemplateBinding ViewportHeight}"
                             Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
                             Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" />
