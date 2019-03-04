@@ -73,18 +73,27 @@
                             CanVerticallyScroll="False"
                             Content="{TemplateBinding Content}"
                             ContentTemplate="{TemplateBinding ContentTemplate}" />
+
+                        <!--
+                            Left margin was added here to
+                            compensate for the negative margin of the
+                            textblock inside the VerticalScrollBarEx
+                        -->
                         <local:VerticalScrollBarEx
                             x:Name="PART_VerticalScrollBar"
                             Grid.Column="1"
+                            Margin="50,0,0,0"
+                            HorizontalAlignment="Right"
                             AutomationProperties.AutomationId="VerticalScrollBar"
                             BottomLabelText="End"
                             Cursor="Arrow"
-                            FloatingLabelText="20 Feb 2019"
+                            FloatingLabelText="{Binding Path=DataContext.CurrentVisibleItemsDateString, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}"
                             FontSize="14"
                             Foreground="White"
                             Maximum="{TemplateBinding ScrollableHeight}"
                             Minimum="0"
                             TopLabelText="Now"
+                            ValueChanged="PART_VerticalScrollBar_ValueChanged"
                             ViewportSize="{TemplateBinding ViewportHeight}"
                             Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
                             Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" />
@@ -137,10 +146,12 @@
                             <ControlTemplate TargetType="{x:Type ListViewItem}">
                                 <Border
                                     x:Name="Bd"
+                                    MinWidth="100"
+                                    MinHeight="80"
                                     MaxWidth="290"
                                     Margin="5"
                                     Background="Transparent"
-                                    BorderBrush="Green"
+                                    BorderBrush="White"
                                     BorderThickness="1"
                                     SnapsToDevicePixels="True">
 
@@ -184,6 +195,12 @@
                     <WrapPanel />
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
+
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding DateCreated}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
 
             <!--<ListView.ItemTemplate>
                 <DataTemplate>

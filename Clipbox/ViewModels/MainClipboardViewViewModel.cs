@@ -24,6 +24,15 @@ namespace Clipbox.ViewModels
             set { SetField(ref _clipboardViewItems, value); }
         }
 
+
+        public string _currentVisibleItemsDateString;
+
+        public string CurrentVisibleItemsDateString
+        {
+            get { return _currentVisibleItemsDateString; }
+            set { SetField(ref _currentVisibleItemsDateString, value); }
+        }
+
         public MainClipboardViewViewModel()
         {
             
@@ -36,7 +45,14 @@ namespace Clipbox.ViewModels
             {
                 Dispatcher.CurrentDispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, new Action(() =>
                 {
-                    ClipboardViewItems.Add(new MainClipboardViewItem());
+                    // by the time the dispatcher executes this code, the counter 
+                    // in the loop has already reached its maximum value, so we cannot
+                    // count on "i" for getting the number of the element.
+                    int currentNumber = ClipboardViewItems.Count;
+                    ClipboardViewItems.Add(new MainClipboardViewItem
+                    {
+                        DateCreated = DateTime.Now.AddDays(currentNumber * -1)
+                    });
                 }));
                 
             }

@@ -1,5 +1,6 @@
 ﻿using Clipbox.Core.Enums;
 using Clipbox.Infrastructure.UI;
+using System;
 using System.Collections.ObjectModel;
 using System.Windows.Media.Imaging;
 
@@ -22,7 +23,23 @@ namespace Clipbox.ViewModels.BindableObjects
             get { return _sourceWindowCaption; }
             set { SetField(ref _sourceWindowCaption, value); }
         }
-        
+
+        private DateTime _dateCreated;
+
+        public DateTime DateCreated
+        {
+            get { return _dateCreated; }
+            set { SetField(ref _dateCreated, value); }
+        }
+
+        private DateTime _dateModified;
+
+        public DateTime DateModified
+        {
+            get { return _dateModified; }
+            set { SetField(ref _dateModified, value); }
+        }
+
         private AsyncObservableCollection<ClipboardContentClass> _cotentClasses;
 
         public AsyncObservableCollection<ClipboardContentClass> ContentClasses

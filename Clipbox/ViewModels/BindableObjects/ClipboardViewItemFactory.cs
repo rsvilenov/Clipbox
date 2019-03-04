@@ -121,6 +121,8 @@ namespace Clipbox.ViewModels.BindableObjects
 
             viewItem.SourceWindowIcon = BitmapSourceFromBitmapByteArray(clipboardItem.Source.SourceWindowInfo.Icon);
             viewItem.SourceWindowCaption = clipboardItem.Source.SourceWindowInfo.Caption;
+            viewItem.DateCreated = new DateTime(clipboardItem.EntryDateTicks);
+            viewItem.DateModified = new DateTime(clipboardItem.ModifiedDateTicks);
             viewItem.ClipboardItemId = clipboardItem.Id;
             viewItem.IsPinned = clipboardItem.IsPinned;
             IEnumerable<ClipboardContentClass> contentClasses = clipboardItem.ClipboardDataObjects.Select(cdo => cdo.ContentClass).Distinct();
