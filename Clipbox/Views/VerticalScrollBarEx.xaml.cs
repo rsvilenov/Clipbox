@@ -27,7 +27,7 @@ namespace Clipbox.Views
         }
 
         public static readonly DependencyProperty TopLabelTextProperty =
-            DependencyProperty.Register("TopLabelText", typeof(string), typeof(VerticalScrollBarEx), new PropertyMetadata(string.Empty, TopLabelTextValueChanged));
+            DependencyProperty.Register(nameof(TopLabelText), typeof(string), typeof(VerticalScrollBarEx), new PropertyMetadata(string.Empty, TopLabelTextValueChanged));
 
         private static void TopLabelTextValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -41,7 +41,7 @@ namespace Clipbox.Views
         }
         
         public static readonly DependencyProperty BottomLabelTextProperty =
-            DependencyProperty.Register("BottomLabelText", typeof(string), typeof(VerticalScrollBarEx), new PropertyMetadata(string.Empty, BottomLabelTextValueChanged));
+            DependencyProperty.Register(nameof(BottomLabelText), typeof(string), typeof(VerticalScrollBarEx), new PropertyMetadata(string.Empty, BottomLabelTextValueChanged));
 
         private static void BottomLabelTextValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -56,7 +56,7 @@ namespace Clipbox.Views
         }
         
         public static readonly DependencyProperty FloatingLabelTextProperty =
-            DependencyProperty.Register("FloatingLabelText", typeof(string), typeof(VerticalScrollBarEx), new PropertyMetadata(string.Empty, FloatingLabelTextValueChanged));
+            DependencyProperty.Register(nameof(FloatingLabelText), typeof(string), typeof(VerticalScrollBarEx), new PropertyMetadata(string.Empty, FloatingLabelTextValueChanged));
 
         private static void FloatingLabelTextValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {

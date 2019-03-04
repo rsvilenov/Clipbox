@@ -23,7 +23,10 @@ namespace Clipbox.Infrastructure.UI.Windows
 
         private void BaseWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            _hWndSource.Dispose();
+            if (_hWndSource != null && !_hWndSource.IsDisposed)
+            {
+                _hWndSource.Dispose();
+            }
         }
 
         private void BaseWindow_SourceInitialized(object sender, EventArgs e)
