@@ -49,15 +49,21 @@ namespace Clipbox.Views
         private void PART_VerticalScrollBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             ScrollBar scrollBar = sender as ScrollBar;
-            double listViewVerticalOffset = scrollBar.Value;
+            // find the listview control
             ListView listView = Traversing.FindParent<ListView>(scrollBar);
-            ScrollViewer scrollViewer = Traversing.FindParent<ScrollViewer>(scrollBar);
+            // find the thumb and its location
+            Thumb thumb = Traversing.GetVisualChildOfType<Thumb>(scrollBar);
+            Point relativeThumbPoint = thumb.TranslatePoint(new Point(0, 0), scrollBar);
+            double thumbYPos = relativeThumbPoint.Y;
+
             foreach (var item in listView.Items)
             {
+                // find the list view item and its location
                 ListViewItem lvi = (ListViewItem)listView.ItemContainerGenerator.ContainerFromItem(item);
-                Point relativeLocation = lvi.TranslatePoint(new Point(0, 0), scrollViewer);
-                if (Math.Abs(relativeLocation.Y) + lvi.ActualHeight >= listViewVerticalOffset &&
-                    Math.Abs(relativeLocation.Y) <= listViewVerticalOffset  + lvi.ActualHeight)
+                Point relativeLocation = lvi.TranslatePoint(new Point(0, 0), listView);
+                double itemYPos = relativeLocation.Y;
+                if (itemYPos < thumbYPos &&
+                    itemYPos + lvi.ActualHeight >= thumbYPos)
                 {
                     lvi.Foreground = Brushes.Red;
                     var dateCreated = (item as ClipboardViewItem).DateCreated;
