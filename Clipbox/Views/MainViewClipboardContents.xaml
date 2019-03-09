@@ -44,6 +44,12 @@
                     Duration="0:0:2.0" />
             </Storyboard>
         </Grid.Resources>
+
+        <!--
+            This listview should scroll its contents by physical units instead of logical ones,
+            thus ScrollViewer.CanContentScroll="False". Otherwise, when grouping is used,
+            the scrollviewer jumps awkwardly to the next group...
+        -->
         <ListView
             Name="MainListView"
             Grid.Row="1"
@@ -53,8 +59,12 @@
             Background="Transparent"
             BorderThickness="0"
             ItemsSource="{Binding ClipboardViewItems}"
+            ScrollViewer.CanContentScroll="False"
             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
             ScrollViewer.VerticalScrollBarVisibility="Visible">
+            <i:Interaction.Behaviors>
+                <localBeh:ListViewGroupingBehavior GroupByPropertyName="DateCreated" />
+            </i:Interaction.Behaviors>
             <ListView.Resources>
                 <ControlTemplate x:Key="MinimalisticScrollViewerControlTemplate" TargetType="{x:Type ScrollViewer}">
                     <Grid x:Name="Grid" Background="{TemplateBinding Background}">
@@ -195,6 +205,30 @@
                     <WrapPanel />
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
+
+            <ListView.GroupStyle>
+                <GroupStyle>
+                    <GroupStyle.ContainerStyle>
+                        <Style TargetType="{x:Type GroupItem}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate>
+                                        <StackPanel Orientation="Vertical">
+                                            <TextBlock
+                                                VerticalAlignment="Bottom"
+                                                FontSize="22"
+                                                FontWeight="Bold"
+                                                Foreground="Gray"
+                                                Text="{Binding Name}" />
+                                            <ItemsPresenter />
+                                        </StackPanel>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </GroupStyle.ContainerStyle>
+                </GroupStyle>
+            </ListView.GroupStyle>
 
             <ListView.ItemTemplate>
                 <DataTemplate>

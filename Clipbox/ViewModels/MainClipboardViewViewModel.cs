@@ -41,18 +41,30 @@ namespace Clipbox.ViewModels
         public void LoadItems()
         {
             ClipboardViewItems = new AsyncObservableCollection<ClipboardViewItem>();
+
+            int currentItemForTheDay = 0;
+            int currentNumber = 300;
             for (int i = 0; i < 300; i++)
             {
                 Dispatcher.CurrentDispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, new Action(() =>
                 {
+                    int itemsPerDay = new Random().Next(1, 30);
                     // by the time the dispatcher executes this code, the counter 
                     // in the loop has already reached its maximum value, so we cannot
                     // count on "i" for getting the number of the element.
-                    int currentNumber = ClipboardViewItems.Count;
+                    DateTime date = DateTime.Today.AddDays(currentNumber);
+                    if (currentItemForTheDay >= itemsPerDay)
+                    {
+
+                        currentNumber--;
+                        currentItemForTheDay = 0;
+                    }
+
                     ClipboardViewItems.Add(new MainClipboardViewItem
                     {
-                        DateCreated = DateTime.Now.AddDays(currentNumber * -1)
+                        DateCreated = date
                     });
+                    currentItemForTheDay++;
                 }));
                 
             }
