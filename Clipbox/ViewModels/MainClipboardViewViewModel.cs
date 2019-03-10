@@ -25,12 +25,28 @@ namespace Clipbox.ViewModels
         }
 
 
-        public string _currentVisibleItemsDateString;
+        private string _currentVisibleItemsDateString;
 
         public string CurrentVisibleItemsDateString
         {
             get { return _currentVisibleItemsDateString; }
             set { SetField(ref _currentVisibleItemsDateString, value); }
+        }
+
+        private string _firstItemDateString;
+
+        public string FirstItemDateString
+        {
+            get { return _firstItemDateString; }
+            set { SetField(ref _firstItemDateString, value); }
+        }
+
+        private string _lastItemDateString;
+
+        public string LastItemDateString
+        {
+            get { return _lastItemDateString; }
+            set { SetField(ref _lastItemDateString, value); }
         }
 
         public MainClipboardViewViewModel()

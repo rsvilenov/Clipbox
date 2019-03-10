@@ -29,7 +29,11 @@ namespace Clipbox.ViewModels.BindableObjects
         public DateTime DateCreated
         {
             get { return _dateCreated; }
-            set { SetField(ref _dateCreated, value); }
+            set
+            {
+                SetField(ref _dateCreated, value);
+                DateCreatedFriendly = GetFriendlyDateString(value);
+            }
         }
 
         private DateTime _dateModified;
@@ -40,6 +44,13 @@ namespace Clipbox.ViewModels.BindableObjects
             set { SetField(ref _dateModified, value); }
         }
 
+        private string _dateCreatedFriendly;
+
+        public string DateCreatedFriendly
+        {
+            get { return _dateCreatedFriendly; }
+            private set { SetField(ref _dateCreatedFriendly, value); }
+        }
         private AsyncObservableCollection<ClipboardContentClass> _cotentClasses;
 
         public AsyncObservableCollection<ClipboardContentClass> ContentClasses
@@ -84,6 +95,19 @@ namespace Clipbox.ViewModels.BindableObjects
         {
             MarkAsUnselectable = true;
             MarkAsUnselectable = false;
+        }
+
+        private string GetFriendlyDateString(DateTime date)
+        {
+            // TODO: Translate 'Today' and 'Yesterday'.
+            return 
+                date.Date == DateTime.Today ? 
+                "Today" :
+                date.Date == DateTime.Today.AddDays(-1) ?
+                "Yesterday" :
+                date.Year == DateTime.Now.Year ?
+                    date.ToString("dd MMMM") :
+                    date.ToString("dd MMMM yyyy");
         }
     }
 }

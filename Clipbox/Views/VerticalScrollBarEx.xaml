@@ -117,7 +117,7 @@
             <Grid Background="Transparent" SnapsToDevicePixels="true">
 
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="55" />
+                    <ColumnDefinition Width="100" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
@@ -167,7 +167,9 @@
                                                 FontFamily="{TemplateBinding FontFamily}"
                                                 FontSize="{TemplateBinding FontSize}"
                                                 Foreground="{TemplateBinding Foreground}"
-                                                Text="{Binding TopLabelText}" />
+                                                Text="{Binding TopLabelText}"
+                                                TextAlignment="Center"
+                                                TextWrapping="Wrap" />
                                             <ControlTemplate.Triggers>
                                                 <Trigger Property="Button.IsMouseOver" Value="True">
                                                     <Setter TargetName="topLabelTextBlock" Property="Effect">
@@ -205,7 +207,9 @@
                                                 FontFamily="{TemplateBinding FontFamily}"
                                                 FontSize="{TemplateBinding FontSize}"
                                                 Foreground="{TemplateBinding Foreground}"
-                                                Text="{Binding BottomLabelText}" />
+                                                Text="{Binding BottomLabelText}"
+                                                TextAlignment="Center"
+                                                TextWrapping="Wrap" />
                                             <ControlTemplate.Triggers>
                                                 <Trigger Property="Button.IsMouseOver" Value="True">
                                                     <Setter TargetName="bottomLabelTextBlock" Property="Effect">
