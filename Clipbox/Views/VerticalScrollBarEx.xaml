@@ -40,18 +40,20 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
-                            <Label
+                            <TextBlock
                                 x:Name="floatingLabel"
                                 Grid.Column="0"
                                 MaxWidth="120"
-                                Margin="-140,-10,0,-10"
-                                HorizontalContentAlignment="Right"
-                                VerticalContentAlignment="Center"
+                                Margin="-140,-10,12,-10"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
                                 Background="Transparent"
-                                Content="{Binding FloatingLabelText}"
                                 FontFamily="{TemplateBinding FontFamily}"
                                 FontSize="{TemplateBinding FontSize}"
-                                Foreground="{TemplateBinding Foreground}" />
+                                Foreground="{TemplateBinding Foreground}"
+                                Text="{Binding FloatingLabelText}"
+                                TextAlignment="Center"
+                                TextWrapping="Wrap" />
                             <Canvas
                                 Grid.Column="1"
                                 Width="20"
