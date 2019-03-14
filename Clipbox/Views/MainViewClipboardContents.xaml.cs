@@ -1,23 +1,15 @@
 ﻿using Clipbox.Infrastructure.Extensibility.Containers;
+using Clipbox.Infrastructure.UI;
+using Clipbox.Infrastructure.UI.Utils;
 using Clipbox.Services.Interfaces;
 using Clipbox.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Clipbox.Infrastructure.UI.Utils;
-using Clipbox.ViewModels.BindableObjects;
 
 namespace Clipbox.Views
 {
@@ -28,22 +20,35 @@ namespace Clipbox.Views
     {
         private MainClipboardViewViewModel _viewModel;
 
+        private SlidingTimer _layoutSlidingTimer;
+        
+        private int _lastListViewItemCount = 0;
+        private Dictionary<string, GroupItem> _groupNameGroupItemMapping = new Dictionary<string, GroupItem>();
+        
         public MainViewClipboardContents(MainClipboardViewViewModel vm, UIExtentionContainer container, ISettingsService settingsService)
             : base (container, settingsService)
         {
             InitializeComponent();
             _viewModel = vm;
             DataContext = _viewModel;
+
+            _layoutSlidingTimer = new SlidingTimer();
+            _layoutSlidingTimer.IntervalMs = 100;
+            _layoutSlidingTimer.Elapsed += _layoutSlidingTimer_Elapsed;
+
             IsVisibleChanged += MainViewClipboardContents_IsVisibleChanged;
 
             MainListView.LayoutUpdated += MainListView_LayoutUpdated;
-            
+        }
+
+        private void _layoutSlidingTimer_Elapsed(object sender, EventArgs e)
+        {
+            LoadItemsAndGroupsCachedInfo(MainListView);
         }
 
         private void MainListView_LayoutUpdated(object sender, EventArgs e)
         {
-
-            LoadItemsAndGroupsCachedInfo(MainListView);
+            _layoutSlidingTimer.Slide();
         }
 
         private void MainViewClipboardContents_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -51,10 +56,6 @@ namespace Clipbox.Views
             _viewModel.LoadItems();
         }
 
-
-        private int _lastListViewItemCount = 0;
-        private Dictionary<string, Tuple<ListViewItem, ListViewItem>> _groupBoundingLvis = new Dictionary<string, Tuple<ListViewItem, ListViewItem>>();
-        
         private void PART_VerticalScrollBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             ScrollBar scrollBar = sender as ScrollBar;
@@ -65,22 +66,13 @@ namespace Clipbox.Views
             Point relativeThumbPoint = thumb.TranslatePoint(new Point(0, 0), scrollBar);
             double thumbYPos = relativeThumbPoint.Y;
 
-            foreach (string groupName in _groupBoundingLvis.Keys)
+            foreach (string groupName in _groupNameGroupItemMapping.Keys)
             {
-                Tuple<ListViewItem, ListViewItem> lvis = _groupBoundingLvis[groupName];
-
-                Point firstLviRelativeLocation = lvis.Item1.TranslatePoint(new Point(0, 0), listView);
-
-                Point lastLviRelativeLocation = firstLviRelativeLocation;
-                double lastItemHeight = lvis.Item1.ActualHeight;
-                if (lvis.Item2 != null)
-                {
-                    lastLviRelativeLocation = lvis.Item2.TranslatePoint(new Point(0, 0), listView);
-                    lastItemHeight = lvis.Item2.ActualHeight;
-                }
-
-                if (thumbYPos >= firstLviRelativeLocation.Y &&
-                    thumbYPos <= lastLviRelativeLocation.Y + lastItemHeight)
+                GroupItem groupItem = _groupNameGroupItemMapping[groupName];
+                Point groupItemRelativeLocation = groupItem.TranslatePoint(new Point(0, 0), listView);
+                
+                if (thumbYPos >= groupItemRelativeLocation.Y &&
+                    thumbYPos <= groupItemRelativeLocation.Y + groupItem.ActualHeight)
                 {
                     _viewModel.CurrentVisibleItemsDateString = groupName;
                 }
@@ -100,11 +92,11 @@ namespace Clipbox.Views
             {
                 return;
             }
+            
+            _groupNameGroupItemMapping.Clear();
 
             var groups = view.Groups.Cast<CollectionViewGroup>();
-
-            _groupBoundingLvis.Clear();
-
+            
             if (listView.Items.Count == 0)
             {
                 return;
@@ -112,30 +104,26 @@ namespace Clipbox.Views
 
             foreach (var group in groups)
             {
-                ListViewItem firstLvi = (ListViewItem)listView.ItemContainerGenerator.ContainerFromItem(group.Items.First());
-                ListViewItem lastLvi = null;
-
-                if (group.Items.Count > 1)
-                {
-                    lastLvi = (ListViewItem)listView.ItemContainerGenerator.ContainerFromItem(group.Items.Last());
-                }
-
                 if (group.Name is string == false)
                 {
                     throw new InvalidCastException("Group name should be string.");
                 }
 
                 string groupName = (string)group.Name;
-                if (_groupBoundingLvis.ContainsKey(groupName))
+                if (_groupNameGroupItemMapping.ContainsKey(groupName))
                 {
                     throw new ArgumentException("Group names should be unique");
                 }
 
-                _groupBoundingLvis.Add((string)group.Name, new Tuple<ListViewItem, ListViewItem>(firstLvi, lastLvi));
+                ListViewItem firstLvi = (ListViewItem)listView.ItemContainerGenerator.ContainerFromItem(group.Items.First());
+                
+                GroupItem groupItem = Traversing.FindParent<GroupItem>(firstLvi);
+
+                _groupNameGroupItemMapping.Add(groupName, groupItem);
             }
 
-            _viewModel.FirstItemDateString = _groupBoundingLvis.First().Key;
-            _viewModel.LastItemDateString = _groupBoundingLvis.Last().Key;
+            _viewModel.FirstItemDateString = _groupNameGroupItemMapping.First().Key;
+            _viewModel.LastItemDateString = _groupNameGroupItemMapping.Last().Key;
 
             _lastListViewItemCount = listView.Items.Count;
         }
