@@ -18,9 +18,10 @@ namespace Clipbox.Views
     /// </summary>
     public partial class MainViewClipboardContents : ClipboardViewControl
     {
-        private MainClipboardViewViewModel _viewModel;
-
+        private const int LAYOUT_TIMER_TIMEOUT_MS = 100;
         private SlidingTimer _layoutSlidingTimer;
+
+        private MainClipboardViewViewModel _viewModel;
         
         private int _lastListViewItemCount = 0;
         private Dictionary<string, GroupItem> _groupNameGroupItemMapping = new Dictionary<string, GroupItem>();
@@ -33,7 +34,7 @@ namespace Clipbox.Views
             DataContext = _viewModel;
 
             _layoutSlidingTimer = new SlidingTimer();
-            _layoutSlidingTimer.IntervalMs = 100;
+            _layoutSlidingTimer.IntervalMs = LAYOUT_TIMER_TIMEOUT_MS;
             _layoutSlidingTimer.Elapsed += _layoutSlidingTimer_Elapsed;
 
             IsVisibleChanged += MainViewClipboardContents_IsVisibleChanged;
@@ -71,7 +72,7 @@ namespace Clipbox.Views
                 GroupItem groupItem = _groupNameGroupItemMapping[groupName];
                 Point groupItemRelativeLocation = groupItem.TranslatePoint(new Point(0, 0), listView);
                 
-                if (thumbYPos >= groupItemRelativeLocation.Y &&
+                if (thumbYPos + thumb.ActualHeight >= groupItemRelativeLocation.Y &&
                     thumbYPos <= groupItemRelativeLocation.Y + groupItem.ActualHeight)
                 {
                     _viewModel.CurrentVisibleItemsDateString = groupName;

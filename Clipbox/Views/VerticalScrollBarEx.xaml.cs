@@ -41,8 +41,15 @@ namespace Clipbox.Views
             var scrollButtons = Traversing.GetVisualChildCollection(this).Where(t =>  t is Button).Cast<Button>();
             _topButton = scrollButtons.Where(b => b.Command == ScrollBar.ScrollToTopCommand).Single();
             _bottomButton = scrollButtons.Where(b => b.Command == ScrollBar.ScrollToBottomCommand).Single();
-            
-            Scroll += VerticalScrollBarEx_Scroll;
+
+            // 'Scrolled' fires only when the thumb is dragged directly and is not affected by the mouse wheel
+            // ... so I use 'ValueChanged' instead.
+            ValueChanged += VerticalScrollBarEx_ValueChanged;
+        }
+
+        private void VerticalScrollBarEx_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            UpdateButtonsVisibility();
         }
 
         private bool TryLoadAndStoreTopBottomButtonsLocations()
@@ -68,7 +75,7 @@ namespace Clipbox.Views
             return true;
         }
 
-        private void VerticalScrollBarEx_Scroll(object sender, ScrollEventArgs e)
+        private void UpdateButtonsVisibility()
         {
             Point relativeLocation = _thumb.TranslatePoint(new Point(0, 0), _parent);
 
