@@ -82,15 +82,7 @@ namespace Clipbox.Views
                 if (thumbYPos >= firstLviRelativeLocation.Y &&
                     thumbYPos <= lastLviRelativeLocation.Y + lastItemHeight)
                 {
-                    if (_viewModel.FirstItemDateString == groupName ||
-                        _viewModel.LastItemDateString == groupName)
-                    {
-                        _viewModel.CurrentVisibleItemsDateString = null;
-                    }
-                    else
-                    {
-                        _viewModel.CurrentVisibleItemsDateString = groupName;
-                    }
+                    _viewModel.CurrentVisibleItemsDateString = groupName;
                 }
             }
         }

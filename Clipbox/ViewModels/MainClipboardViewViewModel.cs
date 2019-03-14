@@ -56,11 +56,13 @@ namespace Clipbox.ViewModels
 
         public void LoadItems()
         {
+            const int NUMBER_OF_ITEMS = 1000;
+
             ClipboardViewItems = new AsyncObservableCollection<ClipboardViewItem>();
 
             int currentItemForTheDay = 0;
-            int currentNumber = 3000;
-            for (int i = 0; i < 3000; i++)
+            int currentNumber = NUMBER_OF_ITEMS;
+            for (int i = 0; i < NUMBER_OF_ITEMS; i++)
             {
                 Dispatcher.CurrentDispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, new Action(() =>
                 {

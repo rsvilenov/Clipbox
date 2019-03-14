@@ -1,6 +1,10 @@
 ﻿using Clipbox.Infrastructure.UI;
+using Clipbox.Infrastructure.UI.Utils;
+using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Media;
 
 namespace Clipbox.Views
 {
@@ -11,15 +15,87 @@ namespace Clipbox.Views
     {
         private LocalDataContext _localDataContext;
 
+        private Thumb _thumb;
+        private Button _topButton;
+        private Button _bottomButton;
+        private UIElement _parent;
+
+        private Point? _topButtonRelativeLocation;
+        private Point? _bottomButtonRelativeLocation;
+
         public VerticalScrollBarEx()
         {
             InitializeComponent();
 
             _localDataContext = new LocalDataContext();
             DataContext = _localDataContext;
+            Loaded += VerticalScrollBarEx_Loaded;
         }
 
-        
+        private void VerticalScrollBarEx_Loaded(object sender, RoutedEventArgs e)
+        {
+            _parent = VisualTreeHelper.GetParent(this) as UIElement;
+            _thumb = Traversing.GetVisualChildOfType<Thumb>(this);
+
+            // find the top and bottom buttons
+            var scrollButtons = Traversing.GetVisualChildCollection(this).Where(t =>  t is Button).Cast<Button>();
+            _topButton = scrollButtons.Where(b => b.Command == ScrollBar.ScrollToTopCommand).Single();
+            _bottomButton = scrollButtons.Where(b => b.Command == ScrollBar.ScrollToBottomCommand).Single();
+            
+            Scroll += VerticalScrollBarEx_Scroll;
+        }
+
+        private bool TryLoadAndStoreTopBottomButtonsLocations()
+        {
+            if (!_topButtonRelativeLocation.HasValue)
+            {
+                _topButtonRelativeLocation = _topButton.TranslatePoint(new Point(0, 0), _parent);
+                if (!_topButtonRelativeLocation.HasValue)
+                {
+                    return false;
+                }
+            }
+
+            if (!_bottomButtonRelativeLocation.HasValue)
+            {
+                _bottomButtonRelativeLocation = _bottomButton.TranslatePoint(new Point(0, 0), _parent);
+                if (!_bottomButtonRelativeLocation.HasValue)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private void VerticalScrollBarEx_Scroll(object sender, ScrollEventArgs e)
+        {
+            Point relativeLocation = _thumb.TranslatePoint(new Point(0, 0), _parent);
+
+            if (!TryLoadAndStoreTopBottomButtonsLocations())
+            {
+                return;
+            }
+
+            if (relativeLocation.Y < _topButtonRelativeLocation.Value.Y + _topButton.ActualHeight)
+            {
+                _topButton.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                _topButton.Visibility = Visibility.Visible;
+            }
+
+            if (relativeLocation.Y + _thumb.ActualHeight > _bottomButtonRelativeLocation.Value.Y)
+            {
+                _bottomButton.Visibility = Visibility.Hidden;
+            }
+            else
+            {
+                _bottomButton.Visibility = Visibility.Visible;
+            }
+        }
+
         public string TopLabelText
         {
             get { return (string)GetValue(TopLabelTextProperty); }
