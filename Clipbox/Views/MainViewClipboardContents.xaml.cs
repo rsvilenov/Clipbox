@@ -5,6 +5,7 @@ using Clipbox.Services.Interfaces;
 using Clipbox.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -60,18 +61,35 @@ namespace Clipbox.Views
         private void PART_VerticalScrollBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             ScrollBar scrollBar = sender as ScrollBar;
+            AdjustScrollThumbLabel(scrollBar);
+        }
+
+        private void AdjustScrollThumbLabel(UIElement scrollElement)
+        {
             // find the listview control
-            ListView listView = Traversing.FindParent<ListView>(scrollBar);
+            ListView listView = Traversing.FindParent<ListView>(scrollElement);
+            if (listView == null)
+            {
+                Debug.WriteLine("listView (still) not found.");
+                return;
+            }
+
             // find the thumb and its location
-            Thumb thumb = Traversing.GetVisualChildOfType<Thumb>(scrollBar);
-            Point relativeThumbPoint = thumb.TranslatePoint(new Point(0, 0), scrollBar);
+            Thumb thumb = Traversing.GetVisualChildOfType<Thumb>(scrollElement);
+            if (thumb == null)
+            {
+                Debug.WriteLine("thumb (still) not found.");
+                return;
+            }
+
+            Point relativeThumbPoint = thumb.TranslatePoint(new Point(0, 0), scrollElement);
             double thumbYPos = relativeThumbPoint.Y;
 
             foreach (string groupName in _groupNameGroupItemMapping.Keys)
             {
                 GroupItem groupItem = _groupNameGroupItemMapping[groupName];
                 Point groupItemRelativeLocation = groupItem.TranslatePoint(new Point(0, 0), listView);
-                
+
                 if (thumbYPos + thumb.ActualHeight >= groupItemRelativeLocation.Y &&
                     thumbYPos <= groupItemRelativeLocation.Y + groupItem.ActualHeight)
                 {
@@ -127,6 +145,15 @@ namespace Clipbox.Views
             _viewModel.LastItemDateString = _groupNameGroupItemMapping.Last().Key;
 
             _lastListViewItemCount = listView.Items.Count;
+        }
+
+        private void PART_ScrollContentPresenter_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            ScrollContentPresenter scrollContentPresenter = sender as ScrollContentPresenter;
+            if (scrollContentPresenter.ScrollOwner != null)
+            {
+                AdjustScrollThumbLabel(scrollContentPresenter.ScrollOwner);
+            }
         }
     }
 }

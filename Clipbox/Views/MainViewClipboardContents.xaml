@@ -82,7 +82,8 @@
                             CanHorizontallyScroll="False"
                             CanVerticallyScroll="False"
                             Content="{TemplateBinding Content}"
-                            ContentTemplate="{TemplateBinding ContentTemplate}" />
+                            ContentTemplate="{TemplateBinding ContentTemplate}"
+                            SizeChanged="PART_ScrollContentPresenter_SizeChanged" />
 
                         <!--
                             Left margin was added here to
@@ -220,9 +221,8 @@
                                                 FontWeight="Bold"
                                                 Foreground="{TemplateBinding Foreground}"
                                                 Text="{Binding Name}" />
-                                            <!-- Add some space to the top and the bottom of each group -->
-                                            <ItemsPresenter 
-                                                Margin="0, 10, 0, 50"/>
+                                            <!--  Add some space to the top and the bottom of each group  -->
+                                            <ItemsPresenter Margin="0,10,0,50" />
                                         </StackPanel>
                                     </ControlTemplate>
                                 </Setter.Value>
