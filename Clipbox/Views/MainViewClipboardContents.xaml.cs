@@ -22,6 +22,8 @@ namespace Clipbox.Views
         private const int LAYOUT_TIMER_TIMEOUT_MS = 100;
         private SlidingTimer _layoutSlidingTimer;
 
+        private ScrollBar _scrollBar;
+
         private MainClipboardViewViewModel _viewModel;
         
         private int _lastListViewItemCount = 0;
@@ -60,14 +62,18 @@ namespace Clipbox.Views
 
         private void PART_VerticalScrollBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            ScrollBar scrollBar = sender as ScrollBar;
-            AdjustScrollThumbLabel(scrollBar);
+            TryAdjustScrollThumbLabel();
         }
 
-        private void AdjustScrollThumbLabel(UIElement scrollElement)
+        private void TryAdjustScrollThumbLabel()
         {
+            if (_scrollBar == null)
+            {
+                return;
+            }
+
             // find the listview control
-            ListView listView = Traversing.FindParent<ListView>(scrollElement);
+            ListView listView = Traversing.FindParent<ListView>(_scrollBar);
             if (listView == null)
             {
                 Debug.WriteLine("listView (still) not found.");
@@ -75,14 +81,14 @@ namespace Clipbox.Views
             }
 
             // find the thumb and its location
-            Thumb thumb = Traversing.GetVisualChildOfType<Thumb>(scrollElement);
+            Thumb thumb = Traversing.GetVisualChildOfType<Thumb>(_scrollBar);
             if (thumb == null)
             {
                 Debug.WriteLine("thumb (still) not found.");
                 return;
             }
 
-            Point relativeThumbPoint = thumb.TranslatePoint(new Point(0, 0), scrollElement);
+            Point relativeThumbPoint = thumb.TranslatePoint(new Point(0, 0), _scrollBar);
             double thumbYPos = relativeThumbPoint.Y;
 
             foreach (string groupName in _groupNameGroupItemMapping.Keys)
@@ -138,6 +144,15 @@ namespace Clipbox.Views
                 
                 GroupItem groupItem = Traversing.FindParent<GroupItem>(firstLvi);
 
+                if (groupItem == null)
+                {
+                    // the item has not been loaded yet.
+                    // TODO: maybe improve this code some day by
+                    // finding a way to wait for the item to laod
+                    // and not just skip it...
+                    continue;
+                }
+
                 _groupNameGroupItemMapping.Add(groupName, groupItem);
             }
 
@@ -145,15 +160,18 @@ namespace Clipbox.Views
             _viewModel.LastItemDateString = _groupNameGroupItemMapping.Last().Key;
 
             _lastListViewItemCount = listView.Items.Count;
+            
+            TryAdjustScrollThumbLabel();
         }
 
         private void PART_ScrollContentPresenter_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            ScrollContentPresenter scrollContentPresenter = sender as ScrollContentPresenter;
-            if (scrollContentPresenter.ScrollOwner != null)
-            {
-                AdjustScrollThumbLabel(scrollContentPresenter.ScrollOwner);
-            }
+            TryAdjustScrollThumbLabel();
+        }
+        
+        private void PART_VerticalScrollBar_Loaded(object sender, RoutedEventArgs e)
+        {
+            _scrollBar = sender as ScrollBar;
         }
     }
 }

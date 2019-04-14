@@ -82,8 +82,7 @@
                             CanHorizontallyScroll="False"
                             CanVerticallyScroll="False"
                             Content="{TemplateBinding Content}"
-                            ContentTemplate="{TemplateBinding ContentTemplate}"
-                            SizeChanged="PART_ScrollContentPresenter_SizeChanged" />
+                            ContentTemplate="{TemplateBinding ContentTemplate}" />
 
                         <!--
                             Left margin was added here to
@@ -101,6 +100,7 @@
                             FloatingLabelText="{Binding Path=DataContext.CurrentVisibleItemsDateString, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}"
                             FontSize="14"
                             Foreground="White"
+                            Loaded="PART_VerticalScrollBar_Loaded"
                             Maximum="{TemplateBinding ScrollableHeight}"
                             Minimum="0"
                             TopLabelText="{Binding Path=DataContext.FirstItemDateString, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}"

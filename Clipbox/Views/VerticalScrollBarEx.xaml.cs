@@ -23,6 +23,8 @@ namespace Clipbox.Views
         private Point? _topButtonRelativeLocation;
         private Point? _bottomButtonRelativeLocation;
 
+        private double _lastThumbTopPosition;
+
         public VerticalScrollBarEx()
         {
             InitializeComponent();
@@ -43,18 +45,37 @@ namespace Clipbox.Views
             _bottomButton = scrollButtons.Where(b => b.Command == ScrollBar.ScrollToBottomCommand).Single();
 
             // 'Scrolled' fires only when the thumb is dragged directly and is not affected by the mouse wheel
-            // ... so I use 'ValueChanged' instead.
-            ValueChanged += VerticalScrollBarEx_ValueChanged;
+            // ... so I attempted to use 'ValueChanged' instead,
+            // but when the content size changes and the thumb moves up/down as a consequence,
+            // the thumb label doesn't get updated because both these events do not fire.
+            // So I ended up using LayoutUpdated.
+            LayoutUpdated += VerticalScrollBarEx_LayoutUpdated;
         }
 
-        private void VerticalScrollBarEx_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void VerticalScrollBarEx_LayoutUpdated(object sender, System.EventArgs e)
         {
-            UpdateButtonsVisibility();
+            if (_thumb != null && _thumb.IsLoaded)
+            {
+                Point thumbRelativeLocation = _thumb.TranslatePoint(new Point(0, 0), this);
+                if (_lastThumbTopPosition != thumbRelativeLocation.Y)
+                {
+                    UpdateButtonsVisibility();
+                    _lastThumbTopPosition = thumbRelativeLocation.Y;
+                }
+            }
         }
 
-        private bool TryLoadAndStoreTopBottomButtonsLocations()
+        private bool TryLoadAndStoreTopBottomButtonsLocations(bool forceLoad = false)
         {
-            if (!_topButtonRelativeLocation.HasValue)
+            if (_topButton == null 
+                || !_topButton.IsLoaded
+                || _bottomButton == null
+                || !_bottomButton.IsLoaded)
+            {
+                return false;
+            }
+
+            if (!_topButtonRelativeLocation.HasValue || forceLoad)
             {
                 _topButtonRelativeLocation = _topButton.TranslatePoint(new Point(0, 0), _parent);
                 if (!_topButtonRelativeLocation.HasValue)
@@ -63,7 +84,7 @@ namespace Clipbox.Views
                 }
             }
 
-            if (!_bottomButtonRelativeLocation.HasValue)
+            if (!_bottomButtonRelativeLocation.HasValue || forceLoad)
             {
                 _bottomButtonRelativeLocation = _bottomButton.TranslatePoint(new Point(0, 0), _parent);
                 if (!_bottomButtonRelativeLocation.HasValue)
@@ -77,14 +98,14 @@ namespace Clipbox.Views
 
         private void UpdateButtonsVisibility()
         {
-            Point relativeLocation = _thumb.TranslatePoint(new Point(0, 0), _parent);
+            Point relativeThumbLocation = _thumb.TranslatePoint(new Point(0, 0), _parent);
 
             if (!TryLoadAndStoreTopBottomButtonsLocations())
             {
                 return;
             }
 
-            if (relativeLocation.Y < _topButtonRelativeLocation.Value.Y + _topButton.ActualHeight)
+            if (relativeThumbLocation.Y < _topButtonRelativeLocation.Value.Y + _topButton.ActualHeight)
             {
                 _topButton.Visibility = Visibility.Hidden;
             }
@@ -93,7 +114,7 @@ namespace Clipbox.Views
                 _topButton.Visibility = Visibility.Visible;
             }
 
-            if (relativeLocation.Y + _thumb.ActualHeight > _bottomButtonRelativeLocation.Value.Y)
+            if (relativeThumbLocation.Y + _thumb.ActualHeight > _bottomButtonRelativeLocation.Value.Y)
             {
                 _bottomButton.Visibility = Visibility.Hidden;
             }
@@ -128,7 +149,10 @@ namespace Clipbox.Views
 
         private static void BottomLabelTextValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            (d as VerticalScrollBarEx)._localDataContext.BottomLabelText = e.NewValue as string;
+            var _this = (VerticalScrollBarEx)d;
+            _this._localDataContext.BottomLabelText = e.NewValue as string;
+            // The size of the text may cause the button to resize and its Y position may change.
+            _this.TryLoadAndStoreTopBottomButtonsLocations(forceLoad: true);
         }
 
 
