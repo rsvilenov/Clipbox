@@ -336,7 +336,9 @@ namespace Clipbox.ExtendedClipboard
                     allItems = _clipboardItems.Where(item => !item.IsShrinked);
                 }
 
-                return allItems.Select(item => item.Id);
+                return allItems.
+                    OrderByDescending(item => item.EntryDateTicks).
+                    Select(item => item.Id);
             }
         }
 

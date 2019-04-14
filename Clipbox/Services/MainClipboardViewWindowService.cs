@@ -5,6 +5,7 @@ using Clipbox.Win32;
 using System.Windows;
 using System.Windows.Threading;
 using Clipbox.Views.Interfaces;
+using Clipbox.ExtendedClipboard.Interfaces;
 
 namespace Clipbox.Services
 {
@@ -13,6 +14,8 @@ namespace Clipbox.Services
         private ISettingsService _settingsService;
         
         private IMainWindow _mainWindow;
+
+        private IClipboardManager _clipboardManager;
 
         public bool IsOpen
         {
@@ -29,8 +32,9 @@ namespace Clipbox.Services
             }
         }
 
-        public MainClipboardViewWindowService(ISettingsService settingsService)
+        public MainClipboardViewWindowService(IClipboardManager clipboardManager, ISettingsService settingsService)
         {
+            _clipboardManager = clipboardManager;
             _settingsService = settingsService;
         }
         
@@ -58,7 +62,7 @@ namespace Clipbox.Services
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
                 new Action(() =>
                 {
-                    _mainWindow = new MainWindow(_settingsService, dm);
+                    _mainWindow = new MainWindow(_clipboardManager, _settingsService, dm);
                     _mainWindow.Show();
                 }));
         }

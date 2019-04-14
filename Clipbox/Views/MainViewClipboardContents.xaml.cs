@@ -65,11 +65,11 @@ namespace Clipbox.Views
             TryAdjustScrollThumbLabel();
         }
 
-        private void TryAdjustScrollThumbLabel()
+        private bool TryAdjustScrollThumbLabel()
         {
             if (_scrollBar == null)
             {
-                return;
+                return false;
             }
 
             // find the listview control
@@ -77,7 +77,7 @@ namespace Clipbox.Views
             if (listView == null)
             {
                 Debug.WriteLine("listView (still) not found.");
-                return;
+                return false;
             }
 
             // find the thumb and its location
@@ -85,7 +85,7 @@ namespace Clipbox.Views
             if (thumb == null)
             {
                 Debug.WriteLine("thumb (still) not found.");
-                return;
+                return false;
             }
 
             Point relativeThumbPoint = thumb.TranslatePoint(new Point(0, 0), _scrollBar);
@@ -102,6 +102,8 @@ namespace Clipbox.Views
                     _viewModel.CurrentVisibleItemsDateString = groupName;
                 }
             }
+
+            return true;
         }
 
         private void LoadItemsAndGroupsCachedInfo(ListView listView)

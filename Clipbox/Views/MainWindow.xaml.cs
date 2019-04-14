@@ -1,4 +1,5 @@
-﻿using Clipbox.Infrastructure.ExtentionMethods;
+﻿using Clipbox.ExtendedClipboard.Interfaces;
+using Clipbox.Infrastructure.ExtentionMethods;
 using Clipbox.Infrastructure.UI.Theme;
 using Clipbox.Infrastructure.UI.Windows;
 using Clipbox.Services.Interfaces;
@@ -32,8 +33,11 @@ namespace Clipbox.Views
 
         private MainViewClipboardContents _mainViewClipboardContents;
 
-        public MainWindow(ISettingsService settingsService, MonitorUtils.DisplayMonitor monitor)
+        private IClipboardManager _clipboardManager;
+
+        public MainWindow(IClipboardManager clipboardManager, ISettingsService settingsService, MonitorUtils.DisplayMonitor monitor)
         {
+            _clipboardManager = clipboardManager;
             _settingsService = settingsService;
             _monitor = monitor;
 
@@ -44,7 +48,7 @@ namespace Clipbox.Views
 
             InitializeComponent();
 
-            _mainViewClipboardContents = new MainViewClipboardContents(new ViewModels.MainClipboardViewViewModel(), null, settingsService);
+            _mainViewClipboardContents = new MainViewClipboardContents(new ViewModels.MainClipboardViewViewModel(_clipboardManager), null, settingsService);
             clipboardContents.Content = _mainViewClipboardContents;
 
             _backgroundRenderMode = (MainClipboardViewBackgroundRenderMode)_settingsService.GetSetting<int>(SettingsKeys.MainClipboardViewBackgroundRenderMode);

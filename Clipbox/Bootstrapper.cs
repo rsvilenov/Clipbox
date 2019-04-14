@@ -147,7 +147,7 @@ namespace Clipbox
 
             _trayContextMenuService = new TrayContextMenuService(_settingsService);
 
-            _mainClipboardViewWindowService = new MainClipboardViewWindowService(_settingsService);
+            _mainClipboardViewWindowService = new MainClipboardViewWindowService(_clipboardManager, _settingsService);
 
             //_mainWindow = new MainWindow(_settingsService);
             //Application.Current.MainWindow = _mainWindow;
