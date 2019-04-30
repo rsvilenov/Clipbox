@@ -4,20 +4,11 @@ using Clipbox.Infrastructure.UI;
 using Clipbox.ViewModels.BindableObjects;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Threading;
 
 namespace Clipbox.ViewModels
 {
     public class MainClipboardViewViewModel : BindableObject
     {
-        private class MainClipboardViewItem : ClipboardViewItem
-        {
-
-        }
-
         public class ClipboardViewItemWrapper : BindableObject
         {
             public ClipboardViewItemWrapper(IClipboardItem clipboardItem)
