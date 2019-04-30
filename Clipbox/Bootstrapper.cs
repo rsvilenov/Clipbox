@@ -124,7 +124,7 @@ namespace Clipbox
             _settingsService.SetSetting(SettingsKeys.MainClipboardViewBackgroundRenderMode, (int)MainClipboardViewBackgroundRenderMode.ImageBrush);
             
 
-            // Initialize the view model
+            // Initialize the view model - the quick view should show as fast as possible, so we will create it beforehand
             var viewModel = new ClipboardViewViewModel(_clipboardManager, _extentionLoader.PreviewGeneratorsContainer, _settingsService);
 
             // Prepare the preview window
@@ -147,7 +147,8 @@ namespace Clipbox
 
             _trayContextMenuService = new TrayContextMenuService(_settingsService);
 
-            _mainClipboardViewWindowService = new MainClipboardViewWindowService(_clipboardManager, _settingsService);
+            // this view can show a little bit slower so we will not keep its instance alive the whole time - we will create it upon request within the service
+            _mainClipboardViewWindowService = new MainClipboardViewWindowService(_clipboardManager, _extentionLoader.PreviewGeneratorsContainer, _extentionLoader.UIExtentionContainer, _settingsService);
 
             //_mainWindow = new MainWindow(_settingsService);
             //Application.Current.MainWindow = _mainWindow;

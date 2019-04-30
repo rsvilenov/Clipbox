@@ -1,113 +1,27 @@
 ﻿using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.ExtendedClipboard.Interfaces;
+using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
 using Clipbox.Infrastructure.UI;
+using Clipbox.Services.Interfaces;
+using Clipbox.Settings;
 using Clipbox.ViewModels.BindableObjects;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Clipbox.ViewModels
 {
     public class MainClipboardViewViewModel : BindableObject
     {
-        public class ClipboardViewItemWrapper : BindableObject
+        public event EventHandler<RequestPreviewDimentionsEventArgs> OnPreviewDimentionsRequested;
+
+        private AsyncObservableCollection<ClipboardViewItemWrapper> _clipboardViewItemWrappers;
+
+        public AsyncObservableCollection<ClipboardViewItemWrapper> ClipboardViewItemWrappers
         {
-            public ClipboardViewItemWrapper(IClipboardItem clipboardItem)
-            {
-                // store the original item for searching...
-                // TODO: map this item's properties to a viewmodel object
-                ClipboardItem = clipboardItem;
-
-                Id = clipboardItem.Id;
-                DateCreated = new DateTime(clipboardItem.EntryDateTicks);
-            }
-
-            /// <summary>
-            /// This gets called when the item scrolls into view
-            /// </summary>
-            public void GenerateFullViewItem()
-            {
-
-            }
-
-            /// <summary>
-            /// This gets called when the item scrolls out of view
-            /// </summary>
-            public void ShrinkFullViewItem()
-            {
-                
-            }
-
-            private string _id;
-
-            public string Id
-            {
-                get { return _id; }
-                private set { SetField(ref _id, value); }
-            }
-
-            private DateTime _dateCreated;
-            
-            public DateTime DateCreated
-            {
-                get { return _dateCreated; }
-                private set
-                {
-                    SetField(ref _dateCreated, value);
-                    DateCreatedFriendly = GetFriendlyDateString(value);
-                }
-            }
-
-            private string _dateCreatedFriendly;
-
-            public string DateCreatedFriendly
-            {
-                get { return _dateCreatedFriendly; }
-                private set { SetField(ref _dateCreatedFriendly, value); }
-            }
-
-            private ClipboardViewItem _viewItem;
-
-            public ClipboardViewItem ViewItem
-            {
-                get { return _viewItem; }
-                private set { SetField(ref _viewItem, value); }
-            }
-
-            private bool _isViewItemLoaded;
-
-            public bool IsViewItemLoaded
-            {
-                get { return _isViewItemLoaded; }
-                private set { SetField(ref _isViewItemLoaded, value); }
-            }
-
-            /// <summary>
-            /// We will not bind this item.
-            /// </summary>
-            public IClipboardItem ClipboardItem { get; private set; }
-
-            
-            private string GetFriendlyDateString(DateTime date)
-            {
-                // TODO: Translate 'Today' and 'Yesterday'.
-                return
-                    date.Date == DateTime.Today ?
-                    "Today" :
-                    date.Date == DateTime.Today.AddDays(-1) ?
-                    "Yesterday" :
-                    date.Year == DateTime.Now.Year ?
-                        date.ToString("dd MMMM") :
-                        date.ToString("dd MMMM yyyy");
-            }
-
-        }
-
-        private AsyncObservableCollection<ClipboardViewItemWrapper> _clipboardViewItems;
-
-        public AsyncObservableCollection<ClipboardViewItemWrapper> ClipboardViewItems
-        {
-            get { return _clipboardViewItems; }
-            set { SetField(ref _clipboardViewItems, value); }
+            get { return _clipboardViewItemWrappers; }
+            set { SetField(ref _clipboardViewItemWrappers, value); }
         }
 
 
@@ -135,24 +49,78 @@ namespace Clipbox.ViewModels
             set { SetField(ref _lastItemDateString, value); }
         }
 
-        private IClipboardManager _clipboardManager;
+        private readonly IClipboardManager _clipboardManager;
+        private readonly ISettingsService _settingsService;
+        private readonly IClipboardFormatPreviewExtentionContainer _previewsContainer;
 
-        public MainClipboardViewViewModel(IClipboardManager clipboardManager)
+        private ClipboardViewItemFactory _clipboardViewItemFactory;
+        private int _previewItemWidth;
+        private int _previewItemHeight;
+
+        public MainClipboardViewViewModel(IClipboardManager clipboardManager, IClipboardFormatPreviewExtentionContainer previewsContainer, ISettingsService settingsService)
         {
             _clipboardManager = clipboardManager;
+            _settingsService = settingsService;
+
+            int maxPreviewItemsInGroupItem = _settingsService.GetSetting<int>(SettingsKeys.MaxPreviewItemsInGroupItem);
+            _clipboardViewItemFactory = new ClipboardViewItemFactory(previewsContainer, maxPreviewItemsInGroupItem);
+        }
+
+        public void LoadViewItem(string clipboardItemId)
+        {
+            LazyLoadPreviewDimentions();
+            LazyLoadClipboardViewItemFactory();
+
+            // TODO: cancel all tasks upon closing the window
+            // TODO2: run the task only if the item is in view for some time,
+            // and cancel the task if the item has scrolled out of view before the task has begun
+            Task.Run(new Action(() =>
+            {
+                var restoredClipboardItem = _clipboardManager.GetClipboardItem(clipboardItemId, restoreShrinked: true);
+                var wrapper = _clipboardViewItemWrappers.First(w => w.Id == clipboardItemId);
+                wrapper.ViewItem = _clipboardViewItemFactory.Create(restoredClipboardItem, _previewItemWidth, _previewItemHeight);
+                wrapper.IsViewItemLoaded = true;
+            }));
+            
+        }
+
+        public void UnloadViewItem(string clipboardItemId)
+        {
+            var wrapper = _clipboardViewItemWrappers.First(w => w.Id == clipboardItemId);
+            wrapper.ViewItem = null;
+            wrapper.IsViewItemLoaded = false;
+        }
+
+        private void LazyLoadClipboardViewItemFactory()
+        {
+            if (_clipboardViewItemFactory == null)
+            {
+                _clipboardViewItemFactory = new ClipboardViewItemFactory(_previewsContainer);
+            }
+        }
+
+        private void LazyLoadPreviewDimentions()
+        {
+            if (_previewItemHeight == 0)
+            {
+                var previewDimArgs = new RequestPreviewDimentionsEventArgs();
+                OnPreviewDimentionsRequested?.Invoke(this, previewDimArgs);
+                _previewItemHeight = previewDimArgs.PreviewHeight;
+                _previewItemWidth = previewDimArgs.PreviewWidth;
+            }
         }
 
         public void LoadItems()
         {
             //const int NUMBER_OF_ITEMS = 1000;
 
-            ClipboardViewItems = new AsyncObservableCollection<ClipboardViewItemWrapper>();
+            ClipboardViewItemWrappers = new AsyncObservableCollection<ClipboardViewItemWrapper>();
             IEnumerable<string> allItemIds = _clipboardManager.GetAllItemIds();
             foreach (string clipboardItemId in allItemIds)
             {
                 IClipboardItem clipboardItem = _clipboardManager.GetClipboardItem(clipboardItemId);
                 var tempViewItem = new ClipboardViewItemWrapper(clipboardItem);
-                ClipboardViewItems.Add(tempViewItem);
+                ClipboardViewItemWrappers.Add(tempViewItem);
             }
 
             //int currentItemForTheDay = 0;

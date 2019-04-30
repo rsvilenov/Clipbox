@@ -3,6 +3,7 @@ using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.Utils;
 using Clipbox.Services.Interfaces;
 using Clipbox.ViewModels;
+using Clipbox.ViewModels.BindableObjects;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -43,6 +44,18 @@ namespace Clipbox.Views
             IsVisibleChanged += MainViewClipboardContents_IsVisibleChanged;
 
             MainListView.LayoutUpdated += MainListView_LayoutUpdated;
+
+            _viewModel.OnPreviewDimentionsRequested += _viewModel_OnPreviewDimentionsRequested;
+        }
+
+        private void _viewModel_OnPreviewDimentionsRequested(object sender, RequestPreviewDimentionsEventArgs e)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                // set both to Height for now (as Height is the important dimention, Width is determined automatically)
+                e.PreviewWidth = ClipboardViewItemHeight;
+                e.PreviewHeight = ClipboardViewItemHeight;
+            });
         }
 
         private void _layoutSlidingTimer_Elapsed(object sender, EventArgs e)
@@ -63,6 +76,7 @@ namespace Clipbox.Views
         private void PART_VerticalScrollBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             TryAdjustScrollThumbLabel();
+            LoadUnloadFullViewOfVisibleItems();
         }
 
         private bool TryAdjustScrollThumbLabel()
@@ -72,13 +86,20 @@ namespace Clipbox.Views
                 return false;
             }
 
-            // find the listview control
-            ListView listView = Traversing.FindParent<ListView>(_scrollBar);
-            if (listView == null)
+            //// find the listview control
+            //ListView listView = Traversing.FindParent<ListView>(_scrollBar);
+            //if (listView == null)
+            //{
+            //    Debug.WriteLine("listView (still) not found.");
+            //    return false;
+            //}
+
+            if (MainListView == null)
             {
-                Debug.WriteLine("listView (still) not found.");
-                return false;
+                return false; // is the listview loaded at this point?
             }
+
+            UpdateVisibleGroupsCache();
 
             // find the thumb and its location
             Thumb thumb = Traversing.GetVisualChildOfType<Thumb>(_scrollBar);
@@ -91,10 +112,15 @@ namespace Clipbox.Views
             Point relativeThumbPoint = thumb.TranslatePoint(new Point(0, 0), _scrollBar);
             double thumbYPos = relativeThumbPoint.Y;
 
-            foreach (string groupName in _groupNameGroupItemMapping.Keys)
+            foreach (string groupName in _visibleGroupNames)
             {
+                if (groupName == string.Empty)
+                {
+                    break; // not all groups are loaded
+                }
+
                 GroupItem groupItem = _groupNameGroupItemMapping[groupName];
-                Point groupItemRelativeLocation = groupItem.TranslatePoint(new Point(0, 0), listView);
+                Point groupItemRelativeLocation = groupItem.TranslatePoint(new Point(0, 0), MainListView);
 
                 if (thumbYPos + thumb.ActualHeight >= groupItemRelativeLocation.Y &&
                     thumbYPos <= groupItemRelativeLocation.Y + groupItem.ActualHeight)
@@ -104,6 +130,25 @@ namespace Clipbox.Views
             }
 
             return true;
+        }
+
+        private List<string> _visibleGroupNames = new List<string>();
+        private void UpdateVisibleGroupsCache()
+        {
+            _visibleGroupNames = new List<string>();
+
+            foreach (string groupName in _groupNameGroupItemMapping.Keys)
+            {
+                GroupItem groupItem = _groupNameGroupItemMapping[groupName];
+                
+                Rect bounds =
+                groupItem.TransformToAncestor(MainListView).TransformBounds(new Rect(0.0, 0.0, groupItem.ActualWidth, groupItem.ActualHeight));
+                var rect = new Rect(0, 0, this.ActualWidth, this.ActualHeight);
+                if (rect.Contains(bounds.TopLeft) || rect.Contains(bounds.BottomRight))
+                {
+                    _visibleGroupNames.Add(groupName);
+                }
+            }
         }
 
         private void LoadItemsAndGroupsCachedInfo(ListView listView)
@@ -164,11 +209,52 @@ namespace Clipbox.Views
             _lastListViewItemCount = listView.Items.Count;
             
             TryAdjustScrollThumbLabel();
+            LoadUnloadFullViewOfVisibleItems();
+        }
+
+        private void LoadUnloadFullViewOfVisibleItems()
+        {
+            if (MainListView == null)
+            {
+                return; // is the listview loaded at this point?
+            }
+
+            // filter out the groups that are not currently in view
+            var visibleGroupItemMapping = _groupNameGroupItemMapping
+                .Where(kvp => _visibleGroupNames.Contains(kvp.Key))
+                .ToDictionary(k => k.Key, v => v.Value);
+
+            foreach (ClipboardViewItemWrapper lviVm in MainListView.Items)
+            {
+                // if the item is part of a visible group...
+                // The item's group name is the wrapper's DateCreatedFriendly.
+                if (visibleGroupItemMapping.ContainsKey(lviVm.DateCreatedFriendly))
+                {
+                    // load the actual item
+                    ListViewItem lvi = (ListViewItem)MainListView.ItemContainerGenerator.ContainerFromItem(lviVm);
+                    
+                    // check if the item is within the bounds of the clipboard view
+                    Rect bounds =
+                        lvi.TransformToAncestor(MainListView).TransformBounds(new Rect(0.0, 0.0, lvi.ActualWidth, lvi.ActualHeight));
+                    var rect = new Rect(0, 0, this.ActualWidth, this.ActualHeight);
+                    if (rect.Contains(bounds.TopLeft) || rect.Contains(bounds.BottomRight))
+                    {
+                        // load the full view item
+                        _viewModel.LoadViewItem(lviVm.Id);
+                    }
+                    else
+                    {
+                        // unload the item to save up memory
+                        _viewModel.UnloadViewItem(lviVm.Id);
+                    }
+                }
+            }
         }
 
         private void PART_ScrollContentPresenter_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             TryAdjustScrollThumbLabel();
+            LoadUnloadFullViewOfVisibleItems();
         }
         
         private void PART_VerticalScrollBar_Loaded(object sender, RoutedEventArgs e)

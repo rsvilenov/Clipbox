@@ -1,4 +1,6 @@
 ﻿using Clipbox.ExtendedClipboard.Interfaces;
+using Clipbox.Infrastructure.Extensibility.Containers;
+using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
 using Clipbox.Infrastructure.ExtentionMethods;
 using Clipbox.Infrastructure.UI.Theme;
 using Clipbox.Infrastructure.UI.Windows;
@@ -34,10 +36,18 @@ namespace Clipbox.Views
         private MainViewClipboardContents _mainViewClipboardContents;
 
         private IClipboardManager _clipboardManager;
+        private IClipboardFormatPreviewExtentionContainer _clipboardFormatPreviewExtContainer;
+        private UIExtentionContainer _uiExtContainer;
 
-        public MainWindow(IClipboardManager clipboardManager, ISettingsService settingsService, MonitorUtils.DisplayMonitor monitor)
+        public MainWindow(IClipboardManager clipboardManager, 
+            IClipboardFormatPreviewExtentionContainer clipboardFormatPreviewExtContainer, 
+            UIExtentionContainer uiExtContainer,
+            ISettingsService settingsService, 
+            MonitorUtils.DisplayMonitor monitor)
         {
             _clipboardManager = clipboardManager;
+            _clipboardFormatPreviewExtContainer = clipboardFormatPreviewExtContainer;
+            _uiExtContainer = uiExtContainer;
             _settingsService = settingsService;
             _monitor = monitor;
 
@@ -48,7 +58,7 @@ namespace Clipbox.Views
 
             InitializeComponent();
 
-            _mainViewClipboardContents = new MainViewClipboardContents(new ViewModels.MainClipboardViewViewModel(_clipboardManager), null, settingsService);
+            _mainViewClipboardContents = new MainViewClipboardContents(new ViewModels.MainClipboardViewViewModel(_clipboardManager, _clipboardFormatPreviewExtContainer, _settingsService), _uiExtContainer, settingsService);
             clipboardContents.Content = _mainViewClipboardContents;
 
             _backgroundRenderMode = (MainClipboardViewBackgroundRenderMode)_settingsService.GetSetting<int>(SettingsKeys.MainClipboardViewBackgroundRenderMode);
@@ -90,6 +100,11 @@ namespace Clipbox.Views
         }
 
         public new bool IsVisible { get; private set; }
+
+        public void SetCurrentDisplayHeight(int height)
+        {
+            _mainViewClipboardContents.SetCurrentDisplayHeight(height);
+        }
 
         public new void Show()
         {

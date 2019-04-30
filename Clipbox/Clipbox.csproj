@@ -109,6 +109,7 @@
     <Compile Include="Settings\SettingsKeys.cs" />
     <Compile Include="Technical\Converters\ContentClassListContainsConverter.cs" />
     <Compile Include="ViewModels\BindableObjects\ClipboardViewItemBase.cs" />
+    <Compile Include="ViewModels\BindableObjects\ClipboardViewItemWrapper.cs" />
     <Compile Include="ViewModels\BindableObjects\ClipboardViewSubItem.cs" />
     <Compile Include="ViewModels\BindableObjects\ClipboardViewSubItemBase.cs" />
     <Compile Include="ViewModels\BindableObjects\ClipboardViewSubItemNMore.cs" />

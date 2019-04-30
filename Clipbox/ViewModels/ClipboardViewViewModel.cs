@@ -162,7 +162,7 @@ namespace Clipbox.ViewModels
                 return;
             }
 
-            int availableItemWidth = (int)args.PreviewHeight;
+            int availableItemWidth = (int)args.PreviewWidth;
             int availableItemHeight = (int)args.PreviewHeight;
 
             IClipboardItem item = GetClipboardItem(clipboardItemId, restoreShrinked: true);
@@ -198,7 +198,7 @@ namespace Clipbox.ViewModels
                 return;
             }
 
-            int availableItemWidth = (int)args.PreviewHeight;
+            int availableItemWidth = (int)args.PreviewWidth;
             int availableItemHeight = (int)args.PreviewHeight;
 
             var clipboardItemIds = _clipboardManager.GetAllItemIds();

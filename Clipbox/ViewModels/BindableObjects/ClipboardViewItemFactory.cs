@@ -44,6 +44,11 @@ namespace Clipbox.ViewModels.BindableObjects
         [HandleProcessCorruptedStateExceptions]
         public ClipboardViewItem Create(IClipboardItem clipboardItem, int previewWidth, int previewHeight)
         {
+            if (previewHeight == 0 || previewWidth == 0)
+            {
+                throw new ArgumentException($"{nameof(previewHeight)} and {nameof(previewWidth)} should not be 0.");
+            }
+
             if (clipboardItem == null)
             {
                 throw new ArgumentNullException("clipboardIitem");

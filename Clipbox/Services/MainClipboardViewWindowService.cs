@@ -6,6 +6,10 @@ using System.Windows;
 using System.Windows.Threading;
 using Clipbox.Views.Interfaces;
 using Clipbox.ExtendedClipboard.Interfaces;
+using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
+using Clipbox.Infrastructure.Extensibility.Containers;
+using Clipbox.Settings;
+using Clipbox.Infrastructure.UI.Windows.Enums;
 
 namespace Clipbox.Services
 {
@@ -16,6 +20,10 @@ namespace Clipbox.Services
         private IMainWindow _mainWindow;
 
         private IClipboardManager _clipboardManager;
+
+        private IClipboardFormatPreviewExtentionContainer _clipboardFormatPreviewExtContainer;
+
+        private UIExtentionContainer _uiExtContainer;
 
         public bool IsOpen
         {
@@ -32,9 +40,14 @@ namespace Clipbox.Services
             }
         }
 
-        public MainClipboardViewWindowService(IClipboardManager clipboardManager, ISettingsService settingsService)
+        public MainClipboardViewWindowService(IClipboardManager clipboardManager, 
+            IClipboardFormatPreviewExtentionContainer clipboardFormatPreviewExtContainer, 
+            UIExtentionContainer uiExtContainer, 
+            ISettingsService settingsService)
         {
             _clipboardManager = clipboardManager;
+            _clipboardFormatPreviewExtContainer = clipboardFormatPreviewExtContainer;
+            _uiExtContainer = uiExtContainer;
             _settingsService = settingsService;
         }
         
@@ -59,12 +72,41 @@ namespace Clipbox.Services
 
         public void OpenOnMonitor(MonitorUtils.DisplayMonitor dm)
         {
+            MonitorUtils.DisplayMonitor currentMonitor = MonitorUtils.GetByCurrentMousePosition();
+            bool resizeToDpi = ShouldResizeToDpi();
+
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
                 new Action(() =>
                 {
-                    _mainWindow = new MainWindow(_clipboardManager, _settingsService, dm);
+                    var mainWindow = new MainWindow(_clipboardManager, 
+                        _clipboardFormatPreviewExtContainer, 
+                        _uiExtContainer, 
+                        _settingsService, 
+                        dm);
+                    _mainWindow = mainWindow;
+
+                    double currentDisplayHeight = currentMonitor.WorkingArea.Height;
+                    if (resizeToDpi)
+                    {
+                        mainWindow.ScaleMode = DpiScaleMode.TaggedChildren;
+                        double scaleFactor = currentMonitor.Dpi / 96;
+                        currentDisplayHeight *= scaleFactor;
+                    }
+                    else
+                    {
+                        mainWindow.ScaleMode = DpiScaleMode.None;
+                    }
+
+                    mainWindow.SetCurrentDisplayHeight((int)currentDisplayHeight);
+
+
                     _mainWindow.Show();
                 }));
+        }
+
+        private bool ShouldResizeToDpi()
+        {
+            return _settingsService.GetSetting<bool>(SettingsKeys.ResizeAccordingToMonitorOrSystemDpi);
         }
     }
 }
