@@ -234,7 +234,21 @@
 
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Text="{Binding DateCreated}" />
+                    <TextBlock Text="{Binding DateCreated}">
+                        <TextBlock.Style>
+                            <Style TargetType="{x:Type TextBlock}">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsViewItemLoaded}" Value="True">
+                                        <Setter Property="Background" Value="Red" />
+                                    </DataTrigger>
+                                    <!--<DataTrigger Binding="{Binding IsViewItemLoaded}" Value="False">
+                                        <Setter Property="Background" Value="Blue" />
+                                    </DataTrigger>-->
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+
+                    </TextBlock>
                 </DataTemplate>
             </ListView.ItemTemplate>
 

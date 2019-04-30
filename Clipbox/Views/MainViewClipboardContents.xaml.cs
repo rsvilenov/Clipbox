@@ -21,7 +21,10 @@ namespace Clipbox.Views
     public partial class MainViewClipboardContents : ClipboardViewControl
     {
         private const int LAYOUT_TIMER_TIMEOUT_MS = 100;
+        private const int SCROLLBAR_TIMER_TIMEOUT_MS = 300;
         private SlidingTimer _layoutSlidingTimer;
+        private SlidingTimer _scrollbarValueChangedSlidingTimer;
+
 
         private ScrollBar _scrollBar;
 
@@ -41,11 +44,21 @@ namespace Clipbox.Views
             _layoutSlidingTimer.IntervalMs = LAYOUT_TIMER_TIMEOUT_MS;
             _layoutSlidingTimer.Elapsed += _layoutSlidingTimer_Elapsed;
 
+            _scrollbarValueChangedSlidingTimer = new SlidingTimer();
+            _scrollbarValueChangedSlidingTimer.IntervalMs = SCROLLBAR_TIMER_TIMEOUT_MS;
+            _scrollbarValueChangedSlidingTimer.Elapsed += _scrollbarValueChangedSlidingTimer_Elapsed; ;
+
+
             IsVisibleChanged += MainViewClipboardContents_IsVisibleChanged;
 
             MainListView.LayoutUpdated += MainListView_LayoutUpdated;
 
             _viewModel.OnPreviewDimentionsRequested += _viewModel_OnPreviewDimentionsRequested;
+        }
+
+        private void _scrollbarValueChangedSlidingTimer_Elapsed(object sender, EventArgs e)
+        {
+            LoadUnloadFullViewOfVisibleItems();
         }
 
         private void _viewModel_OnPreviewDimentionsRequested(object sender, RequestPreviewDimentionsEventArgs e)
@@ -76,7 +89,7 @@ namespace Clipbox.Views
         private void PART_VerticalScrollBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             TryAdjustScrollThumbLabel();
-            LoadUnloadFullViewOfVisibleItems();
+            _scrollbarValueChangedSlidingTimer.Slide();
         }
 
         private bool TryAdjustScrollThumbLabel()
@@ -237,12 +250,16 @@ namespace Clipbox.Views
                     Rect bounds =
                         lvi.TransformToAncestor(MainListView).TransformBounds(new Rect(0.0, 0.0, lvi.ActualWidth, lvi.ActualHeight));
                     var rect = new Rect(0, 0, this.ActualWidth, this.ActualHeight);
-                    if (rect.Contains(bounds.TopLeft) || rect.Contains(bounds.BottomRight))
+                    if ((rect.Contains(bounds.TopLeft) || rect.Contains(bounds.BottomRight))
+                        && !lviVm.IsViewItemLoaded)
                     {
                         // load the full view item
                         _viewModel.LoadViewItem(lviVm.Id);
                     }
-                    else
+                }
+                else
+                {
+                    if (lviVm.IsViewItemLoaded)
                     {
                         // unload the item to save up memory
                         _viewModel.UnloadViewItem(lviVm.Id);
