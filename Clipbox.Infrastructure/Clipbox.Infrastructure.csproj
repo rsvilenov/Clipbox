@@ -83,6 +83,7 @@
     <Compile Include="Persistence\RegistryUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Testing\TestUtils.cs" />
+    <Compile Include="Threading\CancellableTaskManager.cs" />
     <Compile Include="Threading\SimpleDispatcher.cs" />
     <Compile Include="Threading\StaUtils.cs" />
     <Compile Include="Threading\ThreadValidator.cs" />

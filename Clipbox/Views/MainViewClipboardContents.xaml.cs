@@ -33,7 +33,9 @@ namespace Clipbox.Views
         private int _lastListViewItemCount = 0;
         private Dictionary<string, GroupItem> _groupNameGroupItemMapping = new Dictionary<string, GroupItem>();
         
-        public MainViewClipboardContents(MainClipboardViewViewModel vm, UIExtentionContainer container, ISettingsService settingsService)
+        public MainViewClipboardContents(MainClipboardViewViewModel vm, 
+            UIExtentionContainer container, 
+            ISettingsService settingsService)
             : base (container, settingsService)
         {
             InitializeComponent();
@@ -259,6 +261,8 @@ namespace Clipbox.Views
                 }
                 else
                 {
+                    _viewModel.CancelLoadingOfViewItem(lviVm.Id);
+
                     if (lviVm.IsViewItemLoaded)
                     {
                         // unload the item to save up memory
@@ -277,6 +281,11 @@ namespace Clipbox.Views
         private void PART_VerticalScrollBar_Loaded(object sender, RoutedEventArgs e)
         {
             _scrollBar = sender as ScrollBar;
+        }
+
+        ~MainViewClipboardContents()
+        {
+            Debug.WriteLine("MainViewClipboardContents unloaded");
         }
     }
 }

@@ -1,12 +1,14 @@
 ﻿using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
+using Clipbox.Infrastructure.Threading;
 using Clipbox.Infrastructure.UI;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.ViewModels.BindableObjects;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -57,6 +59,8 @@ namespace Clipbox.ViewModels
         private int _previewItemWidth;
         private int _previewItemHeight;
 
+        private CancellableTaskManager _cancellableTaskManager;
+
         public MainClipboardViewViewModel(IClipboardManager clipboardManager, IClipboardFormatPreviewExtentionContainer previewsContainer, ISettingsService settingsService)
         {
             _clipboardManager = clipboardManager;
@@ -64,6 +68,7 @@ namespace Clipbox.ViewModels
 
             int maxPreviewItemsInGroupItem = _settingsService.GetSetting<int>(SettingsKeys.MaxPreviewItemsInGroupItem);
             _clipboardViewItemFactory = new ClipboardViewItemFactory(previewsContainer, maxPreviewItemsInGroupItem);
+            _cancellableTaskManager = new CancellableTaskManager();
         }
 
         public void LoadViewItem(string clipboardItemId)
@@ -71,17 +76,18 @@ namespace Clipbox.ViewModels
             LazyLoadPreviewDimentions();
             LazyLoadClipboardViewItemFactory();
 
-            // TODO: cancel all tasks upon closing the window
-            // TODO2: run the task only if the item is in view for some time,
-            // and cancel the task if the item has scrolled out of view before the task has begun
-            Task.Run(new Action(() =>
+            _cancellableTaskManager.ScheduleTask(clipboardItemId, new Action<string>((taskId) =>
             {
                 var restoredClipboardItem = _clipboardManager.GetClipboardItem(clipboardItemId, restoreShrinked: true);
                 var wrapper = _clipboardViewItemWrappers.First(w => w.Id == clipboardItemId);
                 wrapper.ViewItem = _clipboardViewItemFactory.Create(restoredClipboardItem, _previewItemWidth, _previewItemHeight);
                 wrapper.IsViewItemLoaded = true;
             }));
-            
+        }
+
+        public void CancelLoadingOfViewItem(string clipboardItemId)
+        {
+            _cancellableTaskManager.CancelScheduledTask(taskId: clipboardItemId);
         }
 
         public void UnloadViewItem(string clipboardItemId)
@@ -150,5 +156,13 @@ namespace Clipbox.ViewModels
 
             //}
         }
+
+        ~MainClipboardViewViewModel()
+        {
+            Debug.WriteLine("MainClipboardViewViewModel unloaded");
+        }
+
     }
+
+
 }
