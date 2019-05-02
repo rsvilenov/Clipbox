@@ -19,7 +19,7 @@ namespace Clipbox.Views
     /// <summary>
     /// Interaction logic for QuickViewClipboardContents.xaml
     /// </summary>
-    public partial class QuickViewClipboardContents : ClipboardViewControl
+    public partial class QuickViewClipboardContents : ClipboardViewControl, IDisposable
     {
         private ClipboardViewViewModel _viewModel;
 
@@ -382,6 +382,11 @@ namespace Clipbox.Views
             // Make sure no item remains in these lists when the listview is cleared of all its items
             SelectedItemIds.Clear();
             SelectedMultiItemsIds.Clear();
+        }
+
+        public void Dispose()
+        {
+            _uiExtentionGenerationSlidingTimer.Dispose();
         }
     }
 }

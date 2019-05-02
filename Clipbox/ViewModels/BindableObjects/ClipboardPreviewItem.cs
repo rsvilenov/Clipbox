@@ -13,6 +13,12 @@ namespace Clipbox.ViewModels.BindableObjects
         // hide the default constructor - we will construct these objects with static factory methods
         private ClipboardPreviewItem() { }
 
+        /// <summary>
+        /// Generates ClipboardPreviewItem from FilePreviewData
+        /// and disposes the image inside the FilePreviewData.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
         public static ClipboardPreviewItem FromFilePreviewData(FilePreviewData data)
         {
             if (data == null)
@@ -31,6 +37,7 @@ namespace Clipbox.ViewModels.BindableObjects
             if (data.Preview != null && data.Preview is Bitmap)
             {
                 instance.Image = (data.Preview as Bitmap).ToBitmapSource();
+                data.Preview.Dispose();
             }
             else
             {
@@ -40,6 +47,12 @@ namespace Clipbox.ViewModels.BindableObjects
             return instance;
         }
 
+        /// <summary>
+        /// Generates ClipboardPreviewItem from ImagePreviewData
+        /// and disposes the image in the ImagePreviewData.
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
         public static ClipboardPreviewItem FromImagePreviewData(ImagePreviewData data)
         {
             if (data == null)
@@ -67,6 +80,8 @@ namespace Clipbox.ViewModels.BindableObjects
             {
                 throw new FormatException("Image should be either Bitmap or Metafile");
             }
+
+            data.Preview.Dispose();
             
             return instance;
         }

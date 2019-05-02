@@ -18,7 +18,7 @@ namespace Clipbox.Views
     /// <summary>
     /// Interaction logic for MainViewClipboardContents.xaml
     /// </summary>
-    public partial class MainViewClipboardContents : ClipboardViewControl
+    public partial class MainViewClipboardContents : ClipboardViewControl, IDisposable
     {
         private const int LAYOUT_TIMER_TIMEOUT_MS = 100;
         private const int SCROLLBAR_TIMER_TIMEOUT_MS = 300;
@@ -281,6 +281,12 @@ namespace Clipbox.Views
         private void PART_VerticalScrollBar_Loaded(object sender, RoutedEventArgs e)
         {
             _scrollBar = sender as ScrollBar;
+        }
+
+        public void Dispose()
+        {
+            _layoutSlidingTimer.Dispose();
+            _scrollbarValueChangedSlidingTimer.Dispose();
         }
 
         ~MainViewClipboardContents()

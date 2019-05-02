@@ -94,6 +94,7 @@ namespace Clipbox.Services
         {
             _namedPipeServer.Dispose();
             HideDeskBand();
+            _trayContextMenuHelper.Dispose();
         }
 
         private void ToggleMainWindowVisibility(IntPtr hWndDeskBand)
@@ -130,7 +131,7 @@ namespace Clipbox.Services
         /// Sometimes I get two WM_RBUTTONUP in a row, resulting from a single mouse click.
         /// It is much easier to handle this situation here, than in the DeskBand extention.
         /// </summary>
-        private class TrayContextMenuHelper
+        private class TrayContextMenuHelper : IDisposable
         {
             private const int RBUTTONUP_MSG_DELAY_MS = 300;
 
@@ -177,6 +178,11 @@ namespace Clipbox.Services
             {
                 _lastDeskbandHwnd = deskbandHwnd;
                 _duplicatedRightClickSligingTimer.Slide();
+            }
+
+            public void Dispose()
+            {
+                _duplicatedRightClickSligingTimer.Dispose();
             }
         }
 

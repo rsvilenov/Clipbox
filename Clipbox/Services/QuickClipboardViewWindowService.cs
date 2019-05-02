@@ -269,7 +269,7 @@ namespace Clipbox.Services
 
         public void Dispose()
         {
-            //
+            _sizeChangedSligingTimer.Dispose();
         }
     }
 }

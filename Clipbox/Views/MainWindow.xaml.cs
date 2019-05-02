@@ -180,6 +180,9 @@ namespace Clipbox.Views
             }
 
             IsVisible = false;
+
+            this.Content = null;
+            _mainViewClipboardContents.Dispose();
         }
 
         private void SetDesktopWallpaperBackgoround(int width, int height)

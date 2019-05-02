@@ -15,9 +15,14 @@ namespace Clipbox.Infrastructure.UI.Tests
         [SetUp]
         public void SetUp()
         {
-
+            _timer = new SlidingTimer();
         }
-        
+
+        [TearDown]
+        public void TearDown()
+        {
+            _timer.Dispose();
+        }
 
         [TestCase(1)]
         [TestCase(10)]
@@ -30,13 +35,10 @@ namespace Clipbox.Infrastructure.UI.Tests
             Dispatcher dispatcher = Dispatcher.CurrentDispatcher;
             DispatcherFrame frame = new DispatcherFrame(exitWhenRequested: true);
 
+            _timer.IntervalMs = timerIntervalMs;
+
             dispatcher.BeginInvoke(new Action(() =>
             {
-                _timer = new SlidingTimer
-                {
-                    IntervalMs = timerIntervalMs
-                };
-
                 _timer.Elapsed += (s, e) =>
                 {
                     elapsedFireCount++;
@@ -54,6 +56,7 @@ namespace Clipbox.Infrastructure.UI.Tests
                 }, TestUtils.MAX_THREADS, false);
             }));
 
+            
             // run the actual WPF message loop
             Dispatcher.PushFrame(frame);
 

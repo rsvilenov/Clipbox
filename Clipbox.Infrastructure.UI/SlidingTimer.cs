@@ -12,7 +12,7 @@ namespace Clipbox.Infrastructure.UI
     /// https://www.codeproject.com/Tips/709218/Sliding-Timer
     /// TODO: see if the link above will provide a better solution.
     /// </summary>
-    public class SlidingTimer
+    public class SlidingTimer : IDisposable
     {
         private const int DEFAULT_INTERVAL_MS = 50;
 
@@ -111,6 +111,12 @@ namespace Clipbox.Infrastructure.UI
         {
             _t.Stop();
             _t.Start();
+        }
+
+        public void Dispose()
+        {
+            _t.Stop();
+            _t.Tick -= _t_Tick;
         }
     }
 }

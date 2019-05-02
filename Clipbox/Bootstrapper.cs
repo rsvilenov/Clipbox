@@ -53,7 +53,9 @@ namespace Clipbox
         TrayBandService _trayBandService;
 
         ExtentionLoader _extentionLoader;
-        
+
+        QuickViewClipboardContents _quickViewClipboardContents;
+
         public void PerformStartupSequence()
         {
             string[] startupArgs = Environment.GetCommandLineArgs();
@@ -128,10 +130,10 @@ namespace Clipbox
             var viewModel = new ClipboardViewViewModel(_clipboardManager, _extentionLoader.PreviewGeneratorsContainer, _settingsService);
 
             // Prepare the preview window
-            QuickViewClipboardContents contents = new QuickViewClipboardContents(viewModel, _extentionLoader.UIExtentionContainer, _settingsService);
+            _quickViewClipboardContents = new QuickViewClipboardContents(viewModel, _extentionLoader.UIExtentionContainer, _settingsService);
 
             // Initialize the quick preview window service
-            _previewWindowService = new QuickClipboardViewWindowService(contents, _settingsService);
+            _previewWindowService = new QuickClipboardViewWindowService(_quickViewClipboardContents, _settingsService);
 
             // Initialize the FlowExtention executor service
             _flowExtentionExecutorService = new FlowExtentionExecutorService(_extentionLoader.FlowExtentionContainer);
@@ -270,6 +272,7 @@ namespace Clipbox
             TryDisposeObject(_clipboardManager);
             TryDisposeObject(_flowExtentionExecutorService);
             TryDisposeObject(_previewWindowService);
+            TryDisposeObject(_quickViewClipboardContents);
             TryDisposeObject(_clipboardListenerService);
             TryDisposeObject(_trayService);
             TryDisposeObject(_trayBandService);
