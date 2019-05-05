@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CLR\ClrHelpers.cs" />
+    <Compile Include="Encryption\MD5Hash.cs" />
     <Compile Include="Extensibility\Containers\BaseExtentionContainer.cs" />
     <Compile Include="Extensibility\Containers\ClipboardFormatExtentionContainer.cs" />
     <Compile Include="Extensibility\Containers\ClipboardFormatPreviewExtentionContainer.cs" />
@@ -77,6 +78,7 @@
     <Compile Include="Persistence\AppDataUtils.cs" />
     <Compile Include="Persistence\ClipboardSyncObject.cs" />
     <Compile Include="Persistence\FileLocker.cs" />
+    <Compile Include="Persistence\GlobalNamedMutex.cs" />
     <Compile Include="Persistence\IAuthenticatable.cs" />
     <Compile Include="Persistence\ICloudService.cs" />
     <Compile Include="Persistence\ICloudSynchronizable.cs" />

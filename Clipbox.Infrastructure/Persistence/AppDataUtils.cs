@@ -1,4 +1,5 @@
 ﻿using Clipbox.Core;
+using Clipbox.Infrastructure.Encryption;
 using System;
 using System.IO;
 
@@ -116,7 +117,7 @@ namespace Clipbox.Infrastructure.Persistence
         {
             if (useLock)
             {
-                using (FileLocker locker = new FileLocker(filePath, FILE_LOCK_TIMEOUT_MS))
+                using (GlobalNamedMutex gMutex = new GlobalNamedMutex($"{MD5Hash.Create(filePath)}", FILE_LOCK_TIMEOUT_MS))
                 {
                     operation();
                 }
