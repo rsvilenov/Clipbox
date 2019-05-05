@@ -3,14 +3,17 @@ using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using Clipbox.Core.Extensibility.Contracts.PreviewData;
 using Clipbox.Infrastructure.ExtentionMethods;
 using Clipbox.Infrastructure.Threading;
+using Clipbox.Infrastructure.UI.Utils;
 using System;
 using System.Drawing;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 
 namespace Clipbox.Extentions.BuiltIn.TextFormats.PreviewHandlers
 {
@@ -25,82 +28,84 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.PreviewHandlers
             {
                 throw new ArgumentException("data is null or not a string");
             }
-
+            
             Bitmap preview = null;
             int textLength = 0;
             int wordCount = 0;
-
-            using (SimpleDispatcher dispatcher = new SimpleDispatcher())
+            
+            using (OwnThreadDispatcher _dispatcher = new OwnThreadDispatcher())
             {
-                // Ensure that we use the wpf control from within a STA thread
-                // and that we wait for the thread's competion before we contunie
-                dispatcher.Invoke(new Action(() =>
-                {
-                    RichTextBox rtb = new RichTextBox();
-                    rtb.Background = System.Windows.Media.Brushes.Gainsboro;
-                    rtb.SelectAll();
-
-                    var rtfBytes = Encoding.ASCII.GetBytes(rtf);
-                    using (MemoryStream ms = new MemoryStream(rtfBytes))
+                _dispatcher.Invoke(DispatcherPriority.Background,
+                    new Action(() =>
                     {
-                        rtb.Selection.Load(ms, DataFormats.Rtf);
-                    }
+                        RichTextBox rtb = new RichTextBox();
+                        rtb.Background = System.Windows.Media.Brushes.Gainsboro;
+                        rtb.SelectAll();
 
-                    textLength = rtb.Selection.Text.Length;
-                    wordCount = rtb.Selection.Text.Split(new char[] { ' ' },
-                        StringSplitOptions.RemoveEmptyEntries).Length;
+                        var rtfBytes = Encoding.ASCII.GetBytes(rtf);
+                        using (MemoryStream ms = new MemoryStream(rtfBytes))
+                        {
+                            rtb.Selection.Load(ms, DataFormats.Rtf);
+                        }
 
-                    rtb.HorizontalAlignment = HorizontalAlignment.Center;
-                    rtb.VerticalAlignment = VerticalAlignment.Center;
-                    
+                        textLength = rtb.Selection.Text.Length;
+                        wordCount = rtb.Selection.Text.Split(new char[] { ' ' },
+                            StringSplitOptions.RemoveEmptyEntries).Length;
 
-                    //FormattedText fmtText = GetFormattedText(rtb.Document);
-                    //if (fmtText.Height > previewHeight)
-                    //{
-
-                    //}
-
-                    rtb.Measure(new System.Windows.Size(previewWidth, previewHeight));
-                    rtb.Arrange(new Rect(rtb.DesiredSize));
+                        rtb.HorizontalAlignment = HorizontalAlignment.Center;
+                        rtb.VerticalAlignment = VerticalAlignment.Center;
 
 
-                    RenderTargetBitmap rtBmp = new RenderTargetBitmap((int)rtb.ActualWidth, (int)rtb.ActualHeight, 96, 96, PixelFormats.Pbgra32);
-                    rtBmp.Render(rtb);
-
-                    //DrawingVisual dv = new DrawingVisual();
-                    //Rect bounds = new Rect(new System.Windows.Point(), rtb.DesiredSize); //VisualTreeHelper.GetDescendantBounds(rtb);
-                    //using (DrawingContext ctx = dv.RenderOpen())
-                    //{
-                    //    VisualBrush vb = new VisualBrush(rtb);
-                    //    ctx.DrawRectangle(vb, null, new Rect(new System.Windows.Point(), bounds.Size));
-                    //}
-                    //rtBmp.Render(dv);
-
-                    using (Bitmap previewBmp = rtBmp.ToBitmap())
-                    {
-                        //.GetResized(previewWidth, previewHeight);
-
-                        //System.Windows.Size textSize = FormattedTextMeasuring.MeasureText(rtb.Selection.Text, rtb);
-
-                        //if (previewHeight > textSize.Height && previewWidth > textSize.Width)
+                        //FormattedText fmtText = GetFormattedText(rtb.Document);
+                        //if (fmtText.Height > previewHeight)
                         //{
-                        //    previewBmp = previewBmp.GetResized((int)((double)previewBmp.Width * 1.3), (int)((double)previewBmp.Height * 1.3));
+
                         //}
 
-                        if (previewBmp.Width == previewWidth && previewBmp.Height == previewHeight)
+                        rtb.Measure(new System.Windows.Size(previewWidth, previewHeight));
+                        rtb.Arrange(new Rect(rtb.DesiredSize));
+
+                        rtb.UpdateLayout();
+
+                        RenderTargetBitmap rtBmp = new RenderTargetBitmap((int)rtb.ActualWidth, (int)rtb.ActualHeight, 96, 96, PixelFormats.Pbgra32);
+                        rtBmp.Render(rtb);
+
+                        //DrawingVisual dv = new DrawingVisual();
+                        //Rect bounds = new Rect(new System.Windows.Point(), rtb.DesiredSize); //VisualTreeHelper.GetDescendantBounds(rtb);
+
+
+                        //using (DrawingContext ctx = dv.RenderOpen())
+                        //{
+                        //    VisualBrush vb = new VisualBrush(rtb);
+                        //    ctx.DrawRectangle(vb, null, new Rect(new System.Windows.Point(), bounds.Size));
+                        //}
+                        //rtBmp.Render(dv);
+
+                        using (Bitmap previewBmp = rtBmp.ToBitmap())
                         {
-                            preview = (Bitmap)previewBmp.Clone();
+                            //.GetResized(previewWidth, previewHeight);
+
+                            //System.Windows.Size textSize = FormattedTextMeasuring.MeasureText(rtb.Selection.Text, rtb);
+
+                            //if (previewHeight > textSize.Height && previewWidth > textSize.Width)
+                            //{
+                            //    previewBmp = previewBmp.GetResized((int)((double)previewBmp.Width * 1.3), (int)((double)previewBmp.Height * 1.3));
+                            //}
+
+                            if (previewBmp.Width == previewWidth && previewBmp.Height == previewHeight)
+                            {
+                                preview = (Bitmap)previewBmp.Clone();
+                            }
+                            else if (previewBmp.Width > previewWidth || previewBmp.Height > previewHeight)
+                            {
+                                throw new InvalidOperationException("The RichTextBox should have been resized to the thumbnail size already.");
+                            }
+                            else // if the preview is smaller than the preview size, superimpose it at the center of a transparent canvas
+                            {
+                                preview = previewBmp.GetCenteredOverTransparentCanvas(previewWidth, previewHeight);
+                            }
                         }
-                        else if (previewBmp.Width > previewWidth || previewBmp.Height > previewHeight)
-                        {
-                            throw new InvalidOperationException("The RichTextBox should have been resized to the thumbnail size already.");
-                        }
-                        else // if the preview is smaller than the preview size, superimpose it at the center of a transparent canvas
-                        {
-                            preview = previewBmp.GetCenteredOverTransparentCanvas(previewWidth, previewHeight);
-                        }
-                    }
-                }));
+                    }));
             }
 
             return new ImagePreviewData

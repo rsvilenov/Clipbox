@@ -66,6 +66,20 @@ namespace Clipbox.Infrastructure.ExtentionMethods
             }
             return result;
         }
+
+        public static Bitmap Crop(this Bitmap src, Rectangle cropRect)
+        {
+            Bitmap target = new Bitmap(cropRect.Width, cropRect.Height);
+
+            using (Graphics g = Graphics.FromImage(target))
+            {
+                g.DrawImage(src, new Rectangle(0, 0, target.Width, target.Height),
+                                 cropRect,
+                                 GraphicsUnit.Pixel);
+            }
+
+            return target;
+        }
         
         public static Bitmap SuperimposeBitmap(this Bitmap largeBmp, Bitmap smallBmp)
         {

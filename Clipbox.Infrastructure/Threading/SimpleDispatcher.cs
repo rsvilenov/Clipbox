@@ -25,6 +25,11 @@ namespace Clipbox.Infrastructure.Threading
             _dispatcherThread.Start();
         }
 
+        public Thread Thread
+        {
+            get { return _dispatcherThread; }
+        }
+
         public void Invoke(Action action)
         {
             if (_disposed)

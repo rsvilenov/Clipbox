@@ -81,6 +81,13 @@ namespace Clipbox.ViewModels
                 var restoredClipboardItem = _clipboardManager.GetClipboardItem(clipboardItemId, restoreShrinked: true);
                 var wrapper = _clipboardViewItemWrappers.First(w => w.Id == clipboardItemId);
                 wrapper.ViewItem = _clipboardViewItemFactory.Create(restoredClipboardItem, _previewItemWidth, _previewItemHeight);
+
+
+
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
+
                 wrapper.IsViewItemLoaded = true;
             }));
         }

@@ -3,14 +3,18 @@ using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using Clipbox.Core.Extensibility.Contracts.PreviewData;
 using Clipbox.Infrastructure.ExtentionMethods;
 using Clipbox.Infrastructure.Threading;
+using Clipbox.Infrastructure.UI.Utils;
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 
 namespace Clipbox.Extentions.BuiltIn.TextFormats.PreviewHandlers
 {
@@ -26,16 +30,15 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.PreviewHandlers
             {
                 throw new ArgumentException("data is null or not a string");
             }
-
+            
             Bitmap preview = null;
             int textLength = 0;
             int wordCount = 0;
 
-            using (SimpleDispatcher dispatcher = new SimpleDispatcher())
+            using (OwnThreadDispatcher _dispatcher = new OwnThreadDispatcher())
             {
-                // Ensure that we use the wpf control from within a STA thread
-                // and that we wait for the thread's competion before we contunie
-                dispatcher.Invoke(new Action(() =>
+                _dispatcher.Invoke(DispatcherPriority.Background, 
+                    new Action(() =>
                 {
                     RichTextBox rtb = new RichTextBox();
                     rtb.Background = System.Windows.Media.Brushes.Gainsboro;
@@ -57,9 +60,15 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.PreviewHandlers
                     rtb.Measure(new System.Windows.Size(previewWidth, previewHeight));
                     rtb.Arrange(new Rect(rtb.DesiredSize));
 
+                    // RenderTargetBitmap memory leak fix - the code should run in a thread
+                    // with a running dispatcher and UpdateLayout() should be called on the
+                    // rendered element right before rendering.
+                    //http://www.thejoyofcode.com/Generating_images_using_WPF_on_the_Server.aspx
+                    
+                    rtb.UpdateLayout();
+
                     RenderTargetBitmap rtBmp = new RenderTargetBitmap((int)rtb.ActualWidth, (int)rtb.ActualHeight, 96, 96, PixelFormats.Pbgra32);
                     rtBmp.Render(rtb);
-
 
                     using (Bitmap previewBmp = rtBmp.ToBitmap())
                     {
@@ -76,6 +85,7 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.PreviewHandlers
                             preview = previewBmp.GetCenteredOverTransparentCanvas(previewWidth, previewHeight);
                         }
                     }
+
                 }));
             }
 

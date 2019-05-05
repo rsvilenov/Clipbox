@@ -63,6 +63,7 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="SlidingTimer.cs" />
     <Compile Include="Utils\FormattedTextMeasuring.cs" />
+    <Compile Include="Utils\OwnThreadDispatcher.cs" />
     <Compile Include="Visuals\AutoWrapPanel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Theme\Enums\ThemeBrush.cs" />

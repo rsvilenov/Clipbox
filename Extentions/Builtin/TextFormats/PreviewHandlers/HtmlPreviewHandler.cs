@@ -2,6 +2,7 @@
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using Clipbox.Core.Extensibility.Contracts.PreviewData;
 using Clipbox.Infrastructure.ExtentionMethods;
+using Clipbox.Infrastructure.UI.Utils;
 using System;
 using System.Drawing;
 using System.Threading;
@@ -25,26 +26,36 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.PreviewHandlers
 
             Bitmap previewBmp = null;
 
-            var waitScreenshotResetEvent = new ManualResetEvent(true);
-            
-            using (WebBrowser webBrowser = new WebBrowser())
+            using (OwnThreadDispatcher dispatcher = new OwnThreadDispatcher())
             {
-                webBrowser.NavigateToString(html);
+                dispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Background,
+                    new Action(() =>
+                    {
+                        using (var waitScreenshotResetEvent = new AutoResetEvent(false))
+                        using (WebBrowser webBrowser = new WebBrowser())
+                        {
+                            webBrowser.NavigateToString(html);
 
-                webBrowser.Navigated += (sender, args) =>
-                {
-                    // render the whole webbrowser control
-                    RenderTargetBitmap rtBmp = new RenderTargetBitmap(previewWidth, previewHeight, 96, 96, PixelFormats.Pbgra32);
-                    rtBmp.Render(webBrowser);
+                            webBrowser.Navigated += (sender, args) =>
+                            {
+                                waitScreenshotResetEvent.Set();
+                            };
 
-                    // RenderTargetBitmap is a bitmap source
-                    previewBmp = rtBmp.ToBitmap();
+                            waitScreenshotResetEvent.WaitOne();
 
-                    waitScreenshotResetEvent.Reset();
-                };
+                            // without this, according to one source, a memory leak may occur during rendering
+                            webBrowser.UpdateLayout();
 
-                waitScreenshotResetEvent.WaitOne();
+                            // render the whole webbrowser control
+                            RenderTargetBitmap rtBmp = new RenderTargetBitmap(previewWidth, previewHeight, 96, 96, PixelFormats.Pbgra32);
+                            rtBmp.Render(webBrowser);
+
+                            // RenderTargetBitmap is a bitmap source
+                            previewBmp = rtBmp.ToBitmap();
+                        }
+                    }));
             }
+            
 
             return new HtmlPreviewData
             {
