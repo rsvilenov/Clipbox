@@ -8,6 +8,7 @@ using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
 using Clipbox.Infrastructure.ExtentionMethods;
 using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.ExtentionMethods;
+using Clipbox.ViewModels.BindableObjects;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -19,7 +20,7 @@ using System.Runtime.ExceptionServices;
 using System.Security;
 using System.Windows.Media.Imaging;
 
-namespace Clipbox.ViewModels.BindableObjects
+namespace Clipbox.ViewModels
 {
     public class ClipboardViewItemFactory
     {

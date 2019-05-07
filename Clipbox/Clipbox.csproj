@@ -142,7 +142,7 @@
     <Compile Include="Technical\Converters\ObjectTypeStringConverter.cs" />
     <Compile Include="ViewModels\BindableObjects\ClipboardPreviewItem.cs" />
     <Compile Include="ViewModels\BindableObjects\ClipboardViewItem.cs" />
-    <Compile Include="ViewModels\BindableObjects\ClipboardViewItemFactory.cs" />
+    <Compile Include="ViewModels\ClipboardViewItemFactory.cs" />
     <Compile Include="ViewModels\BindableObjects\ClipboardViewItemSingle.cs" />
     <Compile Include="Services\ClipboardListenerService.cs" />
     <Compile Include="Technical\Converters\BitmapToBitmapImageConverter.cs" />
