@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Clipbox.ViewModels
+namespace Clipbox.ViewModels.SerializableObjects
 {
     [Serializable]
     public class StoredPreviewItem

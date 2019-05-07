@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Clipbox.ViewModels
+namespace Clipbox.ViewModels.SerializableObjects
 {
     [Serializable]
     public class StoredPreviewData

@@ -9,6 +9,7 @@ using Clipbox.Infrastructure.ExtentionMethods;
 using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.ExtentionMethods;
 using Clipbox.ViewModels.BindableObjects;
+using Clipbox.ViewModels.SerializableObjects;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

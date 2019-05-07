@@ -56,7 +56,7 @@ namespace Clipbox.ViewModels
         private readonly IClipboardFormatPreviewExtentionContainer _previewsContainer;
 
         private ClipboardViewItemFactory _clipboardViewItemFactory;
-        private PreviewDataManager _previewDataManager;
+        private ClipboardViewItemManager _previewDataManager;
         private int _previewItemWidth;
         private int _previewItemHeight;
 
@@ -69,7 +69,7 @@ namespace Clipbox.ViewModels
 
             int maxPreviewItemsInGroupItem = _settingsService.GetSetting<int>(SettingsKeys.MaxPreviewItemsInGroupItem);
             _clipboardViewItemFactory = new ClipboardViewItemFactory(previewsContainer, maxPreviewItemsInGroupItem);
-            _previewDataManager = new PreviewDataManager(_clipboardViewItemFactory);
+            _previewDataManager = new ClipboardViewItemManager(_clipboardViewItemFactory);
             _cancellableTaskManager = new CancellableTaskManager();
         }
 

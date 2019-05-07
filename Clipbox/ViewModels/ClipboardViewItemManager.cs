@@ -3,6 +3,7 @@ using Clipbox.Infrastructure.ExtentionMethods;
 using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.UI.ExtentionMethods;
 using Clipbox.ViewModels.BindableObjects;
+using Clipbox.ViewModels.SerializableObjects;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,13 +12,13 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Clipbox.ViewModels
 {
-    public class PreviewDataManager
+    public class ClipboardViewItemManager
     {
         private const string APP_DATA_SUBDIR = "PreviewDataCache";
 
         private ClipboardViewItemFactory _clipboardViewItemFactory;
 
-        public PreviewDataManager(ClipboardViewItemFactory cviFactory)
+        public ClipboardViewItemManager(ClipboardViewItemFactory cviFactory)
         {
             _clipboardViewItemFactory = cviFactory;
         }

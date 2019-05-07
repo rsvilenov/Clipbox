@@ -1,6 +1,7 @@
 ﻿using Clipbox.Core.Extensibility.Contracts.PreviewData;
 using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.ExtentionMethods;
+using Clipbox.ViewModels.SerializableObjects;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
