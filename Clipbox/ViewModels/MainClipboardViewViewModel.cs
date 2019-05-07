@@ -131,12 +131,20 @@ namespace Clipbox.ViewModels
 
             ClipboardViewItemWrappers = new AsyncObservableCollection<ClipboardViewItemWrapper>();
             IEnumerable<string> allItemIds = _clipboardManager.GetAllItemIds();
+            List<IClipboardItem> clipboardItems = new List<IClipboardItem>();
             foreach (string clipboardItemId in allItemIds)
             {
                 IClipboardItem clipboardItem = _clipboardManager.GetClipboardItem(clipboardItemId);
+                clipboardItems.Add(clipboardItem);
                 var tempViewItem = new ClipboardViewItemWrapper(clipboardItem);
                 ClipboardViewItemWrappers.Add(tempViewItem);
             }
+
+            // TODO: this should be fast enough, but I should nevertheless consider doing this on closing the window
+            Task.Run(() =>
+            {
+                _previewDataManager.DeleteUnusedStoredPreviewData(clipboardItems);
+            });
 
             //int currentItemForTheDay = 0;
             //int currentNumber = NUMBER_OF_ITEMS;

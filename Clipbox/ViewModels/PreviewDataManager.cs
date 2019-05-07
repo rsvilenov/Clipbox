@@ -4,6 +4,7 @@ using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.UI.ExtentionMethods;
 using Clipbox.ViewModels.BindableObjects;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -41,6 +42,18 @@ namespace Clipbox.ViewModels
             }
 
             return cvi;
+        }
+
+        public void DeleteUnusedStoredPreviewData(IEnumerable<IClipboardItem> existingClipboardItems)
+        {
+            var relativeFilePathPrefixesToKeep = existingClipboardItems.Select(ci => $"{ci.Id}_");
+            foreach (string relativeFileName in AppDataUtils.ListFiles(APP_DATA_SUBDIR))
+            {
+                if (!relativeFilePathPrefixesToKeep.Any(p => relativeFileName.StartsWith(p)))
+                {
+                    AppDataUtils.DeleteFile(Path.Combine(APP_DATA_SUBDIR, relativeFileName));
+                }
+            }
         }
 
         private StoredPreviewData GetStoredPreviewData(string clipboardItemId, int previewWidth, int previewHeight)

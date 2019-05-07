@@ -1,7 +1,9 @@
 ﻿using Clipbox.Core;
 using Clipbox.Infrastructure.Encryption;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Clipbox.Infrastructure.Persistence
 {
@@ -99,6 +101,20 @@ namespace Clipbox.Infrastructure.Persistence
         {
             string fullFilePath = Path.Combine(GetAppDataDir(throwIfNotExists: true), relativeFilePath);
             return File.Exists(fullFilePath);
+        }
+
+        public static void DeleteFile(string relativeFilePath)
+        {
+            string fullFilePath = Path.Combine(GetAppDataDir(throwIfNotExists: true), relativeFilePath);
+            File.Delete(fullFilePath);
+        }
+
+        public static IEnumerable<string> ListFiles(string subDir = "")
+        {
+            string appDataDir = GetAppDataDir(throwIfNotExists: true);
+            string fullPath = subDir == "" ? appDataDir : Path.Combine(appDataDir, subDir);
+            return Directory.EnumerateFiles(fullPath)
+                .Select(p => Path.GetFileName(p));
         }
 
         public static string GetAppDataDir(bool throwIfNotExists)
