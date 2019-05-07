@@ -13,6 +13,8 @@ namespace Clipbox.ViewModels
 
         public bool IsGroup { get; set; }
 
+        public int NMore { get; set; }
+        
         public List<StoredPreviewItem> PreviewItems { get; set; }
     }
 }

@@ -175,7 +175,7 @@ namespace Clipbox.ViewModels
 
             int maxPreviewItemsInGroupItem = _settingsService.GetSetting<int>(SettingsKeys.MaxPreviewItemsInGroupItem);
             ClipboardViewItemFactory viewItemFactory = new ClipboardViewItemFactory(_previewContainer, maxPreviewItemsInGroupItem);
-            var viewItem = viewItemFactory.FromClipboardItem(item, availableItemWidth, availableItemHeight);
+            var viewItem = viewItemFactory.CreateFromClipboardItem(item, availableItemWidth, availableItemHeight);
 
             ClipboardViewItems.Add(viewItem);
         }
@@ -215,7 +215,7 @@ namespace Clipbox.ViewModels
                 Debug.WriteLine(clipboardItemId);
 #endif
                 IClipboardItem item = GetClipboardItem(clipboardItemId, restoreShrinked: true);
-                var viewItem = viewItemFactory.FromClipboardItem(item, availableItemWidth, availableItemHeight);
+                var viewItem = viewItemFactory.CreateFromClipboardItem(item, availableItemWidth, availableItemHeight);
                 ClipboardViewItems.Add(viewItem);
 
                 AreClipboardItemsAvailable = true;

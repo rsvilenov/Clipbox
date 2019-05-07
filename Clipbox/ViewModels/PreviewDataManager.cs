@@ -32,11 +32,11 @@ namespace Clipbox.ViewModels
             ClipboardViewItem cvi = null;
             if (storedData != null)
             {
-                cvi = _clipboardViewItemFactory.FromStoredPreviewData(storedData, clipboardItem);
+                cvi = _clipboardViewItemFactory.CreateFromStoredPreviewData(storedData, clipboardItem);
             }
             else
             {
-                cvi = _clipboardViewItemFactory.FromClipboardItem(clipboardItem, previewHeight, previewHeight);
+                cvi = _clipboardViewItemFactory.CreateFromClipboardItem(clipboardItem, previewHeight, previewHeight);
                 StorePreviewDataToCache(cvi, clipboardItem.Id, previewWidth, previewHeight);
             }
 
@@ -45,15 +45,16 @@ namespace Clipbox.ViewModels
 
         private StoredPreviewData GetStoredPreviewData(string clipboardItemId, int previewWidth, int previewHeight)
         {
-            string fileName = $"{clipboardItemId}_{previewWidth}_{previewHeight}";
-            string fullFileName = Path.Combine(AppDataUtils.GetAppDataDir(false), fileName);
 
             StoredPreviewData data = null;
 
-            if (File.Exists(fullFileName))
+            string relativeFilePath = Path.Combine(APP_DATA_SUBDIR, $"{clipboardItemId}_{previewWidth}_{previewHeight}");
+            if (AppDataUtils.CheckFileExists(relativeFilePath))
             {
+                byte[] fileData = AppDataUtils.ReadBytesFromApplicationData(relativeFilePath);
+
                 // deserialize
-                using (var ms = new MemoryStream())
+                using (var ms = new MemoryStream(fileData))
                 {
                     var formatter = new BinaryFormatter();
                     data = (StoredPreviewData)formatter.Deserialize(ms);
@@ -65,7 +66,7 @@ namespace Clipbox.ViewModels
         
         private void StorePreviewDataToCache(ClipboardViewItem cvi, string clipboardItemId, int previewWidth, int previewHeight)
         {
-            StoredPreviewData spd = GetStoredPreviewData(cvi);
+            StoredPreviewData spd = CreateStoredPreviewDataObject(cvi);
 
             // serialize
             byte[] serializedData = null;
@@ -74,16 +75,30 @@ namespace Clipbox.ViewModels
             {
                 var formatter = new BinaryFormatter();
                 formatter.Serialize(ms, spd);
+                serializedData = ms.ToArray();
             }
-            
+
+            EnsureAppDataSubDirExists();
+
             string fileName = $"{clipboardItemId}_{previewWidth}_{previewHeight}";
+
             AppDataUtils.WriteToApplicationData(Path.Combine(APP_DATA_SUBDIR, fileName), serializedData);
         }
 
-        private static StoredPreviewData GetStoredPreviewData(ClipboardViewItem cvi)
+        private static void EnsureAppDataSubDirExists()
+        {
+            string dirPath = Path.Combine(AppDataUtils.GetAppDataDir(throwIfNotExists: false), APP_DATA_SUBDIR);
+
+            if (!Directory.Exists(dirPath))
+            {
+                Directory.CreateDirectory(dirPath);
+            }
+        }
+
+        private static StoredPreviewData CreateStoredPreviewDataObject(ClipboardViewItem cvi)
         {
             StoredPreviewData data = new StoredPreviewData();
-            // store and/or return
+
             if (cvi is ClipboardViewItemSingle)
             {
                 var previewItem = ((ClipboardViewItemSingle)cvi).PreviewItem;
@@ -117,6 +132,13 @@ namespace Clipbox.ViewModels
 
                 data.PreviewItems.AddRange(spds);
                 data.IsGroup = true;
+
+                int? nMore = previewItems
+                    .Where(pi => pi is ClipboardViewSubItemNMore)
+                    .Cast<ClipboardViewSubItemNMore>()
+                    .SingleOrDefault()?.NumberOfItems;
+
+                data.NMore = nMore.GetValueOrDefault();
             }
 
             return data;

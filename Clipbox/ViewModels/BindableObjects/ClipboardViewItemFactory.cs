@@ -41,7 +41,7 @@ namespace Clipbox.ViewModels.BindableObjects
             _maxPreviewItemsInGroupItem = maxPreviewItemsInGroupItem;
         }
 
-        public ClipboardViewItem FromStoredPreviewData(StoredPreviewData storedPreviewData, IClipboardItem clipboardItem)
+        public ClipboardViewItem CreateFromStoredPreviewData(StoredPreviewData storedPreviewData, IClipboardItem clipboardItem)
         {
             ClipboardViewItem viewItem = null;
 
@@ -52,7 +52,17 @@ namespace Clipbox.ViewModels.BindableObjects
                     new ClipboardViewSubItem
                     {
                         PreviewItem = ClipboardPreviewItem.FromStoredPreviewItem(spi)
+                    })
+                    .Cast<ClipboardViewSubItemBase>()
+                    .ToList();
+
+                if (storedPreviewData.NMore > 0)
+                {
+                    previewItems.Add(new ClipboardViewSubItemNMore
+                    {
+                        NumberOfItems = storedPreviewData.NMore
                     });
+                }
 
                 viewItem = new ClipboardViewItemGroup
                 {
@@ -82,7 +92,7 @@ namespace Clipbox.ViewModels.BindableObjects
 
         [SecurityCritical]
         [HandleProcessCorruptedStateExceptions]
-        public ClipboardViewItem FromClipboardItem(IClipboardItem clipboardItem, int previewWidth, int previewHeight)
+        public ClipboardViewItem CreateFromClipboardItem(IClipboardItem clipboardItem, int previewWidth, int previewHeight)
         {
             if (previewHeight == 0 || previewWidth == 0)
             {

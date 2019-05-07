@@ -95,6 +95,12 @@ namespace Clipbox.Infrastructure.Persistence
             }
         }
 
+        public static bool CheckFileExists(string relativeFilePath)
+        {
+            string fullFilePath = Path.Combine(GetAppDataDir(throwIfNotExists: true), relativeFilePath);
+            return File.Exists(fullFilePath);
+        }
+
         public static string GetAppDataDir(bool throwIfNotExists)
         {
             string mainAppDataDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
