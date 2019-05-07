@@ -80,7 +80,7 @@ namespace Clipbox.ViewModels
             {
                 var restoredClipboardItem = _clipboardManager.GetClipboardItem(clipboardItemId, restoreShrinked: true);
                 var wrapper = _clipboardViewItemWrappers.First(w => w.Id == clipboardItemId);
-                wrapper.ViewItem = _clipboardViewItemFactory.Create(restoredClipboardItem, _previewItemWidth, _previewItemHeight);
+                wrapper.ViewItem = _clipboardViewItemFactory.FromClipboardItem(restoredClipboardItem, _previewItemWidth, _previewItemHeight);
 
 
 

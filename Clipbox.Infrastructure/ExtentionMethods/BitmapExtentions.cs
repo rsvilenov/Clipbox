@@ -1,12 +1,8 @@
-﻿using Clipbox.Win32.Native;
-using System;
+﻿using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Windows;
-using System.Windows.Interop;
-using System.Windows.Media.Imaging;
 
 namespace Clipbox.Infrastructure.ExtentionMethods
 {
@@ -20,29 +16,7 @@ namespace Clipbox.Infrastructure.ExtentionMethods
                 return stream.ToArray();
             }
         }
-
-        public static BitmapSource ToBitmapSource(this Bitmap bitmap)
-        {
-            BitmapSource bitSrc = null;
-            var hBitmap = bitmap.GetHbitmap();
-
-            try
-            {
-                bitSrc = System.Windows.Interop.Imaging.CreateBitmapSourceFromHBitmap(
-                                hBitmap,
-                                IntPtr.Zero, Int32Rect.Empty,
-                                   System.Windows.Media.Imaging.BitmapSizeOptions.FromEmptyOptions());
-            }
-            finally
-            {
-                Gdi32.DeleteObject(hBitmap);
-            }
-
-            bitSrc.Freeze();
-
-            return bitSrc;
-        }
-
+        
         public static Icon ToIcon(this Bitmap bitmap)
         {
             IntPtr hIcon = bitmap.GetHicon();

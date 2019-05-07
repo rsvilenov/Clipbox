@@ -2,6 +2,7 @@
 using Clipbox.Infrastructure.Extensibility.Containers;
 using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
 using Clipbox.Infrastructure.ExtentionMethods;
+using Clipbox.Infrastructure.UI.ExtentionMethods;
 using Clipbox.Infrastructure.UI.Theme;
 using Clipbox.Infrastructure.UI.Windows;
 using Clipbox.Services.Interfaces;

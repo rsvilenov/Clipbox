@@ -1,9 +1,10 @@
 ﻿using Clipbox.Core.Extensibility.Contracts.PreviewData;
-using Clipbox.Infrastructure.ExtentionMethods;
 using Clipbox.Infrastructure.UI;
+using Clipbox.Infrastructure.UI.ExtentionMethods;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Windows.Media.Imaging;
 
 namespace Clipbox.ViewModels.BindableObjects
@@ -12,6 +13,33 @@ namespace Clipbox.ViewModels.BindableObjects
     {
         // hide the default constructor - we will construct these objects with static factory methods
         private ClipboardPreviewItem() { }
+
+        public static ClipboardPreviewItem FromStoredPreviewItem(StoredPreviewItem item)
+        {
+            if (item == null)
+            {
+                throw new ArgumentNullException("item");
+            }
+
+            if (item.ImageData == null)
+            {
+                throw new ArgumentNullException("item.ImageData");
+            }
+
+            var cpi = new ClipboardPreviewItem
+            {
+                Text = item.Text,
+                Description = item.Description
+            };
+
+            using (var ms = new MemoryStream(item.ImageData))
+            using (Bitmap bmp = new Bitmap(ms))
+            {
+                cpi.Image = bmp.ToBitmapSource();
+            }
+
+            return cpi;
+        }
 
         /// <summary>
         /// Generates ClipboardPreviewItem from FilePreviewData

@@ -2,6 +2,7 @@
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using Clipbox.Core.Extensibility.Contracts.PreviewData;
 using Clipbox.Infrastructure.ExtentionMethods;
+using Clipbox.Infrastructure.UI.ExtentionMethods;
 using Clipbox.Infrastructure.UI.Utils;
 using System;
 using System.Drawing;

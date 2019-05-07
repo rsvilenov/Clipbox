@@ -7,6 +7,7 @@ using Clipbox.ExtendedClipboard.ClipboardContent;
 using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
 using Clipbox.Infrastructure.ExtentionMethods;
 using Clipbox.Infrastructure.UI;
+using Clipbox.Infrastructure.UI.ExtentionMethods;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -40,9 +41,48 @@ namespace Clipbox.ViewModels.BindableObjects
             _maxPreviewItemsInGroupItem = maxPreviewItemsInGroupItem;
         }
 
+        public ClipboardViewItem FromStoredPreviewData(StoredPreviewData storedPreviewData, IClipboardItem clipboardItem)
+        {
+            ClipboardViewItem viewItem = null;
+
+            if (storedPreviewData.IsGroup)
+            {
+                var previewItems = storedPreviewData.PreviewItems
+                    .Select(spi =>
+                    new ClipboardViewSubItem
+                    {
+                        PreviewItem = ClipboardPreviewItem.FromStoredPreviewItem(spi)
+                    });
+
+                viewItem = new ClipboardViewItemGroup
+                {
+                    PreviewItems = new ObservableCollection<ClipboardViewSubItemBase>(previewItems)
+                };
+            }
+            else
+            {
+                StoredPreviewItem spi = storedPreviewData.PreviewItems.Single();
+                viewItem = new ClipboardViewItemSingle
+                {
+                    PreviewItem = ClipboardPreviewItem.FromStoredPreviewItem(spi)
+                };
+            }
+
+            viewItem.SourceWindowIcon = BitmapSourceFromBitmapByteArray(clipboardItem.Source.SourceWindowInfo.Icon);
+            viewItem.SourceWindowCaption = clipboardItem.Source.SourceWindowInfo.Caption;
+            viewItem.DateCreated = new DateTime(clipboardItem.EntryDateTicks);
+            viewItem.DateModified = new DateTime(clipboardItem.ModifiedDateTicks);
+            viewItem.ClipboardItemId = clipboardItem.Id;
+            viewItem.IsPinned = clipboardItem.IsPinned;
+            IEnumerable<ClipboardContentClass> contentClasses = clipboardItem.ClipboardDataObjects.Select(cdo => cdo.ContentClass).Distinct();
+            viewItem.ContentClasses = new AsyncObservableCollection<ClipboardContentClass>(contentClasses);
+
+            return viewItem;
+        }
+
         [SecurityCritical]
         [HandleProcessCorruptedStateExceptions]
-        public ClipboardViewItem Create(IClipboardItem clipboardItem, int previewWidth, int previewHeight)
+        public ClipboardViewItem FromClipboardItem(IClipboardItem clipboardItem, int previewWidth, int previewHeight)
         {
             if (previewHeight == 0 || previewWidth == 0)
             {

@@ -2,14 +2,12 @@
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using Clipbox.Core.Extensibility.Contracts.PreviewData;
 using Clipbox.Infrastructure.ExtentionMethods;
-using Clipbox.Infrastructure.Threading;
+using Clipbox.Infrastructure.UI.ExtentionMethods;
 using Clipbox.Infrastructure.UI.Utils;
 using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Text;
-using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;

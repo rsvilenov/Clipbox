@@ -114,6 +114,9 @@
     <Compile Include="ViewModels\BindableObjects\ClipboardViewSubItemBase.cs" />
     <Compile Include="ViewModels\BindableObjects\ClipboardViewSubItemNMore.cs" />
     <Compile Include="ViewModels\MainClipboardViewViewModel.cs" />
+    <Compile Include="ViewModels\PreviewDataManager.cs" />
+    <Compile Include="ViewModels\StoredPreviewData.cs" />
+    <Compile Include="ViewModels\StoredPreviewItem.cs" />
     <Compile Include="ViewModels\TrayContextMenuViewModel.cs" />
     <Compile Include="ViewModels\RequestPreviewDimentionsEventArgs.cs" />
     <Compile Include="Views\FilterBand.xaml.cs">
