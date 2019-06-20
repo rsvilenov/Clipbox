@@ -12,8 +12,10 @@
     xmlns:infWindows="clr-namespace:Clipbox.Infrastructure.UI.Windows;assembly=Clipbox.Infrastructure.UI"
     xmlns:local="clr-namespace:Clipbox.Views"
     xmlns:localBeh="clr-namespace:Clipbox.Behaviors"
+    xmlns:localBindableObjects="clr-namespace:Clipbox.ViewModels.BindableObjects"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:tile="clr-namespace:Clipbox.Views.ClipboardViewItemTile"
     xmlns:vis="clr-namespace:Clipbox.Infrastructure.UI.Visuals;assembly=Clipbox.Infrastructure.UI"
     d:DesignHeight="300"
     d:DesignWidth="300"
@@ -29,6 +31,7 @@
         <coreConv:IsEqualOrGreaterThanConverter x:Key="IsEqualOrGreaterThanConverter" />
         <coreConv:NullOrEmptyCollectionToBoolConverter x:Key="NullOrEmptyCollectionToBoolConverter" />
         <conv:ContentClassListContainsConverter x:Key="ContentClassListContainsConverter" />
+        <conv:ObjectTypeCompareConverter x:Key="ObjectTypeCompareConverter" />
     </UserControl.Resources>
     <Grid x:Name="mainGrid">
         <Grid.RowDefinitions>
@@ -249,11 +252,19 @@
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
 
+                                    <tile:ItemTypeIconBand
+                                        Grid.Column="0"
+                                        MaxHeight="30"
+                                        ContentClasses="{Binding ContentClasses}"
+                                        IsGroupItem="{Binding Path=DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListViewItem}, Converter={StaticResource ObjectTypeCompareConverter}, ConverterParameter={x:Type localBindableObjects:ClipboardViewItemGroup}}"
+                                        Tag="{x:Static infWindows:PerMonitorDpiWindow.SCALE_ELEMENT_TAG}" />
+
                                     <ItemsControl
                                         Grid.Column="0"
                                         MaxHeight="30"
                                         ItemsSource="{Binding ContentClasses}"
-                                        Tag="{x:Static infWindows:PerMonitorDpiWindow.SCALE_ELEMENT_TAG}">
+                                        Tag="{x:Static infWindows:PerMonitorDpiWindow.SCALE_ELEMENT_TAG}"
+                                        Visibility="Collapsed">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
                                                 <StackPanel Orientation="Horizontal" />

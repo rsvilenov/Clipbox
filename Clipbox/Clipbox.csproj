@@ -108,6 +108,7 @@
     <Compile Include="Settings\Enums\MainClipboardViewBackgroundRenderMode.cs" />
     <Compile Include="Settings\SettingsKeys.cs" />
     <Compile Include="Technical\Converters\ContentClassListContainsConverter.cs" />
+    <Compile Include="Technical\Converters\ObjectTypeCompareConverter.cs" />
     <Compile Include="ViewModels\BindableObjects\ClipboardViewItemBase.cs" />
     <Compile Include="ViewModels\BindableObjects\ClipboardViewItemWrapper.cs" />
     <Compile Include="ViewModels\BindableObjects\ClipboardViewSubItem.cs" />
@@ -119,6 +120,9 @@
     <Compile Include="ViewModels\SerializableObjects\StoredPreviewItem.cs" />
     <Compile Include="ViewModels\TrayContextMenuViewModel.cs" />
     <Compile Include="ViewModels\RequestPreviewDimentionsEventArgs.cs" />
+    <Compile Include="Views\ClipboardViewItemTile\ItemTypeIconBand.xaml.cs">
+      <DependentUpon>ItemTypeIconBand.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\FilterBand.xaml.cs">
       <DependentUpon>FilterBand.xaml</DependentUpon>
     </Compile>
@@ -156,6 +160,10 @@
     </Compile>
     <Compile Include="Views\WallpaperWindow.cs" />
     <Page Include="Resources\TrayContextMenu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ClipboardViewItemTile\ItemTypeIconBand.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -288,6 +296,10 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Images\OpenMainWindow.png" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Views\ClipboardViewItemTile\ReadMe.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

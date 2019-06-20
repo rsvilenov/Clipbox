@@ -1,0 +1,1 @@
+﻿Here is the code for the tiles, appearing in the clipboard views, each of which containing a clipboard item.
