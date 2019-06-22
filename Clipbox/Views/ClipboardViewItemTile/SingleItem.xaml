@@ -12,7 +12,6 @@
     mc:Ignorable="d">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-        <localConv:ObjectTypeCompareConverter x:Key="ObjectTypeCompareConverter" />
     </UserControl.Resources>
     <Grid x:Name="mainGrid">
         <Grid.RowDefinitions>

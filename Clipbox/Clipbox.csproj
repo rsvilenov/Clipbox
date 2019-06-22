@@ -120,6 +120,9 @@
     <Compile Include="ViewModels\SerializableObjects\StoredPreviewItem.cs" />
     <Compile Include="ViewModels\TrayContextMenuViewModel.cs" />
     <Compile Include="ViewModels\RequestPreviewDimentionsEventArgs.cs" />
+    <Compile Include="Views\ClipboardViewItemTile\MultiItem.xaml.cs">
+      <DependentUpon>MultiItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ClipboardViewItemTile\ItemTypeIconBand.xaml.cs">
       <DependentUpon>ItemTypeIconBand.xaml</DependentUpon>
     </Compile>
@@ -163,6 +166,10 @@
     </Compile>
     <Compile Include="Views\WallpaperWindow.cs" />
     <Page Include="Resources\TrayContextMenu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ClipboardViewItemTile\MultiItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

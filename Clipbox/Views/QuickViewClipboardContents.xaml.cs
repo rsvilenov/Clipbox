@@ -6,6 +6,7 @@ using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.ViewModels;
 using Clipbox.ViewModels.BindableObjects;
+using Clipbox.Views.ClipboardViewItemTile;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -273,10 +274,10 @@ namespace Clipbox.Views
         private void MultiItemListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Debug.WriteLine("MultiItemListView_SelectionChanged");
-
-            var listView = sender as ListView;
-
-            var mainViewItem = listView.DataContext as ClipboardViewItem;
+            MultiItem multiItemUserControl = (MultiItem)sender;
+            ListView listView = multiItemUserControl.GetSubItemsListView();
+            
+            var mainViewItem = multiItemUserControl.ClipboardViewItem;
             if (mainViewItem == null)
             {
                 return;
@@ -388,5 +389,6 @@ namespace Clipbox.Views
         {
             _uiExtentionGenerationSlidingTimer.Dispose();
         }
+        
     }
 }

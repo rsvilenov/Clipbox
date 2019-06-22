@@ -32,6 +32,11 @@
         <coreConv:NullOrEmptyCollectionToBoolConverter x:Key="NullOrEmptyCollectionToBoolConverter" />
         <conv:ContentClassListContainsConverter x:Key="ContentClassListContainsConverter" />
         <conv:ObjectTypeCompareConverter x:Key="ObjectTypeCompareConverter" />
+
+        <!--  we cannot subscribe to an event in an inline style, so we need a resource for circumventing this limitation of WPF  -->
+        <Style x:Key="MultiItemStyleForSelectionChangedEvent" TargetType="{x:Type tile:MultiItem}">
+            <EventSetter Event="SubItems_SelectionChanged" Handler="MultiItemListView_SelectionChanged" />
+        </Style>
     </UserControl.Resources>
     <Grid x:Name="mainGrid">
         <Grid.RowDefinitions>
@@ -354,13 +359,59 @@
                                 </ContentControl>
 
                                 <!--  multiple items  -->
-                                <Grid Grid.Row="1" Margin="0,0,0,0">
-                                    <Grid.Height>
+                                <ContentControl Grid.Row="1">
+                                    <ContentControl.Height>
                                         <MultiBinding Converter="{StaticResource MathAddConverter}">
                                             <Binding Path="ClipboardViewItemHeight" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=UserControl}" />
                                             <Binding>
                                                 <Binding.Source>
                                                     <!--  pad the height so that it matches the total height of the single view items  -->
+                                                    <sys:Double>60</sys:Double>
+                                                </Binding.Source>
+                                            </Binding>
+                                        </MultiBinding>
+                                    </ContentControl.Height>
+                                    <ContentControl.Style>
+                                        <Style TargetType="{x:Type ContentControl}">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Converter={StaticResource ObjectToTypeStringConverter}}" Value="ClipboardViewItemGroup">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                    <!--  Set the content only when needed to avoid binding errors and unnecessary memory usage.  -->
+                                                    <Setter Property="Content">
+                                                        <Setter.Value>
+                                                            <tile:MultiItem ClipboardViewItem="{Binding}" Style="{StaticResource MultiItemStyleForSelectionChangedEvent}">
+                                                                <tile:MultiItem.IsDimmed>
+                                                                    <MultiBinding Converter="{StaticResource AndMultiValueConverter}">
+                                                                        <Binding
+                                                                            Converter="{StaticResource InverseBooleanConverter}"
+                                                                            Path="IsManipulationEnabled"
+                                                                            RelativeSource="{RelativeSource AncestorType={x:Type Border}}" />
+                                                                        <Binding Path="DimNonFocusedItems" RelativeSource="{RelativeSource AncestorType={x:Type local:ClipboardViewControl}}" />
+                                                                        <Binding
+                                                                            Converter="{StaticResource InverseBooleanConverter}"
+                                                                            Path="DataContext.IsSelected"
+                                                                            RelativeSource="{RelativeSource AncestorType={x:Type ListViewItem}}" />
+                                                                    </MultiBinding>
+                                                                </tile:MultiItem.IsDimmed>
+                                                            </tile:MultiItem>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ContentControl.Style>
+                                </ContentControl>
+
+                                <!--<Grid Grid.Row="1" Margin="0,0,0,0">
+                                    <Grid.Height>
+                                        <MultiBinding Converter="{StaticResource MathAddConverter}">
+                                            <Binding Path="ClipboardViewItemHeight" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=UserControl}" />
+                                            <Binding>
+                                                <Binding.Source>
+                                -->
+                                <!--  pad the height so that it matches the total height of the single view items  -->
+                                <!--
                                                     <sys:Double>60</sys:Double>
                                                 </Binding.Source>
                                             </Binding>
@@ -486,13 +537,17 @@
                                                                         <Binding Path="ActualHeight" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=ListBox}" />
                                                                         <Binding>
                                                                             <Binding.Source>
-                                                                                <!--  take into account the margin of the border (5 on top and 5 on bottom + 1 for border top and 1 for border bottom)  -->
+                                -->
+                                <!--  take into account the margin of the border (5 on top and 5 on bottom + 1 for border top and 1 for border bottom)  -->
+                                <!--
                                                                                 <sys:Double>-15</sys:Double>
                                                                             </Binding.Source>
                                                                         </Binding>
                                                                     </MultiBinding>
                                                                 </Border.Height>
-                                                                <!--  BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}"  -->
+                                -->
+                                <!--  BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}"  -->
+                                <!--
 
                                                                 <ContentPresenter
                                                                     HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
@@ -501,26 +556,36 @@
                                                             </Border>
                                                             <ControlTemplate.Triggers>
                                                                 <DataTrigger Binding="{Binding Converter={StaticResource ObjectToTypeStringConverter}}" Value="ClipboardViewSubItemNMore">
-                                                                    <!--
-                                                                        Make the "+N" indicator non-selectable. Despite this, the item can still be selected via click, so we will use a behavior on the content (see the ListViewItem template below).
-                                                                        Note that we cannot just set IsEnabled to False, because this will also disable the tooltips and we do not want that.
-                                                                    -->
+                                -->
+                                <!--
+                                    Make the "+N" indicator non-selectable. Despite this, the item can still be selected via click, so we will use a behavior on the content (see the ListViewItem template below).
+                                    Note that we cannot just set IsEnabled to False, because this will also disable the tooltips and we do not want that.
+                                -->
+                                <!--
                                                                     <Setter Property="Focusable" Value="False" />
                                                                 </DataTrigger>
                                                                 <MultiDataTrigger>
                                                                     <MultiDataTrigger.Conditions>
                                                                         <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}" Value="True" />
-                                                                        <!--  show the border only for real subitems, not for the "+N" indicator  -->
+                                -->
+                                <!--  show the border only for real subitems, not for the "+N" indicator  -->
+                                <!--
                                                                         <Condition Binding="{Binding Converter={StaticResource ObjectToTypeStringConverter}}" Value="ClipboardViewSubItem" />
                                                                     </MultiDataTrigger.Conditions>
-                                                                    <!--<Setter Property="Background" TargetName="Bd" Value="Blue"/>-->
+                                -->
+                                <!--<Setter Property="Background" TargetName="Bd" Value="Blue"/>-->
+                                <!--
                                                                     <Setter TargetName="Bd" Property="BorderBrush" Value="DarkGray" />
-                                                                    <!--<Setter Property="BorderThickness" TargetName="Bd" Value="2"/>-->
+                                -->
+                                <!--<Setter Property="BorderThickness" TargetName="Bd" Value="2"/>-->
+                                <!--
 
                                                                 </MultiDataTrigger>
                                                                 <MultiDataTrigger>
                                                                     <MultiDataTrigger.Conditions>
-                                                                        <!--<Condition Binding="{Binding Selector.IsSelectionActive, RelativeSource={RelativeSource Self}}" Value="False" />-->
+                                -->
+                                <!--<Condition Binding="{Binding Selector.IsSelectionActive, RelativeSource={RelativeSource Self}}" Value="False" />-->
+                                <!--
                                                                         <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True" />
                                                                         <Condition Binding="{Binding IsSelected}" Value="True" />
                                                                     </MultiDataTrigger.Conditions>
@@ -529,16 +594,20 @@
                                                                 </MultiDataTrigger>
                                                                 <MultiDataTrigger>
                                                                     <MultiDataTrigger.Conditions>
-                                                                        <!--<Condition Binding="{Binding Selector.IsSelectionActive, RelativeSource={RelativeSource Self}}" Value="True" />-->
+                                -->
+                                <!--<Condition Binding="{Binding Selector.IsSelectionActive, RelativeSource={RelativeSource Self}}" Value="True" />-->
+                                <!--
                                                                         <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True" />
                                                                         <Condition Binding="{Binding IsSelected}" Value="True" />
                                                                     </MultiDataTrigger.Conditions>
                                                                     <Setter TargetName="Bd" Property="Background" Value="{DynamicResource AccentBrush}" />
                                                                     <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource AccentLight3Brush}" />
                                                                 </MultiDataTrigger>
-                                                                <!--<Trigger Property="IsEnabled" Value="False">
+                                -->
+                                <!--<Trigger Property="IsEnabled" Value="False">
                                         <Setter Property="TextElement.Foreground" TargetName="Bd" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
                                     </Trigger>-->
+                                <!--
                                                             </ControlTemplate.Triggers>
                                                         </ControlTemplate>
                                                     </Setter.Value>
@@ -557,7 +626,9 @@
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding Converter={StaticResource ObjectToTypeStringConverter}}" Value="ClipboardViewItemGroup">
                                                         <Setter Property="Visibility" Value="Visible" />
-                                                        <!--  cast the ClipboardViewItem to ClipboardViewItemGroup  -->
+                                -->
+                                <!--  cast the ClipboardViewItem to ClipboardViewItemGroup  -->
+                                <!--
                                                         <Setter Property="ItemsSource" Value="{Binding Path=(bo:ClipboardViewItemGroup.PreviewItems)}" />
                                                     </DataTrigger>
                                                     <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListBoxItem}}, Path=IsSelected}" Value="True">
@@ -568,7 +639,9 @@
                                         </ListView.Style>
                                         <ListView.ItemsPanel>
                                             <ItemsPanelTemplate>
-                                                <!--<WrapPanel />-->
+                                -->
+                                <!--<WrapPanel />-->
+                                <!--
                                                 <UniformGrid Columns="2" />
                                             </ItemsPanelTemplate>
                                         </ListView.ItemsPanel>
@@ -630,7 +703,9 @@
                                                                             <ControlTemplate>
                                                                                 <Grid Width="{Binding Path=Height, RelativeSource={RelativeSource Self}}" Height="{Binding Path=ActualHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Border}}">
                                                                                     <i:Interaction.Behaviors>
-                                                                                        <!--  ClipboardViewSubItemNMore elements are still selectable with a click despite ListViewItem.Focusable=False, so we need a behavior to cancel the click events  -->
+                                -->
+                                <!--  ClipboardViewSubItemNMore elements are still selectable with a click despite ListViewItem.Focusable=False, so we need a behavior to cancel the click events  -->
+                                <!--
                                                                                         <localBeh:FrameworkElementDisableClickBehavior AncestorElement="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListViewItem}}" />
                                                                                     </i:Interaction.Behaviors>
                                                                                     <Grid.ToolTip>
@@ -691,7 +766,7 @@
                                             </Style>
                                         </Rectangle.Style>
                                     </Rectangle>
-                                </Grid>
+                                </Grid>-->
 
                             </Grid>
                         </Border>
