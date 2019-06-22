@@ -320,9 +320,17 @@
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding Converter={StaticResource ObjectToTypeStringConverter}}" Value="ClipboardViewItemSingle">
                                                     <Setter Property="Visibility" Value="Visible" />
+                                                    <!--  Set the content only when needed to avoid binding errors and unnecessary memory usage.  -->
                                                     <Setter Property="Content">
                                                         <Setter.Value>
                                                             <tile:SingleItem ClipboardViewItem="{Binding}">
+                                                                <!--
+                                                                    Set MinWidth to the tile.
+                                                                    If the preview is too narrow, when the buttons appear, the tile expands and this cause flickering.
+                                                                    This may lead to tiles moving to the next line on mouseover, which makes them impossible to be clicked.
+                                                                -->
+                                                                <tile:SingleItem.MinWidth>150</tile:SingleItem.MinWidth>
+                                                                <!--  If the setting DimNonFocusedItems is set to true, the tiles are dimmed when they are not highlighted or selected.  -->
                                                                 <tile:SingleItem.IsDimmed>
                                                                     <MultiBinding Converter="{StaticResource AndMultiValueConverter}">
                                                                         <Binding
@@ -337,8 +345,6 @@
                                                                     </MultiBinding>
                                                                 </tile:SingleItem.IsDimmed>
                                                             </tile:SingleItem>
-
-
                                                         </Setter.Value>
                                                     </Setter>
                                                 </DataTrigger>
