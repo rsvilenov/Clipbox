@@ -1,0 +1,72 @@
+﻿<UserControl
+    x:Class="Clipbox.Views.ClipboardViewItemTile.SingleItem"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:infWindows="clr-namespace:Clipbox.Infrastructure.UI.Windows;assembly=Clipbox.Infrastructure.UI"
+    xmlns:local="clr-namespace:Clipbox.Views.ClipboardViewItemTile"
+    xmlns:localConv="clr-namespace:Clipbox.Technical.Converters"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <localConv:ObjectTypeCompareConverter x:Key="ObjectTypeCompareConverter" />
+    </UserControl.Resources>
+    <Grid x:Name="mainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="40" />
+        </Grid.RowDefinitions>
+
+        <Image
+            Grid.Row="0"
+            Margin="10"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Source="{Binding ClipboardViewItem.PreviewItem.Image}"
+            Stretch="Uniform"
+            ToolTip="{Binding ClipboardViewItem.PreviewItem.Description}" />
+
+        <!--  dim the item by placing a semi-transparent black rectangle on top of it  -->
+        <Rectangle
+            Grid.Row="0"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Fill="Black"
+            Opacity="0.3"
+            Visibility="{Binding IsDimmed, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+        <Label
+            Grid.Row="1"
+            HorizontalContentAlignment="Center"
+            VerticalContentAlignment="Center"
+            FontSize="12"
+            Foreground="White"
+            Tag="{x:Static infWindows:PerMonitorDpiWindow.SCALE_ELEMENT_TAG}">
+            <Label.Content>
+                <!--  TODO: calculate the MaxWidth dynamically  -->
+                <TextBlock
+                    MaxWidth="200"
+                    Text="{Binding ClipboardViewItem.PreviewItem.Text}"
+                    TextBlock.TextTrimming="CharacterEllipsis"
+                    ToolTipService.Placement="Center">
+                    <TextBlock.ToolTip>
+                        <!--  the tooltip won't scale with the textblock, probably because it is not part of its visual tree  -->
+                        <ToolTip>
+                            <ToolTip.Content>
+                                <TextBlock FontSize="12" Text="{Binding ClipboardViewItem.PreviewItem.Text}">
+                                    <!--<TextBlock.LayoutTransform>
+                                                                                                <ScaleTransform CenterX="0" CenterY="0" ScaleX="{Binding Path=ScaleFactor, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=infWindows:PerMonitorDpiWindow}}" ScaleY="{Binding}" />
+                                                                                            </TextBlock.LayoutTransform>-->
+                                </TextBlock>
+                            </ToolTip.Content>
+                        </ToolTip>
+                    </TextBlock.ToolTip>
+                </TextBlock>
+            </Label.Content>
+        </Label>
+
+    </Grid>
+</UserControl>

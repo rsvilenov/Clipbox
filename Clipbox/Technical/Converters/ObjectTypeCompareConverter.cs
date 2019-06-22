@@ -12,11 +12,8 @@ namespace Clipbox.Technical.Converters
             {
                 throw new ArgumentException($"{nameof(parameter)} should be of type System.Type");
             }
-            if (value.GetType() == (Type)parameter)
-            {
 
-            }
-            return (value.GetType() == (Type)parameter).ToString();
+            return value.GetType() == (Type)parameter;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

@@ -11,7 +11,7 @@ using System.Xml.Serialization;
 namespace Clipbox
 {
     [Serializable]
-    internal class FailureInfo
+    public class FailureInfo
     {
         public long WorkingSet { get; set; }
 

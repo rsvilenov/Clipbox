@@ -123,6 +123,8 @@ namespace Clipbox.Infrastructure.UI.Utils
                     if (matchCondition(uiChild))
                     {
                         visualChildlCollection.Add(uiChild);
+                        // if we set this flag, every child which also meets the condition will also be included in the return collection.
+                        // if not, only the top element matching the condition will be returned.
                         if (collectMatchChildren)
                         {
                             GetVisualChildCollection(uiChild, visualChildlCollection, matchCondition, true);

@@ -22,21 +22,19 @@ namespace Clipbox.ViewModels.BindableObjects
                 throw new ArgumentNullException("item");
             }
 
-            if (item.ImageData == null)
-            {
-                throw new ArgumentNullException("item.ImageData");
-            }
-
             var cpi = new ClipboardPreviewItem
             {
                 Text = item.Text,
                 Description = item.Description
             };
 
-            using (var ms = new MemoryStream(item.ImageData))
-            using (Bitmap bmp = new Bitmap(ms))
+            if (item.ImageData != null)
             {
-                cpi.Image = bmp.ToBitmapSource();
+                using (var ms = new MemoryStream(item.ImageData))
+                using (Bitmap bmp = new Bitmap(ms))
+                {
+                    cpi.Image = bmp.ToBitmapSource();
+                }
             }
 
             return cpi;
@@ -55,22 +53,25 @@ namespace Clipbox.ViewModels.BindableObjects
                 throw new ArgumentNullException("data");
             }
 
-            if (data.Preview == null)
-            {
-                throw new ArgumentNullException("data.PreviewData");
-            }
-
             var instance = new ClipboardPreviewItem();
             instance.Description = data.Path;
             instance.Text = data.Annotation;
-            if (data.Preview != null && data.Preview is Bitmap)
+            if (data.Preview != null)
             {
-                instance.Image = (data.Preview as Bitmap).ToBitmapSource();
-                data.Preview.Dispose();
+                if (data.Preview is Bitmap)
+                {
+                    instance.Image = (data.Preview as Bitmap).ToBitmapSource();
+                    data.Preview.Dispose();
+                }
+                else
+                {
+                    throw new FormatException("The preview image, if present, should be Bitmap.");
+                }
             }
             else
             {
-                // TODO: default file icon
+                instance.Description += " (no preview)";
+                instance.Image = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/warn_triangle.png"));
             }
 
             return instance;
@@ -89,28 +90,31 @@ namespace Clipbox.ViewModels.BindableObjects
                 throw new ArgumentNullException("data");
             }
 
-            if (data.Preview == null)
-            {
-                throw new ArgumentNullException("data.PreviewData");
-            }
-
             var instance = new ClipboardPreviewItem();
             instance.Text = data.Annotation;
 
-            if (data.Preview is Bitmap)
+            if (data.Preview != null)
             {
-                instance.Image = (data.Preview as Bitmap).ToBitmapSource();
-            }
-            else if (data.Preview is Metafile)
-            {
-                instance.Image = (data.Preview as Metafile).ToBitmapSource();
+                if (data.Preview is Bitmap)
+                {
+                    instance.Image = (data.Preview as Bitmap).ToBitmapSource();
+                }
+                else if (data.Preview is Metafile)
+                {
+                    instance.Image = (data.Preview as Metafile).ToBitmapSource();
+                }
+                else
+                {
+                    throw new FormatException("Image, if present, should be either Bitmap or Metafile");
+                }
+
+                data.Preview.Dispose();
             }
             else
             {
-                throw new FormatException("Image should be either Bitmap or Metafile");
+                instance.Description += " (no preview)";
+                instance.Image = new BitmapImage(new Uri("pack://application:,,,/Resources/Images/warn_triangle.png"));
             }
-
-            data.Preview.Dispose();
             
             return instance;
         }

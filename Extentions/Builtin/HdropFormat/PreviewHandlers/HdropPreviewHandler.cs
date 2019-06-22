@@ -67,8 +67,50 @@ namespace Clipbox.Extentions.BuiltIn.HdropFormat
                 {
                     break;
                 }
+                
+                Image preview = null;
 
-                Bitmap thumbnail = null;
+                Bitmap thumbnail = GetFileThumbnail(previewWidth, previewHeight, path);
+
+                if (thumbnail != null)
+                {
+                    if (thumbnail.Width == previewWidth && thumbnail.Height == previewHeight)
+                    {
+                        preview = thumbnail;
+                    }
+                    else if (thumbnail.Width > previewWidth && thumbnail.Height > previewHeight)
+                    {
+                        using (thumbnail)
+                            preview = thumbnail.GetScaled(previewWidth, previewHeight);
+                    }
+                    else
+                    {
+                        using (thumbnail)
+                            preview = thumbnail.GetCenteredOverTransparentCanvas(previewWidth, previewHeight);
+                    }
+                }
+
+
+                previewList.Add(new FilePreviewData
+                {
+                    Path = path,
+                    Annotation = Path.GetFileName(path),
+                    Preview = preview
+                });
+
+            }
+
+
+            return previewList;
+
+        }
+
+        private Bitmap GetFileThumbnail(int previewWidth, int previewHeight, string path)
+        {
+            Bitmap thumbnail = null;
+
+            try
+            {
                 if (IsSmallIconFiletype(path))
                 {
                     thumbnail = WindowsThumbnailProvider.GetThumbnail(path, 64, 64, ThumbnailOptions.IconOnly);
@@ -84,38 +126,10 @@ namespace Clipbox.Extentions.BuiltIn.HdropFormat
                         thumbnail = WindowsThumbnailProvider.GetThumbnail(path, previewWidth, previewHeight, ThumbnailOptions.IconOnly);
                     }
                 }
-
-
-                Image preview = null;
-
-                if (thumbnail.Width == previewWidth && thumbnail.Height == previewHeight)
-                {
-                    preview = thumbnail;
-                }
-                else if (thumbnail.Width > previewWidth && thumbnail.Height > previewHeight)
-                {
-                    using (thumbnail)
-                        preview = thumbnail.GetScaled(previewWidth, previewHeight);
-                }
-                else
-                {
-                    using (thumbnail)
-                        preview = thumbnail.GetCenteredOverTransparentCanvas(previewWidth, previewHeight);
-                }
-
-
-                previewList.Add(new FilePreviewData
-                {
-                    Path = path,
-                    Annotation = Path.GetFileName(path),
-                    Preview = preview
-                });
-                
             }
+            catch (FileNotFoundException) { }
 
-
-            return previewList;
-
+            return thumbnail;
         }
     }
 }

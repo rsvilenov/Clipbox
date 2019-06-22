@@ -259,148 +259,6 @@
                                         IsGroupItem="{Binding Path=DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListViewItem}, Converter={StaticResource ObjectTypeCompareConverter}, ConverterParameter={x:Type localBindableObjects:ClipboardViewItemGroup}}"
                                         Tag="{x:Static infWindows:PerMonitorDpiWindow.SCALE_ELEMENT_TAG}" />
 
-                                    <ItemsControl
-                                        Grid.Column="0"
-                                        MaxHeight="30"
-                                        ItemsSource="{Binding ContentClasses}"
-                                        Tag="{x:Static infWindows:PerMonitorDpiWindow.SCALE_ELEMENT_TAG}"
-                                        Visibility="Collapsed">
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <StackPanel Orientation="Horizontal" />
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <Grid>
-                                                    <ContentControl
-                                                        MaxHeight="17"
-                                                        Margin="5,0,0,0"
-                                                        Foreground="#e4e4e6"
-                                                        Template="{DynamicResource ClassImageIcon}"
-                                                        ToolTip="Image">
-                                                        <ContentControl.Style>
-                                                            <Style TargetType="ContentControl">
-                                                                <Setter Property="Visibility" Value="Collapsed" />
-                                                                <Style.Triggers>
-                                                                    <DataTrigger Binding="{Binding}" Value="{x:Static infEnums:ClipboardContentClass.Image}">
-                                                                        <Setter Property="Visibility" Value="Visible" />
-                                                                    </DataTrigger>
-                                                                </Style.Triggers>
-                                                            </Style>
-                                                        </ContentControl.Style>
-                                                    </ContentControl>
-
-                                                    <ContentControl
-                                                        MaxHeight="17"
-                                                        Margin="5,0,0,0"
-                                                        Foreground="#e4e4e6"
-                                                        Template="{DynamicResource ClassFileIcon}"
-                                                        ToolTip="File/Folder">
-                                                        <ContentControl.Style>
-                                                            <Style TargetType="ContentControl">
-                                                                <Setter Property="Visibility" Value="Collapsed" />
-                                                                <Style.Triggers>
-                                                                    <MultiDataTrigger>
-                                                                        <MultiDataTrigger.Conditions>
-                                                                            <Condition Binding="{Binding}" Value="{x:Static infEnums:ClipboardContentClass.File}" />
-                                                                            <Condition Binding="{Binding Path=DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListViewItem}, Converter={StaticResource ObjectToTypeStringConverter}}" Value="ClipboardViewItemSingle" />
-                                                                        </MultiDataTrigger.Conditions>
-                                                                        <Setter Property="Visibility" Value="Visible" />
-                                                                    </MultiDataTrigger>
-                                                                </Style.Triggers>
-                                                            </Style>
-                                                        </ContentControl.Style>
-                                                    </ContentControl>
-
-                                                    <ContentControl
-                                                        MaxHeight="20"
-                                                        Margin="5,0,0,0"
-                                                        Foreground="#e4e4e6"
-                                                        Template="{DynamicResource ClassFileCollectionIcon}"
-                                                        ToolTip="File/Folder collection">
-                                                        <ContentControl.Style>
-                                                            <Style TargetType="ContentControl">
-                                                                <Setter Property="Visibility" Value="Collapsed" />
-                                                                <Style.Triggers>
-                                                                    <MultiDataTrigger>
-                                                                        <MultiDataTrigger.Conditions>
-                                                                            <Condition Binding="{Binding}" Value="{x:Static infEnums:ClipboardContentClass.File}" />
-                                                                            <Condition Binding="{Binding Path=DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListViewItem}, Converter={StaticResource ObjectToTypeStringConverter}}" Value="ClipboardViewItemGroup" />
-                                                                        </MultiDataTrigger.Conditions>
-                                                                        <Setter Property="Visibility" Value="Visible" />
-                                                                    </MultiDataTrigger>
-                                                                </Style.Triggers>
-                                                            </Style>
-                                                        </ContentControl.Style>
-                                                    </ContentControl>
-
-                                                    <ContentControl
-                                                        MaxHeight="16"
-                                                        Margin="5,0,0,0"
-                                                        Foreground="#e4e4e6"
-                                                        Template="{DynamicResource ClassTextIcon}"
-                                                        ToolTip="Text">
-                                                        <ContentControl.Style>
-                                                            <Style TargetType="ContentControl">
-                                                                <Setter Property="Visibility" Value="Collapsed" />
-                                                                <Style.Triggers>
-                                                                    <DataTrigger Binding="{Binding}" Value="{x:Static infEnums:ClipboardContentClass.Text}">
-                                                                        <Setter Property="Visibility" Value="Visible" />
-                                                                    </DataTrigger>
-                                                                </Style.Triggers>
-                                                            </Style>
-                                                        </ContentControl.Style>
-                                                    </ContentControl>
-
-                                                    <ContentControl
-                                                        MaxHeight="17"
-                                                        Margin="5,0,0,0"
-                                                        Foreground="#e4e4e6"
-                                                        Template="{DynamicResource ClassGeneralContentIcon}"
-                                                        ToolTip="Content">
-                                                        <ContentControl.Style>
-                                                            <Style TargetType="ContentControl">
-                                                                <Setter Property="Visibility" Value="Collapsed" />
-                                                                <Style.Triggers>
-                                                                    <MultiDataTrigger>
-                                                                        <MultiDataTrigger.Conditions>
-                                                                            <Condition Binding="{Binding}" Value="{x:Static infEnums:ClipboardContentClass.GeneralContent}" />
-                                                                            <Condition Binding="{Binding Path=DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListViewItem}, Converter={StaticResource ObjectToTypeStringConverter}}" Value="ClipboardViewItemSingle" />
-                                                                        </MultiDataTrigger.Conditions>
-                                                                        <Setter Property="Visibility" Value="Visible" />
-                                                                    </MultiDataTrigger>
-                                                                </Style.Triggers>
-                                                            </Style>
-                                                        </ContentControl.Style>
-                                                    </ContentControl>
-
-                                                    <ContentControl
-                                                        MaxHeight="20"
-                                                        Margin="5,0,0,0"
-                                                        Foreground="#e4e4e6"
-                                                        Template="{DynamicResource ClassGeneralContentCollectionIcon}"
-                                                        ToolTip="Content collection">
-                                                        <ContentControl.Style>
-                                                            <Style TargetType="ContentControl">
-                                                                <Setter Property="Visibility" Value="Collapsed" />
-                                                                <Style.Triggers>
-                                                                    <MultiDataTrigger>
-                                                                        <MultiDataTrigger.Conditions>
-                                                                            <Condition Binding="{Binding}" Value="{x:Static infEnums:ClipboardContentClass.GeneralContent}" />
-                                                                            <Condition Binding="{Binding Path=DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListViewItem}, Converter={StaticResource ObjectToTypeStringConverter}}" Value="ClipboardViewItemGroup" />
-                                                                        </MultiDataTrigger.Conditions>
-                                                                        <Setter Property="Visibility" Value="Visible" />
-                                                                    </MultiDataTrigger>
-                                                                </Style.Triggers>
-                                                            </Style>
-                                                        </ContentControl.Style>
-                                                    </ContentControl>
-                                                </Grid>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-
                                     <!--<Rectangle HorizontalAlignment="Center" VerticalAlignment="Center" Width="1" Height="15" Fill="#e4e4e6" Margin="5,0,0,0" />
 
 
@@ -464,76 +322,23 @@
                                                     <Setter Property="Visibility" Value="Visible" />
                                                     <Setter Property="Content">
                                                         <Setter.Value>
-                                                            <Grid>
-                                                                <Grid.RowDefinitions>
-                                                                    <RowDefinition Height="Auto" />
-                                                                    <RowDefinition Height="40" />
-                                                                </Grid.RowDefinitions>
-
-                                                                <!--  In order to access the PreviewItem property, we need to cast (in XAML) the ClipboardViewItem to ClipboardViewItemSingle  -->
-                                                                <Image
-                                                                    Grid.Row="0"
-                                                                    Margin="10"
-                                                                    HorizontalAlignment="Stretch"
-                                                                    VerticalAlignment="Stretch"
-                                                                    Source="{Binding Path=(bo:ClipboardViewItemSingle.PreviewItem).(bo:ClipboardPreviewItem.Image)}"
-                                                                    Stretch="Uniform"
-                                                                    ToolTip="{Binding PreviewItem.Description}" />
-
-                                                                <Rectangle
-                                                                    Grid.Row="0"
-                                                                    HorizontalAlignment="Stretch"
-                                                                    VerticalAlignment="Stretch"
-                                                                    Fill="Black"
-                                                                    Opacity="0.3"
-                                                                    Visibility="{Binding RelativeSource={RelativeSource Self}, Path=IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                                                    <Rectangle.IsEnabled>
-                                                                        <MultiBinding Converter="{StaticResource AndMultiValueConverter}">
-                                                                            <Binding
-                                                                                Converter="{StaticResource InverseBooleanConverter}"
-                                                                                Path="IsManipulationEnabled"
-                                                                                RelativeSource="{RelativeSource AncestorType={x:Type Border}}" />
-                                                                            <Binding Path="DimNonFocusedItems" RelativeSource="{RelativeSource AncestorType={x:Type local:ClipboardViewControl}}" />
-                                                                            <Binding
-                                                                                Converter="{StaticResource InverseBooleanConverter}"
-                                                                                Path="DataContext.IsSelected"
-                                                                                RelativeSource="{RelativeSource AncestorType={x:Type ListViewItem}}" />
-                                                                        </MultiBinding>
-                                                                    </Rectangle.IsEnabled>
-                                                                </Rectangle>
+                                                            <tile:SingleItem ClipboardViewItem="{Binding}">
+                                                                <tile:SingleItem.IsDimmed>
+                                                                    <MultiBinding Converter="{StaticResource AndMultiValueConverter}">
+                                                                        <Binding
+                                                                            Converter="{StaticResource InverseBooleanConverter}"
+                                                                            Path="IsManipulationEnabled"
+                                                                            RelativeSource="{RelativeSource AncestorType={x:Type Border}}" />
+                                                                        <Binding Path="DimNonFocusedItems" RelativeSource="{RelativeSource AncestorType={x:Type local:ClipboardViewControl}}" />
+                                                                        <Binding
+                                                                            Converter="{StaticResource InverseBooleanConverter}"
+                                                                            Path="DataContext.IsSelected"
+                                                                            RelativeSource="{RelativeSource AncestorType={x:Type ListViewItem}}" />
+                                                                    </MultiBinding>
+                                                                </tile:SingleItem.IsDimmed>
+                                                            </tile:SingleItem>
 
 
-                                                                <Label
-                                                                    Grid.Row="1"
-                                                                    HorizontalContentAlignment="Center"
-                                                                    VerticalContentAlignment="Center"
-                                                                    FontSize="12"
-                                                                    Foreground="White"
-                                                                    Tag="{x:Static infWindows:PerMonitorDpiWindow.SCALE_ELEMENT_TAG}">
-                                                                    <Label.Content>
-                                                                        <!--  TODO: calculate the MaxWidth dynamically  -->
-                                                                        <TextBlock
-                                                                            MaxWidth="200"
-                                                                            Text="{Binding PreviewItem.Text}"
-                                                                            TextBlock.TextTrimming="CharacterEllipsis"
-                                                                            ToolTipService.Placement="Center">
-                                                                            <TextBlock.ToolTip>
-                                                                                <!--  the tooltip won't scale with the textblock, probably because it is not part of its visual tree  -->
-                                                                                <ToolTip>
-                                                                                    <ToolTip.Content>
-                                                                                        <TextBlock FontSize="12" Text="{Binding PreviewItem.Text}">
-                                                                                            <!--<TextBlock.LayoutTransform>
-                                                                                                <ScaleTransform CenterX="0" CenterY="0" ScaleX="{Binding Path=ScaleFactor, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=infWindows:PerMonitorDpiWindow}}" ScaleY="{Binding}" />
-                                                                                            </TextBlock.LayoutTransform>-->
-                                                                                        </TextBlock>
-                                                                                    </ToolTip.Content>
-                                                                                </ToolTip>
-                                                                            </TextBlock.ToolTip>
-                                                                        </TextBlock>
-                                                                    </Label.Content>
-                                                                </Label>
-
-                                                            </Grid>
                                                         </Setter.Value>
                                                     </Setter>
                                                 </DataTrigger>

@@ -123,6 +123,9 @@
     <Compile Include="Views\ClipboardViewItemTile\ItemTypeIconBand.xaml.cs">
       <DependentUpon>ItemTypeIconBand.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ClipboardViewItemTile\SingleItem.xaml.cs">
+      <DependentUpon>SingleItem.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\FilterBand.xaml.cs">
       <DependentUpon>FilterBand.xaml</DependentUpon>
     </Compile>
@@ -164,6 +167,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ClipboardViewItemTile\ItemTypeIconBand.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ClipboardViewItemTile\SingleItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -297,7 +304,9 @@
   <ItemGroup>
     <Resource Include="Resources\Images\OpenMainWindow.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\Images\warn_triangle.png" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Views\ClipboardViewItemTile\ReadMe.txt" />
   </ItemGroup>
