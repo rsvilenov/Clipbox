@@ -37,12 +37,7 @@
             Height="15"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Center"
-            Style="{DynamicResource BtnArrowUp}"
-            Tag="{Binding ElementName=subItemsListView}">
-            <i:Interaction.Behaviors>
-                <localBeh:ListViewScrollButtonBehavior IsScrollUpButton="True" />
-            </i:Interaction.Behaviors>
-        </Button>
+            Style="{DynamicResource BtnArrowUp}" />
         <Button
             Name="BtnScrollDownSubItem"
             Grid.Row="2"
@@ -50,12 +45,7 @@
             Height="15"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Center"
-            Style="{DynamicResource BtnArrowDown}"
-            Tag="{Binding ElementName=subItemsListView}">
-            <i:Interaction.Behaviors>
-                <localBeh:ListViewScrollButtonBehavior IsScrollUpButton="False" />
-            </i:Interaction.Behaviors>
-        </Button>
+            Style="{DynamicResource BtnArrowDown}" />
 
         <Label
             Grid.Row="3"
@@ -115,6 +105,10 @@
             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
             ScrollViewer.VerticalScrollBarVisibility="Hidden"
             SelectionChanged="SubItemsListView_SelectionChanged">
+            <i:Interaction.Behaviors>
+                <localBeh:ListViewScrollButtonBehavior IsScrollUpButton="True" ScrollButton="{Binding ElementName=BtnScrollUpSubItem}" />
+                <localBeh:ListViewScrollButtonBehavior IsScrollUpButton="False" ScrollButton="{Binding ElementName=BtnScrollDownSubItem}" />
+            </i:Interaction.Behaviors>
             <ListView.ItemContainerStyle>
                 <Style TargetType="{x:Type ListViewItem}">
                     <Setter Property="Background" Value="Transparent" />

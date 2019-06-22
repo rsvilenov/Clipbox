@@ -123,29 +123,25 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <Button
+            Name="scrollBtnUp"
             Grid.Row="0"
             Height="10"
             VerticalAlignment="Center"
-            Style="{DynamicResource BtnArrowUp}"
-            Tag="{Binding ElementName=scrollableContent}">
-            <i:Interaction.Behaviors>
-                <localBeh:ScrollViewerContentScrollButtonsBehavior IsScrollUpButton="True" />
-            </i:Interaction.Behaviors>
-        </Button>
+            Style="{DynamicResource BtnArrowUp}" />
         <Button
+            Name="scrollBtnDown"
             Grid.Row="2"
             Height="10"
             VerticalAlignment="Center"
-            Style="{DynamicResource BtnArrowDown}"
-            Tag="{Binding ElementName=scrollableContent}">
-            <i:Interaction.Behaviors>
-                <localBeh:ScrollViewerContentScrollButtonsBehavior IsScrollUpButton="False" />
-            </i:Interaction.Behaviors>
-        </Button>
+            Style="{DynamicResource BtnArrowDown}" />
         <ScrollViewer
             Grid.Row="1"
             HorizontalScrollBarVisibility="Disabled"
             VerticalScrollBarVisibility="Hidden">
+            <i:Interaction.Behaviors>
+                <localBeh:ScrollViewerScrollButtonsBehavior IsScrollUpButton="True" ScrollButton="{Binding ElementName=scrollBtnUp}" />
+                <localBeh:ScrollViewerScrollButtonsBehavior IsScrollUpButton="False" ScrollButton="{Binding ElementName=scrollBtnDown}" />
+            </i:Interaction.Behaviors>
             <StackPanel
                 x:Name="scrollableContent"
                 HorizontalAlignment="Stretch"

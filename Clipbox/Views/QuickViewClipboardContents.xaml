@@ -82,12 +82,7 @@
                 Height="25"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center"
-                Style="{DynamicResource BtnArrowUp}"
-                Tag="{Binding ElementName=MainListView}">
-                <i:Interaction.Behaviors>
-                    <localBeh:ListViewScrollButtonBehavior IsScrollUpButton="True" />
-                </i:Interaction.Behaviors>
-            </Button>
+                Style="{DynamicResource BtnArrowUp}" />
             <Button
                 Name="BtnScrollDown"
                 Grid.Row="2"
@@ -95,12 +90,7 @@
                 Height="25"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center"
-                Style="{DynamicResource BtnArrowDown}"
-                Tag="{Binding ElementName=MainListView}">
-                <i:Interaction.Behaviors>
-                    <localBeh:ListViewScrollButtonBehavior IsScrollUpButton="False" />
-                </i:Interaction.Behaviors>
-            </Button>
+                Style="{DynamicResource BtnArrowDown}" />
 
             <!--
                 MaxHeight="{Binding RelativeSource={RelativeSource FindAncestor,
@@ -118,6 +108,10 @@
                 ItemsSource="{Binding ClipboardViewItems}"
                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
                 ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                <i:Interaction.Behaviors>
+                    <localBeh:ListViewScrollButtonBehavior IsScrollUpButton="True" ScrollButton="{Binding ElementName=BtnScrollUp}" />
+                    <localBeh:ListViewScrollButtonBehavior IsScrollUpButton="False" ScrollButton="{Binding ElementName=BtnScrollDown}" />
+                </i:Interaction.Behaviors>
 
                 <!--  Remove the default highlighting on mouse over  -->
                 <ListView.ItemContainerStyle>
