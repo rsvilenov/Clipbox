@@ -13,6 +13,13 @@ namespace Clipbox
     [Serializable]
     public class FailureInfo
     {
+        // If some member of the exception implements IDictionary,
+        // the exception cannot be serialized to xml.
+        [NonSerialized]
+        private Exception _exception;
+
+        public string ExceptionStr { get; set; }
+
         public long WorkingSet { get; set; }
 
         public int CpuCount { get; set; }
@@ -20,9 +27,7 @@ namespace Clipbox
         public bool Is64BitOs { get; set; }
 
         public double OsVersion { get; set; }
-
-        public Exception Exception { get; set; }
-
+        
         public object ExceptionObject { get; set; }
 
         public string ExceptionObjectType { get; set; }
@@ -47,7 +52,8 @@ namespace Clipbox
             ExceptionObjectType = exceptionObject.GetType().ToString();
             if (exceptionObject is Exception)
             {
-                Exception = exceptionObject as Exception;
+                _exception = exceptionObject as Exception;
+                ExceptionStr = _exception.ToString();
             }
         }
 
