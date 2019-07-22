@@ -37,11 +37,12 @@ namespace Clipbox.Views.ClipboardViewItemTile
         }
 
         public static readonly DependencyProperty ClipboardViewItemProperty =
-            DependencyProperty.Register("ClipboardViewItem", typeof(ClipboardViewItemSingle), typeof(SingleItem), new PropertyMetadata(null));
+            DependencyProperty.Register("ClipboardViewItem", typeof(ClipboardViewItemSingle), typeof(SingleItem), new PropertyMetadata(null, ClipboardViewItem_ValueChanged));
 
-
-
-
+        private static void ClipboardViewItem_ValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            
+        }
 
         public bool IsDimmed
         {

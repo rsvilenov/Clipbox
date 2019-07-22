@@ -62,10 +62,13 @@ namespace Clipbox.ViewModels
 
         private CancellableTaskManager _cancellableTaskManager;
 
-        public MainClipboardViewViewModel(IClipboardManager clipboardManager, IClipboardFormatPreviewExtentionContainer previewsContainer, ISettingsService settingsService)
+        public MainClipboardViewViewModel(IClipboardManager clipboardManager,
+            IClipboardFormatPreviewExtentionContainer previewsContainer,
+            ISettingsService settingsService)
         {
             _clipboardManager = clipboardManager;
             _settingsService = settingsService;
+            _previewsContainer = previewsContainer;
 
             int maxPreviewItemsInGroupItem = _settingsService.GetSetting<int>(SettingsKeys.MaxPreviewItemsInGroupItem);
             _clipboardViewItemFactory = new ClipboardViewItemFactory(previewsContainer, maxPreviewItemsInGroupItem);
@@ -76,15 +79,13 @@ namespace Clipbox.ViewModels
         public void LoadViewItem(string clipboardItemId)
         {
             LazyLoadPreviewDimentions();
-            LazyLoadClipboardViewItemFactory();
 
             _cancellableTaskManager.ScheduleTask(clipboardItemId, new Action<string>((taskId) =>
             {
                 var restoredClipboardItem = _clipboardManager.GetClipboardItem(clipboardItemId, restoreShrinked: true);
                 var wrapper = _clipboardViewItemWrappers.First(w => w.Id == clipboardItemId);
                 wrapper.ViewItem = _previewDataManager.GetClipboardViewItem(restoredClipboardItem, _previewItemWidth, _previewItemHeight); //_clipboardViewItemFactory.CreateFromClipboardItem(restoredClipboardItem, _previewItemWidth, _previewItemHeight);
-
-
+                
 
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
@@ -104,14 +105,6 @@ namespace Clipbox.ViewModels
             var wrapper = _clipboardViewItemWrappers.First(w => w.Id == clipboardItemId);
             wrapper.ViewItem = null;
             wrapper.IsViewItemLoaded = false;
-        }
-
-        private void LazyLoadClipboardViewItemFactory()
-        {
-            if (_clipboardViewItemFactory == null)
-            {
-                _clipboardViewItemFactory = new ClipboardViewItemFactory(_previewsContainer);
-            }
         }
 
         private void LazyLoadPreviewDimentions()
