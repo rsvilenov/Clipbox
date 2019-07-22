@@ -4,6 +4,7 @@ using Clipbox.Infrastructure.UI.Utils;
 using Clipbox.Services.Interfaces;
 using Clipbox.ViewModels;
 using Clipbox.ViewModels.BindableObjects;
+using Clipbox.ViewModels.PreviewRelatedObjects;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -67,6 +68,7 @@ namespace Clipbox.Views
         {
             Dispatcher.Invoke(() =>
             {
+                
                 // set both to Height for now (as Height is the important dimention, Width is determined automatically)
                 e.PreviewWidth = ClipboardViewItemHeight;
                 e.PreviewHeight = ClipboardViewItemHeight;
@@ -256,7 +258,12 @@ namespace Clipbox.Views
                         && !lviVm.IsViewItemLoaded)
                     {
                         // load the full view item
-                        _viewModel.LoadViewItem(lviVm.Id);
+                        _viewModel.LoadViewItem(lviVm.Id, new PreviewDimensionSuggestedInfo
+                        {
+                            MonitorDimensions = MonitorDimensions,
+                            SuggestedPreviewHeight = ClipboardViewItemHeight,
+                            SuggestedPreviewWidth = ClipboardViewItemHeight
+                        });
                     }
                 }
                 else

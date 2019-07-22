@@ -8,8 +8,8 @@
     /// (other machines will be able to know them before generating the preview),
     /// so they may stay here after all.
     /// </summary>
-    public interface IHavePreviewDimentions
+    public interface IHavePreviewDimensionInfo
     {
-        IPreviewDimentions PreviewDimentions { get; }
+        PreviewDimensionInfo PreviewDimensionInfo { get; }
     }
 }

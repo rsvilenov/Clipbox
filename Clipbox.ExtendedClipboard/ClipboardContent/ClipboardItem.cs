@@ -5,11 +5,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Clipbox.Core.ClipboardContent;
 
 namespace Clipbox.ExtendedClipboard.ClipboardContent
 {
     [Serializable]
-    internal class ClipboardItem : IClipboardItem, ICloudSynchronizable, IHavePreviewDimentions
+    internal class ClipboardItem : IClipboardItem, ICloudSynchronizable
     {
         ~ClipboardItem()
         {
@@ -37,6 +38,8 @@ namespace Clipbox.ExtendedClipboard.ClipboardContent
         public static List<ObjectInfo> LivingObjects { get; set; } = new List<ObjectInfo>();
 
 
+        [NonSerialized]
+        private IList<IClipboardDataObject> _clipboardDataObjects;
         /// <summary>
         /// We want to preserve the order of the items and make it known to the users of the code...
         /// IEnumerable<T> is not sufficiant to ensure the consumers that the order will be the same.
@@ -44,7 +47,11 @@ namespace Clipbox.ExtendedClipboard.ClipboardContent
         /// since IList.Add() makes it theoretically possible to add other implementations of IClipboardDataObject
         /// to the collection, so that may introduce the need for the users to call .Cast<ClipboardDataObject>()...
         /// </summary>
-        public IList<IClipboardDataObject> ClipboardDataObjects { get; internal set; }
+        public IList<IClipboardDataObject> ClipboardDataObjects
+        {
+            get { return _clipboardDataObjects; }
+            set { _clipboardDataObjects = value; }
+        }
 
         public IWindowInfo SourceWindowInfo { get; }
 
@@ -103,6 +110,12 @@ namespace Clipbox.ExtendedClipboard.ClipboardContent
         
         public bool IsTemporary { get; internal set; }
 
-        public IPreviewDimentions PreviewDimentions { get; internal set; }
+        [NonSerialized]
+        private PreviewDimensionInfo _previewDimensionInfo;
+        public PreviewDimensionInfo PreviewDimensionInfo
+        {
+            get { return _previewDimensionInfo; }
+            set { _previewDimensionInfo = value; }
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Clipbox.Core.ClipboardContent.Interfaces;
+﻿using Clipbox.Core.ClipboardContent;
+using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
 using Clipbox.Infrastructure.Threading;
@@ -6,6 +7,7 @@ using Clipbox.Infrastructure.UI;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.ViewModels.BindableObjects;
+using Clipbox.ViewModels.PreviewRelatedObjects;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -76,6 +78,78 @@ namespace Clipbox.ViewModels
             _cancellableTaskManager = new CancellableTaskManager();
         }
 
+        public void LoadViewItem(string clipboardItemId, PreviewDimensionSuggestedInfo previewDimensionSuggestedInfo)
+        {
+            _cancellableTaskManager.ScheduleTask(clipboardItemId, new Action<string>((taskId) =>
+            {
+                var restoredClipboardItem = _clipboardManager.GetClipboardItem(clipboardItemId, restoreShrinked: true);
+                var wrapper = _clipboardViewItemWrappers.First(w => w.Id == clipboardItemId);
+                wrapper.ViewItem = _previewDataManager.GetClipboardViewItem(restoredClipboardItem,
+                    previewDimensionSuggestedInfo.SuggestedPreviewWidth,
+                    previewDimensionSuggestedInfo.SuggestedPreviewHeight); //_clipboardViewItemFactory.CreateFromClipboardItem(restoredClipboardItem, _previewItemWidth, _previewItemHeight);
+
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+                GC.Collect();
+
+                wrapper.IsViewItemLoaded = true;
+                
+                if (wrapper.ClipboardItem.PreviewDimensionInfo == null)
+                {
+                    StorePreviewDimensionsInfo(previewDimensionSuggestedInfo, wrapper);
+                }
+            }));
+        }
+
+        private void StorePreviewDimensionsInfo(PreviewDimensionSuggestedInfo previewDimensionSuggestedInfo, ClipboardViewItemWrapper wrapper)
+        {
+            PreviewDimensionInfo pdi = null;
+
+            if (wrapper.ViewItem is ClipboardViewItemGroup)
+            {
+                // get all but the NMore items
+                var actualViewItemsInGroup = ((ClipboardViewItemGroup)wrapper.ViewItem).PreviewItems.Where(vi => vi is ClipboardViewSubItem).Cast<ClipboardViewSubItem>();
+
+                pdi = new PreviewDimensionInfo
+                {
+                    IsViewItemGroup = true,
+                    PreviewDimentions = actualViewItemsInGroup.Select(subItem => new PreviewDimensions
+                    {
+                        PreviewHeight = subItem.PreviewItem?.Image?.PixelHeight ?? 0,
+                        PreviewWidth = subItem.PreviewItem?.Image?.PixelWidth ?? 0,
+                    }),
+                    DPI = previewDimensionSuggestedInfo.MonitorDimensions.MonitorDPI,
+                    WorkAreaHeight = previewDimensionSuggestedInfo.MonitorDimensions.MonitorHeight,
+                    WorkAreaWidth = previewDimensionSuggestedInfo.MonitorDimensions.MonitorWidth
+                };
+
+            }
+            else if (wrapper.ViewItem is ClipboardViewItemSingle)
+            {
+                var previewImg = ((ClipboardViewItemSingle)wrapper.ViewItem).PreviewItem?.Image;
+                pdi = new PreviewDimensionInfo
+                {
+                    IsViewItemGroup = false,
+                    PreviewDimentions = new List<IPreviewDimensions>
+                        {
+                            new PreviewDimensions
+                            {
+                                PreviewHeight = previewImg?.PixelHeight ?? 0,
+                                PreviewWidth = previewImg?.PixelWidth ?? 0
+                            }
+                        },
+                    DPI = previewDimensionSuggestedInfo.MonitorDimensions.MonitorDPI,
+                    WorkAreaHeight = previewDimensionSuggestedInfo.MonitorDimensions.MonitorHeight,
+                    WorkAreaWidth = previewDimensionSuggestedInfo.MonitorDimensions.MonitorWidth
+                };
+            }
+
+            if (pdi != null)
+            {
+                _clipboardManager.SetPreviewDimensions(wrapper.Id, pdi, beSilent: true);
+            }
+        }
+
         public void LoadViewItem(string clipboardItemId)
         {
             LazyLoadPreviewDimentions();
@@ -85,7 +159,6 @@ namespace Clipbox.ViewModels
                 var restoredClipboardItem = _clipboardManager.GetClipboardItem(clipboardItemId, restoreShrinked: true);
                 var wrapper = _clipboardViewItemWrappers.First(w => w.Id == clipboardItemId);
                 wrapper.ViewItem = _previewDataManager.GetClipboardViewItem(restoredClipboardItem, _previewItemWidth, _previewItemHeight); //_clipboardViewItemFactory.CreateFromClipboardItem(restoredClipboardItem, _previewItemWidth, _previewItemHeight);
-                
 
                 GC.Collect();
                 GC.WaitForPendingFinalizers();

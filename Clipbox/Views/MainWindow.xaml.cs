@@ -8,6 +8,7 @@ using Clipbox.Infrastructure.UI.Windows;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.Settings.Enums;
+using Clipbox.ViewModels.PreviewRelatedObjects;
 using Clipbox.Views.Interfaces;
 using Clipbox.Win32;
 using Clipbox.Win32.Native;
@@ -105,6 +106,11 @@ namespace Clipbox.Views
         public void SetCurrentDisplayHeight(int height)
         {
             _mainViewClipboardContents.SetCurrentDisplayHeight(height);
+        }
+
+        public void SetMonitorDimensions(MonitorDimensions dimensions)
+        {
+            _mainViewClipboardContents.SetMonitorDimensions(dimensions);
         }
 
         public new void Show()

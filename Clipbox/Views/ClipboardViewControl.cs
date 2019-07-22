@@ -12,6 +12,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Clipbox.Settings;
+using Clipbox.ViewModels.PreviewRelatedObjects;
 
 namespace Clipbox.Views
 {
@@ -34,6 +35,8 @@ namespace Clipbox.Views
         private int _currentDisplayHeight;
 
         private Dictionary<string, string> _localExtentionSettings;
+
+        protected MonitorDimensions MonitorDimensions { get; private set; }
         
         public int ClipboardViewItemHeight
         {
@@ -181,6 +184,12 @@ namespace Clipbox.Views
                 ClipboardViewItemHeight = (int)(_currentDisplayHeight * _settingsService.GetSetting<double>(SettingsKeys.PreviewItemHeightRatio));
                 OnClipboardViewItemHeightChanged();
             }
+        }
+
+        public void SetMonitorDimensions(MonitorDimensions dimensions)
+        {
+            MonitorDimensions = dimensions;
+            SetCurrentDisplayHeight(dimensions.MonitorHeight);
         }
         
         public virtual void OnClipboardViewItemHeightChanged()

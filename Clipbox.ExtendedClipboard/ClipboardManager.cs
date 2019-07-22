@@ -1,4 +1,5 @@
-﻿using Clipbox.Core.ClipboardContent.Interfaces;
+﻿using Clipbox.Core.ClipboardContent;
+using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.Core.Enums;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
@@ -487,17 +488,39 @@ namespace Clipbox.ExtendedClipboard
                 clonnedItem = (ClipboardItem)formatter.Deserialize(ms);
             }
 
-            // IClipboardDataObject.OriginalData is not automatically deserialized, as it is not guaranteed to be serializable.
-            // Therefore, we will copy the reference to the original object.
-            for (int index = 0; index < clonnedItem.ClipboardDataObjects.Count(); index++)
+            // clone the members marked with [NonSerialized]
+
+            clonnedItem.ClipboardDataObjects = new List<IClipboardDataObject>();
+            foreach (ClipboardDataObject cdo in item.ClipboardDataObjects)
             {
-                IClipboardDataObject iClonnedClipboardDataObject = clonnedItem.ClipboardDataObjects.ElementAt(index);
-                IClipboardDataObject iOriginalClipboardDataObject = item.ClipboardDataObjects.ElementAt(index);
-                if (iClonnedClipboardDataObject is ClipboardDataObject == false)
+                clonnedItem.ClipboardDataObjects.Add(new ClipboardDataObject
                 {
-                    throw new InvalidOperationException("At this point there shouldn't be any implementations of IClipboardDataObject in the collection other than ClipboardDataObject.");
-                }
-                (iClonnedClipboardDataObject as ClipboardDataObject).OriginalData = iOriginalClipboardDataObject.OriginalData;
+                    ByteArray = cdo.ByteArray,
+                    ContentClass = cdo.ContentClass,
+                    Format = cdo.Format,
+                    FormatExtentionName = cdo.FormatExtentionName,
+                    FormatExtentionVersion = cdo.FormatExtentionVersion,
+                    IsTransferable = cdo.IsTransferable,
+                    OriginalData = cdo.OriginalData
+                });
+            }
+
+            if (item.PreviewDimensionInfo != null)
+            {
+                clonnedItem.PreviewDimensionInfo = new PreviewDimensionInfo
+                {
+                    DPI = item.PreviewDimensionInfo.DPI,
+                    IsViewItemGroup = item.PreviewDimensionInfo.IsViewItemGroup,
+                    PreviewDimentions = item.PreviewDimensionInfo.PreviewDimentions
+                        .Select(ipd => new PreviewDimensions
+                        {
+                            PreviewHeight = ipd.PreviewHeight,
+                            PreviewWidth = ipd.PreviewWidth
+                        }).ToList(),
+                    WorkAreaHeight = item.PreviewDimensionInfo.WorkAreaHeight,
+                    WorkAreaWidth = item.PreviewDimensionInfo.WorkAreaWidth
+
+                };
             }
 
             return clonnedItem;
@@ -768,7 +791,7 @@ namespace Clipbox.ExtendedClipboard
             }
         }
 
-        public void SetPreviewDimentions(string clipboardItemId, IPreviewDimentions previewDimentions, bool beSilend = false)
+        public void SetPreviewDimensions(string clipboardItemId, PreviewDimensionInfo previewDimensionInfo, bool beSilent = false)
         {
             lock (_ioLockHandle)
             {
@@ -779,20 +802,27 @@ namespace Clipbox.ExtendedClipboard
                 }
                 
                 // TODO: maybe store the preview dimentions in another file, so that we do not have to
-                // restore the whole item in order to save the dimentions.
+                // restore the whole item in order to save the dimensions.
                 if (clipboardItem.IsShrinked)
                 {
                     // restore the data of the items so that they will be stored properly when updated
                     _persistenceHelper.RestoreShrinkedClipboardItem(clipboardItem);
                 }
 
-                clipboardItem.PreviewDimentions = new PreviewDimentions
+                clipboardItem.PreviewDimensionInfo = new PreviewDimensionInfo
                 {
-                    MonitorDPI = previewDimentions.MonitorDPI,
-                    MonitorHeight = previewDimentions.MonitorHeight,
-                    MonitorWidth = previewDimentions.MonitorWidth,
-                    PreviewHeight = previewDimentions.PreviewHeight,
-                    PreviewWidth = previewDimentions.PreviewWidth
+                    DPI = previewDimensionInfo.DPI,
+                    WorkAreaHeight = previewDimensionInfo.WorkAreaHeight,
+                    WorkAreaWidth = previewDimensionInfo.WorkAreaWidth,
+                    IsViewItemGroup = previewDimensionInfo.IsViewItemGroup,
+
+                    PreviewDimentions = previewDimensionInfo.PreviewDimentions
+                    .Select(pd =>
+                        new PreviewDimensions
+                        {
+                            PreviewHeight = pd.PreviewHeight,
+                            PreviewWidth = pd.PreviewWidth
+                        })
                 };
 
                 // invlidate the synchronized state of the item (it has changed)
@@ -808,7 +838,7 @@ namespace Clipbox.ExtendedClipboard
                 _persistenceHelper.StoreAndShrinkClipboardItem(clipboardItem);
             }
 
-            if (!beSilend)
+            if (!beSilent)
             {
                 ItemChanged?.Invoke(this, new ClipboardManagerEventArgs(clipboardItemId));
             }

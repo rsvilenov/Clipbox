@@ -4,7 +4,7 @@ using System;
 namespace Clipbox.ExtendedClipboard.ClipboardContent
 {
     [Serializable]
-    internal abstract class SerializableClipboardItem : IHaveClipboardItemInfo, IHavePreviewDimentions
+    internal abstract class SerializableClipboardItem : IHaveClipboardItemInfo
     {
         #region IHaveClipboardItemInfo members
 
@@ -26,6 +26,6 @@ namespace Clipbox.ExtendedClipboard.ClipboardContent
 
         public bool IsPinned { get; set; }
 
-        public IPreviewDimentions PreviewDimentions { get; set; }
+        public SerializablePreviewDimensionInfo PreviewDimensionInfo { get; set; }
     }
 }

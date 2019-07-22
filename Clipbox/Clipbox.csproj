@@ -116,6 +116,8 @@
     <Compile Include="ViewModels\BindableObjects\ClipboardViewSubItemNMore.cs" />
     <Compile Include="ViewModels\MainClipboardViewViewModel.cs" />
     <Compile Include="ViewModels\ClipboardViewItemManager.cs" />
+    <Compile Include="ViewModels\PreviewRelatedObjects\MonitorDimensions.cs" />
+    <Compile Include="ViewModels\PreviewRelatedObjects\PreviewDimensionSuggestedInfo.cs" />
     <Compile Include="ViewModels\SerializableObjects\StoredPreviewData.cs" />
     <Compile Include="ViewModels\SerializableObjects\StoredPreviewItem.cs" />
     <Compile Include="ViewModels\TrayContextMenuViewModel.cs" />

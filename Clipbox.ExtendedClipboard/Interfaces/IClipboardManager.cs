@@ -1,4 +1,5 @@
-﻿using Clipbox.Core.ClipboardContent.Interfaces;
+﻿using Clipbox.Core.ClipboardContent;
+using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.ExtendedClipboard.EventArgs;
 using Clipbox.Infrastructure.Persistence;
 using System;
@@ -10,7 +11,7 @@ namespace Clipbox.ExtendedClipboard.Interfaces
     {
         // TODO: interface segregation principle...
 
-        void SetPreviewDimentions(string clipboardItemId, IPreviewDimentions previewDimentions, bool beSilend = false);
+        void SetPreviewDimensions(string clipboardItemId, PreviewDimensionInfo previewDimentionInfo, bool beSilent = false);
 
         void PinUnpinItemItem(string clipboardItemId, bool pin);
 

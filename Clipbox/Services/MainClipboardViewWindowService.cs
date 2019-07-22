@@ -10,6 +10,7 @@ using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
 using Clipbox.Infrastructure.Extensibility.Containers;
 using Clipbox.Settings;
 using Clipbox.Infrastructure.UI.Windows.Enums;
+using Clipbox.ViewModels.PreviewRelatedObjects;
 
 namespace Clipbox.Services
 {
@@ -98,6 +99,13 @@ namespace Clipbox.Services
                     }
 
                     mainWindow.SetCurrentDisplayHeight((int)currentDisplayHeight);
+
+                    mainWindow.SetMonitorDimensions(new MonitorDimensions
+                    {
+                        MonitorDPI = currentMonitor.Dpi,
+                        MonitorHeight = currentMonitor.WorkingArea.Height,
+                        MonitorWidth = currentMonitor.WorkingArea.Width
+                    });
 
 
                     _mainWindow.Show();
