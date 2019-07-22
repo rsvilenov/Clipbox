@@ -43,6 +43,8 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClipboardContent\Interfaces\IHavePreviewDimentions.cs" />
+    <Compile Include="ClipboardContent\Interfaces\IPreviewDimentions.cs" />
     <Compile Include="DisposableObject.cs" />
     <Compile Include="Enums\ClipboardContentClass.cs" />
     <Compile Include="Enums\ProcessExitCodes.cs" />

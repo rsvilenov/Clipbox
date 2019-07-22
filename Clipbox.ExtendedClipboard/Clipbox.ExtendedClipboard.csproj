@@ -47,6 +47,7 @@
     <Compile Include="ClipboardContent\PersistableClipboardDataObject.cs" />
     <Compile Include="ClipboardContent\ClipboardDataObject.cs" />
     <Compile Include="ClipboardContent\PersistableClipboardItem.cs" />
+    <Compile Include="ClipboardContent\PreviewDimentions.cs" />
     <Compile Include="ClipboardContent\SerializableClipboardItem.cs" />
     <Compile Include="ClipboardContent\TransferableClipboardDataObject.cs" />
     <Compile Include="ClipboardContent\TransferableClipboardItem.cs" />

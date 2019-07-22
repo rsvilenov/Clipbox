@@ -10,6 +10,8 @@ namespace Clipbox.ExtendedClipboard.Interfaces
     {
         // TODO: interface segregation principle...
 
+        void SetPreviewDimentions(string clipboardItemId, IPreviewDimentions previewDimentions, bool beSilend = false);
+
         void PinUnpinItemItem(string clipboardItemId, bool pin);
 
         void SuspendClipboardForwarding();

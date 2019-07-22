@@ -301,31 +301,6 @@ namespace Clipbox.ExtendedClipboard
             _currentItemId = id;
         }
 
-        public void PinUnpinItemItem(string clipboardItemId, bool pin)
-        {
-            lock (_ioLockHandle)
-            {
-                ClipboardItem item = _clipboardItems.Where(ci => ci.Id == clipboardItemId).FirstOrDefault();
-
-                if (item == null)
-                {
-                    throw new ArgumentException($"ClipboardItem with Id {clipboardItemId} was not found.");
-                }
-
-                // when we pin a temporary item, it is no longer temporary
-                item.IsTemporary = false;
-                
-                if (item.IsShrinked)
-                {
-                    _persistenceHelper.RestoreShrinkedClipboardItem(item);
-                }
-
-                item.IsPinned = pin;
-                
-                _persistenceHelper.StoreAndShrinkClipboardItem(item);
-            }
-        }
-
         public IEnumerable<string> GetAllItemIds(bool excludeShrinkedItems = false)
         {
             lock (_ioLockHandle)
@@ -715,6 +690,33 @@ namespace Clipbox.ExtendedClipboard
             return newItem;
         }
 
+        #region Edit methods
+
+        public void PinUnpinItemItem(string clipboardItemId, bool pin)
+        {
+            lock (_ioLockHandle)
+            {
+                ClipboardItem item = _clipboardItems.Where(ci => ci.Id == clipboardItemId).FirstOrDefault();
+
+                if (item == null)
+                {
+                    throw new ArgumentException($"ClipboardItem with Id {clipboardItemId} was not found.");
+                }
+
+                // when we pin a temporary item, it is no longer temporary
+                item.IsTemporary = false;
+
+                if (item.IsShrinked)
+                {
+                    _persistenceHelper.RestoreShrinkedClipboardItem(item);
+                }
+
+                item.IsPinned = pin;
+
+                _persistenceHelper.StoreAndShrinkClipboardItem(item);
+            }
+        }
+
         public void RemoveClipbpardDataObjects(string clipboardItemId, int[] clipboardDataObjectIndices, bool beSilend = false)
         {
             lock (_ioLockHandle)
@@ -765,5 +767,53 @@ namespace Clipbox.ExtendedClipboard
                 ItemChanged?.Invoke(this, new ClipboardManagerEventArgs(clipboardItemId));
             }
         }
+
+        public void SetPreviewDimentions(string clipboardItemId, IPreviewDimentions previewDimentions, bool beSilend = false)
+        {
+            lock (_ioLockHandle)
+            {
+                var clipboardItem = _clipboardItems.FirstOrDefault(item => item.Id == clipboardItemId);
+                if (clipboardItemId == null)
+                {
+                    throw new ArgumentException($"{nameof(clipboardItemId)} {clipboardItemId} was not found.");
+                }
+                
+                // TODO: maybe store the preview dimentions in another file, so that we do not have to
+                // restore the whole item in order to save the dimentions.
+                if (clipboardItem.IsShrinked)
+                {
+                    // restore the data of the items so that they will be stored properly when updated
+                    _persistenceHelper.RestoreShrinkedClipboardItem(clipboardItem);
+                }
+
+                clipboardItem.PreviewDimentions = new PreviewDimentions
+                {
+                    MonitorDPI = previewDimentions.MonitorDPI,
+                    MonitorHeight = previewDimentions.MonitorHeight,
+                    MonitorWidth = previewDimentions.MonitorWidth,
+                    PreviewHeight = previewDimentions.PreviewHeight,
+                    PreviewWidth = previewDimentions.PreviewWidth
+                };
+
+                // invlidate the synchronized state of the item (it has changed)
+                clipboardItem.IsSynchronizedWithCloud = false;
+
+                clipboardItem.IsModified = true;
+                // TODO: should we update these dates?
+                // does the synchronization depend on them?
+                clipboardItem.ModifiedDateTicks = DateTime.Now.Ticks;
+                clipboardItem.ModifiedDateUtcTicks = DateTime.UtcNow.Ticks;
+
+                // update the stored clipboard item
+                _persistenceHelper.StoreAndShrinkClipboardItem(clipboardItem);
+            }
+
+            if (!beSilend)
+            {
+                ItemChanged?.Invoke(this, new ClipboardManagerEventArgs(clipboardItemId));
+            }
+        }
+
+        #endregion
     }
 }

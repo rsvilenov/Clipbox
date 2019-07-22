@@ -9,7 +9,7 @@ using System.Linq;
 namespace Clipbox.ExtendedClipboard.ClipboardContent
 {
     [Serializable]
-    internal class ClipboardItem : IClipboardItem, ICloudSynchronizable
+    internal class ClipboardItem : IClipboardItem, ICloudSynchronizable, IHavePreviewDimentions
     {
         ~ClipboardItem()
         {
@@ -102,5 +102,7 @@ namespace Clipbox.ExtendedClipboard.ClipboardContent
         public long ModifiedDateUtcTicks { get; set; }
         
         public bool IsTemporary { get; internal set; }
+
+        public IPreviewDimentions PreviewDimentions { get; internal set; }
     }
 }
