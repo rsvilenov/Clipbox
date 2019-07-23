@@ -84,6 +84,9 @@
     <Compile Include="GlobalConstants.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Services\CloudSynchronizationService.cs" />
+    <Compile Include="Services\DataObjects\MonitorDimensions.cs" />
+    <Compile Include="Services\DataObjects\PreviewDimensionInfo.cs" />
+    <Compile Include="Services\DataObjects\PreviewDimensions.cs" />
     <Compile Include="Services\Enums\TrayIconVisibilityPreference.cs" />
     <Compile Include="Services\EventArgsClasses\SelectionEventArgs.cs" />
     <Compile Include="Services\EventArgsClasses\SettingsEventArgs.cs" />
@@ -91,6 +94,7 @@
     <Compile Include="Services\Interfaces\ICloudSynchronizationService.cs" />
     <Compile Include="Services\Interfaces\IFlowExtentionExecutorService.cs" />
     <Compile Include="Services\Interfaces\ILowLevelKeyboardService.cs" />
+    <Compile Include="Services\Interfaces\IPreviewGenerationService.cs" />
     <Compile Include="Services\Interfaces\IQuickClipboardViewWindowService.cs" />
     <Compile Include="Services\Interfaces\ISettingsService.cs" />
     <Compile Include="Services\Interfaces\ITrayContextMenuService.cs" />
