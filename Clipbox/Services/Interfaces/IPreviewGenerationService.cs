@@ -6,7 +6,7 @@ namespace Clipbox.Services.Interfaces
 {
     public interface IPreviewGenerationService
     {
-        PreviewDimensionInfo GetQuickPreviewDimentionInfo(IClipboardItem clipboardItem, MonitorDimensions monitorDimensions);
+        bool TryGetQuickPreviewDimentionInfo(IClipboardItem clipboardItem, MonitorDimensions monitorDimensions, out PreviewDimensionInfo previewDimensionInfo);
 
         ClipboardViewItem GetViewItem(IClipboardItem clipboardItem, MonitorDimensions monitorDimensions);
     }

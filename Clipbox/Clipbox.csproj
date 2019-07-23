@@ -104,6 +104,7 @@
     <Compile Include="Services\Interfaces\IMainClipboardViewWindowService.cs" />
     <Compile Include="Services\LowLevelKeyboardService.cs" />
     <Compile Include="Services\MainClipboardViewWindowService.cs" />
+    <Compile Include="Services\PreviewGenerationService.cs" />
     <Compile Include="Services\QuickClipboardViewWindowService.cs" />
     <Compile Include="Services\SettingsService.cs" />
     <Compile Include="Services\TrayBandService.cs" />
@@ -114,6 +115,7 @@
     <Compile Include="Technical\Converters\ContentClassListContainsConverter.cs" />
     <Compile Include="Technical\Converters\ObjectTypeCompareConverter.cs" />
     <Compile Include="ViewModels\BindableObjects\ClipboardViewItemBase.cs" />
+    <Compile Include="ViewModels\BindableObjects\ClipboardViewItemDimensions.cs" />
     <Compile Include="ViewModels\BindableObjects\ClipboardViewItemWrapper.cs" />
     <Compile Include="ViewModels\BindableObjects\ClipboardViewSubItem.cs" />
     <Compile Include="ViewModels\BindableObjects\ClipboardViewSubItemBase.cs" />
