@@ -142,5 +142,17 @@ namespace Clipbox {
                 this["IsTrayIconEnabled"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IsBackgroundPreviewGenerationEnabled {
+            get {
+                return ((bool)(this["IsBackgroundPreviewGenerationEnabled"]));
+            }
+            set {
+                this["IsBackgroundPreviewGenerationEnabled"] = value;
+            }
+        }
     }
 }

@@ -84,9 +84,12 @@
     <Compile Include="GlobalConstants.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Services\CloudSynchronizationService.cs" />
+    <Compile Include="Services\DataObjects\CalibratedPreviewDimentionInfo.cs" />
     <Compile Include="Services\DataObjects\MonitorDimensions.cs" />
+    <Compile Include="Services\DataObjects\PreviewDataTransferObject.cs" />
     <Compile Include="Services\DataObjects\PreviewDimensionInfo.cs" />
     <Compile Include="Services\DataObjects\PreviewDimensions.cs" />
+    <Compile Include="Services\DataObjects\PreviewItemTransferObject.cs" />
     <Compile Include="Services\Enums\TrayIconVisibilityPreference.cs" />
     <Compile Include="Services\EventArgsClasses\SelectionEventArgs.cs" />
     <Compile Include="Services\EventArgsClasses\SettingsEventArgs.cs" />

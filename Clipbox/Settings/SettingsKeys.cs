@@ -19,5 +19,7 @@
         public const string MainClipboardViewBackgroundRenderMode = nameof(MainClipboardViewBackgroundRenderMode);
 
         public const string IsTrayIconEnabled = nameof(IsTrayIconEnabled);
+
+        public const string IsBackgroundPreviewGenerationEnabled = nameof(IsBackgroundPreviewGenerationEnabled);
     }
 }
