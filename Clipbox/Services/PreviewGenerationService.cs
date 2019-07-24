@@ -90,8 +90,8 @@ namespace Clipbox.Services
                 MonitorDimensions monitorDimensions = new MonitorDimensions
                 {
                     MonitorDPI = currentMonitor.Dpi,
-                    MonitorHeight = currentMonitor.WorkingArea.Height,
-                    MonitorWidth = currentMonitor.WorkingArea.Width
+                    WorkAreaHeight = currentMonitor.WorkingArea.Height,
+                    WorkAreaWidth = currentMonitor.WorkingArea.Width
                 };
 
                 int itemRequestedHeight = CalculateItemRequestedHeight(monitorDimensions);
@@ -332,7 +332,7 @@ namespace Clipbox.Services
 
         private int CalculateItemRequestedHeight(MonitorDimensions monitorDimensions)
         {
-            double itemHeight = monitorDimensions.MonitorHeight * _settingsService.GetSetting<double>(SettingsKeys.PreviewItemHeightRatio);
+            double itemHeight = monitorDimensions.WorkAreaHeight * _settingsService.GetSetting<double>(SettingsKeys.PreviewItemHeightRatio);
             if (_settingsService.GetSetting<bool>(SettingsKeys.ResizeAccordingToMonitorOrSystemDpi))
             {
                 double scaleFactor = monitorDimensions.MonitorDPI / 96;

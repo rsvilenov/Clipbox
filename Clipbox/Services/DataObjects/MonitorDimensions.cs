@@ -6,8 +6,8 @@ namespace Clipbox.Services.DataObjects
     public class MonitorDimensions : ICloneable
     {
         // monitor info
-        public int MonitorWidth { get; internal set; }
-        public int MonitorHeight { get; internal set; }
+        public int WorkAreaWidth { get; internal set; }
+        public int WorkAreaHeight { get; internal set; }
         public double MonitorDPI { get; internal set; }
 
         public object Clone()
@@ -15,8 +15,8 @@ namespace Clipbox.Services.DataObjects
             return new MonitorDimensions
             {
                 MonitorDPI = MonitorDPI,
-                MonitorHeight = MonitorHeight,
-                MonitorWidth = MonitorWidth
+                WorkAreaHeight = WorkAreaHeight,
+                WorkAreaWidth = WorkAreaWidth
             };
         }
     }
