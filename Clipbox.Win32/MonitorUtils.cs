@@ -35,7 +35,13 @@ namespace Clipbox.Win32
             var hMonitor = User32.MonitorFromWindow(hWnd, NativeConstants.MonitorConstants.MONITOR_DEFAULTTONEAREST);
             return GetDisplayMonitor(hMonitor);
         }
-        
+
+        public static DisplayMonitor GetByForegroundWindow()
+        {
+            IntPtr foregroundWindowHwnd = User32.GetForegroundWindow();
+            return GetByWindowHandle(foregroundWindowHwnd);
+        }
+
         private static DisplayMonitor GetDisplayMonitor(IntPtr hMonitor)
         {
             var dpi = DpiUtils.GetDPIForScreen(hMonitor);

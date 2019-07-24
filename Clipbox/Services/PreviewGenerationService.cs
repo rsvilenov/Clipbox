@@ -5,25 +5,36 @@ using Clipbox.Core.Extensibility.Exceptions;
 using Clipbox.ExtendedClipboard.ClipboardContent;
 using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
+using Clipbox.Infrastructure.Persistence;
+using Clipbox.Infrastructure.Threading;
 using Clipbox.Services.DataObjects;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
+using Clipbox.Win32;
+using Clipbox.Win32.Native;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.ExceptionServices;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Clipbox.Services
 {
     public class PreviewGenerationService : IPreviewGenerationService, IDisposable
     {
+        private const string APP_DATA_SUBDIR = "PreviewDataCache";
+
         private IClipboardManager _clipboardManager;
         private IClipboardFormatPreviewExtentionContainer _clipboardFormatPreviewExtContainer;
         private ISettingsService _settingsService;
 
-        private Dictionary<string, PreviewDimensionInfo> _previewDimensionsDictionary;
-        
+        private ConcurrentDictionary<string, PreviewDimensionInfo> _previewDimensionsDictionary;
+
+        private SimpleDispatcher _bgGenerationDispatcher;
+
         public PreviewGenerationService(
             IClipboardManager clipboardManager,
             IClipboardFormatPreviewExtentionContainer clipboardFormatPreviewExtContainer, 
@@ -35,6 +46,8 @@ namespace Clipbox.Services
 
             _previewDimensionsDictionary = LoadStoredOrInitializePreviewDimensionsInfo();
 
+            _bgGenerationDispatcher = new SimpleDispatcher();
+
             _clipboardManager.ItemAdded += _clipboardManager_ItemAdded;
             _clipboardManager.ItemChanged += _clipboardManager_ItemChanged;
             _clipboardManager.ItemRemoved += _clipboardManager_ItemRemoved;
@@ -42,12 +55,21 @@ namespace Clipbox.Services
 
         private void _clipboardManager_ItemRemoved(object sender, ExtendedClipboard.EventArgs.ClipboardManagerEventArgs e)
         {
+            PreviewDimensionInfo pdi = null;
+            _previewDimensionsDictionary.TryRemove(e.ItemId, out pdi);
+
             // remove the info for this item from cache/stored preview data
+            DeleteStoredPreviewDataTransferObject(e.ItemId);
         }
 
         private void _clipboardManager_ItemChanged(object sender, ExtendedClipboard.EventArgs.ClipboardManagerEventArgs e)
         {
             // redraw the preview data
+            if (_settingsService.GetSetting<bool>(SettingsKeys.IsBackgroundPreviewGenerationEnabled))
+            {
+                // spawn threads here
+                EnqueuePreviewGenerationTask(e.ItemId);
+            }
         }
 
         private void _clipboardManager_ItemAdded(object sender, ExtendedClipboard.EventArgs.ClipboardManagerEventArgs e)
@@ -55,7 +77,30 @@ namespace Clipbox.Services
             if (_settingsService.GetSetting<bool>(SettingsKeys.IsBackgroundPreviewGenerationEnabled))
             {
                 // spawn threads here
+                EnqueuePreviewGenerationTask(e.ItemId);
             }
+        }
+
+        private void EnqueuePreviewGenerationTask(string clipboardItemId)
+        {
+            _bgGenerationDispatcher.BeginInvoke(() =>
+            {
+
+                MonitorUtils.DisplayMonitor currentMonitor = MonitorUtils.GetByForegroundWindow();
+                MonitorDimensions monitorDimensions = new MonitorDimensions
+                {
+                    MonitorDPI = currentMonitor.Dpi,
+                    MonitorHeight = currentMonitor.WorkingArea.Height,
+                    MonitorWidth = currentMonitor.WorkingArea.Width
+                };
+
+                int itemRequestedHeight = CalculateItemRequestedHeight(monitorDimensions);
+                int itemRequestedWidth = itemRequestedHeight;
+
+                IClipboardItem clipboardItem = _clipboardManager.GetClipboardItem(clipboardItemId, restoreShrinked: true);
+                PreviewDataTransferObject pdto = GeneratePreviewDataTransferObject(clipboardItem, itemRequestedHeight, itemRequestedWidth);
+                CacheGeneratedData(monitorDimensions, itemRequestedHeight, itemRequestedWidth, pdto);
+            });
         }
 
         [HandleProcessCorruptedStateExceptions]
@@ -64,7 +109,30 @@ namespace Clipbox.Services
             int itemRequestedHeight = CalculateItemRequestedHeight(monitorDimensions);
             int itemRequestedWidth = itemRequestedHeight;
 
-            PreviewDataTransferObject pdto = new PreviewDataTransferObject();
+            PreviewDataTransferObject pdto = null;
+
+            if (!TryGetStoredPreviewDataTransferObject(clipboardItem.Id, itemRequestedWidth, itemRequestedHeight, out pdto))
+            {
+                pdto = GeneratePreviewDataTransferObject(clipboardItem, itemRequestedHeight, itemRequestedWidth);
+                CacheGeneratedData(monitorDimensions, itemRequestedHeight, itemRequestedWidth, pdto);
+            }
+
+            return pdto;
+        }
+
+        private void CacheGeneratedData(MonitorDimensions monitorDimensions, int itemRequestedHeight, int itemRequestedWidth, PreviewDataTransferObject pdto)
+        {
+            PreviewDimensionInfo pdInfo = GetPreviewDimensionsInfo(pdto, monitorDimensions);
+            SavePreviewDimensionInfoToDictionary(pdto.ClipboardItemId, pdInfo);
+
+            // store to disk
+            StorePreviewDimensionsDictionaryТoDisk();
+            StorePreviewDataTransferObjectToDisk(pdto, itemRequestedWidth, itemRequestedHeight);
+        }
+
+        private PreviewDataTransferObject GeneratePreviewDataTransferObject(IClipboardItem clipboardItem, int itemRequestedHeight, int itemRequestedWidth)
+        {
+            PreviewDataTransferObject pdto = null;
 
             IPreviewHandler previewHandler = null;
             ClipboardDataObject cdoForPreview = null;
@@ -95,29 +163,116 @@ namespace Clipbox.Services
                 pdto = GetPdtoForSingle(itemRequestedHeight, itemRequestedWidth, previewHandler, cdoForPreview);
             }
 
-            PreviewDimensionInfo pdInfo = GetPreviewDimensionsInfo(pdto, monitorDimensions);
-            StorePreviewDimensionInfo(clipboardItem.Id, pdInfo);
+            pdto.ClipboardItemId = clipboardItem.Id;
 
             return pdto;
         }
 
-        private void StorePreviewDimensionInfo(string clipboardItemId, PreviewDimensionInfo pdInfo)
+        public void DeleteStoredPreviewDataTransferObject(string clipboardItemId)
         {
-            if (_previewDimensionsDictionary.ContainsKey(clipboardItemId))
+            foreach (string relativeFileName in AppDataUtils.ListFiles(APP_DATA_SUBDIR))
             {
-                _previewDimensionsDictionary[clipboardItemId] = pdInfo;
+                if (relativeFileName.StartsWith(clipboardItemId))
+                {
+                    AppDataUtils.DeleteFile(Path.Combine(APP_DATA_SUBDIR, relativeFileName));
+                }
             }
-            else
-            {
-                _previewDimensionsDictionary.Add(clipboardItemId, pdInfo);
-            }
-
-            // store to disk
         }
 
-        private Dictionary<string, PreviewDimensionInfo> LoadStoredOrInitializePreviewDimensionsInfo()
+        private void StorePreviewDataTransferObjectToDisk(PreviewDataTransferObject pdto, int itemRequestedWidth, int itemRequestedHeight)
         {
-            return new Dictionary<string, PreviewDimensionInfo>();
+            // serialize
+            byte[] serializedData = pdto.ToByteArray();
+
+            EnsureAppDataSubDirExists();
+
+            string fileName = $"{pdto.ClipboardItemId}_{itemRequestedWidth}_{itemRequestedHeight}.pdto";
+
+            AppDataUtils.WriteToApplicationData(Path.Combine(APP_DATA_SUBDIR, fileName), serializedData);
+        }
+
+        private bool TryGetStoredPreviewDataTransferObject(string clipboardItemId, int itemRequestedWidth, int itemRequestedHeight, out PreviewDataTransferObject pdto)
+        {
+            pdto = null;
+
+            string relativeFilePath = Path.Combine(APP_DATA_SUBDIR, $"{clipboardItemId}_{itemRequestedWidth}_{itemRequestedHeight}");
+            if (!AppDataUtils.CheckFileExists(relativeFilePath))
+            {
+                return false;
+            }
+
+            byte[] fileData = AppDataUtils.ReadBytesFromApplicationData(relativeFilePath);
+
+            // deserialize
+            pdto = PreviewDataTransferObject.FromByteArray(fileData);
+            
+            return true;
+        }
+
+        private void SavePreviewDimensionInfoToDictionary(string clipboardItemId, PreviewDimensionInfo pdInfo)
+        {
+            _previewDimensionsDictionary.AddOrUpdate(clipboardItemId, pdInfo, (key, oldValue) => pdInfo);
+        }
+
+        private void StorePreviewDimensionsDictionaryТoDisk()
+        {
+            // TODO: is ConcurrentDictionary thread safe during serialization?
+            byte[] serializedData = null;
+
+            using (var ms = new MemoryStream())
+            {
+                var formatter = new BinaryFormatter();
+                formatter.Serialize(ms, _previewDimensionsDictionary);
+                serializedData = ms.ToArray();
+            }
+
+            EnsureAppDataSubDirExists();
+            
+            AppDataUtils.WriteToApplicationData(Path.Combine(APP_DATA_SUBDIR, "previewDimensionsDictionary"), serializedData);
+        }
+
+        private bool TryLoadStorePreviewDimensionsDictionary(out ConcurrentDictionary<string, PreviewDimensionInfo> dictionary)
+        {
+            dictionary = null;
+
+            string relativeFilePath = Path.Combine(APP_DATA_SUBDIR, "previewDimensionsDictionary");
+            if (!AppDataUtils.CheckFileExists(relativeFilePath))
+            {
+                return false;
+            }
+
+            byte[] fileData = AppDataUtils.ReadBytesFromApplicationData(relativeFilePath);
+
+            // deserialize
+            using (var ms = new MemoryStream(fileData))
+            {
+                var formatter = new BinaryFormatter();
+                dictionary = (ConcurrentDictionary<string, PreviewDimensionInfo>)formatter.Deserialize(ms);
+            }
+
+            return true;
+        }
+
+        private static void EnsureAppDataSubDirExists()
+        {
+            string dirPath = Path.Combine(AppDataUtils.GetAppDataDir(throwIfNotExists: false), APP_DATA_SUBDIR);
+
+            if (!Directory.Exists(dirPath))
+            {
+                Directory.CreateDirectory(dirPath);
+            }
+        }
+
+        private ConcurrentDictionary<string, PreviewDimensionInfo> LoadStoredOrInitializePreviewDimensionsInfo()
+        {
+            ConcurrentDictionary<string, PreviewDimensionInfo> dictionary = null;
+
+            if (!TryLoadStorePreviewDimensionsDictionary(out dictionary))
+            {
+                dictionary = new ConcurrentDictionary<string, PreviewDimensionInfo>();
+            }
+
+            return dictionary;
         }
 
         private PreviewDimensionInfo GetPreviewDimensionsInfo(PreviewDataTransferObject pdto, MonitorDimensions monitorDimensions)
@@ -275,14 +430,14 @@ namespace Clipbox.Services
 
         public bool TryGetQuickPreviewDimentionInfo(string clipboardItemId, MonitorDimensions monitorDimensions, out CalibratedPreviewDimentionInfo previewDimensionInfo)
         {
-            if (!_previewDimensionsDictionary.ContainsKey(clipboardItemId))
+            PreviewDimensionInfo pdInfo = null;
+
+            if (!_previewDimensionsDictionary.TryGetValue(clipboardItemId, out pdInfo))
             {
                 previewDimensionInfo = null;
                 return false;
             }
-
-            PreviewDimensionInfo pdInfo = _previewDimensionsDictionary[clipboardItemId];
-
+            
             // callibrate the info
 
             previewDimensionInfo = new CalibratedPreviewDimentionInfo
