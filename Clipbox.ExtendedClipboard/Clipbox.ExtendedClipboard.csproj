@@ -47,11 +47,7 @@
     <Compile Include="ClipboardContent\PersistableClipboardDataObject.cs" />
     <Compile Include="ClipboardContent\ClipboardDataObject.cs" />
     <Compile Include="ClipboardContent\PersistableClipboardItem.cs" />
-    <Compile Include="ClipboardContent\PreviewRelatedObjects\PreviewDimensionInfo.cs" />
-    <Compile Include="ClipboardContent\PreviewRelatedObjects\PreviewDimensions.cs" />
     <Compile Include="ClipboardContent\SerializableClipboardItem.cs" />
-    <Compile Include="ClipboardContent\SerializablePreviewDimensionInfo.cs" />
-    <Compile Include="ClipboardContent\SerializablePreviewDimensions.cs" />
     <Compile Include="ClipboardContent\TransferableClipboardDataObject.cs" />
     <Compile Include="ClipboardContent\TransferableClipboardItem.cs" />
     <Compile Include="EventArgs\ItemFetchingEventArgs.cs" />

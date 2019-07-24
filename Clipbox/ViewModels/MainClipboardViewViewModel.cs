@@ -93,61 +93,7 @@ namespace Clipbox.ViewModels
                 GC.Collect();
 
                 wrapper.IsViewItemLoaded = true;
-                
-                if (wrapper.ClipboardItem.PreviewDimensionInfo == null)
-                {
-                    StorePreviewDimensionsInfo(previewDimensionSuggestedInfo, wrapper);
-                }
             }));
-        }
-
-        private void StorePreviewDimensionsInfo(PreviewDimensionSuggestedInfo previewDimensionSuggestedInfo, ClipboardViewItemWrapper wrapper)
-        {
-            PreviewDimensionInfo pdi = null;
-
-            if (wrapper.ViewItem is ClipboardViewItemGroup)
-            {
-                // get all but the NMore items
-                var actualViewItemsInGroup = ((ClipboardViewItemGroup)wrapper.ViewItem).PreviewItems.Where(vi => vi is ClipboardViewSubItem).Cast<ClipboardViewSubItem>();
-
-                pdi = new PreviewDimensionInfo
-                {
-                    IsViewItemGroup = true,
-                    PreviewDimentions = actualViewItemsInGroup.Select(subItem => new PreviewDimensions
-                    {
-                        PreviewHeight = subItem.PreviewItem?.Image?.PixelHeight ?? 0,
-                        PreviewWidth = subItem.PreviewItem?.Image?.PixelWidth ?? 0,
-                    }),
-                    DPI = previewDimensionSuggestedInfo.MonitorDimensions.MonitorDPI,
-                    WorkAreaHeight = previewDimensionSuggestedInfo.MonitorDimensions.MonitorHeight,
-                    WorkAreaWidth = previewDimensionSuggestedInfo.MonitorDimensions.MonitorWidth
-                };
-
-            }
-            else if (wrapper.ViewItem is ClipboardViewItemSingle)
-            {
-                var previewImg = ((ClipboardViewItemSingle)wrapper.ViewItem).PreviewItem?.Image;
-                pdi = new PreviewDimensionInfo
-                {
-                    IsViewItemGroup = false,
-                    PreviewDimentions = new List<IPreviewDimensions>
-                        {
-                            new PreviewDimensions
-                            {
-                                PreviewHeight = previewImg?.PixelHeight ?? 0,
-                                PreviewWidth = previewImg?.PixelWidth ?? 0
-                            }
-                        },
-                    DPI = previewDimensionSuggestedInfo.MonitorDimensions.MonitorDPI,
-                    WorkAreaHeight = previewDimensionSuggestedInfo.MonitorDimensions.MonitorHeight,
-                    WorkAreaWidth = previewDimensionSuggestedInfo.MonitorDimensions.MonitorWidth
-                };
-            }
-
-            if (pdi != null)
-            {
-                _clipboardManager.SetPreviewDimensions(wrapper.Id, pdi, beSilent: true);
-            }
         }
 
         public void LoadViewItem(string clipboardItemId)

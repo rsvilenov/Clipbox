@@ -1,5 +1,4 @@
-﻿using Clipbox.Core.ClipboardContent;
-using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
+﻿using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using Clipbox.Core.Extensibility.Exceptions;
 using Clipbox.ExtendedClipboard.ClipboardContent;
 using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
@@ -144,28 +143,6 @@ namespace Clipbox.ExtendedClipboard
                     clipboardDataObjects.Add(originalCdo);
                 }
 
-                PreviewDimensionInfo previewDimensionInfo = null;
-
-                if (persistableClipboardItem.PreviewDimensionInfo != null)
-                {
-                    previewDimensionInfo = new PreviewDimensionInfo
-                    {
-                        DPI = persistableClipboardItem.PreviewDimensionInfo.DPI,
-                        IsViewItemGroup = persistableClipboardItem.PreviewDimensionInfo.IsViewItemGroup,
-                        PreviewDimentions = persistableClipboardItem.PreviewDimensionInfo.PreviewDimentions
-                            .Select
-                                (spd =>
-                                    new PreviewDimensions
-                                    {
-                                        PreviewHeight = spd.PreviewHeight,
-                                        PreviewWidth = spd.PreviewWidth
-                                    }
-                                ),
-                        WorkAreaHeight = persistableClipboardItem.PreviewDimensionInfo.WorkAreaHeight,
-                        WorkAreaWidth = persistableClipboardItem.PreviewDimensionInfo.WorkAreaWidth
-                    };
-                }
-
                 yield return new ClipboardItem(clipboardItemId, persistableClipboardItem.Source, clipboardDataObjects)
                 {
                     IsShrinked = !anyShrinkedCdoRestored,
@@ -173,8 +150,7 @@ namespace Clipbox.ExtendedClipboard
                     EntryDateTicks = persistableClipboardItem.EntryDateTicks,
                     EntryDateUtcTicks = persistableClipboardItem.EntryDateUtcTicks,
                     ModifiedDateTicks = persistableClipboardItem.ModifiedDateTicks,
-                    ModifiedDateUtcTicks = persistableClipboardItem.ModifiedDateUtcTicks,
-                    PreviewDimensionInfo = previewDimensionInfo
+                    ModifiedDateUtcTicks = persistableClipboardItem.ModifiedDateUtcTicks
                 };
             }  
         }
@@ -236,36 +212,13 @@ namespace Clipbox.ExtendedClipboard
                     IsTransferable = true
                 });
 
-            PreviewDimensionInfo previewDimensionInfo = null;
-
-            if (transferableClipboardItem.PreviewDimensionInfo != null)
-            {
-                previewDimensionInfo = new PreviewDimensionInfo
-                {
-                    DPI = transferableClipboardItem.PreviewDimensionInfo.DPI,
-                    IsViewItemGroup = transferableClipboardItem.PreviewDimensionInfo.IsViewItemGroup,
-                    PreviewDimentions = transferableClipboardItem.PreviewDimensionInfo.PreviewDimentions
-                        .Select
-                            (spd =>
-                                new PreviewDimensions
-                                {
-                                    PreviewHeight = spd.PreviewHeight,
-                                    PreviewWidth = spd.PreviewWidth
-                                }
-                            ).ToList(),
-                    WorkAreaHeight = transferableClipboardItem.PreviewDimensionInfo.WorkAreaHeight,
-                    WorkAreaWidth = transferableClipboardItem.PreviewDimensionInfo.WorkAreaWidth
-                };
-            }
-
             var clipboardItem = new ClipboardItem(transferableClipboardItem.Id, transferableClipboardItem.Source, clipboardDataObjects)
             {
                 IsSynchronizedWithCloud = true,
                 EntryDateTicks = transferableClipboardItem.EntryDateTicks,
                 EntryDateUtcTicks = transferableClipboardItem.EntryDateUtcTicks,
                 ModifiedDateTicks = transferableClipboardItem.ModifiedDateTicks,
-                ModifiedDateUtcTicks = transferableClipboardItem.ModifiedDateUtcTicks,
-                PreviewDimensionInfo = previewDimensionInfo
+                ModifiedDateUtcTicks = transferableClipboardItem.ModifiedDateUtcTicks
             };
 
             return clipboardItem;
@@ -319,26 +272,6 @@ namespace Clipbox.ExtendedClipboard
             var persistableCdos = GeneratePersistableClipboardDataObjects(clipboardItem.ClipboardDataObjects.Cast<ClipboardDataObject>()).ToList();
             if (persistableCdos.Any())
             {
-                SerializablePreviewDimensionInfo previewDimensionInfo = null;
-
-                if (clipboardItem.PreviewDimensionInfo != null)
-                {
-                    previewDimensionInfo = new SerializablePreviewDimensionInfo
-                    {
-                        DPI = clipboardItem.PreviewDimensionInfo.DPI,
-                        IsViewItemGroup = clipboardItem.PreviewDimensionInfo.IsViewItemGroup,
-                        PreviewDimentions = clipboardItem.PreviewDimensionInfo.PreviewDimentions
-                            .Select(ipd =>
-                                new SerializablePreviewDimensions
-                                {
-                                    PreviewHeight = ipd.PreviewHeight,
-                                    PreviewWidth = ipd.PreviewWidth
-                                }).ToList(),
-                        WorkAreaHeight = clipboardItem.PreviewDimensionInfo.WorkAreaHeight,
-                        WorkAreaWidth = clipboardItem.PreviewDimensionInfo.WorkAreaWidth
-                    };
-                }
-
                 return new PersistableClipboardItem
                 {
                     Tag = clipboardItem.Tag,
@@ -349,8 +282,7 @@ namespace Clipbox.ExtendedClipboard
                     EntryDateTicks = clipboardItem.EntryDateTicks,
                     EntryDateUtcTicks = clipboardItem.EntryDateUtcTicks,
                     ModifiedDateTicks = clipboardItem.ModifiedDateTicks,
-                    ModifiedDateUtcTicks = clipboardItem.ModifiedDateUtcTicks,
-                    PreviewDimensionInfo = previewDimensionInfo
+                    ModifiedDateUtcTicks = clipboardItem.ModifiedDateUtcTicks
                 };
             }
 
@@ -396,8 +328,7 @@ namespace Clipbox.ExtendedClipboard
                     EntryDateTicks = persistableClipboardItem.EntryDateTicks,
                     EntryDateUtcTicks = persistableClipboardItem.EntryDateUtcTicks,
                     ModifiedDateTicks = persistableClipboardItem.ModifiedDateTicks,
-                    ModifiedDateUtcTicks = persistableClipboardItem.ModifiedDateUtcTicks,
-                    PreviewDimensionInfo = persistableClipboardItem.PreviewDimensionInfo
+                    ModifiedDateUtcTicks = persistableClipboardItem.ModifiedDateUtcTicks
                 };
             }
 

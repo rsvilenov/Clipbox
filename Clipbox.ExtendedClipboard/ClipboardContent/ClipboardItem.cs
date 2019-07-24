@@ -1,11 +1,10 @@
-﻿using Clipbox.Core.Extensibility.Contracts;
-using Clipbox.Core.ClipboardContent.Interfaces;
+﻿using Clipbox.Core.ClipboardContent.Interfaces;
+using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Infrastructure.Persistence;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Clipbox.Core.ClipboardContent;
 
 namespace Clipbox.ExtendedClipboard.ClipboardContent
 {
@@ -109,13 +108,5 @@ namespace Clipbox.ExtendedClipboard.ClipboardContent
         public long ModifiedDateUtcTicks { get; set; }
         
         public bool IsTemporary { get; internal set; }
-
-        [NonSerialized]
-        private PreviewDimensionInfo _previewDimensionInfo;
-        public PreviewDimensionInfo PreviewDimensionInfo
-        {
-            get { return _previewDimensionInfo; }
-            set { _previewDimensionInfo = value; }
-        }
     }
 }

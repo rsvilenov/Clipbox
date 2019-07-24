@@ -505,24 +505,6 @@ namespace Clipbox.ExtendedClipboard
                 });
             }
 
-            if (item.PreviewDimensionInfo != null)
-            {
-                clonnedItem.PreviewDimensionInfo = new PreviewDimensionInfo
-                {
-                    DPI = item.PreviewDimensionInfo.DPI,
-                    IsViewItemGroup = item.PreviewDimensionInfo.IsViewItemGroup,
-                    PreviewDimentions = item.PreviewDimensionInfo.PreviewDimentions
-                        .Select(ipd => new PreviewDimensions
-                        {
-                            PreviewHeight = ipd.PreviewHeight,
-                            PreviewWidth = ipd.PreviewWidth
-                        }).ToList(),
-                    WorkAreaHeight = item.PreviewDimensionInfo.WorkAreaHeight,
-                    WorkAreaWidth = item.PreviewDimensionInfo.WorkAreaWidth
-
-                };
-            }
-
             return clonnedItem;
         }
 
@@ -786,59 +768,6 @@ namespace Clipbox.ExtendedClipboard
             }
 
             if (!beSilend)
-            {
-                ItemChanged?.Invoke(this, new ClipboardManagerEventArgs(clipboardItemId));
-            }
-        }
-
-        public void SetPreviewDimensions(string clipboardItemId, PreviewDimensionInfo previewDimensionInfo, bool beSilent = false)
-        {
-            lock (_ioLockHandle)
-            {
-                var clipboardItem = _clipboardItems.FirstOrDefault(item => item.Id == clipboardItemId);
-                if (clipboardItemId == null)
-                {
-                    throw new ArgumentException($"{nameof(clipboardItemId)} {clipboardItemId} was not found.");
-                }
-                
-                // TODO: maybe store the preview dimentions in another file, so that we do not have to
-                // restore the whole item in order to save the dimensions.
-                if (clipboardItem.IsShrinked)
-                {
-                    // restore the data of the items so that they will be stored properly when updated
-                    _persistenceHelper.RestoreShrinkedClipboardItem(clipboardItem);
-                }
-
-                clipboardItem.PreviewDimensionInfo = new PreviewDimensionInfo
-                {
-                    DPI = previewDimensionInfo.DPI,
-                    WorkAreaHeight = previewDimensionInfo.WorkAreaHeight,
-                    WorkAreaWidth = previewDimensionInfo.WorkAreaWidth,
-                    IsViewItemGroup = previewDimensionInfo.IsViewItemGroup,
-
-                    PreviewDimentions = previewDimensionInfo.PreviewDimentions
-                    .Select(pd =>
-                        new PreviewDimensions
-                        {
-                            PreviewHeight = pd.PreviewHeight,
-                            PreviewWidth = pd.PreviewWidth
-                        })
-                };
-
-                // invlidate the synchronized state of the item (it has changed)
-                clipboardItem.IsSynchronizedWithCloud = false;
-
-                clipboardItem.IsModified = true;
-                // TODO: should we update these dates?
-                // does the synchronization depend on them?
-                clipboardItem.ModifiedDateTicks = DateTime.Now.Ticks;
-                clipboardItem.ModifiedDateUtcTicks = DateTime.UtcNow.Ticks;
-
-                // update the stored clipboard item
-                _persistenceHelper.StoreAndShrinkClipboardItem(clipboardItem);
-            }
-
-            if (!beSilent)
             {
                 ItemChanged?.Invoke(this, new ClipboardManagerEventArgs(clipboardItemId));
             }

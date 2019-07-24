@@ -10,9 +10,7 @@ namespace Clipbox.ExtendedClipboard.Interfaces
     public interface IClipboardManager : IDisposable
     {
         // TODO: interface segregation principle...
-
-        void SetPreviewDimensions(string clipboardItemId, PreviewDimensionInfo previewDimentionInfo, bool beSilent = false);
-
+        
         void PinUnpinItemItem(string clipboardItemId, bool pin);
 
         void SuspendClipboardForwarding();

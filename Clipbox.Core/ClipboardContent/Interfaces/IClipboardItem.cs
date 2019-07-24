@@ -2,7 +2,7 @@
 
 namespace Clipbox.Core.ClipboardContent.Interfaces
 {
-    public interface IClipboardItem : IHaveClipboardItemInfo, IHavePreviewDimensionInfo
+    public interface IClipboardItem : IHaveClipboardItemInfo
     {
         IList<IClipboardDataObject> ClipboardDataObjects { get; }
         

@@ -25,7 +25,5 @@ namespace Clipbox.ExtendedClipboard.ClipboardContent
         #endregion
 
         public bool IsPinned { get; set; }
-
-        public SerializablePreviewDimensionInfo PreviewDimensionInfo { get; set; }
     }
 }

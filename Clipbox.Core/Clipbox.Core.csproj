@@ -44,10 +44,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClipboardContent\Interfaces\IHaveMonitorInfo.cs" />
-    <Compile Include="ClipboardContent\Interfaces\IHavePreviewDimensionInfo.cs" />
-    <Compile Include="ClipboardContent\Interfaces\IPreviewDimensions.cs" />
-    <Compile Include="ClipboardContent\PreviewDimensionInfo.cs" />
-    <Compile Include="ClipboardContent\PreviewDimensions.cs" />
     <Compile Include="DisposableObject.cs" />
     <Compile Include="Enums\ClipboardContentClass.cs" />
     <Compile Include="Enums\ProcessExitCodes.cs" />
