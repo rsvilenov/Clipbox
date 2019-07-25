@@ -35,10 +35,19 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
         <DataTemplate x:Key="NotLoadedClipboardItem">
-            <Border
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Stretch"
-                Background="Red" />
+            <Grid DataContext="{Binding Path=DimensionInfo}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="40" />
+                </Grid.RowDefinitions>
+
+                <Rectangle Width="{Binding Path=Dimensions[0].PreviewWidth}"
+            Grid.Row="0"
+            Margin="10"
+            Fill="Red" />
+
+                <TextBlock Text="{Binding Path=Dimensions[0].PreviewWidth}" Foreground="White" Grid.Row="1" />
+            </Grid>
         </DataTemplate>
         <DataTemplate x:Key="LoadedClipboardItem">
             <Border
@@ -248,8 +257,7 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ContentControl
-                        MinWidth="{Binding Path=MinHeight, RelativeSource={RelativeSource Mode=Self}}"
-                        MinHeight="{Binding Path=ClipboardViewItemHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                        
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch">
                         <ContentControl.Style>

@@ -86,7 +86,10 @@ namespace Clipbox.Views
 
         private void MainViewClipboardContents_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            _viewModel.LoadItems(this.MonitorDimensions);
+            if ((bool)e.NewValue)
+            {
+                _viewModel.LoadItems(this.MonitorDimensions);
+            }
         }
 
         private void PART_VerticalScrollBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
