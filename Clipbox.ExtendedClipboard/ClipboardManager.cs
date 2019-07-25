@@ -501,6 +501,9 @@ namespace Clipbox.ExtendedClipboard
                     FormatExtentionName = cdo.FormatExtentionName,
                     FormatExtentionVersion = cdo.FormatExtentionVersion,
                     IsTransferable = cdo.IsTransferable,
+                    // NB: this member cannot be serialized reliably as it can
+                    // contain system-specific pointers and other non-serializable data.
+                    // So we will just copy the reference.
                     OriginalData = cdo.OriginalData
                 });
             }
