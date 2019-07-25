@@ -7,11 +7,11 @@ using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
 using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.Threading;
+using Clipbox.Infrastructure.UI.DataObjects;
 using Clipbox.Services.DataObjects;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.Win32;
-using Clipbox.Win32.Native;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -19,13 +19,16 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.ExceptionServices;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading.Tasks;
 
 namespace Clipbox.Services
 {
     public class PreviewGenerationService : IPreviewGenerationService, IDisposable
     {
         private const string APP_DATA_SUBDIR = "PreviewDataCache";
+        private const int PREVIEW_GENERATION_TIMEOUT_MS = 2000;
 
         private IClipboardManager _clipboardManager;
         private IClipboardFormatPreviewExtentionContainer _clipboardFormatPreviewExtContainer;
@@ -85,7 +88,16 @@ namespace Clipbox.Services
         {
             _bgGenerationDispatcher.BeginInvoke(() =>
             {
+                var task = StartPreviewGenerationTask(clipboardItemId);
+                // do not block the queue - abandon the tasks that do not finish on time
+                task.Wait(TimeSpan.FromMilliseconds(PREVIEW_GENERATION_TIMEOUT_MS));
+            });
+        }
 
+        private Task StartPreviewGenerationTask(string clipboardItemId)
+        {
+            return Task.Run(() =>
+            {
                 MonitorUtils.DisplayMonitor currentMonitor = MonitorUtils.GetByForegroundWindow();
                 MonitorDimensions monitorDimensions = new MonitorDimensions
                 {
@@ -204,7 +216,15 @@ namespace Clipbox.Services
             byte[] fileData = AppDataUtils.ReadBytesFromApplicationData(relativeFilePath);
 
             // deserialize
-            pdto = PreviewDataTransferObject.FromByteArray(fileData);
+            try
+            {
+                pdto = PreviewDataTransferObject.FromByteArray(fileData);
+            }
+            catch (SerializationException sex)
+            {
+                Debug.WriteLine($"pdto for {clipboardItemId} cannot be deserialized: {sex}");
+                return false;
+            }
             
             return true;
         }
@@ -244,10 +264,18 @@ namespace Clipbox.Services
             byte[] fileData = AppDataUtils.ReadBytesFromApplicationData(relativeFilePath);
 
             // deserialize
-            using (var ms = new MemoryStream(fileData))
+            try
             {
-                var formatter = new BinaryFormatter();
-                dictionary = (ConcurrentDictionary<string, PreviewDimensionInfo>)formatter.Deserialize(ms);
+                using (var ms = new MemoryStream(fileData))
+                {
+                    var formatter = new BinaryFormatter();
+                    dictionary = (ConcurrentDictionary<string, PreviewDimensionInfo>)formatter.Deserialize(ms);
+                }
+            }
+            catch (SerializationException sex)
+            {
+                Debug.WriteLine($"PreviewDimensionsDictionary cannot be deserialized: {sex}");
+                return false;
             }
 
             return true;

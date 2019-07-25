@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Clipbox.Infrastructure.UI.DataObjects;
+using System;
 using System.Collections.Generic;
 
 namespace Clipbox.Services.DataObjects

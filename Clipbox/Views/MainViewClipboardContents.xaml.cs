@@ -4,7 +4,6 @@ using Clipbox.Infrastructure.UI.Utils;
 using Clipbox.Services.Interfaces;
 using Clipbox.ViewModels;
 using Clipbox.ViewModels.BindableObjects;
-using Clipbox.ViewModels.PreviewRelatedObjects;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -87,7 +86,7 @@ namespace Clipbox.Views
 
         private void MainViewClipboardContents_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            _viewModel.LoadItems();
+            _viewModel.LoadItems(this.MonitorDimensions);
         }
 
         private void PART_VerticalScrollBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -258,12 +257,7 @@ namespace Clipbox.Views
                         && !lviVm.IsViewItemLoaded)
                     {
                         // load the full view item
-                        _viewModel.LoadViewItem(lviVm.Id, new PreviewDimensionSuggestedInfo
-                        {
-                            MonitorDimensions = MonitorDimensions,
-                            SuggestedPreviewHeight = ClipboardViewItemHeight,
-                            SuggestedPreviewWidth = ClipboardViewItemHeight
-                        });
+                        _viewModel.LoadViewItem(lviVm.Id, this.MonitorDimensions);
                     }
                 }
                 else

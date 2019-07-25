@@ -1,4 +1,5 @@
 ﻿using Clipbox.Core.ClipboardContent.Interfaces;
+using Clipbox.Infrastructure.UI.DataObjects;
 using Clipbox.Services.DataObjects;
 
 namespace Clipbox.Services.Interfaces

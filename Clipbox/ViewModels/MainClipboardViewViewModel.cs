@@ -1,18 +1,15 @@
-﻿using Clipbox.Core.ClipboardContent;
-using Clipbox.Core.ClipboardContent.Interfaces;
+﻿using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.ExtendedClipboard.Interfaces;
-using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
 using Clipbox.Infrastructure.Threading;
 using Clipbox.Infrastructure.UI;
+using Clipbox.Infrastructure.UI.DataObjects;
+using Clipbox.Services.DataObjects;
 using Clipbox.Services.Interfaces;
-using Clipbox.Settings;
 using Clipbox.ViewModels.BindableObjects;
-using Clipbox.ViewModels.PreviewRelatedObjects;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Clipbox.ViewModels
 {
@@ -55,56 +52,29 @@ namespace Clipbox.ViewModels
 
         private readonly IClipboardManager _clipboardManager;
         private readonly ISettingsService _settingsService;
-        private readonly IClipboardFormatPreviewExtentionContainer _previewsContainer;
-
-        private ClipboardViewItemFactory _clipboardViewItemFactory;
-        private ClipboardViewItemManager _previewDataManager;
-        private int _previewItemWidth;
-        private int _previewItemHeight;
+        private readonly IPreviewGenerationService _previewGenerationService;
 
         private CancellableTaskManager _cancellableTaskManager;
 
         public MainClipboardViewViewModel(IClipboardManager clipboardManager,
-            IClipboardFormatPreviewExtentionContainer previewsContainer,
+            IPreviewGenerationService previewGenerationService,
             ISettingsService settingsService)
         {
             _clipboardManager = clipboardManager;
             _settingsService = settingsService;
-            _previewsContainer = previewsContainer;
-
-            int maxPreviewItemsInGroupItem = _settingsService.GetSetting<int>(SettingsKeys.MaxPreviewItemsInGroupItem);
-            _clipboardViewItemFactory = new ClipboardViewItemFactory(previewsContainer, maxPreviewItemsInGroupItem);
-            _previewDataManager = new ClipboardViewItemManager(_clipboardViewItemFactory);
+            _previewGenerationService = previewGenerationService;
+            
             _cancellableTaskManager = new CancellableTaskManager();
         }
 
-        public void LoadViewItem(string clipboardItemId, PreviewDimensionSuggestedInfo previewDimensionSuggestedInfo)
+        public void LoadViewItem(string clipboardItemId, MonitorDimensions monitorDimensions)
         {
             _cancellableTaskManager.ScheduleTask(clipboardItemId, new Action<string>((taskId) =>
             {
                 var restoredClipboardItem = _clipboardManager.GetClipboardItem(clipboardItemId, restoreShrinked: true);
                 var wrapper = _clipboardViewItemWrappers.First(w => w.Id == clipboardItemId);
-                wrapper.ViewItem = _previewDataManager.GetClipboardViewItem(restoredClipboardItem,
-                    previewDimensionSuggestedInfo.SuggestedPreviewWidth,
-                    previewDimensionSuggestedInfo.SuggestedPreviewHeight); //_clipboardViewItemFactory.CreateFromClipboardItem(restoredClipboardItem, _previewItemWidth, _previewItemHeight);
-
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-                GC.Collect();
-
-                wrapper.IsViewItemLoaded = true;
-            }));
-        }
-
-        public void LoadViewItem(string clipboardItemId)
-        {
-            LazyLoadPreviewDimentions();
-
-            _cancellableTaskManager.ScheduleTask(clipboardItemId, new Action<string>((taskId) =>
-            {
-                var restoredClipboardItem = _clipboardManager.GetClipboardItem(clipboardItemId, restoreShrinked: true);
-                var wrapper = _clipboardViewItemWrappers.First(w => w.Id == clipboardItemId);
-                wrapper.ViewItem = _previewDataManager.GetClipboardViewItem(restoredClipboardItem, _previewItemWidth, _previewItemHeight); //_clipboardViewItemFactory.CreateFromClipboardItem(restoredClipboardItem, _previewItemWidth, _previewItemHeight);
+                PreviewDataTransferObject pdto = _previewGenerationService.GetPreviewDataTransferObject(restoredClipboardItem, monitorDimensions);
+                wrapper.ViewItem = ClipboardViewItemFactory.CreateFromPreviewDataTransferObject(restoredClipboardItem, pdto);
 
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
@@ -126,21 +96,8 @@ namespace Clipbox.ViewModels
             wrapper.IsViewItemLoaded = false;
         }
 
-        private void LazyLoadPreviewDimentions()
+        public void LoadItems(MonitorDimensions monitorDimensions)
         {
-            if (_previewItemHeight == 0)
-            {
-                var previewDimArgs = new RequestPreviewDimentionsEventArgs();
-                OnPreviewDimentionsRequested?.Invoke(this, previewDimArgs);
-                _previewItemHeight = previewDimArgs.PreviewHeight;
-                _previewItemWidth = previewDimArgs.PreviewWidth;
-            }
-        }
-
-        public void LoadItems()
-        {
-            //const int NUMBER_OF_ITEMS = 1000;
-
             ClipboardViewItemWrappers = new AsyncObservableCollection<ClipboardViewItemWrapper>();
             IEnumerable<string> allItemIds = _clipboardManager.GetAllItemIds();
             List<IClipboardItem> clipboardItems = new List<IClipboardItem>();
@@ -149,41 +106,27 @@ namespace Clipbox.ViewModels
                 IClipboardItem clipboardItem = _clipboardManager.GetClipboardItem(clipboardItemId);
                 clipboardItems.Add(clipboardItem);
                 var tempViewItem = new ClipboardViewItemWrapper(clipboardItem);
+
+                CalibratedPreviewDimentionInfo cpdi = null;
+                if (_previewGenerationService.TryGetQuickPreviewDimentionInfo(clipboardItemId, monitorDimensions, out cpdi))
+                {
+                    IEnumerable<ClipboardViewItemDimensions> dimensions = cpdi.PreviewDimentions
+                        .Select(pd => 
+                            new ClipboardViewItemDimensions
+                            {
+                                PreviewHeight = pd.PreviewHeight,
+                                PreviewWidth = pd.PreviewWidth
+                            });
+
+                    tempViewItem.DimensionInfo = new ClipboardViewItemDimensionInfo
+                    {
+                        IsViewItemGroup = cpdi.IsViewItemGroup,
+                        Dimensions = new AsyncObservableCollection<ClipboardViewItemDimensions>(dimensions)
+                    };
+                }
+                
                 ClipboardViewItemWrappers.Add(tempViewItem);
             }
-
-            // TODO: this should be fast enough, but I should nevertheless consider doing this on closing the window
-            Task.Run(() =>
-            {
-                _previewDataManager.DeleteUnusedStoredPreviewData(clipboardItems);
-            });
-
-            //int currentItemForTheDay = 0;
-            //int currentNumber = NUMBER_OF_ITEMS;
-            //for (int i = 0; i < NUMBER_OF_ITEMS; i++)
-            //{
-            //    Dispatcher.CurrentDispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, new Action(() =>
-            //    {
-            //        int itemsPerDay = new Random().Next(1, 30);
-            //        // by the time the dispatcher executes this code, the counter 
-            //        // in the loop has already reached its maximum value, so we cannot
-            //        // count on "i" for getting the number of the element.
-            //        DateTime date = DateTime.Today.AddDays(currentNumber);
-            //        if (currentItemForTheDay >= itemsPerDay)
-            //        {
-
-            //            currentNumber--;
-            //            currentItemForTheDay = 0;
-            //        }
-
-            //        ClipboardViewItems.Add(new MainClipboardViewItem
-            //        {
-            //            DateCreated = date
-            //        });
-            //        currentItemForTheDay++;
-            //    }));
-
-            //}
         }
 
         ~MainClipboardViewViewModel()

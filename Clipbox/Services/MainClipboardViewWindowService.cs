@@ -10,7 +10,7 @@ using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
 using Clipbox.Infrastructure.Extensibility.Containers;
 using Clipbox.Settings;
 using Clipbox.Infrastructure.UI.Windows.Enums;
-using Clipbox.ViewModels.PreviewRelatedObjects;
+using Clipbox.Infrastructure.UI.DataObjects;
 
 namespace Clipbox.Services
 {
@@ -22,7 +22,7 @@ namespace Clipbox.Services
 
         private IClipboardManager _clipboardManager;
 
-        private IClipboardFormatPreviewExtentionContainer _clipboardFormatPreviewExtContainer;
+        private IPreviewGenerationService _previewGenerationService;
 
         private UIExtentionContainer _uiExtContainer;
 
@@ -41,13 +41,13 @@ namespace Clipbox.Services
             }
         }
 
-        public MainClipboardViewWindowService(IClipboardManager clipboardManager, 
-            IClipboardFormatPreviewExtentionContainer clipboardFormatPreviewExtContainer, 
+        public MainClipboardViewWindowService(IClipboardManager clipboardManager,
+            IPreviewGenerationService previewGenerationService, 
             UIExtentionContainer uiExtContainer, 
             ISettingsService settingsService)
         {
             _clipboardManager = clipboardManager;
-            _clipboardFormatPreviewExtContainer = clipboardFormatPreviewExtContainer;
+            _previewGenerationService = previewGenerationService;
             _uiExtContainer = uiExtContainer;
             _settingsService = settingsService;
         }
@@ -79,8 +79,8 @@ namespace Clipbox.Services
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
                 new Action(() =>
                 {
-                    var mainWindow = new MainWindow(_clipboardManager, 
-                        _clipboardFormatPreviewExtContainer, 
+                    var mainWindow = new MainWindow(_clipboardManager,
+                        _previewGenerationService, 
                         _uiExtContainer, 
                         _settingsService, 
                         dm);
@@ -103,11 +103,10 @@ namespace Clipbox.Services
                     mainWindow.SetMonitorDimensions(new MonitorDimensions
                     {
                         MonitorDPI = currentMonitor.Dpi,
-                        MonitorHeight = currentMonitor.WorkingArea.Height,
-                        MonitorWidth = currentMonitor.WorkingArea.Width
+                        WorkAreaHeight = currentMonitor.WorkingArea.Height,
+                        WorkAreaWidth = currentMonitor.WorkingArea.Width
                     });
-
-
+                    
                     _mainWindow.Show();
                 }));
         }

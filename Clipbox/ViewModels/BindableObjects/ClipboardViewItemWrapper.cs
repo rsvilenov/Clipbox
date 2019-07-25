@@ -1,5 +1,6 @@
 ﻿using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.Infrastructure.UI;
+using Clipbox.Services.DataObjects;
 using System;
 
 namespace Clipbox.ViewModels.BindableObjects
@@ -58,6 +59,14 @@ namespace Clipbox.ViewModels.BindableObjects
         {
             get { return _isViewItemLoaded; }
             set { SetField(ref _isViewItemLoaded, value); }
+        }
+
+        private ClipboardViewItemDimensionInfo _dimensionInfo;
+
+        public ClipboardViewItemDimensionInfo DimensionInfo
+        {
+            get { return _dimensionInfo; }
+            set { SetField(ref _dimensionInfo, value); }
         }
 
         /// <summary>

@@ -85,7 +85,6 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Services\CloudSynchronizationService.cs" />
     <Compile Include="Services\DataObjects\CalibratedPreviewDimentionInfo.cs" />
-    <Compile Include="Services\DataObjects\MonitorDimensions.cs" />
     <Compile Include="Services\DataObjects\PreviewDataTransferObject.cs" />
     <Compile Include="Services\DataObjects\PreviewDimensionInfo.cs" />
     <Compile Include="Services\DataObjects\PreviewDimensions.cs" />
@@ -118,15 +117,13 @@
     <Compile Include="Technical\Converters\ContentClassListContainsConverter.cs" />
     <Compile Include="Technical\Converters\ObjectTypeCompareConverter.cs" />
     <Compile Include="ViewModels\BindableObjects\ClipboardViewItemBase.cs" />
+    <Compile Include="ViewModels\BindableObjects\ClipboardViewItemDimensionInfo.cs" />
     <Compile Include="ViewModels\BindableObjects\ClipboardViewItemDimensions.cs" />
     <Compile Include="ViewModels\BindableObjects\ClipboardViewItemWrapper.cs" />
     <Compile Include="ViewModels\BindableObjects\ClipboardViewSubItem.cs" />
     <Compile Include="ViewModels\BindableObjects\ClipboardViewSubItemBase.cs" />
     <Compile Include="ViewModels\BindableObjects\ClipboardViewSubItemNMore.cs" />
     <Compile Include="ViewModels\MainClipboardViewViewModel.cs" />
-    <Compile Include="ViewModels\ClipboardViewItemManager.cs" />
-    <Compile Include="ViewModels\PreviewRelatedObjects\MonitorDimensions.cs" />
-    <Compile Include="ViewModels\PreviewRelatedObjects\PreviewDimensionSuggestedInfo.cs" />
     <Compile Include="ViewModels\SerializableObjects\StoredPreviewData.cs" />
     <Compile Include="ViewModels\SerializableObjects\StoredPreviewItem.cs" />
     <Compile Include="ViewModels\TrayContextMenuViewModel.cs" />

@@ -173,11 +173,11 @@ namespace Clipbox.ViewModels
 
             AreClipboardItemsAvailable = true;
 
-            int maxPreviewItemsInGroupItem = _settingsService.GetSetting<int>(SettingsKeys.MaxPreviewItemsInGroupItem);
-            ClipboardViewItemFactory viewItemFactory = new ClipboardViewItemFactory(_previewContainer, maxPreviewItemsInGroupItem);
-            var viewItem = viewItemFactory.CreateFromClipboardItem(item, availableItemWidth, availableItemHeight);
+            //int maxPreviewItemsInGroupItem = _settingsService.GetSetting<int>(SettingsKeys.MaxPreviewItemsInGroupItem);
+            //ClipboardViewItemFactory viewItemFactory = new ClipboardViewItemFactory(_previewContainer, maxPreviewItemsInGroupItem);
+            //var viewItem = viewItemFactory.CreateFromClipboardItem(item, availableItemWidth, availableItemHeight);
 
-            ClipboardViewItems.Add(viewItem);
+            //ClipboardViewItems.Add(viewItem);
         }
 
         public void ReloadItems()
@@ -207,19 +207,19 @@ namespace Clipbox.ViewModels
             ClipboardViewItems.Clear();
             AreClipboardItemsAvailable = false;
 
-            int maxPreviewItemsInGroupItem = _settingsService.GetSetting<int>(SettingsKeys.MaxPreviewItemsInGroupItem);
-            ClipboardViewItemFactory viewItemFactory = new ClipboardViewItemFactory(_previewContainer, maxPreviewItemsInGroupItem);
-            foreach (var clipboardItemId in clipboardItemIds)
-            {
-    #if DEBUG
-                Debug.WriteLine(clipboardItemId);
-#endif
-                IClipboardItem item = GetClipboardItem(clipboardItemId, restoreShrinked: true);
-                var viewItem = viewItemFactory.CreateFromClipboardItem(item, availableItemWidth, availableItemHeight);
-                ClipboardViewItems.Add(viewItem);
+//            int maxPreviewItemsInGroupItem = _settingsService.GetSetting<int>(SettingsKeys.MaxPreviewItemsInGroupItem);
+//            ClipboardViewItemFactory viewItemFactory = new ClipboardViewItemFactory(_previewContainer, maxPreviewItemsInGroupItem);
+//            foreach (var clipboardItemId in clipboardItemIds)
+//            {
+//    #if DEBUG
+//                Debug.WriteLine(clipboardItemId);
+//#endif
+//                IClipboardItem item = GetClipboardItem(clipboardItemId, restoreShrinked: true);
+//                var viewItem = viewItemFactory.CreateFromClipboardItem(item, availableItemWidth, availableItemHeight);
+//                ClipboardViewItems.Add(viewItem);
 
-                AreClipboardItemsAvailable = true;
-            }
+//                AreClipboardItemsAvailable = true;
+//            }
 
 #if DEBUG
             GC.Collect();

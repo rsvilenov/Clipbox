@@ -1,18 +1,18 @@
-﻿using Clipbox.Infrastructure.Extensibility.Containers;
+﻿using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.Core.Extensibility.Contracts;
-using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using Clipbox.Core.Extensibility.Exceptions;
+using Clipbox.Infrastructure.Extensibility.Containers;
+using Clipbox.Infrastructure.UI.DataObjects;
 using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Interfaces;
+using Clipbox.Settings;
 using Clipbox.ViewModels.BindableObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using Clipbox.Settings;
-using Clipbox.ViewModels.PreviewRelatedObjects;
 
 namespace Clipbox.Views
 {
@@ -189,7 +189,7 @@ namespace Clipbox.Views
         public void SetMonitorDimensions(MonitorDimensions dimensions)
         {
             MonitorDimensions = dimensions;
-            SetCurrentDisplayHeight(dimensions.MonitorHeight);
+            SetCurrentDisplayHeight(dimensions.WorkAreaHeight);
         }
         
         public virtual void OnClipboardViewItemHeightChanged()

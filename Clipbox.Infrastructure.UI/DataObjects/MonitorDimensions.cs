@@ -1,14 +1,14 @@
 ﻿using System;
 
-namespace Clipbox.Services.DataObjects
+namespace Clipbox.Infrastructure.UI.DataObjects
 {
     [Serializable]
     public class MonitorDimensions : ICloneable
     {
         // monitor info
-        public int WorkAreaWidth { get; internal set; }
-        public int WorkAreaHeight { get; internal set; }
-        public double MonitorDPI { get; internal set; }
+        public int WorkAreaWidth { get; set; }
+        public int WorkAreaHeight { get; set; }
+        public double MonitorDPI { get; set; }
 
         public object Clone()
         {

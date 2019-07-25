@@ -56,6 +56,8 @@ namespace Clipbox
 
         QuickViewClipboardContents _quickViewClipboardContents;
 
+        PreviewGenerationService _previewGenerationService;
+
         public void PerformStartupSequence()
         {
             string[] startupArgs = Environment.GetCommandLineArgs();
@@ -150,8 +152,9 @@ namespace Clipbox
 
             _trayContextMenuService = new TrayContextMenuService(_settingsService);
 
+            _previewGenerationService = new PreviewGenerationService(_clipboardManager, _extentionLoader.PreviewGeneratorsContainer, _settingsService);
             // this view can show a little bit slower so we will not keep its instance alive the whole time - we will create it upon request within the service
-            _mainClipboardViewWindowService = new MainClipboardViewWindowService(_clipboardManager, _extentionLoader.PreviewGeneratorsContainer, _extentionLoader.UIExtentionContainer, _settingsService);
+            _mainClipboardViewWindowService = new MainClipboardViewWindowService(_clipboardManager, _previewGenerationService, _extentionLoader.UIExtentionContainer, _settingsService);
 
             //_mainWindow = new MainWindow(_settingsService);
             //Application.Current.MainWindow = _mainWindow;
@@ -274,6 +277,7 @@ namespace Clipbox
             TryDisposeObject(_flowExtentionExecutorService);
             TryDisposeObject(_previewWindowService);
             TryDisposeObject(_quickViewClipboardContents);
+            TryDisposeObject(_previewGenerationService);
             TryDisposeObject(_clipboardListenerService);
             TryDisposeObject(_trayService);
             TryDisposeObject(_trayBandService);
