@@ -309,7 +309,7 @@ namespace Clipbox.Services
             {
                 MonitorDimensions = (MonitorDimensions)monitorDimensions.Clone(),
                 IsViewItemGroup = pdto.IsGroup,
-                PreviewDimentions = pdto.PreviewItems.Select(pd => (PreviewDimensions)pd.PreviewDimensions.Clone())
+                PreviewDimentions = pdto.PreviewItems.Select(pd => (PreviewDimensions)pd.PreviewDimensions.Clone()).ToList()
             };
         }
 
@@ -471,6 +471,11 @@ namespace Clipbox.Services
             previewDimensionInfo = new CalibratedPreviewDimentionInfo
             {
                 IsViewItemGroup = pdInfo.IsViewItemGroup,
+                PreviewDimentions = pdInfo.PreviewDimentions.Select(pdi => new PreviewDimensions
+                {
+                    PreviewHeight = pdi.PreviewHeight,
+                    PreviewWidth = pdi.PreviewWidth
+                }).ToList()
             };
 
             return true;
