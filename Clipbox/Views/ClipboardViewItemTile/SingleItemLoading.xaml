@@ -1,0 +1,28 @@
+﻿<UserControl x:Class="Clipbox.Views.ClipboardViewItemTile.SingleItemLoading"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:infWindows="clr-namespace:Clipbox.Infrastructure.UI.Windows;assembly=Clipbox.Infrastructure.UI"
+    xmlns:local="clr-namespace:Clipbox.Views.ClipboardViewItemTile"
+    xmlns:localConv="clr-namespace:Clipbox.Technical.Converters"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </UserControl.Resources>
+    <Grid x:Name="mainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="40" />
+        </Grid.RowDefinitions>
+       
+        <Rectangle
+            Grid.Row="0"
+            Height="{Binding ViewItemDimensions.PreviewHeight}"
+            Width="{Binding ViewItemDimensions.PreviewWidth}"
+            Fill="Red"/>
+
+    </Grid>
+</UserControl>

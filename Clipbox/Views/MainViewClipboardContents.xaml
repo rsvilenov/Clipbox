@@ -259,12 +259,19 @@
                     <ContentControl
                         
                         HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch">
+                        VerticalAlignment="Center">
                         <ContentControl.Style>
                             <Style TargetType="{x:Type ContentControl}">
                                 <Style.Triggers>
                                     <DataTrigger Binding="{Binding Path=IsViewItemLoaded}" Value="False">
-                                        <Setter Property="ContentTemplate" Value="{StaticResource NotLoadedClipboardItem}" />
+                                        <!--<Setter Property="ContentTemplate" Value="{StaticResource NotLoadedClipboardItem}" />-->
+                                        <Setter Property="ContentTemplate">
+                                            <Setter.Value>
+                                                <DataTemplate>
+                                                    <tile:SingleItemLoading ViewItemDimensions="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.DimensionInfo.Dimensions[0]}" />
+                                                </DataTemplate>
+                                            </Setter.Value>
+                                        </Setter>
                                     </DataTrigger>
                                     <DataTrigger Binding="{Binding Path=IsViewItemLoaded}" Value="True">
                                         <Setter Property="ContentTemplate">

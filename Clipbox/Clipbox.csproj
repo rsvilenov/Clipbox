@@ -137,6 +137,9 @@
     <Compile Include="Views\ClipboardViewItemTile\SingleItem.xaml.cs">
       <DependentUpon>SingleItem.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ClipboardViewItemTile\SingleItemLoading.xaml.cs">
+      <DependentUpon>SingleItemLoading.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\FilterBand.xaml.cs">
       <DependentUpon>FilterBand.xaml</DependentUpon>
     </Compile>
@@ -186,6 +189,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ClipboardViewItemTile\SingleItem.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ClipboardViewItemTile\SingleItemLoading.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

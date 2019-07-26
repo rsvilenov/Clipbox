@@ -60,6 +60,15 @@ namespace Clipbox
 
         public void PerformStartupSequence()
         {
+            AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
+            {
+                // ignore args.IsTerminating - we will "fail fast"
+                ProcessUnhandledException(args.ExceptionObject);
+            };
+
+            
+            throw new NullReferenceException();
+
             string[] startupArgs = Environment.GetCommandLineArgs();
 
             if (startupArgs.Any(arg => arg == "ShowBrushes"))
@@ -86,12 +95,6 @@ namespace Clipbox
             {
                 MarshalExt.ThrowOnWin32Error();
             }
-
-            AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
-            {
-                // ignore args.IsTerminating - we will "fail fast"
-                ProcessUnhandledException(args.ExceptionObject);
-            };
 
             string appGuid = CreateOrGetAppGuid();
             
@@ -301,9 +304,12 @@ namespace Clipbox
                 failureInfo.LoadExceptionObject(exceptionObject);
             }
 
-            failureInfo.LoadedExtentions = _extentionLoader.LoadedTypes.
-                Select(t => t.FullName).
-                ToList();
+            if (_extentionLoader != null && _extentionLoader.LoadedTypes != null)
+            {
+                failureInfo.LoadedExtentions = _extentionLoader.LoadedTypes.
+                    Select(t => t.FullName).
+                    ToList();
+            }
             
             try
             {

@@ -24,6 +24,7 @@
             Margin="10"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
+            Width="{Binding ClipboardViewItem.PreviewItem.Image.Width}"
             Source="{Binding ClipboardViewItem.PreviewItem.Image}"
             Stretch="Uniform"
             ToolTip="{Binding ClipboardViewItem.PreviewItem.Description}" />

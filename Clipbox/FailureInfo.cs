@@ -4,6 +4,7 @@ using Clipbox.Win32;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
@@ -13,10 +14,17 @@ namespace Clipbox
     [Serializable]
     public class FailureInfo
     {
-        // If some member of the exception implements IDictionary,
-        // the exception cannot be serialized to xml.
         [NonSerialized]
-        private Exception _exception;
+        private object _exceptionObject;
+        
+        [XmlIgnore]
+        public object ExceptionObject
+        {
+            get { return _exceptionObject; }
+            set { _exceptionObject = value; }
+        }
+
+        public string ExceptionObjectType { get; set; }
 
         public string ExceptionStr { get; set; }
 
@@ -28,10 +36,6 @@ namespace Clipbox
 
         public double OsVersion { get; set; }
         
-        public object ExceptionObject { get; set; }
-
-        public string ExceptionObjectType { get; set; }
-
         public List<string> LoadedExtentions { get; set; }
 
         public string FailedExtentionType { get; set; }
@@ -52,8 +56,7 @@ namespace Clipbox
             ExceptionObjectType = exceptionObject.GetType().ToString();
             if (exceptionObject is Exception)
             {
-                _exception = exceptionObject as Exception;
-                ExceptionStr = _exception.ToString();
+                ExceptionStr = ((Exception)exceptionObject).ToString();
             }
         }
 
@@ -106,7 +109,7 @@ namespace Clipbox
             }
 
             sb.AppendLine($"Loaded extentions:");
-            sb.AppendLine(string.Join(Environment.NewLine, LoadedExtentions));
+            sb.AppendLine(string.Join(Environment.NewLine, LoadedExtentions ?? Enumerable.Empty<string>()));
 
             return sb.ToString();
         }
