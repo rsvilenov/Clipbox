@@ -346,6 +346,7 @@ namespace Clipbox.Services
             }
             else if (itemsCount > 1)
             {
+                pdto.IsGroup = true;
                 pdto.PreviewItems = GetClipboardPreviewItemsForGroup(manyPreviewHandler, itemsCount, itemRequestedWidth, itemRequestedHeight);
                 int itemsWithNoPreview = itemsCount - pdto.PreviewItems.Count();
                 pdto.NMore = itemsWithNoPreview;

@@ -65,10 +65,7 @@ namespace Clipbox
                 // ignore args.IsTerminating - we will "fail fast"
                 ProcessUnhandledException(args.ExceptionObject);
             };
-
             
-            throw new NullReferenceException();
-
             string[] startupArgs = Environment.GetCommandLineArgs();
 
             if (startupArgs.Any(arg => arg == "ShowBrushes"))
@@ -86,7 +83,7 @@ namespace Clipbox
                 return;
             }
 
-            // Initialize error handling
+            // Disable WER error handling.
             // The docs for WerRegisterRuntimeExceptionModule, WerReportSetUIOption, etc... are terribly scarce and obscure,
             // so we will disable WER and roll out our own error reporting mechanism.
             // We will disable it per user, not for all users, so that we won't need to write to HKLM.
