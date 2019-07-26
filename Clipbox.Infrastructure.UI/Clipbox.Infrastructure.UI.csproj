@@ -65,6 +65,7 @@
     <Compile Include="ExtentionMethods\MetafileExtentions.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="SlidingTimer.cs" />
+    <Compile Include="Utils\DispatcherUtils.cs" />
     <Compile Include="Utils\FormattedTextMeasuring.cs" />
     <Compile Include="Utils\OwnThreadDispatcher.cs" />
     <Compile Include="Visuals\AutoWrapPanel.cs" />

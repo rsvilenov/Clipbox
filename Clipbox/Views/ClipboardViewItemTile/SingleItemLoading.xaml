@@ -19,6 +19,7 @@
         </Grid.RowDefinitions>
        
         <Rectangle
+            Margin="10"
             Grid.Row="0"
             Height="{Binding ViewItemDimensions.PreviewHeight}"
             Width="{Binding ViewItemDimensions.PreviewWidth}"

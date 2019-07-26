@@ -1,4 +1,5 @@
 ﻿using Clipbox.Infrastructure.Threading;
+using Clipbox.Infrastructure.UI.Utils;
 using Clipbox.Win32;
 using Clipbox.Win32.Native;
 using System;
@@ -184,13 +185,11 @@ namespace Clipbox.Infrastructure.UI.Windows
                 {
                     Close();
 
-                    if (Dispatcher.FromThread(Thread.CurrentThread) != null)
+                    var dispatcher = Dispatcher.FromThread(Thread.CurrentThread);
+                    if (dispatcher != null)
                     {
                         // wait for the sync task to complete without blocking the dispatcher thread
-                        while (!_windowWorkerTask.IsCompleted)
-                        {
-                            Dispatcher.CurrentDispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
-                        }
+                        DispatcherUtils.DispatchWhile(dispatcher, () => !_windowWorkerTask.IsCompleted);
                     }
                     else
                     {

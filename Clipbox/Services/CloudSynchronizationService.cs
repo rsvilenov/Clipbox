@@ -1,6 +1,7 @@
 ﻿using Clipbox.Core;
 using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.Persistence;
+using Clipbox.Infrastructure.UI.Utils;
 using Clipbox.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -326,13 +327,10 @@ namespace Clipbox.Services
             // request sync task cancellation
             _syncTaskCancellationTokenSource.Cancel();
 
-            if (Dispatcher.FromThread(Thread.CurrentThread) != null)
+            var dispatcher = Dispatcher.FromThread(Thread.CurrentThread);
+            if (dispatcher != null)
             {
-                // wait for the sync task to complete without blocking the dispatcher thread
-                while (!_syncRunnerTask.IsCompleted)
-                {
-                    Dispatcher.CurrentDispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
-                }
+                DispatcherUtils.DispatchWhile(dispatcher, () => !_syncRunnerTask.IsCompleted);
             }
             else
             {
