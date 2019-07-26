@@ -93,7 +93,7 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.PreviewHandlers
 
                             if (previewBmp.Width == previewWidth && previewBmp.Height == previewHeight)
                             {
-                                preview = (Bitmap)previewBmp.Clone();
+                                preview = previewBmp.DeepClone();
                             }
                             else if (previewBmp.Width > previewWidth || previewBmp.Height > previewHeight)
                             {

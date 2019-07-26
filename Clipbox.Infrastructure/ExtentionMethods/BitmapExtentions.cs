@@ -92,5 +92,10 @@ namespace Clipbox.Infrastructure.ExtentionMethods
             return canvas;
         }
 
+        public static Bitmap DeepClone(this Bitmap bmp)
+        {
+            return new Bitmap(bmp);
+        }
+
     }
 }

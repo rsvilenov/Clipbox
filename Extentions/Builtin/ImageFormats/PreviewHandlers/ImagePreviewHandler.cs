@@ -27,7 +27,11 @@ namespace Clipbox.Extentions.BuiltIn.ImageFormats.FormatSupport
             }
             else
             {
-                previewData.Preview = (Image)img.Clone();
+                // the image may be Metafile, which is tricky to work with,
+                // so it would be best if we convert it to Bitmap. If the image
+                // is bitmap, then constructing a new object will copy all the
+                // pixel data anew, avoiding the typical locking problems with bitmaps...
+                previewData.Preview = new Bitmap(img);
             }
 
             previewData.Annotation = $"{img.Width} x {img.Height}";
