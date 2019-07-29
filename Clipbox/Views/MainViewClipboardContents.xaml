@@ -267,7 +267,8 @@
                                             <Setter Property="ContentTemplate">
                                                 <Setter.Value>
                                                     <DataTemplate>
-                                                        <tile:SingleItem ClipboardViewItem="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.ViewItem}" />
+                                                        <tile:SingleItem MaxHeight="{Binding Path=ClipboardViewItemMaxHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControl}}}" 
+                                                                         ClipboardViewItem="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.ViewItem}" />
                                                     </DataTemplate>
                                                 </Setter.Value>
                                             </Setter>
@@ -286,7 +287,7 @@
                                                         <tile:MultiItem ClipboardViewItem="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.ViewItem}">
                                                             <tile:MultiItem.Height>
                                                                 <MultiBinding Converter="{StaticResource MathAddConverter}">
-                                                                    <Binding Path="ClipboardViewItemHeight" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=UserControl}" />
+                                                                    <Binding Path="ClipboardViewItemMaxHeight" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControl}}" />
                                                                     <Binding>
                                                                         <Binding.Source>
                                                                             <!--  pad the height so that it matches the total height of the single view items  -->

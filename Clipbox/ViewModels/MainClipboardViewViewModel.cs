@@ -15,8 +15,6 @@ namespace Clipbox.ViewModels
 {
     public class MainClipboardViewViewModel : BindableObject
     {
-        public event EventHandler<RequestPreviewDimentionsEventArgs> OnPreviewDimentionsRequested;
-
         private AsyncObservableCollection<ClipboardViewItemWrapper> _clipboardViewItemWrappers;
 
         public AsyncObservableCollection<ClipboardViewItemWrapper> ClipboardViewItemWrappers

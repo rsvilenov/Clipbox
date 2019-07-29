@@ -98,12 +98,12 @@ namespace Clipbox.Views
             Dispatcher.Invoke(() =>
             {
                 // set both to Height for now (as Height is the important dimention, Width is determined automatically)
-                e.PreviewWidth = ClipboardViewItemHeight;
-                e.PreviewHeight = ClipboardViewItemHeight;
+                e.PreviewWidth = ClipboardViewItemMaxHeight;
+                e.PreviewHeight = ClipboardViewItemMaxHeight;
             });
         }
 
-        public override void OnClipboardViewItemHeightChanged()
+        public override void OnClipboardViewItemMaxHeightChanged()
         {
             _viewModel.ReloadItems();
         }

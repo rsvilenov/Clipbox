@@ -38,14 +38,14 @@ namespace Clipbox.Views
 
         protected MonitorDimensions MonitorDimensions { get; private set; }
         
-        public int ClipboardViewItemHeight
+        public int ClipboardViewItemMaxHeight
         {
             get { return (int)GetValue(ClipboardViewItemHeightProperty); }
             set { SetValue(ClipboardViewItemHeightProperty, value); }
         }
         
         public static readonly DependencyProperty ClipboardViewItemHeightProperty =
-            DependencyProperty.Register("ClipboardViewItemHeight", typeof(int), typeof(ClipboardViewControl), new PropertyMetadata(0));
+            DependencyProperty.Register(nameof(ClipboardViewItemMaxHeight), typeof(int), typeof(ClipboardViewControl), new PropertyMetadata(0));
 
         
         public ClipboardViewControl(UIExtentionContainer container, ISettingsService settingsService)
@@ -181,8 +181,8 @@ namespace Clipbox.Views
             {
                 _currentDisplayHeight = height;
                 // TODO: should we call OnClipboardViewItemHeightChanged when the ClipboardViewItemHeight setting changes?
-                ClipboardViewItemHeight = (int)(_currentDisplayHeight * _settingsService.GetSetting<double>(SettingsKeys.PreviewItemHeightRatio));
-                OnClipboardViewItemHeightChanged();
+                ClipboardViewItemMaxHeight = (int)(_currentDisplayHeight * _settingsService.GetSetting<double>(SettingsKeys.PreviewItemHeightRatio));
+                OnClipboardViewItemMaxHeightChanged();
             }
         }
 
@@ -192,7 +192,7 @@ namespace Clipbox.Views
             SetCurrentDisplayHeight(dimensions.WorkAreaHeight);
         }
         
-        public virtual void OnClipboardViewItemHeightChanged()
+        public virtual void OnClipboardViewItemMaxHeightChanged()
         { }
     }
 }

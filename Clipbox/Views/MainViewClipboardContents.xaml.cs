@@ -54,24 +54,11 @@ namespace Clipbox.Views
             IsVisibleChanged += MainViewClipboardContents_IsVisibleChanged;
 
             MainListView.LayoutUpdated += MainListView_LayoutUpdated;
-
-            _viewModel.OnPreviewDimentionsRequested += _viewModel_OnPreviewDimentionsRequested;
         }
 
         private void _scrollbarValueChangedSlidingTimer_Elapsed(object sender, EventArgs e)
         {
             LoadUnloadFullViewOfVisibleItems();
-        }
-
-        private void _viewModel_OnPreviewDimentionsRequested(object sender, RequestPreviewDimentionsEventArgs e)
-        {
-            Dispatcher.Invoke(() =>
-            {
-                
-                // set both to Height for now (as Height is the important dimention, Width is determined automatically)
-                e.PreviewWidth = ClipboardViewItemHeight;
-                e.PreviewHeight = ClipboardViewItemHeight;
-            });
         }
 
         private void _layoutSlidingTimer_Elapsed(object sender, EventArgs e)
