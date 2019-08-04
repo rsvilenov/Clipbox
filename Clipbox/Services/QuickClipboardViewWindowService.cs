@@ -163,19 +163,19 @@ namespace Clipbox.Services
 
             _quickViewWindow.Dispatcher.Invoke(DispatcherPriority.Send, new Action(() =>
             {
-                double currentDisplayHeight = _currentMonitor.WorkingArea.Height;
+                double currentDisplayDpiCalibratedHeight = _currentMonitor.WorkingArea.Height;
                 if (resizeToDpi)
                 {
                     _quickViewWindow.ScaleMode = DpiScaleMode.TaggedChildren;
                     double scaleFactor = _currentMonitor.Dpi / 96;
-                    currentDisplayHeight *= scaleFactor;
+                    currentDisplayDpiCalibratedHeight *= scaleFactor;
                 }
                 else
                 {
                     _quickViewWindow.ScaleMode = DpiScaleMode.None;
                 }
                 
-                _previewControl.SetCurrentDisplayHeight((int)currentDisplayHeight);
+                _previewControl.SetCurrentDisplayDpiCalibratedHeight((int)currentDisplayDpiCalibratedHeight);
 
                 SetMaxSizeToWindow();
                 _quickViewWindow.SizeChanged += _quickViewWindow_SizeChanged;

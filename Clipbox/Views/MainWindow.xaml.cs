@@ -99,9 +99,9 @@ namespace Clipbox.Views
 
         public new bool IsVisible { get; private set; }
 
-        public void SetCurrentDisplayHeight(int height)
+        public void SetCurrentDisplayDpiCalibratedHeight(int height)
         {
-            _mainViewClipboardContents.SetCurrentDisplayHeight(height);
+            _mainViewClipboardContents.SetCurrentDisplayDpiCalibratedHeight(height);
         }
 
         public void SetMonitorDimensions(MonitorDimensions dimensions)

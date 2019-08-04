@@ -32,20 +32,20 @@ namespace Clipbox.Views
 
         private readonly List<UIExtention> _loadedExtentions;
         
-        private int _currentDisplayHeight;
+        private double _currentDisplayDpiCalibratedHeight;
 
         private Dictionary<string, string> _localExtentionSettings;
 
         protected MonitorDimensions MonitorDimensions { get; private set; }
         
-        public int ClipboardViewItemMaxHeight
+        public double ClipboardViewItemMaxHeight
         {
-            get { return (int)GetValue(ClipboardViewItemHeightProperty); }
+            get { return (double)GetValue(ClipboardViewItemHeightProperty); }
             set { SetValue(ClipboardViewItemHeightProperty, value); }
         }
         
         public static readonly DependencyProperty ClipboardViewItemHeightProperty =
-            DependencyProperty.Register(nameof(ClipboardViewItemMaxHeight), typeof(int), typeof(ClipboardViewControl), new PropertyMetadata(0));
+            DependencyProperty.Register(nameof(ClipboardViewItemMaxHeight), typeof(double), typeof(ClipboardViewControl), new PropertyMetadata(0d));
 
         
         public ClipboardViewControl(UIExtentionContainer container, ISettingsService settingsService)
@@ -175,13 +175,13 @@ namespace Clipbox.Views
             public string CancelMessage { get; }
         }
 
-        public void SetCurrentDisplayHeight(int height)
+        public void SetCurrentDisplayDpiCalibratedHeight(double height)
         {
-            if (_currentDisplayHeight != height)
+            if (_currentDisplayDpiCalibratedHeight != height)
             {
-                _currentDisplayHeight = height;
+                _currentDisplayDpiCalibratedHeight = height;
                 // TODO: should we call OnClipboardViewItemHeightChanged when the ClipboardViewItemHeight setting changes?
-                ClipboardViewItemMaxHeight = (int)(_currentDisplayHeight * _settingsService.GetSetting<double>(SettingsKeys.PreviewItemHeightRatio));
+                ClipboardViewItemMaxHeight = _currentDisplayDpiCalibratedHeight * _settingsService.GetSetting<double>(SettingsKeys.PreviewItemHeightRatio);
                 OnClipboardViewItemMaxHeightChanged();
             }
         }
@@ -189,7 +189,17 @@ namespace Clipbox.Views
         public void SetMonitorDimensions(MonitorDimensions dimensions)
         {
             MonitorDimensions = dimensions;
-            SetCurrentDisplayHeight(dimensions.WorkAreaHeight);
+
+            bool resizeToDpi = _settingsService.GetSetting<bool>(SettingsKeys.ResizeAccordingToMonitorOrSystemDpi);
+
+            double currentDisplayHeight = dimensions.WorkAreaHeight;
+            if (resizeToDpi)
+            {
+                double scaleFactor = dimensions.MonitorDPI / 96;
+                currentDisplayHeight *= scaleFactor;
+            }
+
+            SetCurrentDisplayDpiCalibratedHeight(currentDisplayHeight);
         }
         
         public virtual void OnClipboardViewItemMaxHeightChanged()

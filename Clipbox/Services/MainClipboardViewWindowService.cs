@@ -86,20 +86,8 @@ namespace Clipbox.Services
                         dm);
                     _mainWindow = mainWindow;
 
-                    double currentDisplayHeight = currentMonitor.WorkingArea.Height;
-                    if (resizeToDpi)
-                    {
-                        mainWindow.ScaleMode = DpiScaleMode.TaggedChildren;
-                        double scaleFactor = currentMonitor.Dpi / 96;
-                        currentDisplayHeight *= scaleFactor;
-                    }
-                    else
-                    {
-                        mainWindow.ScaleMode = DpiScaleMode.None;
-                    }
-
-                    mainWindow.SetCurrentDisplayHeight((int)currentDisplayHeight);
-
+                    mainWindow.ScaleMode = resizeToDpi ? DpiScaleMode.TaggedChildren : DpiScaleMode.None;
+                    
                     mainWindow.SetMonitorDimensions(new MonitorDimensions
                     {
                         MonitorDPI = currentMonitor.Dpi,
