@@ -2,14 +2,10 @@
     x:Class="Clipbox.Views.MainViewClipboardContents"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:bo="clr-namespace:Clipbox.ViewModels.BindableObjects"
     xmlns:conv="clr-namespace:Clipbox.Technical.Converters"
     xmlns:coreConv="clr-namespace:Clipbox.Infrastructure.UI.Converters;assembly=Clipbox.Infrastructure.UI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-    xmlns:infEnums="clr-namespace:Clipbox.Core.Enums;assembly=Clipbox.Core"
-    xmlns:infPropAp="clr-namespace:Clipbox.Infrastructure.UI.AttachedProperties;assembly=Clipbox.Infrastructure.UI"
-    xmlns:infWindows="clr-namespace:Clipbox.Infrastructure.UI.Windows;assembly=Clipbox.Infrastructure.UI"
     xmlns:local="clr-namespace:Clipbox.Views"
     xmlns:localBeh="clr-namespace:Clipbox.Behaviors"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -235,10 +231,7 @@
 
             <ListView.ItemTemplate>
                 <DataTemplate>
-                    <ContentControl
-                        
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Center">
+                    <ContentControl HorizontalAlignment="Stretch" VerticalAlignment="Center">
                         <ContentControl.Style>
                             <Style TargetType="{x:Type ContentControl}">
                                 <Style.Triggers>
@@ -267,8 +260,7 @@
                                             <Setter Property="ContentTemplate">
                                                 <Setter.Value>
                                                     <DataTemplate>
-                                                        <tile:SingleItem MaxHeight="{Binding Path=ClipboardViewItemMaxHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControl}}}" 
-                                                                         ClipboardViewItem="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.ViewItem}" />
+                                                        <tile:SingleItem ClipboardViewItem="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.ViewItem}" ThumbnailAreaMaxHeight="{Binding Path=ClipboardViewItemMaxHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControl}}}" />
                                                     </DataTemplate>
                                                 </Setter.Value>
                                             </Setter>

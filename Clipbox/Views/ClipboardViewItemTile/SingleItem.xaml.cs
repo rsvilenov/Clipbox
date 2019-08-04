@@ -56,5 +56,17 @@ namespace Clipbox.Views.ClipboardViewItemTile
 
 
 
+        public double ThumbnailAreaMaxHeight
+        {
+            get { return (double)GetValue(ThumbnailAreaMaxHeightProperty); }
+            set { SetValue(ThumbnailAreaMaxHeightProperty, value); }
+        }
+        
+        public static readonly DependencyProperty ThumbnailAreaMaxHeightProperty =
+            DependencyProperty.Register("ThumbnailAreaMaxHeight", typeof(double), typeof(SingleItem), new PropertyMetadata(0d));
+
+
+
+
     }
 }
