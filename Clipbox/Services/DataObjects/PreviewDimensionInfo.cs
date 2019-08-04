@@ -9,7 +9,9 @@ namespace Clipbox.Services.DataObjects
     {
         public MonitorDimensions MonitorDimensions { get; set; }
 
-        public List<PreviewDimensions> PreviewDimentions { get; set; }
+        public List<PreviewDimensions> PreviewDimensions { get; set; }
+
+        public bool ArePreviewDimensionsDpiScaled { get; set; }
 
         public bool IsViewItemGroup { get; set; }
     }

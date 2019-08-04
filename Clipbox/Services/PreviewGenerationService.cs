@@ -106,19 +106,21 @@ namespace Clipbox.Services
                     WorkAreaWidth = currentMonitor.WorkingArea.Width
                 };
 
-                int itemRequestedHeight = CalculateItemRequestedHeight(monitorDimensions);
+                bool hasHeightBeenDpiScaled = false;
+                int itemRequestedHeight = CalculateItemRequestedHeight(monitorDimensions, out hasHeightBeenDpiScaled);
                 int itemRequestedWidth = itemRequestedHeight;
 
                 IClipboardItem clipboardItem = _clipboardManager.GetClipboardItem(clipboardItemId, restoreShrinked: true);
                 PreviewDataTransferObject pdto = GeneratePreviewDataTransferObject(clipboardItem, itemRequestedHeight, itemRequestedWidth);
-                CacheGeneratedData(monitorDimensions, itemRequestedHeight, itemRequestedWidth, pdto);
+                CacheGeneratedData(monitorDimensions, itemRequestedHeight, itemRequestedWidth, pdto, hasHeightBeenDpiScaled);
             });
         }
 
         [HandleProcessCorruptedStateExceptions]
         public PreviewDataTransferObject GetPreviewDataTransferObject(IClipboardItem clipboardItem, MonitorDimensions monitorDimensions)
         {
-            int itemRequestedHeight = CalculateItemRequestedHeight(monitorDimensions);
+            bool hasHeightBeenDpiScaled = false;
+            int itemRequestedHeight = CalculateItemRequestedHeight(monitorDimensions, out hasHeightBeenDpiScaled);
             int itemRequestedWidth = itemRequestedHeight;
 
             PreviewDataTransferObject pdto = null;
@@ -126,15 +128,17 @@ namespace Clipbox.Services
             if (!TryGetStoredPreviewDataTransferObject(clipboardItem.Id, itemRequestedWidth, itemRequestedHeight, out pdto))
             {
                 pdto = GeneratePreviewDataTransferObject(clipboardItem, itemRequestedHeight, itemRequestedWidth);
-                CacheGeneratedData(monitorDimensions, itemRequestedHeight, itemRequestedWidth, pdto);
+                CacheGeneratedData(monitorDimensions, itemRequestedHeight, itemRequestedWidth, pdto, hasHeightBeenDpiScaled);
             }
 
             return pdto;
         }
 
-        private void CacheGeneratedData(MonitorDimensions monitorDimensions, int itemRequestedHeight, int itemRequestedWidth, PreviewDataTransferObject pdto)
+        private void CacheGeneratedData(MonitorDimensions monitorDimensions, int itemRequestedHeight, int itemRequestedWidth, PreviewDataTransferObject pdto, bool havePreviewDimensionsBeenDpiScaled)
         {
             PreviewDimensionInfo pdInfo = GetPreviewDimensionsInfo(pdto, monitorDimensions);
+            pdInfo.ArePreviewDimensionsDpiScaled = havePreviewDimensionsBeenDpiScaled;
+
             SavePreviewDimensionInfoToDictionary(pdto.ClipboardItemId, pdInfo);
 
             // store to disk
@@ -309,7 +313,7 @@ namespace Clipbox.Services
             {
                 MonitorDimensions = (MonitorDimensions)monitorDimensions.Clone(),
                 IsViewItemGroup = pdto.IsGroup,
-                PreviewDimentions = pdto.PreviewItems.Select(pd => (PreviewDimensions)pd.PreviewDimensions.Clone()).ToList()
+                PreviewDimensions = pdto.PreviewItems.Select(pd => (PreviewDimensions)pd.PreviewDimensions.Clone()).ToList()
             };
         }
 
@@ -359,13 +363,19 @@ namespace Clipbox.Services
             return pdto;
         }
 
-        private int CalculateItemRequestedHeight(MonitorDimensions monitorDimensions)
+        private int CalculateItemRequestedHeight(MonitorDimensions monitorDimensions, out bool hasHeightBeenDpiScaled)
         {
             double itemHeight = monitorDimensions.WorkAreaHeight * _settingsService.GetSetting<double>(SettingsKeys.PreviewItemHeightRatio);
+
             if (_settingsService.GetSetting<bool>(SettingsKeys.ResizeAccordingToMonitorOrSystemDpi))
             {
                 double scaleFactor = monitorDimensions.MonitorDPI / 96;
                 itemHeight *= scaleFactor;
+                hasHeightBeenDpiScaled = true;
+            }
+            else
+            {
+                hasHeightBeenDpiScaled = false;
             }
 
             return (int)itemHeight;
@@ -466,17 +476,67 @@ namespace Clipbox.Services
                 previewDimensionInfo = null;
                 return false;
             }
-            
+
+            List<PreviewDimensions> calibratedPreviewDimensions = new List<PreviewDimensions>();
+
             // callibrate the info
+            if (pdInfo.MonitorDimensions.Equals(monitorDimensions))
+            {
+                calibratedPreviewDimensions = pdInfo.PreviewDimensions.Select(pdi => new PreviewDimensions
+                {
+                    PreviewHeight = pdi.PreviewHeight,
+                    PreviewWidth = pdi.PreviewWidth
+                }).ToList();
+            }
+            else
+            { 
+                // get the scale factor of the monitor for which the original preview has been generated
+                double oldScaleFactor = pdInfo.MonitorDimensions.MonitorDPI / 96;
+                
+                double previewItemHeightRatio = double.NaN;
+                double previewItemWidthRatio = double.NaN;
+                foreach (PreviewDimensions pd in pdInfo.PreviewDimensions)
+                {
+                    double originalPreviewItemHeight = pd.PreviewHeight;
+                    double originalPreviewItemWidth = pd.PreviewWidth;
+                    if (pdInfo.ArePreviewDimensionsDpiScaled)
+                    {
+                        // descale the dimensions
+                        originalPreviewItemHeight /= oldScaleFactor;
+                        originalPreviewItemWidth /= oldScaleFactor;
+                    }
+
+                    // calculate the PreviewItemHeightRatio
+                    if (double.IsNaN(previewItemHeightRatio))
+                    {
+                        previewItemHeightRatio = pdInfo.MonitorDimensions.WorkAreaHeight / originalPreviewItemHeight;
+                        previewItemWidthRatio = pdInfo.MonitorDimensions.WorkAreaWidth / originalPreviewItemWidth;
+                    }
+
+                    // use this ratio to re-scale the item for the new MonitorDimensions
+                    double itemNewHeight = monitorDimensions.WorkAreaHeight / previewItemHeightRatio;
+                    double itemNewWidth = monitorDimensions.WorkAreaWidth / previewItemWidthRatio;
+
+                    if (_settingsService.GetSetting<bool>(SettingsKeys.ResizeAccordingToMonitorOrSystemDpi))
+                    {
+                        double scaleFactor = monitorDimensions.MonitorDPI / 96;
+                        itemNewHeight *= scaleFactor;
+                        itemNewWidth *= scaleFactor;
+                    }
+
+
+                    calibratedPreviewDimensions.Add(new PreviewDimensions
+                    {
+                        PreviewHeight = (int)itemNewHeight,
+                        PreviewWidth = (int)itemNewWidth
+                    });
+                }
+            }
 
             previewDimensionInfo = new CalibratedPreviewDimentionInfo
             {
                 IsViewItemGroup = pdInfo.IsViewItemGroup,
-                PreviewDimentions = pdInfo.PreviewDimentions.Select(pdi => new PreviewDimensions
-                {
-                    PreviewHeight = pdi.PreviewHeight,
-                    PreviewWidth = pdi.PreviewWidth
-                }).ToList()
+                PreviewDimentions = calibratedPreviewDimensions
             };
 
             return true;

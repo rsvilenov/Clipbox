@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Clipbox.Infrastructure.ObjectHelpers;
+using System;
 
 namespace Clipbox.Infrastructure.UI.DataObjects
 {
@@ -18,6 +19,20 @@ namespace Clipbox.Infrastructure.UI.DataObjects
                 WorkAreaHeight = WorkAreaHeight,
                 WorkAreaWidth = WorkAreaWidth
             };
+        }
+
+        public override int GetHashCode()
+        {
+            return GetHashCodeHelper
+                .Start
+                .Append(MonitorDPI)
+                .Append(WorkAreaHeight)
+                .Append(WorkAreaWidth);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj.GetHashCode() == this.GetHashCode();
         }
     }
 }

@@ -71,6 +71,7 @@
     <Compile Include="IPC\NamedPipesResponseEventArgs.cs" />
     <Compile Include="IPC\NamedPipesServer.cs" />
     <Compile Include="IPC\WindowMessageIPC.cs" />
+    <Compile Include="ObjectHelpers\GetHashCodeHelper.cs" />
     <Compile Include="Persistence\AppDataUtils.cs" />
     <Compile Include="Persistence\ClipboardSyncObject.cs" />
     <Compile Include="Persistence\FileLocker.cs" />
