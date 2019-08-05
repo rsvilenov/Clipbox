@@ -74,9 +74,11 @@ namespace Clipbox.ViewModels
                 PreviewDataTransferObject pdto = _previewGenerationService.GetPreviewDataTransferObject(restoredClipboardItem, monitorDimensions);
                 wrapper.ViewItem = ClipboardViewItemFactory.CreateFromPreviewDataTransferObject(restoredClipboardItem, pdto);
 
+#if DEBUG
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
                 GC.Collect();
+#endif
 
                 wrapper.IsViewItemLoaded = true;
             }));

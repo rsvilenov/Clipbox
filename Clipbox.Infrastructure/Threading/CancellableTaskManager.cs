@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -8,14 +9,14 @@ namespace Clipbox.Infrastructure.Threading
 {
     public class CancellableTaskManager
     {
-        private Dictionary<string, CancellationTokenSource> _cancellationTokens = new Dictionary<string, CancellationTokenSource>();
-        private Dictionary<string, string> _internalIdToTaskIdMapping = new Dictionary<string, string>();
+        private ConcurrentDictionary<string, CancellationTokenSource> _cancellationTokens = new ConcurrentDictionary<string, CancellationTokenSource>();
+        private ConcurrentDictionary<string, string> _internalIdToTaskIdMapping = new ConcurrentDictionary<string, string>();
 
         public Task ScheduleTask(string taskId, Action<string> taskAction)
         {
             // if the caller has added a second task with the same id,
-            // cancel the first task.
-            if (_internalIdToTaskIdMapping.ContainsValue(taskId))
+            // cancel the first task. (the linq method is thread-safe as it relies on GetEnumerator)
+            if (_internalIdToTaskIdMapping.Any(kvp => kvp.Value == taskId))
             {
                 CancelScheduledTask(taskId);
             }
@@ -26,20 +27,30 @@ namespace Clipbox.Infrastructure.Threading
             // we use internal task ids because the user may (and is expected to be able to)
             // shchedule a task with the same id twice - the second task replaces the first.
             string internalId = $"{taskId}{Guid.NewGuid()}";
-            _internalIdToTaskIdMapping.Add(internalId, taskId);
+            // the key here is a newly generated unique guid, so TryAdd should never fail
+            _internalIdToTaskIdMapping.TryAdd(internalId, taskId);
 
             var task = Task.Run(() => {
+                
+                CancellationTokenSource cts = null;
+
                 // cancel only the tasks that have been scheduled but are not yet executing
-                if (_cancellationTokens.ContainsKey(internalId)
-                    && _cancellationTokens[internalId].IsCancellationRequested)
+                if (_cancellationTokens.TryGetValue(internalId, out cts))
                 {
-                    _cancellationTokens.Remove(internalId);
-                    return;
+                    if (cts.IsCancellationRequested)
+                    {
+                        if (_cancellationTokens.TryRemove(internalId, out cts))
+                        {
+                            cts.Dispose();
+                        }
+                        // stop the task here
+                        return;
+                    }
                 }
 
                 taskAction(taskId);
 
-                _cancellationTokens.Remove(internalId);
+                _cancellationTokens.TryRemove(internalId, out cts);
             }, token);
 
             if (_cancellationTokens.ContainsKey(internalId))
@@ -48,7 +59,11 @@ namespace Clipbox.Infrastructure.Threading
             }
             else
             {
-                _cancellationTokens.Add(internalId, tokenSource);
+                if (!_cancellationTokens.TryAdd(internalId, tokenSource))
+                {
+                    // this can happen if I change the code above without paying much attention...
+                    throw new InvalidOperationException($"Key {internalId} already exists in {nameof(_cancellationTokens)} dictionary.");
+                }
             }
 
             return task;
@@ -56,13 +71,17 @@ namespace Clipbox.Infrastructure.Threading
 
         public void CancelScheduledTask(string taskId)
         {
+            // linq uses GetEnumerator, which takes a snapshot of the dictionary's content,
+            // so the code below should be thread-safe
+            // https://docs.microsoft.com/en-us/dotnet/api/system.collections.concurrent.concurrentdictionary-2.getenumerator?redirectedfrom=MSDN&view=netframework-4.8#System_Collections_Concurrent_ConcurrentDictionary_2_GetEnumerator
             foreach (string internalId in _internalIdToTaskIdMapping
                 .Where(kv => kv.Value == taskId)
                 .Select(kv => kv.Key))
             {
-                if (_cancellationTokens.ContainsKey(internalId))
+                CancellationTokenSource cts = null;
+                if (_cancellationTokens.TryGetValue(internalId, out cts))
                 {
-                    _cancellationTokens[internalId].Cancel();
+                    cts.Cancel();
                 }
             }
         }
