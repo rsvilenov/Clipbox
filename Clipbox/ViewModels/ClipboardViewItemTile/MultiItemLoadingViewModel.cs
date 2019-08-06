@@ -42,33 +42,32 @@ namespace Clipbox.ViewModels.ClipboardViewItemTile
             get { return _numberOfItemsWithoutPreview; }
             set
             {
-                //UpdatePreviewItemsWithNMoreItem();
                 SetField(ref _numberOfItemsWithoutPreview, value);
                 UpdateTotalClipboardItemsCount();
             }
         }
 
-        //private void UpdatePreviewItemsWithNMoreItem()
-        //{
-        //    var existingItem = _previewItems
-        //            .FirstOrDefault(item => item is ClipboardViewSubItemNMore);
+        public void UpdatePreviewItemsWithNMoreItem()
+        {
+            var existingItem = _previewItems
+                    .FirstOrDefault(item => item is ClipboardViewSubItemNMore);
 
-        //    if (existingItem != null)
-        //    {
-        //        if (NumberOfItemsWithoutPreview == 0)
-        //        {
-        //            _previewItems.Remove(existingItem);
-        //            return;
-        //        }
+            if (existingItem != null)
+            {
+                if (NumberOfItemsWithoutPreview == 0)
+                {
+                    _previewItems.Remove(existingItem);
+                    return;
+                }
 
-        //        ((ClipboardViewSubItemNMore)existingItem).NumberOfItems = NumberOfItemsWithoutPreview;
+                ((ClipboardViewSubItemNMore)existingItem).NumberOfItems = NumberOfItemsWithoutPreview;
 
-        //    }
-        //    else
-        //    {
-        //        _previewItems.Add(new ClipboardViewSubItemNMore { NumberOfItems = NumberOfItemsWithoutPreview });
-        //    }
-        //}
+            }
+            else
+            {
+                _previewItems.Add(new ClipboardViewSubItemNMore { NumberOfItems = NumberOfItemsWithoutPreview });
+            }
+        }
 
         private void UpdateTotalClipboardItemsCount()
         {

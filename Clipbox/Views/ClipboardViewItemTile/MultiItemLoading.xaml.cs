@@ -23,6 +23,17 @@ namespace Clipbox.Views.ClipboardViewItemTile
             InitializeComponent();
 
             mainGrid.DataContext = _viewModel;
+
+            Loaded += MultiItemLoading_Loaded;
+        }
+
+        private void MultiItemLoading_Loaded(object sender, RoutedEventArgs e)
+        {
+            Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, new Action(() =>
+            {
+                // call this once when the bindings are complete
+                _viewModel.UpdatePreviewItemsWithNMoreItem();
+            }));
         }
 
         public int NumberOfItemsWithoutPreview
