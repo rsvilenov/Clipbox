@@ -25,7 +25,7 @@ namespace Clipbox.Views.ClipboardViewItemTile
         }
 
         public static readonly DependencyProperty ClipboardViewItemProperty =
-            DependencyProperty.Register("ClipboardViewItem", typeof(ClipboardViewItemSingle), typeof(SingleItem), new PropertyMetadata(null, ClipboardViewItem_ValueChanged));
+            DependencyProperty.Register(nameof(ClipboardViewItem), typeof(ClipboardViewItemSingle), typeof(SingleItem), new PropertyMetadata(null, ClipboardViewItem_ValueChanged));
 
         private static void ClipboardViewItem_ValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
@@ -39,7 +39,7 @@ namespace Clipbox.Views.ClipboardViewItemTile
         }
 
         public static readonly DependencyProperty IsDimmedProperty =
-            DependencyProperty.Register("IsDimmed", typeof(bool), typeof(SingleItem), new PropertyMetadata(false));
+            DependencyProperty.Register(nameof(IsDimmed), typeof(bool), typeof(SingleItem), new PropertyMetadata(false));
 
 
 
@@ -51,7 +51,7 @@ namespace Clipbox.Views.ClipboardViewItemTile
         }
         
         public static readonly DependencyProperty ThumbnailAreaMaxHeightProperty =
-            DependencyProperty.Register("ThumbnailAreaMaxHeight", typeof(double), typeof(SingleItem), new PropertyMetadata(0d));
+            DependencyProperty.Register(nameof(ThumbnailAreaMaxHeight), typeof(double), typeof(SingleItem), new PropertyMetadata(0d));
 
 
 

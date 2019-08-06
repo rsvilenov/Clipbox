@@ -110,9 +110,9 @@ namespace Clipbox.ViewModels
                 CalibratedPreviewDimentionInfo cpdi = null;
                 if (_previewGenerationService.TryGetQuickPreviewDimentionInfo(clipboardItemId, monitorDimensions, out cpdi))
                 {
-                    IEnumerable<ClipboardViewItemDimensions> dimensions = cpdi.PreviewDimentions
+                    IEnumerable<ClipboardViewSubItemDimension> dimensions = cpdi.PreviewDimentions
                         .Select(pd => 
-                            new ClipboardViewItemDimensions
+                            new ClipboardViewSubItemDimension
                             {
                                 PreviewHeight = pd.PreviewHeight,
                                 PreviewWidth = pd.PreviewWidth
@@ -121,7 +121,8 @@ namespace Clipbox.ViewModels
                     tempViewItem.DimensionInfo = new ClipboardViewItemDimensionInfo
                     {
                         IsViewItemGroup = cpdi.IsViewItemGroup,
-                        Dimensions = new AsyncObservableCollection<ClipboardViewItemDimensions>(dimensions)
+                        Dimensions = new AsyncObservableCollection<ClipboardViewSubItemDimension>(dimensions),
+                        NumberOfItemsWithoutPreview = cpdi.NumberOfItemsWithoutPreview
                     };
                 }
                 

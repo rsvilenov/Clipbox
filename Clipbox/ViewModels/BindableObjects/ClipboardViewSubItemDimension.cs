@@ -1,8 +1,6 @@
-﻿using Clipbox.Infrastructure.UI;
-
-namespace Clipbox.ViewModels.BindableObjects
+﻿namespace Clipbox.ViewModels.BindableObjects
 {
-    public class ClipboardViewItemDimensions : BindableObject
+    public class ClipboardViewSubItemDimension : ClipboardViewSubItemBase
     {
         private double _previewWidth;
         public double PreviewWidth

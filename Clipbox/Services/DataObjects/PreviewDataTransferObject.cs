@@ -17,7 +17,7 @@ namespace Clipbox.Services.DataObjects
 
         public bool IsGroup { get; set; }
 
-        public int NMore { get; set; }
+        public int NumberOfItemsWithoutPreview { get; set; }
 
         public List<PreviewItemTransferObject> PreviewItems { get; set; }
 

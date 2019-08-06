@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Windows;
 using System.Windows.Data;
 
 namespace Clipbox.Infrastructure.UI.Converters
@@ -11,6 +12,15 @@ namespace Clipbox.Infrastructure.UI.Converters
             double result = 0;
             foreach (var val in values)
             {
+                if (val == DependencyProperty.UnsetValue)
+                {
+                    // we have most probably been called from within a template,
+                    // which does not have a DataSource at the time of Loading,
+                    // and this is when our converter has been first called.
+                    // Upon the second call, the value should be present.
+                    return 0;
+                }
+
                 double valDouble = 0;
                 string valStr = val.ToString();
                 if (!double.TryParse(valStr, out valDouble))

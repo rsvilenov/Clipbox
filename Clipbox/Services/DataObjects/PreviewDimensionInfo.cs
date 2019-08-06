@@ -14,5 +14,7 @@ namespace Clipbox.Services.DataObjects
         public bool ArePreviewDimensionsDpiScaled { get; set; }
 
         public bool IsViewItemGroup { get; set; }
+
+        public int NumberOfItemsWithoutPreview { get; set; }
     }
 }

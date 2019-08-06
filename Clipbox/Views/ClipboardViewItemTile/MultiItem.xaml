@@ -204,7 +204,10 @@
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
                     <!--<WrapPanel />-->
-                    <UniformGrid Columns="2" MaxHeight="500" MaxWidth="500" />
+                    <UniformGrid
+                        MaxWidth="500"
+                        MaxHeight="500"
+                        Columns="2" />
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
             <ListView.ItemTemplate>

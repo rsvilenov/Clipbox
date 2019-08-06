@@ -313,7 +313,8 @@ namespace Clipbox.Services
             {
                 MonitorDimensions = (MonitorDimensions)monitorDimensions.Clone(),
                 IsViewItemGroup = pdto.IsGroup,
-                PreviewDimensions = pdto.PreviewItems.Select(pd => (PreviewDimensions)pd.PreviewDimensions.Clone()).ToList()
+                PreviewDimensions = pdto.PreviewItems.Select(pd => (PreviewDimensions)pd.PreviewDimensions.Clone()).ToList(),
+                NumberOfItemsWithoutPreview = pdto.NumberOfItemsWithoutPreview
             };
         }
 
@@ -353,7 +354,7 @@ namespace Clipbox.Services
                 pdto.IsGroup = true;
                 pdto.PreviewItems = GetClipboardPreviewItemsForGroup(manyPreviewHandler, itemsCount, itemRequestedWidth, itemRequestedHeight);
                 int itemsWithNoPreview = itemsCount - pdto.PreviewItems.Count();
-                pdto.NMore = itemsWithNoPreview;
+                pdto.NumberOfItemsWithoutPreview = itemsWithNoPreview;
             }
             else
             {
@@ -536,7 +537,8 @@ namespace Clipbox.Services
             previewDimensionInfo = new CalibratedPreviewDimentionInfo
             {
                 IsViewItemGroup = pdInfo.IsViewItemGroup,
-                PreviewDimentions = calibratedPreviewDimensions
+                PreviewDimentions = calibratedPreviewDimensions,
+                NumberOfItemsWithoutPreview = pdInfo.NumberOfItemsWithoutPreview
             };
 
             return true;

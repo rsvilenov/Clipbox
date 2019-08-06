@@ -13,7 +13,7 @@ namespace Clipbox.ViewModels.SerializableObjects
 
         public bool IsGroup { get; set; }
 
-        public int NMore { get; set; }
+        public int NumberOfItemsWithoutPreview { get; set; }
         
         public List<StoredPreviewItem> PreviewItems { get; set; }
     }

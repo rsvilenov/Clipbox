@@ -31,17 +31,19 @@ namespace Clipbox.ViewModels
                     .Cast<ClipboardViewSubItemBase>()
                     .ToList();
 
-                if (pdto.NMore > 0)
+                if (pdto.NumberOfItemsWithoutPreview > 0)
                 {
                     previewItems.Add(new ClipboardViewSubItemNMore
                     {
-                        NumberOfItems = pdto.NMore
+                        NumberOfItems = pdto.NumberOfItemsWithoutPreview
                     });
                 }
 
                 viewItem = new ClipboardViewItemGroup
                 {
-                    PreviewItems = new ObservableCollection<ClipboardViewSubItemBase>(previewItems)
+                    PreviewItems = new ObservableCollection<ClipboardViewSubItemBase>(previewItems),
+                    // TODO: Remove this property and make it consistent with the way MultiItemLoading.xaml shows the total count
+                    TotalClipboardItemsCount = pdto.NumberOfItemsWithoutPreview + pdto.PreviewItems.Count()
                 };
             }
             else

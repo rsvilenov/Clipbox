@@ -29,14 +29,14 @@ namespace Clipbox.Views.ClipboardViewItemTile
         }
 
         
-        public ClipboardViewItemDimensions ViewItemDimensions
+        public ClipboardViewSubItemDimension ViewItemDimensions
         {
-            get { return (ClipboardViewItemDimensions)GetValue(ViewItemDimensionsProperty); }
+            get { return (ClipboardViewSubItemDimension)GetValue(ViewItemDimensionsProperty); }
             set { SetValue(ViewItemDimensionsProperty, value); }
         }
 
         public static readonly DependencyProperty ViewItemDimensionsProperty =
-            DependencyProperty.Register(nameof(ViewItemDimensions), typeof(ClipboardViewItemDimensions), typeof(SingleItemLoading), new PropertyMetadata(null, ViewItemDimensions_PropertyChanged));
+            DependencyProperty.Register(nameof(ViewItemDimensions), typeof(ClipboardViewSubItemDimension), typeof(SingleItemLoading), new PropertyMetadata(null, ViewItemDimensions_PropertyChanged));
 
         private static void ViewItemDimensions_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {

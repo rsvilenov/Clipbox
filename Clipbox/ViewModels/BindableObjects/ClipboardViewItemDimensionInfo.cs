@@ -4,8 +4,8 @@ namespace Clipbox.ViewModels.BindableObjects
 {
     public class ClipboardViewItemDimensionInfo : BindableObject
     {
-        private AsyncObservableCollection<ClipboardViewItemDimensions> _dimensions;
-        public AsyncObservableCollection<ClipboardViewItemDimensions> Dimensions
+        private AsyncObservableCollection<ClipboardViewSubItemDimension> _dimensions;
+        public AsyncObservableCollection<ClipboardViewSubItemDimension> Dimensions
         {
             get { return _dimensions; }
             set { SetField(ref _dimensions, value); }
@@ -16,6 +16,13 @@ namespace Clipbox.ViewModels.BindableObjects
         {
             get { return _isViewItemGroup; }
             set { SetField(ref _isViewItemGroup, value); }
+        }
+
+        private int _numberOfItemsWithoutPreview;
+        public int NumberOfItemsWithoutPreview
+        {
+            get { return _numberOfItemsWithoutPreview; }
+            set { SetField(ref _numberOfItemsWithoutPreview, value); }
         }
     }
 }
