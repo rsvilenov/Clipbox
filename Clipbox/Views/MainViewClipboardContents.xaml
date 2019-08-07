@@ -156,7 +156,6 @@
                                     x:Name="Bd"
                                     MinWidth="100"
                                     MinHeight="80"
-                                    MaxWidth="290"
                                     Margin="5"
                                     Background="Transparent"
                                     BorderBrush="White"

@@ -18,7 +18,8 @@
             Width="{Binding ViewItemDimensions.PreviewWidth}"
             Height="{Binding ViewItemDimensions.PreviewHeight}"
             Margin="10"
-            Fill="Red" />
+            Fill="Black"
+            Opacity="0.2" />
 
     </Grid>
 </UserControl>

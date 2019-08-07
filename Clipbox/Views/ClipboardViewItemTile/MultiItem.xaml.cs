@@ -39,7 +39,30 @@ namespace Clipbox.Views.ClipboardViewItemTile
             InitializeComponent();
             
             mainGrid.DataContext = this;
+
+            Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle,
+                new Action(() =>
+                {
+                    if (ClipboardViewItem?.TotalClipboardItemsCount != null)
+                    {
+                        NumberOfUniformGridColumns = ClipboardViewItem.TotalClipboardItemsCount <= 4 ? 2 : 3;
+                    }
+                }));
         }
+
+
+
+
+        public int NumberOfUniformGridColumns
+        {
+            get { return (int)GetValue(NumberOfUniformGridColumnsProperty); }
+            set { SetValue(NumberOfUniformGridColumnsProperty, value); }
+        }
+
+        public static readonly DependencyProperty NumberOfUniformGridColumnsProperty =
+            DependencyProperty.Register(nameof(NumberOfUniformGridColumns), typeof(int), typeof(MultiItem), new PropertyMetadata(0));
+
+
 
         /// <summary>
         /// Retrieves a reference to the internal list view.

@@ -207,7 +207,7 @@
                     <UniformGrid
                         MaxWidth="500"
                         MaxHeight="500"
-                        Columns="2" />
+                        Columns="{Binding Path=NumberOfUniformGridColumns, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:MultiItem}}" />
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
             <ListView.ItemTemplate>

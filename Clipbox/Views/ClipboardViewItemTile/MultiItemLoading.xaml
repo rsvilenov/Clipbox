@@ -139,7 +139,8 @@
                                                             Width="{Binding PreviewWidth}"
                                                             Height="{Binding PreviewHeight}"
                                                             Margin="5"
-                                                            Fill="Red" />
+                                                            Fill="Black"
+                                                            Opacity="0.2" />
                                                     </Grid>
                                                 </ControlTemplate>
                                             </Setter.Value>
