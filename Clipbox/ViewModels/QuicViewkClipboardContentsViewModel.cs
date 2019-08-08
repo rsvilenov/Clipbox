@@ -168,8 +168,6 @@ namespace Clipbox.ViewModels
 
             AreClipboardItemsAvailable = true;
 
-
-
             //int maxPreviewItemsInGroupItem = _settingsService.GetSetting<int>(SettingsKeys.MaxPreviewItemsInGroupItem);
             //ClipboardViewItemFactory viewItemFactory = new ClipboardViewItemFactory(_previewContainer, maxPreviewItemsInGroupItem);
             //var viewItem = viewItemFactory.CreateFromClipboardItem(item, availableItemWidth, availableItemHeight);
@@ -205,6 +203,7 @@ namespace Clipbox.ViewModels
             AreClipboardItemsAvailable = false;
 
             IEnumerable<string> allItemIds = base.ClipboardManager.GetAllItemIds();
+            base.ClipboardViewItemWrappers.Clear();
             base.LoadAndWrapItems(monitorDimensions, allItemIds);
 
             AreClipboardItemsAvailable = true;

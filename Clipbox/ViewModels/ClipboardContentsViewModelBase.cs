@@ -33,6 +33,8 @@ namespace Clipbox.ViewModels
             ClipboardManager = clipboardManager;
             SettingsService = settingsService;
             PreviewGenerationService = previewGenerationService;
+
+            ClipboardViewItemWrappers = new AsyncObservableCollection<ClipboardViewItemWrapper>();
         }
 
         public void LoadViewItem(string clipboardItemId, MonitorDimensions monitorDimensions)
@@ -60,7 +62,6 @@ namespace Clipbox.ViewModels
 
         public void LoadAndWrapItems(MonitorDimensions monitorDimensions, IEnumerable<string> clipboardItemIds)
         {
-            ClipboardViewItemWrappers = new AsyncObservableCollection<ClipboardViewItemWrapper>();
             List<IClipboardItem> clipboardItems = new List<IClipboardItem>();
             foreach (string clipboardItemId in clipboardItemIds)
             {
