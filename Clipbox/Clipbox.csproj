@@ -124,8 +124,8 @@
     <Compile Include="ViewModels\BindableObjects\ClipboardViewSubItemBase.cs" />
     <Compile Include="ViewModels\BindableObjects\ClipboardViewSubItemNMore.cs" />
     <Compile Include="ViewModels\ClipboardViewItemTile\MultiItemLoadingViewModel.cs" />
-    <Compile Include="ViewModels\ClipboardViewViewModelBase.cs" />
-    <Compile Include="ViewModels\MainClipboardViewViewModel.cs" />
+    <Compile Include="ViewModels\ClipboardContentsViewModelBase.cs" />
+    <Compile Include="ViewModels\MainViewClipboardContentsViewModel.cs" />
     <Compile Include="ViewModels\SerializableObjects\StoredPreviewData.cs" />
     <Compile Include="ViewModels\SerializableObjects\StoredPreviewItem.cs" />
     <Compile Include="ViewModels\TrayContextMenuViewModel.cs" />
@@ -174,7 +174,7 @@
     <Compile Include="Services\ClipboardListenerService.cs" />
     <Compile Include="Technical\Converters\BitmapToBitmapImageConverter.cs" />
     <Compile Include="ViewModels\BindableObjects\ClipboardViewItemGroup.cs" />
-    <Compile Include="ViewModels\ClipboardViewViewModel.cs" />
+    <Compile Include="ViewModels\QuicViewkClipboardContentsViewModel.cs" />
     <Compile Include="Views\ThemePreview.xaml.cs">
       <DependentUpon>ThemePreview.xaml</DependentUpon>
     </Compile>

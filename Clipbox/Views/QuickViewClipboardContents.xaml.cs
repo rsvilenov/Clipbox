@@ -22,7 +22,7 @@ namespace Clipbox.Views
     /// </summary>
     public partial class QuickViewClipboardContents : ClipboardViewControlBase, IDisposable
     {
-        private ClipboardViewViewModel _viewModel;
+        private QuicViewkClipboardContentsViewModel _viewModel;
 
         private string _lastSelectedItemId;
 
@@ -39,7 +39,7 @@ namespace Clipbox.Views
         public static readonly DependencyProperty DimNonFocusedItemsProperty =
             DependencyProperty.Register(nameof(DimNonFocusedItems), typeof(bool), typeof(QuickViewClipboardContents), new PropertyMetadata(false));
         
-        public QuickViewClipboardContents(ClipboardViewViewModel vm, UIExtentionContainer container, ISettingsService settingsService)
+        public QuickViewClipboardContents(QuicViewkClipboardContentsViewModel vm, UIExtentionContainer container, ISettingsService settingsService)
             : base (container, settingsService)
         {   
             InitializeComponent();
@@ -105,7 +105,13 @@ namespace Clipbox.Views
 
         public override void OnClipboardViewItemMaxHeightChanged()
         {
-            _viewModel.ReloadItems();
+            Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, new Action(() =>
+            {
+                Task.Run(new Action(() => _viewModel.ReloadWrappedItems(MonitorDimensions)))
+                .ContinueWith((t) => _viewModel.LoadViewItems(MonitorDimensions));
+            }));
+
+            _viewModel.ReloadWrappedItems(MonitorDimensions);
         }
         
         private void MainListView_SelectionChanged(object sender, SelectionChangedEventArgs e)

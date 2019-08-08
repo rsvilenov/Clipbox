@@ -8,7 +8,7 @@ using System.Diagnostics;
 
 namespace Clipbox.ViewModels
 {
-    public class MainClipboardViewViewModel : ClipboardViewViewModelBase
+    public class MainViewClipboardContentsViewModel : ClipboardContentsViewModelBase
     {
         private string _currentVisibleItemsDateString;
 
@@ -36,7 +36,7 @@ namespace Clipbox.ViewModels
         
         private CancellableTaskManager _cancellableTaskManager;
 
-        public MainClipboardViewViewModel(IClipboardManager clipboardManager,
+        public MainViewClipboardContentsViewModel(IClipboardManager clipboardManager,
             IPreviewGenerationService previewGenerationService,
             ISettingsService settingsService) 
                 : base(clipboardManager, previewGenerationService, settingsService)
@@ -64,7 +64,7 @@ namespace Clipbox.ViewModels
             base.LoadAndWrapItems(monitorDimensions, allItemIds);
         }
 
-        ~MainClipboardViewViewModel()
+        ~MainViewClipboardContentsViewModel()
         {
             Debug.WriteLine("MainClipboardViewViewModel unloaded");
         }

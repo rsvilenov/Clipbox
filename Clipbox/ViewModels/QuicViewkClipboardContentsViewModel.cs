@@ -3,6 +3,7 @@ using Clipbox.ExtendedClipboard.EventArgs;
 using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
 using Clipbox.Infrastructure.UI;
+using Clipbox.Infrastructure.UI.DataObjects;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.ViewModels.BindableObjects;
@@ -15,7 +16,7 @@ using System.Windows.Threading;
 
 namespace Clipbox.ViewModels
 {
-    public class ClipboardViewViewModel : BindableObject
+    public class QuicViewkClipboardContentsViewModel : ClipboardContentsViewModelBase
     {
         public ICommand ClearClipboardEntries { get; set; }
 
@@ -25,12 +26,6 @@ namespace Clipbox.ViewModels
 
         public event EventHandler<RequestPreviewDimentionsEventArgs> OnPreviewDimentionsRequested;
         
-        private IClipboardFormatPreviewExtentionContainer _previewContainer;
-
-        private IClipboardManager _clipboardManager;
-
-        ISettingsService _settingsService;
-
         private AsyncObservableCollection<ClipboardViewItem> _clipboardViewItems;
 
         public AsyncObservableCollection<ClipboardViewItem> ClipboardViewItems
@@ -54,7 +49,7 @@ namespace Clipbox.ViewModels
             get { return _areClipboardItemsAvailable; }
             set { SetField(ref _areClipboardItemsAvailable, value); }
         }
-        
+
         //private double _itemDesiredHeight;
 
         //public double ItemDesiredHeight
@@ -71,7 +66,10 @@ namespace Clipbox.ViewModels
         //    }
         //}
 
-        public ClipboardViewViewModel(IClipboardManager clipboardManager, IClipboardFormatPreviewExtentionContainer previewsContainer, ISettingsService settingsService)
+        public QuicViewkClipboardContentsViewModel(IClipboardManager clipboardManager,
+            IPreviewGenerationService previewGenerationService,
+            ISettingsService settingsService)
+                : base(clipboardManager, previewGenerationService, settingsService)
         {
             ClearClipboardEntries = new DelegateCommand(ClearAllClipboardEntriesHandler);
             DeleteClipboardEntry = new DelegateCommand<ClipboardViewItem>(DeleteClipboardEntryHandler);
@@ -80,9 +78,6 @@ namespace Clipbox.ViewModels
             ClipboardViewItems = new AsyncObservableCollection<ClipboardViewItem>();
             SelectedClipboardViewItems = new List<ClipboardViewItem>();
 
-            _previewContainer = previewsContainer;
-            _clipboardManager = clipboardManager;
-            _settingsService = settingsService;
             clipboardManager.ItemAdded += ClipboardManager_ItemAdded;
             clipboardManager.ItemRemoved += ClipboardManager_ItemRemoved;
             clipboardManager.ItemChanged += ClipboardManager_ItemChanged;
@@ -94,20 +89,20 @@ namespace Clipbox.ViewModels
             // so we can get the changed value of the IsPinned property
             Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => 
             {
-                _clipboardManager.PinUnpinItemItem(obj.ClipboardItemId, obj.IsPinned);
+                base.ClipboardManager.PinUnpinItemItem(obj.ClipboardItemId, obj.IsPinned);
             }));
             
         }
 
         private void DeleteClipboardEntryHandler(ClipboardViewItem parameter)
         {
-            _clipboardManager.RemoveClipboardItem(parameter.ClipboardItemId);
+            base.ClipboardManager.RemoveClipboardItem(parameter.ClipboardItemId);
         }
 
         private void ClearAllClipboardEntriesHandler()
         {
-            _clipboardManager.Clear();
-            _clipboardManager.ClearSystemClipboard();
+            base.ClipboardManager.Clear();
+            base.ClipboardManager.ClearSystemClipboard();
             ClipboardViewItems.Clear();
             AreClipboardItemsAvailable = false;
         }
@@ -173,6 +168,8 @@ namespace Clipbox.ViewModels
 
             AreClipboardItemsAvailable = true;
 
+
+
             //int maxPreviewItemsInGroupItem = _settingsService.GetSetting<int>(SettingsKeys.MaxPreviewItemsInGroupItem);
             //ClipboardViewItemFactory viewItemFactory = new ClipboardViewItemFactory(_previewContainer, maxPreviewItemsInGroupItem);
             //var viewItem = viewItemFactory.CreateFromClipboardItem(item, availableItemWidth, availableItemHeight);
@@ -180,7 +177,7 @@ namespace Clipbox.ViewModels
             //ClipboardViewItems.Add(viewItem);
         }
 
-        public void ReloadItems()
+        public void ReloadWrappedItems(MonitorDimensions monitorDimensions)
         {
             var args = new RequestPreviewDimentionsEventArgs();
 
@@ -201,36 +198,33 @@ namespace Clipbox.ViewModels
             int availableItemWidth = (int)args.PreviewWidth;
             int availableItemHeight = (int)args.PreviewHeight;
 
-            var clipboardItemIds = _clipboardManager.GetAllItemIds();
+            var clipboardItemIds = base.ClipboardManager.GetAllItemIds();
             
 
             ClipboardViewItems.Clear();
             AreClipboardItemsAvailable = false;
 
-//            int maxPreviewItemsInGroupItem = _settingsService.GetSetting<int>(SettingsKeys.MaxPreviewItemsInGroupItem);
-//            ClipboardViewItemFactory viewItemFactory = new ClipboardViewItemFactory(_previewContainer, maxPreviewItemsInGroupItem);
-//            foreach (var clipboardItemId in clipboardItemIds)
-//            {
-//    #if DEBUG
-//                Debug.WriteLine(clipboardItemId);
-//#endif
-//                IClipboardItem item = GetClipboardItem(clipboardItemId, restoreShrinked: true);
-//                var viewItem = viewItemFactory.CreateFromClipboardItem(item, availableItemWidth, availableItemHeight);
-//                ClipboardViewItems.Add(viewItem);
+            IEnumerable<string> allItemIds = base.ClipboardManager.GetAllItemIds();
+            base.LoadAndWrapItems(monitorDimensions, allItemIds);
 
-//                AreClipboardItemsAvailable = true;
-//            }
+            AreClipboardItemsAvailable = true;
+        }
 
+        public void LoadViewItems(MonitorDimensions monitorDimensions)
+        {
+            foreach (var clipboardItemId in base.ClipboardViewItemWrappers.Select(w => w.Id))
+            {
 #if DEBUG
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
+                Debug.WriteLine(clipboardItemId);
 #endif
+                base.LoadViewItem(clipboardItemId, monitorDimensions);
+
+            }
         }
 
         public IClipboardItem GetClipboardItem(string id, bool restoreShrinked)
         {
-            return _clipboardManager.GetClipboardItem(id, restoreShrinked);
+            return base.ClipboardManager.GetClipboardItem(id, restoreShrinked);
         }
 
 

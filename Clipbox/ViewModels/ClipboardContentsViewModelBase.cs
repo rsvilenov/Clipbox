@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace Clipbox.ViewModels
 {
-    public abstract class ClipboardViewViewModelBase : BindableObject
+    public abstract class ClipboardContentsViewModelBase : BindableObject
     {
         private AsyncObservableCollection<ClipboardViewItemWrapper> _clipboardViewItemWrappers;
 
@@ -26,7 +26,7 @@ namespace Clipbox.ViewModels
         protected IPreviewGenerationService PreviewGenerationService { get; private set; }
         
 
-        public ClipboardViewViewModelBase(IClipboardManager clipboardManager,
+        public ClipboardContentsViewModelBase(IClipboardManager clipboardManager,
             IPreviewGenerationService previewGenerationService,
             ISettingsService settingsService)
         {

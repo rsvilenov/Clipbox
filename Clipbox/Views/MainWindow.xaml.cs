@@ -56,7 +56,7 @@ namespace Clipbox.Views
 
             InitializeComponent();
 
-            _mainViewClipboardContents = new MainViewClipboardContents(new ViewModels.MainClipboardViewViewModel(_clipboardManager, previewGenerationService, _settingsService), _uiExtContainer, settingsService);
+            _mainViewClipboardContents = new MainViewClipboardContents(new ViewModels.MainViewClipboardContentsViewModel(_clipboardManager, previewGenerationService, _settingsService), _uiExtContainer, settingsService);
             clipboardContents.Content = _mainViewClipboardContents;
 
             _backgroundRenderMode = (MainClipboardViewBackgroundRenderMode)_settingsService.GetSetting<int>(SettingsKeys.MainClipboardViewBackgroundRenderMode);

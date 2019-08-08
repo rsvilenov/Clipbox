@@ -28,12 +28,12 @@ namespace Clipbox.Views
 
         private ScrollBar _scrollBar;
 
-        private MainClipboardViewViewModel _viewModel;
+        private MainViewClipboardContentsViewModel _viewModel;
         
         private int _lastListViewItemCount = 0;
         private Dictionary<string, GroupItem> _groupNameGroupItemMapping = new Dictionary<string, GroupItem>();
         
-        public MainViewClipboardContents(MainClipboardViewViewModel vm, 
+        public MainViewClipboardContents(MainViewClipboardContentsViewModel vm, 
             UIExtentionContainer container, 
             ISettingsService settingsService)
             : base (container, settingsService)
