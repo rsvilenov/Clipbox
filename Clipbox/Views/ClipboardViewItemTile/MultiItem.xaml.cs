@@ -19,7 +19,7 @@ namespace Clipbox.Views.ClipboardViewItemTile
     /// <summary>
     /// Interaction logic for GroupItem.xaml
     /// </summary>
-    public partial class MultiItem : UserControl
+    public partial class MultiItem : MultiItemBase
     {
         public static readonly RoutedEvent SubItems_SelectionChangedEvent
         = EventManager.RegisterRoutedEvent(
@@ -49,20 +49,6 @@ namespace Clipbox.Views.ClipboardViewItemTile
                     }
                 }));
         }
-
-
-
-
-        public int NumberOfUniformGridColumns
-        {
-            get { return (int)GetValue(NumberOfUniformGridColumnsProperty); }
-            set { SetValue(NumberOfUniformGridColumnsProperty, value); }
-        }
-
-        public static readonly DependencyProperty NumberOfUniformGridColumnsProperty =
-            DependencyProperty.Register(nameof(NumberOfUniformGridColumns), typeof(int), typeof(MultiItem), new PropertyMetadata(0));
-
-
 
         /// <summary>
         /// Retrieves a reference to the internal list view.

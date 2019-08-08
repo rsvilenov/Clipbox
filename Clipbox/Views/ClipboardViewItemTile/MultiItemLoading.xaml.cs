@@ -11,7 +11,7 @@ namespace Clipbox.Views.ClipboardViewItemTile
     /// <summary>
     /// Interaction logic for MultiItemLoading.xaml
     /// </summary>
-    public partial class MultiItemLoading : UserControl
+    public partial class MultiItemLoading : MultiItemBase
     {
         private MultiItemLoadingViewModel _viewModel;
         private bool viewSubItemDimensions_CollectionChanged_subscribed;
@@ -33,7 +33,17 @@ namespace Clipbox.Views.ClipboardViewItemTile
             {
                 // call this once when the bindings are complete
                 _viewModel.UpdatePreviewItemsWithNMoreItem();
+
+                UpdateNumberOfUniformGridColumns();
             }));
+        }
+
+        private void UpdateNumberOfUniformGridColumns()
+        {
+            if (ViewSubItemDimensions != null)
+            {
+                NumberOfUniformGridColumns = _viewModel.TotalClipboardItemsCount <= 4 ? 2 : 3;
+            }
         }
 
         public int NumberOfItemsWithoutPreview

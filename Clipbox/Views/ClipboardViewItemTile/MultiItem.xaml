@@ -1,4 +1,4 @@
-﻿<UserControl
+﻿<local:MultiItemBase
     x:Class="Clipbox.Views.ClipboardViewItemTile.MultiItem"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -313,4 +313,4 @@
             Visibility="{Binding IsDimmed, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
     </Grid>
-</UserControl>
+</local:MultiItemBase>

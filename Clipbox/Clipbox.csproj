@@ -135,6 +135,7 @@
     <Compile Include="Views\ClipboardViewItemTile\ItemTypeIconBand.xaml.cs">
       <DependentUpon>ItemTypeIconBand.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ClipboardViewItemTile\MultiItemBase.cs" />
     <Compile Include="Views\ClipboardViewItemTile\MultiItemLoading.xaml.cs">
       <DependentUpon>MultiItemLoading.xaml</DependentUpon>
     </Compile>

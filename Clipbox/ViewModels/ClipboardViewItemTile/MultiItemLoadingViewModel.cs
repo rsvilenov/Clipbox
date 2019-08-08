@@ -1,6 +1,5 @@
 ﻿using Clipbox.Infrastructure.UI;
 using Clipbox.ViewModels.BindableObjects;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 
@@ -63,7 +62,7 @@ namespace Clipbox.ViewModels.ClipboardViewItemTile
                 ((ClipboardViewSubItemNMore)existingItem).NumberOfItems = NumberOfItemsWithoutPreview;
 
             }
-            else
+            else if (NumberOfItemsWithoutPreview > 0)
             {
                 _previewItems.Add(new ClipboardViewSubItemNMore { NumberOfItems = NumberOfItemsWithoutPreview });
             }
