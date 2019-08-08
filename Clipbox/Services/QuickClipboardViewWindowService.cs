@@ -1,5 +1,6 @@
 ﻿using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Infrastructure.UI;
+using Clipbox.Infrastructure.UI.DataObjects;
 using Clipbox.Infrastructure.UI.Windows;
 using Clipbox.Infrastructure.UI.Windows.Enums;
 using Clipbox.Services.EventArgsClasses;
@@ -24,7 +25,7 @@ namespace Clipbox.Services
     {
         private NonFocusableInteractiveWindow _quickViewWindow;
 
-        private ClipboardViewControl _previewControl;
+        private ClipboardViewControlBase _previewControl;
 
         private MonitorUtils.DisplayMonitor _currentMonitor;
 
@@ -38,7 +39,7 @@ namespace Clipbox.Services
         }
 
 
-        public QuickClipboardViewWindowService(ClipboardViewControl previewControl, ISettingsService settingsService)
+        public QuickClipboardViewWindowService(ClipboardViewControlBase previewControl, ISettingsService settingsService)
         {
             _selectedItemIds = new List<string>();
             _selectedMultiItemIds = new Dictionary<string, ReadOnlyCollection<int>>();
@@ -163,19 +164,14 @@ namespace Clipbox.Services
 
             _quickViewWindow.Dispatcher.Invoke(DispatcherPriority.Send, new Action(() =>
             {
-                double currentDisplayDpiCalibratedHeight = _currentMonitor.WorkingArea.Height;
-                if (resizeToDpi)
+                _quickViewWindow.ScaleMode = resizeToDpi ? DpiScaleMode.TaggedChildren : DpiScaleMode.None;
+
+                _previewControl.SetMonitorDimensions(new MonitorDimensions
                 {
-                    _quickViewWindow.ScaleMode = DpiScaleMode.TaggedChildren;
-                    double scaleFactor = _currentMonitor.Dpi / 96;
-                    currentDisplayDpiCalibratedHeight *= scaleFactor;
-                }
-                else
-                {
-                    _quickViewWindow.ScaleMode = DpiScaleMode.None;
-                }
-                
-                _previewControl.SetCurrentDisplayDpiCalibratedHeight((int)currentDisplayDpiCalibratedHeight);
+                    MonitorDPI = _currentMonitor.Dpi,
+                    WorkAreaHeight = _currentMonitor.WorkingArea.Height,
+                    WorkAreaWidth = _currentMonitor.WorkingArea.Width
+                });
 
                 SetMaxSizeToWindow();
                 _quickViewWindow.SizeChanged += _quickViewWindow_SizeChanged;

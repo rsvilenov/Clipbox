@@ -20,7 +20,7 @@ namespace Clipbox.Views
     /// <summary>
     /// Interaction logic for QuickViewClipboardContents.xaml
     /// </summary>
-    public partial class QuickViewClipboardContents : ClipboardViewControl, IDisposable
+    public partial class QuickViewClipboardContents : ClipboardViewControlBase, IDisposable
     {
         private ClipboardViewViewModel _viewModel;
 

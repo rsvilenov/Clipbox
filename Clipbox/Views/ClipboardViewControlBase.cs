@@ -16,7 +16,7 @@ using System.Windows.Controls;
 
 namespace Clipbox.Views
 {
-    public class ClipboardViewControl : UserControl
+    public abstract class ClipboardViewControlBase : UserControl
     {
         public Dictionary<string, string> Parameters { get; private set; }
         
@@ -45,10 +45,10 @@ namespace Clipbox.Views
         }
         
         public static readonly DependencyProperty ClipboardViewItemHeightProperty =
-            DependencyProperty.Register(nameof(ClipboardViewItemMaxHeight), typeof(double), typeof(ClipboardViewControl), new PropertyMetadata(0d));
+            DependencyProperty.Register(nameof(ClipboardViewItemMaxHeight), typeof(double), typeof(ClipboardViewControlBase), new PropertyMetadata(0d));
 
         
-        public ClipboardViewControl(UIExtentionContainer container, ISettingsService settingsService)
+        public ClipboardViewControlBase(UIExtentionContainer container, ISettingsService settingsService)
         {
             _container = container;
             _settingsService = settingsService;

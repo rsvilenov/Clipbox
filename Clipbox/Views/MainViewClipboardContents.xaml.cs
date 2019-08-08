@@ -18,7 +18,7 @@ namespace Clipbox.Views
     /// <summary>
     /// Interaction logic for MainViewClipboardContents.xaml
     /// </summary>
-    public partial class MainViewClipboardContents : ClipboardViewControl, IDisposable
+    public partial class MainViewClipboardContents : ClipboardViewControlBase, IDisposable
     {
         private const int LAYOUT_TIMER_TIMEOUT_MS = 100;
         private const int SCROLLBAR_TIMER_TIMEOUT_MS = 300;
@@ -75,7 +75,7 @@ namespace Clipbox.Views
         {
             if ((bool)e.NewValue)
             {
-                _viewModel.LoadItems(this.MonitorDimensions);
+                _viewModel.LoadAllItems(this.MonitorDimensions);
             }
         }
 
@@ -247,7 +247,7 @@ namespace Clipbox.Views
                         && !lviVm.IsViewItemLoaded)
                     {
                         // load the full view item
-                        _viewModel.LoadViewItem(lviVm.Id, this.MonitorDimensions);
+                        _viewModel.ScheduleLoadingOfViewItem(lviVm.Id, this.MonitorDimensions);
                     }
                 }
                 else

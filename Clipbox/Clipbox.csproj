@@ -124,6 +124,7 @@
     <Compile Include="ViewModels\BindableObjects\ClipboardViewSubItemBase.cs" />
     <Compile Include="ViewModels\BindableObjects\ClipboardViewSubItemNMore.cs" />
     <Compile Include="ViewModels\ClipboardViewItemTile\MultiItemLoadingViewModel.cs" />
+    <Compile Include="ViewModels\ClipboardViewViewModelBase.cs" />
     <Compile Include="ViewModels\MainClipboardViewViewModel.cs" />
     <Compile Include="ViewModels\SerializableObjects\StoredPreviewData.cs" />
     <Compile Include="ViewModels\SerializableObjects\StoredPreviewItem.cs" />
@@ -156,7 +157,7 @@
     <Compile Include="Views\QuickViewClipboardContents.xaml.cs">
       <DependentUpon>QuickViewClipboardContents.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\ClipboardViewControl.cs" />
+    <Compile Include="Views\ClipboardViewControlBase.cs" />
     <Compile Include="Views\VerticalScrollBarEx.xaml.cs">
       <DependentUpon>VerticalScrollBarEx.xaml</DependentUpon>
     </Compile>
