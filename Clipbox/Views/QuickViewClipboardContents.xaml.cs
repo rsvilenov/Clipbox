@@ -112,7 +112,7 @@ namespace Clipbox.Views
         
         private void MainListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var lastSelectedItem = e.AddedItems.Cast<ClipboardViewItemWrapper>().LastOrDefault();
+            var lastSelectedItem = e.AddedItems.Cast<object>().LastOrDefault() as ClipboardViewItemWrapper;
             // set the value of _lastSelectedItemId if the item is a single item or a group (both are descendants of ClipboardViewItem)
             // but not a sub-item,which is of type ClipboardViewSubItem and for which setting of _lastSelectedItemId
             // is handled by MultiItemListView_SelectionChanged
@@ -301,13 +301,13 @@ namespace Clipbox.Views
                 SelectedMultiItemsIds.Add(mainViewItem.ClipboardItemId, selectedIndices.ToList());
             }
             
-            IEnumerable<ClipboardViewItem> mainListViewSelectedItems = MainListView.SelectedItems.Cast<ClipboardViewItem>();
+            IEnumerable<ClipboardViewItemWrapper> mainListViewSelectedItems = MainListView.SelectedItems.Cast<ClipboardViewItemWrapper>();
 
 
             //// Due to the fact that we raise the selection and click events programmatically, we are limited to using MainListView_SelectionChanged.
             //// MainListView.Items.CurrentChanging would have been of great help in cancelling the selection, but unfortunately we cannot use it here.
 
-            var selectedItemsPlusMainItem = mainListViewSelectedItems.Select(item => item.ClipboardItemId)
+            var selectedItemsPlusMainItem = mainListViewSelectedItems.Select(item => item.Id)
                 .Concat(new List<string> { mainViewItem.ClipboardItemId });
 
             SelectionChangedEventAnswer eventAnswer = RaiseSelectionChangedEvent(selectedItemsPlusMainItem);

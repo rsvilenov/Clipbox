@@ -61,7 +61,7 @@
                 <Style TargetType="Label">
                     <Setter Property="Visibility" Value="Collapsed" />
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding ClipboardViewItems.Count}" Value="0">
+                        <DataTrigger Binding="{Binding ClipboardViewItemWrappers.Count}" Value="0">
                             <Setter Property="Visibility" Value="Visible" />
                         </DataTrigger>
                     </Style.Triggers>
@@ -267,7 +267,7 @@
                                                                         Grid.Column="0"
                                                                         MaxHeight="30"
                                                                         ContentClasses="{Binding ContentClasses}"
-                                                                        IsGroupItem="{Binding Path=DataContext, Converter={StaticResource ObjectTypeCompareConverter}, ConverterParameter={x:Type localBindableObjects:ClipboardViewItemGroup}}"
+                                                                        IsGroupItem="{Binding Converter={StaticResource ObjectTypeCompareConverter}, ConverterParameter={x:Type localBindableObjects:ClipboardViewItemGroup}}"
                                                                         Tag="{x:Static infWindows:PerMonitorDpiWindow.SCALE_ELEMENT_TAG}" />
 
                                                                     <!--<Rectangle HorizontalAlignment="Center" VerticalAlignment="Center" Width="1" Height="15" Fill="#e4e4e6" Margin="5,0,0,0" />
@@ -320,8 +320,6 @@
                                         </Style>
                                     </ContentControl.Style>
                                 </ContentControl>
-
-
 
 
                                 <Rectangle
@@ -470,103 +468,6 @@
                                     </ContentControl.Style>
 
                                 </ContentControl>
-
-                                <!--  single item  -->
-                                <!--<ContentControl Grid.Row="1">
-                                    <ContentControl.Style>
-                                        <Style TargetType="{x:Type ContentControl}">
-                                            <Setter Property="Visibility" Value="Collapsed" />
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Converter={StaticResource ObjectToTypeStringConverter}}" Value="ClipboardViewItemSingle">
-                                                    <Setter Property="Visibility" Value="Visible" />
-                                -->
-                                <!--  Set the content only when needed to avoid binding errors and unnecessary memory usage.  -->
-                                <!--
-                                                    <Setter Property="Content">
-                                                        <Setter.Value>
-                                                            <tile:SingleItem ClipboardViewItem="{Binding}">
-                                -->
-                                <!--
-                                    Set MinWidth to the tile.
-                                    If the preview is too narrow, when the buttons appear, the tile expands and this cause flickering.
-                                    This may lead to tiles moving to the next line on mouseover, which makes them impossible to be clicked.
-                                -->
-                                <!--
-                                                                <tile:SingleItem.MinWidth>150</tile:SingleItem.MinWidth>
-                                -->
-                                <!--  If the setting DimNonFocusedItems is set to true, the tiles are dimmed when they are not highlighted or selected.  -->
-                                <!--
-                                                                <tile:SingleItem.IsDimmed>
-                                                                    <MultiBinding Converter="{StaticResource AndMultiValueConverter}">
-                                                                        <Binding
-                                                                            Converter="{StaticResource InverseBooleanConverter}"
-                                                                            Path="IsManipulationEnabled"
-                                                                            RelativeSource="{RelativeSource AncestorType={x:Type Border}}" />
-                                                                        <Binding Path="DimNonFocusedItems" RelativeSource="{RelativeSource AncestorType={x:Type local:ClipboardViewControlBase}}" />
-                                                                        <Binding
-                                                                            Converter="{StaticResource InverseBooleanConverter}"
-                                                                            Path="DataContext.IsSelected"
-                                                                            RelativeSource="{RelativeSource AncestorType={x:Type ListViewItem}}" />
-                                                                    </MultiBinding>
-                                                                </tile:SingleItem.IsDimmed>
-                                                            </tile:SingleItem>
-                                                        </Setter.Value>
-                                                    </Setter>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </ContentControl.Style>
-                                </ContentControl>-->
-
-                                <!--  multiple items  -->
-                                <!--<ContentControl Grid.Row="1">
-                                    <ContentControl.Height>
-                                        <MultiBinding Converter="{StaticResource MathAddConverter}">
-                                            <Binding Path="ClipboardViewItemMaxHeight" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType=UserControl}" />
-                                            <Binding>
-                                                <Binding.Source>
-                                -->
-                                <!--  pad the height so that it matches the total height of the single view items  -->
-                                <!--
-                                                    <sys:Double>60</sys:Double>
-                                                </Binding.Source>
-                                            </Binding>
-                                        </MultiBinding>
-                                    </ContentControl.Height>
-                                    <ContentControl.Style>
-                                        <Style TargetType="{x:Type ContentControl}">
-                                            <Setter Property="Visibility" Value="Collapsed" />
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding Converter={StaticResource ObjectToTypeStringConverter}}" Value="ClipboardViewItemGroup">
-                                                    <Setter Property="Visibility" Value="Visible" />
-                                -->
-                                <!--  Set the content only when needed to avoid binding errors and unnecessary memory usage.  -->
-                                <!--
-                                                    <Setter Property="Content">
-                                                        <Setter.Value>
-                                                            <tile:MultiItem ClipboardViewItem="{Binding}" Style="{StaticResource MultiItemStyleForSelectionChangedEvent}">
-                                                                <tile:MultiItem.IsDimmed>
-                                                                    <MultiBinding Converter="{StaticResource AndMultiValueConverter}">
-                                                                        <Binding
-                                                                            Converter="{StaticResource InverseBooleanConverter}"
-                                                                            Path="IsManipulationEnabled"
-                                                                            RelativeSource="{RelativeSource AncestorType={x:Type Border}}" />
-                                                                        <Binding Path="DimNonFocusedItems" RelativeSource="{RelativeSource AncestorType={x:Type local:ClipboardViewControlBase}}" />
-                                                                        <Binding
-                                                                            Converter="{StaticResource InverseBooleanConverter}"
-                                                                            Path="DataContext.IsSelected"
-                                                                            RelativeSource="{RelativeSource AncestorType={x:Type ListViewItem}}" />
-                                                                    </MultiBinding>
-                                                                </tile:MultiItem.IsDimmed>
-                                                            </tile:MultiItem>
-                                                        </Setter.Value>
-                                                    </Setter>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </ContentControl.Style>
-                                </ContentControl>-->
-
                             </Grid>
                         </Border>
 
