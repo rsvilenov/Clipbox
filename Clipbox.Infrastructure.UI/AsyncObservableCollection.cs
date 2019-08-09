@@ -21,23 +21,53 @@ namespace Clipbox.Infrastructure.UI
         {
         }
 
+        public void EnableSyncForCurrentUIThread()
+        {
+            var dispatcherSyncContext = SynchronizationContext.Current as DispatcherSynchronizationContext;
+            if (dispatcherSyncContext == null)
+            {
+                throw new NotSupportedException("This method should be called on UI threads only.");
+            }
+
+            EnableCollectionSynchronization(dispatcherSyncContext);
+        }
+
         private void InvokeSynchronized(Action action)
         {
             lock (_lockHandle)
-            {
-                // Ensure that we are running inside the UI thread, as this is a requirement for BindingOperations.EnableCollectionSynchronization().
-                // The documentation explicitly states that "The call must occur on the UI thread."
-                // https://docs.microsoft.com/en-us/dotnet/api/system.windows.data.bindingoperations.enablecollectionsynchronization?redirectedfrom=MSDN&view=netframework-4.7.2#System_Windows_Data_BindingOperations_EnableCollectionSynchronization_System_Collections_IEnumerable_System_Object_System_Windows_Data_CollectionSynchronizationCallback_
-                if (SynchronizationContext.Current is DispatcherSynchronizationContext &&
-                !_threadsWithSynchronizationEnabled.Contains(Thread.CurrentThread.ManagedThreadId))
+            {   
+                if (SynchronizationContext.Current is DispatcherSynchronizationContext)
                 {
-                    // we should call EnableCollectionSynchronization on each UI thread.
-                    BindingOperations.EnableCollectionSynchronization(this, _lockHandle);
-                    _threadsWithSynchronizationEnabled.Add(Thread.CurrentThread.ManagedThreadId);
+                    EnableCollectionSynchronization((DispatcherSynchronizationContext)SynchronizationContext.Current);
                 }
                 // if we are calling the collection from non-UI threads only, the lock should be enough.
 
-                action.Invoke();
+                try
+                {
+                    action.Invoke();
+                }
+                catch (NotSupportedException nsex)
+                {
+                    if (nsex.Source == "PresentationFramework")
+                    {
+                        throw new InvalidOperationException($"It looks like CollectionSynchronization has not been enabled on the UI thread. Automatic enabling has failed. Consider calling {nameof(EnableCollectionSynchronization)}() on the UI thread.", nsex);
+                    }
+
+                    throw;
+                }
+            }
+        }
+
+        private void EnableCollectionSynchronization(DispatcherSynchronizationContext syncContext)
+        {
+            // Ensure that we are running inside the UI thread, as this is a requirement for BindingOperations.EnableCollectionSynchronization().
+            // The documentation explicitly states that "The call must occur on the UI thread."
+            // https://docs.microsoft.com/en-us/dotnet/api/system.windows.data.bindingoperations.enablecollectionsynchronization?redirectedfrom=MSDN&view=netframework-4.7.2#System_Windows_Data_BindingOperations_EnableCollectionSynchronization_System_Collections_IEnumerable_System_Object_System_Windows_Data_CollectionSynchronizationCallback_
+            if (!_threadsWithSynchronizationEnabled.Contains(Thread.CurrentThread.ManagedThreadId))
+            {
+                // we should call EnableCollectionSynchronization on each UI thread.
+                BindingOperations.EnableCollectionSynchronization(this, _lockHandle);
+                _threadsWithSynchronizationEnabled.Add(Thread.CurrentThread.ManagedThreadId);
             }
         }
 
