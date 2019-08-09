@@ -35,7 +35,9 @@ namespace Clipbox
         public bool Is64BitOs { get; set; }
 
         public double OsVersion { get; set; }
-        
+
+        public float AvailableSystemMemoryMB { get; set; }
+
         public List<string> LoadedExtentions { get; set; }
 
         public string FailedExtentionType { get; set; }
@@ -74,6 +76,13 @@ namespace Clipbox
             try { fi.OsVersion = OsVersionUtils.GetWindowsVersion(); }
             catch { }
 
+            try
+            {
+                var performance = new System.Diagnostics.PerformanceCounter("Memory", "Available MBytes");
+                fi.AvailableSystemMemoryMB = performance.NextValue();
+            }
+            catch { }
+
             return fi;
         }
         
@@ -97,11 +106,13 @@ namespace Clipbox
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine($"Error: {ExceptionObjectType ?? "Unknown."} at {new DateTime(LocalTicks)} local time ({new DateTime(UtcTicks)} UTC.)");
-            if (ExceptionObjectType != null)
+            
+            if (ExceptionObject != null)
             {
-                sb.AppendLine(ExceptionObjectType);
+                sb.AppendLine(ExceptionObject.ToString());
             }
-            sb.AppendLine($"OS Version: {OsVersion}; Is64BitOs: { Is64BitOs}; WorkingSet: {WorkingSet}; CpuCount: {CpuCount}");
+
+            sb.AppendLine($"OS Version: {OsVersion}; Is 64 Bit Os: { Is64BitOs}; Working Set: {WorkingSet}; Available Memory (MB): {AvailableSystemMemoryMB}; CpuCount: {CpuCount}");
 
             if (FailedExtentionType != null)
             {

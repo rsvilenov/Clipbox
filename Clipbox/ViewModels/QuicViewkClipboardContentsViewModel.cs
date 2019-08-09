@@ -23,23 +23,13 @@ namespace Clipbox.ViewModels
         public ICommand DeleteClipboardEntry { get; set; }
 
         public ICommand PinUnpinClipboardEntry { get; set; }
-
-        public event EventHandler<RequestPreviewDimentionsEventArgs> OnPreviewDimentionsRequested;
         
-        private AsyncObservableCollection<ClipboardViewItem> _clipboardViewItems;
+        private List<ClipboardViewItemWrapper> _selectedClipboardViewItemWrappers;
 
-        public AsyncObservableCollection<ClipboardViewItem> ClipboardViewItems
+        public List<ClipboardViewItemWrapper> SelectedClipboardViewItemWrappers
         {
-            get { return _clipboardViewItems; }
-            set { SetField(ref _clipboardViewItems, value); }
-        }
-        
-        private List<ClipboardViewItem> _selectedClipboardViewItems;
-
-        public List<ClipboardViewItem> SelectedClipboardViewItems
-        {
-            get { return _selectedClipboardViewItems; }
-            set { SetField(ref _selectedClipboardViewItems, value); }
+            get { return _selectedClipboardViewItemWrappers; }
+            set { SetField(ref _selectedClipboardViewItemWrappers, value); }
         }
 
         private bool _areClipboardItemsAvailable;
@@ -49,6 +39,8 @@ namespace Clipbox.ViewModels
             get { return _areClipboardItemsAvailable; }
             set { SetField(ref _areClipboardItemsAvailable, value); }
         }
+
+        private List<string> _newlyAddedItemsToLoadAndWrap;
 
         //private double _itemDesiredHeight;
 
@@ -74,9 +66,9 @@ namespace Clipbox.ViewModels
             ClearClipboardEntries = new DelegateCommand(ClearAllClipboardEntriesHandler);
             DeleteClipboardEntry = new DelegateCommand<ClipboardViewItem>(DeleteClipboardEntryHandler);
             PinUnpinClipboardEntry = new DelegateCommand<ClipboardViewItem>(PinUnpinClipboardEntryHandler);
-
-            ClipboardViewItems = new AsyncObservableCollection<ClipboardViewItem>();
-            SelectedClipboardViewItems = new List<ClipboardViewItem>();
+            
+            SelectedClipboardViewItemWrappers = new List<ClipboardViewItemWrapper>();
+            _newlyAddedItemsToLoadAndWrap = new List<string>();
 
             clipboardManager.ItemAdded += ClipboardManager_ItemAdded;
             clipboardManager.ItemRemoved += ClipboardManager_ItemRemoved;
@@ -103,7 +95,7 @@ namespace Clipbox.ViewModels
         {
             base.ClipboardManager.Clear();
             base.ClipboardManager.ClearSystemClipboard();
-            ClipboardViewItems.Clear();
+            base.ClipboardViewItemWrappers.Clear();
             AreClipboardItemsAvailable = false;
         }
 
@@ -129,10 +121,10 @@ namespace Clipbox.ViewModels
 
         private bool RemoveItem(string clipboardItemId)
         {
-            var itemToRemove = ClipboardViewItems.FirstOrDefault(item => item.ClipboardItemId == clipboardItemId);
+            var itemToRemove = base.ClipboardViewItemWrappers.FirstOrDefault(item => item.Id == clipboardItemId);
             if (itemToRemove != null)
             {
-                ClipboardViewItems.Remove(itemToRemove);
+                base.ClipboardViewItemWrappers.Remove(itemToRemove);
                 return true;
             }
 
@@ -141,65 +133,20 @@ namespace Clipbox.ViewModels
 
         private void AddNewItem(string clipboardItemId)
         {
-            var args = new RequestPreviewDimentionsEventArgs();
-
-            if (OnPreviewDimentionsRequested == null)
-            {
-                Debug.WriteLine("WARN: OnPreviewDimentionsRequested has no subscribers.");
-                return;
-            }
-
-            OnPreviewDimentionsRequested?.Invoke(this, args);
-
-            if (args.PreviewHeight == 0)
-            {
-                Debug.WriteLine("WARN: args.PreviewHeight is 0.");
-                return;
-            }
-
-            int availableItemWidth = (int)args.PreviewWidth;
-            int availableItemHeight = (int)args.PreviewHeight;
-
-            IClipboardItem item = GetClipboardItem(clipboardItemId, restoreShrinked: true);
-            if (ClipboardViewItems.Any(cvi => cvi.ClipboardItemId == clipboardItemId))
-            {
-                throw new InvalidOperationException("Item with the same key has already been added to the preview item collection.");
-            }
+            _newlyAddedItemsToLoadAndWrap.Add(clipboardItemId);
 
             AreClipboardItemsAvailable = true;
+        }
 
-            //int maxPreviewItemsInGroupItem = _settingsService.GetSetting<int>(SettingsKeys.MaxPreviewItemsInGroupItem);
-            //ClipboardViewItemFactory viewItemFactory = new ClipboardViewItemFactory(_previewContainer, maxPreviewItemsInGroupItem);
-            //var viewItem = viewItemFactory.CreateFromClipboardItem(item, availableItemWidth, availableItemHeight);
-
-            //ClipboardViewItems.Add(viewItem);
+        public void LoadAndWrapNewlyAddedItems(MonitorDimensions monitorDimensions)
+        {
+            base.LoadAndWrapItems(monitorDimensions, _newlyAddedItemsToLoadAndWrap);
         }
 
         public void ReloadWrappedItems(MonitorDimensions monitorDimensions)
         {
-            var args = new RequestPreviewDimentionsEventArgs();
-
-            if (OnPreviewDimentionsRequested == null)
-            {
-                Debug.WriteLine("WARN: OnPreviewDimentionsRequested has no subscribers.");
-                return;
-            }
-
-            OnPreviewDimentionsRequested?.Invoke(this, args);
-
-            if (args.PreviewHeight == 0)
-            {
-                Debug.WriteLine("WARN: args.PreviewHeight is 0.");
-                return;
-            }
-
-            int availableItemWidth = (int)args.PreviewWidth;
-            int availableItemHeight = (int)args.PreviewHeight;
-
             var clipboardItemIds = base.ClipboardManager.GetAllItemIds();
             
-
-            ClipboardViewItems.Clear();
             AreClipboardItemsAvailable = false;
 
             IEnumerable<string> allItemIds = base.ClipboardManager.GetAllItemIds();
@@ -211,7 +158,9 @@ namespace Clipbox.ViewModels
 
         public void LoadViewItems(MonitorDimensions monitorDimensions)
         {
-            foreach (var clipboardItemId in base.ClipboardViewItemWrappers.Select(w => w.Id))
+            var clipboardItemIds = base.ClipboardViewItemWrappers.Select(w => w.Id).ToList();
+
+            foreach(string clipboardItemId in clipboardItemIds)
             {
 #if DEBUG
                 Debug.WriteLine(clipboardItemId);

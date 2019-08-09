@@ -139,7 +139,7 @@ namespace Clipbox.Views
             }
         }
 
-        public virtual void CancelSelectionWithMessage(ClipboardViewItem item, string message)
+        public virtual void CancelSelectionWithMessage(ClipboardViewItemWrapper item, string message)
         { }
 
         public virtual void ResumeDefaultState()

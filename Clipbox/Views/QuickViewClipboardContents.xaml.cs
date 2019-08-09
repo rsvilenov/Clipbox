@@ -53,11 +53,22 @@ namespace Clipbox.Views
             DimNonFocusedItems = _settingsService.GetSetting<bool>(SettingsKeys.DimNonFocusedItems);
 
             _uiExtentionGenerationSlidingTimer = new SlidingTimer();
-            _uiExtentionGenerationSlidingTimer.IntervalMs =200d;
+            _uiExtentionGenerationSlidingTimer.IntervalMs = 200d;
             _uiExtentionGenerationSlidingTimer.Elapsed += _uiExtentionGenerationSlidingTimer_Elapsed;
-
-            _viewModel.OnPreviewDimentionsRequested += _viewModel_OnPreviewDimentionsRequested;
+            
             MainListView.SelectionChanged += MainListView_SelectionChanged;
+            IsVisibleChanged += QuickViewClipboardContents_IsVisibleChanged;
+        }
+
+        private void QuickViewClipboardContents_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if ((bool)e.NewValue)
+            {
+                Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, new Action(() =>
+                {
+                    LoadItemsAndViewItems();
+                }));
+            }
         }
 
         private void _uiExtentionGenerationSlidingTimer_Elapsed(object sender, EventArgs e)
@@ -65,20 +76,18 @@ namespace Clipbox.Views
             Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background,
             (Action)(() =>
             {
-                IEnumerable<ClipboardViewItem> selectedItems = MainListView.SelectedItems.Cast<ClipboardViewItem>();
-                List<IClipboardItem> originalClipboardItems = new List<IClipboardItem>();
-                foreach (string id in selectedItems.Select(item => item.ClipboardItemId))
-                {
-                    IClipboardItem item = _viewModel.GetClipboardItem(id, restoreShrinked: false);
-                    originalClipboardItems.Add(item);
-                }
+                List<IClipboardItem> selectedClipboardItems = MainListView
+                .SelectedItems
+                .Cast<ClipboardViewItemWrapper>()
+                .Select(w => w.ClipboardItem)
+                .ToList();
 
-                var allExtentions = base.GetExtentions(originalClipboardItems);
+                var allExtentions = base.GetExtentions(selectedClipboardItems);
 
                 foreach (var extention in allExtentions)
                 {
                     UIElement extentionUIElement = null;
-                    extention.OnExtentionViewGenerating(originalClipboardItems, ref extentionUIElement, new Size(uiExtentionContainer.MaxWidth, uiExtentionContainer.MaxHeight));
+                    extention.OnExtentionViewGenerating(selectedClipboardItems, ref extentionUIElement, new Size(uiExtentionContainer.MaxWidth, uiExtentionContainer.MaxHeight));
                     uiExtentionContainer.Children.Add(extentionUIElement);
                 }
             }));
@@ -93,36 +102,23 @@ namespace Clipbox.Views
             }));
         }
 
-        private void _viewModel_OnPreviewDimentionsRequested(object sender, RequestPreviewDimentionsEventArgs e)
+        private void LoadItemsAndViewItems()
         {
-            Dispatcher.Invoke(() =>
-            {
-                // set both to Height for now (as Height is the important dimention, Width is determined automatically)
-                e.PreviewWidth = (int)ClipboardViewItemMaxHeight;
-                e.PreviewHeight = (int)ClipboardViewItemMaxHeight;
-            });
-        }
+            _viewModel.ClipboardViewItemWrappers.EnableSyncForCurrentUIThread();
 
-        public override void OnClipboardViewItemMaxHeightChanged()
-        {
-            Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, new Action(() =>
-            {
-                Task.Run(new Action(() => _viewModel.ReloadWrappedItems(MonitorDimensions)))
+            Task.Run(new Action(() => _viewModel.ReloadWrappedItems(MonitorDimensions)))
                 .ContinueWith((t) => _viewModel.LoadViewItems(MonitorDimensions));
-            }));
-
-            _viewModel.ReloadWrappedItems(MonitorDimensions);
         }
         
         private void MainListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var lastSelectedItem = e.AddedItems.Cast<ClipboardViewItemBase>().LastOrDefault();
+            var lastSelectedItem = e.AddedItems.Cast<ClipboardViewItemWrapper>().LastOrDefault();
             // set the value of _lastSelectedItemId if the item is a single item or a group (both are descendants of ClipboardViewItem)
             // but not a sub-item,which is of type ClipboardViewSubItem and for which setting of _lastSelectedItemId
             // is handled by MultiItemListView_SelectionChanged
-            if (lastSelectedItem != null && lastSelectedItem is ClipboardViewItem)
+            if (lastSelectedItem != null && lastSelectedItem.ViewItem is ClipboardViewItem)
             {
-                _lastSelectedItemId = ((ClipboardViewItem)lastSelectedItem).ClipboardItemId;
+                _lastSelectedItemId = lastSelectedItem.ViewItem.ClipboardItemId;
             }
             
             PerformOnSelectedChangedOpreations();
@@ -137,15 +133,15 @@ namespace Clipbox.Views
                 return;
             }
 
-            IEnumerable<ClipboardViewItem> selectedItems = MainListView.SelectedItems.Cast<ClipboardViewItem>();
+            IEnumerable<ClipboardViewItemWrapper> selectedItems = MainListView.SelectedItems.Cast<ClipboardViewItemWrapper>();
 
             // Due to the fact that we raise the selection and click events programmatically, we are limited to using MainListView_SelectionChanged.
             // MainListView.Items.CurrentChanging would have been of great help in cancelling the selection, but unfortunately we cannot use it here.
-            var allSelectedItemIds = selectedItems.Select(item => item.ClipboardItemId).Union(SelectedMultiItemsIds.Keys);
+            var allSelectedItemIds = selectedItems.Select(item => item.Id).Union(SelectedMultiItemsIds.Keys);
             SelectionChangedEventAnswer eventAnswer = RaiseSelectionChangedEvent(allSelectedItemIds);
             if (eventAnswer.IsCancelled)
             {
-                ClipboardViewItem latestSelectedItem = _viewModel.ClipboardViewItems.Single(item => item.ClipboardItemId == _lastSelectedItemId);
+                ClipboardViewItemWrapper latestSelectedItem = _viewModel.ClipboardViewItemWrappers.Single(item => item.Id == _lastSelectedItemId);
                 //if (latestSelectedItem is ClipboardViewItemGroup == false)
                 {
                     CancelSelectionWithMessage(latestSelectedItem, eventAnswer.CancelMessage);
@@ -153,20 +149,20 @@ namespace Clipbox.Views
                 }
             }
 
-            foreach (ClipboardViewItem item in _viewModel.SelectedClipboardViewItems)
+            foreach (ClipboardViewItemWrapper item in _viewModel.SelectedClipboardViewItemWrappers)
             {
-                item.IsSelected = false;
+                item.ViewItem.IsSelected = false;
             }
 
-            _viewModel.SelectedClipboardViewItems.Clear();
+            _viewModel.SelectedClipboardViewItemWrappers.Clear();
             SelectedItemIds.Clear();
 
-            _viewModel.SelectedClipboardViewItems.AddRange(selectedItems);
-            SelectedItemIds.AddRange(selectedItems.Select(item => item.ClipboardItemId));
+            _viewModel.SelectedClipboardViewItemWrappers.AddRange(selectedItems);
+            SelectedItemIds.AddRange(selectedItems.Select(item => item.Id));
 
-            foreach (ClipboardViewItem item in selectedItems)
+            foreach (ClipboardViewItemWrapper item in selectedItems)
             {
-                item.IsSelected = true;
+                item.ViewItem.IsSelected = true;
             }
 
             uiExtentionContainer.Children.Clear();
@@ -200,10 +196,10 @@ namespace Clipbox.Views
 
             }
 
-            ClipboardViewItem lastSelectedItem = MainListView.SelectedItems.Cast<ClipboardViewItem>().LastOrDefault();
+            ClipboardViewItemWrapper lastSelectedItem = MainListView.SelectedItems.Cast<ClipboardViewItemWrapper>().LastOrDefault();
             if (lastSelectedItem != null)
             {
-                lastSelectedItem.IsSelected = true;
+                lastSelectedItem.ViewItem.IsSelected = true;
             }
 
 #if DEBUG
@@ -240,12 +236,12 @@ namespace Clipbox.Views
         public override void ResumeDefaultState()
         {
             MainListView.UnselectAll();
-            _viewModel.SelectedClipboardViewItems.Clear();
+            _viewModel.SelectedClipboardViewItemWrappers.Clear();
             SelectedItemIds.Clear();
             SelectedMultiItemsIds.Clear();
         }
 
-        public override void CancelSelectionWithMessage(ClipboardViewItem item, string message)
+        public override void CancelSelectionWithMessage(ClipboardViewItemWrapper item, string message)
         {
             Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, (Action)(() =>
             {
@@ -254,7 +250,7 @@ namespace Clipbox.Views
                     MainListView.SelectedItems.Remove(item);
 
                     // trigger the animation which shows that the item cannot be selected
-                    item.SignalThatItemIsUnselectable();
+                    item.ViewItem.SignalThatItemIsUnselectable();
 
                     ShowErrorTextTemporarily(message, 500);
                 }

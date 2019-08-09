@@ -127,7 +127,10 @@ namespace Clipbox
             _settingsService.SetSetting(SettingsKeys.IsCloudSyncEnabled, false);
             _settingsService.SetSetting(SettingsKeys.MainClipboardViewBackgroundRenderMode, (int)MainClipboardViewBackgroundRenderMode.ImageBrush);
             _settingsService.SetSetting(SettingsKeys.IsBackgroundPreviewGenerationEnabled, true);
-            
+
+
+            _previewGenerationService = new PreviewGenerationService(_clipboardManager, _extentionLoader.PreviewGeneratorsContainer, _settingsService);
+
 
             // Initialize the view model - the quick view should show as fast as possible, so we will create it beforehand
             var viewModel = new QuicViewkClipboardContentsViewModel(_clipboardManager, _previewGenerationService, _settingsService);
@@ -151,8 +154,7 @@ namespace Clipbox
             _cloudSyncService.IsEnabled = _settingsService.GetSetting<bool>(SettingsKeys.IsCloudSyncEnabled);
 
             _trayContextMenuService = new TrayContextMenuService(_settingsService);
-
-            _previewGenerationService = new PreviewGenerationService(_clipboardManager, _extentionLoader.PreviewGeneratorsContainer, _settingsService);
+            
             // this view can show a little bit slower so we will not keep its instance alive the whole time - we will create it upon request within the service
             _mainClipboardViewWindowService = new MainClipboardViewWindowService(_clipboardManager, _previewGenerationService, _extentionLoader.UIExtentionContainer, _settingsService);
 
