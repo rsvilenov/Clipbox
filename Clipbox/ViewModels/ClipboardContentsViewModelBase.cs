@@ -60,13 +60,18 @@ namespace Clipbox.ViewModels
             wrapper.IsViewItemLoaded = false;
         }
 
-        public void LoadAndWrapItems(MonitorDimensions monitorDimensions, IEnumerable<string> clipboardItemIds)
+        public void LoadAndWrapItems(MonitorDimensions monitorDimensions, IEnumerable<string> clipboardItemIds, bool pinnedOnly = false)
         {
             List<IClipboardItem> clipboardItems = new List<IClipboardItem>();
             foreach (string clipboardItemId in clipboardItemIds)
             {
                 IClipboardItem clipboardItem = ClipboardManager.GetClipboardItem(clipboardItemId);
                 clipboardItems.Add(clipboardItem);
+                if (pinnedOnly && !clipboardItem.IsPinned)
+                {
+                    continue;
+                }
+
                 var tempViewItem = new ClipboardViewItemWrapper(clipboardItem);
 
                 CalibratedPreviewDimentionInfo cpdi = null;

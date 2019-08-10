@@ -273,7 +273,7 @@ namespace Clipbox.Views
             });
         }
 
-        private void MultiItemListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void MultiItem_SubItems_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Debug.WriteLine("MultiItemListView_SelectionChanged");
             MultiItem multiItemUserControl = (MultiItem)sender;
@@ -284,6 +284,14 @@ namespace Clipbox.Views
             {
                 return;
             }
+
+            ClipboardViewItemWrapper mainViewItemWrapper = _viewModel.ClipboardViewItemWrappers.
+                        SingleOrDefault(item => item.ViewItem == mainViewItem);
+            if (mainViewItemWrapper == null)
+            {
+                throw new InvalidOperationException("The selected item is not present in the ClipboardViewItemWrappers collection in the ViewModel.");
+            }
+
             _lastSelectedItemId = mainViewItem?.ClipboardItemId;
 
             IEnumerable<ClipboardViewSubItemBase> selectedItems = listView.SelectedItems.Cast<ClipboardViewSubItemBase>();
@@ -294,7 +302,7 @@ namespace Clipbox.Views
             {
                 if (mainViewItem.IsSelected)
                 {
-                    MainListView.SelectedItems.Remove(mainViewItem);
+                    MainListView.SelectedItems.Remove(mainViewItemWrapper);
                     mainViewItem.IsSelected = false;
                 }
 
@@ -315,7 +323,7 @@ namespace Clipbox.Views
             {
                 Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, (Action)(() =>
                 {
-                    MainListView.SelectedItems.Remove(mainViewItem);
+                    MainListView.SelectedItems.Remove(mainViewItemWrapper);
 
                     // trigger the animation which shows that the item cannot be selected
                     mainViewItem.SignalThatItemIsUnselectable();
@@ -391,6 +399,13 @@ namespace Clipbox.Views
         {
             _uiExtentionGenerationSlidingTimer.Dispose();
         }
-        
+
+        private void MultiItem_Unloaded(object sender, RoutedEventArgs e)
+        {
+            MultiItem multiItem = (MultiItem)sender;
+
+            multiItem.SubItems_SelectionChanged -= MultiItem_SubItems_SelectionChanged;
+            multiItem.Unloaded -= MultiItem_Unloaded;
+        }
     }
 }

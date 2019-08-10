@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Data;
 
@@ -12,8 +13,11 @@ namespace Clipbox.Technical.Converters
             {
                 throw new ArgumentException($"{nameof(parameter)} should be of type System.Type");
             }
-
-            return value.GetType() == (Type)parameter;
+            if (value == null)
+            {
+                Debug.WriteLine($"{nameof(ObjectTypeCompareConverter)} Warning: {nameof(value)} is null");
+            }
+            return value?.GetType() == (Type)parameter;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

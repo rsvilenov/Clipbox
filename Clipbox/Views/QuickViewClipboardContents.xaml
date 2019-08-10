@@ -35,7 +35,8 @@
 
         <!--  we cannot subscribe to an event in an inline style, so we need a resource for circumventing this limitation of WPF  -->
         <Style x:Key="MultiItemStyleForSelectionChangedEvent" TargetType="{x:Type tile:MultiItem}">
-            <EventSetter Event="SubItems_SelectionChanged" Handler="MultiItemListView_SelectionChanged" />
+            <EventSetter Event="SubItems_SelectionChanged" Handler="MultiItem_SubItems_SelectionChanged" />
+            <EventSetter Event="Unloaded" Handler="MultiItem_Unloaded" />
         </Style>
     </UserControl.Resources>
     <Grid x:Name="mainGrid">
@@ -402,7 +403,7 @@
                                                         <Setter Property="ContentTemplate">
                                                             <Setter.Value>
                                                                 <DataTemplate>
-                                                                    <tile:MultiItem ClipboardViewItem="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}, Path=DataContext.ViewItem}">
+                                                                    <tile:MultiItem ClipboardViewItem="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}, Path=DataContext.ViewItem}" Style="{StaticResource MultiItemStyleForSelectionChangedEvent}">
                                                                         <tile:MultiItem.Height>
                                                                             <MultiBinding Converter="{StaticResource MathAddConverter}">
                                                                                 <Binding Path="ClipboardViewItemMaxHeight" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}" />

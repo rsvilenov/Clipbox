@@ -151,7 +151,7 @@ namespace Clipbox.ViewModels
 
             IEnumerable<string> allItemIds = base.ClipboardManager.GetAllItemIds();
             base.ClipboardViewItemWrappers.Clear();
-            base.LoadAndWrapItems(monitorDimensions, allItemIds);
+            base.LoadAndWrapItems(monitorDimensions, allItemIds, pinnedOnly: true);
 
             AreClipboardItemsAvailable = true;
         }
