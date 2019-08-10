@@ -1,6 +1,7 @@
 ﻿using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.Infrastructure.Extensibility.Containers;
 using Clipbox.Infrastructure.UI;
+using Clipbox.Infrastructure.UI.DataObjects;
 using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
@@ -25,6 +26,8 @@ namespace Clipbox.Views
         private QuicViewkClipboardContentsViewModel _viewModel;
 
         private string _lastSelectedItemId;
+
+        private MonitorDimensions _oldMonitorDimensions;
 
         private ISettingsService _settingsService;
 
@@ -62,12 +65,14 @@ namespace Clipbox.Views
 
         private void QuickViewClipboardContents_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if ((bool)e.NewValue)
+            if ((bool)e.NewValue && base.MonitorDimensions != _oldMonitorDimensions)
             {
                 Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, new Action(() =>
                 {
                     LoadItemsAndViewItems();
                 }));
+
+                _oldMonitorDimensions = base.MonitorDimensions;
             }
         }
 
