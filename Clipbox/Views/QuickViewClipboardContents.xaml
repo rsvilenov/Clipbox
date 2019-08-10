@@ -435,7 +435,7 @@
                                                     </MultiDataTrigger.Setters>
                                                 </MultiDataTrigger>
 
-                                                <!--<MultiDataTrigger>
+                                                <MultiDataTrigger>
                                                     <MultiDataTrigger.Conditions>
                                                         <Condition Binding="{Binding Path=DimensionInfo.IsViewItemGroup}" Value="True" />
                                                         <Condition Binding="{Binding Path=IsViewItemLoaded}" Value="False" />
@@ -450,9 +450,9 @@
                                                                                 <Binding Path="ClipboardViewItemMaxHeight" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}" />
                                                                                 <Binding>
                                                                                     <Binding.Source>
-                                                -->
-                                                <!--  pad the height so that it matches the total height of the single view items  -->
-                                                <!--
+
+                                                                                        <!--  pad the height so that it matches the total height of the single view items  -->
+
                                                                                         <sys:Double>60</sys:Double>
                                                                                     </Binding.Source>
                                                                                 </Binding>
@@ -463,7 +463,7 @@
                                                             </Setter.Value>
                                                         </Setter>
                                                     </MultiDataTrigger.Setters>
-                                                </MultiDataTrigger>-->
+                                                </MultiDataTrigger>
                                             </Style.Triggers>
                                         </Style>
                                     </ContentControl.Style>

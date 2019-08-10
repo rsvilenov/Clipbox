@@ -211,7 +211,7 @@ namespace Clipbox.Services
         {
             pdto = null;
 
-            string relativeFilePath = Path.Combine(APP_DATA_SUBDIR, $"{clipboardItemId}_{itemRequestedWidth}_{itemRequestedHeight}");
+            string relativeFilePath = Path.Combine(APP_DATA_SUBDIR, $"{clipboardItemId}_{itemRequestedWidth}_{itemRequestedHeight}.pdto");
             if (!AppDataUtils.CheckFileExists(relativeFilePath))
             {
                 return false;
