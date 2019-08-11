@@ -13,6 +13,7 @@
     xmlns:local="clr-namespace:Clipbox.Views"
     xmlns:localBeh="clr-namespace:Clipbox.Behaviors"
     xmlns:localBindableObjects="clr-namespace:Clipbox.ViewModels.BindableObjects"
+    xmlns:localEnums="clr-namespace:Clipbox.ViewModels.Enums"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:tile="clr-namespace:Clipbox.Views.ClipboardViewItemTile"
@@ -46,6 +47,22 @@
             <!--  this is the row for the bottom buttons (extentions, clear clipboard, etc...)  -->
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+
+        <!--  loading indication panel  -->
+        <UniformGrid Columns="2">
+            <UniformGrid.Style>
+                <Style TargetType="{x:Type UniformGrid}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ClipboardItemsLoadingStage}" Value="{x:Static localEnums:ClipboardItemsLoadingStage.WrappersLoaded}">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </UniformGrid.Style>
+            <Rectangle Width="{Binding Path=ClipboardViewItemMaxHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}}" Height="{Binding Path=Width, RelativeSource={RelativeSource Mode=Self}}" />
+            <Rectangle Width="{Binding Path=ClipboardViewItemMaxHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}}" Height="{Binding Path=Width, RelativeSource={RelativeSource Mode=Self}}" />
+        </UniformGrid>
+
         <!--  label "No contents"  -->
         <Label
             Grid.Row="0"
@@ -62,9 +79,16 @@
                 <Style TargetType="Label">
                     <Setter Property="Visibility" Value="Collapsed" />
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding ClipboardViewItemWrappers.Count}" Value="0">
-                            <Setter Property="Visibility" Value="Visible" />
-                        </DataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding ClipboardItemsLoadingStage}" Value="{x:Static localEnums:ClipboardItemsLoadingStage.WrappersLoaded}" />
+                                <Condition Binding="{Binding AreClipboardViewItemsAvailable}" Value="False" />
+                                <Condition Binding="{Binding AreClipboardViewItemWrappersAvailable}" Value="False" />
+                            </MultiDataTrigger.Conditions>
+                            <MultiDataTrigger.Setters>
+                                <Setter Property="Visibility" Value="Visible" />
+                            </MultiDataTrigger.Setters>
+                        </MultiDataTrigger>
                     </Style.Triggers>
                 </Style>
             </Label.Style>
@@ -478,7 +502,16 @@
 
 
         </Grid>
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="1" Visibility="Hidden">
+            <Grid.Style>
+                <Style TargetType="{x:Type Grid}">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ClipboardItemsLoadingStage}" Value="{x:Static localEnums:ClipboardItemsLoadingStage.ViewItemsLoaded}">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
                 <ColumnDefinition Width="35" />
@@ -508,7 +541,7 @@
                 Command="{Binding ClearClipboardEntries}"
                 Style="{DynamicResource BtnTrash}"
                 Tag="{x:Static infWindows:PerMonitorDpiWindow.SCALE_ELEMENT_TAG}"
-                Visibility="{Binding AreClipboardItemsAvailable, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                Visibility="{Binding AreClipboardViewItemsAvailable, Converter={StaticResource BooleanToVisibilityConverter}}" />
         </Grid>
     </Grid>
 </local:ClipboardViewControlBase>

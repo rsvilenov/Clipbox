@@ -125,6 +125,7 @@
     <Compile Include="ViewModels\BindableObjects\ClipboardViewSubItemNMore.cs" />
     <Compile Include="ViewModels\ClipboardViewItemTile\MultiItemLoadingViewModel.cs" />
     <Compile Include="ViewModels\ClipboardContentsViewModelBase.cs" />
+    <Compile Include="ViewModels\Enums\ClipboardItemsLoadingStage.cs" />
     <Compile Include="ViewModels\MainViewClipboardContentsViewModel.cs" />
     <Compile Include="ViewModels\SerializableObjects\StoredPreviewData.cs" />
     <Compile Include="ViewModels\SerializableObjects\StoredPreviewItem.cs" />

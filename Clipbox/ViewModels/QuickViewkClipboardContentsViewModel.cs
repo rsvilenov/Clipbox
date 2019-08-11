@@ -7,6 +7,7 @@ using Clipbox.Infrastructure.UI.DataObjects;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.ViewModels.BindableObjects;
+using Clipbox.ViewModels.Enums;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -31,13 +32,21 @@ namespace Clipbox.ViewModels
             get { return _selectedClipboardViewItemWrappers; }
             set { SetField(ref _selectedClipboardViewItemWrappers, value); }
         }
+        
+        private bool _areClipboardViewItemWrappersAvailable;
 
-        private bool _areClipboardItemsAvailable;
-
-        public bool AreClipboardItemsAvailable
+        public bool AreClipboardViewItemWrappersAvailable
         {
-            get { return _areClipboardItemsAvailable; }
-            set { SetField(ref _areClipboardItemsAvailable, value); }
+            get { return _areClipboardViewItemWrappersAvailable; }
+            set { SetField(ref _areClipboardViewItemWrappersAvailable, value); }
+        }
+
+        private ClipboardItemsLoadingStage _clipboardItemLoadingStage;
+
+        public ClipboardItemsLoadingStage ClipboardItemsLoadingStage
+        {
+            get { return _clipboardItemLoadingStage; }
+            set { SetField(ref _clipboardItemLoadingStage, value); }
         }
 
         private List<string> _newlyAddedItemsToLoadAndWrap;
@@ -96,7 +105,7 @@ namespace Clipbox.ViewModels
             base.ClipboardManager.Clear();
             base.ClipboardManager.ClearSystemClipboard();
             base.ClipboardViewItemWrappers.Clear();
-            AreClipboardItemsAvailable = false;
+            AreClipboardViewItemWrappersAvailable = false;
         }
 
         private void ClipboardManager_ItemChanged(object sender, ClipboardManagerEventArgs e)
@@ -135,7 +144,7 @@ namespace Clipbox.ViewModels
         {
             _newlyAddedItemsToLoadAndWrap.Add(clipboardItemId);
 
-            AreClipboardItemsAvailable = true;
+            AreClipboardViewItemWrappersAvailable = true;
         }
 
         public void LoadAndWrapNewlyAddedItems(MonitorDimensions monitorDimensions)
@@ -145,15 +154,18 @@ namespace Clipbox.ViewModels
 
         public void ReloadWrappedItems(MonitorDimensions monitorDimensions)
         {
+            ClipboardItemsLoadingStage = ClipboardItemsLoadingStage.Started;
+
             var clipboardItemIds = base.ClipboardManager.GetAllItemIds();
             
-            AreClipboardItemsAvailable = false;
+            AreClipboardViewItemWrappersAvailable = false;
 
             IEnumerable<string> allItemIds = base.ClipboardManager.GetAllItemIds();
             base.ClipboardViewItemWrappers.Clear();
             base.LoadAndWrapItems(monitorDimensions, allItemIds, pinnedOnly: true);
 
-            AreClipboardItemsAvailable = true;
+            AreClipboardViewItemWrappersAvailable = base.ClipboardViewItemWrappers.Any();
+            ClipboardItemsLoadingStage = ClipboardItemsLoadingStage.WrappersLoaded;
         }
 
         public void LoadViewItems(MonitorDimensions monitorDimensions)
@@ -168,6 +180,8 @@ namespace Clipbox.ViewModels
                 base.LoadViewItem(clipboardItemId, monitorDimensions);
 
             }
+
+            ClipboardItemsLoadingStage = ClipboardItemsLoadingStage.ViewItemsLoaded;
         }
 
         public IClipboardItem GetClipboardItem(string id, bool restoreShrinked)
