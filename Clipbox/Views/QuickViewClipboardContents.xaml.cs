@@ -23,7 +23,7 @@ namespace Clipbox.Views
     /// </summary>
     public partial class QuickViewClipboardContents : ClipboardViewControlBase, IDisposable
     {
-        private QuicViewkClipboardContentsViewModel _viewModel;
+        private QuickViewkClipboardContentsViewModel _viewModel;
 
         private string _lastSelectedItemId;
 
@@ -42,7 +42,7 @@ namespace Clipbox.Views
         public static readonly DependencyProperty DimNonFocusedItemsProperty =
             DependencyProperty.Register(nameof(DimNonFocusedItems), typeof(bool), typeof(QuickViewClipboardContents), new PropertyMetadata(false));
         
-        public QuickViewClipboardContents(QuicViewkClipboardContentsViewModel vm, UIExtentionContainer container, ISettingsService settingsService)
+        public QuickViewClipboardContents(QuickViewkClipboardContentsViewModel vm, UIExtentionContainer container, ISettingsService settingsService)
             : base (container, settingsService)
         {   
             InitializeComponent();

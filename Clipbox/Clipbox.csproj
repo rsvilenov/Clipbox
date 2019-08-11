@@ -174,7 +174,7 @@
     <Compile Include="Services\ClipboardListenerService.cs" />
     <Compile Include="Technical\Converters\BitmapToBitmapImageConverter.cs" />
     <Compile Include="ViewModels\BindableObjects\ClipboardViewItemGroup.cs" />
-    <Compile Include="ViewModels\QuicViewkClipboardContentsViewModel.cs" />
+    <Compile Include="ViewModels\QuickViewkClipboardContentsViewModel.cs" />
     <Compile Include="Views\ThemePreview.xaml.cs">
       <DependentUpon>ThemePreview.xaml</DependentUpon>
     </Compile>

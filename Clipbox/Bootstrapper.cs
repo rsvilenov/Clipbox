@@ -133,7 +133,7 @@ namespace Clipbox
 
 
             // Initialize the view model - the quick view should show as fast as possible, so we will create it beforehand
-            var viewModel = new QuicViewkClipboardContentsViewModel(_clipboardManager, _previewGenerationService, _settingsService);
+            var viewModel = new QuickViewkClipboardContentsViewModel(_clipboardManager, _previewGenerationService, _settingsService);
 
             // Prepare the preview window
             _quickViewClipboardContents = new QuickViewClipboardContents(viewModel, _extentionLoader.UIExtentionContainer, _settingsService);

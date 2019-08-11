@@ -16,7 +16,7 @@ using System.Windows.Threading;
 
 namespace Clipbox.ViewModels
 {
-    public class QuicViewkClipboardContentsViewModel : ClipboardContentsViewModelBase
+    public class QuickViewkClipboardContentsViewModel : ClipboardContentsViewModelBase
     {
         public ICommand ClearClipboardEntries { get; set; }
 
@@ -58,7 +58,7 @@ namespace Clipbox.ViewModels
         //    }
         //}
 
-        public QuicViewkClipboardContentsViewModel(IClipboardManager clipboardManager,
+        public QuickViewkClipboardContentsViewModel(IClipboardManager clipboardManager,
             IPreviewGenerationService previewGenerationService,
             ISettingsService settingsService)
                 : base(clipboardManager, previewGenerationService, settingsService)

@@ -273,6 +273,16 @@ namespace Clipbox.Views
         {
             _scrollBar = sender as ScrollBar;
         }
+        
+        /// <summary>
+        /// This event is wired to the GroupItem's control template main container. We show the listview only when the grouping is ready.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void StackPanel_Loaded(object sender, RoutedEventArgs e)
+        {
+            MainListView.Visibility = Visibility.Visible;
+        }
 
         public void Dispose()
         {
@@ -283,16 +293,6 @@ namespace Clipbox.Views
         ~MainViewClipboardContents()
         {
             Debug.WriteLine("MainViewClipboardContents unloaded");
-        }
-
-        /// <summary>
-        /// This event is wired to the GroupItem's control template main container. We show the listview only when the grouping is ready.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void StackPanel_Loaded(object sender, RoutedEventArgs e)
-        {
-            MainListView.Visibility = Visibility.Visible;
         }
     }
 }
