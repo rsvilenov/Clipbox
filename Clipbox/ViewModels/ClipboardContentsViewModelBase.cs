@@ -5,6 +5,7 @@ using Clipbox.Infrastructure.UI.DataObjects;
 using Clipbox.Services.DataObjects;
 using Clipbox.Services.Interfaces;
 using Clipbox.ViewModels.BindableObjects;
+using Clipbox.ViewModels.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +20,14 @@ namespace Clipbox.ViewModels
         {
             get { return _clipboardViewItemWrappers; }
             set { SetField(ref _clipboardViewItemWrappers, value); }
+        }
+
+        private ClipboardItemsLoadingStage _clipboardItemLoadingStage;
+
+        public ClipboardItemsLoadingStage ClipboardItemsLoadingStage
+        {
+            get { return _clipboardItemLoadingStage; }
+            set { SetField(ref _clipboardItemLoadingStage, value); }
         }
 
         protected IClipboardManager ClipboardManager { get; private set; }

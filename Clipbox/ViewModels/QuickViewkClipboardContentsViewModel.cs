@@ -33,22 +33,6 @@ namespace Clipbox.ViewModels
             set { SetField(ref _selectedClipboardViewItemWrappers, value); }
         }
         
-        private bool _areClipboardViewItemWrappersAvailable;
-
-        public bool AreClipboardViewItemWrappersAvailable
-        {
-            get { return _areClipboardViewItemWrappersAvailable; }
-            set { SetField(ref _areClipboardViewItemWrappersAvailable, value); }
-        }
-
-        private ClipboardItemsLoadingStage _clipboardItemLoadingStage;
-
-        public ClipboardItemsLoadingStage ClipboardItemsLoadingStage
-        {
-            get { return _clipboardItemLoadingStage; }
-            set { SetField(ref _clipboardItemLoadingStage, value); }
-        }
-
         private List<string> _newlyAddedItemsToLoadAndWrap;
 
         //private double _itemDesiredHeight;
@@ -105,7 +89,6 @@ namespace Clipbox.ViewModels
             base.ClipboardManager.Clear();
             base.ClipboardManager.ClearSystemClipboard();
             base.ClipboardViewItemWrappers.Clear();
-            AreClipboardViewItemWrappersAvailable = false;
         }
 
         private void ClipboardManager_ItemChanged(object sender, ClipboardManagerEventArgs e)
@@ -143,8 +126,6 @@ namespace Clipbox.ViewModels
         private void AddNewItem(string clipboardItemId)
         {
             _newlyAddedItemsToLoadAndWrap.Add(clipboardItemId);
-
-            AreClipboardViewItemWrappersAvailable = true;
         }
 
         public void LoadAndWrapNewlyAddedItems(MonitorDimensions monitorDimensions)
@@ -157,14 +138,11 @@ namespace Clipbox.ViewModels
             ClipboardItemsLoadingStage = ClipboardItemsLoadingStage.Started;
 
             var clipboardItemIds = base.ClipboardManager.GetAllItemIds();
-            
-            AreClipboardViewItemWrappersAvailable = false;
 
             IEnumerable<string> allItemIds = base.ClipboardManager.GetAllItemIds();
             base.ClipboardViewItemWrappers.Clear();
             base.LoadAndWrapItems(monitorDimensions, allItemIds, pinnedOnly: true);
 
-            AreClipboardViewItemWrappersAvailable = base.ClipboardViewItemWrappers.Any();
             ClipboardItemsLoadingStage = ClipboardItemsLoadingStage.WrappersLoaded;
         }
 

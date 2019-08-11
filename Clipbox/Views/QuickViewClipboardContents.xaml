@@ -49,7 +49,7 @@
         </Grid.RowDefinitions>
 
         <!--  loading indication panel  -->
-        <UniformGrid Columns="2">
+        <UniformGrid Grid.Row="0" Columns="2">
             <UniformGrid.Style>
                 <Style TargetType="{x:Type UniformGrid}">
                     <Style.Triggers>
@@ -82,8 +82,7 @@
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding ClipboardItemsLoadingStage}" Value="{x:Static localEnums:ClipboardItemsLoadingStage.WrappersLoaded}" />
-                                <Condition Binding="{Binding AreClipboardViewItemsAvailable}" Value="False" />
-                                <Condition Binding="{Binding AreClipboardViewItemWrappersAvailable}" Value="False" />
+                                <Condition Binding="{Binding ClipboardViewItemWrappers.Count}" Value="0" />
                             </MultiDataTrigger.Conditions>
                             <MultiDataTrigger.Setters>
                                 <Setter Property="Visibility" Value="Visible" />
@@ -509,6 +508,9 @@
                         <DataTrigger Binding="{Binding ClipboardItemsLoadingStage}" Value="{x:Static localEnums:ClipboardItemsLoadingStage.ViewItemsLoaded}">
                             <Setter Property="Visibility" Value="Visible" />
                         </DataTrigger>
+                        <DataTrigger Binding="{Binding ClipboardViewItemWrappers.Count}" Value="0">
+                            <Setter Property="Visibility" Value="Hidden" />
+                        </DataTrigger>
                     </Style.Triggers>
                 </Style>
             </Grid.Style>
@@ -537,11 +539,12 @@
                 Width="25"
                 Height="25"
                 Margin="0,0,5,5"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
                 Click="ButtonClearItems_Click"
                 Command="{Binding ClearClipboardEntries}"
                 Style="{DynamicResource BtnTrash}"
-                Tag="{x:Static infWindows:PerMonitorDpiWindow.SCALE_ELEMENT_TAG}"
-                Visibility="{Binding AreClipboardViewItemsAvailable, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                Tag="{x:Static infWindows:PerMonitorDpiWindow.SCALE_ELEMENT_TAG}" />
         </Grid>
     </Grid>
 </local:ClipboardViewControlBase>
