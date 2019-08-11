@@ -47,6 +47,7 @@
             thus ScrollViewer.CanContentScroll="False". Otherwise, when grouping is used,
             the scrollviewer jumps awkwardly to the next group...
         -->
+        <!--  We load this view hidden, so that it can group its items before we show it; Then we show it from GroupItem's template Loaded event.  -->
         <ListView
             Name="MainListView"
             Grid.Row="1"
@@ -58,7 +59,8 @@
             ItemsSource="{Binding ClipboardViewItemWrappers}"
             ScrollViewer.CanContentScroll="False"
             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-            ScrollViewer.VerticalScrollBarVisibility="Visible">
+            ScrollViewer.VerticalScrollBarVisibility="Visible"
+            Visibility="Hidden">
             <i:Interaction.Behaviors>
                 <localBeh:ListViewGroupingBehavior GroupByPropertyName="DateCreatedFriendly" />
             </i:Interaction.Behaviors>
@@ -210,7 +212,7 @@
                             <Setter Property="Template">
                                 <Setter.Value>
                                     <ControlTemplate>
-                                        <StackPanel Orientation="Vertical">
+                                        <StackPanel Loaded="StackPanel_Loaded" Orientation="Vertical">
                                             <TextBlock
                                                 VerticalAlignment="Bottom"
                                                 FontSize="22"

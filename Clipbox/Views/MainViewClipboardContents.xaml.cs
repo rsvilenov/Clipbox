@@ -284,5 +284,15 @@ namespace Clipbox.Views
         {
             Debug.WriteLine("MainViewClipboardContents unloaded");
         }
+
+        /// <summary>
+        /// This event is wired to the GroupItem's control template main container. We show the listview only when the grouping is ready.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void StackPanel_Loaded(object sender, RoutedEventArgs e)
+        {
+            MainListView.Visibility = Visibility.Visible;
+        }
     }
 }
