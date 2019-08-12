@@ -9,6 +9,10 @@ using System.Windows.Media;
 
 namespace Clipbox.Infrastructure.UI.Visuals
 {
+    /// <summary>
+    /// This panel is developed for the purpose of the QuickView and is meant to look like the 
+    /// Alt+Tab switcher of MS Windows
+    /// </summary>
     public class AutoWrapPanel : Panel
     {
 

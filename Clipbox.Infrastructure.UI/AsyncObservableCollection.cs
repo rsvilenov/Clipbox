@@ -50,7 +50,7 @@ namespace Clipbox.Infrastructure.UI
                 {
                     if (nsex.Source == "PresentationFramework")
                     {
-                        throw new InvalidOperationException($"It looks like CollectionSynchronization has not been enabled on the UI thread. Automatic enabling has failed. Consider calling {nameof(EnableCollectionSynchronization)}() on the UI thread.", nsex);
+                        throw new InvalidOperationException($"It looks like CollectionSynchronization has not been enabled on the UI thread. Automatic enabling has not happened. Consider calling {nameof(EnableCollectionSynchronization)}() on the UI thread.", nsex);
                     }
 
                     throw;

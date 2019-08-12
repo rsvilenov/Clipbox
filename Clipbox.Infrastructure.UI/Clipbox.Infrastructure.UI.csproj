@@ -57,6 +57,8 @@
     <Compile Include="Converters\InverseBooleanConverter.cs" />
     <Compile Include="Converters\IsEqualOrGreaterThanConverter.cs" />
     <Compile Include="Converters\MathAddConverter.cs" />
+    <Compile Include="Converters\MathConverterBase.cs" />
+    <Compile Include="Converters\MathMultiplyConverter.cs" />
     <Compile Include="Converters\NullOrEmptyCollectionToBoolConverter.cs" />
     <Compile Include="Converters\OrMultiValueConverter.cs" />
     <Compile Include="DataObjects\MonitorDimensions.cs" />
@@ -77,6 +79,7 @@
     <Compile Include="Utils\Automation.cs" />
     <Compile Include="Utils\Layout.cs" />
     <Compile Include="Utils\Traversing.cs" />
+    <Compile Include="Visuals\SprocketControl.cs" />
     <Compile Include="Windows\AcryllicWindow.cs" />
     <Compile Include="Windows\BaseWindow.cs" />
     <Compile Include="Windows\DpiChangedEventArgs.cs" />

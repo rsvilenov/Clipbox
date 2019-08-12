@@ -28,6 +28,7 @@
         <coreConv:InverseBooleanConverter x:Key="InverseBooleanConverter" />
         <coreConv:OrMultiValueConverter x:Key="OrMultiValueConverter" />
         <coreConv:AndMultiValueConverter x:Key="AndMultiValueConverter" />
+        <coreConv:MathMultiplyConverter x:Key="MathMultiplyConverter" />
         <coreConv:MathAddConverter x:Key="MathAddConverter" />
         <coreConv:IsEqualOrGreaterThanConverter x:Key="IsEqualOrGreaterThanConverter" />
         <coreConv:NullOrEmptyCollectionToBoolConverter x:Key="NullOrEmptyCollectionToBoolConverter" />
@@ -49,19 +50,57 @@
         </Grid.RowDefinitions>
 
         <!--  loading indication panel  -->
-        <UniformGrid Grid.Row="0" Columns="2">
-            <UniformGrid.Style>
-                <Style TargetType="{x:Type UniformGrid}">
+        <Grid Grid.Row="0">
+            <Grid.Width>
+                <MultiBinding Converter="{StaticResource MathMultiplyConverter}">
+                    <Binding Path="ClipboardViewItemMaxHeight" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}" />
+                    <Binding>
+                        <Binding.Source>
+                            <sys:Double>3</sys:Double>
+                        </Binding.Source>
+                    </Binding>
+                </MultiBinding>
+            </Grid.Width>
+            <Grid.Height>
+                <MultiBinding Converter="{StaticResource MathMultiplyConverter}">
+                    <Binding Path="ClipboardViewItemMaxHeight" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}" />
+                    <Binding>
+                        <Binding.Source>
+                            <sys:Double>2</sys:Double>
+                        </Binding.Source>
+                    </Binding>
+                </MultiBinding>
+            </Grid.Height>
+            <Grid.Style>
+
+                <Style TargetType="{x:Type Grid}">
+                    <Setter Property="Visibility" Value="Visible" />
                     <Style.Triggers>
-                        <DataTrigger Binding="{Binding ClipboardItemsLoadingStage}" Value="{x:Static localEnums:ClipboardItemsLoadingStage.WrappersLoaded}">
+                        <DataTrigger Binding="{Binding ClipboardItemsLoadingStage}" Value="{x:Static localEnums:ClipboardItemsLoadingStage.ViewItemsLoaded}">
                             <Setter Property="Visibility" Value="Collapsed" />
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>
-            </UniformGrid.Style>
-            <Rectangle Width="{Binding Path=ClipboardViewItemMaxHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}}" Height="{Binding Path=Width, RelativeSource={RelativeSource Mode=Self}}" />
-            <Rectangle Width="{Binding Path=ClipboardViewItemMaxHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}}" Height="{Binding Path=Width, RelativeSource={RelativeSource Mode=Self}}" />
-        </UniformGrid>
+            </Grid.Style>
+            <vis:SprocketControl
+                Grid.RowSpan="3"
+                Grid.ColumnSpan="3"
+                Width="60"
+                Height="60"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                AlphaTicksPercentage="50"
+                InnerRadius="0.3"
+                Interval="60"
+                IsIndeterminate="True"
+                LowestAlpha="50"
+                OuterRadius="0.5"
+                StartAngle="-90"
+                TickColor="White"
+                TickCount="12"
+                TickStyle="Triangle"
+                TickWidth="3" />
+        </Grid>
 
         <!--  label "No contents"  -->
         <Label
@@ -98,6 +137,22 @@
                 <RowDefinition />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
+
+            <Grid.Style>
+                <!--
+                    show this grid after the wrappers have been loaded,
+                    the whole control - resized accordingly and the view items
+                    have been loaded as well
+                -->
+                <Style TargetType="{x:Type Grid}">
+                    <Setter Property="Visibility" Value="Hidden" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ClipboardItemsLoadingStage}" Value="{x:Static localEnums:ClipboardItemsLoadingStage.ViewItemsLoaded}">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
 
             <Button
                 Name="BtnScrollUp"
@@ -501,9 +556,10 @@
 
 
         </Grid>
-        <Grid Grid.Row="1" Visibility="Hidden">
+        <Grid Grid.Row="1">
             <Grid.Style>
                 <Style TargetType="{x:Type Grid}">
+                    <Setter Property="Visibility" Value="Collapsed" />
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding ClipboardItemsLoadingStage}" Value="{x:Static localEnums:ClipboardItemsLoadingStage.ViewItemsLoaded}">
                             <Setter Property="Visibility" Value="Visible" />
