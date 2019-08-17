@@ -421,8 +421,6 @@ namespace Clipbox.Views
 
         protected override void OnSetControlMaxSizeRequested(MonitorDimensions monitorDimensions)
         {
-            bool resizeToDpi = _settingsService.GetSetting<bool>(SettingsKeys.ResizeAccordingToMonitorOrSystemDpi);
-
             double currentDisplayHeight = monitorDimensions.WorkAreaHeight;
             double currentDisplayWidth = monitorDimensions.WorkAreaWidth;
             
@@ -430,16 +428,10 @@ namespace Clipbox.Views
             double controlMaxWidth = currentDisplayWidth - (currentDisplayWidth * 0.2);
             double controlMaxHeight = currentDisplayHeight - (currentDisplayHeight * 0.2);
 
-            //if (resizeToDpi)
-            //{
-            //    double scaleFactor = monitorDimensions.MonitorDPI / 96;
-            //    controlMaxWidth /= scaleFactor;
-            //    controlMaxHeight /= scaleFactor;
-            //}
-
+            // we should not dpi-scale these dimensions because the UserControl itself should not be
+            // marked with the SCALE_ELEMENT_TAG, therefore it should not be resized in DpiScaleMode.TaggedChildren dpi mode.
             this.MaxWidth = controlMaxWidth;
             this.MaxHeight = controlMaxHeight;
-
         }
     }
 }
