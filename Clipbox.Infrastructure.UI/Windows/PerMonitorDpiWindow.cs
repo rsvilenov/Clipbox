@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Data;
 using System.Windows.Media;
 
 namespace Clipbox.Infrastructure.UI.Windows
@@ -28,15 +29,29 @@ namespace Clipbox.Infrastructure.UI.Windows
         
         private NativeStructures.RECT _recommendedRectByWmDpichanged;
 
+        private bool _hasBeenUnscaled = false;
 
         protected PerMonitorDpiWindow()
         {
             DpiUtils.AssertPerMonitorDPIAwareness();
-
+            
             ContentRendered += PerMonitorDPIWindow_ContentRendered;
             SourceInitialized += PerMonitorDpiWindow_SourceInitialized;
         }
-        
+
+        protected override void OnContentChanged(object oldContent, object newContent)
+        {
+            //if (this.Content is FrameworkElement)
+            //{
+            //    (this.Content as FrameworkElement).LayoutUpdated += PerMonitorDpiWindow_LayoutUpdated;
+            //}
+        }
+
+        private void PerMonitorDpiWindow_LayoutUpdated(object sender, EventArgs e)
+        {
+            DoScaleTransofm();
+        }
+
         private void PerMonitorDpiWindow_SourceInitialized(object sender, EventArgs e)
         {
             UpdateScaleSettings();
@@ -46,6 +61,40 @@ namespace Clipbox.Infrastructure.UI.Windows
         {
             CurrentDPI = DpiUtils.GetDPIForWindow(base.Handle);
             ScaleFactor = CurrentDPI / 96;
+
+            // Windows scales the window automatically at first show() despite the PerMonitorDpi setting...
+            // This happens when the magical "Fix scaling for apps" option in Windows is enabled.
+            // And there seems to be no way to disable this behavior from within the application.
+            // https://stackoverflow.com/questions/55538032/is-there-a-way-to-disable-scaling-for-all-the-wpf-application-even-if-windows-ha
+            // According to MSDN, method NonClientDpiScaling should not be enabled by default in Per monitor Dpi mode.
+            // Plus, once enabled, there does not seem to exist a system call for disabling it.
+            // https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-enablenonclientdpiscaling
+            // For now, I will just un-scale the window along with its contents (they both get scaled of course) if it has been automatically scaled.
+            
+            double? xScale = PresentationSource.FromVisual(this)?.CompositionTarget?.TransformToDevice.M11;
+            double? yScale = PresentationSource.FromVisual(this)?.CompositionTarget?.TransformToDevice.M22;
+            if (!_hasBeenUnscaled
+                && xScale != 1 
+                && xScale == ScaleFactor 
+                && xScale.HasValue 
+                && yScale.HasValue)
+            {
+                ScaleTransform t = new ScaleTransform
+                {
+                    ScaleX = 1 / xScale.Value,
+                    ScaleY = 1 / xScale.Value
+                };
+
+                t.Freeze();
+                
+                this.LayoutTransform = t;
+                if (this.Content is FrameworkElement)
+                {
+                    (this.Content as FrameworkElement).LayoutTransform = t;
+                }
+                
+                _hasBeenUnscaled = true;
+            }
         }
 
         private void PerMonitorDPIWindow_ContentRendered(object sender, EventArgs e)
@@ -65,7 +114,10 @@ namespace Clipbox.Infrastructure.UI.Windows
             }
             else if (ScaleMode == DpiScaleMode.TaggedChildren)
             {
-                ScaleChildrenWithTag(ScaleFactor);
+                if (this.Content != null)
+                {
+                    ScaleChildrenWithTag(ScaleFactor);
+                }
             }
         }
 
@@ -89,6 +141,7 @@ namespace Clipbox.Infrastructure.UI.Windows
             if (scaleFactor != 1.0)
             {
                 var dpiScale = new ScaleTransform(scaleFactor, scaleFactor);
+                //child.SetValue(Window.LayoutTransformProperty, null);
                 child.SetValue(Window.LayoutTransformProperty, dpiScale);
             }
             else
@@ -117,6 +170,8 @@ namespace Clipbox.Infrastructure.UI.Windows
 
                         DPIChanged?.Invoke(this, new DpiChangedEventArgs(CurrentDPI));
                     }
+
+                    handled = true;
                     break;
                 case NativeConstants.WmConstants.WM_SHOWWINDOW:
                     // https://docs.microsoft.com/en-us/windows/desktop/winmsg/wm-showwindow

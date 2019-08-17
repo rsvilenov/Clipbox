@@ -111,8 +111,14 @@ namespace Clipbox.Views
         {
             _viewModel.ClipboardViewItemWrappers.EnableSyncForCurrentUIThread();
 
-            Task.Run(new Action(() => _viewModel.ReloadWrappedItems(MonitorDimensions)))
-                .ContinueWith((t) => _viewModel.LoadViewItems(MonitorDimensions));
+            //Task.Run(new Action(() => LoadWrappedItems()))
+            //    .ContinueWith((t) => _viewModel.LoadViewItems(MonitorDimensions));
+            Task.Run(new Action(() => _viewModel.LoadViewItems(MonitorDimensions)));
+        }
+
+        public void LoadWrappedItems()
+        {
+            _viewModel.ReloadWrappedItems(MonitorDimensions);
         }
         
         private void MainListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -411,6 +417,29 @@ namespace Clipbox.Views
 
             multiItem.SubItems_SelectionChanged -= MultiItem_SubItems_SelectionChanged;
             multiItem.Unloaded -= MultiItem_Unloaded;
+        }
+
+        protected override void OnSetControlMaxSizeRequested(MonitorDimensions monitorDimensions)
+        {
+            bool resizeToDpi = _settingsService.GetSetting<bool>(SettingsKeys.ResizeAccordingToMonitorOrSystemDpi);
+
+            double currentDisplayHeight = monitorDimensions.WorkAreaHeight;
+            double currentDisplayWidth = monitorDimensions.WorkAreaWidth;
+            
+            // display bounds - 20%
+            double controlMaxWidth = currentDisplayWidth - (currentDisplayWidth * 0.2);
+            double controlMaxHeight = currentDisplayHeight - (currentDisplayHeight * 0.2);
+
+            //if (resizeToDpi)
+            //{
+            //    double scaleFactor = monitorDimensions.MonitorDPI / 96;
+            //    controlMaxWidth /= scaleFactor;
+            //    controlMaxHeight /= scaleFactor;
+            //}
+
+            this.MaxWidth = controlMaxWidth;
+            this.MaxHeight = controlMaxHeight;
+
         }
     }
 }

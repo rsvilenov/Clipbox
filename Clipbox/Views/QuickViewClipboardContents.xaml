@@ -51,7 +51,7 @@
 
         <!--  loading indication panel  -->
         <Grid Grid.Row="0">
-            <Grid.Width>
+            <!--<Grid.MinWidth>
                 <MultiBinding Converter="{StaticResource MathMultiplyConverter}">
                     <Binding Path="ClipboardViewItemMaxHeight" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}" />
                     <Binding>
@@ -60,8 +60,8 @@
                         </Binding.Source>
                     </Binding>
                 </MultiBinding>
-            </Grid.Width>
-            <Grid.Height>
+            </Grid.MinWidth>
+            <Grid.MinHeight>
                 <MultiBinding Converter="{StaticResource MathMultiplyConverter}">
                     <Binding Path="ClipboardViewItemMaxHeight" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}" />
                     <Binding>
@@ -70,7 +70,7 @@
                         </Binding.Source>
                     </Binding>
                 </MultiBinding>
-            </Grid.Height>
+            </Grid.MinHeight>-->
             <Grid.Style>
 
                 <Style TargetType="{x:Type Grid}">
@@ -428,7 +428,9 @@
                                                         <Setter Property="ContentTemplate">
                                                             <Setter.Value>
                                                                 <DataTemplate>
-                                                                    <tile:SingleItemLoading ViewItemDimensions="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.DimensionInfo.Dimensions[0]}" />
+                                                                    <Border BorderBrush="Red" BorderThickness="2">
+                                                                        <tile:SingleItemLoading ViewItemDimensions="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.DimensionInfo.Dimensions[0]}" />
+                                                                    </Border>
                                                                 </DataTemplate>
                                                             </Setter.Value>
                                                         </Setter>

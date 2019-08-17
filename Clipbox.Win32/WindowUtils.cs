@@ -302,7 +302,12 @@ namespace Clipbox.Win32
 
             return rect.ToRectangle();
         }
-        
+
+        /// <summary>
+        /// Gets the foremost window info
+        /// <exception>Win32Exception</exception>
+        /// </summary>
+        /// <returns></returns>
         public static WindowInfo GetForemostWindowInfo()
         {
             var foregroundHWnd = User32.GetForegroundWindow();

@@ -175,11 +175,20 @@ namespace Clipbox.Views
             public string CancelMessage { get; }
         }
 
-        public void SetCurrentDisplayDpiCalibratedHeight(double height)
+        private void SetCurrentDisplayHeight(MonitorDimensions monitorDimensions)
         {
-            if (_currentDisplayDpiCalibratedHeight != height)
+            bool resizeToDpi = _settingsService.GetSetting<bool>(SettingsKeys.ResizeAccordingToMonitorOrSystemDpi);
+
+            double currentDisplayHeight = monitorDimensions.WorkAreaHeight;
+            if (resizeToDpi)
             {
-                _currentDisplayDpiCalibratedHeight = height;
+                double scaleFactor = monitorDimensions.MonitorDPI / 96;
+                currentDisplayHeight *= scaleFactor;
+            }
+
+            if (_currentDisplayDpiCalibratedHeight != currentDisplayHeight)
+            {
+                _currentDisplayDpiCalibratedHeight = currentDisplayHeight;
                 // TODO: should we call OnClipboardViewItemHeightChanged when the ClipboardViewItemHeight setting changes?
                 ClipboardViewItemMaxHeight = _currentDisplayDpiCalibratedHeight * _settingsService.GetSetting<double>(SettingsKeys.PreviewItemHeightRatio);
                 OnClipboardViewItemMaxHeightChanged();
@@ -189,20 +198,15 @@ namespace Clipbox.Views
         public void SetMonitorDimensions(MonitorDimensions dimensions)
         {
             MonitorDimensions = dimensions;
-
-            bool resizeToDpi = _settingsService.GetSetting<bool>(SettingsKeys.ResizeAccordingToMonitorOrSystemDpi);
-
-            double currentDisplayHeight = dimensions.WorkAreaHeight;
-            if (resizeToDpi)
-            {
-                double scaleFactor = dimensions.MonitorDPI / 96;
-                currentDisplayHeight *= scaleFactor;
-            }
-
-            SetCurrentDisplayDpiCalibratedHeight(currentDisplayHeight);
+            
+            SetCurrentDisplayHeight(dimensions);
+            OnSetControlMaxSizeRequested(dimensions);
         }
+
+        protected virtual void OnSetControlMaxSizeRequested(MonitorDimensions monitorDimensions)
+        { }
         
-        public virtual void OnClipboardViewItemMaxHeightChanged()
+        protected virtual void OnClipboardViewItemMaxHeightChanged()
         { }
     }
 }

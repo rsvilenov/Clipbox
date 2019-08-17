@@ -8,6 +8,8 @@ using Clipbox.Services.Interfaces;
 using Clipbox.Win32;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.ExceptionServices;
 using System.Security;
 
@@ -43,6 +45,10 @@ namespace Clipbox.Services
             }
         }
 
+        /// <summary>
+        /// <exception>Win32Exception</exception>
+        /// </summary>
+        /// <returns></returns>
         private DestinationWindowInfo GetDestinationWindowInfo()
         {
             // Get the active window info. This is the window, which will act as a
@@ -162,11 +168,25 @@ namespace Clipbox.Services
             public bool ShouldRemoveItem { get; set; }
         }
 
+        /// <summary>
+        /// Runs the plugins, which have to be executed upon showing the quick view window.
+        /// </summary>
+        /// <param name="cancelShow"></param>
         [SecurityCritical]
         [HandleProcessCorruptedStateExceptions]
         public void OnShowPreviewWindowRequestedMethods(ref bool cancelShow)
         {
-            DestinationWindowInfo destWindowInfo = GetDestinationWindowInfo();
+            DestinationWindowInfo destWindowInfo = null;
+
+            try
+            {
+                destWindowInfo = GetDestinationWindowInfo();
+            }
+            catch (Win32Exception wex)
+            {
+                Debug.WriteLine($"{nameof(OnShowPreviewWindowRequestedMethods)} : {wex}");
+                return;
+            }
 
             foreach (var flowExtention in _flowExtentions)
             {

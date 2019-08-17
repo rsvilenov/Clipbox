@@ -30,6 +30,15 @@ namespace Clipbox.Win32
             return GetDisplayMonitor(hMonitor);
         }
 
+        public static DisplayMonitor GetPrimaryMonitor()
+        {
+            // https://devblogs.microsoft.com/oldnewthing/20070809-00/?p=25643
+
+            IntPtr hMonitor = User32.MonitorFromPoint(new Point(0, 0), NativeEnums.MonitorOptions.MONITOR_DEFAULTTONEAREST);
+
+            return GetDisplayMonitor(hMonitor);
+        }
+
         public static DisplayMonitor GetByWindowHandle(IntPtr hWnd)
         {
             var hMonitor = User32.MonitorFromWindow(hWnd, NativeConstants.MonitorConstants.MONITOR_DEFAULTTONEAREST);

@@ -25,7 +25,7 @@ namespace Clipbox.Services
     {
         private NonFocusableInteractiveWindow _quickViewWindow;
 
-        private ClipboardViewControlBase _previewControl;
+        private QuickViewClipboardContents _previewControl;
 
         private MonitorUtils.DisplayMonitor _currentMonitor;
 
@@ -39,7 +39,7 @@ namespace Clipbox.Services
         }
 
 
-        public QuickClipboardViewWindowService(ClipboardViewControlBase previewControl, ISettingsService settingsService)
+        public QuickClipboardViewWindowService(QuickViewClipboardContents previewControl, ISettingsService settingsService)
         {
             _selectedItemIds = new List<string>();
             _selectedMultiItemIds = new Dictionary<string, ReadOnlyCollection<int>>();
@@ -57,14 +57,29 @@ namespace Clipbox.Services
                 WindowStartupLocation = WindowStartupLocation.Manual
             };
             
+            // initialize the window so that it starts listening to dpi changes from before is is first shown
+            new WindowInteropHelper(_quickViewWindow).EnsureHandle();
+
             _quickViewWindow.Content = previewControl;
             
             _previewControl = previewControl;
+
+            var primaryMonitor = MonitorUtils.GetPrimaryMonitor();
+            _previewControl.SetMonitorDimensions(new MonitorDimensions
+            {
+                MonitorDPI = primaryMonitor.Dpi,
+                WorkAreaHeight = primaryMonitor.WorkingArea.Height,
+                WorkAreaWidth = primaryMonitor.WorkingArea.Width
+            });
+
+
+            _previewControl.LoadWrappedItems();
 
             _sizeChangedSligingTimer = new SlidingTimer();
             _sizeChangedSligingTimer.Elapsed += _sizeChangedSligingTimer_Elapsed;
 
             _previewControl.SelectionChanged += _previewControl_SelectionChanged;
+
         }
 
         private void _sizeChangedSligingTimer_Elapsed(object sender, EventArgs e)
@@ -166,17 +181,16 @@ namespace Clipbox.Services
             {
                 _quickViewWindow.ScaleMode = resizeToDpi ? DpiScaleMode.TaggedChildren : DpiScaleMode.None;
 
+                _quickViewWindow.SizeChanged += _quickViewWindow_SizeChanged;
+                _quickViewWindow.Shown += _quickViewWindow_Shown;
+
                 _previewControl.SetMonitorDimensions(new MonitorDimensions
                 {
                     MonitorDPI = _currentMonitor.Dpi,
                     WorkAreaHeight = _currentMonitor.WorkingArea.Height,
                     WorkAreaWidth = _currentMonitor.WorkingArea.Width
                 });
-
-                SetMaxSizeToWindow();
-                _quickViewWindow.SizeChanged += _quickViewWindow_SizeChanged;
-                _quickViewWindow.Shown += _quickViewWindow_Shown;
-
+                
                 _quickViewWindow.Show();
 
             }));
@@ -194,38 +208,13 @@ namespace Clipbox.Services
         
         private void CenterQuickViewWindowOnMonitor(Rectangle monitorBounds)
         {
-
             _quickViewWindow.Dispatcher.Invoke(DispatcherPriority.Send, new Action(() =>
             {
                 if (_quickViewWindow.Handle != IntPtr.Zero)
                 {
-                    SetMaxSizeToWindow();
-
                     CenterWindow(_quickViewWindow);
                 }
             }));
-        }
-
-        private void SetMaxSizeToWindow()
-        {
-            //if (_quickViewWindow.Handle == IntPtr.Zero)
-            //{
-            //    throw new InvalidOperationException("_quickViewWindow is not yet initialized.");
-            //}
-            new WindowInteropHelper(_quickViewWindow).EnsureHandle();
-            HwndSource source = HwndSource.FromHwnd(_quickViewWindow.Handle);
-            Matrix matrix = source.CompositionTarget.TransformFromDevice;
-
-            // bounds -20%
-            double maxHeight = (_currentMonitor.WorkingArea.Height - (_currentMonitor.WorkingArea.Height * 0.2));
-            double maxWidth = _currentMonitor.WorkingArea.Width - (_currentMonitor.WorkingArea.Width * 0.2);
-
-            System.Windows.Point dpiIndependentSize =
-                matrix.Transform(new System.Windows.Point(maxWidth, maxHeight));
-
-            _quickViewWindow.MaxWidth = dpiIndependentSize.X;
-
-            _quickViewWindow.MaxHeight = dpiIndependentSize.Y;
         }
 
         private void CenterWindow(PerMonitorDpiWindow window)
