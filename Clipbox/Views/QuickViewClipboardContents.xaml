@@ -112,6 +112,8 @@
                 </Style>
             </Label.Style>
         </Label>
+
+        <!--  clipboard contents grid  -->
         <Grid Grid.Row="0">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
@@ -547,6 +549,8 @@
 
 
         </Grid>
+
+        <!--  footer buttons  -->
         <Grid Grid.Row="1">
             <Grid.Style>
                 <Style TargetType="{x:Type Grid}">
@@ -563,7 +567,7 @@
             </Grid.Style>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
-                <ColumnDefinition Width="35" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <WrapPanel
                 x:Name="uiExtentionContainer"
