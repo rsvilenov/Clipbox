@@ -230,7 +230,7 @@
                                                         </Grid.Background>
                                                         <Grid.RowDefinitions>
                                                             <RowDefinition Height="*" />
-                                                            <RowDefinition Height="30" />
+                                                            <RowDefinition Height="Auto" />
                                                         </Grid.RowDefinitions>
                                                         <Image
                                                             Name="subItemPreviewImage"
@@ -255,8 +255,20 @@
                                                                     MaxWidth="{Binding ElementName=subItemPreviewImage, Path=ActualWidth}"
                                                                     Text="{Binding PreviewItem.Text}"
                                                                     TextBlock.TextTrimming="CharacterEllipsis"
-                                                                    ToolTip="{Binding PreviewItem.Text}"
-                                                                    ToolTipService.Placement="Center" />
+                                                                    ToolTipService.Placement="Center">
+                                                                    <TextBlock.ToolTip>
+                                                                        <TextBlock Text="{Binding PreviewItem.Text}">
+                                                                            <!--
+                                                                                The toolitp does not scale along with the owner textblock,
+                                                                                probably because it is not part of the visual tree. So we
+                                                                                will need to scale it separately.
+                                                                            -->
+                                                                            <i:Interaction.Behaviors>
+                                                                                <infBeh:FrameworkElementDpiScalingBehavior />
+                                                                            </i:Interaction.Behaviors>
+                                                                        </TextBlock>
+                                                                    </TextBlock.ToolTip>
+                                                                </TextBlock>
                                                             </Label.Content>
                                                         </Label>
                                                     </Grid>
