@@ -89,6 +89,17 @@ namespace Clipbox.Services
 
         private void PreloadQuickViewWindow()
         {
+            _quickViewWindow.ScaleMode = ShouldResizeToDpi() ? DpiScaleMode.Custom : DpiScaleMode.None;
+
+            MonitorUtils.DisplayMonitor primaryMonitor = MonitorUtils.GetPrimaryMonitor();
+
+            _previewControl.SetMonitorDimensions(new MonitorDimensions
+            {
+                MonitorDPI = primaryMonitor.Dpi,
+                WorkAreaHeight = primaryMonitor.WorkingArea.Height,
+                WorkAreaWidth = primaryMonitor.WorkingArea.Width
+            });
+
             _quickViewWindowOpacity = _quickViewWindow.Opacity;
             _quickViewWindow.Opacity = 0.0;
             _quickViewWindow.Shown += _quickViewWindow_ShownPreload;
