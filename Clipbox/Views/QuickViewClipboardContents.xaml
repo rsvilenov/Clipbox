@@ -298,13 +298,13 @@
                                 VerticalAlignment="Stretch"
                                 Background="Transparent">
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="40" />
+                                    <RowDefinition Height="Auto" />
                                     <RowDefinition Height="*" />
                                 </Grid.RowDefinitions>
 
                                 <ContentControl
                                     Grid.Row="0"
-                                    Margin="5,0,0,0"
+                                    Margin="5,3,0,0"
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Stretch">
                                     <ContentControl.Style>
