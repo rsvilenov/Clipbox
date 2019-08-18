@@ -428,8 +428,8 @@ namespace Clipbox.Views
             double controlMaxWidth = currentDisplayWidth - (currentDisplayWidth * 0.2);
             double controlMaxHeight = currentDisplayHeight - (currentDisplayHeight * 0.2);
 
-            // we should not dpi-scale these dimensions because the UserControl itself should not be
-            // marked with the SCALE_ELEMENT_TAG, therefore it should not be resized in DpiScaleMode.TaggedChildren dpi mode.
+            // we should not dpi-scale these dimensions because the UserControl itself
+            // should not be resized in DpiScaleMode.Custom dpi mode.
             this.MaxWidth = controlMaxWidth;
             this.MaxHeight = controlMaxHeight;
         }

@@ -7,6 +7,7 @@
     xmlns:coreConv="clr-namespace:Clipbox.Infrastructure.UI.Converters;assembly=Clipbox.Infrastructure.UI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:infBeh="clr-namespace:Clipbox.Infrastructure.UI.Behaviors;assembly=Clipbox.Infrastructure.UI"
     xmlns:infEnums="clr-namespace:Clipbox.Core.Enums;assembly=Clipbox.Core"
     xmlns:infPropAp="clr-namespace:Clipbox.Infrastructure.UI.AttachedProperties;assembly=Clipbox.Infrastructure.UI"
     xmlns:infWindows="clr-namespace:Clipbox.Infrastructure.UI.Windows;assembly=Clipbox.Infrastructure.UI"
@@ -346,8 +347,11 @@
                                                                         Grid.Column="0"
                                                                         MaxHeight="30"
                                                                         ContentClasses="{Binding ContentClasses}"
-                                                                        IsGroupItem="{Binding Converter={StaticResource ObjectTypeCompareConverter}, ConverterParameter={x:Type localBindableObjects:ClipboardViewItemGroup}}"
-                                                                        Tag="{x:Static infWindows:PerMonitorDpiWindow.SCALE_ELEMENT_TAG}" />
+                                                                        IsGroupItem="{Binding Converter={StaticResource ObjectTypeCompareConverter}, ConverterParameter={x:Type localBindableObjects:ClipboardViewItemGroup}}">
+                                                                        <i:Interaction.Behaviors>
+                                                                            <infBeh:FrameworkElementDpiScalingBehavior />
+                                                                        </i:Interaction.Behaviors>
+                                                                    </tile:ItemTypeIconBand>
 
                                                                     <!--<Rectangle HorizontalAlignment="Center" VerticalAlignment="Center" Width="1" Height="15" Fill="#e4e4e6" Margin="5,0,0,0" />
 
@@ -364,8 +368,10 @@
                                                                         Command="{Binding Path=DataContext.PinUnpinClipboardEntry, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
                                                                         CommandParameter="{Binding}"
                                                                         IsChecked="{Binding IsPinned}"
-                                                                        Style="{DynamicResource ToggleBtnStar}"
-                                                                        Tag="{x:Static infWindows:PerMonitorDpiWindow.SCALE_ELEMENT_TAG}">
+                                                                        Style="{DynamicResource ToggleBtnStar}">
+                                                                        <i:Interaction.Behaviors>
+                                                                            <infBeh:FrameworkElementDpiScalingBehavior />
+                                                                        </i:Interaction.Behaviors>
                                                                         <!--  Visible only if the ListViewItem is highlighted or selected (IsManipulationEnabled = true) OR the toggle button is checked  -->
                                                                         <ToggleButton.IsEnabled>
                                                                             <MultiBinding Converter="{StaticResource OrMultiValueConverter}">
@@ -388,8 +394,11 @@
                                                                         Command="{Binding Path=DataContext.DeleteClipboardEntry, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
                                                                         CommandParameter="{Binding}"
                                                                         Style="{DynamicResource BtnClose}"
-                                                                        Tag="{x:Static infWindows:PerMonitorDpiWindow.SCALE_ELEMENT_TAG}"
-                                                                        Visibility="{Binding Path=IsManipulationEnabled, RelativeSource={RelativeSource AncestorType={x:Type Border}}, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                                                        Visibility="{Binding Path=IsManipulationEnabled, RelativeSource={RelativeSource AncestorType={x:Type Border}}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                                                        <i:Interaction.Behaviors>
+                                                                            <infBeh:FrameworkElementDpiScalingBehavior />
+                                                                        </i:Interaction.Behaviors>
+                                                                    </Button>
                                                                 </Grid>
                                                             </DataTemplate>
                                                         </Setter.Value>
@@ -579,8 +588,11 @@
             <WrapPanel
                 x:Name="uiExtentionContainer"
                 Grid.Column="0"
-                Panel.ZIndex="99"
-                Tag="{x:Static infWindows:PerMonitorDpiWindow.SCALE_ELEMENT_TAG}" />
+                Panel.ZIndex="99">
+                <i:Interaction.Behaviors>
+                    <infBeh:FrameworkElementDpiScalingBehavior />
+                </i:Interaction.Behaviors>
+            </WrapPanel>
             <TextBlock
                 Name="ErrorTextBlock"
                 Grid.Column="0"
@@ -590,8 +602,11 @@
                 Background="Transparent"
                 FontSize="16"
                 Foreground="White"
-                Tag="{x:Static infWindows:PerMonitorDpiWindow.SCALE_ELEMENT_TAG}"
-                Visibility="Collapsed" />
+                Visibility="Collapsed">
+                <i:Interaction.Behaviors>
+                    <infBeh:FrameworkElementDpiScalingBehavior />
+                </i:Interaction.Behaviors>
+            </TextBlock>
             <Button
                 Grid.Column="1"
                 Width="25"
@@ -601,8 +616,11 @@
                 VerticalAlignment="Stretch"
                 Click="ButtonClearItems_Click"
                 Command="{Binding ClearClipboardEntries}"
-                Style="{DynamicResource BtnTrash}"
-                Tag="{x:Static infWindows:PerMonitorDpiWindow.SCALE_ELEMENT_TAG}" />
+                Style="{DynamicResource BtnTrash}">
+                <i:Interaction.Behaviors>
+                    <infBeh:FrameworkElementDpiScalingBehavior />
+                </i:Interaction.Behaviors>
+            </Button>
         </Grid>
     </Grid>
 </local:ClipboardViewControlBase>

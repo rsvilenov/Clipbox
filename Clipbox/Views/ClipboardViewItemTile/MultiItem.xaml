@@ -6,6 +6,7 @@
     xmlns:coreConv="clr-namespace:Clipbox.Infrastructure.UI.Converters;assembly=Clipbox.Infrastructure.UI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:infBeh="clr-namespace:Clipbox.Infrastructure.UI.Behaviors;assembly=Clipbox.Infrastructure.UI"
     xmlns:infPropAp="clr-namespace:Clipbox.Infrastructure.UI.AttachedProperties;assembly=Clipbox.Infrastructure.UI"
     xmlns:infWindows="clr-namespace:Clipbox.Infrastructure.UI.Windows;assembly=Clipbox.Infrastructure.UI"
     xmlns:local="clr-namespace:Clipbox.Views.ClipboardViewItemTile"
@@ -245,8 +246,10 @@
                                                             HorizontalContentAlignment="Center"
                                                             VerticalContentAlignment="Center"
                                                             FontSize="12"
-                                                            Foreground="White"
-                                                            Tag="{x:Static infWindows:PerMonitorDpiWindow.SCALE_ELEMENT_TAG}">
+                                                            Foreground="White">
+                                                            <i:Interaction.Behaviors>
+                                                                <infBeh:FrameworkElementDpiScalingBehavior />
+                                                            </i:Interaction.Behaviors>
                                                             <Label.Content>
                                                                 <TextBlock
                                                                     MaxWidth="{Binding ElementName=subItemPreviewImage, Path=ActualWidth}"
@@ -286,8 +289,11 @@
                                                             FontSize="16"
                                                             FontWeight="Bold"
                                                             Foreground="White"
-                                                            Tag="{x:Static infWindows:PerMonitorDpiWindow.SCALE_ELEMENT_TAG}"
-                                                            Text="{Binding Path=(bo:ClipboardViewSubItemNMore.NumberOfItems), StringFormat={}{0:+#}}" />
+                                                            Text="{Binding Path=(bo:ClipboardViewSubItemNMore.NumberOfItems), StringFormat={}{0:+#}}">
+                                                            <i:Interaction.Behaviors>
+                                                                <infBeh:FrameworkElementDpiScalingBehavior />
+                                                            </i:Interaction.Behaviors>
+                                                        </TextBlock>
                                                     </Grid>
                                                 </ControlTemplate>
                                             </Setter.Value>

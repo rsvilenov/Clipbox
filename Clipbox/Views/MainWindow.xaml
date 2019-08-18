@@ -4,6 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:coreConv="clr-namespace:Clipbox.Infrastructure.UI.Converters;assembly=Clipbox.Infrastructure.UI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:infBeh="clr-namespace:Clipbox.Infrastructure.UI.Behaviors;assembly=Clipbox.Infrastructure.UI"
     xmlns:infWindows="clr-namespace:Clipbox.Infrastructure.UI.Windows;assembly=Clipbox.Infrastructure.UI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:views="clr-namespace:Clipbox.Views"
@@ -119,8 +121,10 @@
             Grid.Row="0"
             Grid.RowSpan="3"
             Grid.Column="0"
-            Background="{DynamicResource TaskbarColorBrush}"
-            Tag="{x:Static infWindows:PerMonitorDpiWindow.SCALE_ELEMENT_TAG}">
+            Background="{DynamicResource TaskbarColorBrush}">
+            <i:Interaction.Behaviors>
+                <infBeh:FrameworkElementDpiScalingBehavior />
+            </i:Interaction.Behaviors>
             <Border.RenderTransform>
                 <TranslateTransform />
             </Border.RenderTransform>
@@ -208,8 +212,11 @@
                 VerticalContentAlignment="Center"
                 Background="Black"
                 Foreground="White"
-                Tag="{x:Static infWindows:PerMonitorDpiWindow.SCALE_ELEMENT_TAG}"
-                Text="Type here to search" />
+                Text="Type here to search">
+                <i:Interaction.Behaviors>
+                    <infBeh:FrameworkElementDpiScalingBehavior />
+                </i:Interaction.Behaviors>
+            </TextBox>
         </Grid>
 
 

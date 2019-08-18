@@ -86,7 +86,7 @@ namespace Clipbox.Services
                         dm);
                     _mainWindow = mainWindow;
 
-                    mainWindow.ScaleMode = resizeToDpi ? DpiScaleMode.TaggedChildren : DpiScaleMode.None;
+                    mainWindow.ScaleMode = resizeToDpi ? DpiScaleMode.Custom : DpiScaleMode.None;
                     
                     mainWindow.SetMonitorDimensions(new MonitorDimensions
                     {

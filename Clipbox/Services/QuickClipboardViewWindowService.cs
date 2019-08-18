@@ -49,7 +49,7 @@ namespace Clipbox.Services
             _quickViewWindow = new NonFocusableInteractiveWindow
             {
                 // Don't allow the window to scale - we will do that manually.
-                ScaleMode = ShouldResizeToDpi() ? DpiScaleMode.TaggedChildren : DpiScaleMode.None,
+                ScaleMode = ShouldResizeToDpi() ? DpiScaleMode.Custom : DpiScaleMode.None,
                 // Allow scaling the window's contents except for the previews, which we will handle manually to avoid blurring.
                 // We will mark the previews with the "noscaleable" tag which the base dpi window understands.
                 //AutoScaleOnlyChildrenAccordingToDPI = true,
@@ -179,7 +179,7 @@ namespace Clipbox.Services
 
             _quickViewWindow.Dispatcher.Invoke(DispatcherPriority.Send, new Action(() =>
             {
-                _quickViewWindow.ScaleMode = resizeToDpi ? DpiScaleMode.TaggedChildren : DpiScaleMode.None;
+                _quickViewWindow.ScaleMode = resizeToDpi ? DpiScaleMode.Custom : DpiScaleMode.None;
 
                 _quickViewWindow.SizeChanged += _quickViewWindow_SizeChanged;
                 _quickViewWindow.Shown += _quickViewWindow_Shown;

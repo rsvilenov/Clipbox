@@ -3,10 +3,8 @@ using Clipbox.Infrastructure.UI.Windows.Enums;
 using Clipbox.Win32;
 using Clipbox.Win32.Native;
 using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows;
-using System.Windows.Data;
 using System.Windows.Media;
 
 namespace Clipbox.Infrastructure.UI.Windows
@@ -17,8 +15,6 @@ namespace Clipbox.Infrastructure.UI.Windows
     /// </summary>
     public class PerMonitorDpiWindow : BaseWindow
     {
-        public const string SCALE_ELEMENT_TAG = "scale";
-
         public double CurrentDPI { get; set; }
         
         public double ScaleFactor { get; set; }
@@ -37,14 +33,6 @@ namespace Clipbox.Infrastructure.UI.Windows
             
             ContentRendered += PerMonitorDPIWindow_ContentRendered;
             SourceInitialized += PerMonitorDpiWindow_SourceInitialized;
-        }
-
-        protected override void OnContentChanged(object oldContent, object newContent)
-        {
-            //if (this.Content is FrameworkElement)
-            //{
-            //    (this.Content as FrameworkElement).LayoutUpdated += PerMonitorDpiWindow_LayoutUpdated;
-            //}
         }
 
         private void PerMonitorDpiWindow_LayoutUpdated(object sender, EventArgs e)
@@ -104,6 +92,8 @@ namespace Clipbox.Infrastructure.UI.Windows
 
         private void DoScaleTransofm()
         {
+            // Handle only DpiScaleMode.Full.
+            // DpiScaleMode.Custom is handled by external code.
             if (ScaleMode == DpiScaleMode.Full)
             {
                 Width = Width * ScaleFactor;
@@ -112,41 +102,14 @@ namespace Clipbox.Infrastructure.UI.Windows
                 //Update graphics and text based on the current DPI of the monitor
                 ScaleContent(ScaleFactor);
             }
-            else if (ScaleMode == DpiScaleMode.TaggedChildren)
-            {
-                if (this.Content != null)
-                {
-                    ScaleChildrenWithTag(ScaleFactor);
-                }
-            }
-        }
-
-        private void ScaleChildrenWithTag(double scaleFactor)
-        {
-            List<UIElement> children = this.GetVisualChildCollection((c) => c is FrameworkElement && (c as FrameworkElement).Tag as string == SCALE_ELEMENT_TAG, collectMatchChildren: false);
-            foreach (var childToScale in children)
-            {
-                ScaleElement(scaleFactor, childToScale);
-            }
         }
 
         protected void ScaleContent(double scaleFactor)
         {
-            var child = GetVisualChild(0);
-            ScaleElement(scaleFactor, child);
-        }
-
-        private static void ScaleElement(double scaleFactor, Visual child)
-        {
-            if (scaleFactor != 1.0)
+            var child = GetVisualChild(0) as FrameworkElement;
+            if (child != null)
             {
-                var dpiScale = new ScaleTransform(scaleFactor, scaleFactor);
-                //child.SetValue(Window.LayoutTransformProperty, null);
-                child.SetValue(Window.LayoutTransformProperty, dpiScale);
-            }
-            else
-            {
-                child.SetValue(Window.LayoutTransformProperty, null);
+                Scaling.ScaleElement(scaleFactor, child);
             }
         }
         
@@ -199,10 +162,6 @@ namespace Clipbox.Infrastructure.UI.Windows
                     _recommendedRectByWmDpichanged.Height, true);
 
                 ScaleContent(ScaleFactor);
-            }
-            else if (ScaleMode == DpiScaleMode.TaggedChildren)
-            {
-                ScaleChildrenWithTag(ScaleFactor);
             }
         }
     }

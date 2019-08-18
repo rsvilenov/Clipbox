@@ -61,7 +61,7 @@ namespace Clipbox.Views
 
             _backgroundRenderMode = (MainClipboardViewBackgroundRenderMode)_settingsService.GetSetting<int>(SettingsKeys.MainClipboardViewBackgroundRenderMode);
 
-            ScaleMode = Infrastructure.UI.Windows.Enums.DpiScaleMode.TaggedChildren;
+            ScaleMode = Infrastructure.UI.Windows.Enums.DpiScaleMode.Custom;
 
             // ensure the window will create itself invisible
             Width = 0;
