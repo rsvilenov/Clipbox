@@ -33,7 +33,7 @@ namespace Clipbox.Views.ClipboardViewItemTile
             add { AddHandler(SubItems_SelectionChangedEvent, value); }
             remove { RemoveHandler(SubItems_SelectionChangedEvent, value); }
         }
-
+        
         public MultiItem()
         {
             InitializeComponent();
