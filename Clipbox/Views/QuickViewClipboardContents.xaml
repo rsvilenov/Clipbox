@@ -52,26 +52,6 @@
 
         <!--  loading indication panel  -->
         <Grid Grid.Row="0">
-            <!--<Grid.MinWidth>
-                <MultiBinding Converter="{StaticResource MathMultiplyConverter}">
-                    <Binding Path="ClipboardViewItemMaxHeight" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}" />
-                    <Binding>
-                        <Binding.Source>
-                            <sys:Double>3</sys:Double>
-                        </Binding.Source>
-                    </Binding>
-                </MultiBinding>
-            </Grid.MinWidth>
-            <Grid.MinHeight>
-                <MultiBinding Converter="{StaticResource MathMultiplyConverter}">
-                    <Binding Path="ClipboardViewItemMaxHeight" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}" />
-                    <Binding>
-                        <Binding.Source>
-                            <sys:Double>2</sys:Double>
-                        </Binding.Source>
-                    </Binding>
-                </MultiBinding>
-            </Grid.MinHeight>-->
             <Grid.Style>
 
                 <Style TargetType="{x:Type Grid}">

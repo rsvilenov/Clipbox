@@ -42,6 +42,7 @@ namespace Clipbox.Views
         public static readonly DependencyProperty DimNonFocusedItemsProperty =
             DependencyProperty.Register(nameof(DimNonFocusedItems), typeof(bool), typeof(QuickViewClipboardContents), new PropertyMetadata(false));
         
+
         public QuickViewClipboardContents(QuickViewkClipboardContentsViewModel vm, UIExtentionContainer container, ISettingsService settingsService)
             : base (container, settingsService)
         {   

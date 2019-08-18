@@ -33,6 +33,9 @@ namespace Clipbox.Services
 
         private ISettingsService _settingsService;
 
+        // used for storing the original window's opacity when preloading the window (it gets shown with Opacity=0.0)
+        private double _quickViewWindowOpacity;
+
         private bool ShouldResizeToDpi()
         {
             return _settingsService.GetSetting<bool>(SettingsKeys.ResizeAccordingToMonitorOrSystemDpi);
@@ -45,7 +48,7 @@ namespace Clipbox.Services
             _selectedMultiItemIds = new Dictionary<string, ReadOnlyCollection<int>>();
             _parameters = new Dictionary<string, string>();
             _settingsService = settingsService;
-            
+
             _quickViewWindow = new NonFocusableInteractiveWindow
             {
                 // Don't allow the window to scale - we will do that manually.
@@ -56,12 +59,12 @@ namespace Clipbox.Services
                 SizeToContent = SizeToContent.WidthAndHeight,
                 WindowStartupLocation = WindowStartupLocation.Manual
             };
-            
+
             // initialize the window so that it starts listening to dpi changes from before is is first shown
             new WindowInteropHelper(_quickViewWindow).EnsureHandle();
 
             _quickViewWindow.Content = previewControl;
-            
+
             _previewControl = previewControl;
 
             var primaryMonitor = MonitorUtils.GetPrimaryMonitor();
@@ -80,6 +83,29 @@ namespace Clipbox.Services
 
             _previewControl.SelectionChanged += _previewControl_SelectionChanged;
 
+            PreloadQuickViewWindow();
+
+        }
+
+        private void PreloadQuickViewWindow()
+        {
+            _quickViewWindowOpacity = _quickViewWindow.Opacity;
+            _quickViewWindow.Opacity = 0.0;
+            _quickViewWindow.Shown += _quickViewWindow_ShownPreload;
+            _quickViewWindow.Show();
+        }
+
+        private void _quickViewWindow_ShownPreload(object sender, EventArgs e)
+        {
+            _quickViewWindow.Shown -= _quickViewWindow_ShownPreload;
+
+            _quickViewWindow.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => 
+            {
+
+                _quickViewWindow.Hide();
+                _quickViewWindow.Opacity = _quickViewWindowOpacity;
+
+            }));
         }
 
         private void _sizeChangedSligingTimer_Elapsed(object sender, EventArgs e)
