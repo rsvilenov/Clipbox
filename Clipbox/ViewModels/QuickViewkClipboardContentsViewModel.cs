@@ -153,7 +153,7 @@ namespace Clipbox.ViewModels
             foreach(string clipboardItemId in clipboardItemIds)
             {
 #if DEBUG
-                Debug.WriteLine(clipboardItemId);
+                Debug.WriteLine($"Loading view of item {clipboardItemId}");
 #endif
                 base.LoadViewItem(clipboardItemId, monitorDimensions);
 

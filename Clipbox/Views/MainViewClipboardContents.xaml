@@ -238,7 +238,7 @@
                                 <Style.Triggers>
                                     <MultiDataTrigger>
                                         <MultiDataTrigger.Conditions>
-                                            <Condition Binding="{Binding Path=DimensionInfo.IsViewItemGroup}" Value="False" />
+                                            <Condition Binding="{Binding Path=DimensionInfo.IsViewItemGroup, FallbackValue=False}" Value="False" />
                                             <Condition Binding="{Binding Path=IsViewItemLoaded}" Value="False" />
                                         </MultiDataTrigger.Conditions>
                                         <MultiDataTrigger.Setters>
@@ -254,7 +254,7 @@
 
                                     <MultiDataTrigger>
                                         <MultiDataTrigger.Conditions>
-                                            <Condition Binding="{Binding Path=DimensionInfo.IsViewItemGroup}" Value="False" />
+                                            <Condition Binding="{Binding Path=DimensionInfo.IsViewItemGroup, FallbackValue=False}" Value="False" />
                                             <Condition Binding="{Binding Path=IsViewItemLoaded}" Value="True" />
                                         </MultiDataTrigger.Conditions>
                                         <MultiDataTrigger.Setters>
@@ -270,7 +270,7 @@
 
                                     <MultiDataTrigger>
                                         <MultiDataTrigger.Conditions>
-                                            <Condition Binding="{Binding Path=DimensionInfo.IsViewItemGroup}" Value="True" />
+                                            <Condition Binding="{Binding Path=DimensionInfo.IsViewItemGroup, FallbackValue=False}" Value="True" />
                                             <Condition Binding="{Binding Path=IsViewItemLoaded}" Value="True" />
                                         </MultiDataTrigger.Conditions>
                                         <MultiDataTrigger.Setters>
@@ -298,7 +298,7 @@
 
                                     <MultiDataTrigger>
                                         <MultiDataTrigger.Conditions>
-                                            <Condition Binding="{Binding Path=DimensionInfo.IsViewItemGroup}" Value="True" />
+                                            <Condition Binding="{Binding Path=DimensionInfo.IsViewItemGroup, FallbackValue=False}" Value="True" />
                                             <Condition Binding="{Binding Path=IsViewItemLoaded}" Value="False" />
                                         </MultiDataTrigger.Conditions>
                                         <MultiDataTrigger.Setters>
