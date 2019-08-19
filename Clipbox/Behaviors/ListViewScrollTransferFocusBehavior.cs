@@ -1,8 +1,10 @@
 ﻿using Clipbox.Infrastructure.UI.Utils;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interactivity;
+using System.Windows.Interop;
 
 namespace Clipbox.Behaviors
 {
@@ -15,16 +17,8 @@ namespace Clipbox.Behaviors
 
         private bool _areInputEventsWired;
 
-        public FrameworkElement FocusRecieverElement
-        {
-            get { return (FrameworkElement)GetValue(FocusRecieverElementProperty); }
-            set { SetValue(FocusRecieverElementProperty, value); }
-        }
+        public event EventHandler<EventArgs> KeyboardFocusMovedOut;
 
-        public static readonly DependencyProperty FocusRecieverElementProperty =
-            DependencyProperty.Register(nameof(FocusRecieverElement), typeof(FrameworkElement), typeof(ListViewScrollTransferFocusBehavior), new PropertyMetadata(null));
-
-        
         protected override void OnAttached()
         {
             AssociatedObject.Loaded += AssociatedObject_Loaded;
@@ -44,30 +38,64 @@ namespace Clipbox.Behaviors
         {
             _scrollViewer = Traversing.GetVisualChildOfType<ScrollViewer>(AssociatedObject);
             AssociatedObject.PreviewMouseWheel += AssociatedObject_PreviewMouseWheel;
-            //AssociatedObject.PreviewKeyDown += AssociatedObject_PreviewKeyDown;
+            AssociatedObject.PreviewKeyDown += AssociatedObject_PreviewKeyDown;
             _areInputEventsWired = true;
         }
 
         private void AssociatedObject_PreviewKeyDown(object sender, KeyEventArgs e)
         {
-            // the code below is not tested
-            if ((e.Key == Key.Down && _scrollViewer.VerticalOffset == 0) ||
-                ((e.Key == Key.Up || e.Key == Key.Tab) && _scrollViewer.VerticalOffset == _scrollViewer.ScrollableHeight))
+            FocusNavigationDirection? focusDirection = null;
+
+            switch (e.Key)
+            {
+                case Key.Right:
+                    if (AssociatedObject.SelectedIndex == AssociatedObject.Items.Count - 1)
+                    {
+                        focusDirection = FocusNavigationDirection.Next;
+                    }
+                    break;
+                case Key.Left:
+                    if (AssociatedObject.SelectedIndex == 0)
+                    {
+                        focusDirection = FocusNavigationDirection.Previous;
+                    }
+                    break;
+                case Key.Up:
+                    if (_scrollViewer.VerticalOffset == 0)
+                    {
+                        focusDirection = FocusNavigationDirection.Previous;
+                    }
+                    break;
+                case Key.Down:
+                    if (_scrollViewer.VerticalOffset == _scrollViewer.ScrollableHeight)
+                    {
+                        focusDirection = FocusNavigationDirection.Next;
+                    }
+                    break;
+            }
+
+            if (focusDirection.HasValue)
             {
                 e.Handled = true;
 
-                // https://stackoverflow.com/questions/10820990/how-to-create-a-keyeventargs-object-in-wpf-related-to-a-so-answer
-                var e2 = new KeyEventArgs(
-                    Keyboard.PrimaryDevice,
-                    Keyboard.PrimaryDevice.ActiveSource,
-                    0, 
-                    Key.Tab)
-                    {
-                        RoutedEvent = Keyboard.PreviewKeyDownEvent
-                    };
+                // the code below is based on Sheridan's answer in the following thread:
+                // https://stackoverflow.com/questions/29028263/wpf-move-focus-to-the-next-item-in-an-itemscontrol-on-enter
 
-                AssociatedObject.RaiseEvent(e2);
+                // MoveFocus takes a TraveralReqest as its argument
+                TraversalRequest request = new TraversalRequest(focusDirection.Value);
+
+                // gets the element with keyboard focus
+                UIElement elementWithFocus = Keyboard.FocusedElement as UIElement;
+
+                // change keyboard focus
+                if (elementWithFocus != null)
+                {
+                    elementWithFocus.MoveFocus(request);
+                }
+
+                KeyboardFocusMovedOut?.Invoke(this, new EventArgs());
             }
+            
         }
 
         private void AssociatedObject_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
@@ -99,7 +127,7 @@ namespace Clipbox.Behaviors
             if (_areInputEventsWired)
             {
                 AssociatedObject.PreviewMouseWheel -= AssociatedObject_PreviewMouseWheel;
-                //AssociatedObject.PreviewKeyDown -= AssociatedObject_PreviewKeyDown;
+                AssociatedObject.PreviewKeyDown -= AssociatedObject_PreviewKeyDown;
             }
         }
     }
