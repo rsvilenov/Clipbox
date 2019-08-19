@@ -53,6 +53,8 @@ namespace Clipbox.ViewModels
             PreviewDataTransferObject pdto = PreviewGenerationService.GetPreviewDataTransferObject(restoredClipboardItem, monitorDimensions);
             wrapper.ViewItem = ClipboardViewItemFactory.CreateFromPreviewDataTransferObject(restoredClipboardItem, pdto);
 
+            TryLoadPreviewDimensions(monitorDimensions, wrapper);
+
 #if DEBUG
             GC.Collect();
             GC.WaitForPendingFinalizers();
@@ -81,29 +83,38 @@ namespace Clipbox.ViewModels
                     continue;
                 }
 
-                var tempViewItem = new ClipboardViewItemWrapper(clipboardItem);
+                var wrapper = new ClipboardViewItemWrapper(clipboardItem);
 
-                CalibratedPreviewDimentionInfo cpdi = null;
-                if (PreviewGenerationService.TryGetQuickPreviewDimentionInfo(clipboardItemId, monitorDimensions, out cpdi))
-                {
-                    IEnumerable<ClipboardViewSubItemDimension> dimensions = cpdi.PreviewDimentions
-                        .Select(pd =>
-                            new ClipboardViewSubItemDimension
-                            {
-                                PreviewHeight = pd.PreviewHeight,
-                                PreviewWidth = pd.PreviewWidth
-                            });
+                TryLoadPreviewDimensions(monitorDimensions, wrapper);
 
-                    tempViewItem.DimensionInfo = new ClipboardViewItemDimensionInfo
-                    {
-                        IsViewItemGroup = cpdi.IsViewItemGroup,
-                        Dimensions = new AsyncObservableCollection<ClipboardViewSubItemDimension>(dimensions),
-                        NumberOfItemsWithoutPreview = cpdi.NumberOfItemsWithoutPreview
-                    };
-                }
-
-                ClipboardViewItemWrappers.Add(tempViewItem);
+                ClipboardViewItemWrappers.Add(wrapper);
             }
         }
+        
+        private bool TryLoadPreviewDimensions(MonitorDimensions monitorDimensions, ClipboardViewItemWrapper wrapper)
+        {
+            if (PreviewGenerationService.TryGetQuickPreviewDimentionInfo(wrapper.Id, monitorDimensions, out CalibratedPreviewDimentionInfo cpdi))
+            {
+                IEnumerable<ClipboardViewSubItemDimension> dimensions = cpdi.PreviewDimentions
+                    .Select(pd =>
+                        new ClipboardViewSubItemDimension
+                        {
+                            PreviewHeight = pd.PreviewHeight,
+                            PreviewWidth = pd.PreviewWidth
+                        });
+
+                wrapper.DimensionInfo = new ClipboardViewItemDimensionInfo
+                {
+                    IsViewItemGroup = cpdi.IsViewItemGroup,
+                    Dimensions = new AsyncObservableCollection<ClipboardViewSubItemDimension>(dimensions),
+                    NumberOfItemsWithoutPreview = cpdi.NumberOfItemsWithoutPreview
+                };
+
+                return true;
+            }
+
+            return false;
+        }
+
     }
 }

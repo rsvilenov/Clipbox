@@ -419,9 +419,7 @@
                                                         <Setter Property="ContentTemplate">
                                                             <Setter.Value>
                                                                 <DataTemplate>
-                                                                    <Border BorderBrush="Red" BorderThickness="2">
-                                                                        <tile:SingleItemLoading ViewItemDimensions="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.DimensionInfo.Dimensions[0], FallbackValue={x:Null}}" />
-                                                                    </Border>
+                                                                    <tile:SingleItemLoading ViewItemDimensions="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.DimensionInfo.Dimensions[0], FallbackValue={x:Null}}" />
                                                                 </DataTemplate>
                                                             </Setter.Value>
                                                         </Setter>
@@ -467,6 +465,36 @@
 
                                                 <MultiDataTrigger>
                                                     <MultiDataTrigger.Conditions>
+                                                        <Condition Binding="{Binding Path=DimensionInfo.IsViewItemGroup, FallbackValue=True}" Value="True" />
+                                                        <Condition Binding="{Binding Path=IsViewItemLoaded}" Value="False" />
+                                                    </MultiDataTrigger.Conditions>
+                                                    <MultiDataTrigger.Setters>
+                                                        <Setter Property="ContentTemplate">
+                                                            <Setter.Value>
+                                                                <DataTemplate>
+                                                                    <tile:MultiItemLoading NumberOfItemsWithoutPreview="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.DimensionInfo.NumberOfItemsWithoutPreview, FallbackValue=0}" ViewSubItemDimensions="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.DimensionInfo.Dimensions, FallbackValue={x:Null}, Mode=OneWay}">
+                                                                        <tile:MultiItemLoading.Height>
+                                                                            <MultiBinding Converter="{StaticResource MathAddConverter}">
+                                                                                <Binding Path="ClipboardViewItemMaxHeight" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}" />
+                                                                                <Binding>
+                                                                                    <Binding.Source>
+
+                                                                                        <!--  pad the height so that it matches the total height of the single view items  -->
+
+                                                                                        <sys:Double>60</sys:Double>
+                                                                                    </Binding.Source>
+                                                                                </Binding>
+                                                                            </MultiBinding>
+                                                                        </tile:MultiItemLoading.Height>
+                                                                    </tile:MultiItemLoading>
+                                                                </DataTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </MultiDataTrigger.Setters>
+                                                </MultiDataTrigger>
+
+                                                <MultiDataTrigger>
+                                                    <MultiDataTrigger.Conditions>
                                                         <Condition Binding="{Binding Path=DimensionInfo.IsViewItemGroup, FallbackValue=False}" Value="True" />
                                                         <Condition Binding="{Binding Path=IsViewItemLoaded}" Value="True" />
                                                     </MultiDataTrigger.Conditions>
@@ -500,36 +528,6 @@
                                                                             </MultiBinding>
                                                                         </tile:MultiItem.IsDimmed>
                                                                     </tile:MultiItem>
-                                                                </DataTemplate>
-                                                            </Setter.Value>
-                                                        </Setter>
-                                                    </MultiDataTrigger.Setters>
-                                                </MultiDataTrigger>
-
-                                                <MultiDataTrigger>
-                                                    <MultiDataTrigger.Conditions>
-                                                        <Condition Binding="{Binding Path=DimensionInfo.IsViewItemGroup, FallbackValue=False}" Value="True" />
-                                                        <Condition Binding="{Binding Path=IsViewItemLoaded}" Value="False" />
-                                                    </MultiDataTrigger.Conditions>
-                                                    <MultiDataTrigger.Setters>
-                                                        <Setter Property="ContentTemplate">
-                                                            <Setter.Value>
-                                                                <DataTemplate>
-                                                                    <tile:MultiItemLoading NumberOfItemsWithoutPreview="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.DimensionInfo.NumberOfItemsWithoutPreview, FallbackValue=0}" ViewSubItemDimensions="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.DimensionInfo.Dimensions, FallbackValue={x:Null}, Mode=OneWay}">
-                                                                        <tile:MultiItemLoading.Height>
-                                                                            <MultiBinding Converter="{StaticResource MathAddConverter}">
-                                                                                <Binding Path="ClipboardViewItemMaxHeight" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}" />
-                                                                                <Binding>
-                                                                                    <Binding.Source>
-
-                                                                                        <!--  pad the height so that it matches the total height of the single view items  -->
-
-                                                                                        <sys:Double>60</sys:Double>
-                                                                                    </Binding.Source>
-                                                                                </Binding>
-                                                                            </MultiBinding>
-                                                                        </tile:MultiItemLoading.Height>
-                                                                    </tile:MultiItemLoading>
                                                                 </DataTemplate>
                                                             </Setter.Value>
                                                         </Setter>
