@@ -570,6 +570,7 @@
             <WrapPanel
                 x:Name="uiExtentionContainer"
                 Grid.Column="0"
+                Height="35"
                 Panel.ZIndex="99">
                 <i:Interaction.Behaviors>
                     <infBeh:FrameworkElementDpiScalingBehavior />
@@ -578,7 +579,8 @@
             <TextBlock
                 Name="ErrorTextBlock"
                 Grid.Column="0"
-                Margin="15,0,0,15"
+                Height="35"
+                Margin="15,0,0,0"
                 VerticalAlignment="Center"
                 Panel.ZIndex="100"
                 Background="Transparent"
