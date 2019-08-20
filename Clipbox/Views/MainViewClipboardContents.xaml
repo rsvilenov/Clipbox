@@ -30,6 +30,11 @@
                 <ResourceDictionary Source="pack://application:,,,/Clipbox.Infrastructure.UI;component/Styles/Style.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
+
+        <Style x:Key="MultiItemStyleForSubItems_SubItemsFocusMovedOutEvent" TargetType="{x:Type tile:MultiItem}">
+            <EventSetter Event="SubItems_SubItemsFocusMovedOut" Handler="MultiItem_SubItems_SubItemsFocusMovedOut" />
+            <EventSetter Event="Unloaded" Handler="MultiItem_Unloaded" />
+        </Style>
     </UserControl.Resources>
     <Grid>
         <Grid.Resources>
@@ -179,7 +184,7 @@
                                     <MultiDataTrigger>
                                         <MultiDataTrigger.Conditions>
                                             <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True" />
-                                            <Condition Binding="{Binding IsSelected}" Value="True" />
+                                            <!--<Condition Binding="{Binding IsSelected}" Value="True" />-->
                                         </MultiDataTrigger.Conditions>
                                         <Setter TargetName="Bd" Property="Background" Value="{DynamicResource AccentBrush}" />
                                         <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource AccentLight3Brush}" />
@@ -187,7 +192,7 @@
                                     <MultiDataTrigger>
                                         <MultiDataTrigger.Conditions>
                                             <Condition Binding="{Binding IsSelected, RelativeSource={RelativeSource Self}}" Value="True" />
-                                            <Condition Binding="{Binding IsSelected}" Value="True" />
+                                            <!--<Condition Binding="{Binding IsSelected}" Value="True" />-->
                                         </MultiDataTrigger.Conditions>
                                         <Setter TargetName="Bd" Property="Background" Value="{DynamicResource AccentBrush}" />
                                         <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource AccentLight3Brush}" />
@@ -277,7 +282,7 @@
                                             <Setter Property="ContentTemplate">
                                                 <Setter.Value>
                                                     <DataTemplate>
-                                                        <tile:MultiItem ClipboardViewItem="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.ViewItem}">
+                                                        <tile:MultiItem ClipboardViewItem="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.ViewItem}" Style="{StaticResource MultiItemStyleForSubItems_SubItemsFocusMovedOutEvent}">
                                                             <tile:MultiItem.Height>
                                                                 <MultiBinding Converter="{StaticResource MathAddConverter}">
                                                                     <Binding Path="ClipboardViewItemMaxHeight" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}" />

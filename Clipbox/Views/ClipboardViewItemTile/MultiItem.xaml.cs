@@ -1,4 +1,5 @@
-﻿using Clipbox.ViewModels.BindableObjects;
+﻿using Clipbox.Infrastructure.UI.Utils;
+using Clipbox.ViewModels.BindableObjects;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +34,20 @@ namespace Clipbox.Views.ClipboardViewItemTile
             add { AddHandler(SubItems_SelectionChangedEvent, value); }
             remove { RemoveHandler(SubItems_SelectionChangedEvent, value); }
         }
-        
+
+        public static readonly RoutedEvent SubItems_SubItemsFocusMovedOutEvent
+        = EventManager.RegisterRoutedEvent(
+            "SubItems_SubItemsFocusMovedOut",
+            RoutingStrategy.Bubble,
+            typeof(EventHandler<RoutedEventArgs>),
+            typeof(MultiItem));
+
+        public event EventHandler<RoutedEventArgs> SubItems_SubItemsFocusMovedOut
+        {
+            add { AddHandler(SubItems_SubItemsFocusMovedOutEvent, value); }
+            remove { RemoveHandler(SubItems_SubItemsFocusMovedOutEvent, value); }
+        }
+
         public MultiItem()
         {
             InitializeComponent();
@@ -81,6 +95,11 @@ namespace Clipbox.Views.ClipboardViewItemTile
         private void SubItemsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             RaiseEvent(new SelectionChangedEventArgs(SubItems_SelectionChangedEvent, e.AddedItems, e.RemovedItems));
+        }
+
+        private void ListViewScrollTransferFocusBehavior_KeyboardFocusMovedOut(object sender, EventArgs e)
+        {
+            RaiseEvent(new RoutedEventArgs(SubItems_SubItemsFocusMovedOutEvent));
         }
     }
 }

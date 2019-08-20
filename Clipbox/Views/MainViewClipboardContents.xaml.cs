@@ -4,6 +4,7 @@ using Clipbox.Infrastructure.UI.Utils;
 using Clipbox.Services.Interfaces;
 using Clipbox.ViewModels;
 using Clipbox.ViewModels.BindableObjects;
+using Clipbox.Views.ClipboardViewItemTile;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -293,6 +294,21 @@ namespace Clipbox.Views
         ~MainViewClipboardContents()
         {
             Debug.WriteLine("MainViewClipboardContents unloaded");
+        }
+
+        private void MultiItem_SubItems_SubItemsFocusMovedOut(object sender, RoutedEventArgs e)
+        {
+            MultiItem multiItem = (MultiItem)sender;
+
+            Traversing.FindParent<ListViewItem>(multiItem).Focus();
+        }
+
+        private void MultiItem_Unloaded(object sender, RoutedEventArgs e)
+        {
+            MultiItem multiItem = (MultiItem)sender;
+
+            multiItem.SubItems_SubItemsFocusMovedOut -= MultiItem_SubItems_SubItemsFocusMovedOut;
+            multiItem.Unloaded -= MultiItem_Unloaded;
         }
     }
 }

@@ -115,7 +115,7 @@
             <i:Interaction.Behaviors>
                 <localBeh:ListViewScrollButtonBehavior IsScrollUpButton="True" ScrollButton="{Binding ElementName=BtnScrollUpSubItem}" />
                 <localBeh:ListViewScrollButtonBehavior IsScrollUpButton="False" ScrollButton="{Binding ElementName=BtnScrollDownSubItem}" />
-                <localBeh:ListViewScrollTransferFocusBehavior />
+                <localBeh:ListViewScrollTransferFocusBehavior KeyboardFocusMovedOut="ListViewScrollTransferFocusBehavior_KeyboardFocusMovedOut" />
             </i:Interaction.Behaviors>
             <ListView.ItemContainerStyle>
                 <Style TargetType="{x:Type ListViewItem}">
