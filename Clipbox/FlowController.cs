@@ -66,10 +66,9 @@ namespace Clipbox
             IEnumerable<IClipboardItem> selectedItems = e.SelectedItemIds.Select(id => _clipboardManager.GetClipboardItem(id, restoreShrinked: false));
 
             // can we modify or combine the items?
-            if (selectedItems.Count() > 1 && !_flowExtentionExecutorService.RunOnQueryModifyMethods(selectedItems))
+            if (selectedItems.Count() > 1)
             {
-                e.Cancel = true;
-                e.CancelMessage = "Incompatible items.";
+                e.AreItemsCombinable = _flowExtentionExecutorService.RunOnQueryModifyMethods(selectedItems);
             }
         }
 

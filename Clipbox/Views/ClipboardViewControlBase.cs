@@ -230,26 +230,22 @@ namespace Clipbox.Views
         {
             var eventArgs = new SelectionEventArgs
             {
-                SelectedItemIds = selectedItems,
-                LastSelectedItemId = selectedItems.LastOrDefault()
+                SelectedItemIds = selectedItems
             };
 
             SelectionChanged?.Invoke(this, eventArgs);
 
-            return new SelectionChangedEventAnswer(eventArgs.Cancel, eventArgs.CancelMessage);
+            return new SelectionChangedEventAnswer(eventArgs.AreItemsCombinable);
         }
 
         protected class SelectionChangedEventAnswer
         {
-            public SelectionChangedEventAnswer(bool isCancelled, string cancelMessage = "")
+            public SelectionChangedEventAnswer(bool areItemsCompatible)
             {
-                IsCancelled = isCancelled;
-                CancelMessage = cancelMessage;
+                AreItemsCombinable = areItemsCompatible;
             }
 
-            public bool IsCancelled { get; }
-
-            public string CancelMessage { get; }
+            public bool AreItemsCombinable { get; }
         }
 
         private void SetCurrentDisplayHeight(MonitorDimensions monitorDimensions)
@@ -301,7 +297,7 @@ namespace Clipbox.Views
             // MainListView.Items.CurrentChanging would have been of great help in cancelling the selection, but unfortunately we cannot use it here.
             var allSelectedItemIds = selectedItems.Select(item => item.Id).Union(SelectedMultiItemsIds.Keys);
             SelectionChangedEventAnswer eventAnswer = RaiseSelectionChangedEvent(allSelectedItemIds);
-            if (eventAnswer.IsCancelled)
+            if (allSelectedItemIds.Count() > 1 && !eventAnswer.AreItemsCombinable)
             {
                 ClipboardViewItemWrapper latestSelectedItem = _mainListView
                     .Items
@@ -309,7 +305,7 @@ namespace Clipbox.Views
                     .Single(item => item.Id == _lastSelectedItemId);
                 //if (latestSelectedItem is ClipboardViewItemGroup == false)
                 {
-                    CancelSelectionWithMessage(latestSelectedItem, eventAnswer.CancelMessage);
+                    CancelSelectionWithMessage(latestSelectedItem, "Incompatible items.");
                     return;
                 }
             }
@@ -356,7 +352,7 @@ namespace Clipbox.Views
         {
             Debug.WriteLine("MultiItemListView_SelectionChanged");
             MultiItem multiItemUserControl = (MultiItem)sender;
-            ListView listView = multiItemUserControl.GetSubItemsListView();
+            ListView multiItemListView = multiItemUserControl.GetSubItemsListView();
 
             var mainViewItem = multiItemUserControl.ClipboardViewItem;
             if (mainViewItem == null)
@@ -373,8 +369,8 @@ namespace Clipbox.Views
 
             _lastSelectedItemId = mainViewItem?.ClipboardItemId;
 
-            IEnumerable<ClipboardViewSubItemBase> selectedItems = listView.SelectedItems.Cast<ClipboardViewSubItemBase>();
-            IEnumerable<int> selectedIndices = selectedItems.Select(item => listView.Items.IndexOf(item));
+            IEnumerable<ClipboardViewSubItemBase> selectedItems = multiItemListView.SelectedItems.Cast<ClipboardViewSubItemBase>();
+            IEnumerable<int> selectedIndices = selectedItems.Select(item => multiItemListView.Items.IndexOf(item));
 
             SelectedMultiItemsIds.Remove(mainViewItem.ClipboardItemId);
             if (selectedItems.Any())
@@ -398,13 +394,13 @@ namespace Clipbox.Views
                 .Concat(new List<string> { mainViewItem.ClipboardItemId });
 
             SelectionChangedEventAnswer eventAnswer = RaiseSelectionChangedEvent(selectedItemsPlusMainItem);
-            if (eventAnswer.IsCancelled)
+            if (selectedItemsPlusMainItem.Count() > 1 && !eventAnswer.AreItemsCombinable)
             {
                 Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, (Action)(() =>
                 {
-                    CancelSelectionWithMessage(mainViewItemWrapper, eventAnswer.CancelMessage);
+                    CancelSelectionWithMessage(mainViewItemWrapper, "Incompatible items.");
                     
-                    listView.UnselectAll();
+                    multiItemListView.UnselectAll();
                     SelectedMultiItemsIds.Remove(mainViewItem.ClipboardItemId);
                 }));
                 return;
