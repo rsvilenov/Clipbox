@@ -120,7 +120,7 @@ namespace Clipbox.Services
 
         private void _previewControl_SelectionChanged(object sender, SelectionEventArgs e)
         {
-            base.InvokeSelectionChangedEvent(e);
+            base.RaiseSelectionChangedEvent(e);
         }
 
         public bool IsWindowVisible

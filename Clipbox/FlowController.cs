@@ -41,7 +41,8 @@ namespace Clipbox
             _quickViewWindowService = quickViewWindowService;
             _mainViewWindowService = mainViewWindowService;
 
-            _quickViewWindowService.SelectionChanged += _quickViewWindowService_SelectionChanged;
+            _quickViewWindowService.SelectionChanged += _clipboardViewWindowService_SelectionChanged;
+            _mainViewWindowService.SelectionChanged += _clipboardViewWindowService_SelectionChanged;
 
             _parametersFromQuickViewWindowService = Enumerable.Empty<IFlowParameter>();
 
@@ -60,9 +61,8 @@ namespace Clipbox
             _keyboardService.VKeyUp += _keyboardListener_VKeyUp;
         }
 
-        private void _quickViewWindowService_SelectionChanged(object sender, SelectionEventArgs e)
+        private void _clipboardViewWindowService_SelectionChanged(object sender, SelectionEventArgs e)
         {
-
             IEnumerable<IClipboardItem> selectedItems = e.SelectedItemIds.Select(id => _clipboardManager.GetClipboardItem(id, restoreShrinked: false));
 
             // can we modify or combine the items?

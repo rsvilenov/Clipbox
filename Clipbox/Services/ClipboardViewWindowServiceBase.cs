@@ -34,7 +34,7 @@ namespace Clipbox.Services
         
         public event EventHandler<SelectionEventArgs> SelectionChanged;
 
-        protected void InvokeSelectionChangedEvent(SelectionEventArgs args)
+        protected void RaiseSelectionChangedEvent(SelectionEventArgs args)
         {
             SelectionChanged?.Invoke(this, args);
         }

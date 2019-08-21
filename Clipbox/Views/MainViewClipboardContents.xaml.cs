@@ -310,5 +310,20 @@ namespace Clipbox.Views
             multiItem.SubItems_SubItemsFocusMovedOut -= MultiItem_SubItems_SubItemsFocusMovedOut;
             multiItem.Unloaded -= MultiItem_Unloaded;
         }
+
+        private void MainListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
+        }
+
+        protected override ListView GetMainListView()
+        {
+            return MainListView;
+        }
+
+        protected override Panel GetUIExtentionContainer()
+        {
+            return new WrapPanel();
+        }
     }
 }

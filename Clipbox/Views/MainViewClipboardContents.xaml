@@ -31,7 +31,7 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
 
-        <Style x:Key="MultiItemStyleForSubItems_SubItemsFocusMovedOutEvent" TargetType="{x:Type tile:MultiItem}">
+        <Style x:Key="MultiItemStyleForSubItems_EventTriggersStyle" TargetType="{x:Type tile:MultiItem}">
             <EventSetter Event="SubItems_SubItemsFocusMovedOut" Handler="MultiItem_SubItems_SubItemsFocusMovedOut" />
             <EventSetter Event="Unloaded" Handler="MultiItem_Unloaded" />
         </Style>
@@ -281,7 +281,7 @@
                                             <Setter Property="ContentTemplate">
                                                 <Setter.Value>
                                                     <DataTemplate>
-                                                        <tile:MultiItem ClipboardViewItem="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.ViewItem}" Style="{StaticResource MultiItemStyleForSubItems_SubItemsFocusMovedOutEvent}">
+                                                        <tile:MultiItem ClipboardViewItem="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.ViewItem}" Style="{StaticResource MultiItemStyleForSubItems_EventTriggersStyle}">
                                                             <tile:MultiItem.Height>
                                                                 <MultiBinding Converter="{StaticResource MathAddConverter}">
                                                                     <Binding Path="ClipboardViewItemMaxHeight" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}" />
