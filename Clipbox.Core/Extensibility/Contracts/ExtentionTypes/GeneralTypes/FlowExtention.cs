@@ -56,7 +56,7 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes
         /// </summary>
         /// <param name="targetWindowInfo">Info for the target window.</param>
         /// <param name="cancelPaste">If set to true, cancels the showing of the window</param>
-        public virtual void OnShowPreviewWindowRequested(IWindowInfo targetWindowInfo, ref bool cancelShow)
+        public virtual void OnShowQuickViewWindowRequested(IWindowInfo targetWindowInfo, ref bool cancelShow)
         { }
 
         /// <summary>

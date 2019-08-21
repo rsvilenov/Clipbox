@@ -11,10 +11,12 @@ using Clipbox.Infrastructure.Extensibility.Containers;
 using Clipbox.Settings;
 using Clipbox.Infrastructure.UI.Windows.Enums;
 using Clipbox.Infrastructure.UI.DataObjects;
+using Clipbox.Core.Extensibility.Contracts;
+using System.Collections.Generic;
 
 namespace Clipbox.Services
 {
-    public class MainClipboardViewWindowService : IMainClipboardViewWindowService
+    public class MainClipboardViewWindowService : ClipboardViewWindowServiceBase, IMainClipboardViewWindowService
     {
         private ISettingsService _settingsService;
         
@@ -102,6 +104,11 @@ namespace Clipbox.Services
         private bool ShouldResizeToDpi()
         {
             return _settingsService.GetSetting<bool>(SettingsKeys.ResizeAccordingToMonitorOrSystemDpi);
+        }
+
+        public override IReadOnlyList<IFlowParameter> GetFlowParameters()
+        {
+            throw new NotImplementedException();
         }
     }
 }

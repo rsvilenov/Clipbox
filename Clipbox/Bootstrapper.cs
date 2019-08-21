@@ -147,9 +147,6 @@ namespace Clipbox
             // Initialize the keyboard service
             _keyboardService = new LowLevelKeyboardService();
 
-            // Initialize the flow controller
-            _flowController = new FlowController(_clipboardManager, _keyboardService, _flowExtentionExecutorService, _previewWindowService);
-
             _cloudSyncService = new CloudSynchronizationService(_clipboardManager, new GoogleDriveService(), appGuid);
             _cloudSyncService.IsEnabled = _settingsService.GetSetting<bool>(SettingsKeys.IsCloudSyncEnabled);
 
@@ -157,6 +154,10 @@ namespace Clipbox
             
             // this view can show a little bit slower so we will not keep its instance alive the whole time - we will create it upon request within the service
             _mainClipboardViewWindowService = new MainClipboardViewWindowService(_clipboardManager, _previewGenerationService, _extentionLoader.UIExtentionContainer, _settingsService);
+
+
+            // Initialize the flow controller
+            _flowController = new FlowController(_clipboardManager, _keyboardService, _flowExtentionExecutorService, _previewWindowService, _mainClipboardViewWindowService);
 
             //_mainWindow = new MainWindow(_settingsService);
             //Application.Current.MainWindow = _mainWindow;

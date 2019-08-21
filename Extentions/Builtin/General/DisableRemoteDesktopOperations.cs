@@ -10,7 +10,7 @@ namespace Clipbox.Extentions.BuiltIn.General
     {
         private const string REMOTE_DESKTOP_EXE_NAME = "mstsc.exe";
 
-        public override void OnShowPreviewWindowRequested(IWindowInfo targetWindowInfo, ref bool cancelShow)
+        public override void OnShowQuickViewWindowRequested(IWindowInfo targetWindowInfo, ref bool cancelShow)
         {
             if (targetWindowInfo.ApplicationPath != null && Path.GetFileName(targetWindowInfo.ApplicationPath).Equals(REMOTE_DESKTOP_EXE_NAME))
             {

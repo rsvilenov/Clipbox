@@ -59,9 +59,9 @@ namespace Clipbox.Services
             {
                 destWindowInfo.ApplicationPath = wInfo.ApplicationPath;
                 destWindowInfo.Caption = wInfo.Caption;
-                destWindowInfo.Icon = wInfo.Icon.ToByteArray(); // destWindowInfo.Icon will be disposed by WindowInfo.Dispose()
+                destWindowInfo.Icon = wInfo.Icon?.ToByteArray(); // destWindowInfo.Icon will be disposed by WindowInfo.Dispose()
             }
-
+            
             return destWindowInfo;
         }
 
@@ -174,7 +174,7 @@ namespace Clipbox.Services
         /// <param name="cancelShow"></param>
         [SecurityCritical]
         [HandleProcessCorruptedStateExceptions]
-        public void OnShowPreviewWindowRequestedMethods(ref bool cancelShow)
+        public void OnShowQuickViewWindowRequestedMethods(ref bool cancelShow)
         {
             DestinationWindowInfo destWindowInfo = null;
 
@@ -184,15 +184,15 @@ namespace Clipbox.Services
             }
             catch (Win32Exception wex)
             {
-                Debug.WriteLine($"{nameof(OnShowPreviewWindowRequestedMethods)} : {wex}");
+                Debug.WriteLine($"{nameof(OnShowQuickViewWindowRequestedMethods)} : {wex}");
                 return;
             }
 
             foreach (var flowExtention in _flowExtentions)
             {
                 bool cancel = false;
-                try { flowExtention.OnShowPreviewWindowRequested( destWindowInfo, ref cancel); }
-                catch (Exception ex) { throw new ClipboxExtentionException(nameof(flowExtention.OnShowPreviewWindowRequested), flowExtention.GetType(), ex); }
+                try { flowExtention.OnShowQuickViewWindowRequested( destWindowInfo, ref cancel); }
+                catch (Exception ex) { throw new ClipboxExtentionException(nameof(flowExtention.OnShowQuickViewWindowRequested), flowExtention.GetType(), ex); }
                 // if any of the extentions says that we should not show the window, set the flag to true
                 if (cancel)
                 {

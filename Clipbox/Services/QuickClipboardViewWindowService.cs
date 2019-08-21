@@ -8,20 +8,17 @@ using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.Views;
 using Clipbox.Win32;
-using Clipbox.Win32.Native;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows;
 using System.Windows.Interop;
-using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace Clipbox.Services
 {
-    public class QuickClipboardViewWindowService : IQuickClipboardViewWindowService, IDisposable
+    public class QuickClipboardViewWindowService : ClipboardViewWindowServiceBase, IQuickClipboardViewWindowService, IDisposable
     {
         private NonFocusableInteractiveWindow _quickViewWindow;
 
@@ -44,9 +41,6 @@ namespace Clipbox.Services
 
         public QuickClipboardViewWindowService(QuickViewClipboardContents previewControl, ISettingsService settingsService)
         {
-            _selectedItemIds = new List<string>();
-            _selectedMultiItemIds = new Dictionary<string, ReadOnlyCollection<int>>();
-            _parameters = new Dictionary<string, string>();
             _settingsService = settingsService;
 
             _quickViewWindow = new NonFocusableInteractiveWindow
@@ -126,7 +120,7 @@ namespace Clipbox.Services
 
         private void _previewControl_SelectionChanged(object sender, SelectionEventArgs e)
         {
-            SelectionChanged?.Invoke(this, e);
+            base.InvokeSelectionChangedEvent(e);
         }
 
         public bool IsWindowVisible
@@ -134,37 +128,6 @@ namespace Clipbox.Services
             get
             {
                 return _quickViewWindow.IsVisible;
-            }
-        }
-
-        private Dictionary<string, string> _parameters;
-        public IReadOnlyDictionary<string, string> Parameters
-        {
-            get
-            {
-                return _parameters;
-            }
-        }
-        
-        public event EventHandler<SelectionEventArgs> SelectionChanged;
-
-        private List<string> _selectedItemIds;
-
-        public IReadOnlyList<string> SelectedItemIds
-        {
-            get
-            {
-                return _selectedItemIds.AsReadOnly();
-            }
-        }
-
-        private Dictionary<string, ReadOnlyCollection<int>> _selectedMultiItemIds;
-
-        public IReadOnlyDictionary<string, ReadOnlyCollection<int>> SelectedMultiItemsIds
-        {
-            get
-            {
-                return new ReadOnlyDictionary<string, ReadOnlyCollection<int>>(_selectedMultiItemIds);
             }
         }
 
@@ -183,16 +146,11 @@ namespace Clipbox.Services
                 _quickViewWindow.SizeChanged -= _quickViewWindow_SizeChanged;
                 _quickViewWindow.Shown -= _quickViewWindow_Shown;
 
-                _selectedItemIds.Clear();
-                _selectedItemIds.AddRange(_previewControl.SelectedItemIds);
-                _selectedMultiItemIds.Clear();
-                _selectedMultiItemIds = _previewControl.SelectedMultiItemsIds.ToDictionary(x => x.Key, y => y.Value.AsReadOnly());
-                _parameters.Clear();
-                foreach (var option in _previewControl.Parameters)
-                {
-                    _parameters.Add(option.Key, option.Value);
-                }
-
+                SelectedItemIds.Clear();
+                SelectedItemIds.AddRange(_previewControl.SelectedItemIds);
+                SelectedMultiItemIds.Clear();
+                SelectedMultiItemIds = _previewControl.SelectedMultiItemsIds.ToDictionary(x => x.Key, y => y.Value.AsReadOnly());
+                
                 // clear the state of the control and its collections
                 _previewControl.ResumeDefaultState();
 
@@ -279,9 +237,9 @@ namespace Clipbox.Services
             return t.Transform(p);
         }
 
-        public IEnumerable<IFlowParameter> GetParameters()
+        public override IReadOnlyList<IFlowParameter> GetFlowParameters()
         {
-            return _previewControl.GetParameters();
+            return _previewControl.GetFlowParameters();
         }
 
         public void SaveChangedSettings()

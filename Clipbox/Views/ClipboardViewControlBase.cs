@@ -54,7 +54,6 @@ namespace Clipbox.Views
             _settingsService = settingsService;
             _loadedExtentions = new List<UIExtention>();
             _localExtentionSettings = new Dictionary<string, string>();
-            Parameters = new Dictionary<string, string>();
             SelectedItemIds = new List<string>();
             SelectedMultiItemsIds = new Dictionary<string, List<int>>();
         }
@@ -94,7 +93,7 @@ namespace Clipbox.Views
             }
         }
 
-        public IEnumerable<IFlowParameter> GetParameters()
+        public IReadOnlyList<IFlowParameter> GetFlowParameters()
         {
             var parameters = _loadedExtentions.SelectMany(ext => ext.GetAllParameters());
             var distinctParametersByKey = parameters.GroupBy(p => p.Key).Select(gr => gr.First());
@@ -104,7 +103,7 @@ namespace Clipbox.Views
                 throw new InvalidOperationException("There are two UIExtention parameters with the same key");
             }
             
-            return parameters;
+            return parameters.ToList().AsReadOnly();
         }
 
         public void ClearParameters()

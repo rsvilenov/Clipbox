@@ -16,34 +16,34 @@ namespace Clipbox
 {
     public class FlowController : IDisposable
     {
-        IClipboardManager _clipboardManager;
+        private readonly IClipboardManager _clipboardManager;
+        private readonly ILowLevelKeyboardService _keyboardService;
+        private readonly IQuickClipboardViewWindowService _quickViewWindowService;
+        private readonly IMainClipboardViewWindowService _mainViewWindowService;
+        private readonly IFlowExtentionExecutorService _flowExtentionExecutorService;
 
-        ILowLevelKeyboardService _keyboardService;
+        private readonly System.Timers.Timer _longCtrlVTimer;
 
-        IQuickClipboardViewWindowService _previewWindowService;
+        private bool _hasCtrlVBeenPreviouslyPressed = false;
+        private bool _hasQuickViewWindowShowingBeenRequested = false;
 
-        IFlowExtentionExecutorService _flowExtentionExecutorService;
-        
-        System.Timers.Timer _longCtrlVTimer;
-        
-        bool _hasCtrlVBeenPreviouslyPressed = false;
-
-        bool _hasViewWindowShowingBeenRequested = false;
-
-        IEnumerable<IFlowParameter> _parametersFromPreviewWindowService;
+        private IEnumerable<IFlowParameter> _parametersFromQuickViewWindowService;
 
         public FlowController(IClipboardManager clipboardManager, 
             ILowLevelKeyboardService keyboardService,
             IFlowExtentionExecutorService flowExtentionExecutorService, 
-            IQuickClipboardViewWindowService previewWindowService)
+            IQuickClipboardViewWindowService quickViewWindowService,
+            IMainClipboardViewWindowService mainViewWindowService)
         {
             _clipboardManager = clipboardManager;
             _keyboardService = keyboardService;
             _flowExtentionExecutorService = flowExtentionExecutorService;
-            _previewWindowService = previewWindowService;
-            _previewWindowService.SelectionChanged += _previewWindowService_SelectionChanged;
+            _quickViewWindowService = quickViewWindowService;
+            _mainViewWindowService = mainViewWindowService;
 
-            _parametersFromPreviewWindowService = Enumerable.Empty<IFlowParameter>();
+            _quickViewWindowService.SelectionChanged += _quickViewWindowService_SelectionChanged;
+
+            _parametersFromQuickViewWindowService = Enumerable.Empty<IFlowParameter>();
 
             _clipboardManager.ItemFetching += _clipboardManager_ItemFetching;
 
@@ -60,7 +60,7 @@ namespace Clipbox
             _keyboardService.VKeyUp += _keyboardListener_VKeyUp;
         }
 
-        private void _previewWindowService_SelectionChanged(object sender, SelectionEventArgs e)
+        private void _quickViewWindowService_SelectionChanged(object sender, SelectionEventArgs e)
         {
 
             IEnumerable<IClipboardItem> selectedItems = e.SelectedItemIds.Select(id => _clipboardManager.GetClipboardItem(id, restoreShrinked: false));
@@ -116,7 +116,7 @@ namespace Clipbox
             _longCtrlVTimer.Stop();
 
             // if the preview window has not been activated, ensure the normal behavior of Ctrl+V
-            if (_hasCtrlVBeenPreviouslyPressed && !_previewWindowService.IsWindowVisible && !_hasViewWindowShowingBeenRequested)
+            if (_hasCtrlVBeenPreviouslyPressed && !_quickViewWindowService.IsWindowVisible && !_hasQuickViewWindowShowingBeenRequested)
             {
                 Task.Run(new Action(() =>
                 {
@@ -133,10 +133,10 @@ namespace Clipbox
 
             _longCtrlVTimer.Stop();
 
-            if (_previewWindowService.IsWindowVisible)
+            if (_quickViewWindowService.IsWindowVisible)
             {
-                Debug.WriteLine("Closing preview window");
-                ClosePreviewWindow();
+                Debug.WriteLine("Closing quick view window");
+                CloseQuickViewWindow();
 
                 // do not hold the hook for long - we may get unhooked by Windows
                 Task.Run(new Action(() =>
@@ -156,7 +156,7 @@ namespace Clipbox
 
         private void _longCtrlVTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            RequestOpenPreviewWindow();
+            RequestOpenQuickViewWindow();
         }
 
         private void _keyboardListener_CtrlVHotkeyDown(object sender, System.ComponentModel.CancelEventArgs e)
@@ -167,46 +167,46 @@ namespace Clipbox
             _hasCtrlVBeenPreviouslyPressed = true;
 
            
-            if (_previewWindowService.IsWindowVisible)
+            if (_quickViewWindowService.IsWindowVisible)
             {
-                FocusNextItemInPreviewWindow();
+                FocusNextItemInQuickViewWindow();
             }
-            else if (!_hasViewWindowShowingBeenRequested)
+            else if (!_hasQuickViewWindowShowingBeenRequested)
             {
                 _longCtrlVTimer.Start();
             }
         }
 
-        private void RequestOpenPreviewWindow()
+        private void RequestOpenQuickViewWindow()
         {
             bool cancel = false;
-            _hasViewWindowShowingBeenRequested = true;
-            _flowExtentionExecutorService.OnShowPreviewWindowRequestedMethods(ref cancel);
+            _hasQuickViewWindowShowingBeenRequested = true;
+            _flowExtentionExecutorService.OnShowQuickViewWindowRequestedMethods(ref cancel);
             if (!cancel)
             {
                 // TODO: housekeeping here will slow us down
                 PerformHouseKeeping();
-                _previewWindowService.ShowQuickClipboardViewWindow();
+                _quickViewWindowService.ShowQuickClipboardViewWindow();
             }
         }
 
-        private void ClosePreviewWindow()
+        private void CloseQuickViewWindow()
         {
             // hide the preview window
-            _previewWindowService.HideQuickClipboardViewWindow();
-            _hasViewWindowShowingBeenRequested = false;
-            _parametersFromPreviewWindowService = _previewWindowService.GetParameters();
-            _previewWindowService.SaveChangedSettings();
+            _quickViewWindowService.HideQuickClipboardViewWindow();
+            _hasQuickViewWindowShowingBeenRequested = false;
+            _parametersFromQuickViewWindowService = _quickViewWindowService.GetFlowParameters();
+            _quickViewWindowService.SaveChangedSettings();
         }
 
-        private void FocusNextItemInPreviewWindow()
+        private void FocusNextItemInQuickViewWindow()
         {
-            _previewWindowService.FocusNextItem();
+            _quickViewWindowService.FocusNextItem();
         }
         
         private void DoPasteOperation(out bool pasteCancelled)
         {
-            if (!_previewWindowService.SelectedItemIds.Any() && !_previewWindowService.SelectedMultiItemsIds.Any())
+            if (!_quickViewWindowService.GetSelectedItemIds().Any() && !_quickViewWindowService.GetSelectedMultiItemsIds().Any())
             {
                 pasteCancelled = true;
                 return;
@@ -214,17 +214,17 @@ namespace Clipbox
 
             _flowExtentionExecutorService.ClearParameters();
 
-            IEnumerable<IClipboardItem> selectedItems = _previewWindowService.SelectedItemIds.Select(id => _clipboardManager.GetClipboardItem(id, restoreShrinked: true));
+            IEnumerable<IClipboardItem> selectedItems = _quickViewWindowService.GetSelectedItemIds().Select(id => _clipboardManager.GetClipboardItem(id, restoreShrinked: true));
 
-            if (_previewWindowService.SelectedMultiItemsIds.Any())
+            if (_quickViewWindowService.GetSelectedMultiItemsIds().Any())
             {
-                IEnumerable<IClipboardItem> selecteMultiItems = _previewWindowService.SelectedMultiItemsIds.Keys.Select(id => _clipboardManager.GetClipboardItem(id, restoreShrinked: true));
+                IEnumerable<IClipboardItem> selecteMultiItems = _quickViewWindowService.GetSelectedMultiItemsIds().Keys.Select(id => _clipboardManager.GetClipboardItem(id, restoreShrinked: true));
                 selectedItems = selectedItems.Concat(selecteMultiItems);
 
                 var multiItemSelectionParamDictionary = new Dictionary<string, int[]>();
                 foreach (IClipboardItem multiItem in selecteMultiItems)
                 {
-                    int[] selectedIds = _previewWindowService.SelectedMultiItemsIds.First(x => x.Key == multiItem.Id).Value.ToArray();
+                    int[] selectedIds = _quickViewWindowService.GetSelectedMultiItemsIds().First(x => x.Key == multiItem.Id).Value.ToArray();
                     multiItemSelectionParamDictionary.Add(multiItem.Id, selectedIds);
                 }
 
@@ -232,14 +232,14 @@ namespace Clipbox
                 _flowExtentionExecutorService.LoadParameters(new List<IFlowParameter> { multiItemsParameter });
             }
 
-            _flowExtentionExecutorService.LoadParameters(_parametersFromPreviewWindowService);
+            _flowExtentionExecutorService.LoadParameters(_parametersFromQuickViewWindowService);
 
             IClipboardItem currentItem = null;
 
             bool forceRemoveOnEnd = false;
 
             bool canModify = _flowExtentionExecutorService.RunOnQueryModifyMethods(selectedItems);
-            if (!canModify && _previewWindowService.SelectedMultiItemsIds.Any())
+            if (!canModify && _quickViewWindowService.GetSelectedMultiItemsIds().Any())
             {
                 throw new InvalidOperationException("Multi-selection items were found for which there are no flow extentions.");
             }

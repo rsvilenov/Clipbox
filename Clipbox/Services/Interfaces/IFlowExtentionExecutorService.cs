@@ -7,7 +7,7 @@ namespace Clipbox.Services.Interfaces
 {
     public interface IFlowExtentionExecutorService
     {
-        void OnShowPreviewWindowRequestedMethods(ref bool cancelShow);
+        void OnShowQuickViewWindowRequestedMethods(ref bool cancelShow);
 
         void RunOnCopyRequestedMethods(IWindowInfo sourceWindowInfo, ref bool cancelStoreToItemList);
 

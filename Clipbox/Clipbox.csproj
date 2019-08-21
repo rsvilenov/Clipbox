@@ -84,6 +84,7 @@
     <Compile Include="FailureInfo.cs" />
     <Compile Include="GlobalConstants.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Services\ClipboardViewWindowServiceBase.cs" />
     <Compile Include="Services\CloudSynchronizationService.cs" />
     <Compile Include="Services\DataObjects\CalibratedPreviewDimentionInfo.cs" />
     <Compile Include="Services\DataObjects\PreviewDataTransferObject.cs" />
@@ -94,6 +95,7 @@
     <Compile Include="Services\EventArgsClasses\SelectionEventArgs.cs" />
     <Compile Include="Services\EventArgsClasses\SettingsEventArgs.cs" />
     <Compile Include="Services\Interfaces\IClipboardListenerService.cs" />
+    <Compile Include="Services\Interfaces\IClipboardViewWindowServiceBase.cs" />
     <Compile Include="Services\Interfaces\ICloudSynchronizationService.cs" />
     <Compile Include="Services\Interfaces\IFlowExtentionExecutorService.cs" />
     <Compile Include="Services\Interfaces\ILowLevelKeyboardService.cs" />
