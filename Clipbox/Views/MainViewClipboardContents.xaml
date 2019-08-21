@@ -164,8 +164,7 @@
                                     MinWidth="100"
                                     MinHeight="80"
                                     Margin="5"
-                                    Background="Transparent"
-                                    BorderBrush="White"
+                                    BorderBrush="Transparent"
                                     BorderThickness="1"
                                     SnapsToDevicePixels="True">
 
@@ -179,7 +178,7 @@
                                         <MultiTrigger.Conditions>
                                             <Condition Property="IsMouseOver" Value="True" />
                                         </MultiTrigger.Conditions>
-                                        <Setter TargetName="Bd" Property="BorderBrush" Value="DarkGray" />
+                                        <Setter TargetName="Bd" Property="BorderBrush" Value="White" />
                                     </MultiTrigger>
                                     <MultiDataTrigger>
                                         <MultiDataTrigger.Conditions>
