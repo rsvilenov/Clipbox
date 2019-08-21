@@ -60,6 +60,14 @@ namespace Clipbox.ViewModels.BindableObjects
             get { return _isViewItemLoaded; }
             set { SetField(ref _isViewItemLoaded, value); }
         }
+        
+        private bool _isSelected;
+
+        public bool IsSelected
+        {
+            get { return _isSelected; }
+            set { SetField(ref _isSelected, value); }
+        }
 
         private ClipboardViewItemDimensionInfo _dimensionInfo;
 

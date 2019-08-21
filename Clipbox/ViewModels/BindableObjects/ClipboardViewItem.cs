@@ -67,14 +67,6 @@ namespace Clipbox.ViewModels.BindableObjects
             set { SetField(ref _clipboardItemId, value); }
         }
 
-        private bool _isSelected;
-
-        public bool IsSelected
-        {
-            get { return _isSelected; }
-            set { SetField(ref _isSelected, value); }
-        }
-
         private bool _markAsUnselectable;
 
         public bool MarkAsUnselectable

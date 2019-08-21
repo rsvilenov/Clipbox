@@ -312,7 +312,7 @@ namespace Clipbox.Views
                 .Items
                 .Cast<ClipboardViewItemWrapper>())
             {
-                item.ViewItem.IsSelected = false;
+                item.IsSelected = false;
             }
 
             SelectedItemIds.Clear();
@@ -321,7 +321,7 @@ namespace Clipbox.Views
 
             foreach (ClipboardViewItemWrapper item in selectedItems)
             {
-                item.ViewItem.IsSelected = true;
+                item.IsSelected = true;
             }
 
             _uiExtentionContainer.Children.Clear();
@@ -333,7 +333,7 @@ namespace Clipbox.Views
             ClipboardViewItemWrapper lastSelectedItem = _mainListView.SelectedItems.Cast<ClipboardViewItemWrapper>().LastOrDefault();
             if (lastSelectedItem != null)
             {
-                lastSelectedItem.ViewItem.IsSelected = true;
+                lastSelectedItem.IsSelected = true;
             }
 
 #if DEBUG
@@ -373,10 +373,10 @@ namespace Clipbox.Views
             SelectedMultiItemsIds.Remove(mainViewItem.ClipboardItemId);
             if (selectedItems.Any())
             {
-                if (mainViewItem.IsSelected)
+                if (mainViewItemWrapper.IsSelected)
                 {
                     _mainListView.SelectedItems.Remove(mainViewItemWrapper);
-                    mainViewItem.IsSelected = false;
+                    mainViewItemWrapper.IsSelected = false;
                 }
 
                 SelectedMultiItemsIds.Add(mainViewItem.ClipboardItemId, selectedIndices.ToList());
