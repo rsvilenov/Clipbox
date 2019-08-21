@@ -12,6 +12,7 @@ using Clipbox.ViewModels.BindableObjects;
 using Clipbox.Views.ClipboardViewItemTile;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows;
@@ -78,6 +79,11 @@ namespace Clipbox.Views
 
         private void ClipboardViewControlBase_Loaded(object sender, RoutedEventArgs e)
         {
+            if (DesignerProperties.GetIsInDesignMode(this))
+            {
+                return;
+            }
+
             _mainListView = GetMainListView();
             if (_mainListView == null)
             {
