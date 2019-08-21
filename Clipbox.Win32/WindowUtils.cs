@@ -64,7 +64,10 @@ namespace Clipbox.Win32
         private static IntPtr GetClassLongPtr(IntPtr hWnd, int nIndex)
         {
             if (IntPtr.Size == 4)
-                return new IntPtr((long)User32.GetClassLong32(hWnd, nIndex));
+                // IntPtr constructor on 32 systems uses checked int, but GetClassLong32 returns uint and OverflowException occurs.
+                // A workaround was found in this commit https://github.com/WernerWenz/opentk/commit/d9e05bec4551973c59aa55ef4ec363d4923e08d4
+                // which was mentioned in this discussion of the .NET Core project: https://github.com/dotnet/coreclr/issues/4062
+                return (IntPtr)unchecked((int)(User32.GetClassLong32(hWnd, nIndex)));
             else
                 return User32.GetClassLong64(hWnd, nIndex);
         }

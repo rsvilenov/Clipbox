@@ -55,7 +55,14 @@ namespace Clipbox.ViewModels
                 };
             }
 
-            viewItem.SourceWindowIcon = BitmapSourceFromBitmapByteArray(clipboardItem.Source.SourceWindowInfo.Icon);
+            if (clipboardItem.Source.SourceWindowInfo.Icon != null)
+            {
+                viewItem.SourceWindowIcon = BitmapSourceFromBitmapByteArray(clipboardItem.Source.SourceWindowInfo.Icon);
+            }
+            else
+            {
+                // TODO: show a defalt icon here
+            }
             viewItem.SourceWindowCaption = clipboardItem.Source.SourceWindowInfo.Caption;
             viewItem.DateCreated = new DateTime(clipboardItem.EntryDateTicks);
             viewItem.DateModified = new DateTime(clipboardItem.ModifiedDateTicks);

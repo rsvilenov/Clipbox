@@ -407,7 +407,7 @@ namespace Clipbox.ExtendedClipboard
             {
                 windowInfo.ApplicationPath = wInfo.ApplicationPath;
                 windowInfo.Caption = wInfo.Caption;
-                windowInfo.Icon = wInfo.Icon.ToByteArray();
+                windowInfo.Icon = wInfo.Icon?.ToByteArray();
             }
 
             return windowInfo;
