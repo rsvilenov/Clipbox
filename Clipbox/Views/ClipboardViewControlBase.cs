@@ -448,6 +448,7 @@ namespace Clipbox.Views
             if (!_disposedValue)
             {
                 _uiExtentionGenerationSlidingTimer.Dispose();
+                _mainListView.SelectionChanged -= _mainListView_SelectionChanged;
                 _disposedValue = true;
             }
         }

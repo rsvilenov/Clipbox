@@ -4,6 +4,7 @@ using Clipbox.Infrastructure.UI.DataObjects;
 using Clipbox.Infrastructure.UI.ExtentionMethods;
 using Clipbox.Infrastructure.UI.Theme;
 using Clipbox.Infrastructure.UI.Windows;
+using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.Settings.Enums;
@@ -38,6 +39,8 @@ namespace Clipbox.Views
         private IClipboardManager _clipboardManager;
         private UIExtentionContainer _uiExtContainer;
 
+        public event EventHandler<SelectionEventArgs> ClipboardItemSelectionChanged;
+
         public MainWindow(IClipboardManager clipboardManager,
             IPreviewGenerationService previewGenerationService,
             UIExtentionContainer uiExtContainer,
@@ -58,6 +61,8 @@ namespace Clipbox.Views
 
             _mainViewClipboardContents = new MainViewClipboardContents(new ViewModels.MainViewClipboardContentsViewModel(_clipboardManager, previewGenerationService, _settingsService), _uiExtContainer, settingsService);
             clipboardContents.Content = _mainViewClipboardContents;
+
+            _mainViewClipboardContents.SelectionChanged += _mainViewClipboardContents_SelectionChanged;
 
             _backgroundRenderMode = (MainClipboardViewBackgroundRenderMode)_settingsService.GetSetting<int>(SettingsKeys.MainClipboardViewBackgroundRenderMode);
 
@@ -90,6 +95,11 @@ namespace Clipbox.Views
 
             Closing += MainWindow_Closing;
             Shown += MainWindow_Shown;
+        }
+
+        private void _mainViewClipboardContents_SelectionChanged(object sender, Services.EventArgsClasses.SelectionEventArgs e)
+        {
+            ClipboardItemSelectionChanged?.Invoke(this, e);
         }
 
         private void MainWindow_Shown(object sender, EventArgs e)

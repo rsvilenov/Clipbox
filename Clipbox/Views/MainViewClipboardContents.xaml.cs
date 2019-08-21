@@ -285,10 +285,12 @@ namespace Clipbox.Views
             MainListView.Visibility = Visibility.Visible;
         }
 
-        public void Dispose()
+        protected override void Dispose(bool disposing)
         {
             _layoutSlidingTimer.Dispose();
             _scrollbarValueChangedSlidingTimer.Dispose();
+
+            base.Dispose(disposing);
         }
 
         ~MainViewClipboardContents()

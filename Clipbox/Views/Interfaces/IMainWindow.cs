@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using Clipbox.Services.EventArgsClasses;
+using System;
+using System.Windows;
 
 namespace Clipbox.Views.Interfaces
 {
@@ -9,5 +11,7 @@ namespace Clipbox.Views.Interfaces
         bool IsLoaded { get; }
         bool IsVisible { get; }
         event RoutedEventHandler Loaded;
+
+        event EventHandler<SelectionEventArgs> ClipboardItemSelectionChanged;
     }
 }

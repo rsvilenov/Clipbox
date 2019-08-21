@@ -59,6 +59,8 @@ namespace Clipbox.Services
             Application.Current.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background,
                 new Action(() =>
                 {
+                    _mainWindow.ClipboardItemSelectionChanged -= MainWindow_ClipboardItemSelectionChanged;
+
                     _mainWindow.Close();
                     //_mainWindow.Close();
                     _mainWindow = null;
@@ -88,6 +90,8 @@ namespace Clipbox.Services
                         dm);
                     _mainWindow = mainWindow;
 
+                    _mainWindow.ClipboardItemSelectionChanged += MainWindow_ClipboardItemSelectionChanged;    
+
                     mainWindow.ScaleMode = resizeToDpi ? DpiScaleMode.Custom : DpiScaleMode.None;
                     
                     mainWindow.SetMonitorDimensions(new MonitorDimensions
@@ -99,6 +103,11 @@ namespace Clipbox.Services
                     
                     _mainWindow.Show();
                 }));
+        }
+
+        private void MainWindow_ClipboardItemSelectionChanged(object sender, EventArgsClasses.SelectionEventArgs e)
+        {
+            base.RaiseSelectionChangedEvent(e);
         }
 
         private bool ShouldResizeToDpi()
