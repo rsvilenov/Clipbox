@@ -51,6 +51,11 @@ namespace Clipbox.Views
 
         private string _lastSelectedItemId;
 
+        private bool _areLastSelectedItemsCombinable;
+        
+        private List<MultiItem> _loadedMultiItems;
+
+
         public double ClipboardViewItemMaxHeight
         {
             get { return (double)GetValue(ClipboardViewItemHeightProperty); }
@@ -87,6 +92,8 @@ namespace Clipbox.Views
             _uiExtentionGenerationSlidingTimer.IntervalMs = 200d;
             _uiExtentionGenerationSlidingTimer.Elapsed += _uiExtentionGenerationSlidingTimer_Elapsed;
 
+            _loadedMultiItems = new List<MultiItem>();
+
             Loaded += ClipboardViewControlBase_Loaded;
         }
 
@@ -121,9 +128,15 @@ namespace Clipbox.Views
             if (lastSelectedItem != null && lastSelectedItem.ViewItem is ClipboardViewItem)
             {
                 _lastSelectedItemId = lastSelectedItem.ViewItem.ClipboardItemId;
+                
             }
-
+            
             PerformOnSelectedChangedOpreations();
+
+            if (lastSelectedItem != null)
+            {
+                OnItemsSelectionChanged();
+            }
         }
         
         private void _uiExtentionGenerationSlidingTimer_Elapsed(object sender, EventArgs e)
@@ -295,6 +308,15 @@ namespace Clipbox.Views
         protected virtual void OnClipboardViewItemMaxHeightChanged()
         { }
 
+        protected virtual void OnSelectedItemsCombinabilityChanged(SelectedItemsCombinabilityArgs args)
+        { }
+
+        protected virtual void OnSubItemsSelectionChanged()
+        { }
+
+        protected virtual void OnItemsSelectionChanged()
+        { }
+
         protected void PerformOnSelectedChangedOpreations()
         {
             System.Diagnostics.Debug.WriteLine("SelectionChanged");
@@ -310,16 +332,48 @@ namespace Clipbox.Views
             // MainListView.Items.CurrentChanging would have been of great help in cancelling the selection, but unfortunately we cannot use it here.
             var allSelectedItemIds = selectedItems.Select(item => item.Id).Union(SelectedMultiItemsIds.Keys);
             SelectionChangedEventAnswer eventAnswer = RaiseSelectionChangedEvent(allSelectedItemIds);
+
+            bool areSelectedItemsCompatible = true;
             if (allSelectedItemIds.Count() > 1 && !eventAnswer.AreItemsCombinable)
             {
-                ClipboardViewItemWrapper latestSelectedItem = _mainListView
-                    .Items
-                    .Cast<ClipboardViewItemWrapper>()
-                    .Single(item => item.Id == _lastSelectedItemId);
+                
                 //if (latestSelectedItem is ClipboardViewItemGroup == false)
                 {
-                    CancelSelectionWithMessage(latestSelectedItem, "Incompatible items.");
+                    areSelectedItemsCompatible = false;
+                }
+            }
+            
+            if (areSelectedItemsCompatible != _areLastSelectedItemsCombinable)
+            {
+                SelectedItemsCombinabilityArgs args = new SelectedItemsCombinabilityArgs
+                {
+                    AreItemsCombinable = areSelectedItemsCompatible
+                };
+
+                OnSelectedItemsCombinabilityChanged(args);
+
+                if (args.CancelLastSelection)
+                {
+                    ClipboardViewItemWrapper latestSelectedItem = _mainListView
+                        .Items
+                        .Cast<ClipboardViewItemWrapper>()
+                        .Single(item => item.Id == _lastSelectedItemId);
+
+                    Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, (Action)(() =>
+                    {
+                        if (latestSelectedItem != null)
+                        {
+                            _mainListView.SelectedItems.Remove(latestSelectedItem);
+
+                            // trigger the animation which shows that the item cannot be selected
+                            latestSelectedItem.ViewItem.SignalThatItemIsUnselectable();
+                        }
+                    }));
                     return;
+                }
+                else
+                {
+                    _areLastSelectedItemsCombinable = areSelectedItemsCompatible;
                 }
             }
             
@@ -408,17 +462,35 @@ namespace Clipbox.Views
             var selectedItemsPlusMainItem = mainListViewSelectedItems.Select(item => item.Id)
                 .Concat(new List<string> { mainViewItem.ClipboardItemId });
 
+            bool areSelectedItemsCombinable = true;
             SelectionChangedEventAnswer eventAnswer = RaiseSelectionChangedEvent(selectedItemsPlusMainItem);
             if (selectedItemsPlusMainItem.Count() > 1 && !eventAnswer.AreItemsCombinable)
             {
-                Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, (Action)(() =>
+                areSelectedItemsCombinable = false;
+            }
+
+            if (areSelectedItemsCombinable != _areLastSelectedItemsCombinable)
+            {
+                SelectedItemsCombinabilityArgs args = new SelectedItemsCombinabilityArgs
                 {
-                    CancelSelectionWithMessage(mainViewItemWrapper, "Incompatible items.");
-                    
-                    multiItemListView.UnselectAll();
-                    SelectedMultiItemsIds.Remove(mainViewItem.ClipboardItemId);
-                }));
-                return;
+                    AreItemsCombinable = areSelectedItemsCombinable
+                };
+
+                OnSelectedItemsCombinabilityChanged(args);
+
+                if (args.CancelLastSelection)
+                {
+                    Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, (Action)(() =>
+                    {
+                        multiItemListView.UnselectAll();
+                        SelectedMultiItemsIds.Remove(mainViewItem.ClipboardItemId);
+                    }));
+                    return;
+                }
+                else
+                {
+                    _areLastSelectedItemsCombinable = areSelectedItemsCombinable;
+                }
             }
 
             foreach (ClipboardViewSubItemBase item in selectedItems)
@@ -431,6 +503,7 @@ namespace Clipbox.Views
             }
 
             UpdateAreAnyItemsSelected();
+            OnSubItemsSelectionChanged();
         }
 
         private void UpdateAreAnyItemsSelected()
@@ -438,14 +511,29 @@ namespace Clipbox.Views
             AreAnyItemsSelected = SelectedItemIds.Any() || SelectedMultiItemsIds.Any();
         }
 
-        protected void MultiItem_Unloaded(object sender, RoutedEventArgs e)
+        private void MultiItem_Loaded(object sender, RoutedEventArgs e)
+        {
+            _loadedMultiItems.Add((MultiItem)sender);
+        }
+
+        private void MultiItem_Unloaded(object sender, RoutedEventArgs e)
         {
             MultiItem multiItem = (MultiItem)sender;
 
             multiItem.SubItems_SelectionChanged -= MultiItem_SubItems_SelectionChanged;
             multiItem.Unloaded -= MultiItem_Unloaded;
+            multiItem.Loaded -= MultiItem_Loaded;
+
+            _loadedMultiItems.Remove(multiItem);
         }
 
+        protected void UnselectMultiItemSubItems()
+        {
+            foreach (MultiItem multiItem in _loadedMultiItems)
+            {
+                multiItem.GetSubItemsListView()?.UnselectAll();
+            }
+        }
 
         protected abstract ListView GetMainListView();
 
@@ -471,5 +559,12 @@ namespace Clipbox.Views
             }
         }
         #endregion
+
+        protected class SelectedItemsCombinabilityArgs
+        {
+            public bool AreItemsCombinable { get; set; }
+
+            public bool CancelLastSelection { get; set; }
+        }
     }
 }

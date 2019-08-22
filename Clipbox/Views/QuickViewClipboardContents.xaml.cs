@@ -120,25 +120,19 @@ namespace Clipbox.Views
         public override void ResumeDefaultState()
         {
             MainListView.UnselectAll();
+            UnselectMultiItemSubItems();
             _viewModel.SelectedClipboardViewItemWrappers.Clear();
             SelectedItemIds.Clear();
             SelectedMultiItemsIds.Clear();
         }
 
-        public override void CancelSelectionWithMessage(ClipboardViewItemWrapper item, string message)
+        protected override void OnSelectedItemsCombinabilityChanged(SelectedItemsCombinabilityArgs args)
         {
-            Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, (Action)(() =>
+            if (!args.AreItemsCombinable)
             {
-                if (item != null)
-                {
-                    MainListView.SelectedItems.Remove(item);
-
-                    // trigger the animation which shows that the item cannot be selected
-                    item.ViewItem.SignalThatItemIsUnselectable();
-
-                    ShowErrorTextTemporarily(message, 500);
-                }
-            }));
+                ShowErrorTextTemporarily("Incompatible items.", 1000);
+                args.CancelLastSelection = true;
+            }
         }
 
         private void ShowErrorTextTemporarily(string text, int visibleMilliseconds)

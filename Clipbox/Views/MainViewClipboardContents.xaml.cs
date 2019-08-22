@@ -5,6 +5,7 @@ using Clipbox.Services.Interfaces;
 using Clipbox.ViewModels;
 using Clipbox.ViewModels.BindableObjects;
 using Clipbox.Views.ClipboardViewItemTile;
+using Clipbox.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -326,6 +327,24 @@ namespace Clipbox.Views
         protected override Panel GetUIExtentionContainer()
         {
             return new WrapPanel();
+        }
+
+        protected override void OnSubItemsSelectionChanged()
+        {
+            //if (!KeyboardUtils.IsKeyPressed(Win32.Native.NativeEnums.Keys.LeftControl)
+            //    && !KeyboardUtils.IsKeyPressed(Win32.Native.NativeEnums.Keys.RightContol))
+            //{
+            //    MainListView.UnselectAll();
+            //}
+        }
+
+        protected override void OnItemsSelectionChanged()
+        {
+            //if (!KeyboardUtils.IsKeyPressed(Win32.Native.NativeEnums.Keys.LeftControl)
+            //    && !KeyboardUtils.IsKeyPressed(Win32.Native.NativeEnums.Keys.RightContol))
+            //{
+            //    UnselectMultiItemSubItems();
+            //}
         }
     }
 }

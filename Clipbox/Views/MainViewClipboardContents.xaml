@@ -32,8 +32,10 @@
         </ResourceDictionary>
 
         <Style x:Key="MultiItemStyleForSubItems_EventTriggersStyle" TargetType="{x:Type tile:MultiItem}">
+            <EventSetter Event="SubItems_SelectionChanged" Handler="MultiItem_SubItems_SelectionChanged" />
             <EventSetter Event="SubItems_SubItemsFocusMovedOut" Handler="MultiItem_SubItems_SubItemsFocusMovedOut" />
             <EventSetter Event="Unloaded" Handler="MultiItem_Unloaded" />
+            <EventSetter Event="Loaded" Handler="MultiItem_Loaded" />
         </Style>
     </UserControl.Resources>
     <Grid>
