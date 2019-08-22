@@ -6,6 +6,7 @@
     xmlns:coreConv="clr-namespace:Clipbox.Infrastructure.UI.Converters;assembly=Clipbox.Infrastructure.UI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:infBeh="clr-namespace:Clipbox.Infrastructure.UI.Behaviors;assembly=Clipbox.Infrastructure.UI"
     xmlns:local="clr-namespace:Clipbox.Views"
     xmlns:localBeh="clr-namespace:Clipbox.Behaviors"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -39,6 +40,10 @@
         </Style>
     </UserControl.Resources>
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
         <Grid.Resources>
             <Storyboard x:Key="FadeInItem">
                 <DoubleAnimation
@@ -48,6 +53,37 @@
                     Duration="0:0:2.0" />
             </Storyboard>
         </Grid.Resources>
+
+        <Grid Grid.Row="0" Margin="10,15,10,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <WrapPanel
+                x:Name="uiExtentionContainer"
+                Grid.Column="0"
+                Height="35"
+                Panel.ZIndex="99">
+                <i:Interaction.Behaviors>
+                    <infBeh:FrameworkElementDpiScalingBehavior />
+                </i:Interaction.Behaviors>
+            </WrapPanel>
+            <TextBlock
+                Name="ErrorTextBlock"
+                Grid.Column="0"
+                Height="35"
+                Margin="15,0,0,0"
+                VerticalAlignment="Center"
+                Panel.ZIndex="100"
+                Background="Transparent"
+                FontSize="16"
+                Foreground="White"
+                Visibility="Collapsed">
+                <i:Interaction.Behaviors>
+                    <infBeh:FrameworkElementDpiScalingBehavior />
+                </i:Interaction.Behaviors>
+            </TextBlock>
+        </Grid>
 
         <!--
             This listview should scroll its contents by physical units instead of logical ones,

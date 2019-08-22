@@ -326,7 +326,7 @@ namespace Clipbox.Views
 
         protected override Panel GetUIExtentionContainer()
         {
-            return new WrapPanel();
+            return uiExtentionContainer;
         }
 
         protected override void OnSubItemsSelectionChanged()
@@ -335,6 +335,32 @@ namespace Clipbox.Views
 
         protected override void OnItemsSelectionChanged()
         {
+        }
+
+        protected override void OnSelectedItemsCombinabilityChanged(SelectedItemsCombinabilityArgs args)
+        {
+            if (!args.AreItemsCombinable)
+            {
+                ShowErrorText("Incompatible items.");
+            }
+            else
+            {
+                ClearErrorText();
+            }
+        }
+
+        private void ShowErrorText(string text)
+        {
+            uiExtentionContainer.Visibility = Visibility.Collapsed;
+            ErrorTextBlock.Visibility = Visibility.Visible;
+            ErrorTextBlock.Text = text;
+        }
+
+        private void ClearErrorText()
+        {
+            uiExtentionContainer.Visibility = Visibility.Visible;
+            ErrorTextBlock.Visibility = Visibility.Collapsed;
+            ErrorTextBlock.Text = null;
         }
     }
 }
