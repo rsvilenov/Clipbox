@@ -72,6 +72,7 @@
     <Compile Include="Behaviors\FrameworkElementDisableClickBehavior.cs" />
     <Compile Include="Behaviors\ListViewScrollButtonBehavior.cs" />
     <Compile Include="Behaviors\ListViewScrollTransferFocusBehavior.cs" />
+    <Compile Include="Behaviors\ListViewItemUnselectOnClickBehavior.cs" />
     <Compile Include="Behaviors\ScrollButtonBehavior.cs" />
     <Compile Include="Behaviors\ScrollViewerScrollButtonsBehavior.cs" />
     <Compile Include="Behaviors\ListViewGroupingBehavior.cs" />

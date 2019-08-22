@@ -231,6 +231,10 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <ContentControl HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                        <i:Interaction.Behaviors>
+                            <localBeh:ListViewItemUnselectOnClickBehavior />
+                        </i:Interaction.Behaviors>
+
                         <ContentControl.Style>
                             <Style TargetType="{x:Type ContentControl}">
                                 <Style.Triggers>
