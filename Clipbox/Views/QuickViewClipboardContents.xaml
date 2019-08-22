@@ -600,7 +600,9 @@
                 VerticalAlignment="Stretch"
                 Click="ButtonClearItems_Click"
                 Command="{Binding ClearClipboardEntries}"
-                Style="{DynamicResource BtnTrash}">
+                IsEnabled="{Binding Path=AreAnyItemsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}, Converter={StaticResource InverseBooleanConverter}}"
+                Style="{DynamicResource BtnTrash}"
+                Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <i:Interaction.Behaviors>
                     <infBeh:FrameworkElementDpiScalingBehavior />
                 </i:Interaction.Behaviors>

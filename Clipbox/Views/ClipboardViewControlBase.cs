@@ -60,7 +60,20 @@ namespace Clipbox.Views
         public static readonly DependencyProperty ClipboardViewItemHeightProperty =
             DependencyProperty.Register(nameof(ClipboardViewItemMaxHeight), typeof(double), typeof(ClipboardViewControlBase), new PropertyMetadata(0d));
 
+
+
+
+        public bool AreAnyItemsSelected
+        {
+            get { return (bool)GetValue(AreAnyItemsSelectedProperty); }
+            set { SetValue(AreAnyItemsSelectedProperty, value); }
+        }
         
+        public static readonly DependencyProperty AreAnyItemsSelectedProperty =
+            DependencyProperty.Register(nameof(AreAnyItemsSelected), typeof(bool), typeof(ClipboardViewControlBase), new PropertyMetadata(false));
+
+
+
         public ClipboardViewControlBase(UIExtentionContainer container, ISettingsService settingsService)
         {
             _container = container;
@@ -338,6 +351,8 @@ namespace Clipbox.Views
                 lastSelectedItem.IsSelected = true;
             }
 
+            UpdateAreAnyItemsSelected();
+
 #if DEBUG
             GC.Collect();
             GC.WaitForPendingFinalizers();
@@ -414,6 +429,13 @@ namespace Clipbox.Views
                     subItem.IsSelected = true;
                 }
             }
+
+            UpdateAreAnyItemsSelected();
+        }
+
+        private void UpdateAreAnyItemsSelected()
+        {
+            AreAnyItemsSelected = SelectedItemIds.Any() || SelectedMultiItemsIds.Any();
         }
 
         protected void MultiItem_Unloaded(object sender, RoutedEventArgs e)
