@@ -10,6 +10,7 @@ using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.ViewModels.BindableObjects;
 using Clipbox.Views.ClipboardViewItemTile;
+using Clipbox.Win32;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -133,10 +134,18 @@ namespace Clipbox.Views
             
             PerformOnSelectedChangedOpreations();
 
+            // if we select a main item and we are not hoding Ctrl down,
+            // then we should unselect every subitem which is selected.
             if (lastSelectedItem != null)
             {
-                OnItemsSelectionChanged();
+                if (!KeyboardUtils.IsKeyPressed(Win32.Native.NativeEnums.Keys.LeftControl)
+                && !KeyboardUtils.IsKeyPressed(Win32.Native.NativeEnums.Keys.RightContol))
+                {
+                    UnselectMultiItemSubItems();
+                }
             }
+
+            OnItemsSelectionChanged();
         }
         
         private void _uiExtentionGenerationSlidingTimer_Elapsed(object sender, EventArgs e)
@@ -500,6 +509,15 @@ namespace Clipbox.Views
                 {
                     subItem.IsSelected = true;
                 }
+            }
+
+            // if we are not holding Ctrl down, then upon selection of a subitem,
+            // we should unselect every main item which is selected.
+            if (!KeyboardUtils.IsKeyPressed(Win32.Native.NativeEnums.Keys.LeftControl)
+                && !KeyboardUtils.IsKeyPressed(Win32.Native.NativeEnums.Keys.RightContol)
+                && selectedItems.Any())
+            {
+                _mainListView.UnselectAll();
             }
 
             UpdateAreAnyItemsSelected();

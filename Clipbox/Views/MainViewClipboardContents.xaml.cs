@@ -331,20 +331,10 @@ namespace Clipbox.Views
 
         protected override void OnSubItemsSelectionChanged()
         {
-            //if (!KeyboardUtils.IsKeyPressed(Win32.Native.NativeEnums.Keys.LeftControl)
-            //    && !KeyboardUtils.IsKeyPressed(Win32.Native.NativeEnums.Keys.RightContol))
-            //{
-            //    MainListView.UnselectAll();
-            //}
         }
 
         protected override void OnItemsSelectionChanged()
         {
-            //if (!KeyboardUtils.IsKeyPressed(Win32.Native.NativeEnums.Keys.LeftControl)
-            //    && !KeyboardUtils.IsKeyPressed(Win32.Native.NativeEnums.Keys.RightContol))
-            //{
-            //    UnselectMultiItemSubItems();
-            //}
         }
     }
 }
