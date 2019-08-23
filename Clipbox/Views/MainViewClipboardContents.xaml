@@ -54,36 +54,57 @@
             </Storyboard>
         </Grid.Resources>
 
-        <Grid Grid.Row="0" Margin="10,15,10,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <WrapPanel
-                x:Name="uiExtentionContainer"
-                Grid.Column="0"
-                Height="35"
-                Panel.ZIndex="99">
-                <i:Interaction.Behaviors>
-                    <infBeh:FrameworkElementDpiScalingBehavior />
-                </i:Interaction.Behaviors>
-            </WrapPanel>
-            <TextBlock
-                Name="ErrorTextBlock"
-                Grid.Column="0"
-                Height="35"
-                Margin="15,0,0,0"
-                VerticalAlignment="Center"
-                Panel.ZIndex="100"
-                Background="Transparent"
-                FontSize="16"
-                Foreground="White"
-                Visibility="Collapsed">
-                <i:Interaction.Behaviors>
-                    <infBeh:FrameworkElementDpiScalingBehavior />
-                </i:Interaction.Behaviors>
-            </TextBlock>
-        </Grid>
+        <Border Grid.Row="0">
+            <Border.Background>
+                <SolidColorBrush Opacity="0.6" Color="{DynamicResource TaskbarColor}" />
+            </Border.Background>
+
+            <Grid Margin="10,15,10,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <WrapPanel
+                    x:Name="uiExtentionContainer"
+                    Grid.Column="0"
+                    Height="35"
+                    VerticalAlignment="Center"
+                    Panel.ZIndex="99">
+                    <i:Interaction.Behaviors>
+                        <infBeh:FrameworkElementDpiScalingBehavior />
+                    </i:Interaction.Behaviors>
+                </WrapPanel>
+                <TextBlock
+                    Name="ErrorTextBlock"
+                    Grid.Column="0"
+                    Height="35"
+                    Margin="15,0,0,0"
+                    VerticalAlignment="Center"
+                    Panel.ZIndex="100"
+                    Background="Transparent"
+                    FontSize="16"
+                    Foreground="White"
+                    Visibility="Collapsed">
+                    <i:Interaction.Behaviors>
+                        <infBeh:FrameworkElementDpiScalingBehavior />
+                    </i:Interaction.Behaviors>
+                </TextBlock>
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <!--  vertical separator  -->
+                    <Rectangle
+                        Width="1"
+                        Margin="10,5,10,5"
+                        VerticalAlignment="Stretch"
+                        Stroke="DarkGray" />
+                    <Button
+                        Height="32"
+                        VerticalAlignment="Top"
+                        Style="{DynamicResource SetToClipboardButton}" />
+                </StackPanel>
+
+            </Grid>
+        </Border>
 
         <!--
             This listview should scroll its contents by physical units instead of logical ones,
