@@ -1,4 +1,5 @@
-﻿using Clipbox.ExtendedClipboard.Interfaces;
+﻿using Clipbox.Core.Extensibility.Contracts;
+using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.Extensibility.Containers;
 using Clipbox.Infrastructure.UI.DataObjects;
 using Clipbox.Infrastructure.UI.ExtentionMethods;
@@ -12,6 +13,7 @@ using Clipbox.Views.Interfaces;
 using Clipbox.Win32;
 using Clipbox.Win32.Native;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
@@ -41,6 +43,8 @@ namespace Clipbox.Views
 
         public event EventHandler<SelectionEventArgs> ClipboardItemSelectionChanged;
 
+        public event EventHandler<CombinabilityEventArgs> ClipbardItemsCombinabilityCheckRequested;
+
         public MainWindow(IClipboardManager clipboardManager,
             IPreviewGenerationService previewGenerationService,
             UIExtentionContainer uiExtContainer,
@@ -63,6 +67,7 @@ namespace Clipbox.Views
             clipboardContents.Content = _mainViewClipboardContents;
 
             _mainViewClipboardContents.SelectionChanged += _mainViewClipboardContents_SelectionChanged;
+            _mainViewClipboardContents.CombinabilityCheckRequested += _mainViewClipboardContents_CombinabilityCheckRequested;
 
             _backgroundRenderMode = (MainClipboardViewBackgroundRenderMode)_settingsService.GetSetting<int>(SettingsKeys.MainClipboardViewBackgroundRenderMode);
 
@@ -95,6 +100,11 @@ namespace Clipbox.Views
 
             Closing += MainWindow_Closing;
             Shown += MainWindow_Shown;
+        }
+
+        private void _mainViewClipboardContents_CombinabilityCheckRequested(object sender, CombinabilityEventArgs e)
+        {
+            ClipbardItemsCombinabilityCheckRequested?.Invoke(this, e);
         }
 
         private void _mainViewClipboardContents_SelectionChanged(object sender, Services.EventArgsClasses.SelectionEventArgs e)
@@ -244,6 +254,11 @@ namespace Clipbox.Views
         private void Button_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        public IReadOnlyList<IFlowParameter> GetFlowParameters()
+        {
+            return _mainViewClipboardContents.GetFlowParameters();
         }
     }
     

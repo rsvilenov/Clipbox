@@ -30,7 +30,9 @@ namespace Clipbox.Views
         public Dictionary<string, List<int>> SelectedMultiItemsIds { get; protected set; }
 
         public event EventHandler<SelectionEventArgs> SelectionChanged;
-        
+
+        public event EventHandler<CombinabilityEventArgs> CombinabilityCheckRequested;
+
         private UIExtentionContainer _container;
 
         private ISettingsService _settingsService;
@@ -273,29 +275,7 @@ namespace Clipbox.Views
 
         public virtual void FocusNextItem()
         { }
-
-
-        protected SelectionChangedEventAnswer RaiseSelectionChangedEvent(IEnumerable<string> selectedItems)
-        {
-            var eventArgs = new SelectionEventArgs
-            {
-                SelectedItemIds = selectedItems
-            };
-
-            SelectionChanged?.Invoke(this, eventArgs);
-
-            return new SelectionChangedEventAnswer(eventArgs.AreItemsCombinable);
-        }
-
-        protected class SelectionChangedEventAnswer
-        {
-            public SelectionChangedEventAnswer(bool areItemsCompatible)
-            {
-                AreItemsCombinable = areItemsCompatible;
-            }
-
-            public bool AreItemsCombinable { get; }
-        }
+        
 
         private void SetCurrentDisplayHeight(MonitorDimensions monitorDimensions)
         {
@@ -354,25 +334,23 @@ namespace Clipbox.Views
             // Due to the fact that we raise the selection and click events programmatically, we are limited to using MainListView_SelectionChanged.
             // MainListView.Items.CurrentChanging would have been of great help in cancelling the selection, but unfortunately we cannot use it here.
             var allSelectedItemIds = selectedItems.Select(item => item.Id).Union(SelectedMultiItemsIds.Keys);
-            SelectionChangedEventAnswer eventAnswer = RaiseSelectionChangedEvent(allSelectedItemIds);
 
-            bool areSelectedItemsCompatible = true;
-            if (allSelectedItemIds.Count() > 1 && !eventAnswer.AreItemsCombinable)
-            {
-                
-                //if (latestSelectedItem is ClipboardViewItemGroup == false)
-                {
-                    areSelectedItemsCompatible = false;
-                }
-            }
+            var combinabilityEventArgs = new CombinabilityEventArgs(selectedItems.Select(item => item.Id).ToList(), SelectedMultiItemsIds);
             
+            SelectionChanged?.Invoke(this, combinabilityEventArgs);
+            
+            bool areSelectedItemsCompatible = true;
+
+            if (combinabilityEventArgs.SelectedItemIds.Union(combinabilityEventArgs.SelectedMultiItemIds.Keys).Count() > 1)
+            {
+                CombinabilityCheckRequested?.Invoke(this, combinabilityEventArgs);
+                areSelectedItemsCompatible = combinabilityEventArgs.AreItemsCombinable;
+            }
+
             if (areSelectedItemsCompatible != _areLastSelectedItemsCombinable)
             {
-                SelectedItemsCombinabilityArgs args = new SelectedItemsCombinabilityArgs
-                {
-                    AreItemsCombinable = areSelectedItemsCompatible
-                };
-
+                SelectedItemsCombinabilityArgs args = new SelectedItemsCombinabilityArgs(areSelectedItemsCompatible);
+                
                 OnSelectedItemsCombinabilityChanged(args);
 
                 if (args.CancelLastSelection)
@@ -482,24 +460,23 @@ namespace Clipbox.Views
 
             //// Due to the fact that we raise the selection and click events programmatically, we are limited to using MainListView_SelectionChanged.
             //// MainListView.Items.CurrentChanging would have been of great help in cancelling the selection, but unfortunately we cannot use it here.
-
-            var selectedItemsPlusMainItem = mainListViewSelectedItems.Select(item => item.Id)
-                .Concat(new List<string> { mainViewItem.ClipboardItemId });
-
+            
             bool areSelectedItemsCombinable = true;
-            SelectionChangedEventAnswer eventAnswer = RaiseSelectionChangedEvent(selectedItemsPlusMainItem);
-            if (selectedItemsPlusMainItem.Count() > 1 && !eventAnswer.AreItemsCombinable)
-            {
-                areSelectedItemsCombinable = false;
-            }
 
+            var combinabilityEventArgs = new CombinabilityEventArgs(mainListViewSelectedItems.Select(item => item.Id).ToList(), SelectedMultiItemsIds);
+
+            SelectionChanged?.Invoke(this, combinabilityEventArgs);
+            
+            if (combinabilityEventArgs.SelectedItemIds.Union(combinabilityEventArgs.SelectedMultiItemIds.Keys).Count() > 1)
+            {
+                CombinabilityCheckRequested?.Invoke(this, combinabilityEventArgs);
+                areSelectedItemsCombinable = combinabilityEventArgs.AreItemsCombinable;
+            }
+            
             if (areSelectedItemsCombinable != _areLastSelectedItemsCombinable)
             {
-                SelectedItemsCombinabilityArgs args = new SelectedItemsCombinabilityArgs
-                {
-                    AreItemsCombinable = areSelectedItemsCombinable
-                };
-
+                SelectedItemsCombinabilityArgs args = new SelectedItemsCombinabilityArgs(areSelectedItemsCombinable);
+                
                 OnSelectedItemsCombinabilityChanged(args);
 
                 if (args.CancelLastSelection)
@@ -595,7 +572,12 @@ namespace Clipbox.Views
 
         protected class SelectedItemsCombinabilityArgs
         {
-            public bool AreItemsCombinable { get; set; }
+            public SelectedItemsCombinabilityArgs(bool areItemsCombinable)
+            {
+                AreItemsCombinable = areItemsCombinable;
+            }
+
+            public bool AreItemsCombinable { get; }
 
             public bool CancelLastSelection { get; set; }
         }

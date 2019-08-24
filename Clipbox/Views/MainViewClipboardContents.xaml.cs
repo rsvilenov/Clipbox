@@ -362,11 +362,7 @@ namespace Clipbox.Views
 
         private void SetToClipboardButton_Click(object sender, RoutedEventArgs e)
         {
-            SetItemsToClipboardRequested?.Invoke(this, new SelectionEventArgs
-            {
-                SelectedItemIds = SelectedItemIds,
-
-            });
+            SetItemsToClipboardRequested?.Invoke(this, new SelectionEventArgs(SelectedItemIds, SelectedMultiItemsIds));
         }
     }
 }

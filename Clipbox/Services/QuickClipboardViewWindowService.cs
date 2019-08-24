@@ -76,6 +76,7 @@ namespace Clipbox.Services
             _sizeChangedSligingTimer.Elapsed += _sizeChangedSligingTimer_Elapsed;
 
             _previewControl.SelectionChanged += _previewControl_SelectionChanged;
+            _previewControl.CombinabilityCheckRequested += _previewControl_CombinabilityCheckRequested;
 
             PreloadQuickViewWindow();
 
@@ -121,6 +122,11 @@ namespace Clipbox.Services
         private void _previewControl_SelectionChanged(object sender, SelectionEventArgs e)
         {
             base.RaiseSelectionChangedEvent(e);
+        }
+        
+        private void _previewControl_CombinabilityCheckRequested(object sender, CombinabilityEventArgs e)
+        {
+            base.RaiseCombinabilityCheckRequestedEvent(e);
         }
 
         public bool IsWindowVisible
@@ -250,6 +256,8 @@ namespace Clipbox.Services
         public void Dispose()
         {
             _sizeChangedSligingTimer.Dispose();
+            _previewControl.SelectionChanged -= _previewControl_SelectionChanged;
+            _previewControl.CombinabilityCheckRequested -= _previewControl_CombinabilityCheckRequested;
         }
     }
 }

@@ -93,6 +93,8 @@
     <Compile Include="Services\DataObjects\PreviewDimensions.cs" />
     <Compile Include="Services\DataObjects\PreviewItemTransferObject.cs" />
     <Compile Include="Services\Enums\TrayIconVisibilityPreference.cs" />
+    <Compile Include="Services\EventArgsClasses\CombinabilityEventArgs.cs" />
+    <Compile Include="Services\EventArgsClasses\PasteRequestedEventArgs.cs" />
     <Compile Include="Services\EventArgsClasses\SelectionEventArgs.cs" />
     <Compile Include="Services\EventArgsClasses\SettingsEventArgs.cs" />
     <Compile Include="Services\Interfaces\IClipboardListenerService.cs" />

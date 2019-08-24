@@ -1,18 +1,17 @@
-﻿using System;
+﻿using Clipbox.Core.Extensibility.Contracts;
+using Clipbox.ExtendedClipboard.Interfaces;
+using Clipbox.Infrastructure.Extensibility.Containers;
+using Clipbox.Infrastructure.UI.DataObjects;
+using Clipbox.Infrastructure.UI.Windows.Enums;
 using Clipbox.Services.Interfaces;
+using Clipbox.Settings;
 using Clipbox.Views;
+using Clipbox.Views.Interfaces;
 using Clipbox.Win32;
+using System;
+using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Threading;
-using Clipbox.Views.Interfaces;
-using Clipbox.ExtendedClipboard.Interfaces;
-using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
-using Clipbox.Infrastructure.Extensibility.Containers;
-using Clipbox.Settings;
-using Clipbox.Infrastructure.UI.Windows.Enums;
-using Clipbox.Infrastructure.UI.DataObjects;
-using Clipbox.Core.Extensibility.Contracts;
-using System.Collections.Generic;
 
 namespace Clipbox.Services
 {
@@ -60,6 +59,8 @@ namespace Clipbox.Services
                 new Action(() =>
                 {
                     _mainWindow.ClipboardItemSelectionChanged -= MainWindow_ClipboardItemSelectionChanged;
+                    _mainWindow.ClipbardItemsCombinabilityCheckRequested -= _mainWindow_ClipbardItemsCombinabilityCheckRequested;
+
 
                     _mainWindow.Close();
                     //_mainWindow.Close();
@@ -90,7 +91,8 @@ namespace Clipbox.Services
                         dm);
                     _mainWindow = mainWindow;
 
-                    _mainWindow.ClipboardItemSelectionChanged += MainWindow_ClipboardItemSelectionChanged;    
+                    _mainWindow.ClipboardItemSelectionChanged += MainWindow_ClipboardItemSelectionChanged;
+                    _mainWindow.ClipbardItemsCombinabilityCheckRequested += _mainWindow_ClipbardItemsCombinabilityCheckRequested;
 
                     mainWindow.ScaleMode = resizeToDpi ? DpiScaleMode.Custom : DpiScaleMode.None;
                     
@@ -105,6 +107,11 @@ namespace Clipbox.Services
                 }));
         }
 
+        private void _mainWindow_ClipbardItemsCombinabilityCheckRequested(object sender, EventArgsClasses.CombinabilityEventArgs e)
+        {
+            base.RaiseCombinabilityCheckRequestedEvent(e);
+        }
+
         private void MainWindow_ClipboardItemSelectionChanged(object sender, EventArgsClasses.SelectionEventArgs e)
         {
             base.RaiseSelectionChangedEvent(e);
@@ -117,7 +124,7 @@ namespace Clipbox.Services
 
         public override IReadOnlyList<IFlowParameter> GetFlowParameters()
         {
-            throw new NotImplementedException();
+            return _mainWindow.GetFlowParameters();
         }
     }
 }

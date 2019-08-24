@@ -40,9 +40,9 @@ namespace Clipbox
             _flowExtentionExecutorService = flowExtentionExecutorService;
             _quickViewWindowService = quickViewWindowService;
             _mainViewWindowService = mainViewWindowService;
-
-            _quickViewWindowService.SelectionChanged += _clipboardViewWindowService_SelectionChanged;
-            _mainViewWindowService.SelectionChanged += _clipboardViewWindowService_SelectionChanged;
+            
+            _quickViewWindowService.CombinabilityCheckRequested += _clipboardViewWindowService_CombinabilityCheckRequested;
+            _mainViewWindowService.CombinabilityCheckRequested += _clipboardViewWindowService_CombinabilityCheckRequested;
 
             _parametersFromQuickViewWindowService = Enumerable.Empty<IFlowParameter>();
 
@@ -61,7 +61,7 @@ namespace Clipbox
             _keyboardService.VKeyUp += _keyboardListener_VKeyUp;
         }
 
-        private void _clipboardViewWindowService_SelectionChanged(object sender, SelectionEventArgs e)
+        private void _clipboardViewWindowService_CombinabilityCheckRequested(object sender, CombinabilityEventArgs e)
         {
             IEnumerable<IClipboardItem> selectedItems = e.SelectedItemIds.Select(id => _clipboardManager.GetClipboardItem(id, restoreShrinked: false));
 

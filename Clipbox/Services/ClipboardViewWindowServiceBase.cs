@@ -38,6 +38,13 @@ namespace Clipbox.Services
         {
             SelectionChanged?.Invoke(this, args);
         }
+        
+        public event EventHandler<CombinabilityEventArgs> CombinabilityCheckRequested;
+
+        protected void RaiseCombinabilityCheckRequestedEvent(CombinabilityEventArgs args)
+        {
+            CombinabilityCheckRequested?.Invoke(this, args);
+        }
 
         public abstract IReadOnlyList<IFlowParameter> GetFlowParameters();
     }

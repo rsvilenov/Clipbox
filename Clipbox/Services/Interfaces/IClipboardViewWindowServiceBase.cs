@@ -18,5 +18,7 @@ namespace Clipbox.Services.Interfaces
         IReadOnlyDictionary<string, ReadOnlyCollection<int>> GetSelectedMultiItemsIds();
 
         event EventHandler<SelectionEventArgs> SelectionChanged;
+
+        event EventHandler<CombinabilityEventArgs> CombinabilityCheckRequested;
     }
 }
