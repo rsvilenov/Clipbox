@@ -21,7 +21,7 @@ namespace Clipbox.ExtendedClipboard.Interfaces
 
         void ClearSystemClipboard();
 
-        void RemoveClipboardItem(string id, bool beSilent = false);
+        void RemoveClipboardItem(string id, bool beSilent = false, bool removeFromSystemClipboard = false);
 
         void SetCurrentItem(string id);
         

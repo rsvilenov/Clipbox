@@ -1,4 +1,7 @@
-﻿namespace Clipbox.Services.Interfaces
+﻿using Clipbox.Services.EventArgsClasses;
+using System;
+
+namespace Clipbox.Services.Interfaces
 {
     public interface IMainClipboardViewWindowService : IClipboardViewWindowServiceBase
     {
@@ -7,5 +10,7 @@
         void Close();
 
         bool IsOpen { get; }
+
+        event EventHandler<SelectionEventArgs> SetItemsToClipboardRequested;
     }
 }

@@ -154,7 +154,7 @@ namespace Clipbox.ExtendedClipboard
         /// Remove a clipboard item
         /// </summary>
         /// <param name="item"></param>
-        public void RemoveClipboardItem(string id, bool beSilent = false)
+        public void RemoveClipboardItem(string id, bool beSilent = false, bool removeFromSystemClipboard = false)
         {
             ClipboardItem item = null;
 
@@ -167,7 +167,8 @@ namespace Clipbox.ExtendedClipboard
                 }
 
                 _clipboardItems.Remove(item);
-                if (item.Id == _currentItemId)
+
+                if (removeFromSystemClipboard && item.Id == _currentItemId)
                 {
                     ClearSystemClipboard();
                 }

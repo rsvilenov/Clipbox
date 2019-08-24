@@ -43,6 +43,7 @@ namespace Clipbox
             
             _quickViewWindowService.CombinabilityCheckRequested += _clipboardViewWindowService_CombinabilityCheckRequested;
             _mainViewWindowService.CombinabilityCheckRequested += _clipboardViewWindowService_CombinabilityCheckRequested;
+            _mainViewWindowService.SetItemsToClipboardRequested += _mainViewWindowService_SetItemsToClipboardRequested;
 
             _parametersFromQuickViewWindowService = Enumerable.Empty<IFlowParameter>();
 
@@ -59,6 +60,11 @@ namespace Clipbox
             _keyboardService.CtrlVHotkeyDown += _keyboardListener_CtrlVHotkeyDown;
             _keyboardService.ControlKeyUp += _keyboardListener_ControlKeyUp;
             _keyboardService.VKeyUp += _keyboardListener_VKeyUp;
+        }
+
+        private void _mainViewWindowService_SetItemsToClipboardRequested(object sender, SelectionEventArgs e)
+        {
+            //throw new NotImplementedException();
         }
 
         private void _clipboardViewWindowService_CombinabilityCheckRequested(object sender, CombinabilityEventArgs e)
@@ -290,7 +296,7 @@ namespace Clipbox
 
             if (removeItemFromClipboardItemsRequested || forceRemoveOnEnd)
             {
-                _clipboardManager.RemoveClipboardItem(currentItem.Id, beSilent: true);
+                _clipboardManager.RemoveClipboardItem(currentItem.Id, beSilent: true, removeFromSystemClipboard: true);
             }
 
             PerformHouseKeeping();

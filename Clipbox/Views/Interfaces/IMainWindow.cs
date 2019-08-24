@@ -20,5 +20,7 @@ namespace Clipbox.Views.Interfaces
         event EventHandler<SelectionEventArgs> ClipboardItemSelectionChanged;
 
         event EventHandler<CombinabilityEventArgs> ClipbardItemsCombinabilityCheckRequested;
+
+        event EventHandler<SelectionEventArgs> SetItemsToClipboardRequested;
     }
 }

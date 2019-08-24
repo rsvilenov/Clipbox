@@ -3,6 +3,7 @@ using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.Extensibility.Containers;
 using Clipbox.Infrastructure.UI.DataObjects;
 using Clipbox.Infrastructure.UI.Windows.Enums;
+using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.Views;
@@ -26,6 +27,8 @@ namespace Clipbox.Services
         private IPreviewGenerationService _previewGenerationService;
 
         private UIExtentionContainer _uiExtContainer;
+
+        public event EventHandler<SelectionEventArgs> SetItemsToClipboardRequested;
 
         public bool IsOpen
         {
@@ -60,7 +63,7 @@ namespace Clipbox.Services
                 {
                     _mainWindow.ClipboardItemSelectionChanged -= MainWindow_ClipboardItemSelectionChanged;
                     _mainWindow.ClipbardItemsCombinabilityCheckRequested -= _mainWindow_ClipbardItemsCombinabilityCheckRequested;
-
+                    _mainWindow.SetItemsToClipboardRequested -= _mainWindow_SetItemsToClipboardRequested;
 
                     _mainWindow.Close();
                     //_mainWindow.Close();
@@ -93,6 +96,7 @@ namespace Clipbox.Services
 
                     _mainWindow.ClipboardItemSelectionChanged += MainWindow_ClipboardItemSelectionChanged;
                     _mainWindow.ClipbardItemsCombinabilityCheckRequested += _mainWindow_ClipbardItemsCombinabilityCheckRequested;
+                    _mainWindow.SetItemsToClipboardRequested += _mainWindow_SetItemsToClipboardRequested;
 
                     mainWindow.ScaleMode = resizeToDpi ? DpiScaleMode.Custom : DpiScaleMode.None;
                     
@@ -105,6 +109,11 @@ namespace Clipbox.Services
                     
                     _mainWindow.Show();
                 }));
+        }
+
+        private void _mainWindow_SetItemsToClipboardRequested(object sender, SelectionEventArgs e)
+        {
+            SetItemsToClipboardRequested?.Invoke(this, e);
         }
 
         private void _mainWindow_ClipbardItemsCombinabilityCheckRequested(object sender, EventArgsClasses.CombinabilityEventArgs e)
