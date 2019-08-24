@@ -64,43 +64,46 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <WrapPanel
-                    x:Name="uiExtentionContainer"
+                <StackPanel
                     Grid.Column="0"
                     Height="35"
-                    VerticalAlignment="Center"
-                    Panel.ZIndex="99">
+                    Orientation="Horizontal">
                     <i:Interaction.Behaviors>
                         <infBeh:FrameworkElementDpiScalingBehavior />
                     </i:Interaction.Behaviors>
-                </WrapPanel>
-                <TextBlock
-                    Name="ErrorTextBlock"
-                    Grid.Column="0"
-                    Height="35"
-                    Margin="15,0,0,0"
-                    VerticalAlignment="Center"
-                    Panel.ZIndex="100"
-                    Background="Transparent"
-                    FontSize="16"
-                    Foreground="White"
-                    Visibility="Collapsed">
-                    <i:Interaction.Behaviors>
-                        <infBeh:FrameworkElementDpiScalingBehavior />
-                    </i:Interaction.Behaviors>
-                </TextBlock>
+                    <WrapPanel
+                        x:Name="uiExtentionContainer"
+                        VerticalAlignment="Center"
+                        Panel.ZIndex="99"
+                        Visibility="{Binding Path=AreAnyUIExtensionsLoaded, RelativeSource={RelativeSource AncestorType={x:Type local:ClipboardViewControlBase}}, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <TextBlock
+                        Margin="15,0,0,0"
+                        VerticalAlignment="Center"
+                        Panel.ZIndex="100"
+                        Background="Transparent"
+                        FontSize="16"
+                        Foreground="White"
+                        IsEnabled="{Binding Path=AreSelectedItemsCombinable, RelativeSource={RelativeSource AncestorType={x:Type local:ClipboardViewControlBase}}, Converter={StaticResource InverseBooleanConverter}}"
+                        Text="Incompatible items."
+                        Visibility="{Binding Path=IsEnabled, RelativeSource={RelativeSource Mode=Self}, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal">
                     <!--  vertical separator  -->
                     <Rectangle
                         Width="1"
                         Margin="10,5,10,5"
                         VerticalAlignment="Stretch"
-                        Stroke="DarkGray" />
+                        Stroke="DarkGray"
+                        Visibility="{Binding ElementName=uiExtentionContainer, Path=Visibility}" />
+                </StackPanel>
+
+
+                <StackPanel Grid.Column="1" Orientation="Horizontal">
                     <Button
                         Height="32"
                         VerticalAlignment="Top"
-                        Style="{DynamicResource SetToClipboardButton}" />
+                        Style="{DynamicResource SetToClipboardButton}"
+                        Visibility="{Binding Path=AreSelectedItemsCombinable, RelativeSource={RelativeSource AncestorType={x:Type local:ClipboardViewControlBase}}, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
                 </StackPanel>
 
             </Grid>

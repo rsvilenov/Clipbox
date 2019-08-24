@@ -79,7 +79,20 @@ namespace Clipbox.Views
             DependencyProperty.Register(nameof(AreAnyItemsSelected), typeof(bool), typeof(ClipboardViewControlBase), new PropertyMetadata(false));
 
 
+        /// <summary>
+        /// Indicates whether we have ui extensions loaded. We cannot bind to uiExtensionContainer.Childern.Count because the
+        /// collection does not raise change notifications. Therefore we need this property.
+        /// </summary>
+        public bool AreAnyUIExtensionsLoaded
+        {
+            get { return (bool)GetValue(AreAnyUIExtensionsLoadedperty); }
+            set { SetValue(AreAnyUIExtensionsLoadedperty, value); }
+        }
+        
+        public static readonly DependencyProperty AreAnyUIExtensionsLoadedperty =
+            DependencyProperty.Register(nameof(AreAnyUIExtensionsLoaded), typeof(bool), typeof(ClipboardViewControlBase), new PropertyMetadata(false));
 
+        
         public ClipboardViewControlBase(UIExtentionContainer container, ISettingsService settingsService)
         {
             _container = container;
@@ -160,13 +173,14 @@ namespace Clipbox.Views
                 .ToList();
 
                 var allExtentions = GetExtentions(selectedClipboardItems);
-
                 foreach (var extention in allExtentions)
                 {
                     UIElement extentionUIElement = null;
                     extention.OnExtentionViewGenerating(selectedClipboardItems, ref extentionUIElement, new Size(_uiExtentionContainer.MaxWidth, _uiExtentionContainer.MaxHeight));
                     _uiExtentionContainer.Children.Add(extentionUIElement);
                 }
+                
+                AreAnyUIExtensionsLoaded = allExtentions.Any();
             }));
 
         }
@@ -403,6 +417,7 @@ namespace Clipbox.Views
             }
 
             _uiExtentionContainer.Children.Clear();
+            AreAnyUIExtensionsLoaded = false;
             if (selectedItems.Any())
             {
                 _uiExtentionGenerationSlidingTimer.Slide();

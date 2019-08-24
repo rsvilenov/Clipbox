@@ -34,7 +34,24 @@ namespace Clipbox.Views
         
         private int _lastListViewItemCount = 0;
         private Dictionary<string, GroupItem> _groupNameGroupItemMapping = new Dictionary<string, GroupItem>();
+
+
+
+        /// <summary>
+        /// This view is the only one that allows for selection of incompatible items,
+        /// so this property seem to belong here.
+        /// </summary>
+        public bool AreSelectedItemsCombinable
+        {
+            get { return (bool)GetValue(AreSelectedItemsCombinableProperty); }
+            set { SetValue(AreSelectedItemsCombinableProperty, value); }
+        }
         
+        public static readonly DependencyProperty AreSelectedItemsCombinableProperty =
+            DependencyProperty.Register(nameof(AreSelectedItemsCombinable), typeof(bool), typeof(MainViewClipboardContents), new PropertyMetadata(false));
+
+
+
         public MainViewClipboardContents(MainViewClipboardContentsViewModel vm, 
             UIExtentionContainer container, 
             ISettingsService settingsService)
@@ -339,28 +356,7 @@ namespace Clipbox.Views
 
         protected override void OnSelectedItemsCombinabilityChanged(SelectedItemsCombinabilityArgs args)
         {
-            if (!args.AreItemsCombinable)
-            {
-                ShowErrorText("Incompatible items.");
-            }
-            else
-            {
-                ClearErrorText();
-            }
-        }
-
-        private void ShowErrorText(string text)
-        {
-            uiExtentionContainer.Visibility = Visibility.Collapsed;
-            ErrorTextBlock.Visibility = Visibility.Visible;
-            ErrorTextBlock.Text = text;
-        }
-
-        private void ClearErrorText()
-        {
-            uiExtentionContainer.Visibility = Visibility.Visible;
-            ErrorTextBlock.Visibility = Visibility.Collapsed;
-            ErrorTextBlock.Text = null;
+            AreSelectedItemsCombinable = args.AreItemsCombinable;
         }
     }
 }
