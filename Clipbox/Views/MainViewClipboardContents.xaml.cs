@@ -1,6 +1,7 @@
 ﻿using Clipbox.Infrastructure.Extensibility.Containers;
 using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.Utils;
+using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Interfaces;
 using Clipbox.ViewModels;
 using Clipbox.ViewModels.BindableObjects;
@@ -35,7 +36,7 @@ namespace Clipbox.Views
         private int _lastListViewItemCount = 0;
         private Dictionary<string, GroupItem> _groupNameGroupItemMapping = new Dictionary<string, GroupItem>();
 
-
+        public event EventHandler<SelectionEventArgs> SetItemsToClipboardRequested;
 
         /// <summary>
         /// This view is the only one that allows for selection of incompatible items,
@@ -48,7 +49,7 @@ namespace Clipbox.Views
         }
         
         public static readonly DependencyProperty AreSelectedItemsCombinableProperty =
-            DependencyProperty.Register(nameof(AreSelectedItemsCombinable), typeof(bool), typeof(MainViewClipboardContents), new PropertyMetadata(false));
+            DependencyProperty.Register(nameof(AreSelectedItemsCombinable), typeof(bool), typeof(MainViewClipboardContents), new PropertyMetadata(true));
 
 
 
@@ -357,6 +358,15 @@ namespace Clipbox.Views
         protected override void OnSelectedItemsCombinabilityChanged(SelectedItemsCombinabilityArgs args)
         {
             AreSelectedItemsCombinable = args.AreItemsCombinable;
+        }
+
+        private void SetToClipboardButton_Click(object sender, RoutedEventArgs e)
+        {
+            SetItemsToClipboardRequested?.Invoke(this, new SelectionEventArgs
+            {
+                SelectedItemIds = SelectedItemIds,
+
+            });
         }
     }
 }
