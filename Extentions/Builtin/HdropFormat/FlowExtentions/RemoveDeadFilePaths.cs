@@ -5,13 +5,24 @@ using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Clipbox.Core.Extensibility.Enums;
 
 namespace Clipbox.Extentions.BuiltIn.HdropFormat.FlowExtentions
 {
     [ClipboxExtention]
     public class RemoveDeadFilePaths : FlowExtention
     {
-        public override IHouseKeepingResult OnHousekeepingPerformed(IClipboardItem item)
+        public override IHouseKeepingTask RegisterHousekeepingTask()
+        {
+            return new HouseKeepingTask
+            {
+                ClipboardFormat = "CF_HDROP",
+                RequiresRestoredState = true,
+                Regularity = HouseKeepingRegularity.UponViewClipboardContents
+            };
+        }
+
+        public override IHouseKeepingResult OnHousekeepingPerformed(IClipboardItem item, string clipboradFormat)
         {
             List<int> cdoIndicesToRemove = new List<int>();
             bool shouldRemoveItem = false;

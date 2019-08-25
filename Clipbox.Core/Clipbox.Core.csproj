@@ -46,6 +46,7 @@
     <Compile Include="ClipboardContent\Interfaces\IHaveMonitorInfo.cs" />
     <Compile Include="DisposableObject.cs" />
     <Compile Include="Enums\ClipboardContentClass.cs" />
+    <Compile Include="Extensibility\Enums\HouseKeepingRegularity.cs" />
     <Compile Include="Enums\ProcessExitCodes.cs" />
     <Compile Include="Extensibility\Attributes\ClipboardFormatAttribute.cs" />
     <Compile Include="Extensibility\Attributes\ClipioExtentionAttribute.cs" />
@@ -76,6 +77,7 @@
     <Compile Include="Extensibility\Contracts\IClipioExtention.cs" />
     <Compile Include="Extensibility\Contracts\IExtentionInfo.cs" />
     <Compile Include="Extensibility\Contracts\IHouseKeepingResult.cs" />
+    <Compile Include="Extensibility\Contracts\IHouseKeepingTask.cs" />
     <Compile Include="Extensibility\Contracts\IPreviewData.cs" />
     <Compile Include="Extensibility\Contracts\IWindowInfo.cs" />
     <Compile Include="Extensibility\Contracts\PreviewData\FilePreviewData.cs" />

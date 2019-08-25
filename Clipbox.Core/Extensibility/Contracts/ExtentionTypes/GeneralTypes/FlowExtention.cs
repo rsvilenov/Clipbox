@@ -3,6 +3,7 @@ using Clipbox.Core.ClipboardContent.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Clipbox.Core.Extensibility.Enums;
 
 namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes
 {
@@ -24,8 +25,20 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes
         /// Allows filtering of dead clipboard items (items which are no longer paste-able)
         /// </summary>
         /// <param name="items">A reference to a clipboard item</param>
+        /// <param name="clipboardFormat">The name of the clipboard format for which the housekeeping is requested</param>
         /// <returns>IHouseKeepingResult</returns>
-        public virtual IHouseKeepingResult OnHousekeepingPerformed(IClipboardItem item)
+        public virtual IHouseKeepingResult OnHousekeepingPerformed(IClipboardItem item, string clipboardFormat)
+        {
+            return null;
+        }
+
+        /// <summary>
+        /// Returns an IHouseKeepingTask object. This is required for
+        /// <see cref="OnHousekeepingPerformed"/> to be called.
+        /// </summary>
+        /// <param name="items">A reference to a clipboard item</param>
+        /// <returns>IHouseKeepingResult</returns>
+        public virtual IHouseKeepingTask RegisterHousekeepingTask()
         {
             return null;
         }
@@ -35,7 +48,7 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes
         /// </summary>
         /// <param name="items">A collection of items to combine</param>
         /// <returns>'True' if the items should be modified. If this method returns 'true', there should be
-        /// modification logic impelemted in OnPerformModifyRequested in the same extention.</returns>
+        /// modification logic impelemted in <see cref="OnPerformModifyRequested"/> in the same extention.</returns>
         public virtual bool OnQueryModify(IEnumerable<IClipboardItem> items)
         {
             return false;
@@ -140,6 +153,15 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes
             public bool ShouldRemoveItem { get; set; }
 
             public IEnumerable<int> ClipboardDataObjectsToRemove { get; set; }
+        }
+
+        protected class HouseKeepingTask : IHouseKeepingTask
+        {
+            public string ClipboardFormat { get; set; }
+
+            public bool RequiresRestoredState { get; set; }
+
+            public HouseKeepingRegularity Regularity { get; set; }
         }
     }
 }

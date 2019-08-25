@@ -17,7 +17,9 @@ namespace Clipbox.Services.Interfaces
 
         void RunOnOnCopyCompletedMethods(IClipboardItem currentClipboardItem);
 
-        IHouseKeepingResult RunOnHousekeepingPerformedMethods(IClipboardItem clipboardItem);
+        IReadOnlyCollection<IHouseKeepingTask> RunRegisterHousekeepingTaskMethods();
+
+        IHouseKeepingResult RunOnHousekeepingPerformedMethods(IHouseKeepingTask task, IClipboardItem clipboardItem);
 
         bool RunOnQueryModifyMethods(IEnumerable<IClipboardItem> items);
 

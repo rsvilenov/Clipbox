@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.ExceptionServices;
 using System.Security;
 
@@ -19,12 +20,15 @@ namespace Clipbox.Services
     {
         private List<FlowExtention> _flowExtentions;
 
+        private Dictionary<IHouseKeepingTask, FlowExtention> _housekeepingTasks;
+
         // TODO: find a better way to store the extention, which can perform the concatenation
         private FlowExtention _lastExtentionForModification;
 
         public FlowExtentionExecutorService(FlowExtentionContainer flowExtentionContainer)
         {
             InitializeFlowExtentions(flowExtentionContainer);
+            RunRegisterHousekeepingTaskMethods();
         }
 
         [SecurityCritical]
@@ -116,34 +120,54 @@ namespace Clipbox.Services
             }
         }
 
-        [SecurityCritical]
-        [HandleProcessCorruptedStateExceptions]
-        public IHouseKeepingResult RunOnHousekeepingPerformedMethods(IClipboardItem clipboardItem)
+        public IReadOnlyCollection<IHouseKeepingTask> RunRegisterHousekeepingTaskMethods()
         {
-            MergedHousekeepingResult mergedResult = new MergedHousekeepingResult();
+            _housekeepingTasks = new Dictionary<IHouseKeepingTask, FlowExtention>();
 
             foreach (var flowExtention in _flowExtentions)
             {
-                IHouseKeepingResult result = null;
-                try
+                IHouseKeepingTask hkTask = flowExtention.RegisterHousekeepingTask();
+                if (hkTask != null)
                 {
-                    result = flowExtention.OnHousekeepingPerformed(clipboardItem);
+                    _housekeepingTasks.Add(hkTask, flowExtention);
                 }
-                catch (Exception ex) { throw new ClipboxExtentionException(nameof(flowExtention.OnHousekeepingPerformed), flowExtention.GetType(), ex); }
+            }
 
-                if (result != null)
+            return _housekeepingTasks.Keys.ToList().AsReadOnly();
+        }
+
+        [SecurityCritical]
+        [HandleProcessCorruptedStateExceptions]
+        public IHouseKeepingResult RunOnHousekeepingPerformedMethods(IHouseKeepingTask task, IClipboardItem clipboardItem)
+        {
+            MergedHousekeepingResult mergedResult = new MergedHousekeepingResult();
+
+            if (!_housekeepingTasks.ContainsKey(task))
+            {
+                throw new KeyNotFoundException("The FlowExtension for this IHouseKeepingTask could not be found.");
+            }
+
+            FlowExtention flowExtention = _housekeepingTasks[task];
+
+            IHouseKeepingResult result = null;
+            try
+            {
+                result = flowExtention.OnHousekeepingPerformed(clipboardItem, task.ClipboardFormat);
+            }
+            catch (Exception ex) { throw new ClipboxExtentionException(nameof(flowExtention.OnHousekeepingPerformed), flowExtention.GetType(), ex); }
+
+            if (result != null)
+            {
+                if (result.ShouldRemoveItem)
                 {
-                    if (result.ShouldRemoveItem)
-                    {
-                        mergedResult.ShouldRemoveItem = true;
-                    }
+                    mergedResult.ShouldRemoveItem = true;
+                }
 
-                    if (result.ClipboardDataObjectsToRemove != null)
+                if (result.ClipboardDataObjectsToRemove != null)
+                {
+                    foreach (int index in result.ClipboardDataObjectsToRemove)
                     {
-                        foreach (int index in result.ClipboardDataObjectsToRemove)
-                        {
-                            mergedResult.AddClipboardDataObjectId(index);
-                        }
+                        mergedResult.AddClipboardDataObjectId(index);
                     }
                 }
             }

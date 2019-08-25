@@ -93,26 +93,26 @@ namespace Clipbox
             GC.Collect();
 #endif
 
-            lock (_clipboardManager)
-            {
-                IEnumerable<string> clipboardItemIds = _clipboardManager.GetAllItemIds(excludeShrinkedItems: true);
-                foreach (string id in clipboardItemIds)
-                {
-                    IClipboardItem item = _clipboardManager.GetClipboardItem(id, restoreShrinked: false);
-                    IHouseKeepingResult result = _flowExtentionExecutorService.RunOnHousekeepingPerformedMethods(item);
-                    if (result != null)
-                    {
-                        if (result.ShouldRemoveItem)
-                        {
-                            _clipboardManager.RemoveClipboardItem(id, beSilent: true);
-                        }
-                        else if (result.ClipboardDataObjectsToRemove != null && result.ClipboardDataObjectsToRemove.Any())
-                        {
-                            _clipboardManager.RemoveClipbpardDataObjects(id, result.ClipboardDataObjectsToRemove.ToArray());
-                        }
-                    }
-                }
-            }
+            //lock (_clipboardManager)
+            //{
+            //    IEnumerable<string> clipboardItemIds = _clipboardManager.GetAllItemIds(excludeShrinkedItems: true);
+            //    foreach (string id in clipboardItemIds)
+            //    {
+            //        IClipboardItem item = _clipboardManager.GetClipboardItem(id, restoreShrinked: false);
+            //        IHouseKeepingResult result = _flowExtentionExecutorService.RunOnHousekeepingPerformedMethods(item);
+            //        if (result != null)
+            //        {
+            //            if (result.ShouldRemoveItem)
+            //            {
+            //                _clipboardManager.RemoveClipboardItem(id, beSilent: true);
+            //            }
+            //            else if (result.ClipboardDataObjectsToRemove != null && result.ClipboardDataObjectsToRemove.Any())
+            //            {
+            //                _clipboardManager.RemoveClipbpardDataObjects(id, result.ClipboardDataObjectsToRemove.ToArray());
+            //            }
+            //        }
+            //    }
+            //}
         }
 
         private void _keyboardListener_VKeyUp(object sender, System.ComponentModel.CancelEventArgs e)
