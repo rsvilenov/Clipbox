@@ -382,6 +382,14 @@ namespace Clipbox.ExtendedClipboard
             }
 
             var clipboardDataObjects = ReadClipboardDataObjectsFromSystemClipboard();
+            
+            // for some reason I receive WM_DRAWCLIPBOARD on pasting a file which has been cut the moment before
+            // and GetAvailableFormats() returns zero items...
+            if (!clipboardDataObjects.Any())
+            {
+                return;
+            }
+
             var currentItem = new ClipboardItem(source, clipboardDataObjects);
 
             lock (_ioLockHandle)
