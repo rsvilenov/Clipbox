@@ -72,22 +72,33 @@ namespace Clipbox.Infrastructure.UI
     {
         private readonly Predicate<T> _canExecute;
         private readonly Action<T> _execute;
+        private readonly DispatcherPriority? _dispatcherPriority;
+
         private bool _isExecuting;
 
-        private readonly bool _waitBackgroundOperationsFirst;
-
-        public DelegateCommand(Action<T> execute, bool waitBackgroundOperationsFirst = false)
-            : this(execute, null, waitBackgroundOperationsFirst)
+        public DelegateCommand(Action<T> execute)
+            : this(execute, null)
         {
         }
 
-        public DelegateCommand(Action<T> execute, Predicate<T> canExecute, bool waitBackgroundOperationsFirst = false)
+        public DelegateCommand(Action<T> execute, DispatcherPriority dispatcherPriority)
+            : this(execute, null, dispatcherPriority)
+        {
+        }
+
+        public DelegateCommand(Action<T> execute, Predicate<T> canExecute)
         {
             _execute = execute;
             _canExecute = canExecute;
-            _waitBackgroundOperationsFirst = waitBackgroundOperationsFirst;
         }
-        
+
+        public DelegateCommand(Action<T> execute, Predicate<T> canExecute, DispatcherPriority dispatcherPriority)
+        {
+            _execute = execute;
+            _canExecute = canExecute;
+            _dispatcherPriority = dispatcherPriority;
+        }
+
         public bool CanExecute(T parameter)
         {
             if (_canExecute == null)
@@ -100,10 +111,9 @@ namespace Clipbox.Infrastructure.UI
 
         public void Execute(T parameter)
         {
-            if (_waitBackgroundOperationsFirst)
+            if (_dispatcherPriority.HasValue)
             {
-                // wait for the binding operations to complete
-                Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
+                Dispatcher.CurrentDispatcher.BeginInvoke(_dispatcherPriority.Value, new Action(() =>
                 {
                     _execute(parameter);
                 }));

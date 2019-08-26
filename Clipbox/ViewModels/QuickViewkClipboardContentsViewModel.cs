@@ -60,7 +60,7 @@ namespace Clipbox.ViewModels
             // wait for the binding operations to complete,
             // so we can get the changed value of the IsPinned property
             PinUnpinClipboardEntry = new DelegateCommand<ClipboardViewItem>(PinUnpinClipboardEntryHandler,
-                waitBackgroundOperationsFirst: true);
+                dispatcherPriority: DispatcherPriority.ContextIdle);
             
             SelectedClipboardViewItemWrappers = new List<ClipboardViewItemWrapper>();
             _newlyAddedItemsToLoadAndWrap = new List<string>();
