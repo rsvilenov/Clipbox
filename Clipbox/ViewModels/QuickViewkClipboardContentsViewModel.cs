@@ -73,12 +73,7 @@ namespace Clipbox.ViewModels
             clipboardManager.ItemRemoved += ClipboardManager_ItemRemoved;
             clipboardManager.ItemChanged += ClipboardManager_ItemChanged;
         }
-
-        private void _loadNewlyAddedItemsSlidingTimer_Elapsed(object sender, EventArgs e)
-        {
-            LoadAndWrapNewlyAddedItems();
-        }
-
+        
         private void PinUnpinClipboardEntryHandler(ClipboardViewItem obj)
         {
             base.ClipboardManager.PinUnpinItemItem(obj.ClipboardItemId, obj.IsPinned);
@@ -134,11 +129,16 @@ namespace Clipbox.ViewModels
             _loadNewlyAddedItemsSlidingTimer.Slide();
         }
 
+        private void _loadNewlyAddedItemsSlidingTimer_Elapsed(object sender, EventArgs e)
+        {
+            LoadAndWrapNewlyAddedItems();
+        }
+
         private void LoadAndWrapNewlyAddedItems()
         {
             if (_lastUsedMonitorDimensions == null)
             {
-                throw new InvalidCastException($"{nameof(_lastUsedMonitorDimensions)}is null. Call {nameof(ReloadWrappedItems)} first.");
+                throw new InvalidCastException($"{nameof(_lastUsedMonitorDimensions)} is null. Call {nameof(ReloadWrappedItems)} first.");
             }
 
             ClipboardItemsLoadingStage = ClipboardItemsLoadingStage.Started;
