@@ -31,6 +31,10 @@ namespace Clipbox.Extentions.BuiltIn.HdropFormat.FlowExtentions
             {
                 int? dibIndex = null;
 
+                // When we copy an image in Firefox, that image is saved in a temp file. Fireox 
+                // places in the clipboard both a DIB and the path to the temp file.
+                // As a result we can conveniently paste the copied web image not only as an image,
+                // but directly as a file as well, but that complicates my task in this extension...
                 var dibCdo = item.ClipboardDataObjects.FirstOrDefault(cdo => cdo.Format == "CF_DIBV5");
                 if (dibCdo != null)
                 {
