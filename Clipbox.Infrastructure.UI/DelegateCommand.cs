@@ -113,10 +113,8 @@ namespace Clipbox.Infrastructure.UI
         {
             if (_dispatcherPriority.HasValue)
             {
-                Dispatcher.CurrentDispatcher.BeginInvoke(_dispatcherPriority.Value, new Action(() =>
-                {
-                    _execute(parameter);
-                }));
+                Dispatcher.CurrentDispatcher.BeginInvoke(_dispatcherPriority.Value,
+                    new Action(() => _execute(parameter)));
             }
             else
             {
