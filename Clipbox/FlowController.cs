@@ -1,5 +1,6 @@
 ﻿using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.Core.Extensibility.Contracts;
+using Clipbox.Core.Extensibility.Enums;
 using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Interfaces;
@@ -29,6 +30,8 @@ namespace Clipbox
 
         private IEnumerable<IFlowParameter> _parametersFromQuickViewWindowService;
 
+        private IEnumerable<IHouseKeepingTask> _houseKeepingTasks;
+
         public FlowController(IClipboardManager clipboardManager, 
             ILowLevelKeyboardService keyboardService,
             IFlowExtentionExecutorService flowExtentionExecutorService, 
@@ -46,6 +49,7 @@ namespace Clipbox
             _mainViewWindowService.SetItemsToClipboardRequested += _mainViewWindowService_SetItemsToClipboardRequested;
 
             _parametersFromQuickViewWindowService = Enumerable.Empty<IFlowParameter>();
+            _houseKeepingTasks = _flowExtentionExecutorService.RunRegisterHousekeepingTaskMethods();
 
             _clipboardManager.ItemFetching += _clipboardManager_ItemFetching;
 
@@ -85,7 +89,7 @@ namespace Clipbox
             e.Cancel = cancel;
         }
 
-        private void PerformHouseKeeping()
+        private void PerformHouseKeeping(IEnumerable<IHouseKeepingTask> tasks)
         {
 #if DEBUG
             GC.Collect();
@@ -93,26 +97,36 @@ namespace Clipbox
             GC.Collect();
 #endif
 
-            //lock (_clipboardManager)
-            //{
-            //    IEnumerable<string> clipboardItemIds = _clipboardManager.GetAllItemIds(excludeShrinkedItems: true);
-            //    foreach (string id in clipboardItemIds)
-            //    {
-            //        IClipboardItem item = _clipboardManager.GetClipboardItem(id, restoreShrinked: false);
-            //        IHouseKeepingResult result = _flowExtentionExecutorService.RunOnHousekeepingPerformedMethods(item);
-            //        if (result != null)
-            //        {
-            //            if (result.ShouldRemoveItem)
-            //            {
-            //                _clipboardManager.RemoveClipboardItem(id, beSilent: true);
-            //            }
-            //            else if (result.ClipboardDataObjectsToRemove != null && result.ClipboardDataObjectsToRemove.Any())
-            //            {
-            //                _clipboardManager.RemoveClipbpardDataObjects(id, result.ClipboardDataObjectsToRemove.ToArray());
-            //            }
-            //        }
-            //    }
-            //}
+            lock (_clipboardManager)
+            {
+                foreach (IHouseKeepingTask hkTask in tasks)
+                {
+                    IEnumerable<string> clipboardItemIds = _clipboardManager.GetAllItemIds(filterCondition: (item) =>
+                        item.ClipboardDataObjects.Any(cdo => cdo.Format == hkTask.ClipboardFormat));
+
+                    foreach (string clipboardItemId in clipboardItemIds)
+                    {
+                        IClipboardItem item = _clipboardManager.GetClipboardItem(clipboardItemId, restoreShrinked: hkTask.RequiresRestoredState);
+                        PerformHousekeepingOnItem(hkTask, item);
+                    }
+                }
+            }
+        }
+
+        private void PerformHousekeepingOnItem(IHouseKeepingTask hkTask, IClipboardItem item)
+        {
+            IHouseKeepingResult result = _flowExtentionExecutorService.RunOnHousekeepingPerformedMethods(hkTask, item);
+            if (result != null)
+            {
+                if (result.ShouldRemoveItem)
+                {
+                    _clipboardManager.RemoveClipboardItem(item.Id, beSilent: true);
+                }
+                else if (result.ClipboardDataObjectsToRemove != null && result.ClipboardDataObjectsToRemove.Any())
+                {
+                    _clipboardManager.RemoveClipbpardDataObjects(item.Id, result.ClipboardDataObjectsToRemove.ToArray());
+                }
+            }
         }
 
         private void _keyboardListener_VKeyUp(object sender, System.ComponentModel.CancelEventArgs e)
@@ -190,7 +204,7 @@ namespace Clipbox
             if (!cancel)
             {
                 // TODO: housekeeping here will slow us down
-                PerformHouseKeeping();
+                PerformHouseKeeping(_houseKeepingTasks.Where(hkTask => hkTask.Regularity.HasFlag(HouseKeepingRegularity.UponViewClipboardContents)));
                 _quickViewWindowService.ShowQuickClipboardViewWindow();
             }
         }
@@ -299,7 +313,7 @@ namespace Clipbox
                 _clipboardManager.RemoveClipboardItem(currentItem.Id, beSilent: true, removeFromSystemClipboard: true);
             }
 
-            PerformHouseKeeping();
+            PerformHouseKeeping(_houseKeepingTasks.Where(hkTask => hkTask.Regularity.HasFlag(HouseKeepingRegularity.UponViewClipboardContents)));
 
             pasteCancelled = false;
         }

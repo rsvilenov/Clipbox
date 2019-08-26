@@ -24,8 +24,8 @@ namespace Clipbox.ExtendedClipboard.Interfaces
         void RemoveClipboardItem(string id, bool beSilent = false, bool removeFromSystemClipboard = false);
 
         void SetCurrentItem(string id);
-        
-        IEnumerable<string> GetAllItemIds(bool excludeShrinkedItems = false);
+
+        IEnumerable<string> GetAllItemIds(Func<IClipboardItem, bool> filterCondition = null);
 
         IClipboardItem GetClipboardItem(string id, bool restoreShrinked = false);
 

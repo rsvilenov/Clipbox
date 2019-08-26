@@ -303,14 +303,16 @@ namespace Clipbox.ExtendedClipboard
             _currentItemId = id;
         }
 
-        public IEnumerable<string> GetAllItemIds(bool excludeShrinkedItems = false)
+        public IEnumerable<string> GetAllItemIds(Func<IClipboardItem, bool> filterCondition = null)
         {
             lock (_ioLockHandle)
             {
                 IEnumerable<ClipboardItem> allItems = _clipboardItems;
-                if (excludeShrinkedItems)
+                if (filterCondition != null)
                 {
-                    allItems = _clipboardItems.Where(item => !item.IsShrinked);
+                    // Func<IClipboardItem, bool> is not implicitly convertable to Func<ClipboardItem, bool>
+                    // so we cannot pass filterCondition directly as an argument to the Where method.
+                    allItems = _clipboardItems.Where(item => filterCondition(item));
                 }
 
                 return allItems.
