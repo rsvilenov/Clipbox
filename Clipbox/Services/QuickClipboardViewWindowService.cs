@@ -77,9 +77,15 @@ namespace Clipbox.Services
 
             _previewControl.SelectionChanged += _previewControl_SelectionChanged;
             _previewControl.CombinabilityCheckRequested += _previewControl_CombinabilityCheckRequested;
+            _previewControl.HousekeepingRequested += _previewControl_HousekeepingRequested;
 
             PreloadQuickViewWindow();
 
+        }
+
+        private void _previewControl_HousekeepingRequested(object sender, HousekeepingEventArgs e)
+        {
+            base.RaiseHousekeepingRequestedEvent(e);
         }
 
         private void PreloadQuickViewWindow()
@@ -256,8 +262,11 @@ namespace Clipbox.Services
         public void Dispose()
         {
             _sizeChangedSligingTimer.Dispose();
+
+            // TODO: it looks like we do not need these
             _previewControl.SelectionChanged -= _previewControl_SelectionChanged;
             _previewControl.CombinabilityCheckRequested -= _previewControl_CombinabilityCheckRequested;
+            _previewControl.HousekeepingRequested -= _previewControl_HousekeepingRequested;
         }
     }
 }

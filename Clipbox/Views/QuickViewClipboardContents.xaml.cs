@@ -1,20 +1,16 @@
-﻿using Clipbox.Core.ClipboardContent.Interfaces;
-using Clipbox.Infrastructure.Extensibility.Containers;
-using Clipbox.Infrastructure.UI;
+﻿using Clipbox.Infrastructure.Extensibility.Containers;
 using Clipbox.Infrastructure.UI.DataObjects;
 using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.ViewModels;
-using Clipbox.ViewModels.BindableObjects;
-using Clipbox.Views.ClipboardViewItemTile;
+using Clipbox.ViewModels.Enums;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace Clipbox.Views
 {
@@ -24,12 +20,12 @@ namespace Clipbox.Views
     public partial class QuickViewClipboardContents : ClipboardViewControlBase
     {
         private QuickViewkClipboardContentsViewModel _viewModel;
-
-        private string _lastSelectedItemId;
-
+        
         private MonitorDimensions _oldMonitorDimensions;
 
         private ISettingsService _settingsService;
+
+        public event EventHandler<HousekeepingEventArgs> HousekeepingRequested;
 
         public bool DimNonFocusedItems
         {
@@ -59,14 +55,32 @@ namespace Clipbox.Views
 
         private void QuickViewClipboardContents_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if ((bool)e.NewValue && base.MonitorDimensions != _oldMonitorDimensions)
+            if ((bool)e.NewValue)
             {
-                Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, new Action(() =>
-                {
-                    LoadItemsAndViewItems();
-                }));
+                var previousStage = _viewModel.ClipboardItemsLoadingStage;
+                
+                _viewModel.ClipboardViewItemWrappers.EnableSyncForCurrentUIThread();
 
-                _oldMonitorDimensions = base.MonitorDimensions;
+                Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
+                {
+                    Task.Run(new Action(() =>
+                    {
+                        Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
+                        {
+                            PerformHousekeeping();
+                            _viewModel.LoadAndWrapNewlyAddedItems(base.MonitorDimensions);
+                        }));
+                    }))
+                    .ContinueWith((t) =>
+                    {
+                        if (base.MonitorDimensions != _oldMonitorDimensions)
+                        {
+                            _oldMonitorDimensions = base.MonitorDimensions;
+
+                            LoadViewItems();
+                        }
+                    });
+                }));
             }
         }
 
@@ -80,13 +94,24 @@ namespace Clipbox.Views
             }));
         }
 
-        private void LoadItemsAndViewItems()
+        private void LoadViewItems()
         {
-            _viewModel.ClipboardViewItemWrappers.EnableSyncForCurrentUIThread();
+            _viewModel.LoadViewItems(MonitorDimensions);
+        }
 
-            //Task.Run(new Action(() => LoadWrappedItems()))
-            //    .ContinueWith((t) => _viewModel.LoadViewItems(MonitorDimensions));
-            Task.Run(new Action(() => _viewModel.LoadViewItems(MonitorDimensions)));
+        private void PerformHousekeeping()
+        {
+            HousekeepingEventArgs args = new HousekeepingEventArgs(_viewModel.ClipboardViewItemWrappers.Select(w => w.Id));
+            HousekeepingRequested?.Invoke(this, args);
+
+            var wrappersToRemove = _viewModel.ClipboardViewItemWrappers
+                .Where(w => args.RemovedClipboardItemIds.Contains(w.Id))
+                .ToList();
+
+            foreach (var wrapper in wrappersToRemove)
+            {
+                _viewModel.ClipboardViewItemWrappers.Remove(wrapper);
+            }
         }
 
         public void LoadWrappedItems()

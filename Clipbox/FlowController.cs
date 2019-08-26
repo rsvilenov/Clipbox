@@ -45,8 +45,11 @@ namespace Clipbox
             _mainViewWindowService = mainViewWindowService;
             
             _quickViewWindowService.CombinabilityCheckRequested += _clipboardViewWindowService_CombinabilityCheckRequested;
+            _quickViewWindowService.HousekeepingRequested += _clipboardViewWindowService_HousekeepingRequested;
+
             _mainViewWindowService.CombinabilityCheckRequested += _clipboardViewWindowService_CombinabilityCheckRequested;
             _mainViewWindowService.SetItemsToClipboardRequested += _mainViewWindowService_SetItemsToClipboardRequested;
+            _mainViewWindowService.HousekeepingRequested += _clipboardViewWindowService_HousekeepingRequested;
 
             _parametersFromQuickViewWindowService = Enumerable.Empty<IFlowParameter>();
             _houseKeepingTasks = _flowExtentionExecutorService.RunRegisterHousekeepingTaskMethods();
@@ -64,6 +67,15 @@ namespace Clipbox
             _keyboardService.CtrlVHotkeyDown += _keyboardListener_CtrlVHotkeyDown;
             _keyboardService.ControlKeyUp += _keyboardListener_ControlKeyUp;
             _keyboardService.VKeyUp += _keyboardListener_VKeyUp;
+        }
+
+        private void _clipboardViewWindowService_HousekeepingRequested(object sender, HousekeepingEventArgs e)
+        {
+            PerformHouseKeeping(e.ClipboardItemIdsToProcess,
+                _houseKeepingTasks.Where(hkTask => hkTask.Regularity.HasFlag(HouseKeepingRegularity.UponViewClipboardContents)),
+                removedItemIds: out List<string> removedItemIds);
+
+            e.RemovedClipboardItemIds = removedItemIds;
         }
 
         private void _mainViewWindowService_SetItemsToClipboardRequested(object sender, SelectionEventArgs e)
@@ -89,42 +101,41 @@ namespace Clipbox
             e.Cancel = cancel;
         }
 
-        private void PerformHouseKeeping(IEnumerable<IHouseKeepingTask> tasks)
+        private void PerformHouseKeeping(IEnumerable<string> clipboardItemIds, IEnumerable<IHouseKeepingTask> tasks, out List<string> removedItemIds)
         {
 #if DEBUG
             GC.Collect();
             GC.WaitForPendingFinalizers();
             GC.Collect();
 #endif
+            removedItemIds = new List<string>();
 
             lock (_clipboardManager)
             {
                 foreach (IHouseKeepingTask hkTask in tasks)
                 {
-                    IEnumerable<string> clipboardItemIds = _clipboardManager.GetAllItemIds(filterCondition: (item) =>
+                    IEnumerable<string> matchingClipboardItemIds = _clipboardManager.GetAllItemIds(filterCondition: (item) =>
+                        clipboardItemIds.Contains(item.Id) &&
                         item.ClipboardDataObjects.Any(cdo => cdo.Format == hkTask.ClipboardFormat));
 
-                    foreach (string clipboardItemId in clipboardItemIds)
+                    foreach (string clipboardItemId in matchingClipboardItemIds)
                     {
                         IClipboardItem item = _clipboardManager.GetClipboardItem(clipboardItemId, restoreShrinked: hkTask.RequiresRestoredState);
-                        PerformHousekeepingOnItem(hkTask, item);
-                    }
-                }
-            }
-        }
 
-        private void PerformHousekeepingOnItem(IHouseKeepingTask hkTask, IClipboardItem item)
-        {
-            IHouseKeepingResult result = _flowExtentionExecutorService.RunOnHousekeepingPerformedMethods(hkTask, item);
-            if (result != null)
-            {
-                if (result.ShouldRemoveItem)
-                {
-                    _clipboardManager.RemoveClipboardItem(item.Id, beSilent: true);
-                }
-                else if (result.ClipboardDataObjectsToRemove != null && result.ClipboardDataObjectsToRemove.Any())
-                {
-                    _clipboardManager.RemoveClipbpardDataObjects(item.Id, result.ClipboardDataObjectsToRemove.ToArray());
+                        IHouseKeepingResult result = _flowExtentionExecutorService.RunOnHousekeepingPerformedMethods(hkTask, item);
+                        if (result != null)
+                        {
+                            if (result.ShouldRemoveItem)
+                            {
+                                _clipboardManager.RemoveClipboardItem(item.Id, beSilent: true);
+                                removedItemIds.Add(item.Id);
+                            }
+                            else if (result.ClipboardDataObjectsToRemove != null && result.ClipboardDataObjectsToRemove.Any())
+                            {
+                                _clipboardManager.RemoveClipbpardDataObjects(item.Id, result.ClipboardDataObjectsToRemove.ToArray());
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -203,8 +214,6 @@ namespace Clipbox
             _flowExtentionExecutorService.OnShowQuickViewWindowRequestedMethods(ref cancel);
             if (!cancel)
             {
-                // TODO: housekeeping here will slow us down
-                PerformHouseKeeping(_houseKeepingTasks.Where(hkTask => hkTask.Regularity.HasFlag(HouseKeepingRegularity.UponViewClipboardContents)));
                 _quickViewWindowService.ShowQuickClipboardViewWindow();
             }
         }
@@ -313,8 +322,10 @@ namespace Clipbox
                 _clipboardManager.RemoveClipboardItem(currentItem.Id, beSilent: true, removeFromSystemClipboard: true);
             }
 
-            PerformHouseKeeping(_houseKeepingTasks.Where(hkTask => hkTask.Regularity.HasFlag(HouseKeepingRegularity.UponViewClipboardContents)));
-
+            PerformHouseKeeping(new List<string> { currentItem.Id },
+                _houseKeepingTasks.Where(hkTask => hkTask.Regularity.HasFlag(HouseKeepingRegularity.UponViewClipboardContents)),
+                removedItemIds: out List<string> removedItemIds);
+            
             pasteCancelled = false;
         }
 

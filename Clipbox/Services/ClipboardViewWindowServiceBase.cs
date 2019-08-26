@@ -45,6 +45,13 @@ namespace Clipbox.Services
         {
             CombinabilityCheckRequested?.Invoke(this, args);
         }
+        
+        public event EventHandler<HousekeepingEventArgs> HousekeepingRequested;
+
+        protected void RaiseHousekeepingRequestedEvent(HousekeepingEventArgs args)
+        {
+            HousekeepingRequested?.Invoke(this, args);
+        }
 
         public abstract IReadOnlyList<IFlowParameter> GetFlowParameters();
     }

@@ -130,7 +130,20 @@ namespace Clipbox.ViewModels
 
         public void LoadAndWrapNewlyAddedItems(MonitorDimensions monitorDimensions)
         {
+            ClipboardItemsLoadingStage = ClipboardItemsLoadingStage.Started;
+
             base.LoadAndWrapItems(monitorDimensions, _newlyAddedItemsToLoadAndWrap);
+
+            ClipboardItemsLoadingStage = ClipboardItemsLoadingStage.WrappersLoaded;
+
+            foreach (string clipboardItemId in _newlyAddedItemsToLoadAndWrap)
+            {
+                base.LoadViewItem(clipboardItemId, monitorDimensions);
+            }
+
+            _newlyAddedItemsToLoadAndWrap.Clear();
+
+            ClipboardItemsLoadingStage = ClipboardItemsLoadingStage.ViewItemsLoaded;
         }
 
         public void ReloadWrappedItems(MonitorDimensions monitorDimensions)
@@ -141,7 +154,7 @@ namespace Clipbox.ViewModels
 
             IEnumerable<string> allItemIds = base.ClipboardManager.GetAllItemIds();
             base.ClipboardViewItemWrappers.Clear();
-            base.LoadAndWrapItems(monitorDimensions, allItemIds, pinnedOnly: true);
+            base.LoadAndWrapItems(monitorDimensions, allItemIds, pinnedOnly: false);
 
             ClipboardItemsLoadingStage = ClipboardItemsLoadingStage.WrappersLoaded;
         }

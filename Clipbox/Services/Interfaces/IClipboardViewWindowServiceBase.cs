@@ -20,5 +20,7 @@ namespace Clipbox.Services.Interfaces
         event EventHandler<SelectionEventArgs> SelectionChanged;
 
         event EventHandler<CombinabilityEventArgs> CombinabilityCheckRequested;
+
+        event EventHandler<HousekeepingEventArgs> HousekeepingRequested;
     }
 }
