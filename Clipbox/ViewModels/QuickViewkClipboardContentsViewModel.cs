@@ -56,7 +56,11 @@ namespace Clipbox.ViewModels
         {
             ClearClipboardEntries = new DelegateCommand(ClearAllClipboardEntriesHandler);
             DeleteClipboardEntry = new DelegateCommand<ClipboardViewItem>(DeleteClipboardEntryHandler);
-            PinUnpinClipboardEntry = new DelegateCommand<ClipboardViewItem>(PinUnpinClipboardEntryHandler);
+
+            // wait for the binding operations to complete,
+            // so we can get the changed value of the IsPinned property
+            PinUnpinClipboardEntry = new DelegateCommand<ClipboardViewItem>(PinUnpinClipboardEntryHandler,
+                waitBackgroundOperationsFirst: true);
             
             SelectedClipboardViewItemWrappers = new List<ClipboardViewItemWrapper>();
             _newlyAddedItemsToLoadAndWrap = new List<string>();
@@ -77,12 +81,7 @@ namespace Clipbox.ViewModels
 
         private void PinUnpinClipboardEntryHandler(ClipboardViewItem obj)
         {
-            // wait for the binding operations to complete,
-            // so we can get the changed value of the IsPinned property
-            Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => 
-            {
-                base.ClipboardManager.PinUnpinItemItem(obj.ClipboardItemId, obj.IsPinned);
-            }));
+            base.ClipboardManager.PinUnpinItemItem(obj.ClipboardItemId, obj.IsPinned);
         }
 
         private void DeleteClipboardEntryHandler(ClipboardViewItem parameter)

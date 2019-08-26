@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace Clipbox.Infrastructure.UI
 {
@@ -72,24 +73,21 @@ namespace Clipbox.Infrastructure.UI
         private readonly Predicate<T> _canExecute;
         private readonly Action<T> _execute;
         private bool _isExecuting;
-        private ICommand deleteClipboardEntry;
 
-        public DelegateCommand(Action<T> execute)
-            : this(execute, null)
+        private readonly bool _waitBackgroundOperationsFirst;
+
+        public DelegateCommand(Action<T> execute, bool waitBackgroundOperationsFirst = false)
+            : this(execute, null, waitBackgroundOperationsFirst)
         {
         }
 
-        public DelegateCommand(Action<T> execute, Predicate<T> canExecute)
+        public DelegateCommand(Action<T> execute, Predicate<T> canExecute, bool waitBackgroundOperationsFirst = false)
         {
             _execute = execute;
             _canExecute = canExecute;
+            _waitBackgroundOperationsFirst = waitBackgroundOperationsFirst;
         }
-
-        public DelegateCommand(ICommand deleteClipboardEntry)
-        {
-            this.deleteClipboardEntry = deleteClipboardEntry;
-        }
-
+        
         public bool CanExecute(T parameter)
         {
             if (_canExecute == null)
@@ -102,7 +100,18 @@ namespace Clipbox.Infrastructure.UI
 
         public void Execute(T parameter)
         {
-            _execute(parameter);
+            if (_waitBackgroundOperationsFirst)
+            {
+                // wait for the binding operations to complete
+                Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
+                {
+                    _execute(parameter);
+                }));
+            }
+            else
+            {
+                _execute(parameter);
+            }
         }
 
         public event EventHandler CanExecuteChanged
