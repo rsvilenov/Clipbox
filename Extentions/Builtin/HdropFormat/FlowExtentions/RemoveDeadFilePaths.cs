@@ -29,10 +29,15 @@ namespace Clipbox.Extentions.BuiltIn.HdropFormat.FlowExtentions
 
             if (item.ClipboardDataObjects.Any(cdo => cdo.Format == "CF_HDROP"))
             {
-                
-                int? dibIndex = item.ClipboardDataObjects.Select((v, i) => new { cdo = v, index = i }).
-                    Where(obj => obj.cdo.Format == "CF_DIBV5").Select(obj => obj.index).FirstOrDefault();
+                int? dibIndex = null;
 
+                var dibCdo = item.ClipboardDataObjects.FirstOrDefault(cdo => cdo.Format == "CF_DIBV5");
+                if (dibCdo != null)
+                {
+                    dibIndex = item.ClipboardDataObjects.Select((v, i) => new { cdo = v, index = i }).
+                        Where(obj => obj.cdo.Format == "CF_DIBV5").Select(obj => obj.index).FirstOrDefault();
+                }
+                
                 var hdropTarget = item.ClipboardDataObjects.First(cdo => cdo.Format == "CF_HDROP");
                 if (hdropTarget.OriginalData is string[])
                 {
