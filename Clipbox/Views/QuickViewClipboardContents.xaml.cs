@@ -68,7 +68,6 @@ namespace Clipbox.Views
                         Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
                         {
                             PerformHousekeeping();
-                            _viewModel.LoadAndWrapNewlyAddedItems(base.MonitorDimensions);
                         }));
                     }))
                     .ContinueWith((t) =>

@@ -35,21 +35,19 @@ namespace Clipbox.ViewModels
         
         private List<string> _newlyAddedItemsToLoadAndWrap;
 
-        //private double _itemDesiredHeight;
+        private MonitorDimensions _lastUsedMonitorDimensions;
 
-        //public double ItemDesiredHeight
-        //{
-        //    get { return _itemDesiredHeight; }
-        //    set
-        //    {
-        //        if (_itemDesiredHeight != value)
-        //        {
-        //            Debug.WriteLine("ItemHeight changed to: " + value);
-        //            ReloadItems((int)value, (int)value);
-        //            SetField(ref _itemDesiredHeight, value);
-        //        }
-        //    }
-        //}
+        private SlidingTimer _loadNewlyAddedItemsSlidingTimer;
+
+        /// <summary>
+        /// This delay is to reduce the occurance of the cases when many
+        /// clipboard items has been added to the clipboard manager in a short time and each item
+        /// blocks the thread of NewItemAdded handler while it loads its view item... With this delay,
+        /// a bunch of newly added items within its duration will load their view items asynchronously
+        /// after the NewItemAdded has fired...
+        /// However, I am not sure how often these cases will happen and if I need this at all...
+        /// </summary>
+        private const int NEWLY_ADDED_ITEMS_LOAD_DELAY_MS = 200;
 
         public QuickViewkClipboardContentsViewModel(IClipboardManager clipboardManager,
             IPreviewGenerationService previewGenerationService,
@@ -63,11 +61,20 @@ namespace Clipbox.ViewModels
             SelectedClipboardViewItemWrappers = new List<ClipboardViewItemWrapper>();
             _newlyAddedItemsToLoadAndWrap = new List<string>();
 
+            _loadNewlyAddedItemsSlidingTimer = new SlidingTimer();
+            _loadNewlyAddedItemsSlidingTimer.IntervalMs = NEWLY_ADDED_ITEMS_LOAD_DELAY_MS;
+            _loadNewlyAddedItemsSlidingTimer.Elapsed += _loadNewlyAddedItemsSlidingTimer_Elapsed;
+
             clipboardManager.ItemAdded += ClipboardManager_ItemAdded;
             clipboardManager.ItemRemoved += ClipboardManager_ItemRemoved;
             clipboardManager.ItemChanged += ClipboardManager_ItemChanged;
         }
-        
+
+        private void _loadNewlyAddedItemsSlidingTimer_Elapsed(object sender, EventArgs e)
+        {
+            LoadAndWrapNewlyAddedItems();
+        }
+
         private void PinUnpinClipboardEntryHandler(ClipboardViewItem obj)
         {
             // wait for the binding operations to complete,
@@ -76,7 +83,6 @@ namespace Clipbox.ViewModels
             {
                 base.ClipboardManager.PinUnpinItemItem(obj.ClipboardItemId, obj.IsPinned);
             }));
-            
         }
 
         private void DeleteClipboardEntryHandler(ClipboardViewItem parameter)
@@ -126,19 +132,25 @@ namespace Clipbox.ViewModels
         private void AddNewItem(string clipboardItemId)
         {
             _newlyAddedItemsToLoadAndWrap.Add(clipboardItemId);
+            _loadNewlyAddedItemsSlidingTimer.Slide();
         }
 
-        public void LoadAndWrapNewlyAddedItems(MonitorDimensions monitorDimensions)
+        private void LoadAndWrapNewlyAddedItems()
         {
+            if (_lastUsedMonitorDimensions == null)
+            {
+                throw new InvalidCastException($"{nameof(_lastUsedMonitorDimensions)}is null. Call {nameof(ReloadWrappedItems)} first.");
+            }
+
             ClipboardItemsLoadingStage = ClipboardItemsLoadingStage.Started;
 
-            base.LoadAndWrapItems(monitorDimensions, _newlyAddedItemsToLoadAndWrap);
+            base.LoadAndWrapItems(_lastUsedMonitorDimensions, _newlyAddedItemsToLoadAndWrap);
 
             ClipboardItemsLoadingStage = ClipboardItemsLoadingStage.WrappersLoaded;
 
             foreach (string clipboardItemId in _newlyAddedItemsToLoadAndWrap)
             {
-                base.LoadViewItem(clipboardItemId, monitorDimensions);
+                base.LoadViewItem(clipboardItemId, _lastUsedMonitorDimensions);
             }
 
             _newlyAddedItemsToLoadAndWrap.Clear();
@@ -157,6 +169,8 @@ namespace Clipbox.ViewModels
             base.LoadAndWrapItems(monitorDimensions, allItemIds, pinnedOnly: false);
 
             ClipboardItemsLoadingStage = ClipboardItemsLoadingStage.WrappersLoaded;
+
+            _lastUsedMonitorDimensions = monitorDimensions;
         }
 
         public void LoadViewItems(MonitorDimensions monitorDimensions)
