@@ -103,14 +103,14 @@ namespace Clipbox.Services
 
         [SecurityCritical]
         [HandleProcessCorruptedStateExceptions]
-        public void RunOnOnPasteCompletedMethods(IClipboardItem currentClipboardItem, ref bool removeItemFromClipboardItemsRequested)
+        public void RunOnManagedPasteCompletedMethods(IClipboardItem currentClipboardItem, ref bool removeItemFromClipboardItemsRequested)
         {
             DestinationWindowInfo destWindowInfo = GetDestinationWindowInfo();
 
             foreach (var flowExtention in _flowExtentions)
             {
                 bool removeItem = false;
-                try { flowExtention.OnPasteCompleted(currentClipboardItem, destWindowInfo, ref removeItem); }
+                try { flowExtention.OnManagedPasteCompleted(currentClipboardItem, destWindowInfo, ref removeItem); }
                 catch (Exception ex) { throw new ClipboxExtentionException(nameof(flowExtention.OnCopyCompleted), flowExtention.GetType(), ex); }
                 // if any of the extentions says that we should remove the item, set the flag to true
                 if (removeItem)

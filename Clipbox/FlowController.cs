@@ -315,7 +315,7 @@ namespace Clipbox
 
             bool removeItemFromClipboardItemsRequested = false;
 
-            _flowExtentionExecutorService.RunOnOnPasteCompletedMethods(currentItem, ref removeItemFromClipboardItemsRequested);
+            _flowExtentionExecutorService.RunOnManagedPasteCompletedMethods(currentItem, ref removeItemFromClipboardItemsRequested);
 
             if (removeItemFromClipboardItemsRequested || forceRemoveOnEnd)
             {

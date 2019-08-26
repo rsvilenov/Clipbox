@@ -82,12 +82,15 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes
         { }
 
         /// <summary>
-        /// Allows doing a custom operation after the contents are pasted.
+        /// Allows doing a custom operation after the contents are pasted. 
+        /// This method executes when the QuickView's paste functionality has been used. 
+        /// It does not execute on native paste operations,
+        /// because these operations cannot be detected reliably.
         /// </summary>
         /// <param name="clipboardItem">The pasted clipboard item.</param>
         /// <param name="targetWindowInfo">Info for the target window.</param>
         /// <param name="removeItem">If set to true, removes the current item from the list of clipboard items.</param>
-        public virtual void OnPasteCompleted(IClipboardItem clipboardItem, IWindowInfo targetWindowInfo, ref bool removeItem)
+        public virtual void OnManagedPasteCompleted(IClipboardItem clipboardItem, IWindowInfo targetWindowInfo, ref bool removeItem)
         { }
 
         /// <summary>

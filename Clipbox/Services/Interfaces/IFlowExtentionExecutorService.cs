@@ -13,7 +13,13 @@ namespace Clipbox.Services.Interfaces
 
         void RunOnBeforePasteMethods(IClipboardItem currentClipboardItem, ref bool cancelPasteRequested);
 
-        void RunOnOnPasteCompletedMethods(IClipboardItem currentClipboardItem, ref bool removeItemFromClipboardItemsRequested);
+        /// <summary>
+        /// Executes when the QuickView's paste functionality has been used. It does not execute on native paste operations,
+        /// because these operations cannot be detected reliably.
+        /// </summary>
+        /// <param name="currentClipboardItem"></param>
+        /// <param name="removeItemFromClipboardItemsRequested"></param>
+        void RunOnManagedPasteCompletedMethods(IClipboardItem currentClipboardItem, ref bool removeItemFromClipboardItemsRequested);
 
         void RunOnOnCopyCompletedMethods(IClipboardItem currentClipboardItem);
 

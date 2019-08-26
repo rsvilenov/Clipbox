@@ -10,7 +10,7 @@ namespace Clipbox.Extentions.BuiltIn.HdropFormat.FlowExtentions
     [ClipboxExtention]
     public class CutFlowExtention : FlowExtention
     {
-        public override void OnPasteCompleted(IClipboardItem clipboardItem, IWindowInfo targetWindowInfo, ref bool removeItem)
+        public override void OnManagedPasteCompleted(IClipboardItem clipboardItem, IWindowInfo targetWindowInfo, ref bool removeItem)
         {
             if (!clipboardItem.ClipboardDataObjects.Any(obj => obj.Format == "CF_HDROP"))
             {
