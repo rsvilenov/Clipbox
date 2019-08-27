@@ -8,7 +8,7 @@ namespace Clipbox.Extentions.BuiltIn.HdropFormat.FlowExtentions
     [ClipboxExtention]
     public class RenameExistingFilesFlowExtention : FlowExtention
     {
-        public override void OnPasteRequested(IClipboardItem clipboardItems, IWindowInfo targetWindowInfo, ref bool cancelPaste)
+        public override void OnManagedPasteRequested(IClipboardItem clipboardItems, IWindowInfo targetWindowInfo, ref bool cancelPaste)
         {
             // resolve current explorer's address and if the folder contains files with names such as those awaiting paste, do what?
         }

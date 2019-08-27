@@ -71,15 +71,15 @@ namespace Clipbox.Services
 
         [SecurityCritical]
         [HandleProcessCorruptedStateExceptions]
-        public void RunOnBeforePasteMethods(IClipboardItem currentClipboardItem, ref bool cancelPasteRequested)
+        public void RunOnBeforeManagedPasteMethods(IClipboardItem currentClipboardItem, ref bool cancelPasteRequested)
         {
             DestinationWindowInfo destWindowInfo = GetDestinationWindowInfo();
 
             foreach (var flowExtention in _flowExtentions)
             {
                 bool cancelPaste = false;
-                try { flowExtention.OnPasteRequested(currentClipboardItem, destWindowInfo, ref cancelPaste); }
-                catch (Exception ex) { throw new ClipboxExtentionException(nameof(flowExtention.OnPasteRequested), flowExtention.GetType(), ex); }
+                try { flowExtention.OnManagedPasteRequested(currentClipboardItem, destWindowInfo, ref cancelPaste); }
+                catch (Exception ex) { throw new ClipboxExtentionException(nameof(flowExtention.OnManagedPasteRequested), flowExtention.GetType(), ex); }
                 if (cancelPaste)
                 {
                     // set the out parameter to true

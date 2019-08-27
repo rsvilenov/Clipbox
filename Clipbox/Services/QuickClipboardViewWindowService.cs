@@ -10,6 +10,7 @@ using Clipbox.Views;
 using Clipbox.Win32;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows;
@@ -42,6 +43,9 @@ namespace Clipbox.Services
         public QuickClipboardViewWindowService(QuickViewClipboardContents previewControl, ISettingsService settingsService)
         {
             _settingsService = settingsService;
+
+            SelectedItemIds = new List<string>();
+            SelectedMultiItemIds = new Dictionary<string, IReadOnlyCollection<int>>();
 
             _quickViewWindow = new NonFocusableInteractiveWindow
             {
@@ -81,6 +85,20 @@ namespace Clipbox.Services
 
             PreloadQuickViewWindow();
 
+        }
+
+        protected List<string> SelectedItemIds { get; set; }
+
+        public IReadOnlyList<string> GetSelectedItemIds()
+        {
+            return SelectedItemIds.AsReadOnly();
+        }
+
+        protected Dictionary<string, IReadOnlyCollection<int>> SelectedMultiItemIds { get; set; }
+
+        public IReadOnlyDictionary<string, IReadOnlyCollection<int>> GetSelectedMultiItemsIds()
+        {
+            return new ReadOnlyDictionary<string, IReadOnlyCollection<int>>(SelectedMultiItemIds);
         }
 
         private void _previewControl_HousekeepingRequested(object sender, HousekeepingEventArgs e)
@@ -161,7 +179,7 @@ namespace Clipbox.Services
                 SelectedItemIds.Clear();
                 SelectedItemIds.AddRange(_previewControl.SelectedItemIds);
                 SelectedMultiItemIds.Clear();
-                SelectedMultiItemIds = _previewControl.SelectedMultiItemsIds.ToDictionary(x => x.Key, y => y.Value.AsReadOnly());
+                SelectedMultiItemIds = _previewControl.SelectedMultiItemsIds.ToDictionary(x => x.Key, y => (IReadOnlyCollection<int>)y.Value.AsReadOnly());
                 
                 // clear the state of the control and its collections
                 _previewControl.ResumeDefaultState();

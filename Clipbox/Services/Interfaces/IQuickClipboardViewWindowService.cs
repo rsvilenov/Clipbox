@@ -1,4 +1,7 @@
-﻿namespace Clipbox.Services.Interfaces
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+
+namespace Clipbox.Services.Interfaces
 {
     public interface IQuickClipboardViewWindowService : IClipboardViewWindowServiceBase
     {
@@ -11,5 +14,9 @@
         void SaveChangedSettings();
 
         bool IsWindowVisible { get; }
+        
+        IReadOnlyList<string> GetSelectedItemIds();
+
+        IReadOnlyDictionary<string, IReadOnlyCollection<int>> GetSelectedMultiItemsIds();
     }
 }

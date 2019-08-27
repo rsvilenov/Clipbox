@@ -6,6 +6,7 @@ using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -80,7 +81,7 @@ namespace Clipbox
 
         private void _mainViewWindowService_SetItemsToClipboardRequested(object sender, SelectionEventArgs e)
         {
-            //throw new NotImplementedException();
+            ChargeSystemClipboard(e.SelectedItemIds, e.SelectedMultiItemIds);
         }
 
         private void _clipboardViewWindowService_CombinabilityCheckRequested(object sender, CombinabilityEventArgs e)
@@ -90,6 +91,7 @@ namespace Clipbox
             // can we modify or combine the items?
             if (selectedItems.Count() > 1)
             {
+                // the items are combinable if we can modify them together
                 e.AreItemsCombinable = _flowExtentionExecutorService.RunOnQueryModifyMethods(selectedItems);
             }
         }
@@ -175,7 +177,7 @@ namespace Clipbox
 
                     Debug.WriteLine("Doing paste operation");
                     bool pasteCancelled = false;
-                    DoPasteOperation(out pasteCancelled);
+                    DoManagedPasteOperation(out pasteCancelled);
                 }));
 
             }
@@ -230,28 +232,93 @@ namespace Clipbox
         {
             _quickViewWindowService.FocusNextItem();
         }
-        
-        private void DoPasteOperation(out bool pasteCancelled)
+
+        private void ChargeSystemClipboard(IReadOnlyCollection<string> selectedItemIds, IReadOnlyDictionary<string, IReadOnlyCollection<int>> selectedMultiItemIds)
         {
-            if (!_quickViewWindowService.GetSelectedItemIds().Any() && !_quickViewWindowService.GetSelectedMultiItemsIds().Any())
+            if (!selectedItemIds.Any() && !selectedMultiItemIds.Any())
+            {
+                throw new InvalidOperationException("No clipboard items were selected. The UI should have stopped the flow by now.");
+            }
+
+            IClipboardItem currentItem = PrepareItemsForPaste(selectedItemIds,
+                selectedMultiItemIds,
+                _mainViewWindowService.GetFlowParameters());
+            
+            // set the selected/generated item in the clipboard
+            _clipboardManager.SetCurrentItem(currentItem.Id);
+        }
+        
+        /// <summary>
+        /// Perform a paste, which is requested from the QuickView
+        /// </summary>
+        /// <param name="pasteCancelled"></param>
+        private void DoManagedPasteOperation(out bool pasteCancelled)
+        {
+            IReadOnlyList<string> selectedItemIds = _quickViewWindowService.GetSelectedItemIds();
+            IReadOnlyDictionary<string, IReadOnlyCollection<int>> selectedMultiItemIds = _quickViewWindowService.GetSelectedMultiItemsIds();
+
+
+            if (!selectedItemIds.Any() && !selectedMultiItemIds.Any())
+            {
+                pasteCancelled = true;
+                return;
+            }
+            
+            IClipboardItem currentItem = PrepareItemsForPaste(selectedItemIds,
+                selectedMultiItemIds,
+                _parametersFromQuickViewWindowService);
+
+            bool cancelPasteRequested = false;
+
+            _flowExtentionExecutorService.RunOnBeforeManagedPasteMethods(currentItem, ref cancelPasteRequested);
+
+            if (cancelPasteRequested)
             {
                 pasteCancelled = true;
                 return;
             }
 
-            _flowExtentionExecutorService.ClearParameters();
+            // set the selected/generated item in the clipboard
+            _clipboardManager.SetCurrentItem(currentItem.Id);
 
-            IEnumerable<IClipboardItem> selectedItems = _quickViewWindowService.GetSelectedItemIds().Select(id => _clipboardManager.GetClipboardItem(id, restoreShrinked: true));
+            Debug.WriteLine("Simulating Ctrl+V: " + currentItem.ClipboardDataObjects.First().OriginalData.ToString());
+            // simulate Ctrl+V in order to really paste the item
+            _keyboardService.SimulateCtrlV();
 
-            if (_quickViewWindowService.GetSelectedMultiItemsIds().Any())
+
+            bool removeItemFromClipboardItemsRequested = false;
+
+            _flowExtentionExecutorService.RunOnManagedPasteCompletedMethods(currentItem, ref removeItemFromClipboardItemsRequested);
+
+            if (removeItemFromClipboardItemsRequested || currentItem.IsTemporary)
             {
-                IEnumerable<IClipboardItem> selecteMultiItems = _quickViewWindowService.GetSelectedMultiItemsIds().Keys.Select(id => _clipboardManager.GetClipboardItem(id, restoreShrinked: true));
+                _clipboardManager.RemoveClipboardItem(currentItem.Id, beSilent: true, removeFromSystemClipboard: true);
+            }
+
+            PerformHouseKeeping(new List<string> { currentItem.Id },
+                _houseKeepingTasks.Where(hkTask => hkTask.Regularity.HasFlag(HouseKeepingRegularity.UponViewClipboardContents)),
+                removedItemIds: out List<string> removedItemIds);
+
+            pasteCancelled = false;
+        }
+
+        private IClipboardItem PrepareItemsForPaste(IReadOnlyCollection<string> selectedItemIds, IReadOnlyDictionary<string, IReadOnlyCollection<int>> selectedMultiItemIds, IEnumerable<IFlowParameter> flowParameters)
+        {
+            IClipboardItem currentItem = null;
+
+           _flowExtentionExecutorService.ClearParameters();
+
+            IEnumerable<IClipboardItem> selectedItems = selectedItemIds.Select(id => _clipboardManager.GetClipboardItem(id, restoreShrinked: true));
+
+            if (selectedMultiItemIds.Any())
+            {
+                IEnumerable<IClipboardItem> selecteMultiItems = selectedMultiItemIds.Keys.Select(id => _clipboardManager.GetClipboardItem(id, restoreShrinked: true));
                 selectedItems = selectedItems.Concat(selecteMultiItems);
 
                 var multiItemSelectionParamDictionary = new Dictionary<string, int[]>();
                 foreach (IClipboardItem multiItem in selecteMultiItems)
                 {
-                    int[] selectedIds = _quickViewWindowService.GetSelectedMultiItemsIds().First(x => x.Key == multiItem.Id).Value.ToArray();
+                    int[] selectedIds = selectedMultiItemIds.First(x => x.Key == multiItem.Id).Value.ToArray();
                     multiItemSelectionParamDictionary.Add(multiItem.Id, selectedIds);
                 }
 
@@ -259,14 +326,10 @@ namespace Clipbox
                 _flowExtentionExecutorService.LoadParameters(new List<IFlowParameter> { multiItemsParameter });
             }
 
-            _flowExtentionExecutorService.LoadParameters(_parametersFromQuickViewWindowService);
-
-            IClipboardItem currentItem = null;
-
-            bool forceRemoveOnEnd = false;
-
+            _flowExtentionExecutorService.LoadParameters(flowParameters);
+            
             bool canModify = _flowExtentionExecutorService.RunOnQueryModifyMethods(selectedItems);
-            if (!canModify && _quickViewWindowService.GetSelectedMultiItemsIds().Any())
+            if (!canModify && selectedMultiItemIds.Any())
             {
                 throw new InvalidOperationException("Multi-selection items were found for which there are no flow extentions.");
             }
@@ -278,7 +341,6 @@ namespace Clipbox
                 if (generatedClipboardObject != null && generatedClipboardObject.ClipboardDataObjects != null && generatedClipboardObject.ClipboardDataObjects.Any())
                 {
                     currentItem = _clipboardManager.AppendFromGenerated(generatedClipboardObject, beSilent: true, isTemporary: true);
-                    forceRemoveOnEnd = true;
                 }
                 else
                 {
@@ -293,39 +355,8 @@ namespace Clipbox
             {
                 throw new InvalidOperationException("Selection of multiple incompatible objects must have been stopped by the UI already.");
             }
-            
-            bool cancelPasteRequested = false;
 
-            _flowExtentionExecutorService.RunOnBeforePasteMethods(currentItem, ref cancelPasteRequested);
-
-            if (cancelPasteRequested)
-            {
-                pasteCancelled = true;
-                return;
-            }
-
-            // set the selected item in the clipboard
-            _clipboardManager.SetCurrentItem(currentItem.Id);
-
-            Debug.WriteLine("Simulating Ctrl+V: " + currentItem.ClipboardDataObjects.First().OriginalData.ToString());
-            // simulate Ctrl+V in order to really paste the item
-            _keyboardService.SimulateCtrlV();
-
-
-            bool removeItemFromClipboardItemsRequested = false;
-
-            _flowExtentionExecutorService.RunOnManagedPasteCompletedMethods(currentItem, ref removeItemFromClipboardItemsRequested);
-
-            if (removeItemFromClipboardItemsRequested || forceRemoveOnEnd)
-            {
-                _clipboardManager.RemoveClipboardItem(currentItem.Id, beSilent: true, removeFromSystemClipboard: true);
-            }
-
-            PerformHouseKeeping(new List<string> { currentItem.Id },
-                _houseKeepingTasks.Where(hkTask => hkTask.Regularity.HasFlag(HouseKeepingRegularity.UponViewClipboardContents)),
-                removedItemIds: out List<string> removedItemIds);
-            
-            pasteCancelled = false;
+            return currentItem;
         }
 
         // TODO: rename?

@@ -78,7 +78,7 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes
         /// <param name="clipboardItem">The clipboard item to be pasted.</param>
         /// <param name="targetWindowInfo">Info for the target window.</param>
         /// <param name="cancelPaste">If set to true, cancels the paste operation</param>
-        public virtual void OnPasteRequested(IClipboardItem clipboardItem, IWindowInfo targetWindowInfo, ref bool cancelPaste)
+        public virtual void OnManagedPasteRequested(IClipboardItem clipboardItem, IWindowInfo targetWindowInfo, ref bool cancelPaste)
         { }
 
         /// <summary>
