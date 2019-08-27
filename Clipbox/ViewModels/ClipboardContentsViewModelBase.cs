@@ -116,5 +116,17 @@ namespace Clipbox.ViewModels
             return false;
         }
 
+        public void RemoveClipboardItemWrappers(IEnumerable<string> clipboardItemIds)
+        {
+            var wrappersToRemove = ClipboardViewItemWrappers
+                .Where(w => clipboardItemIds.Contains(w.Id))
+                .ToList();
+
+            foreach (var wrapper in wrappersToRemove)
+            {
+                ClipboardViewItemWrappers.Remove(wrapper);
+            }
+        }
+
     }
 }

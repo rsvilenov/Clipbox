@@ -103,37 +103,36 @@ namespace Clipbox
 
         private void PerformHouseKeeping(IEnumerable<string> clipboardItemIds, IEnumerable<IHouseKeepingTask> tasks, out List<string> removedItemIds)
         {
-#if DEBUG
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
-#endif
+            // WaitForPendingFinalizers() causes a deadlock
+            //#if DEBUG
+            //            GC.Collect();
+            //            GC.WaitForPendingFinalizers();
+            //            GC.Collect();
+            //#endif
+
             removedItemIds = new List<string>();
 
-            lock (_clipboardManager)
+            foreach (IHouseKeepingTask hkTask in tasks)
             {
-                foreach (IHouseKeepingTask hkTask in tasks)
+                IEnumerable<string> matchingClipboardItemIds = _clipboardManager.GetAllItemIds(filterCondition: (item) =>
+                    clipboardItemIds.Contains(item.Id) &&
+                    item.ClipboardDataObjects.Any(cdo => cdo.Format == hkTask.ClipboardFormat));
+
+                foreach (string clipboardItemId in matchingClipboardItemIds)
                 {
-                    IEnumerable<string> matchingClipboardItemIds = _clipboardManager.GetAllItemIds(filterCondition: (item) =>
-                        clipboardItemIds.Contains(item.Id) &&
-                        item.ClipboardDataObjects.Any(cdo => cdo.Format == hkTask.ClipboardFormat));
+                    IClipboardItem item = _clipboardManager.GetClipboardItem(clipboardItemId, restoreShrinked: hkTask.RequiresRestoredState);
 
-                    foreach (string clipboardItemId in matchingClipboardItemIds)
+                    IHouseKeepingResult result = _flowExtentionExecutorService.RunOnHousekeepingPerformedMethods(hkTask, item);
+                    if (result != null)
                     {
-                        IClipboardItem item = _clipboardManager.GetClipboardItem(clipboardItemId, restoreShrinked: hkTask.RequiresRestoredState);
-
-                        IHouseKeepingResult result = _flowExtentionExecutorService.RunOnHousekeepingPerformedMethods(hkTask, item);
-                        if (result != null)
+                        if (result.ShouldRemoveItem)
                         {
-                            if (result.ShouldRemoveItem)
-                            {
-                                _clipboardManager.RemoveClipboardItem(item.Id, beSilent: true);
-                                removedItemIds.Add(item.Id);
-                            }
-                            else if (result.ClipboardDataObjectsToRemove != null && result.ClipboardDataObjectsToRemove.Any())
-                            {
-                                _clipboardManager.RemoveClipbpardDataObjects(item.Id, result.ClipboardDataObjectsToRemove.ToArray());
-                            }
+                            _clipboardManager.RemoveClipboardItem(item.Id, beSilent: true);
+                            removedItemIds.Add(item.Id);
+                        }
+                        else if (result.ClipboardDataObjectsToRemove != null && result.ClipboardDataObjectsToRemove.Any())
+                        {
+                            _clipboardManager.RemoveClipbpardDataObjects(item.Id, result.ClipboardDataObjectsToRemove.ToArray());
                         }
                     }
                 }

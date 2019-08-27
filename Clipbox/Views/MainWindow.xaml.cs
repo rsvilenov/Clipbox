@@ -47,6 +47,8 @@ namespace Clipbox.Views
 
         public event EventHandler<SelectionEventArgs> SetItemsToClipboardRequested;
 
+        public event EventHandler<HousekeepingEventArgs> HousekeepingRequested;
+
         public MainWindow(IClipboardManager clipboardManager,
             IPreviewGenerationService previewGenerationService,
             UIExtentionContainer uiExtContainer,
@@ -71,6 +73,7 @@ namespace Clipbox.Views
             _mainViewClipboardContents.SelectionChanged += _mainViewClipboardContents_SelectionChanged;
             _mainViewClipboardContents.CombinabilityCheckRequested += _mainViewClipboardContents_CombinabilityCheckRequested;
             _mainViewClipboardContents.SetItemsToClipboardRequested += _mainViewClipboardContents_SetItemsToClipboardRequested;
+            _mainViewClipboardContents.HousekeepingRequested += _mainViewClipboardContents_HousekeepingRequested;
 
             _backgroundRenderMode = (MainClipboardViewBackgroundRenderMode)_settingsService.GetSetting<int>(SettingsKeys.MainClipboardViewBackgroundRenderMode);
 
@@ -103,6 +106,11 @@ namespace Clipbox.Views
 
             Closing += MainWindow_Closing;
             Shown += MainWindow_Shown;
+        }
+
+        private void _mainViewClipboardContents_HousekeepingRequested(object sender, HousekeepingEventArgs e)
+        {
+            HousekeepingRequested?.Invoke(this, e);
         }
 
         private void _mainViewClipboardContents_SetItemsToClipboardRequested(object sender, SelectionEventArgs e)

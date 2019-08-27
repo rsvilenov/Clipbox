@@ -56,12 +56,15 @@ namespace Clipbox.ViewModels
         {
             _cancellableTaskManager.CancelScheduledTask(taskId: clipboardItemId);
         }
-        
 
-        public void LoadAllItems(MonitorDimensions monitorDimensions)
+        public IEnumerable<string> GetClipboardItemIds()
         {
-            IEnumerable<string> allItemIds = base.ClipboardManager.GetAllItemIds();
-            base.LoadAndWrapItems(monitorDimensions, allItemIds);
+            return base.ClipboardManager.GetAllItemIds();
+        }
+        
+        public void LoadAllItems(MonitorDimensions monitorDimensions, IEnumerable<string> clipboardItemIds)
+        {
+            base.LoadAndWrapItems(monitorDimensions, clipboardItemIds);
         }
 
         ~MainViewClipboardContentsViewModel()

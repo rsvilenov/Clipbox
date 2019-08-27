@@ -32,6 +32,8 @@ namespace Clipbox.Views
         public event EventHandler<SelectionEventArgs> SelectionChanged;
 
         public event EventHandler<CombinabilityEventArgs> CombinabilityCheckRequested;
+        
+        public event EventHandler<HousekeepingEventArgs> HousekeepingRequested;
 
         private UIExtentionContainer _container;
 
@@ -543,6 +545,13 @@ namespace Clipbox.Views
             {
                 multiItem.GetSubItemsListView()?.UnselectAll();
             }
+        }
+
+        protected void PerformHousekeeping(IEnumerable<string> clipboardItemIdsToProcess, out IReadOnlyCollection<string> removedClipboardItemIds)
+        {
+            HousekeepingEventArgs args = new HousekeepingEventArgs(clipboardItemIdsToProcess);
+            HousekeepingRequested?.Invoke(this, args);
+            removedClipboardItemIds = args.RemovedClipboardItemIds.ToList().AsReadOnly();
         }
 
         protected abstract ListView GetMainListView();

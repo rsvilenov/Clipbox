@@ -95,7 +95,11 @@ namespace Clipbox.Views
         {
             if ((bool)e.NewValue)
             {
-                _viewModel.LoadAllItems(this.MonitorDimensions);
+                IEnumerable<string> clipboardItemIds = _viewModel.GetClipboardItemIds(); // maybe pass filters to this method later
+
+                base.PerformHousekeeping(clipboardItemIds, out IReadOnlyCollection<string> removedClipboardItemIds);
+                
+                _viewModel.LoadAllItems(this.MonitorDimensions, clipboardItemIds.Except(removedClipboardItemIds));
             }
         }
 

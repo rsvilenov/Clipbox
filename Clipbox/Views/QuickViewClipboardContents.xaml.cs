@@ -6,6 +6,7 @@ using Clipbox.Settings;
 using Clipbox.ViewModels;
 using Clipbox.ViewModels.Enums;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -24,8 +25,6 @@ namespace Clipbox.Views
         private MonitorDimensions _oldMonitorDimensions;
 
         private ISettingsService _settingsService;
-
-        public event EventHandler<HousekeepingEventArgs> HousekeepingRequested;
 
         public bool DimNonFocusedItems
         {
@@ -67,7 +66,10 @@ namespace Clipbox.Views
                     {
                         Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
                         {
-                            PerformHousekeeping();
+                            base.PerformHousekeeping(_viewModel.ClipboardViewItemWrappers.Select(w => w.Id), 
+                                out IReadOnlyCollection<string> removedClipboardItemIds);
+
+                            _viewModel.RemoveClipboardItemWrappers(removedClipboardItemIds);
                         }));
                     }))
                     .ContinueWith((t) =>
@@ -96,21 +98,6 @@ namespace Clipbox.Views
         private void LoadViewItems()
         {
             _viewModel.LoadViewItems(MonitorDimensions);
-        }
-
-        private void PerformHousekeeping()
-        {
-            HousekeepingEventArgs args = new HousekeepingEventArgs(_viewModel.ClipboardViewItemWrappers.Select(w => w.Id));
-            HousekeepingRequested?.Invoke(this, args);
-
-            var wrappersToRemove = _viewModel.ClipboardViewItemWrappers
-                .Where(w => args.RemovedClipboardItemIds.Contains(w.Id))
-                .ToList();
-
-            foreach (var wrapper in wrappersToRemove)
-            {
-                _viewModel.ClipboardViewItemWrappers.Remove(wrapper);
-            }
         }
 
         public void LoadWrappedItems()

@@ -64,6 +64,7 @@ namespace Clipbox.Services
                     _mainWindow.ClipboardItemSelectionChanged -= MainWindow_ClipboardItemSelectionChanged;
                     _mainWindow.ClipbardItemsCombinabilityCheckRequested -= _mainWindow_ClipbardItemsCombinabilityCheckRequested;
                     _mainWindow.SetItemsToClipboardRequested -= _mainWindow_SetItemsToClipboardRequested;
+                    _mainWindow.HousekeepingRequested -= _mainWindow_HousekeepingRequested;
 
                     _mainWindow.Close();
                     //_mainWindow.Close();
@@ -97,6 +98,7 @@ namespace Clipbox.Services
                     _mainWindow.ClipboardItemSelectionChanged += MainWindow_ClipboardItemSelectionChanged;
                     _mainWindow.ClipbardItemsCombinabilityCheckRequested += _mainWindow_ClipbardItemsCombinabilityCheckRequested;
                     _mainWindow.SetItemsToClipboardRequested += _mainWindow_SetItemsToClipboardRequested;
+                    _mainWindow.HousekeepingRequested += _mainWindow_HousekeepingRequested;
 
                     mainWindow.ScaleMode = resizeToDpi ? DpiScaleMode.Custom : DpiScaleMode.None;
                     
@@ -109,6 +111,11 @@ namespace Clipbox.Services
                     
                     _mainWindow.Show();
                 }));
+        }
+
+        private void _mainWindow_HousekeepingRequested(object sender, HousekeepingEventArgs e)
+        {
+            base.RaiseHousekeepingRequestedEvent(e);
         }
 
         private void _mainWindow_SetItemsToClipboardRequested(object sender, SelectionEventArgs e)
