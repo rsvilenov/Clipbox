@@ -1,4 +1,5 @@
-﻿using Clipbox.Core.ClipboardContent;
+﻿using Clipbox.Core;
+using Clipbox.Core.ClipboardContent;
 using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.Core.Enums;
 using Clipbox.Core.Extensibility.Contracts;
@@ -13,8 +14,10 @@ using Clipbox.Infrastructure.Persistence;
 using Clipbox.Win32;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security;
@@ -410,6 +413,10 @@ namespace Clipbox.ExtendedClipboard
             ItemAdded?.Invoke(this, new ClipboardManagerEventArgs(currentItem.Id));
         }
 
+        /// <summary>
+        /// Construct a SourceWindowInfo for the foreground window 
+        /// </summary>
+        /// <returns></returns>
         private SourceWindowInfo GetForemostWindowInfo()
         {
             SourceWindowInfo windowInfo = new SourceWindowInfo();
@@ -424,7 +431,21 @@ namespace Clipbox.ExtendedClipboard
             return windowInfo;
         }
 
-        
+        /// <summary>
+        /// Construct a SourceWindowInfo for the current process
+        /// </summary>
+        /// <returns></returns>
+        private SourceWindowInfo GetOwnWindowInfo()
+        {
+            return new SourceWindowInfo
+            {
+                ApplicationPath = Assembly.GetEntryAssembly().Location,
+                Caption = ProductConstants.PRODUCT_NAME,
+                Icon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location)
+                    ?.ToBitmap()
+                    ?.ToByteArray()
+            };
+        }
 
         [SecurityCritical]
         [HandleProcessCorruptedStateExceptions]
@@ -635,6 +656,14 @@ namespace Clipbox.ExtendedClipboard
                 throw new ArgumentException($"{nameof(concatenated.ClipboardDataObjects)} does not contain any objects");
             }
 
+            // as a source, use the main window of Clipbox, if available
+            var source = new ClipboardItemSource
+            {
+                SourceWindowInfo = GetOwnWindowInfo(),
+                MachineName = Environment.MachineName,
+                UserName = Environment.UserName
+            };
+
             var newClipboardDataObjects = new List<ClipboardDataObject>();
 
             foreach (IGeneratedClipboardDataObject generatedCdo in concatenated.ClipboardDataObjects)
@@ -684,7 +713,7 @@ namespace Clipbox.ExtendedClipboard
                 }
             }
 
-            var newItem = new ClipboardItem(null, newClipboardDataObjects);
+            var newItem = new ClipboardItem(source, newClipboardDataObjects);
             
             lock (_ioLockHandle)
             {
