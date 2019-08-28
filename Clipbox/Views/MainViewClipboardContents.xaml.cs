@@ -36,7 +36,7 @@ namespace Clipbox.Views
         private int _lastListViewItemCount = 0;
         private Dictionary<string, GroupItem> _groupNameGroupItemMapping = new Dictionary<string, GroupItem>();
 
-        public event EventHandler<SelectionEventArgs> SetItemsToClipboardRequested;
+        public event EventHandler<SetToClipboardEventArgs> SetItemsToClipboardRequested;
 
         /// <summary>
         /// This view is the only one that allows for selection of incompatible items,
@@ -366,7 +366,8 @@ namespace Clipbox.Views
 
         private void SetToClipboardButton_Click(object sender, RoutedEventArgs e)
         {
-            SetItemsToClipboardRequested?.Invoke(this, new SelectionEventArgs(SelectedItemIds, SelectedMultiItemsIds));
+            SetItemsToClipboardRequested?.Invoke(this, 
+                new SetToClipboardEventArgs(SelectedItemIds, SelectedMultiItemsIds, keepGeneratedItemsCb.IsChecked == true));
         }
     }
 }

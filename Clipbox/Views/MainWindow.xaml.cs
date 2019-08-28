@@ -45,7 +45,7 @@ namespace Clipbox.Views
 
         public event EventHandler<CombinabilityEventArgs> ClipbardItemsCombinabilityCheckRequested;
 
-        public event EventHandler<SelectionEventArgs> SetItemsToClipboardRequested;
+        public event EventHandler<SetToClipboardEventArgs> SetItemsToClipboardRequested;
 
         public event EventHandler<HousekeepingEventArgs> HousekeepingRequested;
 
@@ -113,7 +113,7 @@ namespace Clipbox.Views
             HousekeepingRequested?.Invoke(this, e);
         }
 
-        private void _mainViewClipboardContents_SetItemsToClipboardRequested(object sender, SelectionEventArgs e)
+        private void _mainViewClipboardContents_SetItemsToClipboardRequested(object sender, SetToClipboardEventArgs e)
         {
             SetItemsToClipboardRequested?.Invoke(this, e);
         }

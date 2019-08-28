@@ -718,4 +718,28 @@
         </Viewbox>
     </ControlTemplate>
 
+    <ControlTemplate x:Key="SaveIcon">
+        <Viewbox>
+            <Grid Visibility="Visible">
+                <Path
+                    Width="90"
+                    Height="90"
+                    Margin="0,0,0,0"
+                    Data="M6.7059901,26.268005L6.7059901,30.567017 21.46001,30.567017 21.46001,26.268005z M6.7059901,1.4330444L6.7059901,11.821045 21.46001,11.821045 21.46001,1.4330444z M1.3410029,1.4330444L1.3410029,30.567017 5.3649877,30.567017 5.3649877,24.835999 22.801014,24.835999 22.801014,30.567017 24.426988,30.567017 26.824999,27.713013 26.824999,1.4330444 22.801014,1.4330444 22.801014,13.254028 5.3649877,13.254028 5.3649877,1.4330444z M0,0L28.166,0 28.166,28.262024 25.023973,32 0,32z"
+                    Fill="{TemplateBinding Foreground}"
+                    RenderTransformOrigin="0.5,0.5"
+                    Stretch="Uniform">
+                    <Path.RenderTransform>
+                        <TransformGroup>
+                            <TransformGroup.Children>
+                                <RotateTransform Angle="0" />
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                            </TransformGroup.Children>
+                        </TransformGroup>
+                    </Path.RenderTransform>
+                </Path>
+            </Grid>
+        </Viewbox>
+    </ControlTemplate>
+
 </ResourceDictionary>

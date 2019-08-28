@@ -21,7 +21,7 @@ namespace Clipbox.Views.Interfaces
 
         event EventHandler<CombinabilityEventArgs> ClipbardItemsCombinabilityCheckRequested;
 
-        event EventHandler<SelectionEventArgs> SetItemsToClipboardRequested;
+        event EventHandler<SetToClipboardEventArgs> SetItemsToClipboardRequested;
 
         event EventHandler<HousekeepingEventArgs> HousekeepingRequested;
     }

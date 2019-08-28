@@ -16,28 +16,40 @@
     d:DesignWidth="300"
     mc:Ignorable="d">
     <UserControl.Resources>
-        <conv:BitmapToBitmapImageConverter x:Key="BitmapToBitmapImageConverter" />
-        <conv:ObjectToTypeStringConverter x:Key="ObjectToTypeStringConverter" />
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-        <coreConv:InverseBooleanConverter x:Key="InverseBooleanConverter" />
-        <coreConv:OrMultiValueConverter x:Key="OrMultiValueConverter" />
-        <coreConv:AndMultiValueConverter x:Key="AndMultiValueConverter" />
-        <coreConv:MathAddConverter x:Key="MathAddConverter" />
-        <coreConv:IsEqualOrGreaterThanConverter x:Key="IsEqualOrGreaterThanConverter" />
-        <coreConv:NullOrEmptyCollectionToBoolConverter x:Key="NullOrEmptyCollectionToBoolConverter" />
-        <conv:ContentClassListContainsConverter x:Key="ContentClassListContainsConverter" />
-        <ResourceDictionary x:Key="Styles">
+        <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Clipbox.Infrastructure.UI;component/Styles/Style.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Views/Styles/ToggleButtonBaseStyle.xaml" />
             </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
 
-        <Style x:Key="MultiItemStyleForSubItems_EventTriggersStyle" TargetType="{x:Type tile:MultiItem}">
-            <EventSetter Event="SubItems_SelectionChanged" Handler="MultiItem_SubItems_SelectionChanged" />
-            <EventSetter Event="SubItems_SubItemsFocusMovedOut" Handler="MultiItem_SubItems_SubItemsFocusMovedOut" />
-            <EventSetter Event="Unloaded" Handler="MultiItem_Unloaded" />
-            <EventSetter Event="Loaded" Handler="MultiItem_Loaded" />
-        </Style>
+            <conv:BitmapToBitmapImageConverter x:Key="BitmapToBitmapImageConverter" />
+            <conv:ObjectToTypeStringConverter x:Key="ObjectToTypeStringConverter" />
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <coreConv:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+            <coreConv:OrMultiValueConverter x:Key="OrMultiValueConverter" />
+            <coreConv:AndMultiValueConverter x:Key="AndMultiValueConverter" />
+            <coreConv:MathAddConverter x:Key="MathAddConverter" />
+            <coreConv:IsEqualOrGreaterThanConverter x:Key="IsEqualOrGreaterThanConverter" />
+            <coreConv:NullOrEmptyCollectionToBoolConverter x:Key="NullOrEmptyCollectionToBoolConverter" />
+            <conv:ContentClassListContainsConverter x:Key="ContentClassListContainsConverter" />
+
+            <Style x:Key="MultiItemStyleForSubItems_EventTriggersStyle" TargetType="{x:Type tile:MultiItem}">
+                <EventSetter Event="SubItems_SelectionChanged" Handler="MultiItem_SubItems_SelectionChanged" />
+                <EventSetter Event="SubItems_SubItemsFocusMovedOut" Handler="MultiItem_SubItems_SubItemsFocusMovedOut" />
+                <EventSetter Event="Unloaded" Handler="MultiItem_Unloaded" />
+                <EventSetter Event="Loaded" Handler="MultiItem_Loaded" />
+            </Style>
+
+            <Style
+                x:Key="keepGeneratedItemToggleButton"
+                BasedOn="{StaticResource tglButton}"
+                TargetType="{x:Type ToggleButton}">
+                <Setter Property="Content" Value="{DynamicResource SaveIcon}" />
+                <Setter Property="ToolTip" Value="Save the combined/modified item" />
+                <Setter Property="Padding" Value="5" />
+            </Style>
+
+        </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -117,6 +129,11 @@
                         VerticalAlignment="Top"
                         Click="SetToClipboardButton_Click"
                         Style="{DynamicResource SetToClipboardButton}" />
+                    <ToggleButton
+                        x:Name="keepGeneratedItemsCb"
+                        Width="32"
+                        Height="32"
+                        Style="{StaticResource keepGeneratedItemToggleButton}" />
 
                 </StackPanel>
 

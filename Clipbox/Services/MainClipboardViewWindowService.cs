@@ -28,7 +28,7 @@ namespace Clipbox.Services
 
         private UIExtentionContainer _uiExtContainer;
 
-        public event EventHandler<SelectionEventArgs> SetItemsToClipboardRequested;
+        public event EventHandler<SetToClipboardEventArgs> SetItemsToClipboardRequested;
 
         public bool IsOpen
         {
@@ -118,7 +118,7 @@ namespace Clipbox.Services
             base.RaiseHousekeepingRequestedEvent(e);
         }
 
-        private void _mainWindow_SetItemsToClipboardRequested(object sender, SelectionEventArgs e)
+        private void _mainWindow_SetItemsToClipboardRequested(object sender, SetToClipboardEventArgs e)
         {
             SetItemsToClipboardRequested?.Invoke(this, e);
         }

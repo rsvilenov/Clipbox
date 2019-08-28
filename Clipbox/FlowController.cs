@@ -79,9 +79,9 @@ namespace Clipbox
             e.RemovedClipboardItemIds = removedItemIds;
         }
 
-        private void _mainViewWindowService_SetItemsToClipboardRequested(object sender, SelectionEventArgs e)
+        private void _mainViewWindowService_SetItemsToClipboardRequested(object sender, SetToClipboardEventArgs e)
         {
-            ChargeSystemClipboard(e.SelectedItemIds, e.SelectedMultiItemIds);
+            ChargeSystemClipboard(e.SelectedItemIds, e.SelectedMultiItemIds, e.KeepGeneratedItem);
         }
 
         private void _clipboardViewWindowService_CombinabilityCheckRequested(object sender, CombinabilityEventArgs e)
@@ -233,7 +233,7 @@ namespace Clipbox
             _quickViewWindowService.FocusNextItem();
         }
 
-        private void ChargeSystemClipboard(IReadOnlyCollection<string> selectedItemIds, IReadOnlyDictionary<string, IReadOnlyCollection<int>> selectedMultiItemIds)
+        private void ChargeSystemClipboard(IReadOnlyCollection<string> selectedItemIds, IReadOnlyDictionary<string, IReadOnlyCollection<int>> selectedMultiItemIds, bool keepGeneratedItem)
         {
             if (!selectedItemIds.Any() && !selectedMultiItemIds.Any())
             {
@@ -242,7 +242,9 @@ namespace Clipbox
 
             IClipboardItem currentItem = PrepareItemsForPaste(selectedItemIds,
                 selectedMultiItemIds,
-                _mainViewWindowService.GetFlowParameters());
+                _mainViewWindowService.GetFlowParameters(),
+                /* ClipboardItem.IsTemporary is controlled by the flat keepGeneratedItem */
+                keepGeneratedItem: keepGeneratedItem);
             
             // set the selected/generated item in the clipboard
             _clipboardManager.SetCurrentItem(currentItem.Id);
@@ -274,7 +276,8 @@ namespace Clipbox
             
             IClipboardItem currentItem = PrepareItemsForPaste(selectedItemIds,
                 selectedMultiItemIds,
-                _parametersFromQuickViewWindowService);
+                _parametersFromQuickViewWindowService,
+                keepGeneratedItem: false);
 
             bool cancelPasteRequested = false;
 
@@ -310,7 +313,7 @@ namespace Clipbox
             pasteCancelled = false;
         }
 
-        private IClipboardItem PrepareItemsForPaste(IReadOnlyCollection<string> selectedItemIds, IReadOnlyDictionary<string, IReadOnlyCollection<int>> selectedMultiItemIds, IEnumerable<IFlowParameter> flowParameters)
+        private IClipboardItem PrepareItemsForPaste(IReadOnlyCollection<string> selectedItemIds, IReadOnlyDictionary<string, IReadOnlyCollection<int>> selectedMultiItemIds, IEnumerable<IFlowParameter> flowParameters, bool keepGeneratedItem)
         {
             IClipboardItem currentItem = null;
 
@@ -348,7 +351,9 @@ namespace Clipbox
                 IGeneratedClipboardItem generatedClipboardObject = _flowExtentionExecutorService.ModifyItems(selectedItems);
                 if (generatedClipboardObject != null && generatedClipboardObject.ClipboardDataObjects != null && generatedClipboardObject.ClipboardDataObjects.Any())
                 {
-                    currentItem = _clipboardManager.AppendFromGenerated(generatedClipboardObject, beSilent: true, isTemporary: true);
+                    currentItem = _clipboardManager.AppendFromGenerated(generatedClipboardObject, 
+                        beSilent: !keepGeneratedItem, /* inform the listeners that a new item is available if this item is not temporary */
+                        isTemporary: !keepGeneratedItem /* if we want to keep the item, it shouldn't be temporary */);
                 }
                 else
                 {

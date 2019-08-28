@@ -95,7 +95,7 @@
     <Compile Include="Services\Enums\TrayIconVisibilityPreference.cs" />
     <Compile Include="Services\EventArgsClasses\CombinabilityEventArgs.cs" />
     <Compile Include="Services\EventArgsClasses\HousekeepingEventArgs.cs" />
-    <Compile Include="Services\EventArgsClasses\PasteRequestedEventArgs.cs" />
+    <Compile Include="Services\EventArgsClasses\SetToClipboardEventArgs.cs" />
     <Compile Include="Services\EventArgsClasses\SelectionEventArgs.cs" />
     <Compile Include="Services\EventArgsClasses\SettingsEventArgs.cs" />
     <Compile Include="Services\Interfaces\IClipboardListenerService.cs" />
@@ -238,6 +238,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Styles\ToggleButtonBaseStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\VerticalScrollBarEx.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -350,7 +354,9 @@
   <ItemGroup>
     <Resource Include="Views\ClipboardViewItemTile\ReadMe.txt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Views\Styles\ReadMe.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
