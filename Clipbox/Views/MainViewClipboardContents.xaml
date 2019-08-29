@@ -168,10 +168,58 @@
                         Visibility="{Binding ElementName=keepGenersetToClipboardBtnatedItemsCb, Path=Visibility}" />
 
                     <Button
+                        x:Name="trashBtn"
                         Height="32"
                         VerticalAlignment="Top"
-                        Click="SetToClipboardButton_Click"
+                        Click="TrashBtn_Click"
                         Style="{DynamicResource BtnTrash}" />
+
+                    <Popup
+                        x:Name="deleteConfirmationPopup"
+                        IsOpen="False"
+                        Placement="Bottom"
+                        PlacementTarget="{Binding ElementName=trashBtn}">
+                        <Grid Margin="25" Background="{DynamicResource TaskbarColorBrush}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition MinHeight="50" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock
+                                 MaxWidth="350"
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="2"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Foreground="White"
+                                Text="Are you sure you want to delete the selected item(s)? Note: the selected multiitems will not be deleted. Please select the whole items."
+                                TextWrapping="WrapWithOverflow" />
+
+                            <Button
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                Width="50"
+                                Height="20"
+                                Margin="5"
+                                HorizontalContentAlignment="Center"
+                                Click="ButtonConfirmDelete_Click"
+                                Content="Yes" />
+                            <Button
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Width="50"
+                                Height="20"
+                                Margin="5"
+                                HorizontalContentAlignment="Center"
+                                Content="No" />
+                        </Grid>
+                    </Popup>
                 </StackPanel>
 
             </Grid>

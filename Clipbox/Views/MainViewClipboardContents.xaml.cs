@@ -368,5 +368,16 @@ namespace Clipbox.Views
                 SetItemsToClipboardRequested?.Invoke(this,
                     new SetToClipboardEventArgs(SelectedItemIds, SelectedMultiItemsIds, keepGeneratedItemsCb.IsChecked == true));
         }
+
+        private void TrashBtn_Click(object sender, RoutedEventArgs e)
+        {
+            deleteConfirmationPopup.IsOpen = true;
+
+        }
+
+        private void ButtonConfirmDelete_Click(object sender, RoutedEventArgs e)
+        {
+            deleteConfirmationPopup.IsOpen = false;
+        }
     }
 }
