@@ -6,7 +6,6 @@ using Clipbox.Services.Interfaces;
 using Clipbox.ViewModels;
 using Clipbox.ViewModels.BindableObjects;
 using Clipbox.Views.ClipboardViewItemTile;
-using Clipbox.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -366,8 +365,8 @@ namespace Clipbox.Views
 
         private void SetToClipboardButton_Click(object sender, RoutedEventArgs e)
         {
-            SetItemsToClipboardRequested?.Invoke(this, 
-                new SetToClipboardEventArgs(SelectedItemIds, SelectedMultiItemsIds, keepGeneratedItemsCb.IsChecked == true));
+                SetItemsToClipboardRequested?.Invoke(this,
+                    new SetToClipboardEventArgs(SelectedItemIds, SelectedMultiItemsIds, keepGeneratedItemsCb.IsChecked == true));
         }
     }
 }

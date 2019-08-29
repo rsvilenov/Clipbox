@@ -133,7 +133,8 @@
                         x:Name="keepGeneratedItemsCb"
                         Width="32"
                         Height="32"
-                        Style="{StaticResource keepGeneratedItemToggleButton}" />
+                        Style="{StaticResource keepGeneratedItemToggleButton}"
+                        Visibility="{Binding Path=AreAnyUIExtensionsLoaded, RelativeSource={RelativeSource AncestorType={x:Type local:ClipboardViewControlBase}}, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                 </StackPanel>
 
