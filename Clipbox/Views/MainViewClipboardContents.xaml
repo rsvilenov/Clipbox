@@ -75,6 +75,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <StackPanel
                     Grid.Column="0"
@@ -110,6 +111,9 @@
 
 
                 <StackPanel Grid.Column="1" Orientation="Horizontal">
+                    <i:Interaction.Behaviors>
+                        <infBeh:FrameworkElementDpiScalingBehavior />
+                    </i:Interaction.Behaviors>
                     <StackPanel.Style>
                         <Style TargetType="{x:Type StackPanel}">
                             <Setter Property="Visibility" Value="Collapsed" />
@@ -124,11 +128,6 @@
                             </Style.Triggers>
                         </Style>
                     </StackPanel.Style>
-                    <Button
-                        Height="32"
-                        VerticalAlignment="Top"
-                        Click="SetToClipboardButton_Click"
-                        Style="{DynamicResource SetToClipboardButton}" />
                     <ToggleButton
                         x:Name="keepGeneratedItemsCb"
                         Width="32"
@@ -136,6 +135,43 @@
                         Style="{StaticResource keepGeneratedItemToggleButton}"
                         Visibility="{Binding Path=AreAnyUIExtensionsLoaded, RelativeSource={RelativeSource AncestorType={x:Type local:ClipboardViewControlBase}}, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
+                    <!--  vertical separator  -->
+                    <Rectangle
+                        Width="1"
+                        Margin="10,5,10,5"
+                        VerticalAlignment="Stretch"
+                        Stroke="DarkGray"
+                        Visibility="{Binding ElementName=keepGeneratedItemsCb, Path=Visibility}" />
+
+                    <Button
+                        x:Name="setToClipboardBtn"
+                        Height="32"
+                        VerticalAlignment="Top"
+                        Click="SetToClipboardButton_Click"
+                        Style="{DynamicResource SetToClipboardButton}" />
+
+                </StackPanel>
+
+                <StackPanel
+                    Grid.Column="2"
+                    Orientation="Horizontal"
+                    Visibility="{Binding Path=AreAnyItemsSelected, RelativeSource={RelativeSource AncestorType={x:Type local:ClipboardViewControlBase}}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <i:Interaction.Behaviors>
+                        <infBeh:FrameworkElementDpiScalingBehavior />
+                    </i:Interaction.Behaviors>
+
+                    <Rectangle
+                        Width="1"
+                        Margin="10,5,10,5"
+                        VerticalAlignment="Stretch"
+                        Stroke="DarkGray"
+                        Visibility="{Binding ElementName=keepGenersetToClipboardBtnatedItemsCb, Path=Visibility}" />
+
+                    <Button
+                        Height="32"
+                        VerticalAlignment="Top"
+                        Click="SetToClipboardButton_Click"
+                        Style="{DynamicResource BtnTrash}" />
                 </StackPanel>
 
             </Grid>
