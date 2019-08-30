@@ -152,10 +152,23 @@
 
                 </StackPanel>
 
-                <StackPanel
-                    Grid.Column="2"
-                    Orientation="Horizontal"
-                    Visibility="{Binding Path=AreAnyItemsSelected, RelativeSource={RelativeSource AncestorType={x:Type local:ClipboardViewControlBase}}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <StackPanel Grid.Column="2" Orientation="Horizontal">
+
+                    <StackPanel.Style>
+                        <Style TargetType="{x:Type StackPanel}">
+                            <Setter Property="Visibility" Value="Hidden" />
+                            <Style.Triggers>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Binding="{Binding Path=AreAnyItemsSelected, RelativeSource={RelativeSource AncestorType={x:Type local:ClipboardViewControlBase}}}" Value="True" />
+                                        <Condition Binding="{Binding Path=AreAnySubItemsSelected, RelativeSource={RelativeSource AncestorType={x:Type local:ClipboardViewControlBase}}}" Value="False" />
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </MultiDataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </StackPanel.Style>
+
                     <i:Interaction.Behaviors>
                         <infBeh:FrameworkElementDpiScalingBehavior />
                     </i:Interaction.Behaviors>
@@ -190,10 +203,10 @@
                             </Grid.RowDefinitions>
 
                             <TextBlock
-                                 MaxWidth="350"
                                 Grid.Row="0"
                                 Grid.Column="0"
                                 Grid.ColumnSpan="2"
+                                MaxWidth="350"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Center"
                                 FontSize="16"

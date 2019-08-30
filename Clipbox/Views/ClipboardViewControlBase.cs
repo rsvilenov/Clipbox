@@ -83,6 +83,19 @@ namespace Clipbox.Views
             DependencyProperty.Register(nameof(AreAnyItemsSelected), typeof(bool), typeof(ClipboardViewControlBase), new PropertyMetadata(false));
 
 
+
+
+        public bool AreAnySubItemsSelected
+        {
+            get { return (bool)GetValue(AreAnyMultiItemsSelectedProperty); }
+            set { SetValue(AreAnyMultiItemsSelectedProperty, value); }
+        }
+        
+        public static readonly DependencyProperty AreAnyMultiItemsSelectedProperty =
+            DependencyProperty.Register(nameof(AreAnySubItemsSelected), typeof(bool), typeof(ClipboardViewControlBase), new PropertyMetadata(false));
+
+
+
         /// <summary>
         /// Indicates whether we have ui extensions loaded. We cannot bind to uiExtensionContainer.Childern.Count because the
         /// collection does not raise change notifications. Therefore we need this property.
@@ -410,6 +423,7 @@ namespace Clipbox.Views
             }
 
             UpdateAreAnyItemsSelected();
+            UpdateAreAnySubItemsSelected();
 
 #if DEBUG
             GC.Collect();
@@ -515,12 +529,19 @@ namespace Clipbox.Views
             }
 
             UpdateAreAnyItemsSelected();
+            UpdateAreAnySubItemsSelected();
+
             OnSubItemsSelectionChanged();
         }
 
         private void UpdateAreAnyItemsSelected()
         {
             AreAnyItemsSelected = SelectedItemIds.Any() || SelectedMultiItemsIds.Any();
+        }
+
+        private void UpdateAreAnySubItemsSelected()
+        {
+            AreAnySubItemsSelected = SelectedMultiItemsIds.Any();
         }
 
         private void MultiItem_Loaded(object sender, RoutedEventArgs e)
