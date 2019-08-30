@@ -190,48 +190,61 @@
                     <Popup
                         x:Name="deleteConfirmationPopup"
                         IsOpen="False"
+                        KeyDown="DeleteConfirmationPopup_KeyDown"
                         Placement="Bottom"
                         PlacementTarget="{Binding ElementName=trashBtn}">
-                        <Grid Margin="25" Background="{DynamicResource TaskbarColorBrush}">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition MinHeight="50" />
-                                <RowDefinition />
-                            </Grid.RowDefinitions>
 
-                            <TextBlock
-                                Grid.Row="0"
-                                Grid.Column="0"
-                                Grid.ColumnSpan="2"
-                                MaxWidth="350"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Center"
-                                FontSize="16"
-                                Foreground="White"
-                                Text="Are you sure you want to delete the selected item(s)? Note: the selected multiitems will not be deleted. Please select the whole items."
-                                TextWrapping="WrapWithOverflow" />
+                        <Border BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1">
 
-                            <Button
-                                Grid.Row="1"
-                                Grid.Column="0"
-                                Width="50"
-                                Height="20"
-                                Margin="5"
-                                HorizontalContentAlignment="Center"
-                                Click="ButtonConfirmDelete_Click"
-                                Content="Yes" />
-                            <Button
-                                Grid.Row="1"
-                                Grid.Column="1"
-                                Width="50"
-                                Height="20"
-                                Margin="5"
-                                HorizontalContentAlignment="Center"
-                                Content="No" />
-                        </Grid>
+                            <Grid Margin="15" Background="{DynamicResource TaskbarColorBrush}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition MinHeight="80" />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+
+                                <TextBlock
+                                    Grid.Row="0"
+                                    Grid.Column="0"
+                                    Grid.ColumnSpan="2"
+                                    MaxWidth="350"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Center"
+                                    FontSize="16"
+                                    Foreground="White"
+                                    Text="Are you sure you want to delete the selected item(s)?"
+                                    TextAlignment="Center"
+                                    TextWrapping="WrapWithOverflow" />
+
+                                <Button
+                                    Grid.Row="1"
+                                    Grid.Column="0"
+                                    Width="70"
+                                    Height="30"
+                                    Margin="5"
+                                    Click="ButtonConfirmDelete_Click"
+                                    Content="Yes"
+                                    Foreground="White"
+                                    Style="{DynamicResource BtnProceedDelete}" />
+
+                                <Button
+                                    x:Name="cancelDeleteButton"
+                                    Grid.Row="1"
+                                    Grid.Column="1"
+                                    Width="70"
+                                    Height="30"
+                                    Margin="5"
+                                    Click="ButtonCancelDelete_Click"
+                                    Content="No"
+                                    Foreground="White"
+                                    Style="{DynamicResource BtnCancelDelete}" />
+
+                            </Grid>
+                        </Border>
+
                     </Popup>
                 </StackPanel>
 
