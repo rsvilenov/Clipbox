@@ -57,7 +57,6 @@
     <Compile Include="Behaviors\FrameworkElementDpiScalingBehavior.cs" />
     <Compile Include="BindableObject.cs" />
     <Compile Include="Converters\AndMultiValueConverter.cs" />
-    <Compile Include="Converters\IntToVisibilityConverter.cs" />
     <Compile Include="Converters\InverseBooleanConverter.cs" />
     <Compile Include="Converters\IsEqualOrGreaterThanConverter.cs" />
     <Compile Include="Converters\MathAddConverter.cs" />
@@ -104,6 +103,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="Styles\Brushes.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Styles\Buttons.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

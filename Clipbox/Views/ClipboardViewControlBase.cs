@@ -109,7 +109,18 @@ namespace Clipbox.Views
         public static readonly DependencyProperty AreAnyUIExtensionsLoadedperty =
             DependencyProperty.Register(nameof(AreAnyUIExtensionsLoaded), typeof(bool), typeof(ClipboardViewControlBase), new PropertyMetadata(false));
 
-        
+        /// <summary>
+        /// This constructor is here solely because the XAML designer gives the following error otherwise:
+        /// Error XLS0507 Type 'ClipboardViewControlBase' is not usable as an object element because it is not public or does not define a public parameterless constructor or a type converter."
+        /// </summary>
+        public ClipboardViewControlBase()
+        {
+            if (!DesignerProperties.GetIsInDesignMode(this))
+            {
+                throw new InvalidOperationException("This constructor should never be called from a user code.");
+            }
+        }
+
         public ClipboardViewControlBase(UIExtentionContainer container, ISettingsService settingsService)
         {
             _container = container;

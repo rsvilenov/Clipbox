@@ -124,7 +124,7 @@
         </Style.Triggers>
     </Style>
 
-    <Style x:Key="BtnProceedDelete" TargetType="{x:Type Button}">
+    <Style x:Key="BtnNo" TargetType="{x:Type Button}">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="1" />
 
@@ -137,26 +137,94 @@
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         SnapsToDevicePixels="True">
-                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock
-                                Grid.Column="0"
-                                Margin="5,0,0,2"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Foreground="{TemplateBinding Foreground}"
-                                Text="{TemplateBinding Content}" />
-                            <ContentControl
-                                Grid.Column="1"
-                                Margin="2"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Stretch"
-                                Template="{DynamicResource ProceedIcon}" />
-                        </Grid>
+                        <Border
+                            Name="selectionBorder"
+                            BorderBrush="{DynamicResource whiteDottedBrush}"
+                            BorderThickness="0">
+                            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    Grid.Column="0"
+                                    Margin="5,0,0,2"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Foreground="{TemplateBinding Foreground}"
+                                    Text="{TemplateBinding Content}" />
+                                <ContentControl
+                                    Grid.Column="1"
+                                    Margin="2"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Stretch"
+                                    Template="{DynamicResource NoIcon}" />
+                            </Grid>
+                        </Border>
                     </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsFocused" Value="True">
+                            <Setter TargetName="selectionBorder" Property="BorderThickness" Value="1" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter Property="Background" Value="{DynamicResource AccentDark2Brush}" />
+                <Setter Property="BorderBrush" Value="White" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="True">
+                <Setter Property="Background" Value="{DynamicResource AccentDark1Brush}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style x:Key="BtnYes" TargetType="{x:Type Button}">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="1" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border
+                        Name="btnBorder"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        SnapsToDevicePixels="True">
+                        <Border
+                            Name="selectionBorder"
+                            BorderBrush="{DynamicResource whiteDottedBrush}"
+                            BorderThickness="0">
+                            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    Grid.Column="0"
+                                    Margin="5,0,0,2"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Foreground="{TemplateBinding Foreground}"
+                                    Text="{TemplateBinding Content}" />
+                                <ContentControl
+                                    Grid.Column="1"
+                                    Margin="2"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Stretch"
+                                    Template="{DynamicResource YesIcon}" />
+                            </Grid>
+                        </Border>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsFocused" Value="True">
+                            <Setter TargetName="selectionBorder" Property="BorderThickness" Value="1" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -172,7 +240,7 @@
         </Style.Triggers>
     </Style>
 
-    <Style x:Key="BtnCancelDelete" TargetType="{x:Type Button}">
+    <Style x:Key="BtnOk" TargetType="{x:Type Button}">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="1" />
 
@@ -185,26 +253,38 @@
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
                         SnapsToDevicePixels="True">
-                        <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock
-                                Grid.Column="0"
-                                Margin="5,0,0,2"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Foreground="{TemplateBinding Foreground}"
-                                Text="{TemplateBinding Content}" />
-                            <ContentControl
-                                Grid.Column="1"
-                                Margin="2"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Stretch"
-                                Template="{DynamicResource CancelIcon}" />
-                        </Grid>
+                        <Border
+                            Name="selectionBorder"
+                            BorderBrush="{DynamicResource whiteDottedBrush}"
+                            BorderThickness="0">
+
+                            <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock
+                                    Grid.Column="0"
+                                    Margin="5,0,0,2"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Foreground="{TemplateBinding Foreground}"
+                                    Text="{TemplateBinding Content}" />
+                                <ContentControl
+                                    Grid.Column="1"
+                                    Margin="2"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Stretch"
+                                    Template="{DynamicResource OkIcon}" />
+                            </Grid>
+
+                        </Border>
                     </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsFocused" Value="True">
+                            <Setter TargetName="selectionBorder" Property="BorderThickness" Value="1" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

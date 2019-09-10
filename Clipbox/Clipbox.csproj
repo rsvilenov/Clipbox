@@ -70,6 +70,7 @@
     </ApplicationDefinition>
     <Compile Include="ApplicationSettings.cs" />
     <Compile Include="Behaviors\FrameworkElementDisableClickBehavior.cs" />
+    <Compile Include="Behaviors\ListViewOnFocusSelectFirstItem.cs" />
     <Compile Include="Behaviors\ListViewScrollButtonBehavior.cs" />
     <Compile Include="Behaviors\ListViewScrollTransferFocusBehavior.cs" />
     <Compile Include="Behaviors\ListViewItemUnselectOnClickBehavior.cs" />
@@ -154,6 +155,12 @@
     <Compile Include="Views\ClipboardViewItemTile\SingleItemLoading.xaml.cs">
       <DependentUpon>SingleItemLoading.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Dialog\DialogPopup.xaml.cs">
+      <DependentUpon>DialogPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Dialog\Enums\DialogButtons.cs" />
+    <Compile Include="Views\Dialog\Enums\DialogTypes.cs" />
+    <Compile Include="Views\Dialog\EventArgsClasses\DialogAnswerEventArgs.cs" />
     <Compile Include="Views\FilterBand.xaml.cs">
       <DependentUpon>FilterBand.xaml</DependentUpon>
     </Compile>
@@ -211,6 +218,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ClipboardViewItemTile\SingleItemLoading.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Dialog\DialogPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -357,6 +368,7 @@
   <ItemGroup>
     <Resource Include="Views\Styles\ReadMe.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

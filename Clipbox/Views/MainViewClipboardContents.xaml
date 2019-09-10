@@ -9,6 +9,7 @@
     xmlns:infBeh="clr-namespace:Clipbox.Infrastructure.UI.Behaviors;assembly=Clipbox.Infrastructure.UI"
     xmlns:local="clr-namespace:Clipbox.Views"
     xmlns:localBeh="clr-namespace:Clipbox.Behaviors"
+    xmlns:localDialog="clr-namespace:Clipbox.Views.Dialog"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:tile="clr-namespace:Clipbox.Views.ClipboardViewItemTile"
@@ -187,65 +188,17 @@
                         Click="TrashBtn_Click"
                         Style="{DynamicResource BtnTrash}" />
 
-                    <Popup
+                    <localDialog:DialogPopup
                         x:Name="deleteConfirmationPopup"
+                        MaxWidth="350"
+                        DefaultButton="Yes"
+                        DialogAnswered="DeleteConfirmationPopup_DialogAnswered"
+                        DialogText="Are you sure you want to delete the selected item(s)?"
+                        DialogueType="YesNo"
                         IsOpen="False"
-                        KeyDown="DeleteConfirmationPopup_KeyDown"
                         Placement="Bottom"
-                        PlacementTarget="{Binding ElementName=trashBtn}">
-
-                        <Border BorderBrush="{DynamicResource AccentBrush}" BorderThickness="1">
-
-                            <Grid Margin="15" Background="{DynamicResource TaskbarColorBrush}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition MinHeight="80" />
-                                    <RowDefinition />
-                                </Grid.RowDefinitions>
-
-                                <TextBlock
-                                    Grid.Row="0"
-                                    Grid.Column="0"
-                                    Grid.ColumnSpan="2"
-                                    MaxWidth="350"
-                                    HorizontalAlignment="Stretch"
-                                    VerticalAlignment="Center"
-                                    FontSize="16"
-                                    Foreground="White"
-                                    Text="Are you sure you want to delete the selected item(s)?"
-                                    TextAlignment="Center"
-                                    TextWrapping="WrapWithOverflow" />
-
-                                <Button
-                                    Grid.Row="1"
-                                    Grid.Column="0"
-                                    Width="70"
-                                    Height="30"
-                                    Margin="5"
-                                    Click="ButtonConfirmDelete_Click"
-                                    Content="Yes"
-                                    Foreground="White"
-                                    Style="{DynamicResource BtnProceedDelete}" />
-
-                                <Button
-                                    x:Name="cancelDeleteButton"
-                                    Grid.Row="1"
-                                    Grid.Column="1"
-                                    Width="70"
-                                    Height="30"
-                                    Margin="5"
-                                    Click="ButtonCancelDelete_Click"
-                                    Content="No"
-                                    Foreground="White"
-                                    Style="{DynamicResource BtnCancelDelete}" />
-
-                            </Grid>
-                        </Border>
-
-                    </Popup>
+                        PlacementTarget="{Binding ElementName=trashBtn}"
+                        ReturnFocusTo="{Binding ElementName=MainListView}" />
                 </StackPanel>
 
             </Grid>
@@ -272,6 +225,7 @@
             Visibility="Hidden">
             <i:Interaction.Behaviors>
                 <localBeh:ListViewGroupingBehavior GroupByPropertyName="DateCreatedFriendly" />
+                <localBeh:ListViewOnFocusSelectFirstItem />
             </i:Interaction.Behaviors>
             <ListView.Resources>
                 <ControlTemplate x:Key="MinimalisticScrollViewerControlTemplate" TargetType="{x:Type ScrollViewer}">

@@ -372,26 +372,12 @@ namespace Clipbox.Views
         private void TrashBtn_Click(object sender, RoutedEventArgs e)
         {
             deleteConfirmationPopup.IsOpen = true;
-            cancelDeleteButton.Focus();
 
         }
-
-        private void ButtonConfirmDelete_Click(object sender, RoutedEventArgs e)
+        
+        private void DeleteConfirmationPopup_DialogAnswered(object sender, Dialog.EventArgsClasses.DialogAnswerEventArgs e)
         {
-            deleteConfirmationPopup.IsOpen = false;
-        }
-
-        private void ButtonCancelDelete_Click(object sender, RoutedEventArgs e)
-        {
-            deleteConfirmationPopup.IsOpen = false;
-        }
-
-        private void DeleteConfirmationPopup_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
-        {
-            if (e.Key == System.Windows.Input.Key.Escape)
-            {
-                deleteConfirmationPopup.IsOpen = false;
-            }
+            
         }
     }
 }
