@@ -16,6 +16,7 @@ namespace Clipbox.Behaviors
 
         private void AssociatedObject_GotFocus(object sender, System.Windows.RoutedEventArgs e)
         {
+            // prevent recursion - when the ListViewItem receives the focus, the ListView's GotFocus event fires as well.
             if (e.OriginalSource?.GetType() != typeof(ListViewItem))
             {
                 // focus the last selected item or the first item in the list if none is selected
