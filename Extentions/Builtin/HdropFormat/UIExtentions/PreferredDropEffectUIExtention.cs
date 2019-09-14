@@ -14,7 +14,7 @@ namespace Clipbox.Extentions.BuiltIn.HdropFormat.UIExtentions
 
         public override bool OnShouldShow(IEnumerable<IClipboardItem> concatinatedItems)
         {
-            return concatinatedItems.Any(item => item.ClipboardDataObjects.Any(cdo => cdo.Format == "CF_HDROP"));
+            return concatinatedItems.All(item => item.ClipboardDataObjects.Any(cdo => cdo.Format == "CF_HDROP"));
         }
 
         public override void OnExtentionViewGenerating(IEnumerable<IClipboardItem> selectedItems, ref UIElement additionalViewElement, Size availableSize)
