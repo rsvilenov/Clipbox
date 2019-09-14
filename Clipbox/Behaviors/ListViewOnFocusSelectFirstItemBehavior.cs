@@ -7,7 +7,7 @@ namespace Clipbox.Behaviors
     /// When the ListView receives focus, set the focus to the last selected item
     /// or the first item in the list if no item is selected.
     /// </summary>
-    public class ListViewOnFocusSelectFirstItem : Behavior<ListView>
+    public class ListViewOnFocusSelectFirstItemBehavior : Behavior<ListView>
     {
         protected override void OnAttached()
         {

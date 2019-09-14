@@ -225,7 +225,7 @@
             Visibility="Hidden">
             <i:Interaction.Behaviors>
                 <localBeh:ListViewGroupingBehavior GroupByPropertyName="DateCreatedFriendly" />
-                <localBeh:ListViewOnFocusSelectFirstItem />
+                <localBeh:ListViewOnFocusSelectFirstItemBehavior />
             </i:Interaction.Behaviors>
             <ListView.Resources>
                 <ControlTemplate x:Key="MinimalisticScrollViewerControlTemplate" TargetType="{x:Type ScrollViewer}">
