@@ -365,17 +365,17 @@ namespace Clipbox.Views
             
             SelectionChanged?.Invoke(this, combinabilityEventArgs);
             
-            bool areSelectedItemsCompatible = true;
+            bool areSelectedItemsCombinable = true;
 
             if (combinabilityEventArgs.SelectedItemIds.Union(combinabilityEventArgs.SelectedMultiItemIds.Keys).Count() > 1)
             {
                 CombinabilityCheckRequested?.Invoke(this, combinabilityEventArgs);
-                areSelectedItemsCompatible = combinabilityEventArgs.AreItemsCombinable;
+                areSelectedItemsCombinable = combinabilityEventArgs.AreItemsCombinable;
             }
 
-            if (areSelectedItemsCompatible != _areLastSelectedItemsCombinable)
+            if (areSelectedItemsCombinable != _areLastSelectedItemsCombinable)
             {
-                SelectedItemsCombinabilityArgs args = new SelectedItemsCombinabilityArgs(areSelectedItemsCompatible);
+                SelectedItemsCombinabilityArgs args = new SelectedItemsCombinabilityArgs(areSelectedItemsCombinable);
                 
                 OnSelectedItemsCombinabilityChanged(args);
 
@@ -400,7 +400,7 @@ namespace Clipbox.Views
                 }
                 else
                 {
-                    _areLastSelectedItemsCombinable = areSelectedItemsCompatible;
+                    _areLastSelectedItemsCombinable = areSelectedItemsCombinable;
                 }
             }
             

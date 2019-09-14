@@ -86,13 +86,14 @@ namespace Clipbox
 
         private void _clipboardViewWindowService_CombinabilityCheckRequested(object sender, CombinabilityEventArgs e)
         {
-            IEnumerable<IClipboardItem> selectedItems = e.SelectedItemIds.Select(id => _clipboardManager.GetClipboardItem(id, restoreShrinked: false));
+            IEnumerable<string> allSelectedItemIds = e.SelectedItemIds.Union(e.SelectedMultiItemIds.Keys);
+            IEnumerable <IClipboardItem> allSelectedItems = allSelectedItemIds.Select(id => _clipboardManager.GetClipboardItem(id, restoreShrinked: false));
 
             // can we modify or combine the items?
-            if (selectedItems.Count() > 1)
+            if (allSelectedItems.Count() > 1)
             {
                 // the items are combinable if we can modify them together
-                e.AreItemsCombinable = _flowExtentionExecutorService.RunOnQueryModifyMethods(selectedItems);
+                e.AreItemsCombinable = _flowExtentionExecutorService.RunOnQueryModifyMethods(allSelectedItems);
             }
         }
 
