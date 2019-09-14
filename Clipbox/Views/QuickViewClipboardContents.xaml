@@ -4,10 +4,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:bo="clr-namespace:Clipbox.ViewModels.BindableObjects"
     xmlns:conv="clr-namespace:Clipbox.Technical.Converters"
-    xmlns:coreConv="clr-namespace:Clipbox.Infrastructure.UI.Converters;assembly=Clipbox.Infrastructure.UI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:infBeh="clr-namespace:Clipbox.Infrastructure.UI.Behaviors;assembly=Clipbox.Infrastructure.UI"
+    xmlns:infConv="clr-namespace:Clipbox.Infrastructure.UI.Converters;assembly=Clipbox.Infrastructure.UI"
     xmlns:infEnums="clr-namespace:Clipbox.Core.Enums;assembly=Clipbox.Core"
     xmlns:infPropAp="clr-namespace:Clipbox.Infrastructure.UI.AttachedProperties;assembly=Clipbox.Infrastructure.UI"
     xmlns:infWindows="clr-namespace:Clipbox.Infrastructure.UI.Windows;assembly=Clipbox.Infrastructure.UI"
@@ -26,13 +26,14 @@
         <conv:BitmapToBitmapImageConverter x:Key="BitmapToBitmapImageConverter" />
         <conv:ObjectToTypeStringConverter x:Key="ObjectToTypeStringConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-        <coreConv:InverseBooleanConverter x:Key="InverseBooleanConverter" />
-        <coreConv:OrMultiValueConverter x:Key="OrMultiValueConverter" />
-        <coreConv:AndMultiValueConverter x:Key="AndMultiValueConverter" />
-        <coreConv:MathMultiplyConverter x:Key="MathMultiplyConverter" />
-        <coreConv:MathAddConverter x:Key="MathAddConverter" />
-        <coreConv:IsEqualOrGreaterThanConverter x:Key="IsEqualOrGreaterThanConverter" />
-        <coreConv:NullOrEmptyCollectionToBoolConverter x:Key="NullOrEmptyCollectionToBoolConverter" />
+        <infConv:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+        <infConv:OrMultiValueConverter x:Key="OrMultiValueConverter" />
+        <infConv:AndMultiValueConverter x:Key="AndMultiValueConverter" />
+        <infConv:MathMultiplyConverter x:Key="MathMultiplyConverter" />
+        <infConv:BooleanToVisibilityHiddenConverter x:Key="BooleanToVisibilityHiddenConverter" />
+        <infConv:MathAddConverter x:Key="MathAddConverter" />
+        <infConv:IsEqualOrGreaterThanConverter x:Key="IsEqualOrGreaterThanConverter" />
+        <infConv:NullOrEmptyCollectionToBoolConverter x:Key="NullOrEmptyCollectionToBoolConverter" />
         <conv:ContentClassListContainsConverter x:Key="ContentClassListContainsConverter" />
         <conv:ObjectTypeCompareConverter x:Key="ObjectTypeCompareConverter" />
 
@@ -364,7 +365,7 @@
                                                                         </ToggleButton.IsEnabled>
                                                                         <ToggleButton.Visibility>
                                                                             <Binding
-                                                                                Converter="{StaticResource BooleanToVisibilityConverter}"
+                                                                                Converter="{StaticResource BooleanToVisibilityHiddenConverter}"
                                                                                 Path="IsEnabled"
                                                                                 RelativeSource="{RelativeSource Self}" />
                                                                         </ToggleButton.Visibility>
