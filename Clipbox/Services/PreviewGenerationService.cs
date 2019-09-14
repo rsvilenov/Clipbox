@@ -453,7 +453,7 @@ namespace Clipbox.Services
 
                     using (previewData)
                     {
-                        pito = PreviewItemTransferObject.FromImagePreviewData(previewData);
+                        pito = PreviewItemTransferObject.FromFilePreviewData(previewData);
                     }
 
                     pitos.Add(pito);
