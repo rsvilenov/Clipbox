@@ -437,7 +437,10 @@
                                                         <Setter Property="ContentTemplate">
                                                             <Setter.Value>
                                                                 <DataTemplate>
-                                                                    <tile:SingleItem ClipboardViewItem="{Binding Path=DataContext.ViewItem, RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}}" ThumbnailAreaMaxHeight="{Binding Path=ClipboardViewItemMaxHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}}">
+                                                                    <tile:SingleItem
+                                                                        ClipboardViewItem="{Binding Path=DataContext.ViewItem, RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}}"
+                                                                        ThumbnailAreaMaxHeight="{Binding Path=ClipboardViewItemMaxHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}}"
+                                                                        ThumbnailAreaMinHeight="{Binding Path=ClipboardViewItemMaxHeight, RelativeSource={RelativeSource Mode=Self}}">
                                                                         <!--
                                                                             Set MinWidth to the tile.
                                                                             If the preview is too narrow, when the buttons appear, the tile expands and this cause flickering.

@@ -14,13 +14,23 @@
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </UserControl.Resources>
     <Grid x:Name="mainGrid">
+        <!--
+            we need to set a background other than Null to this grid in order to make it hit-testable.
+            If we leave the background to null, then no mouse events will fire for the space with no content.
+        -->
+        <Grid.Background>
+            <SolidColorBrush Color="Transparent" />
+        </Grid.Background>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="40" />
         </Grid.RowDefinitions>
 
         <!--  thumbnail area  -->
-        <Grid MaxHeight="{Binding ThumbnailAreaMaxHeight}" Margin="10">
+        <Grid
+            MinHeight="{Binding ThumbnailAreaMaxHeight}"
+            MaxHeight="{Binding ThumbnailAreaMaxHeight}"
+            Margin="10">
             <Image
                 Grid.Row="0"
                 Width="{Binding ClipboardViewItem.PreviewItem.Image.Width}"

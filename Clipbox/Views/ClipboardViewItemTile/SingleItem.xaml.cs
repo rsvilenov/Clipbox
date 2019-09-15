@@ -55,6 +55,14 @@ namespace Clipbox.Views.ClipboardViewItemTile
 
 
 
+        public double ThumbnailAreaMinHeight
+        {
+            get { return (double)GetValue(ThumbnailAreaMinHeightProperty); }
+            set { SetValue(ThumbnailAreaMinHeightProperty, value); }
+        }
 
+        public static readonly DependencyProperty ThumbnailAreaMinHeightProperty =
+            DependencyProperty.Register(nameof(ThumbnailAreaMinHeight), typeof(double), typeof(SingleItem), new PropertyMetadata(0d));
+        
     }
 }
