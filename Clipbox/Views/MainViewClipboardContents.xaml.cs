@@ -6,14 +6,17 @@ using Clipbox.Services.Interfaces;
 using Clipbox.ViewModels;
 using Clipbox.ViewModels.BindableObjects;
 using Clipbox.Views.ClipboardViewItemTile;
+using Clipbox.Win32.Native;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
+using System.Windows.Threading;
 
 namespace Clipbox.Views
 {
@@ -26,6 +29,7 @@ namespace Clipbox.Views
         private const int SCROLLBAR_TIMER_TIMEOUT_MS = 300;
         private SlidingTimer _layoutSlidingTimer;
         private SlidingTimer _scrollbarValueChangedSlidingTimer;
+        private Timer _postSelectionUtilsTimer;
 
 
         private ScrollBar _scrollBar;
@@ -52,6 +56,20 @@ namespace Clipbox.Views
 
 
 
+
+        public bool IsShowingOfPostSelectionToolboxEnabled
+        {
+            get { return (bool)GetValue(IsLoadingOfPostSelectionToolboxEnabledProperty); }
+            set { SetValue(IsLoadingOfPostSelectionToolboxEnabledProperty, value); }
+        }
+        
+        public static readonly DependencyProperty IsLoadingOfPostSelectionToolboxEnabledProperty =
+            DependencyProperty.Register(nameof(IsShowingOfPostSelectionToolboxEnabled), typeof(bool), typeof(MainViewClipboardContents), new PropertyMetadata(false));
+
+
+
+        private int _doubleClickTimeMs;
+
         public MainViewClipboardContents(MainViewClipboardContentsViewModel vm, 
             UIExtentionContainer container, 
             ISettingsService settingsService)
@@ -67,12 +85,37 @@ namespace Clipbox.Views
 
             _scrollbarValueChangedSlidingTimer = new SlidingTimer();
             _scrollbarValueChangedSlidingTimer.IntervalMs = SCROLLBAR_TIMER_TIMEOUT_MS;
-            _scrollbarValueChangedSlidingTimer.Elapsed += _scrollbarValueChangedSlidingTimer_Elapsed; ;
+            _scrollbarValueChangedSlidingTimer.Elapsed += _scrollbarValueChangedSlidingTimer_Elapsed;
+
 
 
             IsVisibleChanged += MainViewClipboardContents_IsVisibleChanged;
 
             MainListView.LayoutUpdated += MainListView_LayoutUpdated;
+
+            _doubleClickTimeMs = User32.GetDoubleClickTime();
+            // we need to delay the loading of the UI extensions so that we can cancel it if 
+            // the selection is after a double click. Double clicks should set the item to the
+            // system clipboard and close the window, so UI extensions are not needed.
+            base.LoadingOfUIExtensionsDelayMs += _doubleClickTimeMs;
+
+
+            _postSelectionUtilsTimer = new Timer();
+            _postSelectionUtilsTimer.AutoReset = false;
+            _postSelectionUtilsTimer.Interval = _doubleClickTimeMs;
+            _postSelectionUtilsTimer.Elapsed += _postSelectionUtilsTimer_Elapsed;
+        }
+
+        private void _postSelectionUtilsTimer_Elapsed(object sender, EventArgs e)
+        {
+            IsLoadingOfUIExtensionsEnabled = true;
+            Dispatcher.BeginInvoke(DispatcherPriority.Background,
+                new Action(() =>
+                {
+                    IsShowingOfPostSelectionToolboxEnabled = true;
+                    base.LoadUIExtensions();
+                }
+            ));
         }
 
         private void _scrollbarValueChangedSlidingTimer_Elapsed(object sender, EventArgs e)
@@ -311,6 +354,7 @@ namespace Clipbox.Views
         {
             _layoutSlidingTimer.Dispose();
             _scrollbarValueChangedSlidingTimer.Dispose();
+            _postSelectionUtilsTimer.Dispose();
 
             base.Dispose(disposing);
         }
@@ -378,6 +422,46 @@ namespace Clipbox.Views
         private void DeleteConfirmationPopup_DialogAnswered(object sender, Dialog.EventArgsClasses.DialogAnswerEventArgs e)
         {
             
+        }
+
+        private void ClipboardItemContentControl_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter)
+            {
+                SetSelectedItemsToClipboard();
+            }
+        }
+        
+        private void ContentControl_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (e.ClickCount == 1)
+            {
+                IsShowingOfPostSelectionToolboxEnabled = false;
+                IsLoadingOfUIExtensionsEnabled = false;
+                _postSelectionUtilsTimer.Start();
+            }
+            else
+            {
+                _postSelectionUtilsTimer.Stop();
+
+                // cancel the second click in a doubleclick so that it won't deselect the item
+                e.Handled = true;
+
+                // post the invoking of SetItemsToClipboardRequested to the dispatcher thread, so that we exit this method immediately.
+                Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
+                {
+                    SetSelectedItemsToClipboard();
+                }));
+            }
+        }
+
+        private void SetSelectedItemsToClipboard()
+        {
+            //TODO: notify the user and close the window
+
+            // raise the event...
+            SetItemsToClipboardRequested?.Invoke(this,
+                                    new SetToClipboardEventArgs(SelectedItemIds, SelectedMultiItemsIds, keepGeneratedItemsCb.IsChecked == true));
         }
     }
 }

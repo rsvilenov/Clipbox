@@ -21,6 +21,7 @@
         <Grid.Background>
             <SolidColorBrush Color="Transparent" />
         </Grid.Background>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="40" />

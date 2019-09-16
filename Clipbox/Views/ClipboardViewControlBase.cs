@@ -93,9 +93,7 @@ namespace Clipbox.Views
         
         public static readonly DependencyProperty AreAnyMultiItemsSelectedProperty =
             DependencyProperty.Register(nameof(AreAnySubItemsSelected), typeof(bool), typeof(ClipboardViewControlBase), new PropertyMetadata(false));
-
-
-
+        
         /// <summary>
         /// Indicates whether we have ui extensions loaded. We cannot bind to uiExtensionContainer.Childern.Count because the
         /// collection does not raise change notifications. Therefore we need this property.
@@ -108,6 +106,9 @@ namespace Clipbox.Views
         
         public static readonly DependencyProperty AreAnyUIExtensionsLoadedperty =
             DependencyProperty.Register(nameof(AreAnyUIExtensionsLoaded), typeof(bool), typeof(ClipboardViewControlBase), new PropertyMetadata(false));
+
+
+        protected double LoadingOfUIExtensionsDelayMs { get; set; } = 200d;
 
         /// <summary>
         /// This constructor is here solely because the XAML designer gives the following error otherwise:
@@ -131,7 +132,7 @@ namespace Clipbox.Views
             SelectedMultiItemsIds = new Dictionary<string, List<int>>();
             
             _uiExtentionGenerationSlidingTimer = new SlidingTimer();
-            _uiExtentionGenerationSlidingTimer.IntervalMs = 200d;
+            _uiExtentionGenerationSlidingTimer.IntervalMs = LoadingOfUIExtensionsDelayMs;
             _uiExtentionGenerationSlidingTimer.Elapsed += _uiExtentionGenerationSlidingTimer_Elapsed;
 
             _loadedMultiItems = new List<MultiItem>();
@@ -194,6 +195,14 @@ namespace Clipbox.Views
             Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background,
             (Action)(() =>
             {
+                if (!IsLoadingOfUIExtensionsEnabled)
+                {
+                    AreAnyUIExtensionsLoaded = false;
+                    // re-enable the loading of the extensions
+                    IsLoadingOfUIExtensionsEnabled = true;
+                    return;
+                }
+
                 List<IClipboardItem> selectedClipboardItems = _mainListView
                 .SelectedItems
                 .Cast<ClipboardViewItemWrapper>()
@@ -362,9 +371,9 @@ namespace Clipbox.Views
             var allSelectedItemIds = selectedItems.Select(item => item.Id).Union(SelectedMultiItemsIds.Keys);
 
             var combinabilityEventArgs = new CombinabilityEventArgs(selectedItems.Select(item => item.Id).ToList(), SelectedMultiItemsIds);
-            
+
             SelectionChanged?.Invoke(this, combinabilityEventArgs);
-            
+
             bool areSelectedItemsCombinable = true;
 
             if (combinabilityEventArgs.SelectedItemIds.Union(combinabilityEventArgs.SelectedMultiItemIds.Keys).Count() > 1)
@@ -376,7 +385,7 @@ namespace Clipbox.Views
             if (areSelectedItemsCombinable != _areLastSelectedItemsCombinable)
             {
                 SelectedItemsCombinabilityArgs args = new SelectedItemsCombinabilityArgs(areSelectedItemsCombinable);
-                
+
                 OnSelectedItemsCombinabilityChanged(args);
 
                 if (args.CancelLastSelection)
@@ -403,7 +412,7 @@ namespace Clipbox.Views
                     _areLastSelectedItemsCombinable = areSelectedItemsCombinable;
                 }
             }
-            
+
             foreach (ClipboardViewItemWrapper item in _mainListView
                 .Items
                 .Cast<ClipboardViewItemWrapper>())
@@ -420,21 +429,16 @@ namespace Clipbox.Views
                 item.IsSelected = true;
             }
 
-            _uiExtentionContainer.Children.Clear();
-            AreAnyUIExtensionsLoaded = false;
-            if (selectedItems.Any())
-            {
-                _uiExtentionGenerationSlidingTimer.Slide();
-            }
-
-            ClipboardViewItemWrapper lastSelectedItem = _mainListView.SelectedItems.Cast<ClipboardViewItemWrapper>().LastOrDefault();
-            if (lastSelectedItem != null)
-            {
-                lastSelectedItem.IsSelected = true;
-            }
+            //ClipboardViewItemWrapper lastSelectedItem = _mainListView.SelectedItems.Cast<ClipboardViewItemWrapper>().LastOrDefault();
+            //if (lastSelectedItem != null)
+            //{
+            //    lastSelectedItem.IsSelected = true;
+            //}
 
             UpdateAreAnyItemsSelected();
             UpdateAreAnySubItemsSelected();
+            
+            LoadUIExtensions();
 
 #if DEBUG
             GC.Collect();
@@ -444,7 +448,22 @@ namespace Clipbox.Views
 
         }
 
+        /// <summary>
+        /// This property resets its state after the ui extension loading has been attempted.
+        /// So if it is set to false, upon the attempt to load the ui extensions no extension will be
+        /// loaded and the property will be set to true.
+        /// </summary>
+        protected bool IsLoadingOfUIExtensionsEnabled { get; set; }
 
+        protected void LoadUIExtensions()
+        {
+            _uiExtentionContainer.Children.Clear();
+            AreAnyUIExtensionsLoaded = false;
+            if (SelectedItemIds.Any())
+            {
+                _uiExtentionGenerationSlidingTimer.Slide();
+            }
+        }
 
         private void MultiItem_SubItems_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
