@@ -89,6 +89,13 @@ namespace Clipbox.Services
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
                 new Action(() =>
                 {
+                    // if by some reason we try to open the window twice,
+                    // stop here...
+                    if (_mainWindow != null)
+                    {
+                        return;
+                    }
+
                     var mainWindow = new MainWindow(_clipboardManager,
                         _previewGenerationService, 
                         _uiExtContainer, 
