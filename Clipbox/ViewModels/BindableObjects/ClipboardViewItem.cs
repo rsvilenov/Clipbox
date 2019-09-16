@@ -67,18 +67,18 @@ namespace Clipbox.ViewModels.BindableObjects
             set { SetField(ref _clipboardItemId, value); }
         }
 
-        private bool _markAsUnselectable;
+        private bool _isItemAnimationRunRequested;
 
-        public bool MarkAsUnselectable
+        public bool IsItemAnimationRunRequested
         {
-            get { return _markAsUnselectable; }
-            private set { SetField(ref _markAsUnselectable, value); }
+            get { return _isItemAnimationRunRequested; }
+            private set { SetField(ref _isItemAnimationRunRequested, value); }
         }
 
-        public void SignalThatItemIsUnselectable()
+        public void RunItemAnimation()
         {
-            MarkAsUnselectable = true;
-            MarkAsUnselectable = false;
+            IsItemAnimationRunRequested = true;
+            IsItemAnimationRunRequested = false;
         }
     }
 }

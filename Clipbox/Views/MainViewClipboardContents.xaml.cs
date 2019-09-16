@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,6 +28,7 @@ namespace Clipbox.Views
     {
         private const int LAYOUT_TIMER_TIMEOUT_MS = 100;
         private const int SCROLLBAR_TIMER_TIMEOUT_MS = 300;
+
         private SlidingTimer _layoutSlidingTimer;
         private SlidingTimer _scrollbarValueChangedSlidingTimer;
         private Timer _postSelectionUtilsTimer;
@@ -40,6 +42,8 @@ namespace Clipbox.Views
         private Dictionary<string, GroupItem> _groupNameGroupItemMapping = new Dictionary<string, GroupItem>();
 
         public event EventHandler<SetToClipboardEventArgs> SetItemsToClipboardRequested;
+
+        public event EventHandler CloseMainWindowRequested;
 
         /// <summary>
         /// This view is the only one that allows for selection of incompatible items,
@@ -409,8 +413,7 @@ namespace Clipbox.Views
 
         private void SetToClipboardButton_Click(object sender, RoutedEventArgs e)
         {
-                SetItemsToClipboardRequested?.Invoke(this,
-                    new SetToClipboardEventArgs(SelectedItemIds, SelectedMultiItemsIds, keepGeneratedItemsCb.IsChecked == true));
+            SetSelectedItemsToClipboard();
         }
 
         private void TrashBtn_Click(object sender, RoutedEventArgs e)
@@ -444,6 +447,17 @@ namespace Clipbox.Views
             {
                 _postSelectionUtilsTimer.Stop();
 
+                // if the item has been previously selected, the first click will unselect it,
+                // so that we need to re-select it on the second click in order for it to be in
+                // the list with selected items.
+                var contentControl = (ContentControl)sender;
+                var itemWrapper = (ClipboardViewItemWrapper)contentControl.DataContext;
+                if (!itemWrapper.IsSelected)
+                {
+                    itemWrapper.IsSelected = true;
+                    MainListView.SelectedItems.Add(itemWrapper);
+                }
+                
                 // cancel the second click in a doubleclick so that it won't deselect the item
                 e.Handled = true;
 
@@ -458,10 +472,26 @@ namespace Clipbox.Views
         private void SetSelectedItemsToClipboard()
         {
             //TODO: notify the user and close the window
+            foreach (ClipboardViewItemWrapper wrapper in MainListView.SelectedItems)
+            {
+                wrapper.ViewItem.RunItemAnimation();
+            }
 
-            // raise the event...
-            SetItemsToClipboardRequested?.Invoke(this,
-                                    new SetToClipboardEventArgs(SelectedItemIds, SelectedMultiItemsIds, keepGeneratedItemsCb.IsChecked == true));
+            // allow the user to see the animation before closing the window/
+            Task.Delay(700) // the duration of the color animation (300) in the markup plus some extra time
+                .ContinueWith((t) =>
+            {
+                Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
+                {
+                    // raise the event...
+                    SetItemsToClipboardRequested?.Invoke(this,
+                                        new SetToClipboardEventArgs(SelectedItemIds, SelectedMultiItemsIds, keepGeneratedItemsCb.IsChecked == true));
+
+
+                    CloseMainWindowRequested?.Invoke(this, new EventArgs());
+                }));
+            });
+            
         }
     }
 }

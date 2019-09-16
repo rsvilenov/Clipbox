@@ -24,5 +24,7 @@ namespace Clipbox.Views.Interfaces
         event EventHandler<SetToClipboardEventArgs> SetItemsToClipboardRequested;
 
         event EventHandler<HousekeepingEventArgs> HousekeepingRequested;
+
+        event EventHandler CloseRequested;
     }
 }

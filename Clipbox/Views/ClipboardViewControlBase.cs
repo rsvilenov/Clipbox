@@ -402,7 +402,7 @@ namespace Clipbox.Views
                             _mainListView.SelectedItems.Remove(latestSelectedItem);
 
                             // trigger the animation which shows that the item cannot be selected
-                            latestSelectedItem.ViewItem.SignalThatItemIsUnselectable();
+                            latestSelectedItem.ViewItem.RunItemAnimation();
                         }
                     }));
                     return;
