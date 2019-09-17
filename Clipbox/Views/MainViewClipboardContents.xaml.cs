@@ -424,7 +424,10 @@ namespace Clipbox.Views
         
         private void DeleteConfirmationPopup_DialogAnswered(object sender, Dialog.EventArgsClasses.DialogAnswerEventArgs e)
         {
-            
+            if (e.SelectedButton == Dialog.Enums.DialogButtons.Yes)
+            {
+                _viewModel.DeleteItems(SelectedItemIds);
+            }
         }
 
         private void ClipboardItemContentControl_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)

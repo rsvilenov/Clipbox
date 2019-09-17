@@ -113,7 +113,7 @@ namespace Clipbox.ViewModels
 
         private bool RemoveItem(string clipboardItemId)
         {
-            var itemToRemove = base.ClipboardViewItemWrappers.FirstOrDefault(item => item.Id == clipboardItemId);
+            var itemToRemove = base.ClipboardViewItemWrappers.SingleOrDefault(item => item.Id == clipboardItemId);
             if (itemToRemove != null)
             {
                 base.ClipboardViewItemWrappers.Remove(itemToRemove);
