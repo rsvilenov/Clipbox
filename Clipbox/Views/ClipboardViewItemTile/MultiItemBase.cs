@@ -3,7 +3,7 @@ using System.Windows.Controls;
 
 namespace Clipbox.Views.ClipboardViewItemTile
 {
-    public class MultiItemBase : UserControl
+    public class MultiItemBase : ItemBase
     {
         protected int NumberOfUniformGridColumns
         {
@@ -12,7 +12,7 @@ namespace Clipbox.Views.ClipboardViewItemTile
         }
 
         protected static readonly DependencyProperty NumberOfUniformGridColumnsProperty =
-            DependencyProperty.Register(nameof(NumberOfUniformGridColumns), typeof(int), typeof(MultiItem), new PropertyMetadata(0));
+            DependencyProperty.Register(nameof(NumberOfUniformGridColumns), typeof(int), typeof(MultiItemBase), new PropertyMetadata(0));
         
     }
 }

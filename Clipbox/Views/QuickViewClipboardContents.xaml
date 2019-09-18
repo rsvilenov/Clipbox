@@ -249,6 +249,14 @@
                                 </ControlTemplate>
                             </Setter.Value>
                         </Setter>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsViewItemLoaded}" Value="False">
+                                <!--  disable the selection of the item  -->
+                                <Setter Property="Focusable" Value="False" />
+                                <!--  disable the mouse events for the item, as there are triggers on them (the mouseover border for example)  -->
+                                <Setter Property="IsHitTestVisible" Value="False" />
+                            </DataTrigger>
+                        </Style.Triggers>
                     </Style>
                 </ListView.ItemContainerStyle>
 
@@ -266,6 +274,7 @@
                                 <Style TargetType="{x:Type Border}">
                                     <Setter Property="IsManipulationEnabled" Value="False" />
                                     <Style.Triggers>
+                                        <!--  use IsManipulationEnabled as a bindable flag, indicating that the mouse is over the item  -->
                                         <Trigger Property="IsMouseOver" Value="True">
                                             <Setter Property="IsManipulationEnabled" Value="True" />
                                         </Trigger>

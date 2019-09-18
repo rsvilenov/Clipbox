@@ -1,13 +1,14 @@
 ﻿using Clipbox.ViewModels.BindableObjects;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 
 namespace Clipbox.Views.ClipboardViewItemTile
 {
     /// <summary>
     /// Interaction logic for SingleItem.xaml
     /// </summary>
-    public partial class SingleItem : UserControl
+    public partial class SingleItem : ItemBase
     {
         public SingleItem()
         {
@@ -15,9 +16,7 @@ namespace Clipbox.Views.ClipboardViewItemTile
 
             mainGrid.DataContext = this;
         }
-
-
-
+        
         public ClipboardViewItemSingle ClipboardViewItem
         {
             get { return (ClipboardViewItemSingle)GetValue(ClipboardViewItemProperty); }
