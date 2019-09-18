@@ -360,7 +360,8 @@ namespace Clipbox.Views
                 {
                     CancelLoadingOfViewItem(lviVm.Id);
 
-                    if (lviVm.IsViewItemLoaded)
+                    if (lviVm.IsViewItemLoaded 
+                        && !lviVm.IsSelected /* do not unload the selected items */)
                     {
                         // unload the item to save up memory
                         _viewModel.UnloadViewItem(lviVm.Id);
