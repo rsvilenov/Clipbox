@@ -9,6 +9,7 @@ using Clipbox.ViewModels.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows;
 
 namespace Clipbox.ViewModels
 {
@@ -46,20 +47,31 @@ namespace Clipbox.ViewModels
             ClipboardViewItemWrappers = new AsyncObservableCollection<ClipboardViewItemWrapper>();
         }
 
-        public void LoadViewItem(string clipboardItemId, MonitorDimensions monitorDimensions)
+        public ClipboardViewItemWrapper GetViewItemWrapper(string clipboardItemId)
         {
             var restoredClipboardItem = ClipboardManager.GetClipboardItem(clipboardItemId, restoreShrinked: true);
-            var wrapper = _clipboardViewItemWrappers.First(w => w.Id == clipboardItemId);
+            return _clipboardViewItemWrappers.First(w => w.Id == clipboardItemId);
+        }
+
+        public ClipboardViewItem GetViewItem(string clipboardItemId, MonitorDimensions monitorDimensions)
+        {
+            var restoredClipboardItem = ClipboardManager.GetClipboardItem(clipboardItemId, restoreShrinked: true);
             PreviewDataTransferObject pdto = PreviewGenerationService.GetPreviewDataTransferObject(restoredClipboardItem, monitorDimensions);
-            wrapper.ViewItem = ClipboardViewItemFactory.CreateFromPreviewDataTransferObject(restoredClipboardItem, pdto);
+            return ClipboardViewItemFactory.CreateFromPreviewDataTransferObject(restoredClipboardItem, pdto);
+        }
+        
+        [Obsolete("Use GetViewItemWrapper, GetViewItem and TryGetPreviewDimensions from within the view " +
+            "and use the dispatcher background priority for assigning the bindable properties to the wrapper" +
+            ", as running all three in a row synchronously and not in the dispatcher backgroud thread causes the UI to update painfully slow.")]
+        public void LoadViewItem(string clipboardItemId, MonitorDimensions monitorDimensions)
+        {
+            ClipboardViewItemWrapper wrapper = GetViewItemWrapper(clipboardItemId);
+            wrapper.ViewItem = GetViewItem(clipboardItemId, monitorDimensions);
 
-            TryLoadPreviewDimensions(monitorDimensions, wrapper);
-
-#if DEBUG
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-            GC.Collect();
-#endif
+            if (TryGetPreviewDimensions(monitorDimensions, wrapper, out ClipboardViewItemDimensionInfo cvItemDimInfo))
+            {
+                wrapper.DimensionInfo = cvItemDimInfo;
+            }
 
             wrapper.IsViewItemLoaded = true;
         }
@@ -85,14 +97,21 @@ namespace Clipbox.ViewModels
 
                 var wrapper = new ClipboardViewItemWrapper(clipboardItem);
 
-                TryLoadPreviewDimensions(monitorDimensions, wrapper);
+                if (TryGetPreviewDimensions(monitorDimensions, wrapper, out ClipboardViewItemDimensionInfo cvItemDimInfo))
+                {
+                    wrapper.DimensionInfo = cvItemDimInfo;
+                }
 
                 ClipboardViewItemWrappers.Add(wrapper);
             }
         }
         
-        private bool TryLoadPreviewDimensions(MonitorDimensions monitorDimensions, ClipboardViewItemWrapper wrapper)
+        public bool TryGetPreviewDimensions(MonitorDimensions monitorDimensions, 
+            ClipboardViewItemWrapper wrapper,
+            out ClipboardViewItemDimensionInfo cvItemDimInfo)
         {
+            cvItemDimInfo = null;
+
             if (PreviewGenerationService.TryGetQuickPreviewDimentionInfo(wrapper.Id, monitorDimensions, out CalibratedPreviewDimentionInfo cpdi))
             {
                 IEnumerable<ClipboardViewSubItemDimension> dimensions = cpdi.PreviewDimentions
@@ -103,7 +122,7 @@ namespace Clipbox.ViewModels
                             PreviewWidth = pd.PreviewWidth
                         });
 
-                wrapper.DimensionInfo = new ClipboardViewItemDimensionInfo
+                cvItemDimInfo = new ClipboardViewItemDimensionInfo
                 {
                     IsViewItemGroup = cpdi.IsViewItemGroup,
                     Dimensions = new AsyncObservableCollection<ClipboardViewSubItemDimension>(dimensions),

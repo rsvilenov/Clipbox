@@ -1,5 +1,7 @@
 ﻿using Clipbox.Infrastructure.Extensibility.Containers;
+using Clipbox.Infrastructure.Threading;
 using Clipbox.Infrastructure.UI;
+using Clipbox.Infrastructure.UI.DataObjects;
 using Clipbox.Infrastructure.UI.Utils;
 using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Interfaces;
@@ -74,6 +76,10 @@ namespace Clipbox.Views
 
         private int _doubleClickTimeMs;
 
+
+        private CancellableTaskManager _cancellableTaskManager;
+
+
         public MainViewClipboardContents(MainViewClipboardContentsViewModel vm, 
             UIExtentionContainer container, 
             ISettingsService settingsService)
@@ -82,6 +88,8 @@ namespace Clipbox.Views
             InitializeComponent();
             _viewModel = vm;
             DataContext = _viewModel;
+
+            _cancellableTaskManager = new CancellableTaskManager();
 
             _layoutSlidingTimer = new SlidingTimer();
             _layoutSlidingTimer.IntervalMs = LAYOUT_TIMER_TIMEOUT_MS;
@@ -154,6 +162,34 @@ namespace Clipbox.Views
             TryAdjustScrollThumbLabel();
             _scrollbarValueChangedSlidingTimer.Slide();
         }
+
+        public void ScheduleLoadingOfViewItem(string clipboardItemId, MonitorDimensions monitorDimensions)
+        {
+            // run the slow-running operations in a separate task
+            _cancellableTaskManager.ScheduleTask(clipboardItemId, new Action<string>((taskId) =>
+            {
+                ClipboardViewItemWrapper wrapper = _viewModel.GetViewItemWrapper(clipboardItemId);
+                _viewModel.TryGetPreviewDimensions(monitorDimensions, wrapper, out ClipboardViewItemDimensionInfo cvItemDimInfo);
+                
+                // this optimization (updating the bindable properties in the dispatcher thread with background priority)
+                // solves the problem with the items showing up painfully slowly...
+                // recommended by Mark Green in this thread:
+                // https://stackoverflow.com/questions/19510723/why-ui-is-freezing-during-wpf-datagrid-binding
+                Application.Current.Dispatcher.Invoke(new Action(() =>
+                {
+                    wrapper.ViewItem = _viewModel.GetViewItem(clipboardItemId, monitorDimensions);
+                    wrapper.DimensionInfo = cvItemDimInfo;
+                    wrapper.IsViewItemLoaded = true;
+
+                }), DispatcherPriority.Background);
+            }));
+        }
+
+        public void CancelLoadingOfViewItem(string clipboardItemId)
+        {
+            _cancellableTaskManager.CancelScheduledTask(taskId: clipboardItemId);
+        }
+
 
         private bool TryAdjustScrollThumbLabel()
         {
@@ -317,12 +353,12 @@ namespace Clipbox.Views
                         && !lviVm.IsViewItemLoaded)
                     {
                         // load the full view item
-                        _viewModel.ScheduleLoadingOfViewItem(lviVm.Id, this.MonitorDimensions);
+                        ScheduleLoadingOfViewItem(lviVm.Id, this.MonitorDimensions);
                     }
                 }
                 else
                 {
-                    _viewModel.CancelLoadingOfViewItem(lviVm.Id);
+                    CancelLoadingOfViewItem(lviVm.Id);
 
                     if (lviVm.IsViewItemLoaded)
                     {

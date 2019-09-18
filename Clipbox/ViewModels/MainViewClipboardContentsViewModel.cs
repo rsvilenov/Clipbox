@@ -35,29 +35,13 @@ namespace Clipbox.ViewModels
             set { SetField(ref _lastItemDateString, value); }
         }
         
-        private CancellableTaskManager _cancellableTaskManager;
-
         public MainViewClipboardContentsViewModel(IClipboardManager clipboardManager,
             IPreviewGenerationService previewGenerationService,
             ISettingsService settingsService) 
                 : base(clipboardManager, previewGenerationService, settingsService)
         {
-            _cancellableTaskManager = new CancellableTaskManager();
         }
-
-        public void ScheduleLoadingOfViewItem(string clipboardItemId, MonitorDimensions monitorDimensions)
-        {
-            _cancellableTaskManager.ScheduleTask(clipboardItemId, new Action<string>((taskId) =>
-            {
-                base.LoadViewItem(clipboardItemId, monitorDimensions);
-            }));
-        }
-
-        public void CancelLoadingOfViewItem(string clipboardItemId)
-        {
-            _cancellableTaskManager.CancelScheduledTask(taskId: clipboardItemId);
-        }
-
+        
         public IEnumerable<string> GetClipboardItemIds()
         {
             return base.ClipboardManager.GetAllItemIds();
