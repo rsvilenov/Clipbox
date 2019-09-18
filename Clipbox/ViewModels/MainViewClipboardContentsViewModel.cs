@@ -70,21 +70,18 @@ namespace Clipbox.ViewModels
 
         public void DeleteItems(IEnumerable<string> clipboardItemIds)
         {
-            foreach (string clipboardItemId in clipboardItemIds)
-            {
-                // remove the item from the clipboard manager
-                base.ClipboardManager.RemoveClipboardItem(clipboardItemId);
-            }
-
-            // remove the item from the collection, bound to the view; 
-            // do not modify the collection, passed as a method parameter here, 
+            // do not loop through the collection, passed as a method parameter here, 
             // as it may be the SelectedItems collection, which will change when we
             // remove the selected items and this will throw an exception...
             var itemsToRemove = base.ClipboardViewItemWrappers
                 .Where(item => clipboardItemIds.Contains(item.Id))
                 .ToList();
+            
             foreach (var item in itemsToRemove)
             {
+                // remove the item from the clipboard manager
+                base.ClipboardManager.RemoveClipboardItem(item.Id);
+                // remove the item from the collection, bound to the view; 
                 base.ClipboardViewItemWrappers.Remove(item);
             }
         }
