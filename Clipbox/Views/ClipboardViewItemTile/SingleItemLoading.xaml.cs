@@ -19,7 +19,7 @@ namespace Clipbox.Views.ClipboardViewItemTile
     /// <summary>
     /// Interaction logic for SingleItemLoading.xaml
     /// </summary>
-    public partial class SingleItemLoading : UserControl
+    public partial class SingleItemLoading : SingleItemBase
     {
         public SingleItemLoading()
         {

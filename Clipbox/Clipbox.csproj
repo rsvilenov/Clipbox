@@ -153,6 +153,7 @@
     <Compile Include="Views\ClipboardViewItemTile\SingleItem.xaml.cs">
       <DependentUpon>SingleItem.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ClipboardViewItemTile\SingleItemBase.cs" />
     <Compile Include="Views\ClipboardViewItemTile\SingleItemLoading.xaml.cs">
       <DependentUpon>SingleItemLoading.xaml</DependentUpon>
     </Compile>

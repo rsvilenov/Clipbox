@@ -8,7 +8,7 @@ namespace Clipbox.Views.ClipboardViewItemTile
     /// <summary>
     /// Interaction logic for SingleItem.xaml
     /// </summary>
-    public partial class SingleItem : ItemBase
+    public partial class SingleItem : SingleItemBase
     {
         public SingleItem()
         {
@@ -39,29 +39,6 @@ namespace Clipbox.Views.ClipboardViewItemTile
 
         public static readonly DependencyProperty IsDimmedProperty =
             DependencyProperty.Register(nameof(IsDimmed), typeof(bool), typeof(SingleItem), new PropertyMetadata(false));
-
-
-
-
-        public double ThumbnailAreaMaxHeight
-        {
-            get { return (double)GetValue(ThumbnailAreaMaxHeightProperty); }
-            set { SetValue(ThumbnailAreaMaxHeightProperty, value); }
-        }
-        
-        public static readonly DependencyProperty ThumbnailAreaMaxHeightProperty =
-            DependencyProperty.Register(nameof(ThumbnailAreaMaxHeight), typeof(double), typeof(SingleItem), new PropertyMetadata(0d));
-
-
-
-        public double ThumbnailAreaMinHeight
-        {
-            get { return (double)GetValue(ThumbnailAreaMinHeightProperty); }
-            set { SetValue(ThumbnailAreaMinHeightProperty, value); }
-        }
-
-        public static readonly DependencyProperty ThumbnailAreaMinHeightProperty =
-            DependencyProperty.Register(nameof(ThumbnailAreaMinHeight), typeof(double), typeof(SingleItem), new PropertyMetadata(0d));
         
     }
 }

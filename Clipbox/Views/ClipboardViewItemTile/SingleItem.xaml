@@ -1,4 +1,4 @@
-﻿<tile:ItemBase
+﻿<tile:SingleItemBase
     x:Class="Clipbox.Views.ClipboardViewItemTile.SingleItem"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -11,9 +11,9 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <tile:ItemBase.Resources>
+    <tile:SingleItemBase.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-    </tile:ItemBase.Resources>
+    </tile:SingleItemBase.Resources>
     <Grid x:Name="mainGrid">
         <!--
             we need to set a background other than Null to this grid in order to make it hit-testable.
@@ -34,7 +34,7 @@
 
         <!--  thumbnail area  -->
         <Grid
-            MinHeight="{Binding ThumbnailAreaMaxHeight}"
+            MinHeight="{Binding ThumbnailAreaMinHeight}"
             MaxHeight="{Binding ThumbnailAreaMaxHeight}"
             Margin="10">
             <Image
@@ -90,4 +90,4 @@
         </Label>
 
     </Grid>
-</tile:ItemBase>
+</tile:SingleItemBase>
