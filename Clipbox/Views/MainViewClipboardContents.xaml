@@ -486,7 +486,6 @@
                                                                         Width="Auto"
                                                                         Orientation="Horizontal">
 
-
                                                                         <!--  separator  -->
                                                                         <Rectangle
                                                                             Width="1"
@@ -502,7 +501,11 @@
                                                                             Margin="5,0,0,0"
                                                                             HorizontalAlignment="Center"
                                                                             VerticalAlignment="Center"
-                                                                            Template="{DynamicResource AllMachinesItemsIcon}" />
+                                                                            Template="{DynamicResource AllMachinesItemsIcon}">
+                                                                            <i:Interaction.Behaviors>
+                                                                                <infBeh:FrameworkElementDpiScalingBehavior />
+                                                                            </i:Interaction.Behaviors>
+                                                                        </ContentControl>
 
                                                                         <!--  separator  -->
                                                                         <Rectangle
