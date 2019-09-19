@@ -1,7 +1,6 @@
 ﻿using Clipbox.Core.Enums;
 using Clipbox.Infrastructure.UI;
 using System;
-using System.Collections.ObjectModel;
 using System.Windows.Media.Imaging;
 
 namespace Clipbox.ViewModels.BindableObjects
@@ -22,6 +21,32 @@ namespace Clipbox.ViewModels.BindableObjects
         {
             get { return _sourceWindowCaption; }
             set { SetField(ref _sourceWindowCaption, value); }
+        }
+
+        private string _sourceWindowMachineName;
+
+        public string SourceWindowMachineName
+        {
+            get { return _sourceWindowMachineName; }
+            set { SetField(ref _sourceWindowMachineName, value); }
+        }
+
+        private string _sourceWindowUserName;
+
+        public string SourceWindowUserName
+        {
+            get { return _sourceWindowUserName; }
+            set { SetField(ref _sourceWindowUserName, value); }
+        }
+
+        private bool _isCloudItem;
+        /// <summary>
+        /// Indicates whether the item comes from the cloud and not from local computer.
+        /// </summary>
+        public bool IsCloudItem
+        {
+            get { return _isCloudItem; }
+            set { SetField(ref _isCloudItem, value); }
         }
 
         private DateTime _dateCreated;

@@ -486,28 +486,33 @@
                                                                         Width="Auto"
                                                                         Orientation="Horizontal">
 
-                                                                        <!--  separator  -->
+                                                                        <!--  cloud item indicator separator  -->
                                                                         <Rectangle
                                                                             Width="1"
                                                                             Height="15"
                                                                             Margin="5,0,0,0"
                                                                             HorizontalAlignment="Center"
                                                                             VerticalAlignment="Center"
-                                                                            Fill="LightGray" />
+                                                                            Fill="LightGray"
+                                                                            Visibility="{Binding IsCloudItem, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                                                                         <!--  cloud item indicator  -->
+                                                                        <!--  TODO: maybe show the username as well (in the tooltip)  -->
                                                                         <ContentControl
                                                                             MaxHeight="17"
                                                                             Margin="5,0,0,0"
                                                                             HorizontalAlignment="Center"
                                                                             VerticalAlignment="Center"
-                                                                            Template="{DynamicResource AllMachinesItemsIcon}">
+                                                                            Background="Transparent"
+                                                                            Template="{DynamicResource AllMachinesItemsIcon}"
+                                                                            ToolTip="{Binding SourceWindowMachineName}"
+                                                                            Visibility="{Binding IsCloudItem, Converter={StaticResource BooleanToVisibilityConverter}}">
                                                                             <i:Interaction.Behaviors>
                                                                                 <infBeh:FrameworkElementDpiScalingBehavior />
                                                                             </i:Interaction.Behaviors>
                                                                         </ContentControl>
 
-                                                                        <!--  separator  -->
+                                                                        <!--  source window icon separator  -->
                                                                         <Rectangle
                                                                             Width="1"
                                                                             Height="15"

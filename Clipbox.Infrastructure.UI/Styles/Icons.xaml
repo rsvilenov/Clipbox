@@ -596,7 +596,8 @@
 
     <ControlTemplate x:Key="AllMachinesItemsIcon">
         <Viewbox>
-            <Grid Visibility="Visible">
+            <!--  set the background so that the entire area is hit-testable  -->
+            <Grid Background="{TemplateBinding Background}" Visibility="Visible">
                 <Path
                     Width="90"
                     Height="90"

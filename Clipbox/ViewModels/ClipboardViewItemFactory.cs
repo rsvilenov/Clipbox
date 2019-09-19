@@ -63,6 +63,10 @@ namespace Clipbox.ViewModels
             {
                 // TODO: show a defalt icon here
             }
+
+            viewItem.IsCloudItem = clipboardItem.Source.MachineName != Environment.MachineName;
+            viewItem.SourceWindowMachineName = clipboardItem.Source.MachineName;
+            viewItem.SourceWindowUserName = clipboardItem.Source.UserName;
             viewItem.SourceWindowCaption = clipboardItem.Source.SourceWindowInfo.Caption;
             viewItem.DateCreated = new DateTime(clipboardItem.EntryDateTicks);
             viewItem.DateModified = new DateTime(clipboardItem.ModifiedDateTicks);
