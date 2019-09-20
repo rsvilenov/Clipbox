@@ -1,8 +1,6 @@
 ﻿using Clipbox.ExtendedClipboard.Interfaces;
-using Clipbox.Infrastructure.Threading;
 using Clipbox.Infrastructure.UI.DataObjects;
 using Clipbox.Services.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;

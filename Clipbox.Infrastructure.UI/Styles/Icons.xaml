@@ -667,15 +667,44 @@
         </Viewbox>
     </ControlTemplate>-->
 
-    <ControlTemplate x:Key="CategoriesIcon">
+    <!--<ControlTemplate x:Key="CategoriesIcon">
         <Viewbox>
             <Grid Visibility="Visible">
-                <!--  This icon has the same size as the others but appears larger. We will put smome margin to it.  -->
+    -->
+    <!--  This icon has the same size as the others but appears larger. We will put smome margin to it.  -->
+    <!--
                 <Path
                     Width="94"
                     Height="94"
                     Margin="3,0"
                     Data="M24.024017,1.151001C21.279999,1.1510009,18.921997,2.4020001,17.744995,4.2060007L17.72702,4.2060007 17.72702,17.710996C19.299011,16.384002 21.528015,15.538999 24.024017,15.538999 26.524994,15.538999 28.756012,16.387999 30.32901,17.720998L30.32901,4.2060007 30.300995,4.2060007C29.123016,2.4020001,26.765015,1.1510009,24.024017,1.151001z M7.9770203,1.151001C5.2350159,1.1510009,2.8770142,2.4020001,1.7000122,4.2060007L1.6820068,4.2060007 1.6820068,17.710996C3.2550049,16.384002 5.4830017,15.538999 7.9770203,15.538999 10.485016,15.538999 12.722992,16.391997 14.292999,17.73L14.292999,4.2060007 14.256012,4.2060007C13.078003,2.4020001,10.720001,1.1510009,7.9770203,1.151001z M7.9770203,0C11.58902,7.8386165E-08,14.673004,1.7410049,15.955017,4.2060007L16.045013,4.2060007C17.328003,1.7410049 20.412018,7.8386165E-08 24.024017,0 27.632019,7.8386165E-08 30.716003,1.7410049 32,4.2060007L32,19.745 30.32901,19.745 30.300995,19.745C29.123016,17.94 26.765015,16.691001 24.024017,16.691001 21.279999,16.691001 18.921997,17.94 17.744995,19.745L17.72702,19.745 16.045013,19.745 15.955017,19.745 14.292999,19.745 14.256012,19.745C13.078003,17.94 10.720001,16.691001 7.9770203,16.691001 5.2350159,16.691001 2.8770142,17.94 1.7000122,19.745L1.6820068,19.745 0,19.745 0,4.2060007C1.2839966,1.7410049,4.3680115,7.8386165E-08,7.9770203,0z"
+                    Fill="{TemplateBinding Foreground}"
+                    RenderTransformOrigin="0.5,0.5"
+                    Stretch="Uniform">
+                    <Path.RenderTransform>
+                        <TransformGroup>
+                            <TransformGroup.Children>
+                                <RotateTransform Angle="0" />
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                            </TransformGroup.Children>
+                        </TransformGroup>
+                    </Path.RenderTransform>
+                </Path>
+            </Grid>
+        </Viewbox>
+    </ControlTemplate>-->
+
+    <ControlTemplate x:Key="CategoriesIcon">
+        <Viewbox>
+            <Grid
+                Width="128"
+                Height="128"
+                Visibility="Visible">
+                <Path
+                    Width="90"
+                    Height="90"
+                    Margin="0,0,0,0"
+                    Data="M19,28L32,28 32,30 19,30z M2,20L2,30 12,30 12,20z M19,19L32,19 32,21 19,21z M0,18L14,18 14,32 0,32z M19,11L32,11 32,13 19,13z M19,2L32,2 32,4 19,4z M2,2L2,12 12,12 12,2z M0,0L14,0 14,14 0,14z"
                     Fill="{TemplateBinding Foreground}"
                     RenderTransformOrigin="0.5,0.5"
                     Stretch="Uniform">

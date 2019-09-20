@@ -1,11 +1,9 @@
 ﻿using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.ExtendedClipboard.EventArgs;
 using Clipbox.ExtendedClipboard.Interfaces;
-using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
 using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.DataObjects;
 using Clipbox.Services.Interfaces;
-using Clipbox.Settings;
 using Clipbox.ViewModels.BindableObjects;
 using Clipbox.ViewModels.Enums;
 using System;
@@ -13,17 +11,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
-using System.Windows.Threading;
 
 namespace Clipbox.ViewModels
 {
     public class QuickViewkClipboardContentsViewModel : ClipboardContentsViewModelBase
     {
         public ICommand ClearClipboardEntries { get; set; }
-
-        public ICommand DeleteClipboardEntry { get; set; }
-
-        public ICommand PinUnpinClipboardEntry { get; set; }
         
         private List<ClipboardViewItemWrapper> _selectedClipboardViewItemWrappers;
 
@@ -55,12 +48,6 @@ namespace Clipbox.ViewModels
                 : base(clipboardManager, previewGenerationService, settingsService)
         {
             ClearClipboardEntries = new DelegateCommand(ClearAllClipboardEntriesHandler);
-            DeleteClipboardEntry = new DelegateCommand<ClipboardViewItem>(DeleteClipboardEntryHandler);
-
-            // wait for the binding operations to complete,
-            // so we can get the changed value of the IsPinned property
-            PinUnpinClipboardEntry = new DelegateCommand<ClipboardViewItem>(PinUnpinClipboardEntryHandler,
-                dispatcherPriority: DispatcherPriority.ContextIdle);
             
             SelectedClipboardViewItemWrappers = new List<ClipboardViewItemWrapper>();
             _newlyAddedItemsToLoadAndWrap = new List<string>();
@@ -70,20 +57,9 @@ namespace Clipbox.ViewModels
             _loadNewlyAddedItemsSlidingTimer.Elapsed += _loadNewlyAddedItemsSlidingTimer_Elapsed;
 
             clipboardManager.ItemAdded += ClipboardManager_ItemAdded;
-            clipboardManager.ItemRemoved += ClipboardManager_ItemRemoved;
             clipboardManager.ItemChanged += ClipboardManager_ItemChanged;
         }
         
-        private void PinUnpinClipboardEntryHandler(ClipboardViewItem obj)
-        {
-            base.ClipboardManager.PinUnpinItemItem(obj.ClipboardItemId, obj.IsPinned);
-        }
-
-        private void DeleteClipboardEntryHandler(ClipboardViewItem parameter)
-        {
-            base.ClipboardManager.RemoveClipboardItem(parameter.ClipboardItemId);
-        }
-
         private void ClearAllClipboardEntriesHandler()
         {
             base.ClipboardManager.Clear();
@@ -93,7 +69,7 @@ namespace Clipbox.ViewModels
 
         private void ClipboardManager_ItemChanged(object sender, ClipboardManagerEventArgs e)
         {
-            if (RemoveItem(e.ItemId))
+            if (RemoveItemWrapper(e.ItemId))
             {
                 AddNewItem(e.ItemId);
             }
@@ -104,23 +80,6 @@ namespace Clipbox.ViewModels
 #pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         {
             AddNewItem(e.ItemId);
-        }
-
-        private void ClipboardManager_ItemRemoved(object sender, ClipboardManagerEventArgs e)
-        {
-            RemoveItem(e.ItemId);
-        }
-
-        private bool RemoveItem(string clipboardItemId)
-        {
-            var itemToRemove = base.ClipboardViewItemWrappers.SingleOrDefault(item => item.Id == clipboardItemId);
-            if (itemToRemove != null)
-            {
-                base.ClipboardViewItemWrappers.Remove(itemToRemove);
-                return true;
-            }
-
-            return false;
         }
 
         private void AddNewItem(string clipboardItemId)

@@ -5,7 +5,6 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:infBeh="clr-namespace:Clipbox.Infrastructure.UI.Behaviors;assembly=Clipbox.Infrastructure.UI"
-    xmlns:infWindows="clr-namespace:Clipbox.Infrastructure.UI.Windows;assembly=Clipbox.Infrastructure.UI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:tile="clr-namespace:Clipbox.Views.ClipboardViewItemTile"
     d:DesignHeight="450"
@@ -34,11 +33,11 @@
 
         <!--  thumbnail area  -->
         <Grid
+            Grid.Row="0"
             MinHeight="{Binding ThumbnailAreaMinHeight}"
             MaxHeight="{Binding ThumbnailAreaMaxHeight}"
             Margin="10">
             <Image
-                Grid.Row="0"
                 Width="{Binding ClipboardViewItem.PreviewItem.Image.Width}"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
@@ -48,7 +47,6 @@
 
             <!--  dim the item by placing a semi-transparent black rectangle on top of it  -->
             <Rectangle
-                Grid.Row="0"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
                 Fill="Black"
