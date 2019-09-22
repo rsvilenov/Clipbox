@@ -186,8 +186,6 @@ namespace Clipbox.Views
                     UnselectMultiItemSubItems();
                 }
             }
-
-            OnItemsSelectionChanged();
         }
         
         private void _uiExtentionGenerationSlidingTimer_Elapsed(object sender, EventArgs e)
@@ -302,9 +300,6 @@ namespace Clipbox.Views
             }
         }
 
-        public virtual void CancelSelectionWithMessage(ClipboardViewItemWrapper item, string message)
-        { }
-
         public virtual void ResumeDefaultState()
         { }
 
@@ -348,13 +343,7 @@ namespace Clipbox.Views
 
         protected virtual void OnSelectedItemsCombinabilityChanged(SelectedItemsCombinabilityArgs args)
         { }
-
-        protected virtual void OnSubItemsSelectionChanged()
-        { }
-
-        protected virtual void OnItemsSelectionChanged()
-        { }
-
+        
         protected void PerformOnSelectedChangedOpreations()
         {
             System.Diagnostics.Debug.WriteLine("SelectionChanged");
@@ -560,8 +549,6 @@ namespace Clipbox.Views
 
             UpdateAreAnyItemsSelected();
             UpdateAreAnySubItemsSelected();
-
-            OnSubItemsSelectionChanged();
         }
 
         private void UpdateAreAnyItemsSelected()

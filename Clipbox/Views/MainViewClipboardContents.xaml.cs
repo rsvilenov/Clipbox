@@ -434,15 +434,7 @@ namespace Clipbox.Views
         {
             return uiExtentionContainer;
         }
-
-        protected override void OnSubItemsSelectionChanged()
-        {
-        }
-
-        protected override void OnItemsSelectionChanged()
-        {
-        }
-
+        
         protected override void OnSelectedItemsCombinabilityChanged(SelectedItemsCombinabilityArgs args)
         {
             AreSelectedItemsCombinable = args.AreItemsCombinable;

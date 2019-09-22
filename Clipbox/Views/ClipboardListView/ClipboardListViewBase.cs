@@ -1,0 +1,382 @@
+﻿using Clipbox.Infrastructure.UI;
+using Clipbox.Services.EventArgsClasses;
+using Clipbox.ViewModels.BindableObjects;
+using Clipbox.Views.ClipboardViewItemTile;
+using Clipbox.Views.EventArgsClasses;
+using Clipbox.Win32;
+using Clipbox.Win32.Native;
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Timers;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Threading;
+
+namespace Clipbox.Views.ClipboardListView
+{
+    public abstract class ClipboardListViewBase : ListView
+    {
+        private string _lastSelectedItemId;
+
+        private bool _areLastSelectedItemsCombinable;
+
+        private List<MultiItem> _loadedMultiItems;
+
+        private int _hashCodeOfItemUndergoingDeletion;
+
+        protected List<string> SelectedItemIds { get; set; }
+
+        protected Dictionary<string, List<int>> SelectedMultiItemsIds { get; set; }
+
+        public event EventHandler<SelectionEventArgs> SelectionChangeCompleted;
+
+        public event EventHandler<CombinabilityEventArgs> CombinabilityCheckRequested;
+
+        public event EventHandler<ClipboardItemManipulationEventArgs> ItemDeletionRequested;
+
+        public event EventHandler<ClipboardItemManipulationEventArgs> ItemPinUnpinRequested;
+
+        public ICommand DeleteClipboardEntry { get; set; }
+
+        public ICommand PinUnpinClipboardEntry { get; set; }
+
+        public bool AreAnyItemsSelected
+        {
+            get { return (bool)GetValue(AreAnyItemsSelectedProperty); }
+            set { SetValue(AreAnyItemsSelectedProperty, value); }
+        }
+
+        public static readonly DependencyProperty AreAnyItemsSelectedProperty =
+            DependencyProperty.Register(nameof(AreAnyItemsSelected), typeof(bool), typeof(ClipboardListViewBase), new PropertyMetadata(false));
+
+        
+        public bool AreAnySubItemsSelected
+        {
+            get { return (bool)GetValue(AreAnyMultiItemsSelectedProperty); }
+            set { SetValue(AreAnyMultiItemsSelectedProperty, value); }
+        }
+
+        public static readonly DependencyProperty AreAnyMultiItemsSelectedProperty =
+            DependencyProperty.Register(nameof(AreAnySubItemsSelected), typeof(bool), typeof(ClipboardListViewBase), new PropertyMetadata(false));
+
+
+        public ClipboardListViewBase()
+        {
+            SelectedItemIds = new List<string>();
+            SelectedMultiItemsIds = new Dictionary<string, List<int>>();
+            _loadedMultiItems = new List<MultiItem>();
+
+            DeleteClipboardEntry = new DelegateCommand<ClipboardViewItem>(DeleteClipboardEntryHandler,
+                /* disable the command until all deletion operations execute (it should be just one, so do it just in case... 
+                 * and prevent the possibility of the user to click on the button twice in a row) */
+                (item) => item.GetHashCode() != _hashCodeOfItemUndergoingDeletion);
+
+            // wait for the binding operations to complete,
+            // so we can get the changed value of the IsPinned property
+            PinUnpinClipboardEntry = new DelegateCommand<ClipboardViewItem>(PinUnpinClipboardEntryHandler,
+                dispatcherPriority: DispatcherPriority.ContextIdle);
+        }
+
+        private void PinUnpinClipboardEntryHandler(ClipboardViewItem parameter)
+        {
+            ItemPinUnpinRequested?.Invoke(this, new ClipboardItemManipulationEventArgs(parameter.ClipboardItemId));
+        }
+
+        private void DeleteClipboardEntryHandler(ClipboardViewItem parameter)
+        {
+            // block consequent executions of the command until the entire delete operation is executed
+            _hashCodeOfItemUndergoingDeletion = parameter.GetHashCode();
+            ItemDeletionRequested?.Invoke(this, new ClipboardItemManipulationEventArgs(parameter.ClipboardItemId));
+        }
+
+        public IReadOnlyCollection<string> GetSelectedItemIds()
+        {
+            return SelectedItemIds.AsReadOnly();
+        }
+
+        
+        public IReadOnlyDictionary<string, ReadOnlyCollection<int>> GetSelectedMultiItemsIds()
+        {
+            return new ReadOnlyDictionary<string, ReadOnlyCollection<int>>
+                (SelectedMultiItemsIds.ToDictionary(k => k.Key, v => v.Value.AsReadOnly()));
+        }
+        
+
+        protected override void OnSelectionChanged(SelectionChangedEventArgs e)
+        {
+            var lastSelectedItem = e.AddedItems.Cast<object>().LastOrDefault() as ClipboardViewItemWrapper;
+            // set the value of _lastSelectedItemId if the item is a single item or a group (both are descendants of ClipboardViewItem)
+            // but not a sub-item,which is of type ClipboardViewSubItem and for which setting of _lastSelectedItemId
+            // is handled by MultiItemListView_SelectionChanged
+            if (lastSelectedItem != null && lastSelectedItem.ViewItem is ClipboardViewItem)
+            {
+                _lastSelectedItemId = lastSelectedItem.ViewItem.ClipboardItemId;
+
+            }
+
+            PerformOnSelectedChangedOpreations();
+
+            // if we select a main item and we are not hoding Ctrl down,
+            // then we should unselect every subitem which is selected.
+            if (lastSelectedItem != null)
+            {
+                if (!KeyboardUtils.IsKeyPressed(Win32.Native.NativeEnums.Keys.LeftControl)
+                && !KeyboardUtils.IsKeyPressed(Win32.Native.NativeEnums.Keys.RightContol))
+                {
+                    UnselectMultiItemSubItems();
+                }
+            }
+        }
+
+        public void UnselectMultiItemSubItems()
+        {
+            foreach (MultiItem multiItem in _loadedMultiItems)
+            {
+                multiItem.GetSubItemsListView()?.UnselectAll();
+            }
+        }
+
+
+        private void UpdateAreAnyItemsSelected()
+        {
+            AreAnyItemsSelected = SelectedItemIds.Any() || SelectedMultiItemsIds.Any();
+        }
+
+        private void UpdateAreAnySubItemsSelected()
+        {
+            AreAnySubItemsSelected = SelectedMultiItemsIds.Any();
+        }
+
+        private void MultiItem_Loaded(object sender, RoutedEventArgs e)
+        {
+            var multiItem = (MultiItem)sender;
+            multiItem.SubItems_SelectionChanged += MultiItem_SubItems_SelectionChanged;
+            _loadedMultiItems.Add(multiItem);
+        }
+
+
+        private void MultiItem_Unloaded(object sender, RoutedEventArgs e)
+        {
+            MultiItem multiItem = (MultiItem)sender;
+
+            multiItem.SubItems_SelectionChanged -= MultiItem_SubItems_SelectionChanged;
+            multiItem.Unloaded -= MultiItem_Unloaded;
+            multiItem.Loaded -= MultiItem_Loaded;
+
+            _loadedMultiItems.Remove(multiItem);
+        }
+
+        private void MultiItem_SubItems_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Debug.WriteLine("MultiItemListView_SelectionChanged");
+            MultiItem multiItemUserControl = (MultiItem)sender;
+            ListView multiItemListView = multiItemUserControl.GetSubItemsListView();
+
+            var mainViewItem = multiItemUserControl.ClipboardViewItem;
+            if (mainViewItem == null)
+            {
+                return;
+            }
+
+            ClipboardViewItemWrapper mainViewItemWrapper = this.Items.Cast<ClipboardViewItemWrapper>().
+                        SingleOrDefault(item => item.ViewItem == mainViewItem);
+            if (mainViewItemWrapper == null)
+            {
+                throw new InvalidOperationException("The selected item is not present in the ClipboardViewItemWrappers collection in the ViewModel.");
+            }
+
+            _lastSelectedItemId = mainViewItem?.ClipboardItemId;
+
+            IEnumerable<ClipboardViewSubItemBase> selectedItems = multiItemListView.SelectedItems.Cast<ClipboardViewSubItemBase>();
+            IEnumerable<int> selectedIndices = selectedItems.Select(item => multiItemListView.Items.IndexOf(item));
+
+            SelectedMultiItemsIds.Remove(mainViewItem.ClipboardItemId);
+            if (selectedItems.Any())
+            {
+                if (mainViewItemWrapper.IsSelected)
+                {
+                    this.SelectedItems.Remove(mainViewItemWrapper);
+                    mainViewItemWrapper.IsSelected = false;
+                }
+
+                SelectedMultiItemsIds.Add(mainViewItem.ClipboardItemId, selectedIndices.ToList());
+            }
+
+            IEnumerable<ClipboardViewItemWrapper> mainListViewSelectedItems = this.SelectedItems.Cast<ClipboardViewItemWrapper>();
+
+
+            //// Due to the fact that we raise the selection and click events programmatically, we are limited to using MainListView_SelectionChanged.
+            //// MainListView.Items.CurrentChanging would have been of great help in cancelling the selection, but unfortunately we cannot use it here.
+
+            bool areSelectedItemsCombinable = true;
+
+            var combinabilityEventArgs = new CombinabilityEventArgs(mainListViewSelectedItems.Select(item => item.Id).ToList(), SelectedMultiItemsIds);
+            
+            if (combinabilityEventArgs.SelectedItemIds.Union(combinabilityEventArgs.SelectedMultiItemIds.Keys).Count() > 1)
+            {
+                CombinabilityCheckRequested?.Invoke(this, combinabilityEventArgs);
+                areSelectedItemsCombinable = combinabilityEventArgs.AreItemsCombinable;
+            }
+
+            if (areSelectedItemsCombinable != _areLastSelectedItemsCombinable)
+            {
+                SelectedItemsCombinabilityArgs args = new SelectedItemsCombinabilityArgs(areSelectedItemsCombinable);
+
+                OnSelectedItemsCombinabilityChanged(args);
+
+                if (args.CancelLastSelection)
+                {
+                    Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, (Action)(() =>
+                    {
+                        multiItemListView.UnselectAll();
+                        SelectedMultiItemsIds.Remove(mainViewItem.ClipboardItemId);
+                    }));
+                    return;
+                }
+                else
+                {
+                    _areLastSelectedItemsCombinable = areSelectedItemsCombinable;
+                }
+            }
+
+            foreach (ClipboardViewSubItemBase item in selectedItems)
+            {
+                var subItem = item as ClipboardViewSubItem;
+                if (subItem != null)
+                {
+                    subItem.IsSelected = true;
+                }
+            }
+
+            // if we are not holding Ctrl down, then upon selection of a subitem,
+            // we should unselect every main item which is selected.
+            if (!KeyboardUtils.IsKeyPressed(Win32.Native.NativeEnums.Keys.LeftControl)
+                && !KeyboardUtils.IsKeyPressed(Win32.Native.NativeEnums.Keys.RightContol)
+                && selectedItems.Any())
+            {
+                this.UnselectAll();
+            }
+
+            UpdateAreAnyItemsSelected();
+            UpdateAreAnySubItemsSelected();
+
+            SelectionChangeCompleted?.Invoke(this, combinabilityEventArgs);
+        }
+
+        protected void PerformOnSelectedChangedOpreations()
+        {
+            Debug.WriteLine("SelectionChanged");
+
+            if (_lastSelectedItemId == null)
+            {
+                return;
+            }
+
+            IEnumerable<ClipboardViewItemWrapper> selectedItems = this.SelectedItems.Cast<ClipboardViewItemWrapper>();
+
+            // Due to the fact that we raise the selection and click events programmatically, we are limited to using MainListView_SelectionChanged.
+            // MainListView.Items.CurrentChanging would have been of great help in cancelling the selection, but unfortunately we cannot use it here.
+            var allSelectedItemIds = selectedItems.Select(item => item.Id).Union(SelectedMultiItemsIds.Keys);
+
+            var combinabilityEventArgs = new CombinabilityEventArgs(selectedItems.Select(item => item.Id).ToList(), SelectedMultiItemsIds);
+            
+            bool areSelectedItemsCombinable = true;
+
+            if (combinabilityEventArgs.SelectedItemIds.Union(combinabilityEventArgs.SelectedMultiItemIds.Keys).Count() > 1)
+            {
+                CombinabilityCheckRequested?.Invoke(this, combinabilityEventArgs);
+                areSelectedItemsCombinable = combinabilityEventArgs.AreItemsCombinable;
+            }
+
+            if (areSelectedItemsCombinable != _areLastSelectedItemsCombinable)
+            {
+                SelectedItemsCombinabilityArgs args = new SelectedItemsCombinabilityArgs(areSelectedItemsCombinable);
+
+                OnSelectedItemsCombinabilityChanged(args);
+
+                if (args.CancelLastSelection)
+                {
+                    ClipboardViewItemWrapper latestSelectedItem = this
+                        .Items
+                        .Cast<ClipboardViewItemWrapper>()
+                        .Single(item => item.Id == _lastSelectedItemId);
+
+                    Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, (Action)(() =>
+                    {
+                        if (latestSelectedItem != null)
+                        {
+                            this.SelectedItems.Remove(latestSelectedItem);
+
+                            // trigger the animation which shows that the item cannot be selected
+                            latestSelectedItem.ViewItem.RunItemAnimation();
+                        }
+                    }));
+                    return;
+                }
+                else
+                {
+                    _areLastSelectedItemsCombinable = areSelectedItemsCombinable;
+                }
+            }
+
+            foreach (ClipboardViewItemWrapper item in this
+                .Items
+                .Cast<ClipboardViewItemWrapper>())
+            {
+                item.IsSelected = false;
+            }
+
+            SelectedItemIds.Clear();
+
+            SelectedItemIds.AddRange(selectedItems.Select(item => item.Id));
+
+            foreach (ClipboardViewItemWrapper item in selectedItems)
+            {
+                item.IsSelected = true;
+            }
+
+            //ClipboardViewItemWrapper lastSelectedItem = _mainListView.SelectedItems.Cast<ClipboardViewItemWrapper>().LastOrDefault();
+            //if (lastSelectedItem != null)
+            //{
+            //    lastSelectedItem.IsSelected = true;
+            //}
+
+            UpdateAreAnyItemsSelected();
+            UpdateAreAnySubItemsSelected();
+
+            SelectionChangeCompleted?.Invoke(this, combinabilityEventArgs);
+
+#if DEBUG
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+#endif
+
+        }
+
+        protected virtual void OnSelectedItemsCombinabilityChanged(SelectedItemsCombinabilityArgs args)
+        { }
+        
+        public virtual void ResumeDefaultState()
+        { }
+
+        protected class SelectedItemsCombinabilityArgs
+        {
+            public SelectedItemsCombinabilityArgs(bool areItemsCombinable)
+            {
+                AreItemsCombinable = areItemsCombinable;
+            }
+
+            public bool AreItemsCombinable { get; }
+
+            public bool CancelLastSelection { get; set; }
+        }
+    }
+}

@@ -94,6 +94,10 @@
     <Compile Include="Services\DataObjects\PreviewDimensions.cs" />
     <Compile Include="Services\DataObjects\PreviewItemTransferObject.cs" />
     <Compile Include="Services\Enums\TrayIconVisibilityPreference.cs" />
+    <Compile Include="Views\ClipboardListView\SimpleClipboardListView.xaml.cs">
+      <DependentUpon>SimpleClipboardListView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\EventArgsClasses\ClipboardItemManipulationEventArgs.cs" />
     <Compile Include="Services\EventArgsClasses\CombinabilityEventArgs.cs" />
     <Compile Include="Services\EventArgsClasses\HousekeepingEventArgs.cs" />
     <Compile Include="Services\EventArgsClasses\SetToClipboardEventArgs.cs" />
@@ -139,6 +143,10 @@
     <Compile Include="ViewModels\SerializableObjects\StoredPreviewItem.cs" />
     <Compile Include="ViewModels\TrayContextMenuViewModel.cs" />
     <Compile Include="ViewModels\RequestPreviewDimentionsEventArgs.cs" />
+    <Compile Include="Views\ClipboardListView\ClipboardListViewBase.cs" />
+    <Compile Include="Views\ClipboardListView\FullClipboardListView.xaml.cs">
+      <DependentUpon>FullClipboardListView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ClipboardViewItemTile\ItemBase.cs" />
     <Compile Include="Views\ClipboardViewItemTile\MultiItem.xaml.cs">
       <DependentUpon>MultiItem.xaml</DependentUpon>
@@ -200,6 +208,14 @@
     </Compile>
     <Compile Include="Views\WallpaperWindow.cs" />
     <Page Include="Resources\TrayContextMenu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ClipboardListView\FullClipboardListView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ClipboardListView\SimpleClipboardListView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

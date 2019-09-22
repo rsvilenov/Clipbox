@@ -5,6 +5,7 @@ using System.Linq;
 
 namespace Clipbox.ViewModels.ClipboardViewItemTile
 {
+    // TODO: we do not need this view model
     public class MultiItemLoadingViewModel : BindableObject
     {
         public MultiItemLoadingViewModel()
