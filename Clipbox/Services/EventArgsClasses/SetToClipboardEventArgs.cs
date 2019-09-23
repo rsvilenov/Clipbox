@@ -4,8 +4,8 @@ namespace Clipbox.Services.EventArgsClasses
 {
     public class SetToClipboardEventArgs : SelectionEventArgs
     {
-        public SetToClipboardEventArgs(List<string> selectedItemIds, 
-            Dictionary<string, List<int>> selectedMultiItemIds,
+        public SetToClipboardEventArgs(IReadOnlyCollection<string> selectedItemIds, 
+            IReadOnlyDictionary<string, IReadOnlyCollection<int>> selectedMultiItemIds,
             bool keepGeneratedItem)
             : base(selectedItemIds, selectedMultiItemIds)
         {

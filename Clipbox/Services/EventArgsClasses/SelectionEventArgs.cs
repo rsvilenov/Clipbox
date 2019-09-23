@@ -15,6 +15,13 @@ namespace Clipbox.Services.EventArgsClasses
             SelectedMultiItemIds = new ReadOnlyDictionary<string, IReadOnlyCollection<int>>(multiItemsTransformedValuesDic);
         }
 
+        public SelectionEventArgs(IReadOnlyCollection<string> selectedItemIds, IReadOnlyDictionary<string, IReadOnlyCollection<int>> selectedMultiItemIds)
+        {
+            SelectedItemIds = selectedItemIds;
+            
+            SelectedMultiItemIds = selectedMultiItemIds;
+        }
+
         public IReadOnlyCollection<string> SelectedItemIds { get; }
         
         public IReadOnlyDictionary<string, IReadOnlyCollection<int>> SelectedMultiItemIds { get; }

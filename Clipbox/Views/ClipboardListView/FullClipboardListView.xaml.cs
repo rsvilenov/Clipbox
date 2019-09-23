@@ -64,7 +64,20 @@ namespace Clipbox.Views.ClipboardListView
         private static readonly DependencyProperty ScrollBarDataContextProperty =
             DependencyProperty.Register(nameof(ScrollBarDataContext), typeof(ScrollBarDataContextClass), typeof(FullClipboardListView), new PropertyMetadata(null));
 
-        
+        /// <summary>
+        /// This view is the only one that allows for selection of incompatible items,
+        /// so this property seem to belong here.
+        /// </summary>
+        public bool AreSelectedItemsCombinable
+        {
+            get { return (bool)GetValue(AreSelectedItemsCombinableProperty); }
+            set { SetValue(AreSelectedItemsCombinableProperty, value); }
+        }
+
+        public static readonly DependencyProperty AreSelectedItemsCombinableProperty =
+            DependencyProperty.Register(nameof(AreSelectedItemsCombinable), typeof(bool), typeof(FullClipboardListView), new PropertyMetadata(true));
+
+
         public FullClipboardListView()
         {
             InitializeComponent();
@@ -92,6 +105,8 @@ namespace Clipbox.Views.ClipboardListView
             };
 
             _postSelectionUtilsTimer.Elapsed += _postSelectionUtilsTimer_Elapsed;
+
+            LayoutUpdated += (sender, args) => _layoutSlidingTimer.Slide();
         }
 
         private void _scrollbarValueChangedSlidingTimer_Elapsed(object sender, EventArgs e)
@@ -107,6 +122,11 @@ namespace Clipbox.Views.ClipboardListView
         private void _postSelectionUtilsTimer_Elapsed(object sender, EventArgs e)
         {
             ClipboardItemContentControl_MouseDoubleClickDetection_SingleClickDetected?.Invoke(this, e);
+        }
+
+        protected override void OnSelectedItemsCombinabilityChanged(SelectedItemsCombinabilityArgs args)
+        {
+            AreSelectedItemsCombinable = args.AreItemsCombinable;
         }
 
         /// <summary>

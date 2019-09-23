@@ -107,43 +107,14 @@ namespace Clipbox.Views
         
         public override void FocusNextItem()
         {
-            // changing the selected index will not cause SelectionChanged to fire, but assigning it for the first time will fire the event
-            if (MainListView.SelectedIndex == -1)
-            {
-                MainListView.SelectedIndex = 0;
-            }
-            else
-            {
-                if (MainListView.SelectedIndex == MainListView.Items.Count - 1)
-                {
-                    MainListView.SelectedIndex = 0;
-                }
-                else
-                {
-                    MainListView.SelectedIndex++;
-                }
-
-                base.PerformOnSelectedChangedOpreations();
-            }
-            
+            MainListView.FocusNextItem();
         }
 
         public override void ResumeDefaultState()
         {
             MainListView.UnselectAll();
-            UnselectMultiItemSubItems();
+            MainListView.UnselectMultiItemSubItems();
             _viewModel.SelectedClipboardViewItemWrappers.Clear();
-            SelectedItemIds.Clear();
-            SelectedMultiItemsIds.Clear();
-        }
-
-        protected override void OnSelectedItemsCombinabilityChanged(SelectedItemsCombinabilityArgs args)
-        {
-            if (!args.AreItemsCombinable)
-            {
-                ShowErrorTextTemporarily("Incompatible items.", 1000);
-                args.CancelLastSelection = true;
-            }
         }
 
         private void ShowErrorTextTemporarily(string text, int visibleMilliseconds)
@@ -162,24 +133,10 @@ namespace Clipbox.Views
             });
         }
 
-        private void Grid_IsMouseDirectlyOverChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if ((bool)e.NewValue)
-            {
-
-            }
-        }
-
-        private void Grid_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
-        {
-
-        }
-
         private void ButtonClearItems_Click(object sender, RoutedEventArgs e)
         {
             // Make sure no item remains in these lists when the listview is cleared of all its items
-            SelectedItemIds.Clear();
-            SelectedMultiItemsIds.Clear();
+           
         }
         
         protected override void OnSetControlMaxSizeRequested(MonitorDimensions monitorDimensions)
@@ -196,15 +153,58 @@ namespace Clipbox.Views
             this.MaxWidth = controlMaxWidth;
             this.MaxHeight = controlMaxHeight;
         }
-
-        protected override ListView GetMainListView()
-        {
-            return MainListView;
-        }
-
+        
         protected override Panel GetUIExtentionContainer()
         {
             return uiExtentionContainer;
+        }
+
+        private void MainListView_ItemPinUnpinRequested(object sender, EventArgsClasses.ClipboardItemManipulationEventArgs e)
+        {
+            _viewModel.PinUnpinClipboardEntry(e.ClipboardItemId);
+        }
+
+        private void MainListView_ItemDeletionRequested(object sender, EventArgsClasses.ClipboardItemManipulationEventArgs e)
+        {
+            _viewModel.DeleteClipboardEntry(e.ClipboardItemId);
+        }
+
+        
+        public IReadOnlyCollection<string> GetSelectedItemIds()
+        {
+            return MainListView.GetSelectedItemIds();
+        }
+
+
+        public IReadOnlyDictionary<string, IReadOnlyCollection<int>> GetSelectedMultiItemsIds()
+        {
+            return MainListView.GetSelectedMultiItemsIds();
+        }
+
+        private void MainListView_CombinabilityCheckRequested(object sender, CombinabilityEventArgs args)
+        {
+            RaiseCombinabilityCheckRequested(args);
+        }
+
+        private void MainListView_UncombinableItemsSelected(object sender, EventArgs args)
+        {
+            ShowErrorTextTemporarily("Incompatible items.", 1000);
+        }
+
+        private void MainListView_SelectionChangeCompleted(object sender, SelectionEventArgs e)
+        {
+            base.ClearLoadedUIExtensions();
+            base.LoadUIExtensions(MainListView);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (MainListView != null)
+            {
+                MainListView.Dispose();
+            }
+
+            base.Dispose(disposing);
         }
     }
 }

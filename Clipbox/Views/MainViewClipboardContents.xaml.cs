@@ -7,6 +7,7 @@ using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Interfaces;
 using Clipbox.ViewModels;
 using Clipbox.ViewModels.BindableObjects;
+using Clipbox.Views.ClipboardListView;
 using Clipbox.Views.ClipboardViewItemTile;
 using Clipbox.Win32.Native;
 using System;
@@ -28,21 +29,8 @@ namespace Clipbox.Views
     /// </summary>
     public partial class MainViewClipboardContents : ClipboardViewControlBase, IDisposable
     {
-        private const int LAYOUT_TIMER_TIMEOUT_MS = 100;
-        private const int SCROLLBAR_TIMER_TIMEOUT_MS = 300;
-
-        private SlidingTimer _layoutSlidingTimer;
-        private SlidingTimer _scrollbarValueChangedSlidingTimer;
-        private Timer _postSelectionUtilsTimer;
-
-
-        private ScrollBar _scrollBar;
-
         private MainViewClipboardContentsViewModel _viewModel;
         
-        private int _lastListViewItemCount = 0;
-        private Dictionary<string, GroupItem> _groupNameGroupItemMapping = new Dictionary<string, GroupItem>();
-
         public event EventHandler<SetToClipboardEventArgs> SetItemsToClipboardRequested;
 
         public event EventHandler CloseMainWindowRequested;
@@ -72,13 +60,10 @@ namespace Clipbox.Views
         public static readonly DependencyProperty IsLoadingOfPostSelectionToolboxEnabledProperty =
             DependencyProperty.Register(nameof(IsShowingOfPostSelectionToolboxEnabled), typeof(bool), typeof(MainViewClipboardContents), new PropertyMetadata(false));
 
-
-
-        private int _doubleClickTimeMs;
-
-
+        
         private CancellableTaskManager _cancellableTaskManager;
 
+        private SlidingTimer _uiExtentionGenerationSlidingTimer;
 
         public MainViewClipboardContents(MainViewClipboardContentsViewModel vm, 
             UIExtentionContainer container, 
@@ -91,58 +76,21 @@ namespace Clipbox.Views
 
             _cancellableTaskManager = new CancellableTaskManager();
 
-            _layoutSlidingTimer = new SlidingTimer();
-            _layoutSlidingTimer.IntervalMs = LAYOUT_TIMER_TIMEOUT_MS;
-            _layoutSlidingTimer.Elapsed += _layoutSlidingTimer_Elapsed;
-
-            _scrollbarValueChangedSlidingTimer = new SlidingTimer();
-            _scrollbarValueChangedSlidingTimer.IntervalMs = SCROLLBAR_TIMER_TIMEOUT_MS;
-            _scrollbarValueChangedSlidingTimer.Elapsed += _scrollbarValueChangedSlidingTimer_Elapsed;
+            _uiExtentionGenerationSlidingTimer = new SlidingTimer();
+            _uiExtentionGenerationSlidingTimer.IntervalMs = LoadingOfUIExtensionsDelayMs;
+            _uiExtentionGenerationSlidingTimer.Elapsed += _uiExtentionGenerationSlidingTimer_Elapsed;
 
 
-
+            Loaded += MainViewClipboardContents_Loaded;
             IsVisibleChanged += MainViewClipboardContents_IsVisibleChanged;
+        }
 
-            MainListView.LayoutUpdated += MainListView_LayoutUpdated;
-
-            _doubleClickTimeMs = User32.GetDoubleClickTime();
+        private void MainViewClipboardContents_Loaded(object sender, RoutedEventArgs e)
+        {
             // we need to delay the loading of the UI extensions so that we can cancel it if 
             // the selection is after a double click. Double clicks should set the item to the
             // system clipboard and close the window, so UI extensions are not needed.
-            base.LoadingOfUIExtensionsDelayMs += _doubleClickTimeMs;
-
-
-            _postSelectionUtilsTimer = new Timer();
-            _postSelectionUtilsTimer.AutoReset = false;
-            _postSelectionUtilsTimer.Interval = _doubleClickTimeMs;
-            _postSelectionUtilsTimer.Elapsed += _postSelectionUtilsTimer_Elapsed;
-        }
-
-        private void _postSelectionUtilsTimer_Elapsed(object sender, EventArgs e)
-        {
-            IsLoadingOfUIExtensionsEnabled = true;
-            Dispatcher.BeginInvoke(DispatcherPriority.Background,
-                new Action(() =>
-                {
-                    IsShowingOfPostSelectionToolboxEnabled = true;
-                    base.LoadUIExtensions();
-                }
-            ));
-        }
-
-        private void _scrollbarValueChangedSlidingTimer_Elapsed(object sender, EventArgs e)
-        {
-            LoadUnloadFullViewOfVisibleItems();
-        }
-
-        private void _layoutSlidingTimer_Elapsed(object sender, EventArgs e)
-        {
-            LoadItemsAndGroupsCachedInfo(MainListView);
-        }
-
-        private void MainListView_LayoutUpdated(object sender, EventArgs e)
-        {
-            _layoutSlidingTimer.Slide();
+            base.LoadingOfUIExtensionsDelayMs += MainListView.DoubleClickDetectionWaitIntervalMs;
         }
 
         private void MainViewClipboardContents_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -157,19 +105,13 @@ namespace Clipbox.Views
             }
         }
 
-        private void PART_VerticalScrollBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
-        {
-            TryAdjustScrollThumbLabel();
-            _scrollbarValueChangedSlidingTimer.Slide();
-        }
-
-        public void ScheduleLoadingOfViewItem(string clipboardItemId, MonitorDimensions monitorDimensions)
+        public void ScheduleLoadingOfViewItem(string clipboardItemId)
         {
             // run the slow-running operations in a separate task
             _cancellableTaskManager.ScheduleTask(clipboardItemId, new Action<string>((taskId) =>
             {
                 ClipboardViewItemWrapper wrapper = _viewModel.GetViewItemWrapper(clipboardItemId);
-                _viewModel.TryGetPreviewDimensions(monitorDimensions, wrapper, out ClipboardViewItemDimensionInfo cvItemDimInfo);
+                _viewModel.TryGetPreviewDimensions(base.MonitorDimensions, wrapper, out ClipboardViewItemDimensionInfo cvItemDimInfo);
                 
                 // this optimization (updating the bindable properties in the dispatcher thread with background priority)
                 // solves the problem with the items showing up painfully slowly...
@@ -177,7 +119,7 @@ namespace Clipbox.Views
                 // https://stackoverflow.com/questions/19510723/why-ui-is-freezing-during-wpf-datagrid-binding
                 Application.Current.Dispatcher.Invoke(new Action(() =>
                 {
-                    wrapper.ViewItem = _viewModel.GetViewItem(clipboardItemId, monitorDimensions);
+                    wrapper.ViewItem = _viewModel.GetViewItem(clipboardItemId, base.MonitorDimensions);
                     wrapper.DimensionInfo = cvItemDimInfo;
                     wrapper.IsViewItemLoaded = true;
 
@@ -189,213 +131,16 @@ namespace Clipbox.Views
         {
             _cancellableTaskManager.CancelScheduledTask(taskId: clipboardItemId);
         }
-
-
-        private bool TryAdjustScrollThumbLabel()
-        {
-            if (_scrollBar == null)
-            {
-                return false;
-            }
-
-            //// find the listview control
-            //ListView listView = Traversing.FindParent<ListView>(_scrollBar);
-            //if (listView == null)
-            //{
-            //    Debug.WriteLine("listView (still) not found.");
-            //    return false;
-            //}
-
-            if (MainListView == null)
-            {
-                return false; // is the listview loaded at this point?
-            }
-
-            UpdateVisibleGroupsCache();
-
-            // find the thumb and its location
-            Thumb thumb = Traversing.GetVisualChildOfType<Thumb>(_scrollBar);
-            if (thumb == null)
-            {
-                Debug.WriteLine("thumb (still) not found.");
-                return false;
-            }
-
-            Point relativeThumbPoint = thumb.TranslatePoint(new Point(0, 0), _scrollBar);
-            double thumbYPos = relativeThumbPoint.Y;
-
-            foreach (string groupName in _visibleGroupNames)
-            {
-                if (groupName == string.Empty)
-                {
-                    break; // not all groups are loaded
-                }
-
-                GroupItem groupItem = _groupNameGroupItemMapping[groupName];
-                Point groupItemRelativeLocation = groupItem.TranslatePoint(new Point(0, 0), MainListView);
-
-                if (thumbYPos + thumb.ActualHeight >= groupItemRelativeLocation.Y &&
-                    thumbYPos <= groupItemRelativeLocation.Y + groupItem.ActualHeight)
-                {
-                    _viewModel.CurrentVisibleItemsDateString = groupName;
-                }
-            }
-
-            return true;
-        }
-
-        private List<string> _visibleGroupNames = new List<string>();
-        private void UpdateVisibleGroupsCache()
-        {
-            _visibleGroupNames = new List<string>();
-
-            foreach (string groupName in _groupNameGroupItemMapping.Keys)
-            {
-                GroupItem groupItem = _groupNameGroupItemMapping[groupName];
-                
-                Rect bounds =
-                groupItem.TransformToAncestor(MainListView).TransformBounds(new Rect(0.0, 0.0, groupItem.ActualWidth, groupItem.ActualHeight));
-                var rect = new Rect(0, 0, this.ActualWidth, this.ActualHeight);
-                if (rect.Contains(bounds.TopLeft) || rect.Contains(bounds.BottomRight))
-                {
-                    _visibleGroupNames.Add(groupName);
-                }
-            }
-        }
-
-        private void LoadItemsAndGroupsCachedInfo(ListView listView)
-        {
-            if (_lastListViewItemCount == listView.Items.Count)
-            {
-                return;
-            }
-
-            CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(listView.ItemsSource);
-
-            if (view.Groups == null)
-            {
-                return;
-            }
-            
-            _groupNameGroupItemMapping.Clear();
-
-            var groups = view.Groups.Cast<CollectionViewGroup>();
-            
-            if (listView.Items.Count == 0)
-            {
-                return;
-            }
-
-            foreach (var group in groups)
-            {
-                if (group.Name is string == false)
-                {
-                    throw new InvalidCastException("Group name should be string.");
-                }
-
-                string groupName = (string)group.Name;
-                if (_groupNameGroupItemMapping.ContainsKey(groupName))
-                {
-                    throw new ArgumentException("Group names should be unique");
-                }
-
-                ListViewItem firstLvi = (ListViewItem)listView.ItemContainerGenerator.ContainerFromItem(group.Items.First());
-                
-                GroupItem groupItem = Traversing.FindParent<GroupItem>(firstLvi);
-
-                if (groupItem == null)
-                {
-                    // the item has not been loaded yet.
-                    // TODO: maybe improve this code some day by
-                    // finding a way to wait for the item to laod
-                    // and not just skip it...
-                    continue;
-                }
-
-                _groupNameGroupItemMapping.Add(groupName, groupItem);
-            }
-
-            _viewModel.FirstItemDateString = _groupNameGroupItemMapping.First().Key;
-            _viewModel.LastItemDateString = _groupNameGroupItemMapping.Last().Key;
-
-            _lastListViewItemCount = listView.Items.Count;
-            
-            TryAdjustScrollThumbLabel();
-            LoadUnloadFullViewOfVisibleItems();
-        }
-
-        private void LoadUnloadFullViewOfVisibleItems()
-        {
-            if (MainListView == null)
-            {
-                return; // is the listview loaded at this point?
-            }
-
-            // filter out the groups that are not currently in view
-            var visibleGroupItemMapping = _groupNameGroupItemMapping
-                .Where(kvp => _visibleGroupNames.Contains(kvp.Key))
-                .ToDictionary(k => k.Key, v => v.Value);
-
-            foreach (ClipboardViewItemWrapper lviVm in MainListView.Items)
-            {
-                // if the item is part of a visible group...
-                // The item's group name is the wrapper's DateCreatedFriendly.
-                if (visibleGroupItemMapping.ContainsKey(lviVm.DateCreatedFriendly))
-                {
-                    // load the actual item
-                    ListViewItem lvi = (ListViewItem)MainListView.ItemContainerGenerator.ContainerFromItem(lviVm);
-                    
-                    // check if the item is within the bounds of the clipboard view
-                    Rect bounds =
-                        lvi.TransformToAncestor(MainListView).TransformBounds(new Rect(0.0, 0.0, lvi.ActualWidth, lvi.ActualHeight));
-                    var rect = new Rect(0, 0, this.ActualWidth, this.ActualHeight);
-                    if ((rect.Contains(bounds.TopLeft) || rect.Contains(bounds.BottomRight))
-                        && !lviVm.IsViewItemLoaded)
-                    {
-                        // load the full view item
-                        ScheduleLoadingOfViewItem(lviVm.Id, this.MonitorDimensions);
-                    }
-                }
-                else
-                {
-                    CancelLoadingOfViewItem(lviVm.Id);
-
-                    if (lviVm.IsViewItemLoaded 
-                        && !lviVm.IsSelected /* do not unload the selected items */)
-                    {
-                        // unload the item to save up memory
-                        _viewModel.UnloadViewItem(lviVm.Id);
-                    }
-                }
-            }
-        }
-
-        private void PART_ScrollContentPresenter_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            TryAdjustScrollThumbLabel();
-            LoadUnloadFullViewOfVisibleItems();
-        }
         
-        private void PART_VerticalScrollBar_Loaded(object sender, RoutedEventArgs e)
-        {
-            _scrollBar = sender as ScrollBar;
-        }
-        
-        /// <summary>
-        /// This event is wired to the GroupItem's control template main container. We show the listview only when the grouping is ready.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void StackPanel_Loaded(object sender, RoutedEventArgs e)
-        {
-            MainListView.Visibility = Visibility.Visible;
-        }
 
         protected override void Dispose(bool disposing)
         {
-            _layoutSlidingTimer.Dispose();
-            _scrollbarValueChangedSlidingTimer.Dispose();
-            _postSelectionUtilsTimer.Dispose();
+            _uiExtentionGenerationSlidingTimer.Dispose();
+
+            if (MainListView != null)
+            {
+                MainListView.Dispose();
+            }
 
             base.Dispose(disposing);
         }
@@ -405,41 +150,11 @@ namespace Clipbox.Views
             Debug.WriteLine("MainViewClipboardContents unloaded");
         }
 
-        private void MultiItem_SubItems_SubItemsFocusMovedOut(object sender, RoutedEventArgs e)
-        {
-            MultiItem multiItem = (MultiItem)sender;
-
-            Traversing.FindParent<ListViewItem>(multiItem).Focus();
-        }
-
-        private void MultiItem_Unloaded(object sender, RoutedEventArgs e)
-        {
-            MultiItem multiItem = (MultiItem)sender;
-
-            multiItem.SubItems_SubItemsFocusMovedOut -= MultiItem_SubItems_SubItemsFocusMovedOut;
-            multiItem.Unloaded -= MultiItem_Unloaded;
-        }
-
-        private void MainListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
-
-        protected override ListView GetMainListView()
-        {
-            return MainListView;
-        }
-
         protected override Panel GetUIExtentionContainer()
         {
             return uiExtentionContainer;
         }
         
-        protected override void OnSelectedItemsCombinabilityChanged(SelectedItemsCombinabilityArgs args)
-        {
-            AreSelectedItemsCombinable = args.AreItemsCombinable;
-        }
-
         private void SetToClipboardButton_Click(object sender, RoutedEventArgs e)
         {
             SetSelectedItemsToClipboard();
@@ -455,52 +170,11 @@ namespace Clipbox.Views
         {
             if (e.SelectedButton == Dialog.Enums.DialogButtons.Yes)
             {
-                _viewModel.DeleteItems(SelectedItemIds);
+                _viewModel.DeleteItems(MainListView.GetSelectedItemIds());
             }
         }
 
-        private void ClipboardItemContentControl_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
-        {
-            if (e.Key == System.Windows.Input.Key.Enter)
-            {
-                SetSelectedItemsToClipboard();
-            }
-        }
         
-        private void ContentControl_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            if (e.ClickCount == 1)
-            {
-                IsShowingOfPostSelectionToolboxEnabled = false;
-                IsLoadingOfUIExtensionsEnabled = false;
-                _postSelectionUtilsTimer.Start();
-            }
-            else
-            {
-                _postSelectionUtilsTimer.Stop();
-
-                // if the item has been previously selected, the first click will unselect it,
-                // so that we need to re-select it on the second click in order for it to be in
-                // the list with selected items.
-                var contentControl = (ContentControl)sender;
-                var itemWrapper = (ClipboardViewItemWrapper)contentControl.DataContext;
-                if (!itemWrapper.IsSelected)
-                {
-                    itemWrapper.IsSelected = true;
-                    MainListView.SelectedItems.Add(itemWrapper);
-                }
-                
-                // cancel the second click in a doubleclick so that it won't deselect the item
-                e.Handled = true;
-
-                // post the invoking of SetItemsToClipboardRequested to the dispatcher thread, so that we exit this method immediately.
-                Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
-                {
-                    SetSelectedItemsToClipboard();
-                }));
-            }
-        }
-
         private void SetSelectedItemsToClipboard()
         {
             //TODO: notify the user and close the window
@@ -517,13 +191,123 @@ namespace Clipbox.Views
                 {
                     // raise the event...
                     SetItemsToClipboardRequested?.Invoke(this,
-                                        new SetToClipboardEventArgs(SelectedItemIds, SelectedMultiItemsIds, keepGeneratedItemsCb.IsChecked == true));
+                                        new SetToClipboardEventArgs(MainListView.GetSelectedItemIds(), MainListView.GetSelectedMultiItemsIds(), keepGeneratedItemsCb.IsChecked == true));
 
 
                     CloseMainWindowRequested?.Invoke(this, new EventArgs());
                 }));
             });
             
+        }
+
+        private void MainListView_ClipboardItemContentControl_MouseDoubleClickDetection_DoubleClickDetected(object sender, EventArgs e)
+        {
+            SetSelectedItemsToClipboard();
+        }
+
+        private void MainListView_ClipboardItemContentControl_MouseDoubleClickDetection_SingleClickDetected(object sender, EventArgs e)
+        {
+            IsLoadingOfUIExtensionsEnabled = true;
+            Dispatcher.BeginInvoke(DispatcherPriority.Background,
+                new Action(() =>
+                {
+                    IsShowingOfPostSelectionToolboxEnabled = true;
+                    base.ClearLoadedUIExtensions();
+                    base.LoadUIExtensions((ClipboardListViewBase)sender);
+                }
+            ));
+        }
+
+        private void MainListView_ClipboardItemContentControl_MouseDoubleClickDetectionStarted(object sender, EventArgs e)
+        {
+            IsShowingOfPostSelectionToolboxEnabled = false;
+            IsLoadingOfUIExtensionsEnabled = false;
+            base.ClearLoadedUIExtensions();
+        }
+
+        private void MainListView_ClipboardItemContentControl_KeyIsUp(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter)
+            {
+                e.Handled = true;
+                SetSelectedItemsToClipboard();
+            }
+        }
+
+        private void MainListView_ViewItemLoadingRequested(object sender, EventArgsClasses.ClipboardItemManipulationEventArgs e)
+        {
+            ScheduleLoadingOfViewItem(e.ClipboardItemId);
+        }
+
+        private void MainListView_ViewItemLoadingCancelRequested(object sender, EventArgsClasses.ClipboardItemManipulationEventArgs e)
+        {
+            CancelLoadingOfViewItem(e.ClipboardItemId);
+        }
+
+        private void MainListView_ViewItemUnloadingRequested(object sender, EventArgsClasses.ClipboardItemManipulationEventArgs e)
+        {
+            // unload the item to save up memory
+            _viewModel.UnloadViewItem(e.ClipboardItemId);
+        }
+
+        private void MainListView_CombinabilityCheckRequested(object sender, CombinabilityEventArgs e)
+        {
+            base.RaiseCombinabilityCheckRequested(e);
+        }
+
+        private void MainListView_ItemPinUnpinRequested(object sender, EventArgsClasses.ClipboardItemManipulationEventArgs e)
+        {
+            _viewModel.PinUnpinClipboardEntry(e.ClipboardItemId);
+        }
+
+        private void MainListView_ItemDeletionRequested(object sender, EventArgsClasses.ClipboardItemManipulationEventArgs e)
+        {
+            _viewModel.DeleteClipboardEntry(e.ClipboardItemId);
+        }
+        
+        private void MainListView_SelectionChangeCompleted(object sender, SelectionEventArgs e)
+        {
+            LoadUIExtensionsWithDelay();
+        }
+
+        /// <summary>
+        /// This property resets its state after the ui extension loading has been attempted.
+        /// So if it is set to false, upon the attempt to load the ui extensions no extension will be
+        /// loaded and the property will be set to true.
+        /// </summary>
+        protected bool IsLoadingOfUIExtensionsEnabled { get; set; }
+
+        private void LoadUIExtensionsWithDelay()
+        {
+            base.ClearLoadedUIExtensions();
+
+            if (MainListView.SelectedItems.Count > 0)
+            {
+                _uiExtentionGenerationSlidingTimer.Slide();
+            }
+        }
+
+        private void _uiExtentionGenerationSlidingTimer_Elapsed(object sender, EventArgs e)
+        {
+            Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background,
+            (Action)(() =>
+            {
+                if (IsLoadingOfUIExtensionsEnabled)
+                {
+                    base.LoadUIExtensions(MainListView);
+                }
+                else
+                {
+                    // re-enable the loading of the extensions
+                    IsLoadingOfUIExtensionsEnabled = true;
+                }
+            }));
+
+        }
+
+        private void MainListView_GroupingComplete(object sender, EventArgs e)
+        {
+            MainListView.Visibility = Visibility.Visible;
         }
     }
 }

@@ -18,10 +18,6 @@ namespace Clipbox.ViewModels
 {
     public abstract class ClipboardContentsViewModelBase : BindableObject
     {
-        public ICommand DeleteClipboardEntry { get; set; }
-
-        public ICommand PinUnpinClipboardEntry { get; set; }
-
         private ConcurrentBag<string> _itemIdsUndergoingDeletion;
 
         private AsyncObservableCollection<ClipboardViewItemWrapper> _clipboardViewItemWrappers;
@@ -54,16 +50,6 @@ namespace Clipbox.ViewModels
             PreviewGenerationService = previewGenerationService;
 
             _itemIdsUndergoingDeletion = new ConcurrentBag<string>();
-
-            DeleteClipboardEntry = new DelegateCommand<ClipboardViewItem>(DeleteClipboardEntryHandler, 
-                /* disable the command until all deletion operations execute (it should be just one, so do it just in case... 
-                 * and prevent the possibility of the user to click on the button twice in a row) */
-                (item) => !_itemIdsUndergoingDeletion.Any());
-
-            // wait for the binding operations to complete,
-            // so we can get the changed value of the IsPinned property
-            PinUnpinClipboardEntry = new DelegateCommand<ClipboardViewItem>(PinUnpinClipboardEntryHandler,
-                dispatcherPriority: DispatcherPriority.ContextIdle);
 
             ClipboardViewItemWrappers = new AsyncObservableCollection<ClipboardViewItemWrapper>();
 
@@ -175,16 +161,27 @@ namespace Clipbox.ViewModels
             }
         }
 
-        private void PinUnpinClipboardEntryHandler(ClipboardViewItem obj)
+        public void PinUnpinClipboardEntry(string clipboardItemId)
         {
-            ClipboardManager.PinUnpinItemItem(obj.ClipboardItemId, obj.IsPinned);
+            ClipboardViewItemWrapper wrapper = ClipboardViewItemWrappers.FirstOrDefault(w => w.Id == clipboardItemId);
+            if (wrapper == null)
+            {
+                throw new KeyNotFoundException($"No clipboard item with id {clipboardItemId} was found.");
+            }
+
+            if (!wrapper.IsViewItemLoaded)
+            {
+                throw new InvalidOperationException($"The view item for {clipboardItemId} is not loaded. Please load it first.");
+            }
+
+            ClipboardManager.PinUnpinItemItem(wrapper.Id, wrapper.ViewItem.IsPinned);
         }
 
-        private void DeleteClipboardEntryHandler(ClipboardViewItem parameter)
+        public void DeleteClipboardEntry(string clipboardItemId)
         {
             // block consequent executions of the command until the entire delete operation is executed
-            _itemIdsUndergoingDeletion.Add(parameter.ClipboardItemId);
-            ClipboardManager.RemoveClipboardItem(parameter.ClipboardItemId);
+            _itemIdsUndergoingDeletion.Add(clipboardItemId);
+            ClipboardManager.RemoveClipboardItem(clipboardItemId);
         }
 
         protected bool RemoveItemWrapper(string clipboardItemId)

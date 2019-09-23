@@ -52,8 +52,8 @@
         </Style>
     </ListView.Resources>
     <i:Interaction.Behaviors>
-        <localBeh:ListViewScrollButtonBehavior IsScrollUpButton="True" ScrollButton="{Binding ElementName=BtnScrollUp}" />
-        <localBeh:ListViewScrollButtonBehavior IsScrollUpButton="False" ScrollButton="{Binding ElementName=BtnScrollDown}" />
+        <localBeh:ListViewScrollButtonBehavior IsScrollUpButton="True" ScrollButton="{Binding ScrollUpButton}" />
+        <localBeh:ListViewScrollButtonBehavior IsScrollUpButton="False" ScrollButton="{Binding ScrollDownButton}" />
     </i:Interaction.Behaviors>
 
     <!--  Remove the default highlighting on mouse over  -->
@@ -241,7 +241,7 @@
                                                             Grid.Column="2"
                                                             MaxWidth="25"
                                                             Margin="0,0,5,0"
-                                                            Command="{Binding Path=DataContext.PinUnpinClipboardEntry, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
+                                                            Command="{Binding Path=PinUnpinClipboardEntry, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
                                                             CommandParameter="{Binding}"
                                                             IsChecked="{Binding IsPinned}"
                                                             Style="{DynamicResource ToggleBtnStar}">
@@ -281,7 +281,7 @@
                                                             <Button
                                                                 MaxWidth="25"
                                                                 Margin="0,0,5,0"
-                                                                Command="{Binding Path=DataContext.DeleteClipboardEntry, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
+                                                                Command="{Binding Path=DeleteClipboardEntry, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
                                                                 CommandParameter="{Binding}"
                                                                 Style="{DynamicResource BtnClose}"
                                                                 Visibility="{Binding Path=IsManipulationEnabled, RelativeSource={RelativeSource AncestorType={x:Type Border}}, Converter={StaticResource BooleanToVisibilityConverter}}">

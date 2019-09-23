@@ -59,11 +59,11 @@ namespace Clipbox.Views.ClipboardListView
         
         public bool AreAnySubItemsSelected
         {
-            get { return (bool)GetValue(AreAnyMultiItemsSelectedProperty); }
-            set { SetValue(AreAnyMultiItemsSelectedProperty, value); }
+            get { return (bool)GetValue(AreAnySubItemsSelectedProperty); }
+            set { SetValue(AreAnySubItemsSelectedProperty, value); }
         }
 
-        public static readonly DependencyProperty AreAnyMultiItemsSelectedProperty =
+        public static readonly DependencyProperty AreAnySubItemsSelectedProperty =
             DependencyProperty.Register(nameof(AreAnySubItemsSelected), typeof(bool), typeof(ClipboardListViewBase), new PropertyMetadata(false));
 
 
@@ -76,7 +76,7 @@ namespace Clipbox.Views.ClipboardListView
             DeleteClipboardEntry = new DelegateCommand<ClipboardViewItem>(DeleteClipboardEntryHandler,
                 /* disable the command until all deletion operations execute (it should be just one, so do it just in case... 
                  * and prevent the possibility of the user to click on the button twice in a row) */
-                (item) => item.GetHashCode() != _hashCodeOfItemUndergoingDeletion);
+                (item) => item?.GetHashCode() != _hashCodeOfItemUndergoingDeletion);
 
             // wait for the binding operations to complete,
             // so we can get the changed value of the IsPinned property
@@ -102,10 +102,10 @@ namespace Clipbox.Views.ClipboardListView
         }
 
         
-        public IReadOnlyDictionary<string, ReadOnlyCollection<int>> GetSelectedMultiItemsIds()
+        public IReadOnlyDictionary<string, IReadOnlyCollection<int>> GetSelectedMultiItemsIds()
         {
-            return new ReadOnlyDictionary<string, ReadOnlyCollection<int>>
-                (SelectedMultiItemsIds.ToDictionary(k => k.Key, v => v.Value.AsReadOnly()));
+            return new ReadOnlyDictionary<string, IReadOnlyCollection<int>>
+                (SelectedMultiItemsIds.ToDictionary(k => k.Key, v => (IReadOnlyCollection<int>)v.Value.AsReadOnly()));
         }
         
 

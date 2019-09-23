@@ -265,8 +265,8 @@ namespace Clipbox
         /// <param name="pasteCancelled"></param>
         private void DoManagedPasteOperation(out bool pasteCancelled)
         {
-            IReadOnlyList<string> selectedItemIds = _quickViewWindowService.GetSelectedItemIds();
-            IReadOnlyDictionary<string, IReadOnlyCollection<int>> selectedMultiItemIds = _quickViewWindowService.GetSelectedMultiItemsIds();
+            IReadOnlyCollection<string> selectedItemIds = _quickViewWindowService.SelectedItemIds;
+            IReadOnlyDictionary<string, IReadOnlyCollection<int>> selectedMultiItemIds = _quickViewWindowService.SelectedMultiItemIds;
 
 
             if (!selectedItemIds.Any() && !selectedMultiItemIds.Any())

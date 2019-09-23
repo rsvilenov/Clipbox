@@ -15,8 +15,8 @@ namespace Clipbox.Services.Interfaces
 
         bool IsWindowVisible { get; }
         
-        IReadOnlyList<string> GetSelectedItemIds();
+        IReadOnlyCollection<string> SelectedItemIds { get; }
 
-        IReadOnlyDictionary<string, IReadOnlyCollection<int>> GetSelectedMultiItemsIds();
+        IReadOnlyDictionary<string, IReadOnlyCollection<int>> SelectedMultiItemIds { get; }
     }
 }

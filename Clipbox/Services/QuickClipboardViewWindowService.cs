@@ -87,19 +87,9 @@ namespace Clipbox.Services
 
         }
 
-        protected List<string> SelectedItemIds { get; set; }
+        public IReadOnlyCollection<string> SelectedItemIds { get; private set; }
 
-        public IReadOnlyList<string> GetSelectedItemIds()
-        {
-            return SelectedItemIds.AsReadOnly();
-        }
-
-        protected Dictionary<string, IReadOnlyCollection<int>> SelectedMultiItemIds { get; set; }
-
-        public IReadOnlyDictionary<string, IReadOnlyCollection<int>> GetSelectedMultiItemsIds()
-        {
-            return new ReadOnlyDictionary<string, IReadOnlyCollection<int>>(SelectedMultiItemIds);
-        }
+        public IReadOnlyDictionary<string, IReadOnlyCollection<int>> SelectedMultiItemIds { get; private set; }
 
         private void _previewControl_HousekeepingRequested(object sender, HousekeepingEventArgs e)
         {
@@ -176,10 +166,8 @@ namespace Clipbox.Services
                 _quickViewWindow.SizeChanged -= _quickViewWindow_SizeChanged;
                 _quickViewWindow.Shown -= _quickViewWindow_Shown;
 
-                SelectedItemIds.Clear();
-                SelectedItemIds.AddRange(_previewControl.SelectedItemIds);
-                SelectedMultiItemIds.Clear();
-                SelectedMultiItemIds = _previewControl.SelectedMultiItemsIds.ToDictionary(x => x.Key, y => (IReadOnlyCollection<int>)y.Value.AsReadOnly());
+                SelectedItemIds = _previewControl.GetSelectedItemIds();
+                SelectedMultiItemIds = _previewControl.GetSelectedMultiItemsIds();
                 
                 // clear the state of the control and its collections
                 _previewControl.ResumeDefaultState();

@@ -23,7 +23,7 @@ namespace Clipbox.Behaviors
         }
 
         public static readonly DependencyProperty ScrollUpProperty =
-            DependencyProperty.Register("IsScrollUpButton", typeof(bool), typeof(ScrollButtonBehavior), new PropertyMetadata(false));
+            DependencyProperty.Register(nameof(IsScrollUpButton), typeof(bool), typeof(ScrollButtonBehavior), new PropertyMetadata(false));
 
 
 
@@ -34,16 +34,24 @@ namespace Clipbox.Behaviors
         }
         
         public static readonly DependencyProperty ScrollButtonProperty =
-            DependencyProperty.Register("ScrollButton", typeof(Button), typeof(ScrollButtonBehavior), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(ScrollButton), typeof(Button), typeof(ScrollButtonBehavior), new PropertyMetadata(null, ScrollButtonProperty_PropertyChanged));
 
-
+        private static void ScrollButtonProperty_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (e.NewValue != null)
+            {
+                ((ScrollButtonBehavior)d).WireUpScrollButton();
+            }
+        }
 
         protected override void OnAttached()
         {
             AssociatedObject.Loaded += AssociatedObject_Loaded;
-            if (AssociatedObject.IsLoaded)
+
+            WireUpAssociatedListView();
+
+            if (AssociatedObject.IsLoaded && ScrollButton != null)
             {
-                WireUpAssociatedListView();
                 WireUpScrollButton();
             }
         }
@@ -68,18 +76,25 @@ namespace Clipbox.Behaviors
         private void AssociatedObject_Loaded(object sender, System.Windows.RoutedEventArgs e)
         {
             WireUpAssociatedListView();
-            WireUpScrollButton();
+
+            if (ScrollButton != null)
+            {
+                WireUpScrollButton();
+            }
 
             AssociatedObject.Loaded -= AssociatedObject_Loaded;
         }
 
         private void WireUpScrollButton()
         {
-            if (!_scrollBtnClickSubscribed)
+            if (_scrollBtnClickSubscribed)
             {
-                ScrollButton.Click += ScrollButton_Click;
-                _scrollBtnClickSubscribed = true;
+                ScrollButton.Click -= ScrollButton_Click;
+                _scrollBtnClickSubscribed = false;
             }
+
+            ScrollButton.Click += ScrollButton_Click;
+            _scrollBtnClickSubscribed = true;
         }
 
         private void WireUpAssociatedListView()
@@ -97,7 +112,7 @@ namespace Clipbox.Behaviors
 
         private void _associatedScrollViewer_LayoutUpdated(object sender, EventArgs e)
         {
-            if (_associatedScrollViewer != null)
+            if (_associatedScrollViewer != null && ScrollButton != null)
             {
                 if (IsScrollUpButton)
                 {
