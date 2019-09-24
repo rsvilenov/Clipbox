@@ -221,6 +221,7 @@
             ClipboardItemContentControl_MouseDoubleClickDetection_DoubleClickDetected="MainListView_ClipboardItemContentControl_MouseDoubleClickDetection_DoubleClickDetected"
             ClipboardItemContentControl_MouseDoubleClickDetection_SingleClickDetected="MainListView_ClipboardItemContentControl_MouseDoubleClickDetection_SingleClickDetected"
             ClipboardItemsPanel_KeyUp="MainListView_ClipboardItemsPanel_KeyUp"
+            ClipboardViewItemMaxHeight="{Binding Path=ClipboardViewItemMaxHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}}"
             CombinabilityCheckRequested="MainListView_CombinabilityCheckRequested"
             GroupingComplete="MainListView_GroupingComplete"
             ItemDeletionRequested="MainListView_ItemDeletionRequested"

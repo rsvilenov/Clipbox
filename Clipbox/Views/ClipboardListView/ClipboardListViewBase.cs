@@ -5,16 +5,11 @@ using Clipbox.ViewModels.BindableObjects;
 using Clipbox.Views.ClipboardViewItemTile;
 using Clipbox.Views.EventArgsClasses;
 using Clipbox.Win32;
-using Clipbox.Win32.Native;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -31,23 +26,6 @@ namespace Clipbox.Views.ClipboardListView
         private List<MultiItem> _loadedMultiItems;
 
         private int _hashCodeOfItemUndergoingDeletion;
-
-
-        /// <summary>
-        /// Contains the command for the Close and Pin buttons.
-        /// We do not want these commands to be publicly accessible, but we cannot make the 
-        /// ICommand properties protected as they should be public or they will not work, yet we do not want to 
-        /// use a ViewModel for these user controls, as the logic in them is purely UI-related, so we are using this... 
-        /// Unlike ICommand properties, Dependency properties can be private and protected and the binding will still work.
-        /// </summary>
-        protected ActionButtonsDataContextClass ActionButtonsDataContext
-        {
-            get { return (ActionButtonsDataContextClass)GetValue(ActionButtonsDataContextProperty); }
-            set { SetValue(ActionButtonsDataContextProperty, value); }
-        }
-        
-        protected static readonly DependencyProperty ActionButtonsDataContextProperty =
-            DependencyProperty.Register(nameof(ActionButtonsDataContext), typeof(ActionButtonsDataContextClass), typeof(ClipboardListViewBase), new PropertyMetadata(null));
         
         protected List<string> SelectedItemIds { get; set; }
 
@@ -61,25 +39,67 @@ namespace Clipbox.Views.ClipboardListView
 
         public event EventHandler<ClipboardItemManipulationEventArgs> ItemPinUnpinRequested;
 
+        /// <summary>
+        /// Contains the command for the Close and Pin buttons.
+        /// We do not want these commands to be publicly accessible, but we cannot make the 
+        /// ICommand properties protected as they should be public or they will not work, yet we do not want to 
+        /// use a ViewModel for these user controls, as the logic in them is purely UI-related, so we are using this... 
+        /// Unlike ICommand properties, Dependency properties can be private and protected and the binding will still work.
+        /// </summary>
+        protected ActionButtonsDataContextClass ActionButtonsDataContext
+        {
+            get { return (ActionButtonsDataContextClass)GetValue(ActionButtonsDataContextProperty); }
+            set { SetValue(ActionButtonsDataContextProperty, value); }
+        }
+
+        protected static readonly DependencyProperty ActionButtonsDataContextProperty =
+            DependencyProperty.Register(nameof(ActionButtonsDataContext), typeof(ActionButtonsDataContextClass), typeof(ClipboardListViewBase), new PropertyMetadata(null));
+
+
+        public double ClipboardViewItemMaxHeight
+        {
+            get { return (double)GetValue(ClipboardViewItemHeightProperty); }
+            set { SetValue(ClipboardViewItemHeightProperty, value); }
+        }
+
+
+        public static readonly DependencyProperty ClipboardViewItemHeightProperty =
+            DependencyProperty.Register(nameof(ClipboardViewItemMaxHeight), typeof(double), typeof(ClipboardListViewBase), new PropertyMetadata(0d));
+        
+        private static readonly DependencyPropertyKey AreAnyItemsSelectedPropertyKey
+        = DependencyProperty.RegisterReadOnly(nameof(AreAnyItemsSelected), typeof(bool), typeof(ClipboardListViewBase),
+            new FrameworkPropertyMetadata(default(bool),
+                FrameworkPropertyMetadataOptions.None));
+
+        public static readonly DependencyProperty AreAnyItemsSelectedProperty
+            = AreAnyItemsSelectedPropertyKey.DependencyProperty;
+
+        /// <summary>
+        /// A read only DP, indicating whether there are any selected items.
+        /// </summary>
         public bool AreAnyItemsSelected
         {
             get { return (bool)GetValue(AreAnyItemsSelectedProperty); }
-            set { SetValue(AreAnyItemsSelectedProperty, value); }
+            protected set { SetValue(AreAnyItemsSelectedPropertyKey, value); }
         }
 
-        public static readonly DependencyProperty AreAnyItemsSelectedProperty =
-            DependencyProperty.Register(nameof(AreAnyItemsSelected), typeof(bool), typeof(ClipboardListViewBase), new PropertyMetadata(false));
 
-        
+        private static readonly DependencyPropertyKey AreAnySubItemsSelectedPropertyKey
+        = DependencyProperty.RegisterReadOnly(nameof(AreAnySubItemsSelected), typeof(bool), typeof(ClipboardListViewBase),
+            new FrameworkPropertyMetadata(default(bool),
+                FrameworkPropertyMetadataOptions.None));
+
+        public static readonly DependencyProperty AreAnySubItemsSelectedProperty
+            = AreAnySubItemsSelectedPropertyKey.DependencyProperty;
+
+        /// <summary>
+        /// A read-only DP, indicating whether there are any selected sub items.
+        /// </summary>
         public bool AreAnySubItemsSelected
         {
             get { return (bool)GetValue(AreAnySubItemsSelectedProperty); }
-            set { SetValue(AreAnySubItemsSelectedProperty, value); }
+            protected set { SetValue(AreAnySubItemsSelectedPropertyKey, value); }
         }
-
-        public static readonly DependencyProperty AreAnySubItemsSelectedProperty =
-            DependencyProperty.Register(nameof(AreAnySubItemsSelected), typeof(bool), typeof(ClipboardListViewBase), new PropertyMetadata(false));
-
 
         public ClipboardListViewBase()
         {

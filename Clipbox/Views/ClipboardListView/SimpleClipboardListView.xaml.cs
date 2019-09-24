@@ -37,25 +37,25 @@ namespace Clipbox.Views.ClipboardListView
 
 
 
-        public FrameworkElement ScrollUpButton
+        public Button ScrollUpButton
         {
-            get { return (FrameworkElement)GetValue(ScrollUpButtonProperty); }
+            get { return (Button)GetValue(ScrollUpButtonProperty); }
             set { SetValue(ScrollUpButtonProperty, value); }
         }
 
         public static readonly DependencyProperty ScrollUpButtonProperty =
-            DependencyProperty.Register(nameof(ScrollUpButton), typeof(FrameworkElement), typeof(SimpleClipboardListView), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(ScrollUpButton), typeof(Button), typeof(SimpleClipboardListView), new PropertyMetadata(null));
 
 
 
-        public FrameworkElement ScrollDownButton
+        public Button ScrollDownButton
         {
-            get { return (FrameworkElement)GetValue(ScrollDownButtonProperty); }
+            get { return (Button)GetValue(ScrollDownButtonProperty); }
             set { SetValue(ScrollDownButtonProperty, value); }
         }
 
         public static readonly DependencyProperty ScrollDownButtonProperty =
-            DependencyProperty.Register(nameof(ScrollDownButton), typeof(FrameworkElement), typeof(SimpleClipboardListView), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(ScrollDownButton), typeof(Button), typeof(SimpleClipboardListView), new PropertyMetadata(null));
         
         public SimpleClipboardListView()
         {

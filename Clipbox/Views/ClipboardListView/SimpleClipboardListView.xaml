@@ -51,8 +51,8 @@
         </Style>
     </ListView.Resources>
     <i:Interaction.Behaviors>
-        <localBeh:ListViewScrollButtonBehavior IsScrollUpButton="True" ScrollButton="{Binding ScrollUpButton}" />
-        <localBeh:ListViewScrollButtonBehavior IsScrollUpButton="False" ScrollButton="{Binding ScrollDownButton}" />
+        <localBeh:ListViewScrollButtonBehavior IsScrollUpButton="True" ScrollButton="{Binding ScrollUpButton, RelativeSource={RelativeSource AncestorType={x:Type lv:ClipboardListViewBase}}}" />
+        <localBeh:ListViewScrollButtonBehavior IsScrollUpButton="False" ScrollButton="{Binding ScrollDownButton, RelativeSource={RelativeSource AncestorType={x:Type lv:ClipboardListViewBase}}}" />
     </i:Interaction.Behaviors>
 
     <!--  Remove the default highlighting on mouse over  -->
@@ -329,7 +329,7 @@
                                                 <Setter.Value>
                                                     <DataTemplate>
                                                         <tile:SingleItemLoading
-                                                            ThumbnailAreaMaxHeight="{Binding Path=ClipboardViewItemMaxHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}}"
+                                                            ThumbnailAreaMaxHeight="{Binding Path=ClipboardViewItemMaxHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type lv:ClipboardListViewBase}}}"
                                                             ThumbnailAreaMinHeight="{Binding Path=ThumbnailAreaMaxHeight, RelativeSource={RelativeSource Mode=Self}}"
                                                             ViewItemDimensions="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.DimensionInfo.Dimensions[0], FallbackValue={x:Null}}" />
                                                     </DataTemplate>
@@ -349,7 +349,7 @@
                                                     <DataTemplate>
                                                         <tile:SingleItem
                                                             ClipboardViewItem="{Binding Path=DataContext.ViewItem, RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}}"
-                                                            ThumbnailAreaMaxHeight="{Binding Path=ClipboardViewItemMaxHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}}"
+                                                            ThumbnailAreaMaxHeight="{Binding Path=ClipboardViewItemMaxHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type lv:ClipboardListViewBase}}}"
                                                             ThumbnailAreaMinHeight="{Binding Path=ThumbnailAreaMaxHeight, RelativeSource={RelativeSource Mode=Self}}">
                                                             <!--
                                                                 Set MinWidth to the tile.
@@ -364,7 +364,7 @@
                                                                         Converter="{StaticResource InverseBooleanConverter}"
                                                                         Path="IsManipulationEnabled"
                                                                         RelativeSource="{RelativeSource AncestorType={x:Type Border}}" />
-                                                                    <Binding Path="DimNonFocusedItems" RelativeSource="{RelativeSource AncestorType={x:Type local:ClipboardViewControlBase}}" />
+                                                                    <Binding Path="DimNonFocusedItems" RelativeSource="{RelativeSource AncestorType={x:Type lv:ClipboardListViewBase}}" />
                                                                     <Binding
                                                                         Converter="{StaticResource InverseBooleanConverter}"
                                                                         Path="DataContext.IsSelected"
@@ -390,7 +390,7 @@
                                                         <tile:MultiItemLoading NumberOfItemsWithoutPreview="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.DimensionInfo.NumberOfItemsWithoutPreview, FallbackValue=0}" ViewSubItemDimensions="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.DimensionInfo.Dimensions, FallbackValue={x:Null}, Mode=OneWay}">
                                                             <tile:MultiItemLoading.Height>
                                                                 <MultiBinding Converter="{StaticResource MathAddConverter}">
-                                                                    <Binding Path="ClipboardViewItemMaxHeight" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}" />
+                                                                    <Binding Path="ClipboardViewItemMaxHeight" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type lv:ClipboardListViewBase}}" />
                                                                     <Binding>
                                                                         <Binding.Source>
 
@@ -420,7 +420,7 @@
                                                         <tile:MultiItem ClipboardViewItem="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}, Path=DataContext.ViewItem}" Style="{StaticResource MultiItemStyleForSubItems_EventTriggersStyle}">
                                                             <tile:MultiItem.Height>
                                                                 <MultiBinding Converter="{StaticResource MathAddConverter}">
-                                                                    <Binding Path="ClipboardViewItemMaxHeight" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}" />
+                                                                    <Binding Path="ClipboardViewItemMaxHeight" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type lv:ClipboardListViewBase}}" />
                                                                     <Binding>
                                                                         <Binding.Source>
                                                                             <!--  pad the height so that it matches the total height of the single view items  -->
@@ -435,7 +435,7 @@
                                                                         Converter="{StaticResource InverseBooleanConverter}"
                                                                         Path="IsManipulationEnabled"
                                                                         RelativeSource="{RelativeSource AncestorType={x:Type Border}}" />
-                                                                    <Binding Path="DimNonFocusedItems" RelativeSource="{RelativeSource AncestorType={x:Type local:ClipboardViewControlBase}}" />
+                                                                    <Binding Path="DimNonFocusedItems" RelativeSource="{RelativeSource AncestorType={x:Type lv:ClipboardListViewBase}}" />
                                                                     <Binding
                                                                         Converter="{StaticResource InverseBooleanConverter}"
                                                                         Path="DataContext.IsSelected"

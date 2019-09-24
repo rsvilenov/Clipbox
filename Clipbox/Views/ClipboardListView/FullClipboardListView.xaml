@@ -455,7 +455,7 @@
                                                     <DataTemplate>
                                                         <tile:SingleItemLoading
                                                             PreviewContainerBackgroundColor="{DynamicResource TaskbarColor}"
-                                                            ThumbnailAreaMaxHeight="{Binding Path=ClipboardViewItemMaxHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}}"
+                                                            ThumbnailAreaMaxHeight="{Binding Path=ClipboardViewItemMaxHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type lv:ClipboardListViewBase}}}"
                                                             ThumbnailAreaMinHeight="{Binding Path=ThumbnailAreaMaxHeight, RelativeSource={RelativeSource Mode=Self}}"
                                                             ViewItemDimensions="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.DimensionInfo.Dimensions[0]}" />
                                                     </DataTemplate>
@@ -475,7 +475,7 @@
                                                     <DataTemplate>
                                                         <tile:SingleItem
                                                             ClipboardViewItem="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.ViewItem}"
-                                                            ThumbnailAreaMaxHeight="{Binding Path=ClipboardViewItemMaxHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}}"
+                                                            ThumbnailAreaMaxHeight="{Binding Path=ClipboardViewItemMaxHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type lv:ClipboardListViewBase}}}"
                                                             ThumbnailAreaMinHeight="{Binding Path=ThumbnailAreaMaxHeight, RelativeSource={RelativeSource Mode=Self}}">
                                                             <tile:SingleItem.Style>
                                                                 <Style TargetType="{x:Type tile:SingleItem}">
@@ -506,7 +506,7 @@
                                                         <tile:MultiItem ClipboardViewItem="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.ViewItem}">
                                                             <tile:MultiItem.Height>
                                                                 <MultiBinding Converter="{StaticResource MathAddConverter}">
-                                                                    <Binding Path="ClipboardViewItemMaxHeight" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}" />
+                                                                    <Binding Path="ClipboardViewItemMaxHeight" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type lv:ClipboardListViewBase}}" />
                                                                     <Binding>
                                                                         <Binding.Source>
                                                                             <!--  pad the height so that it matches the total height of the single view items  -->
@@ -544,7 +544,7 @@
                                                         <tile:MultiItemLoading NumberOfItemsWithoutPreview="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.DimensionInfo.NumberOfItemsWithoutPreview}" ViewSubItemDimensions="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.DimensionInfo.Dimensions, Mode=OneWay}">
                                                             <tile:MultiItemLoading.Height>
                                                                 <MultiBinding Converter="{StaticResource MathAddConverter}">
-                                                                    <Binding Path="ClipboardViewItemMaxHeight" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}" />
+                                                                    <Binding Path="ClipboardViewItemMaxHeight" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type lv:ClipboardListViewBase}}" />
                                                                     <Binding>
                                                                         <Binding.Source>
                                                                             <!--  pad the height so that it matches the total height of the single view items  -->
