@@ -31,6 +31,21 @@ namespace Clipbox.Views.ClipboardListView
 
         private int _hashCodeOfItemUndergoingDeletion;
 
+
+        /// <summary>
+        /// Contains the command for the Close and Pin buttons.
+        /// We do not want these commands to be publicly accessible, yet we do not want to use a ViewModel for
+        /// these user controls, as the logic in them is purely UI-related, so we are using this...
+        /// </summary>
+        protected ActionButtonsDataContextClass ActionButtonsDataContext
+        {
+            get { return (ActionButtonsDataContextClass)GetValue(ActionButtonsDataContextProperty); }
+            set { SetValue(ActionButtonsDataContextProperty, value); }
+        }
+        
+        public static readonly DependencyProperty ActionButtonsDataContextProperty =
+            DependencyProperty.Register(nameof(ActionButtonsDataContext), typeof(ActionButtonsDataContextClass), typeof(ClipboardListViewBase), new PropertyMetadata(null));
+        
         protected List<string> SelectedItemIds { get; set; }
 
         protected Dictionary<string, List<int>> SelectedMultiItemsIds { get; set; }
@@ -42,10 +57,6 @@ namespace Clipbox.Views.ClipboardListView
         public event EventHandler<ClipboardItemManipulationEventArgs> ItemDeletionRequested;
 
         public event EventHandler<ClipboardItemManipulationEventArgs> ItemPinUnpinRequested;
-
-        public ICommand DeleteClipboardEntry { get; set; }
-
-        public ICommand PinUnpinClipboardEntry { get; set; }
 
         public bool AreAnyItemsSelected
         {
@@ -73,15 +84,18 @@ namespace Clipbox.Views.ClipboardListView
             SelectedMultiItemsIds = new Dictionary<string, List<int>>();
             _loadedMultiItems = new List<MultiItem>();
 
-            DeleteClipboardEntry = new DelegateCommand<ClipboardViewItem>(DeleteClipboardEntryHandler,
+            ActionButtonsDataContext = new ActionButtonsDataContextClass
+            {
+                DeleteClipboardEntry = new DelegateCommand<ClipboardViewItem>(DeleteClipboardEntryHandler,
                 /* disable the command until all deletion operations execute (it should be just one, so do it just in case... 
                  * and prevent the possibility of the user to click on the button twice in a row) */
-                (item) => item?.GetHashCode() != _hashCodeOfItemUndergoingDeletion);
+                (item) => item?.GetHashCode() != _hashCodeOfItemUndergoingDeletion),
 
-            // wait for the binding operations to complete,
-            // so we can get the changed value of the IsPinned property
-            PinUnpinClipboardEntry = new DelegateCommand<ClipboardViewItem>(PinUnpinClipboardEntryHandler,
-                dispatcherPriority: DispatcherPriority.ContextIdle);
+                // wait for the binding operations to complete,
+                // so we can get the changed value of the IsPinned property
+                PinUnpinClipboardEntry = new DelegateCommand<ClipboardViewItem>(PinUnpinClipboardEntryHandler,
+                dispatcherPriority: DispatcherPriority.ContextIdle)
+            };
         }
 
         private void PinUnpinClipboardEntryHandler(ClipboardViewItem parameter)
@@ -377,6 +391,13 @@ namespace Clipbox.Views.ClipboardListView
             public bool AreItemsCombinable { get; }
 
             public bool CancelLastSelection { get; set; }
+        }
+
+        protected class ActionButtonsDataContextClass
+        {
+            public ICommand DeleteClipboardEntry { get; set; }
+
+            public ICommand PinUnpinClipboardEntry { get; set; }
         }
     }
 }
