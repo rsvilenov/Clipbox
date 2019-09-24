@@ -183,7 +183,7 @@
       <DependentUpon>QuickViewClipboardContents.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ClipboardViewControlBase.cs" />
-    <Compile Include="Views\VerticalScrollBarEx.xaml.cs">
+    <Compile Include="Views\ClipboardListView\VerticalScrollBarEx.xaml.cs">
       <DependentUpon>VerticalScrollBarEx.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SettingsWindow.xaml.cs">
@@ -271,7 +271,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\VerticalScrollBarEx.xaml">
+    <Page Include="Views\ClipboardListView\VerticalScrollBarEx.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

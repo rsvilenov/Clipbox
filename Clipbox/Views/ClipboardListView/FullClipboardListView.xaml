@@ -7,10 +7,8 @@
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:infBeh="clr-namespace:Clipbox.Infrastructure.UI.Behaviors;assembly=Clipbox.Infrastructure.UI"
     xmlns:infConv="clr-namespace:Clipbox.Infrastructure.UI.Converters;assembly=Clipbox.Infrastructure.UI"
-    xmlns:local="clr-namespace:Clipbox.Views"
     xmlns:localBeh="clr-namespace:Clipbox.Behaviors"
     xmlns:localBindableObjects="clr-namespace:Clipbox.ViewModels.BindableObjects"
-    xmlns:localDialog="clr-namespace:Clipbox.Views.Dialog"
     xmlns:lv="clr-namespace:Clipbox.Views.ClipboardListView"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
@@ -74,7 +72,7 @@
                     compensate for the negative margin of the
                     textblock inside the VerticalScrollBarEx
                 -->
-                <local:VerticalScrollBarEx
+                <lv:VerticalScrollBarEx
                     x:Name="PART_VerticalScrollBar"
                     Grid.Column="1"
                     Margin="50,0,0,0"

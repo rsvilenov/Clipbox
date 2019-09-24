@@ -6,7 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 
-namespace Clipbox.Views
+namespace Clipbox.Views.ClipboardListView
 {
     /// <summary>
     /// Interaction logic for ScrollBarEx.xaml
