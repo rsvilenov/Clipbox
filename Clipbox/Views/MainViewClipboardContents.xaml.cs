@@ -225,7 +225,7 @@ namespace Clipbox.Views
             base.ClearLoadedUIExtensions();
         }
 
-        private void MainListView_ClipboardItemContentControl_KeyIsUp(object sender, System.Windows.Input.KeyEventArgs e)
+        private void MainListView_ClipboardItemsPanel_KeyUp(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if (e.Key == System.Windows.Input.Key.Enter)
             {

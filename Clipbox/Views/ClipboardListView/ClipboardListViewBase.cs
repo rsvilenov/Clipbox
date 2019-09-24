@@ -1,4 +1,5 @@
 ﻿using Clipbox.Infrastructure.UI;
+using Clipbox.Infrastructure.UI.Utils;
 using Clipbox.Services.EventArgsClasses;
 using Clipbox.ViewModels.BindableObjects;
 using Clipbox.Views.ClipboardViewItemTile;
@@ -34,8 +35,10 @@ namespace Clipbox.Views.ClipboardListView
 
         /// <summary>
         /// Contains the command for the Close and Pin buttons.
-        /// We do not want these commands to be publicly accessible, yet we do not want to use a ViewModel for
-        /// these user controls, as the logic in them is purely UI-related, so we are using this...
+        /// We do not want these commands to be publicly accessible, but we cannot make the 
+        /// ICommand properties protected as they should be public or they will not work, yet we do not want to 
+        /// use a ViewModel for these user controls, as the logic in them is purely UI-related, so we are using this... 
+        /// Unlike ICommand properties, Dependency properties can be private and protected and the binding will still work.
         /// </summary>
         protected ActionButtonsDataContextClass ActionButtonsDataContext
         {
@@ -43,7 +46,7 @@ namespace Clipbox.Views.ClipboardListView
             set { SetValue(ActionButtonsDataContextProperty, value); }
         }
         
-        public static readonly DependencyProperty ActionButtonsDataContextProperty =
+        protected static readonly DependencyProperty ActionButtonsDataContextProperty =
             DependencyProperty.Register(nameof(ActionButtonsDataContext), typeof(ActionButtonsDataContextClass), typeof(ClipboardListViewBase), new PropertyMetadata(null));
         
         protected List<string> SelectedItemIds { get; set; }
@@ -168,23 +171,41 @@ namespace Clipbox.Views.ClipboardListView
             AreAnySubItemsSelected = SelectedMultiItemsIds.Any();
         }
 
-        private void MultiItem_Loaded(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// MultiItem Loaded event. Bind this through an EventSetter in the XAML
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected void MultiItem_Loaded(object sender, RoutedEventArgs e)
         {
             var multiItem = (MultiItem)sender;
             multiItem.SubItems_SelectionChanged += MultiItem_SubItems_SelectionChanged;
+            multiItem.SubItems_SubItemsFocusMovedOut += MultiItem_SubItems_SubItemsFocusMovedOut;
             _loadedMultiItems.Add(multiItem);
         }
 
-
-        private void MultiItem_Unloaded(object sender, RoutedEventArgs e)
+        /// <summary>
+        /// MultiItem Unloaded event. Bind this through an EventSetter in the XAML
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        protected void MultiItem_Unloaded(object sender, RoutedEventArgs e)
         {
             MultiItem multiItem = (MultiItem)sender;
 
             multiItem.SubItems_SelectionChanged -= MultiItem_SubItems_SelectionChanged;
+            multiItem.SubItems_SubItemsFocusMovedOut -= MultiItem_SubItems_SubItemsFocusMovedOut;
             multiItem.Unloaded -= MultiItem_Unloaded;
             multiItem.Loaded -= MultiItem_Loaded;
 
             _loadedMultiItems.Remove(multiItem);
+        }
+
+        private void MultiItem_SubItems_SubItemsFocusMovedOut(object sender, RoutedEventArgs e)
+        {
+            MultiItem multiItem = (MultiItem)sender;
+
+            Traversing.FindParent<ListViewItem>(multiItem).Focus();
         }
 
         private void MultiItem_SubItems_SelectionChanged(object sender, SelectionChangedEventArgs e)

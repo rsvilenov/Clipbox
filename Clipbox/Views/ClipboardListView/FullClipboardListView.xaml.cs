@@ -33,7 +33,7 @@ namespace Clipbox.Views.ClipboardListView
 
         public event EventHandler<EventArgs> GroupingComplete;
 
-        public event EventHandler<KeyEventArgs> ClipboardItemContentControl_KeyIsUp;
+        public event EventHandler<KeyEventArgs> ClipboardItemsPanel_KeyUp;
 
         public event EventHandler<EventArgs> ClipboardItemContentControl_MouseDoubleClickDetectionStarted;
 
@@ -138,10 +138,10 @@ namespace Clipbox.Views.ClipboardListView
         {
             GroupingComplete?.Invoke(this, new EventArgs());
         }
-
-        private void ClipboardItemContentControl_KeyUp(object sender, KeyEventArgs e)
+        
+        private void WrapPanel_KeyUp(object sender, KeyEventArgs e)
         {
-            ClipboardItemContentControl_KeyIsUp?.Invoke(this, e);
+            ClipboardItemsPanel_KeyUp?.Invoke(this, e);
         }
 
         private void ContentControl_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)

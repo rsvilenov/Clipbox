@@ -46,7 +46,6 @@
 
         <!--  we cannot subscribe to an event in an inline style, so we need a resource for circumventing this limitation of WPF  -->
         <Style x:Key="MultiItemStyleForSubItems_EventTriggersStyle" TargetType="{x:Type tile:MultiItem}">
-            <EventSetter Event="SubItems_SelectionChanged" Handler="MultiItem_SubItems_SelectionChanged" />
             <EventSetter Event="Unloaded" Handler="MultiItem_Unloaded" />
             <EventSetter Event="Loaded" Handler="MultiItem_Loaded" />
         </Style>

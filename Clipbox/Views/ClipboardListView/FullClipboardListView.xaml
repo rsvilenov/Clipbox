@@ -47,8 +47,6 @@
         <conv:ContentClassListContainsConverter x:Key="ContentClassListContainsConverter" />
 
         <Style x:Key="MultiItemStyleForSubItems_EventTriggersStyle" TargetType="{x:Type tile:MultiItem}">
-            <EventSetter Event="SubItems_SelectionChanged" Handler="MultiItem_SubItems_SelectionChanged" />
-            <EventSetter Event="SubItems_SubItemsFocusMovedOut" Handler="MultiItem_SubItems_SubItemsFocusMovedOut" />
             <EventSetter Event="Unloaded" Handler="MultiItem_Unloaded" />
             <EventSetter Event="Loaded" Handler="MultiItem_Loaded" />
         </Style>
@@ -189,7 +187,7 @@
 
     <ListView.ItemsPanel>
         <ItemsPanelTemplate>
-            <WrapPanel />
+            <WrapPanel KeyUp="WrapPanel_KeyUp" />
         </ItemsPanelTemplate>
     </ListView.ItemsPanel>
 
@@ -438,7 +436,6 @@
                         Grid.Row="1"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Center"
-                        KeyUp="ClipboardItemContentControl_KeyUp"
                         PreviewMouseLeftButtonDown="ContentControl_PreviewMouseLeftButtonDown">
                         <i:Interaction.Behaviors>
                             <localBeh:ListViewItemUnselectOnClickBehavior />
