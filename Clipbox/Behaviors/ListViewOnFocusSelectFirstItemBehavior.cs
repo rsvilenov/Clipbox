@@ -20,7 +20,7 @@ namespace Clipbox.Behaviors
             if (e.OriginalSource?.GetType() != typeof(ListViewItem))
             {
                 // focus the last selected item or the first item in the list if none is selected
-                var item = (ListViewItem)AssociatedObject.ItemContainerGenerator.ContainerFromIndex(AssociatedObject.SelectedIndex);
+                var item = (ListViewItem)AssociatedObject.ItemContainerGenerator.ContainerFromIndex(AssociatedObject.SelectedIndex == -1 ? 0 : AssociatedObject.SelectedIndex);
                 if (item != null)
                 {
                     item.Focus();

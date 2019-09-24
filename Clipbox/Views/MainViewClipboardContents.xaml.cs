@@ -308,6 +308,7 @@ namespace Clipbox.Views
         private void MainListView_GroupingComplete(object sender, EventArgs e)
         {
             MainListView.Visibility = Visibility.Visible;
+            MainListView.Focus();
         }
     }
 }
