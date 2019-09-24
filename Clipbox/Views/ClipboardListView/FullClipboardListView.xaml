@@ -219,6 +219,11 @@
     <ListView.ItemTemplate>
         <DataTemplate>
             <Border Background="Transparent" BorderThickness="0">
+
+                <i:Interaction.Behaviors>
+                    <localBeh:ListViewItemUnselectOnClickBehavior />
+                </i:Interaction.Behaviors>
+
                 <Border.Style>
                     <Style TargetType="{x:Type Border}">
                         <Style.Triggers>
@@ -262,7 +267,10 @@
                     </Grid.RowDefinitions>
 
                     <!--  top band  -->
-                    <Grid Grid.Row="0" Margin="5,3,0,0">
+                    <Grid
+                        Grid.Row="0"
+                        Margin="5,3,0,0"
+                        Background="Transparent">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
@@ -437,9 +445,6 @@
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Center"
                         PreviewMouseLeftButtonDown="ContentControl_PreviewMouseLeftButtonDown">
-                        <i:Interaction.Behaviors>
-                            <localBeh:ListViewItemUnselectOnClickBehavior />
-                        </i:Interaction.Behaviors>
 
                         <ContentControl.Style>
                             <Style TargetType="{x:Type ContentControl}">

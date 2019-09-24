@@ -339,7 +339,8 @@ namespace Clipbox.Views.ClipboardListView
                     ViewItemLoadingCancelRequested?.Invoke(this, new ClipboardItemManipulationEventArgs(lviVm.Id));
 
                     if (lviVm.IsViewItemLoaded
-                        && !lviVm.IsSelected /* do not unload the selected items */)
+                        && !lviVm.IsSelected  /* do not unload the selected items */
+                        && !SelectedMultiItemsIds.ContainsKey(lviVm.Id) /* do not unload the multi items with selected subitems */)
                     {
                         // unload the item to save up memory
                         ViewItemUnloadingRequested?.Invoke(this, new ClipboardItemManipulationEventArgs(lviVm.Id));
