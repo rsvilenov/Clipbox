@@ -51,7 +51,7 @@
                                 FontFamily="{TemplateBinding FontFamily}"
                                 FontSize="{TemplateBinding FontSize}"
                                 Foreground="{TemplateBinding Foreground}"
-                                Text="{Binding FloatingLabelText}"
+                                Text="{Binding FloatingLabelText, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ScrollBar}}}"
                                 TextAlignment="Center"
                                 TextWrapping="Wrap" />
                             <Canvas
@@ -102,10 +102,10 @@
                             </Trigger>
 
                             <!--  do not take up any space if the text is null or empty  -->
-                            <DataTrigger Binding="{Binding FloatingLabelText}" Value="{x:Null}">
+                            <DataTrigger Binding="{Binding FloatingLabelText, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ScrollBar}}}" Value="{x:Null}">
                                 <Setter TargetName="floatingLabel" Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding FloatingLabelText}" Value="">
+                            <DataTrigger Binding="{Binding FloatingLabelText, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ScrollBar}}}" Value="">
                                 <Setter TargetName="floatingLabel" Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
                         </ControlTemplate.Triggers>
@@ -169,7 +169,7 @@
                                                 FontFamily="{TemplateBinding FontFamily}"
                                                 FontSize="{TemplateBinding FontSize}"
                                                 Foreground="{TemplateBinding Foreground}"
-                                                Text="{Binding TopLabelText}"
+                                                Text="{Binding TopLabelText, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ScrollBar}}}"
                                                 TextAlignment="Center"
                                                 TextWrapping="Wrap" />
                                             <ControlTemplate.Triggers>
@@ -209,7 +209,7 @@
                                                 FontFamily="{TemplateBinding FontFamily}"
                                                 FontSize="{TemplateBinding FontSize}"
                                                 Foreground="{TemplateBinding Foreground}"
-                                                Text="{Binding BottomLabelText}"
+                                                Text="{Binding BottomLabelText, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ScrollBar}}}"
                                                 TextAlignment="Center"
                                                 TextWrapping="Wrap" />
                                             <ControlTemplate.Triggers>

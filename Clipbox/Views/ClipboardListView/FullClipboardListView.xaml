@@ -82,7 +82,7 @@
                     AutomationProperties.AutomationId="VerticalScrollBar"
                     BottomLabelText="{Binding LastItemDateString}"
                     Cursor="Arrow"
-                    DataContext="{Binding Path=DataContext.ScrollBarDataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}"
+                    DataContext="{Binding Path=ScrollBarDataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type lv:FullClipboardListView}}}"
                     FloatingLabelText="{Binding CurrentVisibleItemsDateString}"
                     FontSize="14"
                     Foreground="White"

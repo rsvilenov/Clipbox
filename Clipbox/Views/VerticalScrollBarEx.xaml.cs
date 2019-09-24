@@ -13,8 +13,6 @@ namespace Clipbox.Views
     /// </summary>
     public partial class VerticalScrollBarEx : ScrollBar
     {
-        private LocalDataContext _localDataContext;
-
         private Thumb _thumb;
         private Button _topButton;
         private Button _bottomButton;
@@ -28,9 +26,7 @@ namespace Clipbox.Views
         public VerticalScrollBarEx()
         {
             InitializeComponent();
-
-            _localDataContext = new LocalDataContext();
-            DataContext = _localDataContext;
+            
             Loaded += VerticalScrollBarEx_Loaded;
         }
 
@@ -43,7 +39,7 @@ namespace Clipbox.Views
             var scrollButtons = Traversing.GetVisualChildCollection(this).Where(t =>  t is Button).Cast<Button>();
             _topButton = scrollButtons.Where(b => b.Command == ScrollBar.ScrollToTopCommand).Single();
             _bottomButton = scrollButtons.Where(b => b.Command == ScrollBar.ScrollToBottomCommand).Single();
-
+            
             // 'Scrolled' fires only when the thumb is dragged directly and is not affected by the mouse wheel
             // ... so I attempted to use 'ValueChanged' instead,
             // but when the content size changes and the thumb moves up/down as a consequence,
@@ -98,6 +94,11 @@ namespace Clipbox.Views
 
         private void UpdateButtonsVisibility()
         {
+            if (_parent == null)
+            {
+                return;
+            }
+
             Point relativeThumbLocation = _thumb.TranslatePoint(new Point(0, 0), _parent);
 
             if (!TryLoadAndStoreTopBottomButtonsLocations())
@@ -131,13 +132,8 @@ namespace Clipbox.Views
         }
 
         public static readonly DependencyProperty TopLabelTextProperty =
-            DependencyProperty.Register(nameof(TopLabelText), typeof(string), typeof(VerticalScrollBarEx), new PropertyMetadata(string.Empty, TopLabelTextValueChanged));
-
-        private static void TopLabelTextValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            (d as VerticalScrollBarEx)._localDataContext.TopLabelText = e.NewValue as string;
-        }
-
+            DependencyProperty.Register(nameof(TopLabelText), typeof(string), typeof(VerticalScrollBarEx), new PropertyMetadata(string.Empty));
+        
         public string BottomLabelText
         {
             get { return (string)GetValue(BottomLabelTextProperty); }
@@ -149,10 +145,12 @@ namespace Clipbox.Views
 
         private static void BottomLabelTextValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            var _this = (VerticalScrollBarEx)d;
-            _this._localDataContext.BottomLabelText = e.NewValue as string;
-            // The size of the text may cause the button to resize and its Y position may change.
-            _this.TryLoadAndStoreTopBottomButtonsLocations(forceLoad: true);
+            if (e.NewValue != null)
+            {
+                var _this = (VerticalScrollBarEx)d;
+                _this.TryLoadAndStoreTopBottomButtonsLocations(forceLoad: true);
+                _this.UpdateButtonsVisibility();
+            }
         }
 
 
@@ -163,37 +161,7 @@ namespace Clipbox.Views
         }
         
         public static readonly DependencyProperty FloatingLabelTextProperty =
-            DependencyProperty.Register(nameof(FloatingLabelText), typeof(string), typeof(VerticalScrollBarEx), new PropertyMetadata(string.Empty, FloatingLabelTextValueChanged));
-
-        private static void FloatingLabelTextValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            (d as VerticalScrollBarEx)._localDataContext.FloatingLabelText = e.NewValue as string;
-        }
-
-        private class LocalDataContext : BindableObject
-        {
-            private string _topLabelText;
-            public string TopLabelText
-            {
-                get { return _topLabelText; }
-                set { SetField(ref _topLabelText, value); }
-            }
-
-            private string _bottomLabelText;
-            public string BottomLabelText
-            {
-                get { return _bottomLabelText; }
-                set { SetField(ref _bottomLabelText, value); }
-            }
-
-            private string _floatingLabelText;
-            public string FloatingLabelText
-            {
-                get { return _floatingLabelText; }
-                set { SetField(ref _floatingLabelText, value); }
-            }
-
-        }
-
+            DependencyProperty.Register(nameof(FloatingLabelText), typeof(string), typeof(VerticalScrollBarEx), new PropertyMetadata(string.Empty));
+        
     }
 }
