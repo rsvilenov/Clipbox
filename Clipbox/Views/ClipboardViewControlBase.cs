@@ -23,8 +23,6 @@ namespace Clipbox.Views
     {
         public Dictionary<string, string> Parameters { get; private set; }
 
-        public event EventHandler<SelectionEventArgs> SelectionChanged;
-
         public event EventHandler<CombinabilityEventArgs> CombinabilityCheckRequested;
         
         public event EventHandler<HousekeepingEventArgs> HousekeepingRequested;
@@ -42,8 +40,6 @@ namespace Clipbox.Views
         protected MonitorDimensions MonitorDimensions { get; private set; }
         
         private Panel _uiExtentionContainer;
-        
-        private List<MultiItem> _loadedMultiItems;
         
         public double ClipboardViewItemMaxHeight
         {

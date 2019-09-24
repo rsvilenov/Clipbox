@@ -10,7 +10,6 @@ using Clipbox.Views;
 using Clipbox.Win32;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows;
@@ -78,8 +77,7 @@ namespace Clipbox.Services
 
             _sizeChangedSligingTimer = new SlidingTimer();
             _sizeChangedSligingTimer.Elapsed += _sizeChangedSligingTimer_Elapsed;
-
-            _previewControl.SelectionChanged += _previewControl_SelectionChanged;
+            
             _previewControl.CombinabilityCheckRequested += _previewControl_CombinabilityCheckRequested;
             _previewControl.HousekeepingRequested += _previewControl_HousekeepingRequested;
 
@@ -87,9 +85,9 @@ namespace Clipbox.Services
 
         }
 
-        public IReadOnlyCollection<string> SelectedItemIds { get; private set; }
+        public IReadOnlyCollection<string> SelectedItemIds { get; set; }
 
-        public IReadOnlyDictionary<string, IReadOnlyCollection<int>> SelectedMultiItemIds { get; private set; }
+        public IReadOnlyDictionary<string, IReadOnlyCollection<int>> SelectedMultiItemIds { get; set; }
 
         private void _previewControl_HousekeepingRequested(object sender, HousekeepingEventArgs e)
         {
@@ -131,11 +129,6 @@ namespace Clipbox.Services
         private void _sizeChangedSligingTimer_Elapsed(object sender, EventArgs e)
         {
             CenterQuickViewWindowOnMonitor(_currentMonitor.WorkingArea);
-        }
-
-        private void _previewControl_SelectionChanged(object sender, SelectionEventArgs e)
-        {
-            base.RaiseSelectionChangedEvent(e);
         }
         
         private void _previewControl_CombinabilityCheckRequested(object sender, CombinabilityEventArgs e)
@@ -270,7 +263,6 @@ namespace Clipbox.Services
             _sizeChangedSligingTimer.Dispose();
 
             // TODO: it looks like we do not need these
-            _previewControl.SelectionChanged -= _previewControl_SelectionChanged;
             _previewControl.CombinabilityCheckRequested -= _previewControl_CombinabilityCheckRequested;
             _previewControl.HousekeepingRequested -= _previewControl_HousekeepingRequested;
         }

@@ -61,7 +61,6 @@ namespace Clipbox.Services
             Application.Current.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background,
                 new Action(() =>
                 {
-                    _mainWindow.ClipboardItemSelectionChanged -= MainWindow_ClipboardItemSelectionChanged;
                     _mainWindow.ClipbardItemsCombinabilityCheckRequested -= _mainWindow_ClipbardItemsCombinabilityCheckRequested;
                     _mainWindow.SetItemsToClipboardRequested -= _mainWindow_SetItemsToClipboardRequested;
                     _mainWindow.HousekeepingRequested -= _mainWindow_HousekeepingRequested;
@@ -102,8 +101,7 @@ namespace Clipbox.Services
                         _settingsService, 
                         dm);
                     _mainWindow = mainWindow;
-
-                    _mainWindow.ClipboardItemSelectionChanged += MainWindow_ClipboardItemSelectionChanged;
+                    
                     _mainWindow.ClipbardItemsCombinabilityCheckRequested += _mainWindow_ClipbardItemsCombinabilityCheckRequested;
                     _mainWindow.SetItemsToClipboardRequested += _mainWindow_SetItemsToClipboardRequested;
                     _mainWindow.HousekeepingRequested += _mainWindow_HousekeepingRequested;
@@ -140,11 +138,6 @@ namespace Clipbox.Services
         private void _mainWindow_ClipbardItemsCombinabilityCheckRequested(object sender, EventArgsClasses.CombinabilityEventArgs e)
         {
             base.RaiseCombinabilityCheckRequestedEvent(e);
-        }
-
-        private void MainWindow_ClipboardItemSelectionChanged(object sender, EventArgsClasses.SelectionEventArgs e)
-        {
-            base.RaiseSelectionChangedEvent(e);
         }
 
         private bool ShouldResizeToDpi()

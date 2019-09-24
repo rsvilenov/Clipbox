@@ -17,8 +17,6 @@ namespace Clipbox.Views.Interfaces
 
         event RoutedEventHandler Loaded;
 
-        event EventHandler<SelectionEventArgs> ClipboardItemSelectionChanged;
-
         event EventHandler<CombinabilityEventArgs> ClipbardItemsCombinabilityCheckRequested;
 
         event EventHandler<SetToClipboardEventArgs> SetItemsToClipboardRequested;

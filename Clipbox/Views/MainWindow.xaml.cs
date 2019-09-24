@@ -40,9 +40,7 @@ namespace Clipbox.Views
 
         private IClipboardManager _clipboardManager;
         private UIExtentionContainer _uiExtContainer;
-
-        public event EventHandler<SelectionEventArgs> ClipboardItemSelectionChanged;
-
+        
         public event EventHandler<CombinabilityEventArgs> ClipbardItemsCombinabilityCheckRequested;
 
         public event EventHandler<SetToClipboardEventArgs> SetItemsToClipboardRequested;
@@ -71,8 +69,7 @@ namespace Clipbox.Views
 
             _mainViewClipboardContents = new MainViewClipboardContents(new ViewModels.MainViewClipboardContentsViewModel(_clipboardManager, previewGenerationService, _settingsService), _uiExtContainer, settingsService);
             clipboardContents.Content = _mainViewClipboardContents;
-
-            _mainViewClipboardContents.SelectionChanged += _mainViewClipboardContents_SelectionChanged;
+            
             _mainViewClipboardContents.CombinabilityCheckRequested += _mainViewClipboardContents_CombinabilityCheckRequested;
             _mainViewClipboardContents.SetItemsToClipboardRequested += _mainViewClipboardContents_SetItemsToClipboardRequested;
             _mainViewClipboardContents.HousekeepingRequested += _mainViewClipboardContents_HousekeepingRequested;
@@ -130,12 +127,7 @@ namespace Clipbox.Views
         {
             ClipbardItemsCombinabilityCheckRequested?.Invoke(this, e);
         }
-
-        private void _mainViewClipboardContents_SelectionChanged(object sender, Services.EventArgsClasses.SelectionEventArgs e)
-        {
-            ClipboardItemSelectionChanged?.Invoke(this, e);
-        }
-
+        
         private void MainWindow_Shown(object sender, EventArgs e)
         {
             User32.SetForegroundWindow(Handle);

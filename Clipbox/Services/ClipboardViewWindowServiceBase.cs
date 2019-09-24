@@ -8,13 +8,6 @@ namespace Clipbox.Services
 {
     public abstract class ClipboardViewWindowServiceBase : IClipboardViewWindowServiceBase
     {
-        public event EventHandler<SelectionEventArgs> SelectionChanged;
-
-        protected void RaiseSelectionChangedEvent(SelectionEventArgs args)
-        {
-            SelectionChanged?.Invoke(this, args);
-        }
-        
         public event EventHandler<CombinabilityEventArgs> CombinabilityCheckRequested;
 
         protected void RaiseCombinabilityCheckRequestedEvent(CombinabilityEventArgs args)

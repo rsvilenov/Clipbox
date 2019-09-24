@@ -15,10 +15,9 @@ namespace Clipbox.Behaviors
             get { return (FrameworkElement)GetValue(AncestorElementProperty); }
             set { SetValue(AncestorElementProperty, value); }
         }
-
-        // Using a DependencyProperty as the backing store for Element.  This enables animation, styling, binding, etc...
+        
         public static readonly DependencyProperty AncestorElementProperty =
-            DependencyProperty.Register("AncestorElement", typeof(FrameworkElement), typeof(FrameworkElementDisableClickBehavior), new PropertyMetadata(AncestorElementChanged));
+            DependencyProperty.Register(nameof(AncestorElement), typeof(FrameworkElement), typeof(FrameworkElementDisableClickBehavior), new PropertyMetadata(AncestorElementChanged));
 
         private static void AncestorElementChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {

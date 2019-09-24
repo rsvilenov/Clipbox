@@ -11,8 +11,6 @@ namespace Clipbox.Services.Interfaces
     public interface IClipboardViewWindowServiceBase
     {
         IReadOnlyList<IFlowParameter> GetFlowParameters();
-        
-        event EventHandler<SelectionEventArgs> SelectionChanged;
 
         event EventHandler<CombinabilityEventArgs> CombinabilityCheckRequested;
 

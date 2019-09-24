@@ -135,14 +135,16 @@ namespace Clipbox.Views.ClipboardListView
 
         public IReadOnlyCollection<string> GetSelectedItemIds()
         {
-            return SelectedItemIds.AsReadOnly();
+            return SelectedItemIds
+                .ToList() // clone the collection
+                .AsReadOnly();
         }
 
         
         public IReadOnlyDictionary<string, IReadOnlyCollection<int>> GetSelectedMultiItemsIds()
         {
             return new ReadOnlyDictionary<string, IReadOnlyCollection<int>>
-                (SelectedMultiItemsIds.ToDictionary(k => k.Key, v => (IReadOnlyCollection<int>)v.Value.AsReadOnly()));
+                (SelectedMultiItemsIds.ToDictionary(k => k.Key, v => (IReadOnlyCollection<int>)v.Value.ToList().AsReadOnly()));
         }
         
 
