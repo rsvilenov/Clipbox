@@ -1,24 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Clipbox.Views.ClipboardListView
 {
     /// <summary>
     /// Interaction logic for SimpleClipboardListView.xaml
     /// </summary>
-    public partial class SimpleClipboardListView : ClipboardListViewBase, IDisposable
+    public partial class SimpleClipboardListView : ClipboardListViewBase
     {
         public event EventHandler<EventArgs> UncombinableItemsSelected;
 
@@ -99,11 +88,6 @@ namespace Clipbox.Views.ClipboardListView
                 UncombinableItemsSelected?.Invoke(this, new EventArgs());
                 args.CancelLastSelection = true;
             }
-        }
-
-        public void Dispose()
-        {
-            throw new NotImplementedException();
         }
     }
 }
