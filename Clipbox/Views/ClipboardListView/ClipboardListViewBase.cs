@@ -107,6 +107,8 @@ namespace Clipbox.Views.ClipboardListView
             SelectedMultiItemsIds = new Dictionary<string, List<int>>();
             _loadedMultiItems = new List<MultiItem>();
 
+            Unloaded += ClipboardListViewBase_Unloaded;
+
             ActionButtonsDataContext = new ActionButtonsDataContextClass
             {
                 DeleteClipboardEntry = new DelegateCommand<ClipboardViewItem>(DeleteClipboardEntryHandler,
@@ -119,6 +121,24 @@ namespace Clipbox.Views.ClipboardListView
                 PinUnpinClipboardEntry = new DelegateCommand<ClipboardViewItem>(PinUnpinClipboardEntryHandler,
                 dispatcherPriority: DispatcherPriority.ContextIdle)
             };
+        }
+
+        private void ClipboardListViewBase_Unloaded(object sender, RoutedEventArgs e)
+        {
+            // if we do not set this to null, a memory leak occurs - the control stays alive forever,
+            // keeping the entire view and the window alive...
+            // TODO: figure out why
+            ActionButtonsDataContext = null;
+
+            foreach (var multiItem in _loadedMultiItems)
+            {
+                multiItem.SubItems_SelectionChanged -= MultiItem_SubItems_SelectionChanged;
+                multiItem.SubItems_SubItemsFocusMovedOut -= MultiItem_SubItems_SubItemsFocusMovedOut;
+                multiItem.Unloaded -= MultiItem_Unloaded;
+                multiItem.Loaded -= MultiItem_Loaded;
+            }
+
+            _loadedMultiItems.Clear();
         }
 
         private void PinUnpinClipboardEntryHandler(ClipboardViewItem parameter)

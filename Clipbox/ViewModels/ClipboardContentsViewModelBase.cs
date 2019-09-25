@@ -8,18 +8,13 @@ using Clipbox.Services.Interfaces;
 using Clipbox.ViewModels.BindableObjects;
 using Clipbox.ViewModels.Enums;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Input;
-using System.Windows.Threading;
 
 namespace Clipbox.ViewModels
 {
     public abstract class ClipboardContentsViewModelBase : BindableObject
     {
-        private ConcurrentBag<string> _itemIdsUndergoingDeletion;
-
         private AsyncObservableCollection<ClipboardViewItemWrapper> _clipboardViewItemWrappers;
 
         public AsyncObservableCollection<ClipboardViewItemWrapper> ClipboardViewItemWrappers
@@ -49,11 +44,9 @@ namespace Clipbox.ViewModels
             SettingsService = settingsService;
             PreviewGenerationService = previewGenerationService;
 
-            _itemIdsUndergoingDeletion = new ConcurrentBag<string>();
-
             ClipboardViewItemWrappers = new AsyncObservableCollection<ClipboardViewItemWrapper>();
 
-            clipboardManager.ItemRemoved += ClipboardManager_ItemRemoved;
+            ClipboardManager.ItemRemoved += ClipboardManager_ItemRemoved;
         }
 
         private void ClipboardManager_ItemRemoved(object sender, ClipboardManagerEventArgs e)
@@ -179,8 +172,6 @@ namespace Clipbox.ViewModels
 
         public void DeleteClipboardEntry(string clipboardItemId)
         {
-            // block consequent executions of the command until the entire delete operation is executed
-            _itemIdsUndergoingDeletion.Add(clipboardItemId);
             ClipboardManager.RemoveClipboardItem(clipboardItemId);
         }
 
@@ -194,15 +185,7 @@ namespace Clipbox.ViewModels
                 success = true;
             }
 
-            // empty the concurrent bag, so that we can enable delete command again
-            while (!_itemIdsUndergoingDeletion.IsEmpty)
-            {
-                _itemIdsUndergoingDeletion.TryTake(out string itemId);
-            }
-
             return success;
         }
-
-
     }
 }

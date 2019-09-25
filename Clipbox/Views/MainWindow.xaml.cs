@@ -18,6 +18,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 
@@ -106,6 +107,15 @@ namespace Clipbox.Views
 
             Closing += MainWindow_Closing;
             Shown += MainWindow_Shown;
+            KeyUp += MainWindow_KeyUp;
+        }
+
+        private void MainWindow_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Escape)
+            {
+                CloseRequested?.Invoke(this, new EventArgs());
+            }
         }
 
         private void _mainViewClipboardContents_CloseMainWindowRequested(object sender, EventArgs e)
@@ -216,6 +226,7 @@ namespace Clipbox.Views
             IsVisible = false;
 
             this.Content = null;
+
             _mainViewClipboardContents.Dispose();
         }
 

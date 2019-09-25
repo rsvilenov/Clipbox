@@ -17,7 +17,7 @@ namespace Clipbox.ViewModels
     public class QuickViewkClipboardContentsViewModel : ClipboardContentsViewModelBase
     {
         public ICommand ClearClipboardEntries { get; set; }
-        
+
         private List<ClipboardViewItemWrapper> _selectedClipboardViewItemWrappers;
 
         public List<ClipboardViewItemWrapper> SelectedClipboardViewItemWrappers
@@ -25,7 +25,7 @@ namespace Clipbox.ViewModels
             get { return _selectedClipboardViewItemWrappers; }
             set { SetField(ref _selectedClipboardViewItemWrappers, value); }
         }
-        
+
         private List<string> _newlyAddedItemsToLoadAndWrap;
 
         private MonitorDimensions _lastUsedMonitorDimensions;
@@ -48,7 +48,7 @@ namespace Clipbox.ViewModels
                 : base(clipboardManager, previewGenerationService, settingsService)
         {
             ClearClipboardEntries = new DelegateCommand(ClearAllClipboardEntriesHandler);
-            
+
             SelectedClipboardViewItemWrappers = new List<ClipboardViewItemWrapper>();
             _newlyAddedItemsToLoadAndWrap = new List<string>();
 
@@ -56,10 +56,10 @@ namespace Clipbox.ViewModels
             _loadNewlyAddedItemsSlidingTimer.IntervalMs = NEWLY_ADDED_ITEMS_LOAD_DELAY_MS;
             _loadNewlyAddedItemsSlidingTimer.Elapsed += _loadNewlyAddedItemsSlidingTimer_Elapsed;
 
-            clipboardManager.ItemAdded += ClipboardManager_ItemAdded;
-            clipboardManager.ItemChanged += ClipboardManager_ItemChanged;
+            ClipboardManager.ItemAdded += ClipboardManager_ItemAdded;
+            ClipboardManager.ItemChanged += ClipboardManager_ItemChanged;
         }
-        
+
         private void ClearAllClipboardEntriesHandler()
         {
             base.ClipboardManager.Clear();
@@ -135,7 +135,7 @@ namespace Clipbox.ViewModels
         {
             var clipboardItemIds = base.ClipboardViewItemWrappers.Select(w => w.Id).ToList();
 
-            foreach(string clipboardItemId in clipboardItemIds)
+            foreach (string clipboardItemId in clipboardItemIds)
             {
 #if DEBUG
                 Debug.WriteLine($"Loading view of item {clipboardItemId}");
@@ -151,7 +151,5 @@ namespace Clipbox.ViewModels
         {
             return base.ClipboardManager.GetClipboardItem(id, restoreShrinked);
         }
-
-
     }
 }
