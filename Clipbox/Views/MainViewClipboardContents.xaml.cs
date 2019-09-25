@@ -1,25 +1,18 @@
 ﻿using Clipbox.Infrastructure.Extensibility.Containers;
 using Clipbox.Infrastructure.Threading;
 using Clipbox.Infrastructure.UI;
-using Clipbox.Infrastructure.UI.DataObjects;
-using Clipbox.Infrastructure.UI.Utils;
 using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Interfaces;
 using Clipbox.ViewModels;
 using Clipbox.ViewModels.BindableObjects;
 using Clipbox.Views.ClipboardListView;
-using Clipbox.Views.ClipboardViewItemTile;
-using Clipbox.Win32.Native;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Timers;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
 using System.Windows.Threading;
 
 namespace Clipbox.Views

@@ -13,6 +13,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace Clipbox.Views.ClipboardListView
@@ -109,6 +110,8 @@ namespace Clipbox.Views.ClipboardListView
 
             Unloaded += ClipboardListViewBase_Unloaded;
 
+            MouseDown += ClipboardListViewBase_MouseDown;
+
             ActionButtonsDataContext = new ActionButtonsDataContextClass
             {
                 DeleteClipboardEntry = new DelegateCommand<ClipboardViewItem>(DeleteClipboardEntryHandler,
@@ -121,6 +124,15 @@ namespace Clipbox.Views.ClipboardListView
                 PinUnpinClipboardEntry = new DelegateCommand<ClipboardViewItem>(PinUnpinClipboardEntryHandler,
                 dispatcherPriority: DispatcherPriority.ContextIdle)
             };
+        }
+
+        private void ClipboardListViewBase_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            // deselect the selected item on click on the blank space between them
+            // https://stackoverflow.com/questions/30737097/wpf-how-deselect-all-my-selected-items-when-click-on-empty-space-in-my-listview/34469477
+            HitTestResult r = VisualTreeHelper.HitTest(this, e.GetPosition(this));
+            if (r.VisualHit.GetType() != typeof(ListViewItem))
+                this.UnselectAll();
         }
 
         private void ClipboardListViewBase_Unloaded(object sender, RoutedEventArgs e)
