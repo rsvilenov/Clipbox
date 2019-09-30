@@ -18,6 +18,8 @@ namespace Clipbox.Services
 {
     public class MainClipboardViewWindowService : ClipboardViewWindowServiceBase, IMainClipboardViewWindowService
     {
+        private static readonly object _mainWindowLockHandle = new object();
+
         private ISettingsService _settingsService;
         
         private IMainWindow _mainWindow;
@@ -61,16 +63,24 @@ namespace Clipbox.Services
             Application.Current.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background,
                 new Action(() =>
                 {
-                    _mainWindow.ClipbardItemsCombinabilityCheckRequested -= _mainWindow_ClipbardItemsCombinabilityCheckRequested;
-                    _mainWindow.SetItemsToClipboardRequested -= _mainWindow_SetItemsToClipboardRequested;
-                    _mainWindow.HousekeepingRequested -= _mainWindow_HousekeepingRequested;
-                    _mainWindow.CloseRequested -= _mainWindow_CloseRequested;
+                    lock (_mainWindowLockHandle)
+                    {
+                        if (_mainWindow == null)
+                        {
+                            return;
+                        }
 
-                    _mainWindow.Close();
-                    //_mainWindow.Close();
-                    _mainWindow = null;
-                    // Equivalent to Application.DoEvents() just in case...
-                    Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
+                        _mainWindow.ClipbardItemsCombinabilityCheckRequested -= _mainWindow_ClipbardItemsCombinabilityCheckRequested;
+                        _mainWindow.SetItemsToClipboardRequested -= _mainWindow_SetItemsToClipboardRequested;
+                        _mainWindow.HousekeepingRequested -= _mainWindow_HousekeepingRequested;
+                        _mainWindow.CloseRequested -= _mainWindow_CloseRequested;
+
+                        _mainWindow.Close();
+                        //_mainWindow.Close();
+                        _mainWindow = null;
+                        // Equivalent to Application.DoEvents() just in case...
+                        Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
+                    }
 
 #if DEBUG
                     GC.Collect();
@@ -88,35 +98,38 @@ namespace Clipbox.Services
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
                 new Action(() =>
                 {
-                    // if by some reason we try to open the window twice,
-                    // stop here...
-                    if (_mainWindow != null)
+                    lock (_mainWindowLockHandle)
                     {
-                        return;
+                        // if by some reason we try to open the window twice,
+                        // stop here...
+                        if (_mainWindow != null)
+                        {
+                            return;
+                        }
+
+                        var mainWindow = new MainWindow(_clipboardManager,
+                            _previewGenerationService,
+                            _uiExtContainer,
+                            _settingsService,
+                            dm);
+                        _mainWindow = mainWindow;
+
+                        _mainWindow.ClipbardItemsCombinabilityCheckRequested += _mainWindow_ClipbardItemsCombinabilityCheckRequested;
+                        _mainWindow.SetItemsToClipboardRequested += _mainWindow_SetItemsToClipboardRequested;
+                        _mainWindow.HousekeepingRequested += _mainWindow_HousekeepingRequested;
+                        _mainWindow.CloseRequested += _mainWindow_CloseRequested;
+
+                        mainWindow.ScaleMode = resizeToDpi ? DpiScaleMode.Custom : DpiScaleMode.None;
+
+                        mainWindow.SetMonitorDimensions(new MonitorDimensions
+                        {
+                            MonitorDPI = currentMonitor.Dpi,
+                            WorkAreaHeight = currentMonitor.WorkingArea.Height,
+                            WorkAreaWidth = currentMonitor.WorkingArea.Width
+                        });
+
+                        _mainWindow.Show();
                     }
-
-                    var mainWindow = new MainWindow(_clipboardManager,
-                        _previewGenerationService, 
-                        _uiExtContainer, 
-                        _settingsService, 
-                        dm);
-                    _mainWindow = mainWindow;
-                    
-                    _mainWindow.ClipbardItemsCombinabilityCheckRequested += _mainWindow_ClipbardItemsCombinabilityCheckRequested;
-                    _mainWindow.SetItemsToClipboardRequested += _mainWindow_SetItemsToClipboardRequested;
-                    _mainWindow.HousekeepingRequested += _mainWindow_HousekeepingRequested;
-                    _mainWindow.CloseRequested += _mainWindow_CloseRequested;
-
-                    mainWindow.ScaleMode = resizeToDpi ? DpiScaleMode.Custom : DpiScaleMode.None;
-                    
-                    mainWindow.SetMonitorDimensions(new MonitorDimensions
-                    {
-                        MonitorDPI = currentMonitor.Dpi,
-                        WorkAreaHeight = currentMonitor.WorkingArea.Height,
-                        WorkAreaWidth = currentMonitor.WorkingArea.Width
-                    });
-                    
-                    _mainWindow.Show();
                 }));
         }
 
