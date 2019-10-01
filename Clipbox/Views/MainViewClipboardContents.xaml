@@ -56,8 +56,6 @@
             <RowDefinition Height="Auto" />
             <!--  list view  -->
             <RowDefinition />
-            <!--  search bar  -->
-            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
@@ -88,6 +86,7 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <StackPanel
                     Grid.Column="0"
@@ -214,6 +213,15 @@
                         ReturnFocusTo="{Binding ElementName=MainListView}" />
                 </StackPanel>
 
+                <views:ExpandableSearchBox
+                    Grid.Column="3"
+                    Margin="5"
+                    HorizontalAlignment="Right">
+                    <i:Interaction.Behaviors>
+                        <infBeh:FrameworkElementDpiScalingBehavior />
+                    </i:Interaction.Behaviors>
+                </views:ExpandableSearchBox>
+
             </Grid>
         </Border>
 
@@ -245,25 +253,6 @@
             </Button>
 
         </Grid>
-
-        <!--  search bar  -->
-        <Border Grid.Row="2" Grid.Column="1" Height="45">
-            <Border.Background>
-                <SolidColorBrush Opacity="0.6" Color="{DynamicResource TaskbarColor}" />
-            </Border.Background>
-            <i:Interaction.Behaviors>
-                <infBeh:FrameworkElementDpiScalingBehavior />
-            </i:Interaction.Behaviors>
-            <TextBox
-                Margin="0,5,5,0"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Stretch"
-                HorizontalContentAlignment="Center"
-                VerticalContentAlignment="Center"
-                Background="Black"
-                Foreground="White"
-                Text="Type here to search" />
-        </Border>
 
 
         <!--

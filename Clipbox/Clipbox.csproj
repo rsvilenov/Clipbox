@@ -170,6 +170,9 @@
     <Compile Include="Views\Dialog\Enums\DialogButtons.cs" />
     <Compile Include="Views\Dialog\Enums\DialogTypes.cs" />
     <Compile Include="Views\Dialog\EventArgsClasses\DialogAnswerEventArgs.cs" />
+    <Compile Include="Views\ExpandableSearchBox.xaml.cs">
+      <DependentUpon>ExpandableSearchBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\FilterBand.xaml.cs">
       <DependentUpon>FilterBand.xaml</DependentUpon>
     </Compile>
@@ -239,6 +242,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Dialog\DialogPopup.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ExpandableSearchBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

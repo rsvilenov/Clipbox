@@ -3,7 +3,7 @@
     <Duration x:Key="openCloseDuration">0:0:0.2</Duration>
 
     <!--  https://www.codeproject.com/Articles/248112/Templating-WPF-Expander-Control  -->
-    <ControlTemplate x:Key="AnimatedExpanderButtonTemp" TargetType="{x:Type ToggleButton}">
+    <ControlTemplate x:Key="AnimatedVerticalExpanderButton" TargetType="{x:Type ToggleButton}">
         <Border
             x:Name="ExpanderButtonBorder"
             Padding="{TemplateBinding Padding}"
@@ -92,7 +92,96 @@
         </ControlTemplate.Triggers>
     </ControlTemplate>
 
-    <ControlTemplate x:Key="StretchyExpanderTemp" TargetType="{x:Type Expander}">
+    <ControlTemplate x:Key="AnimatedHorizontalExpanderButton" TargetType="{x:Type ToggleButton}">
+        <Border
+            x:Name="ExpanderButtonBorder"
+            Padding="{TemplateBinding Padding}"
+            Background="{TemplateBinding Background}"
+            BorderBrush="{TemplateBinding BorderBrush}"
+            BorderThickness="{TemplateBinding BorderThickness}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Rectangle Grid.ColumnSpan="2" Fill="Transparent" />
+                <Path
+                    x:Name="Arrow"
+                    Grid.Column="0"
+                    Width="Auto"
+                    Height="Auto"
+                    Margin="0,5"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Data="M 1,1.5 L 4.5,5 8,1.5"
+                    RenderTransformOrigin="0.5,0.5"
+                    Stroke="{DynamicResource ControlBorderBrush}"
+                    StrokeThickness="2">
+                    <Path.RenderTransform>
+                        <RotateTransform Angle="90" CenterX="0" CenterY="0" />
+                    </Path.RenderTransform>
+                </Path>
+                <Border
+                    Name="TglBorder"
+                    Grid.Column="1"
+                    Margin="5"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    BorderThickness="1">
+                    <ContentControl
+                        Name="TglContentControl"
+                        Width="23"
+                        Height="23"
+                        Margin="5"
+                        Template="{TemplateBinding Content}" />
+                    <!--  bind the icon of the button to the Content property of ToggleButton, which is the Header property of the Expander  -->
+                </Border>
+            </Grid>
+        </Border>
+        <ControlTemplate.Triggers>
+            <!--  Animate arrow when toggled  -->
+            <Trigger Property="IsChecked" Value="True">
+                <Trigger.EnterActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetName="Arrow"
+                                Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)"
+                                To="270"
+                                Duration="{StaticResource openCloseDuration}" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </Trigger.EnterActions>
+                <Trigger.ExitActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetName="Arrow"
+                                Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)"
+                                To="90"
+                                Duration="{StaticResource openCloseDuration}" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </Trigger.ExitActions>
+            </Trigger>
+
+            <Trigger Property="IsChecked" Value="True">
+                <Setter TargetName="TglBorder" Property="Background" Value="{DynamicResource AccentDark1Brush}" />
+                <Setter TargetName="TglBorder" Property="BorderBrush" Value="{DynamicResource AccentLight1Brush}" />
+
+            </Trigger>
+
+            <!--  MouseOver, Pressed behaviours  -->
+            <Trigger Property="IsMouseOver" Value="true">
+                <Setter TargetName="Arrow" Property="Stroke" Value="{DynamicResource ControlHighlightBorderBrush}" />
+            </Trigger>
+            <Trigger Property="IsPressed" Value="true">
+                <Setter TargetName="Arrow" Property="Stroke" Value="{DynamicResource ControlHighlightBorderBrush}" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="VerticalStretchyExpander" TargetType="{x:Type Expander}">
         <Border
             x:Name="ExpanderBorder"
             BorderBrush="Transparent"
@@ -105,7 +194,7 @@
                     DockPanel.Dock="Top"
                     IsChecked="{Binding Path=IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
                     OverridesDefaultStyle="True"
-                    Template="{StaticResource AnimatedExpanderButtonTemp}" />
+                    Template="{StaticResource AnimatedVerticalExpanderButton}" />
                 <Border
                     Name="ExpanderSeparator"
                     Margin="5,0,5,5"
@@ -149,6 +238,77 @@
                             <DoubleAnimation
                                 Storyboard.TargetName="ExpanderContent"
                                 Storyboard.TargetProperty="(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleY)"
+                                To="0"
+                                Duration="{StaticResource openCloseDuration}" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </Trigger.ExitActions>
+            </Trigger>
+
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="HorizontalLeftStretchyExpander" TargetType="{x:Type Expander}">
+        <Border
+            x:Name="ExpanderBorder"
+            BorderBrush="Transparent"
+            BorderThickness="1"
+            SnapsToDevicePixels="True">
+            <StackPanel Orientation="Horizontal">
+
+                <ContentPresenter
+                    Name="ExpanderContent"
+                    ContentSource="Content"
+                    DockPanel.Dock="Left">
+                    <ContentPresenter.LayoutTransform>
+                        <ScaleTransform ScaleX="0" />
+                    </ContentPresenter.LayoutTransform>
+                </ContentPresenter>
+
+                <Border
+                    Name="ExpanderSeparator"
+                    Margin="5,5,5,5"
+                    BorderBrush="Transparent"
+                    BorderThickness="1,0,0,0" />
+
+                <ToggleButton
+                    Name="ExpanderButton"
+                    Content="{TemplateBinding Header}"
+                    DockPanel.Dock="Right"
+                    IsChecked="{Binding Path=IsExpanded, RelativeSource={RelativeSource TemplatedParent}}"
+                    OverridesDefaultStyle="True"
+                    Template="{StaticResource AnimatedHorizontalExpanderButton}" />
+
+            </StackPanel>
+
+        </Border>
+        <ControlTemplate.Triggers>
+            <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="ExpanderBorder" Property="BorderBrush" Value="{DynamicResource ControlHighlightBorderBrush}" />
+            </Trigger>
+            <Trigger Property="IsExpanded" Value="True">
+                <Setter TargetName="ExpanderBorder" Property="BorderBrush" Value="{DynamicResource ControlHighlightBorderBrush}" />
+                <Setter TargetName="ExpanderSeparator" Property="BorderBrush" Value="{DynamicResource ControlHighlightBorderBrush}" />
+
+            </Trigger>
+            <Trigger Property="IsExpanded" Value="True">
+                <Trigger.EnterActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetName="ExpanderContent"
+                                Storyboard.TargetProperty="(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleX)"
+                                To="1"
+                                Duration="{StaticResource openCloseDuration}" />
+                        </Storyboard>
+                    </BeginStoryboard>
+                </Trigger.EnterActions>
+                <Trigger.ExitActions>
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <DoubleAnimation
+                                Storyboard.TargetName="ExpanderContent"
+                                Storyboard.TargetProperty="(ContentPresenter.LayoutTransform).(ScaleTransform.ScaleX)"
                                 To="0"
                                 Duration="{StaticResource openCloseDuration}" />
                         </Storyboard>

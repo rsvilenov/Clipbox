@@ -132,7 +132,7 @@
                     Header="{DynamicResource CategoriesIcon}"
                     OverridesDefaultStyle="True"
                     Tag="{DynamicResource CategoriesIcon}"
-                    Template="{StaticResource StretchyExpanderTemp}">
+                    Template="{StaticResource VerticalStretchyExpander}">
 
                     <StackPanel Margin="0,5" Orientation="Vertical">
                         <ToggleButton Margin="5,3" Style="{StaticResource textToggleButton}" />
@@ -151,7 +151,7 @@
                     Header="{DynamicResource SyncedItemsIcon}"
                     OverridesDefaultStyle="True"
                     Tag="{DynamicResource SyncedItemsIcon}"
-                    Template="{StaticResource StretchyExpanderTemp}">
+                    Template="{StaticResource VerticalStretchyExpander}">
 
                     <StackPanel Margin="0,5" Orientation="Vertical">
                         <ToggleButton Margin="5,3" Style="{StaticResource myMachineToggleButton}" />
