@@ -42,8 +42,8 @@
             HorizontalContentAlignment="Center"
             VerticalContentAlignment="Center"
             Background="White"
-            Foreground="Black"
             FontSize="16"
+            Foreground="Black"
             Text="Type here to search" />
 
     </Expander>

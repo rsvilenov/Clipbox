@@ -25,8 +25,8 @@
                     BorderThickness="1">
                     <ContentControl
                         Name="TglContentControl"
-                        Width="23"
-                        Height="23"
+                        Width="Auto"
+                        Height="Auto"
                         Margin="5"
                         Template="{TemplateBinding Content}" />
                     <!--  bind the icon of the button to the Content property of ToggleButton, which is the Header property of the Expander  -->
@@ -130,8 +130,8 @@
                     BorderThickness="1">
                     <ContentControl
                         Name="TglContentControl"
-                        Width="23"
-                        Height="23"
+                        Width="Auto"
+                        Height="Auto"
                         Margin="5"
                         Template="{TemplateBinding Content}" />
                     <!--  bind the icon of the button to the Content property of ToggleButton, which is the Header property of the Expander  -->
