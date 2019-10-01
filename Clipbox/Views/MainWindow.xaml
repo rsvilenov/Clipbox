@@ -4,11 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:coreConv="clr-namespace:Clipbox.Infrastructure.UI.Converters;assembly=Clipbox.Infrastructure.UI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
-    xmlns:infBeh="clr-namespace:Clipbox.Infrastructure.UI.Behaviors;assembly=Clipbox.Infrastructure.UI"
-    xmlns:infWindows="clr-namespace:Clipbox.Infrastructure.UI.Windows;assembly=Clipbox.Infrastructure.UI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:views="clr-namespace:Clipbox.Views"
     xmlns:wnd="clr-namespace:Clipbox.Infrastructure.UI.Windows;assembly=Clipbox.Infrastructure.UI"
     Title="MainWindow"
     Width="525"
@@ -18,92 +14,27 @@
         <coreConv:InverseBooleanConverter x:Key="InverseBooleanConverter" />
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </Window.Resources>
-    <Grid>
-        <Grid.Background>
+    <!--  don't replace this with ContentControl or something, as the fade in background animation will not work  -->
+    <Border Opacity="0.1">
+        <Border.Background>
             <SolidColorBrush Opacity="0.3" Color="Black" />
-        </Grid.Background>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="100" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="45" />
-        </Grid.RowDefinitions>
+        </Border.Background>
+        <Border.CacheMode>
+            <BitmapCache />
+        </Border.CacheMode>
 
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
-        <Grid.Resources>
+        <Border.Resources>
             <Storyboard x:Key="FadeInBackground">
                 <DoubleAnimation
                     Storyboard.TargetProperty="(UIElement.Opacity)"
                     From="0"
                     To="1"
-                    Duration="0:0:0.4" />
-            </Storyboard>
-
-            <Storyboard x:Key="FadeInItem">
-                <DoubleAnimation
-                    Storyboard.TargetProperty="(UIElement.Opacity)"
-                    From="0"
-                    To="1"
-                    Duration="0:0:0.4" />
-            </Storyboard>
-
-            <Storyboard x:Key="SlideLeft">
-                <ObjectAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetProperty="(UIElement.Visibility)">
-                    <DiscreteObjectKeyFrame KeyTime="00:00:00" Value="{x:Static Visibility.Collapsed}" />
-                    <DiscreteObjectKeyFrame KeyTime="00:00:00.1" Value="{x:Static Visibility.Visible}" />
-                </ObjectAnimationUsingKeyFrames>
-                <DoubleAnimation
-                    Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
-                    From="100"
-                    To="0"
                     Duration="0:0:0.3" />
-                <DoubleAnimation
-                    Storyboard.TargetProperty="(UIElement.Opacity)"
-                    From="0"
-                    To="1"
-                    Duration="0:0:0.4" />
             </Storyboard>
+        </Border.Resources>
 
-            <Storyboard x:Key="SlideRight">
-                <ObjectAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetProperty="(UIElement.Visibility)">
-                    <DiscreteObjectKeyFrame KeyTime="00:00:00" Value="{x:Static Visibility.Collapsed}" />
-                    <DiscreteObjectKeyFrame KeyTime="00:00:00.1" Value="{x:Static Visibility.Visible}" />
-                </ObjectAnimationUsingKeyFrames>
-                <DoubleAnimation
-                    Storyboard.TargetProperty="(UIElement.RenderTransform).(TranslateTransform.X)"
-                    From="-50"
-                    To="0"
-                    Duration="0:0:0.3" />
-                <DoubleAnimation
-                    Storyboard.TargetProperty="(UIElement.Opacity)"
-                    From="0"
-                    To="1"
-                    Duration="0:0:0.4" />
-            </Storyboard>
-
-
-            <Storyboard x:Key="ExpandCategories">
-                <ObjectAnimationUsingKeyFrames BeginTime="00:00:00" Storyboard.TargetProperty="(UIElement.Visibility)">
-                    <DiscreteObjectKeyFrame KeyTime="00:00:00" Value="{x:Static Visibility.Collapsed}" />
-                    <DiscreteObjectKeyFrame KeyTime="00:00:00.1" Value="{x:Static Visibility.Visible}" />
-                </ObjectAnimationUsingKeyFrames>
-                <DoubleAnimation
-                    Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)"
-                    To="1"
-                    Duration="0:0:0.3" />
-                <DoubleAnimation
-                    Storyboard.TargetProperty="(UIElement.Opacity)"
-                    From="0"
-                    To="1"
-                    Duration="0:0:0.4" />
-            </Storyboard>
-        </Grid.Resources>
-
-        <Grid.Style>
-            <Style TargetType="Grid">
+        <Border.Style>
+            <Style TargetType="Border">
                 <Style.Triggers>
                     <Trigger Property="IsVisible" Value="True">
                         <Trigger.EnterActions>
@@ -115,112 +46,10 @@
                     </Trigger>
                 </Style.Triggers>
             </Style>
-        </Grid.Style>
-
-        <Border
-            Grid.Row="0"
-            Grid.RowSpan="3"
-            Grid.Column="0"
-            Background="{DynamicResource TaskbarColorBrush}">
-            <i:Interaction.Behaviors>
-                <infBeh:FrameworkElementDpiScalingBehavior />
-            </i:Interaction.Behaviors>
-            <Border.RenderTransform>
-                <TranslateTransform />
-            </Border.RenderTransform>
-            <Border.Style>
-                <Style TargetType="Border">
-                    <Setter Property="Visibility" Value="Collapsed" />
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Grid}, Path=IsVisible}" Value="True">
-                            <DataTrigger.EnterActions>
-                                <BeginStoryboard x:Name="BsSlideRight" Storyboard="{StaticResource SlideRight}" />
-                            </DataTrigger.EnterActions>
-                            <DataTrigger.ExitActions>
-                                <RemoveStoryboard BeginStoryboardName="BsSlideRight" />
-                            </DataTrigger.ExitActions>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Border.Style>
-
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="50" />
-                </Grid.RowDefinitions>
-
-                <views:FilterBand Grid.Row="0" />
-
-                <Button
-                    Grid.Row="1"
-                    VerticalAlignment="Bottom"
-                    VerticalContentAlignment="Center"
-                    BorderBrush="Transparent">
-                    <ContentControl Margin="15" Template="{DynamicResource SettingsIcon}" />
-                </Button>
-
-            </Grid>
-        </Border>
-
-        <!--<Border
-            Grid.Row="0"
-            Grid.RowSpan="3"
-            Grid.Column="2"
-            Width="50"
-            Background="{DynamicResource TaskbarColorBrush}">
-            <Border.RenderTransform>
-                <TranslateTransform />
-            </Border.RenderTransform>
-            <Border.Style>
-                <Style TargetType="Border">
-                    <Setter Property="Visibility" Value="Collapsed" />
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Grid}, Path=IsVisible}" Value="True">
-                            <DataTrigger.EnterActions>
-                                <BeginStoryboard x:Name="BsSlideLeft" Storyboard="{StaticResource SlideLeft}" />
-                            </DataTrigger.EnterActions>
-                            <DataTrigger.ExitActions>
-                                <RemoveStoryboard BeginStoryboardName="BsSlideLeft" />
-                            </DataTrigger.ExitActions>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Border.Style>
-        </Border>-->
-
-        <ContentPresenter
-            x:Name="clipboardContents"
-            Grid.Row="0"
-            Grid.RowSpan="2"
-            Grid.Column="1" />
-
-        <Grid
-            Grid.Row="2"
-            Grid.Column="0"
-            Grid.ColumnSpan="3">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="2*" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <TextBox
-                Grid.Column="1"
-                Height="30"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Center"
-                HorizontalContentAlignment="Center"
-                VerticalContentAlignment="Center"
-                Background="Black"
-                Foreground="White"
-                Text="Type here to search">
-                <i:Interaction.Behaviors>
-                    <infBeh:FrameworkElementDpiScalingBehavior />
-                </i:Interaction.Behaviors>
-            </TextBox>
-        </Grid>
+        </Border.Style>
 
 
+        <ContentPresenter x:Name="clipboardContents" />
 
-    </Grid>
+    </Border>
 </wnd:AcryllicWindow>

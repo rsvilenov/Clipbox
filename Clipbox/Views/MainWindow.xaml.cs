@@ -20,6 +20,7 @@ using System.Drawing;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Threading;
 
 namespace Clipbox.Views
@@ -49,6 +50,18 @@ namespace Clipbox.Views
         public event EventHandler<HousekeepingEventArgs> HousekeepingRequested;
 
         public event EventHandler CloseRequested;
+        
+        /// <summary>
+        /// A static constructor, used solely for overriding metadata
+        /// </summary>
+        static MainWindow()
+        {
+            // reduce the framerate of the animations, so that they do not use a lot of CPU power.
+            // This framerate corresponds to MainWindowAnimationsFrameRate setting, which is a static setting,
+            // which requires application restart upon change.
+            Timeline.DesiredFrameRateProperty.OverrideMetadata(typeof(Timeline),
+               new FrameworkPropertyMetadata { DefaultValue = 60 });
+        }
 
         public MainWindow(IClipboardManager clipboardManager,
             IPreviewGenerationService previewGenerationService,

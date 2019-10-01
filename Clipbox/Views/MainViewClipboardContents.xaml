@@ -1,4 +1,4 @@
-﻿<local:ClipboardViewControlBase
+﻿<views:ClipboardViewControlBase
     x:Class="Clipbox.Views.MainViewClipboardContents"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -15,6 +15,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:tile="clr-namespace:Clipbox.Views.ClipboardViewItemTile"
+    xmlns:views="clr-namespace:Clipbox.Views"
     d:DesignHeight="300"
     d:DesignWidth="300"
     mc:Ignorable="d">
@@ -51,9 +52,21 @@
     </UserControl.Resources>
     <Grid>
         <Grid.RowDefinitions>
+            <!--  top bar  -->
             <RowDefinition Height="Auto" />
+            <!--  list view  -->
             <RowDefinition />
+            <!--  search bar  -->
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <!--  side bar  -->
+            <ColumnDefinition Width="Auto" />
+            <!--  list view  -->
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+
         <Grid.Resources>
             <Storyboard x:Key="FadeInItem">
                 <DoubleAnimation
@@ -64,12 +77,13 @@
             </Storyboard>
         </Grid.Resources>
 
-        <Border Grid.Row="0">
+        <!--  top bar  -->
+        <Border Grid.Row="0" Grid.Column="1">
             <Border.Background>
                 <SolidColorBrush Opacity="0.6" Color="{DynamicResource TaskbarColor}" />
             </Border.Background>
 
-            <Grid Margin="10,15,10,0">
+            <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
@@ -203,6 +217,55 @@
             </Grid>
         </Border>
 
+        <!--  side bar  -->
+        <Grid
+            Grid.Row="0"
+            Grid.RowSpan="3"
+            Grid.Column="0">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="50" />
+            </Grid.RowDefinitions>
+            <Grid.Background>
+                <SolidColorBrush Opacity="0.6" Color="{DynamicResource TaskbarColor}" />
+            </Grid.Background>
+            <i:Interaction.Behaviors>
+                <infBeh:FrameworkElementDpiScalingBehavior />
+            </i:Interaction.Behaviors>
+
+            <views:FilterBand Grid.Row="0" />
+
+            <Button
+                Grid.Row="1"
+                VerticalAlignment="Bottom"
+                VerticalContentAlignment="Center"
+                BorderBrush="Transparent">
+                <ContentControl Margin="15" Template="{DynamicResource SettingsIcon}" />
+            </Button>
+
+        </Grid>
+
+        <!--  search bar  -->
+        <Border Grid.Row="2" Grid.Column="1" Height="45">
+            <Border.Background>
+                <SolidColorBrush Opacity="0.6" Color="{DynamicResource TaskbarColor}" />
+            </Border.Background>
+            <i:Interaction.Behaviors>
+                <infBeh:FrameworkElementDpiScalingBehavior />
+            </i:Interaction.Behaviors>
+            <TextBox
+                Margin="0,5,5,0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Stretch"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                Background="Black"
+                Foreground="White"
+                Text="Type here to search" />
+        </Border>
+
+
         <!--
             This listview should scroll its contents by physical units instead of logical ones,
             thus ScrollViewer.CanContentScroll="False". Otherwise, when grouping is used,
@@ -212,6 +275,7 @@
         <lv:FullClipboardListView
             x:Name="MainListView"
             Grid.Row="1"
+            Grid.Column="1"
             Margin="10"
             VerticalAlignment="Stretch"
             VerticalContentAlignment="Top"
@@ -233,4 +297,4 @@
             ViewItemUnloadingRequested="MainListView_ViewItemUnloadingRequested"
             Visibility="Hidden" />
     </Grid>
-</local:ClipboardViewControlBase>
+</views:ClipboardViewControlBase>
