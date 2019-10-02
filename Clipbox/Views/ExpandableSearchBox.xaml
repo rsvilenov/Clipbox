@@ -31,6 +31,7 @@
         x:Name="Expander"
         HorizontalAlignment="Right"
         VerticalAlignment="Top"
+        Collapsed="Expander_Collapsed"
         Expanded="Expander_Expanded"
         Foreground="{DynamicResource ControlForegroundBrush}"
         Header="{DynamicResource SearchIcon}"

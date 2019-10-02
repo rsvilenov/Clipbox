@@ -33,6 +33,7 @@ namespace Clipbox.Infrastructure.UI.CustomControls
             if (self._textBox != null)
             {
                 self._textBox.Text = (string)e.NewValue;
+                self.SetControlsVisibility();
             }
         }
 
@@ -240,12 +241,18 @@ namespace Clipbox.Infrastructure.UI.CustomControls
 
         private void _textBox_KeyUp(object sender, KeyEventArgs e)
         {
+            SetControlsVisibility();
+
+            Text = _textBox.Text;
+            _searchSlidingTimer.Slide();
+        }
+
+        private void SetControlsVisibility()
+        {
             if (_textBox.Text?.Length > 0)
             {
                 _textBlockOverlay.Visibility = Visibility.Collapsed;
-                Text = _textBox.Text;
                 _clearButton.Visibility = Visibility.Visible;
-                _searchSlidingTimer.Slide();
             }
             else
             {
