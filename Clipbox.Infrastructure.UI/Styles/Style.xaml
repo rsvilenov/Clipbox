@@ -9,7 +9,6 @@
         <ResourceDictionary Source="Expander.xaml" />
         <ResourceDictionary Source="ScrollBar.xaml" />
         <ResourceDictionary Source="Brushes.xaml" />
-        <ResourceDictionary Source="TextBox.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
 </ResourceDictionary>

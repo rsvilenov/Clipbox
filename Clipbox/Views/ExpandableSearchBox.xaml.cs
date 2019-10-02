@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Clipbox.Infrastructure.UI.CustomControls;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -41,7 +42,7 @@ namespace Clipbox.Views
 
         private void SearchTextBox_SearchRequested(object sender, RoutedEventArgs e)
         {
-
+            string text = ((SearchTextBox)sender).Text;
         }
     }
 }

@@ -212,14 +212,17 @@ namespace Clipbox.Infrastructure.UI.CustomControls
         private void _clearButton_Click(object sender, RoutedEventArgs e)
         {
             _textBox.Clear();
+            Text = string.Empty;
             _textBoxOverlay.Visibility = Visibility.Visible;
             _clearButton.Visibility = Visibility.Hidden;
+            OnSearchRequested();
         }
 
         private void _textBox_KeyUp(object sender, KeyEventArgs e)
         {
             if (_textBox.Text?.Length > 0)
             {
+                Text = _textBox.Text;
                 _clearButton.Visibility = Visibility.Visible;
                 _searchSlidingTimer.Slide();
             }
