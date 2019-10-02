@@ -13,7 +13,7 @@ using System.Linq;
 
 namespace Clipbox.ViewModels
 {
-    public abstract class ClipboardContentsViewModelBase : BindableObject
+    public abstract class ClipboardContentsViewModelBase : BindableObject, IDisposable
     {
         private AsyncObservableCollection<ClipboardViewItemWrapper> _clipboardViewItemWrappers;
 
@@ -187,5 +187,23 @@ namespace Clipbox.ViewModels
 
             return success;
         }
+
+        #region IDisposable Support
+        private bool disposedValue = false;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                ClipboardManager.ItemRemoved -= ClipboardManager_ItemRemoved;
+                disposedValue = true;
+            }
+        }
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+        #endregion
+
     }
 }

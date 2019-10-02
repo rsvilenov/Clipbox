@@ -196,5 +196,11 @@ namespace Clipbox.Views
             base.ClearLoadedUIExtensions();
             base.LoadUIExtensions(MainListView);
         }
+
+        protected override void Dispose(bool disposing)
+        {
+            _viewModel.Dispose();
+            base.Dispose(disposing);
+        }
     }
 }
