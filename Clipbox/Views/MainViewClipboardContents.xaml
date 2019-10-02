@@ -16,6 +16,7 @@
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:tile="clr-namespace:Clipbox.Views.ClipboardViewItemTile"
     xmlns:views="clr-namespace:Clipbox.Views"
+    xmlns:vis="clr-namespace:Clipbox.Infrastructure.UI.Visuals;assembly=Clipbox.Infrastructure.UI"
     d:DesignHeight="300"
     d:DesignWidth="300"
     mc:Ignorable="d">
@@ -71,12 +72,69 @@
                     Storyboard.TargetProperty="(UIElement.Opacity)"
                     From="0"
                     To="1"
-                    Duration="0:0:2.0" />
+                    Duration="0:0:0.7" />
             </Storyboard>
         </Grid.Resources>
 
+        <!--  loading indication panel  -->
+        <Grid Grid.RowSpan="2" Grid.ColumnSpan="2">
+            <Grid.Style>
+                <Style TargetType="{x:Type Grid}">
+                    <Setter Property="Visibility" Value="Visible" />
+                    <Style.Triggers>
+                        <!--  the MainListViewContainer becomes visible only after the listview's grouping task has completed. See MainListView_GroupingComplete.  -->
+                        <DataTrigger Binding="{Binding ElementName=MainListViewContainer, Path=Visibility}" Value="Visible">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            <vis:SprocketControl
+                Grid.RowSpan="3"
+                Grid.ColumnSpan="3"
+                Width="60"
+                Height="60"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                AlphaTicksPercentage="50"
+                InnerRadius="0.3"
+                Interval="60"
+                IsIndeterminate="True"
+                LowestAlpha="50"
+                OuterRadius="0.5"
+                StartAngle="-90"
+                TickColor="White"
+                TickCount="12"
+                TickStyle="Triangle"
+                TickWidth="3" />
+        </Grid>
+
         <!--  top bar  -->
         <Border Grid.Row="0" Grid.Column="1">
+            <Border.Style>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <!--  the MainListViewContainer becomes visible only after the listview's grouping task has completed. See MainListView_GroupingComplete.  -->
+                        <DataTrigger Binding="{Binding ElementName=MainListViewContainer, Path=Visibility}" Value="Visible">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Path=IsVisible, RelativeSource={RelativeSource Mode=Self}}" Value="True" />
+                                <Condition Binding="{Binding Path=AreFadeAnimationsEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type views:MainViewClipboardContents}}}" Value="True" />
+                            </MultiDataTrigger.Conditions>
+                            <MultiDataTrigger.EnterActions>
+                                <BeginStoryboard x:Name="FadeInItemTopBar" Storyboard="{StaticResource FadeInItem}" />
+                            </MultiDataTrigger.EnterActions>
+                            <MultiDataTrigger.ExitActions>
+                                <RemoveStoryboard BeginStoryboardName="FadeInItemTopBar" />
+                            </MultiDataTrigger.ExitActions>
+                        </MultiDataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+
             <Border.Background>
                 <SolidColorBrush Opacity="0.6" Color="{DynamicResource TaskbarColor}" />
             </Border.Background>
@@ -237,6 +295,29 @@
             Grid.Row="0"
             Grid.RowSpan="3"
             Grid.Column="0">
+            <Grid.Style>
+                <Style TargetType="{x:Type Grid}">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <!--  the MainListViewContainer becomes visible only after the listview's grouping task has completed. See MainListView_GroupingComplete.  -->
+                        <DataTrigger Binding="{Binding ElementName=MainListViewContainer, Path=Visibility}" Value="Visible">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Path=IsVisible, RelativeSource={RelativeSource Mode=Self}}" Value="True" />
+                                <Condition Binding="{Binding Path=AreFadeAnimationsEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type views:MainViewClipboardContents}}}" Value="True" />
+                            </MultiDataTrigger.Conditions>
+                            <MultiDataTrigger.EnterActions>
+                                <BeginStoryboard x:Name="FadeInItemSideBar" Storyboard="{StaticResource FadeInItem}" />
+                            </MultiDataTrigger.EnterActions>
+                            <MultiDataTrigger.ExitActions>
+                                <RemoveStoryboard BeginStoryboardName="FadeInItemSideBar" />
+                            </MultiDataTrigger.ExitActions>
+                        </MultiDataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
@@ -268,29 +349,50 @@
             the scrollviewer jumps awkwardly to the next group...
         -->
         <!--  We load this view hidden, so that it can group its items before we show it; Then we show it from GroupItem's template Loaded event.  -->
-        <lv:FullClipboardListView
-            x:Name="MainListView"
+        <Border
+            x:Name="MainListViewContainer"
             Grid.Row="1"
             Grid.Column="1"
-            Margin="10"
-            VerticalAlignment="Stretch"
-            VerticalContentAlignment="Top"
-            Background="Transparent"
-            BorderThickness="0"
-            ClipboardItemContentControl_MouseDoubleClickDetectionStarted="MainListView_ClipboardItemContentControl_MouseDoubleClickDetectionStarted"
-            ClipboardItemContentControl_MouseDoubleClickDetection_DoubleClickDetected="MainListView_ClipboardItemContentControl_MouseDoubleClickDetection_DoubleClickDetected"
-            ClipboardItemContentControl_MouseDoubleClickDetection_SingleClickDetected="MainListView_ClipboardItemContentControl_MouseDoubleClickDetection_SingleClickDetected"
-            ClipboardItemsPanel_KeyUp="MainListView_ClipboardItemsPanel_KeyUp"
-            ClipboardViewItemMaxHeight="{Binding Path=ClipboardViewItemMaxHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}}"
-            CombinabilityCheckRequested="MainListView_CombinabilityCheckRequested"
-            GroupingComplete="MainListView_GroupingComplete"
-            ItemDeletionRequested="MainListView_ItemDeletionRequested"
-            ItemPinUnpinRequested="MainListView_ItemPinUnpinRequested"
-            ItemsSource="{Binding ClipboardViewItemWrappers}"
-            SelectionChangeCompleted="MainListView_SelectionChangeCompleted"
-            ViewItemLoadingCancelRequested="MainListView_ViewItemLoadingCancelRequested"
-            ViewItemLoadingRequested="MainListView_ViewItemLoadingRequested"
-            ViewItemUnloadingRequested="MainListView_ViewItemUnloadingRequested"
-            Visibility="Hidden" />
+            Visibility="Hidden">
+            <Border.Style>
+                <Style TargetType="{x:Type Border}">
+                    <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Path=IsVisible, RelativeSource={RelativeSource Mode=Self}}" Value="True" />
+                                <Condition Binding="{Binding Path=AreFadeAnimationsEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type views:MainViewClipboardContents}}}" Value="True" />
+                            </MultiDataTrigger.Conditions>
+                            <MultiDataTrigger.EnterActions>
+                                <BeginStoryboard x:Name="FadeInItemListView" Storyboard="{StaticResource FadeInItem}" />
+                            </MultiDataTrigger.EnterActions>
+                            <MultiDataTrigger.ExitActions>
+                                <RemoveStoryboard BeginStoryboardName="FadeInItemListView" />
+                            </MultiDataTrigger.ExitActions>
+                        </MultiDataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+            <lv:FullClipboardListView
+                x:Name="MainListView"
+                Margin="10"
+                VerticalAlignment="Stretch"
+                VerticalContentAlignment="Top"
+                Background="Transparent"
+                BorderThickness="0"
+                ClipboardItemContentControl_MouseDoubleClickDetectionStarted="MainListView_ClipboardItemContentControl_MouseDoubleClickDetectionStarted"
+                ClipboardItemContentControl_MouseDoubleClickDetection_DoubleClickDetected="MainListView_ClipboardItemContentControl_MouseDoubleClickDetection_DoubleClickDetected"
+                ClipboardItemContentControl_MouseDoubleClickDetection_SingleClickDetected="MainListView_ClipboardItemContentControl_MouseDoubleClickDetection_SingleClickDetected"
+                ClipboardItemsPanel_KeyUp="MainListView_ClipboardItemsPanel_KeyUp"
+                ClipboardViewItemMaxHeight="{Binding Path=ClipboardViewItemMaxHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}}"
+                CombinabilityCheckRequested="MainListView_CombinabilityCheckRequested"
+                GroupingComplete="MainListView_GroupingComplete"
+                ItemDeletionRequested="MainListView_ItemDeletionRequested"
+                ItemPinUnpinRequested="MainListView_ItemPinUnpinRequested"
+                ItemsSource="{Binding ClipboardViewItemWrappers}"
+                SelectionChangeCompleted="MainListView_SelectionChangeCompleted"
+                ViewItemLoadingCancelRequested="MainListView_ViewItemLoadingCancelRequested"
+                ViewItemLoadingRequested="MainListView_ViewItemLoadingRequested"
+                ViewItemUnloadingRequested="MainListView_ViewItemUnloadingRequested" />
+        </Border>
     </Grid>
 </views:ClipboardViewControlBase>

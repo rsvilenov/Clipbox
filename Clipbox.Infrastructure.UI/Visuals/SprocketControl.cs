@@ -26,6 +26,9 @@
 // WPFSpark v1.3.1
 // 
 
+// NOTE: This version is modified as part of Clipbox development. It does not rely on Dispose to dispose of the timers.
+// It relies on VisibilityChanged insted.
+
 using System;
 using System.Collections.Generic;
 using System.Timers;
@@ -97,7 +100,7 @@ namespace Clipbox.Infrastructure.UI.Visuals
         double _alphaChange = 0;
         double _angleIncrement = 0;
         double _renderStartAngle = 0;
-        readonly Timer renderTimer = null;
+        Timer renderTimer = null;
         List<Spoke> _spokes = null;
 
         #endregion
@@ -783,9 +786,6 @@ namespace Clipbox.Infrastructure.UI.Visuals
         /// </summary>
         public SprocketControl()
         {
-            renderTimer = new Timer(Interval);
-            renderTimer.Elapsed += OnRenderTimerElapsed;
-
             // Set the minimum size of the SprocketControl
             MinWidth = MINIMUM_CONTROL_SIZE.Width;
             MinWidth = MINIMUM_CONTROL_SIZE.Height;
@@ -819,11 +819,13 @@ namespace Clipbox.Infrastructure.UI.Visuals
         /// </summary>
         private void Start()
         {
-            if ((renderTimer == null) || (renderTimer.Enabled))
-                return;
-
-            renderTimer.Interval = Interval;
-            renderTimer.Enabled = true;
+            if (renderTimer == null)
+            {
+                renderTimer = new Timer(Interval);
+                renderTimer.Elapsed += OnRenderTimerElapsed;
+                renderTimer.Interval = Interval;
+                renderTimer.Enabled = true;
+            }
         }
 
         /// <summary>
@@ -834,6 +836,9 @@ namespace Clipbox.Infrastructure.UI.Visuals
             if (renderTimer != null)
             {
                 renderTimer.Enabled = false;
+                renderTimer.Elapsed -= OnRenderTimerElapsed;
+                renderTimer.Dispose();
+                renderTimer = null;
             }
         }
 
@@ -1059,8 +1064,7 @@ namespace Clipbox.Infrastructure.UI.Visuals
                 return;
             if (renderTimer != null)
             {
-                renderTimer.Elapsed -= OnRenderTimerElapsed;
-                renderTimer.Dispose();
+                Stop();
             }
             IsVisibleChanged -= OnVisibilityChanged;
 

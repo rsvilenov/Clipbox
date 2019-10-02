@@ -5,6 +5,7 @@
     xmlns:coreConv="clr-namespace:Clipbox.Infrastructure.UI.Converters;assembly=Clipbox.Infrastructure.UI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:views="clr-namespace:Clipbox.Views"
     xmlns:wnd="clr-namespace:Clipbox.Infrastructure.UI.Windows;assembly=Clipbox.Infrastructure.UI"
     Title="MainWindow"
     Width="525"
@@ -15,7 +16,7 @@
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
     </Window.Resources>
     <!--  don't replace this with ContentControl or something, as the fade in background animation will not work  -->
-    <Border Opacity="0.1">
+    <Border>
         <Border.Background>
             <SolidColorBrush Opacity="0.3" Color="Black" />
         </Border.Background>
@@ -35,15 +36,30 @@
 
         <Border.Style>
             <Style TargetType="Border">
+                <!--  set the initial border's opacity to 0.1  -->
+                <Setter Property="Opacity" Value="0.1" />
                 <Style.Triggers>
-                    <Trigger Property="IsVisible" Value="True">
-                        <Trigger.EnterActions>
+                    <!--  if the fade animations are enabled, animate border's opacity to 1  -->
+                    <MultiDataTrigger>
+                        <MultiDataTrigger.Conditions>
+                            <Condition Binding="{Binding Path=IsVisible, RelativeSource={RelativeSource Mode=Self}}" Value="True" />
+                            <Condition Binding="{Binding Path=AreFadeAnimationsEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type views:MainWindow}}}" Value="True" />
+                        </MultiDataTrigger.Conditions>
+                        <MultiDataTrigger.EnterActions>
                             <BeginStoryboard x:Name="BsFadeInBackground" Storyboard="{StaticResource FadeInBackground}" />
-                        </Trigger.EnterActions>
-                        <Trigger.ExitActions>
+                        </MultiDataTrigger.EnterActions>
+                        <MultiDataTrigger.ExitActions>
                             <RemoveStoryboard BeginStoryboardName="BsFadeInBackground" />
-                        </Trigger.ExitActions>
-                    </Trigger>
+                        </MultiDataTrigger.ExitActions>
+                    </MultiDataTrigger>
+                    <!--  if the fade animations are disabled, set the border's opacity to 1 via a setter  -->
+                    <MultiDataTrigger>
+                        <MultiDataTrigger.Conditions>
+                            <Condition Binding="{Binding Path=IsVisible, RelativeSource={RelativeSource Mode=Self}}" Value="True" />
+                            <Condition Binding="{Binding Path=AreFadeAnimationsEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type views:MainWindow}}}" Value="False" />
+                        </MultiDataTrigger.Conditions>
+                        <Setter Property="Opacity" Value="1" />
+                    </MultiDataTrigger>
                 </Style.Triggers>
             </Style>
         </Border.Style>

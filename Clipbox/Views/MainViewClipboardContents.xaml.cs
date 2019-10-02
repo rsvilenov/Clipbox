@@ -3,6 +3,7 @@ using Clipbox.Infrastructure.Threading;
 using Clipbox.Infrastructure.UI;
 using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Interfaces;
+using Clipbox.Settings;
 using Clipbox.ViewModels;
 using Clipbox.ViewModels.BindableObjects;
 using Clipbox.Views.ClipboardListView;
@@ -28,6 +29,18 @@ namespace Clipbox.Views
 
         public event EventHandler CloseMainWindowRequested;
 
+
+
+        public bool AreFadeAnimationsEnabled
+        {
+            get { return (bool)GetValue(AreFadeAnimationsEnabledProperty); }
+            set { SetValue(AreFadeAnimationsEnabledProperty, value); }
+        }
+
+        public static readonly DependencyProperty AreFadeAnimationsEnabledProperty =
+            DependencyProperty.Register(nameof(AreFadeAnimationsEnabled), typeof(bool), typeof(MainViewClipboardContents), new PropertyMetadata(false));
+
+        
         /// <summary>
         /// This view is the only one that allows for selection of incompatible items,
         /// so this property seem to belong here.
@@ -76,6 +89,9 @@ namespace Clipbox.Views
 
             Loaded += MainViewClipboardContents_Loaded;
             IsVisibleChanged += MainViewClipboardContents_IsVisibleChanged;
+
+            // this setting should not change while this view is open, so no SettingChanged subscription is needed.
+            AreFadeAnimationsEnabled = settingsService.GetSetting<bool>(SettingsKeys.AreFadeAnimationsEnabled);
         }
 
         private void MainViewClipboardContents_Loaded(object sender, RoutedEventArgs e)
@@ -300,6 +316,8 @@ namespace Clipbox.Views
 
         private void MainListView_GroupingComplete(object sender, EventArgs e)
         {
+            MainListViewContainer.Visibility = Visibility.Visible;
+            // TODO: the child should become visible when the container becomes visible... In this case it does not. Figure out why.
             MainListView.Visibility = Visibility.Visible;
             MainListView.Focus();
         }

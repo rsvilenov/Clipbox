@@ -50,7 +50,17 @@ namespace Clipbox.Views
         public event EventHandler<HousekeepingEventArgs> HousekeepingRequested;
 
         public event EventHandler CloseRequested;
-        
+
+        public bool AreFadeAnimationsEnabled
+        {
+            get { return (bool)GetValue(AreFadeAnimationsEnabledProperty); }
+            set { SetValue(AreFadeAnimationsEnabledProperty, value); }
+        }
+
+        public static readonly DependencyProperty AreFadeAnimationsEnabledProperty =
+            DependencyProperty.Register(nameof(AreFadeAnimationsEnabled), typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
+
+
         /// <summary>
         /// A static constructor, used solely for overriding metadata
         /// </summary>
@@ -121,6 +131,8 @@ namespace Clipbox.Views
             Closing += MainWindow_Closing;
             Shown += MainWindow_Shown;
             KeyUp += MainWindow_KeyUp;
+
+            AreFadeAnimationsEnabled = _settingsService.GetSetting<bool>(SettingsKeys.AreFadeAnimationsEnabled);
         }
 
         private void MainWindow_KeyUp(object sender, KeyEventArgs e)

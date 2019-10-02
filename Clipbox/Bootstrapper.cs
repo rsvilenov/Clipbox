@@ -127,7 +127,7 @@ namespace Clipbox
             _settingsService.SetSetting(SettingsKeys.IsCloudSyncEnabled, false);
             _settingsService.SetSetting(SettingsKeys.MainClipboardViewBackgroundRenderMode, (int)MainClipboardViewBackgroundRenderMode.ImageBrush);
             _settingsService.SetSetting(SettingsKeys.IsBackgroundPreviewGenerationEnabled, true);
-
+            _settingsService.SetSetting(SettingsKeys.AreFadeAnimationsEnabled, true);
 
             _previewGenerationService = new PreviewGenerationService(_clipboardManager, _extentionLoader.PreviewGeneratorsContainer, _settingsService);
 

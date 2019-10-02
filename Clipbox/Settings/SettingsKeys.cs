@@ -21,5 +21,7 @@
         public const string IsTrayIconEnabled = nameof(IsTrayIconEnabled);
 
         public const string IsBackgroundPreviewGenerationEnabled = nameof(IsBackgroundPreviewGenerationEnabled);
+
+        public const string AreFadeAnimationsEnabled = nameof(AreFadeAnimationsEnabled);
     }
 }
