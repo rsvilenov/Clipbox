@@ -20,9 +20,28 @@ namespace Clipbox.Views
     /// </summary>
     public partial class ExpandableSearchBox : UserControl
     {
+
+
+        public double TextBoxExpandedWidth
+        {
+            get { return (double)GetValue(TextBoxExpandedWidthProperty); }
+            set { SetValue(TextBoxExpandedWidthProperty, value); }
+        }
+
+        public static readonly DependencyProperty TextBoxExpandedWidthProperty =
+            DependencyProperty.Register(nameof(TextBoxExpandedWidth), typeof(double), typeof(ExpandableSearchBox), new PropertyMetadata(200d));
+
+
+
         public ExpandableSearchBox()
         {
             InitializeComponent();
+            this.Expander.DataContext = this;
+        }
+
+        private void SearchTextBox_SearchRequested(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }
