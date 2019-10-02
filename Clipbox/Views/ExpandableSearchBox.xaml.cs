@@ -44,5 +44,10 @@ namespace Clipbox.Views
         {
             string text = ((SearchTextBox)sender).Text;
         }
+
+        private void Expander_Expanded(object sender, RoutedEventArgs e)
+        {
+            searchTextBox.Focus();
+        }
     }
 }

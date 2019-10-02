@@ -31,6 +31,7 @@
         x:Name="Expander"
         HorizontalAlignment="Right"
         VerticalAlignment="Top"
+        Expanded="Expander_Expanded"
         Foreground="{DynamicResource ControlForegroundBrush}"
         Header="{DynamicResource SearchIcon}"
         OverridesDefaultStyle="True"
@@ -40,6 +41,7 @@
             <BitmapCache />
         </Expander.CacheMode>
         <customControls:SearchTextBox
+            x:Name="searchTextBox"
             Width="{Binding TextBoxExpandedWidth}"
             Margin="5"
             VerticalAlignment="Stretch"
@@ -47,14 +49,5 @@
             VerticalContentAlignment="Center"
             OverlayText="Type here to search"
             SearchRequested="SearchTextBox_SearchRequested" />
-        <!--<TextBox
-            Width="{Binding TextBoxExpandedWidth}"
-            Margin="5"
-            VerticalAlignment="Stretch"
-            HorizontalContentAlignment="Left"
-            VerticalContentAlignment="Center"
-            Style="{DynamicResource TbSearchBox}"
-            Text="Type here to search" />-->
-
     </Expander>
 </UserControl>

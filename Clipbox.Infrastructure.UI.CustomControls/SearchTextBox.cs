@@ -1,17 +1,18 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Clipbox.Infrastructure.UI.CustomControls
 {
     [TemplatePart(Name = "PART_MainBorder", Type = typeof(Border))]
     [TemplatePart(Name = "PART_TextBox", Type = typeof(TextBox))]
-    [TemplatePart(Name = "PART_TextBoxOverlay", Type = typeof(TextBox))]
+    [TemplatePart(Name = "PART_TextBlockOverlay", Type = typeof(TextBox))]
     [TemplatePart(Name = "PART_ClearButton", Type = typeof(Button))]
     public class SearchTextBox : Control
     {
         private TextBox _textBox;
-        private TextBox _textBoxOverlay;
+        private TextBlock _textBlockOverlay;
         private Button _clearButton;
 
         private SlidingTimer _searchSlidingTimer;
@@ -47,9 +48,9 @@ namespace Clipbox.Infrastructure.UI.CustomControls
         private static void OverlayText_PropertyChangedy(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var self = ((SearchTextBox)d);
-            if (self._textBoxOverlay != null)
+            if (self._textBlockOverlay != null)
             {
-                self._textBoxOverlay.Text = (string)e.NewValue;
+                self._textBlockOverlay.Text = (string)e.NewValue;
             }
         }
 
@@ -102,6 +103,29 @@ namespace Clipbox.Infrastructure.UI.CustomControls
         public SearchTextBox()
         {
             IsVisibleChanged += SearchTextBox_IsVisibleChanged;
+            GotFocus += SearchTextBox_GotFocus;
+            PreviewMouseDown += SearchTextBox_PreviewMouseDown;
+        }
+
+        private void SearchTextBox_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            // if the click occurs on the hidden clear button or anywhere else inside the control,
+            // focus the text box. If the click is on the button, let it handle the click.
+            HitTestResult r = VisualTreeHelper.HitTest(this, e.GetPosition(this));
+
+            if ((r.VisualHit.GetType() == typeof(Button) && _clearButton != null && !_clearButton.IsVisible)
+                || r.VisualHit.GetType() != typeof(Button))
+            {
+                _textBox.Focus();
+            }
+        }
+
+        private void SearchTextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (_textBox != null)
+            {
+                _textBox.Focus();
+            }
         }
 
         private void SearchTextBox_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -150,20 +174,16 @@ namespace Clipbox.Infrastructure.UI.CustomControls
         
         private void WireUpTextBoxOverlay()
         {
-            TextBox textBoxOverlay = this.Template.FindName("PART_TextBoxOverlay", this) as TextBox;
-            if (textBoxOverlay != _textBoxOverlay)
+            TextBlock textBlockOverlay = this.Template.FindName("PART_TextBlockOverlay", this) as TextBlock;
+            if (textBlockOverlay != _textBlockOverlay)
             {
-                if (_textBoxOverlay != null)
+                _textBlockOverlay = textBlockOverlay;
+                
+                if (_textBlockOverlay != null)
                 {
-                    _textBoxOverlay.GotFocus -= _textBoxOverlay_GotFocus;
-                }
-
-                _textBoxOverlay = textBoxOverlay;
-
-                if (_textBoxOverlay != null)
-                {
-                    _textBoxOverlay.Text = OverlayText;
-                    _textBoxOverlay.GotFocus += _textBoxOverlay_GotFocus;
+                    // make the label click-through
+                    _textBlockOverlay.IsHitTestVisible = false;
+                    _textBlockOverlay.Text = OverlayText;
                 }
 
             }
@@ -213,7 +233,7 @@ namespace Clipbox.Infrastructure.UI.CustomControls
         {
             _textBox.Clear();
             Text = string.Empty;
-            _textBoxOverlay.Visibility = Visibility.Visible;
+            _textBlockOverlay.Visibility = Visibility.Visible;
             _clearButton.Visibility = Visibility.Hidden;
             OnSearchRequested();
         }
@@ -222,6 +242,7 @@ namespace Clipbox.Infrastructure.UI.CustomControls
         {
             if (_textBox.Text?.Length > 0)
             {
+                _textBlockOverlay.Visibility = Visibility.Collapsed;
                 Text = _textBox.Text;
                 _clearButton.Visibility = Visibility.Visible;
                 _searchSlidingTimer.Slide();
@@ -229,14 +250,8 @@ namespace Clipbox.Infrastructure.UI.CustomControls
             else
             {
                 _clearButton.Visibility = Visibility.Hidden;
+                _textBlockOverlay.Visibility = Visibility.Visible;
             }
-        }
-        
-
-        private void _textBoxOverlay_GotFocus(object sender, RoutedEventArgs e)
-        {
-            _textBoxOverlay.Visibility = Visibility.Collapsed;
-            _textBox.Focus();
         }
     }
 }

@@ -29,6 +29,7 @@
                             <TextBox
                                 x:Name="PART_TextBox"
                                 Grid.Column="0"
+                                Margin="3,0,0,0"
                                 HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                                 VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                                 Background="{TemplateBinding Background}"
@@ -41,18 +42,18 @@
                                 x:Name="PART_ClearButton"
                                 Grid.Column="1"
                                 Style="{DynamicResource BtnClearSearch}" />
-                            <TextBox
-                                x:Name="PART_TextBoxOverlay"
+                            <TextBlock
+                                x:Name="PART_TextBlockOverlay"
                                 Grid.Column="0"
-                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
+                                Margin="7,0,0,0"
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
                                 Background="Transparent"
-                                BorderBrush="Transparent"
-                                BorderThickness="0"
                                 FontSize="{TemplateBinding FontSize}"
                                 FontStretch="{TemplateBinding FontStretch}"
                                 FontWeight="{TemplateBinding FontWeight}"
-                                Foreground="{TemplateBinding Foreground}" />
+                                Foreground="{TemplateBinding Foreground}"
+                                Opacity="0.4" />
                         </Grid>
                     </Border>
                 </ControlTemplate>
