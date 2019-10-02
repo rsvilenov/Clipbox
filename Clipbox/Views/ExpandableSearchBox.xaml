@@ -13,6 +13,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Views/Styles/ToggleButtonBaseStyle.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Clipbox.Infrastructure.UI;component/Styles/Expander.xaml" />
                 <ResourceDictionary>
                     <Style
                         x:Key="searchToggleButton"
