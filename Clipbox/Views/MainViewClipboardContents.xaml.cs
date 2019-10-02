@@ -145,12 +145,14 @@ namespace Clipbox.Views
         protected override void Dispose(bool disposing)
         {
             _uiExtentionGenerationSlidingTimer.Dispose();
-            _viewModel.Dispose();
 
             if (MainListView != null)
             {
                 MainListView.Dispose();
             }
+            
+            _viewModel.Dispose();
+            _viewModel = null;
 
             base.Dispose(disposing);
         }

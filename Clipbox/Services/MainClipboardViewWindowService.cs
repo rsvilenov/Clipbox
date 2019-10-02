@@ -78,16 +78,17 @@ namespace Clipbox.Services
                         _mainWindow.Close();
                         //_mainWindow.Close();
                         _mainWindow = null;
-                        // Equivalent to Application.DoEvents() just in case...
-                        Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
                     }
-
-#if DEBUG
-                    GC.Collect();
-                    GC.WaitForPendingFinalizers();
-                    GC.Collect();
-#endif
                 }));
+            
+            // Equivalent to Application.DoEvents() just in case...
+            Application.Current.Dispatcher.Invoke(DispatcherPriority.Background, new Action(delegate { }));
+#if DEBUG
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+#endif
+
         }
 
         public void OpenOnMonitor(MonitorUtils.DisplayMonitor dm)
