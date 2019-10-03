@@ -21,7 +21,7 @@ namespace Clipbox.Views
     /// </summary>
     public partial class ExpandableSearchBox : UserControl
     {
-
+        public event EventHandler Expanded;
 
         public double TextBoxExpandedWidth
         {
@@ -49,6 +49,7 @@ namespace Clipbox.Views
 
         private void Expander_Expanded(object sender, RoutedEventArgs e)
         {
+            Expanded?.Invoke(this, new EventArgs());
             searchTextBox.Focus();
         }
 

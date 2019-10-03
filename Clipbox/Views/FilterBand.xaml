@@ -115,8 +115,8 @@
             HorizontalScrollBarVisibility="Disabled"
             VerticalScrollBarVisibility="Hidden">
             <i:Interaction.Behaviors>
-                <localBeh:ScrollViewerScrollButtonsBehavior IsScrollUpButton="True" ScrollButton="{Binding ElementName=scrollBtnUp}" />
-                <localBeh:ScrollViewerScrollButtonsBehavior IsScrollUpButton="False" ScrollButton="{Binding ElementName=scrollBtnDown}" />
+                <localBeh:ScrollViewerScrollButtonsBehavior ButtonScrollDirection="Up" ScrollButton="{Binding ElementName=scrollBtnUp}" />
+                <localBeh:ScrollViewerScrollButtonsBehavior ButtonScrollDirection="Down" ScrollButton="{Binding ElementName=scrollBtnDown}" />
             </i:Interaction.Behaviors>
             <StackPanel
                 x:Name="scrollableContent"

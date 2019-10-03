@@ -305,6 +305,54 @@
         </Viewbox>
     </ControlTemplate>
 
+    <ControlTemplate x:Key="RightArrowIcon">
+        <Viewbox>
+            <Grid Background="Transparent">
+                <Path
+                    Width="92"
+                    Height="92"
+                    Margin="0,0,0,0"
+                    Data="M16.01001,2.7699638L2.9260254,13.840967 5.8760376,17.326996 15.879028,8.8629921 25.968994,18.175997 29.065979,14.821987z M16.070007,0L32,14.704006 26.085999,21.111 15.819031,11.633016 5.632019,20.253027 0,13.597986z"
+                    Fill="{TemplateBinding Foreground}"
+                    RenderTransformOrigin="0.5,0.5"
+                    Stretch="Uniform">
+                    <Path.RenderTransform>
+                        <TransformGroup>
+                            <TransformGroup.Children>
+                                <RotateTransform Angle="90" />
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                            </TransformGroup.Children>
+                        </TransformGroup>
+                    </Path.RenderTransform>
+                </Path>
+            </Grid>
+        </Viewbox>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="LeftArrowIcon">
+        <Viewbox>
+            <Grid Background="Transparent">
+                <Path
+                    Width="92"
+                    Height="92"
+                    Margin="0,0,0,0"
+                    Data="M16.01001,2.7699638L2.9260254,13.840967 5.8760376,17.326996 15.879028,8.8629921 25.968994,18.175997 29.065979,14.821987z M16.070007,0L32,14.704006 26.085999,21.111 15.819031,11.633016 5.632019,20.253027 0,13.597986z"
+                    Fill="{TemplateBinding Foreground}"
+                    RenderTransformOrigin="0.5,0.5"
+                    Stretch="Uniform">
+                    <Path.RenderTransform>
+                        <TransformGroup>
+                            <TransformGroup.Children>
+                                <RotateTransform Angle="270" />
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                            </TransformGroup.Children>
+                        </TransformGroup>
+                    </Path.RenderTransform>
+                </Path>
+            </Grid>
+        </Viewbox>
+    </ControlTemplate>
+
     <ControlTemplate x:Key="UpArrowIcon">
         <Viewbox>
             <Border Background="Transparent">

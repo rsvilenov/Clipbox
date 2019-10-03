@@ -46,8 +46,8 @@
         </Style>
     </ListView.Resources>
     <i:Interaction.Behaviors>
-        <localBeh:ListViewScrollButtonBehavior IsScrollUpButton="True" ScrollButton="{Binding ScrollUpButton, RelativeSource={RelativeSource AncestorType={x:Type lv:ClipboardListViewBase}}}" />
-        <localBeh:ListViewScrollButtonBehavior IsScrollUpButton="False" ScrollButton="{Binding ScrollDownButton, RelativeSource={RelativeSource AncestorType={x:Type lv:ClipboardListViewBase}}}" />
+        <localBeh:ListViewScrollButtonBehavior ButtonScrollDirection="Up" ScrollButton="{Binding ScrollUpButton, RelativeSource={RelativeSource AncestorType={x:Type lv:ClipboardListViewBase}}}" />
+        <localBeh:ListViewScrollButtonBehavior ButtonScrollDirection="Down" ScrollButton="{Binding ScrollDownButton, RelativeSource={RelativeSource AncestorType={x:Type lv:ClipboardListViewBase}}}" />
     </i:Interaction.Behaviors>
 
     <!--  Remove the default highlighting on mouse over  -->

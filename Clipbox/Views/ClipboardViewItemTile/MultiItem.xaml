@@ -125,8 +125,8 @@
             ScrollViewer.VerticalScrollBarVisibility="Hidden"
             SelectionChanged="SubItemsListView_SelectionChanged">
             <i:Interaction.Behaviors>
-                <localBeh:ListViewScrollButtonBehavior IsScrollUpButton="True" ScrollButton="{Binding ElementName=BtnScrollUpSubItem}" />
-                <localBeh:ListViewScrollButtonBehavior IsScrollUpButton="False" ScrollButton="{Binding ElementName=BtnScrollDownSubItem}" />
+                <localBeh:ListViewScrollButtonBehavior ButtonScrollDirection="Up" ScrollButton="{Binding ElementName=BtnScrollUpSubItem}" />
+                <localBeh:ListViewScrollButtonBehavior ButtonScrollDirection="Down" ScrollButton="{Binding ElementName=BtnScrollDownSubItem}" />
                 <localBeh:ListViewScrollTransferFocusBehavior KeyboardFocusMovedOut="ListViewScrollTransferFocusBehavior_KeyboardFocusMovedOut" />
             </i:Interaction.Behaviors>
             <ListView.ItemContainerStyle>

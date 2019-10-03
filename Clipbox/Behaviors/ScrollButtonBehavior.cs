@@ -15,17 +15,16 @@ namespace Clipbox.Behaviors
         private ScrollViewer _associatedScrollViewer;
         private bool _layoutUpdatedSubscribed;
         private bool _scrollBtnClickSubscribed;
-
-        public bool IsScrollUpButton
+        
+        public ScrollDirection ButtonScrollDirection
         {
-            get { return (bool)GetValue(ScrollUpProperty); }
-            set { SetValue(ScrollUpProperty, value); }
+            get { return (ScrollDirection)GetValue(ButtonScrollDirectionProperty); }
+            set { SetValue(ButtonScrollDirectionProperty, value); }
         }
 
-        public static readonly DependencyProperty ScrollUpProperty =
-            DependencyProperty.Register(nameof(IsScrollUpButton), typeof(bool), typeof(ScrollButtonBehavior), new PropertyMetadata(false));
-
-
+        public static readonly DependencyProperty ButtonScrollDirectionProperty =
+            DependencyProperty.Register(nameof(ButtonScrollDirection), typeof(ScrollDirection), typeof(ScrollButtonBehavior), new PropertyMetadata(ScrollDirection.Down));
+        
 
         public Button ScrollButton
         {
@@ -62,13 +61,20 @@ namespace Clipbox.Behaviors
         {
             if (_associatedScrollViewer != null)
             {
-                if (IsScrollUpButton)
+                switch (ButtonScrollDirection)
                 {
-                    _associatedScrollViewer.PageUp();
-                }
-                else
-                {
-                    _associatedScrollViewer.PageDown();
+                    case ScrollDirection.Up:
+                        _associatedScrollViewer.PageUp();
+                        break;
+                    case ScrollDirection.Down:
+                        _associatedScrollViewer.PageDown();
+                        break;
+                    case ScrollDirection.Left:
+                        _associatedScrollViewer.PageLeft();
+                        break;
+                    case ScrollDirection.Right:
+                        _associatedScrollViewer.PageRight();
+                        break;
                 }
             }
         }
@@ -114,15 +120,24 @@ namespace Clipbox.Behaviors
         {
             if (_associatedScrollViewer != null && ScrollButton != null)
             {
-                if (IsScrollUpButton)
+                switch (ButtonScrollDirection)
                 {
-                    ScrollButton.Visibility = _associatedScrollViewer.ContentVerticalOffset > 0 ?
+                    case ScrollDirection.Up:
+                        ScrollButton.Visibility = _associatedScrollViewer.ContentVerticalOffset > 0 ?
                         Visibility.Visible : Visibility.Collapsed;
-                }
-                else
-                {
-                    ScrollButton.Visibility = _associatedScrollViewer.ContentVerticalOffset < _associatedScrollViewer.ScrollableHeight ?
-                    Visibility.Visible : Visibility.Collapsed;
+                        break;
+                    case ScrollDirection.Down:
+                        ScrollButton.Visibility = _associatedScrollViewer.ContentVerticalOffset < _associatedScrollViewer.ScrollableHeight ?
+                        Visibility.Visible : Visibility.Collapsed;
+                        break;
+                    case ScrollDirection.Left:
+                        ScrollButton.Visibility = _associatedScrollViewer.ContentHorizontalOffset > 0 ?
+                        Visibility.Visible : Visibility.Collapsed;
+                        break;
+                    case ScrollDirection.Right:
+                        ScrollButton.Visibility = _associatedScrollViewer.ContentHorizontalOffset < _associatedScrollViewer.ScrollableWidth ?
+                        Visibility.Visible : Visibility.Collapsed;
+                        break;
                 }
             }
         }
@@ -138,6 +153,14 @@ namespace Clipbox.Behaviors
             {
                 ScrollButton.Click -= ScrollButton_Click;
             }
+        }
+        
+        public enum ScrollDirection
+        {
+            Up,
+            Down,
+            Left,
+            Right
         }
     }
 }
