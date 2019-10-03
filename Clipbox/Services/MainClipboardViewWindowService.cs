@@ -11,6 +11,7 @@ using Clipbox.Views.Interfaces;
 using Clipbox.Win32;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -136,7 +137,8 @@ namespace Clipbox.Services
 
         private void _mainWindow_CloseRequested(object sender, EventArgs e)
         {
-            Close();
+            // run a task so this handle can finish without waiting for the Close operation
+            Task.Run(() => Close());
         }
 
         private void _mainWindow_HousekeepingRequested(object sender, HousekeepingEventArgs e)
