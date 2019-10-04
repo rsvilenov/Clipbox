@@ -3,7 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:infEnums="clr-namespace:Clipbox.Core.Enums;assembly=Clipbox.Core"
+    xmlns:infCcEnums="clr-namespace:Clipbox.Core.ClipboardContent.Enums;assembly=Clipbox.Core"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="450"
     d:DesignWidth="800"
@@ -28,7 +28,7 @@
                             <Style TargetType="ContentControl">
                                 <Setter Property="Visibility" Value="Collapsed" />
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding}" Value="{x:Static infEnums:ClipboardContentClass.Image}">
+                                    <DataTrigger Binding="{Binding}" Value="{x:Static infCcEnums:ClipboardContentClass.Image}">
                                         <Setter Property="Visibility" Value="Visible" />
                                     </DataTrigger>
                                 </Style.Triggers>
@@ -48,7 +48,7 @@
                                 <Style.Triggers>
                                     <MultiDataTrigger>
                                         <MultiDataTrigger.Conditions>
-                                            <Condition Binding="{Binding}" Value="{x:Static infEnums:ClipboardContentClass.File}" />
+                                            <Condition Binding="{Binding}" Value="{x:Static infCcEnums:ClipboardContentClass.File}" />
                                             <Condition Binding="{Binding Path=DataContext.IsGroupItem, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ItemsControl}}" Value="False" />
                                         </MultiDataTrigger.Conditions>
                                         <Setter Property="Visibility" Value="Visible" />
@@ -71,7 +71,7 @@
                                 <Style.Triggers>
                                     <MultiDataTrigger>
                                         <MultiDataTrigger.Conditions>
-                                            <Condition Binding="{Binding}" Value="{x:Static infEnums:ClipboardContentClass.File}" />
+                                            <Condition Binding="{Binding}" Value="{x:Static infCcEnums:ClipboardContentClass.File}" />
                                             <Condition Binding="{Binding Path=DataContext.IsGroupItem, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ItemsControl}}" Value="True" />
                                         </MultiDataTrigger.Conditions>
                                         <Setter Property="Visibility" Value="Visible" />
@@ -91,7 +91,7 @@
                             <Style TargetType="ContentControl">
                                 <Setter Property="Visibility" Value="Collapsed" />
                                 <Style.Triggers>
-                                    <DataTrigger Binding="{Binding}" Value="{x:Static infEnums:ClipboardContentClass.Text}">
+                                    <DataTrigger Binding="{Binding}" Value="{x:Static infCcEnums:ClipboardContentClass.Text}">
                                         <Setter Property="Visibility" Value="Visible" />
                                     </DataTrigger>
                                 </Style.Triggers>
@@ -111,7 +111,7 @@
                                 <Style.Triggers>
                                     <MultiDataTrigger>
                                         <MultiDataTrigger.Conditions>
-                                            <Condition Binding="{Binding}" Value="{x:Static infEnums:ClipboardContentClass.GeneralContent}" />
+                                            <Condition Binding="{Binding}" Value="{x:Static infCcEnums:ClipboardContentClass.GeneralContent}" />
                                             <Condition Binding="{Binding Path=DataContext.IsGroupItem, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ItemsControl}}" Value="False" />
                                         </MultiDataTrigger.Conditions>
                                         <Setter Property="Visibility" Value="Visible" />
@@ -133,7 +133,7 @@
                                 <Style.Triggers>
                                     <MultiDataTrigger>
                                         <MultiDataTrigger.Conditions>
-                                            <Condition Binding="{Binding}" Value="{x:Static infEnums:ClipboardContentClass.GeneralContent}" />
+                                            <Condition Binding="{Binding}" Value="{x:Static infCcEnums:ClipboardContentClass.GeneralContent}" />
                                             <Condition Binding="{Binding Path=DataContext.IsGroupItem, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ItemsControl}}" Value="True" />
                                         </MultiDataTrigger.Conditions>
                                         <Setter Property="Visibility" Value="Visible" />

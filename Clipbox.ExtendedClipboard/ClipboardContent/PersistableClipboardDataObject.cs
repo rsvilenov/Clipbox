@@ -1,5 +1,5 @@
 ﻿using Clipbox.Core.ClipboardContent.Interfaces;
-using Clipbox.Core.Enums;
+using Clipbox.Core.ClipboardContent.Enums;
 using System;
 
 namespace Clipbox.ExtendedClipboard.ClipboardContent

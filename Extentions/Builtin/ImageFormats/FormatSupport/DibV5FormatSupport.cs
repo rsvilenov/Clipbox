@@ -1,4 +1,4 @@
-﻿using Clipbox.Core.Enums;
+﻿using Clipbox.Core.ClipboardContent.Enums;
 using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using Clipbox.Win32;

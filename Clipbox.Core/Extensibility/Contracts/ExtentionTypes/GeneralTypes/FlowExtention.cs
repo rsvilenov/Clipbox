@@ -1,4 +1,4 @@
-﻿using Clipbox.Core.Enums;
+﻿using Clipbox.Core.ClipboardContent.Enums;
 using Clipbox.Core.ClipboardContent.Interfaces;
 using System;
 using System.Collections.Generic;

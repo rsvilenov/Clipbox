@@ -45,7 +45,11 @@
   <ItemGroup>
     <Compile Include="ClipboardContent\Interfaces\IHaveMonitorInfo.cs" />
     <Compile Include="DisposableObject.cs" />
-    <Compile Include="Enums\ClipboardContentClass.cs" />
+    <Compile Include="ClipboardContent\Enums\ClipboardContentClass.cs" />
+    <Compile Include="Search\Enums\SearchCategory.cs" />
+    <Compile Include="Search\SearchTerms\ClipboardContentType.cs" />
+    <Compile Include="Search\ISearchTerm.cs" />
+    <Compile Include="Search\SearchTermBase.cs" />
     <Compile Include="Extensibility\Enums\HouseKeepingRegularity.cs" />
     <Compile Include="Enums\ProcessExitCodes.cs" />
     <Compile Include="Extensibility\Attributes\ClipboardFormatAttribute.cs" />
@@ -74,7 +78,7 @@
     <Compile Include="Extensibility\Contracts\ExtentionTypes\PreviewGenerationTypes\ManyPreviewHandler.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\PreviewGenerationTypes\PreviewHandler.cs" />
     <Compile Include="Extensibility\Contracts\FlowParameter.cs" />
-    <Compile Include="Extensibility\Contracts\IClipioExtention.cs" />
+    <Compile Include="Extensibility\Contracts\IClipboxExtention.cs" />
     <Compile Include="Extensibility\Contracts\IExtentionInfo.cs" />
     <Compile Include="Extensibility\Contracts\IHouseKeepingResult.cs" />
     <Compile Include="Extensibility\Contracts\IHouseKeepingTask.cs" />
@@ -88,6 +92,12 @@
     <Compile Include="Extensibility\Exceptions\ClipioExtentionException.cs" />
     <Compile Include="ProductConstants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Search\SearchTerms\SourceApplicationName.cs" />
+    <Compile Include="Search\SearchTerms\SourceMachineName.cs" />
+    <Compile Include="Search\SearchTerms\SourceWindowName.cs" />
+    <Compile Include="Search\SearchTerms\Tag.cs" />
+    <Compile Include="Search\SearchTerms\TextFields.cs" />
+    <Compile Include="Search\SearchUnit.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Clipbox.Win32\Clipbox.Win32.csproj">

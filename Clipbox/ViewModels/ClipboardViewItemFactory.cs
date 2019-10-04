@@ -1,5 +1,5 @@
 ﻿using Clipbox.Core.ClipboardContent.Interfaces;
-using Clipbox.Core.Enums;
+using Clipbox.Core.ClipboardContent.Enums;
 using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.ExtentionMethods;
 using Clipbox.Services.DataObjects;

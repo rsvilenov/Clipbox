@@ -1,4 +1,4 @@
-﻿namespace Clipbox.Core.Enums
+﻿namespace Clipbox.Core.ClipboardContent.Enums
 {
     public enum ClipboardContentClass
     {

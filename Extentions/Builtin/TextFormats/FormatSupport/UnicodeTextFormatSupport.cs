@@ -4,7 +4,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Text;
 using Clipbox.Win32;
-using Clipbox.Core.Enums;
+using Clipbox.Core.ClipboardContent.Enums;
 
 namespace Clipbox.Extentions.BuiltIn.ImageFormats.FormatSupport
 {

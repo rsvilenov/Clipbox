@@ -94,6 +94,7 @@
     <Compile Include="Services\DataObjects\PreviewDimensions.cs" />
     <Compile Include="Services\DataObjects\PreviewItemTransferObject.cs" />
     <Compile Include="Services\Enums\TrayIconVisibilityPreference.cs" />
+    <Compile Include="Services\Interfaces\ISearchService.cs" />
     <Compile Include="Views\ClipboardListView\SimpleClipboardListView.xaml.cs">
       <DependentUpon>SimpleClipboardListView.xaml</DependentUpon>
     </Compile>

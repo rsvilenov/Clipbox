@@ -5,7 +5,7 @@ using System;
 using System.Runtime.InteropServices;
 using Clipbox.Win32;
 using Clipbox.Win32.Native;
-using Clipbox.Core.Enums;
+using Clipbox.Core.ClipboardContent.Enums;
 
 namespace Clipbox.Extentions.BuiltIn.ImageFormats.FormatSupport
 {

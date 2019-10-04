@@ -1,6 +1,6 @@
 ﻿using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
-using Clipbox.Core.Enums;
+using Clipbox.Core.ClipboardContent.Enums;
 using Clipbox.Win32;
 using Clipbox.Win32.Native;
 using System;

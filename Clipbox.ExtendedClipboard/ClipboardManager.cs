@@ -1,7 +1,6 @@
 ﻿using Clipbox.Core;
-using Clipbox.Core.ClipboardContent;
+using Clipbox.Core.ClipboardContent.Enums;
 using Clipbox.Core.ClipboardContent.Interfaces;
-using Clipbox.Core.Enums;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using Clipbox.Core.Extensibility.Exceptions;
