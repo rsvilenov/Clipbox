@@ -92,7 +92,7 @@ namespace Clipbox.Views
 
             InitializeComponent();
 
-            _mainViewClipboardContents = new MainViewClipboardContents(new ViewModels.MainViewClipboardContentsViewModel(_clipboardManager, previewGenerationService, _settingsService), _uiExtContainer, settingsService);
+            _mainViewClipboardContents = new MainViewClipboardContents(new ViewModels.MainViewClipboardContentsViewModel(_clipboardManager, previewGenerationService, _settingsService, _searchService), _uiExtContainer, settingsService);
             clipboardContents.Content = _mainViewClipboardContents;
             
             _mainViewClipboardContents.CombinabilityCheckRequested += _mainViewClipboardContents_CombinabilityCheckRequested;
