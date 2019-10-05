@@ -89,13 +89,34 @@ namespace Clipbox.SearchProvider
         private string BuildLuceneQuery(IEnumerable<ISearchTerm> searchTerms)
         {
             StringBuilder luceneQuery = new StringBuilder();
-            foreach (ISearchTerm searchTerm in searchTerms)
-            {
-                IEnumerable<string> searchStringParts = GetTermValuesAsStringCollection(searchTerm);
 
-                //luceneQuery.AppendFormat("{0}:{1}")
+            int searchTermsCount = searchTerms.Count();
+            for (int i = 0; i < searchTermsCount; i++)
+            {
+                if (i > 0 && i != searchTermsCount - 1)
+                {
+                    luceneQuery.Append(" AND ");
+                }
+
+                ISearchTerm searchTerm = searchTerms.ElementAt(i);
+                string category = searchTerm.Category.ToString();
+                IEnumerable<string> searchStringParts = GetTermValuesAsStringCollection(searchTerm);
+                
+                int partsCount = searchStringParts.Count();
+                luceneQuery.Append("(");
+                for (int j = 0; j < partsCount; j++)
+                {
+                    if (j > 0 && j != partsCount - 1)
+                    {
+                        luceneQuery.Append(" OR ");
+                    }
+
+                    luceneQuery.AppendFormat("{0}:\"{1}\"", category, searchStringParts.ElementAt(j));
+                }
+                luceneQuery.Append(")");
             }
-            return string.Empty;
+
+            return luceneQuery.ToString();
         }
 
         public void StoreSearchUnits(IEnumerable<SearchUnit> searchUnits)
@@ -170,7 +191,7 @@ namespace Clipbox.SearchProvider
             }
             else
             {
-                throw new InvalidOperationException("The term's type is not recognized.");
+                throw new ArgumentException("The term's type is not recognized.");
             }
         }
     }
