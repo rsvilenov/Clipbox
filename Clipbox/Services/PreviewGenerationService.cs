@@ -9,7 +9,6 @@ using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.Threading;
 using Clipbox.Infrastructure.UI.DataObjects;
 using Clipbox.Services.DataObjects;
-using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.Win32;

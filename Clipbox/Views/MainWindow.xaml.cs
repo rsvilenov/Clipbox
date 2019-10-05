@@ -30,19 +30,18 @@ namespace Clipbox.Views
     /// </summary>
     public partial class MainWindow : AcryllicWindow, IMainWindow
     {
-        private ISettingsService _settingsService;
-        
-        private WallpaperWindow _wallpaperWindow;
+        private readonly ISettingsService _settingsService;
+        private readonly ISearchService _searchService;
+        private readonly MonitorUtils.DisplayMonitor _monitor;
+        private readonly IClipboardManager _clipboardManager;
+        private readonly UIExtentionContainer _uiExtContainer;
 
-        private MonitorUtils.DisplayMonitor _monitor;
+        private WallpaperWindow _wallpaperWindow;
 
         private MainClipboardViewBackgroundRenderMode _backgroundRenderMode;
 
         private MainViewClipboardContents _mainViewClipboardContents;
 
-        private IClipboardManager _clipboardManager;
-        private UIExtentionContainer _uiExtContainer;
-        
         public event EventHandler<CombinabilityEventArgs> ClipbardItemsCombinabilityCheckRequested;
 
         public event EventHandler<SetToClipboardEventArgs> SetItemsToClipboardRequested;
@@ -77,12 +76,14 @@ namespace Clipbox.Views
             IPreviewGenerationService previewGenerationService,
             UIExtentionContainer uiExtContainer,
             ISettingsService settingsService, 
-            MonitorUtils.DisplayMonitor monitor)
+            MonitorUtils.DisplayMonitor monitor,
+            ISearchService searchService)
         {
             _clipboardManager = clipboardManager;
             _uiExtContainer = uiExtContainer;
             _settingsService = settingsService;
             _monitor = monitor;
+            _searchService = searchService;
 
             if (!ThemeManager.IsLoaded)
             {

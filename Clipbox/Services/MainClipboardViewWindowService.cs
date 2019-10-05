@@ -21,15 +21,17 @@ namespace Clipbox.Services
     {
         private static readonly object _mainWindowLockHandle = new object();
 
-        private ISettingsService _settingsService;
+        private readonly ISettingsService _settingsService;
+        
+        private readonly IClipboardManager _clipboardManager;
+
+        private readonly IPreviewGenerationService _previewGenerationService;
+
+        private readonly ISearchService _searchService;
+
+        private readonly UIExtentionContainer _uiExtContainer;
         
         private IMainWindow _mainWindow;
-
-        private IClipboardManager _clipboardManager;
-
-        private IPreviewGenerationService _previewGenerationService;
-
-        private UIExtentionContainer _uiExtContainer;
 
         public event EventHandler<SetToClipboardEventArgs> SetItemsToClipboardRequested;
 
@@ -51,12 +53,14 @@ namespace Clipbox.Services
         public MainClipboardViewWindowService(IClipboardManager clipboardManager,
             IPreviewGenerationService previewGenerationService, 
             UIExtentionContainer uiExtContainer, 
-            ISettingsService settingsService)
+            ISettingsService settingsService,
+            ISearchService searchService)
         {
             _clipboardManager = clipboardManager;
             _previewGenerationService = previewGenerationService;
             _uiExtContainer = uiExtContainer;
             _settingsService = settingsService;
+            _searchService = searchService;
         }
         
         public void Close()
@@ -113,7 +117,8 @@ namespace Clipbox.Services
                             _previewGenerationService,
                             _uiExtContainer,
                             _settingsService,
-                            dm);
+                            dm,
+                            _searchService);
                         _mainWindow = mainWindow;
 
                         _mainWindow.ClipbardItemsCombinabilityCheckRequested += _mainWindow_ClipbardItemsCombinabilityCheckRequested;

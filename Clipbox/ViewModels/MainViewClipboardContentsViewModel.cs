@@ -9,6 +9,8 @@ namespace Clipbox.ViewModels
 {
     public class MainViewClipboardContentsViewModel : ClipboardContentsViewModelBase
     {
+        private readonly ISearchService _searchService;
+
         private string _currentVisibleItemsDateString;
 
         public string CurrentVisibleItemsDateString
@@ -35,9 +37,11 @@ namespace Clipbox.ViewModels
         
         public MainViewClipboardContentsViewModel(IClipboardManager clipboardManager,
             IPreviewGenerationService previewGenerationService,
-            ISettingsService settingsService) 
+            ISettingsService settingsService,
+            ISearchService searchService) 
                 : base(clipboardManager, previewGenerationService, settingsService)
         {
+            _searchService = searchService;
         }
         
         public IEnumerable<string> GetClipboardItemIds()

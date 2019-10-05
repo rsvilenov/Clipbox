@@ -154,9 +154,16 @@ namespace Clipbox
             _cloudSyncService.IsEnabled = _settingsService.GetSetting<bool>(SettingsKeys.IsCloudSyncEnabled);
 
             _trayContextMenuService = new TrayContextMenuService(_settingsService);
-            
+
+
+            _searchService = new SearchService(_extentionLoader.SearchSupportExtensionContainer, _clipboardManager, new LuceneSearch());
+
             // this view can show a little bit slower so we will not keep its instance alive the whole time - we will create it upon request within the service
-            _mainClipboardViewWindowService = new MainClipboardViewWindowService(_clipboardManager, _previewGenerationService, _extentionLoader.UIExtentionContainer, _settingsService);
+            _mainClipboardViewWindowService = new MainClipboardViewWindowService(_clipboardManager, 
+                _previewGenerationService, 
+                _extentionLoader.UIExtentionContainer, 
+                _settingsService,
+                _searchService);
 
 
             // Initialize the flow controller
@@ -169,8 +176,6 @@ namespace Clipbox
 
             _trayService = new TrayIconService(_mainClipboardViewWindowService, _trayContextMenuService, _settingsService);
 
-            _searchService = new SearchService(_extentionLoader.SearchSupportExtensionContainer, _clipboardManager, new LuceneSearch());
-            
             if (!ThemeManager.IsLoaded)
             {
                 ThemeManager.LoadThemeFromSystemTheme();
