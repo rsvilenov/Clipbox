@@ -358,6 +358,10 @@
       <Project>{EDD4D662-1F39-415C-9B66-718457922626}</Project>
       <Name>Clipbox.Infrastructure</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Clipbox.SearchProvider\Clipbox.SearchProvider.csproj">
+      <Project>{A4CBB114-319B-4895-873C-BDBB6EA2B37D}</Project>
+      <Name>Clipbox.SearchProvider</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Clipbox.Win32\Clipbox.Win32.csproj">
       <Project>{14442748-d4f5-4a60-a9da-7e0b86d48b73}</Project>
       <Name>Clipbox.Win32</Name>

@@ -6,7 +6,7 @@ using System.Text;
 using Clipbox.Win32;
 using Clipbox.Core.ClipboardContent.Enums;
 
-namespace Clipbox.Extentions.BuiltIn.ImageFormats.FormatSupport
+namespace Clipbox.Extentions.BuiltIn.TextFormats.FormatSupport
 {
     [ClipboxExtention(Author = "Clipbox", Description = "Unicode text formats", Version = 0.1)]
     [ClipboardFormat("CF_HTML")]

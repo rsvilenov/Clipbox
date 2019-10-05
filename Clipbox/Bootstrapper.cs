@@ -7,6 +7,7 @@ using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.IPC;
 using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.UI.Theme;
+using Clipbox.SearchProvider;
 using Clipbox.Services;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
@@ -29,6 +30,8 @@ namespace Clipbox
     public class Bootstrapper
     {
         FlowController _flowController;
+
+        IntegrationController _integrationController;
 
         LowLevelKeyboardService _keyboardService;
 
@@ -57,6 +60,8 @@ namespace Clipbox
         QuickViewClipboardContents _quickViewClipboardContents;
 
         PreviewGenerationService _previewGenerationService;
+
+        SearchService _searchService;
 
         public void PerformStartupSequence()
         {
@@ -166,6 +171,9 @@ namespace Clipbox
 
             _trayService = new TrayIconService(_mainClipboardViewWindowService, _trayContextMenuService, _settingsService);
 
+            _searchService = new SearchService(new LuceneSearch());
+
+            _integrationController = new IntegrationController(_previewGenerationService, _searchService, _clipboardManager);
 
             if (!ThemeManager.IsLoaded)
             {
@@ -285,6 +293,8 @@ namespace Clipbox
             TryDisposeObject(_trayService);
             TryDisposeObject(_trayBandService);
             TryDisposeObject(_trayContextMenuService);
+            TryDisposeObject(_integrationController);
+            TryDisposeObject(_searchService);
         }
 
         private void TryDisposeObject(IDisposable obj)

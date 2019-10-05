@@ -71,8 +71,15 @@ namespace Clipbox.Services
 
         private void DoLenghtySearchStoreOperations(List<string> removedIds, List<SearchUnit> addedSearchUnits)
         {
-            _searchProvider.DeleteSearchUnits(removedIds);
-            _searchProvider.StoreSearchUnits(addedSearchUnits);
+            if (removedIds.Any())
+            {
+                _searchProvider.DeleteSearchUnits(removedIds);
+            }
+
+            if (addedSearchUnits.Any())
+            {
+                _searchProvider.StoreSearchUnits(addedSearchUnits);
+            }
         }
 
         public IEnumerable<string> FindSearchUnitIds(IEnumerable<ISearchTerm> searchTerms)
@@ -86,6 +93,8 @@ namespace Clipbox.Services
             {
                 _addedSearchUnits.Add(searchUnit);
             }
+
+            _clipboardItemsChangeSlidingTimer.Slide();
         }
 
         public void DeleteSearchUnit(string unitId)
@@ -94,6 +103,8 @@ namespace Clipbox.Services
             {
                 _removedSearchUnitIds.Add(unitId);
             }
+
+            _clipboardItemsChangeSlidingTimer.Slide();
         }
 
         public void Dispose()

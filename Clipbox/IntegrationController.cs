@@ -47,13 +47,27 @@ namespace Clipbox
         {
             List<ISearchTerm> searchTerms = new List<ISearchTerm>();
 
-            var contentTypeSearchTerm = new ClipboardContentType(clipboardItem.ClipboardDataObjects.Select(cdo => cdo.ContentClass));
+            var contentTypeSearchTerm = new ClipboardContentType(clipboardItem
+                .ClipboardDataObjects
+                .Select(cdo => cdo.ContentClass)
+                .Distinct());
 
             searchTerms.Add(contentTypeSearchTerm);
 
             var textFieldsList = new List<string>();
-            textFieldsList.AddRange(pdto.PreviewItems.Select(item => item.Description));
-            textFieldsList.AddRange(pdto.PreviewItems.Select(item => item.Text));
+            foreach (PreviewItemTransferObject pito in pdto.PreviewItems)
+            {
+                if (!string.IsNullOrEmpty(pito.Description))
+                {
+                    textFieldsList.Add(pito.Description);
+                }
+
+                if (!string.IsNullOrEmpty(pito.Text))
+                {
+                    textFieldsList.Add(pito.Text);
+                }
+            }
+
             var textSearchTerm = new TextFields(textFieldsList);
             searchTerms.Add(textSearchTerm);
 

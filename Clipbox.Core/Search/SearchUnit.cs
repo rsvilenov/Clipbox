@@ -7,6 +7,7 @@ namespace Clipbox.Core.Search
     {
         public SearchUnit(string id, IEnumerable<ISearchTerm> searchTerms)
         {
+            Id = id;
             SearchTerms = searchTerms.ToList();
         }
 

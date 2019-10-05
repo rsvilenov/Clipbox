@@ -25,12 +25,17 @@ namespace Clipbox.SearchProvider
 
         public LuceneSearch()
         {
-            var searchUnitObj = new SearchUnit(null, null);
+            var searchUnitObj = new SearchUnit(null, Enumerable.Empty<ISearchTerm>());
             _searchUnitIdFieldName = nameof(searchUnitObj.Id);
         }
 
         public void DeleteSearchUnits(IEnumerable<string> searchUnitIds)
         {
+            if (!searchUnitIds.Any())
+            {
+                throw new ArgumentException($"{nameof(searchUnitIds)} is empty");
+            }
+
             DirectoryInfo dirInfo = GetIndexDirectoryInfo();
             using (var analyzer = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30))
             using (var indexDir = FSDirectory.Open(dirInfo))
@@ -48,6 +53,11 @@ namespace Clipbox.SearchProvider
 
         public IEnumerable<string> FindSearchUnitIds(IEnumerable<ISearchTerm> searchTerms)
         {
+            if (!searchTerms.Any())
+            {
+                throw new ArgumentException($"{nameof(searchTerms)} is empty");
+            }
+
             List<string> searchUnitIds = new List<string>();
 
             DirectoryInfo dirInfo = GetIndexDirectoryInfo();
@@ -121,6 +131,11 @@ namespace Clipbox.SearchProvider
 
         public void StoreSearchUnits(IEnumerable<SearchUnit> searchUnits)
         {
+            if (!searchUnits.Any())
+            {
+                throw new ArgumentException($"{nameof(searchUnits)} is empty");
+            }
+
             DirectoryInfo dirInfo = GetIndexDirectoryInfo();
 
             using (var analyzer = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30))
