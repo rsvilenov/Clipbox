@@ -46,6 +46,7 @@
     <Compile Include="ClipboardContent\Interfaces\IHaveMonitorInfo.cs" />
     <Compile Include="DisposableObject.cs" />
     <Compile Include="ClipboardContent\Enums\ClipboardContentClass.cs" />
+    <Compile Include="Extensibility\Contracts\ExtentionTypes\GeneralTypes\SearchSupportExtension.cs" />
     <Compile Include="Search\Enums\SearchCategory.cs" />
     <Compile Include="Search\SearchTerms\ClipboardContentType.cs" />
     <Compile Include="Search\ISearchTerm.cs" />

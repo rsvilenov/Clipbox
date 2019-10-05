@@ -31,8 +31,6 @@ namespace Clipbox
     {
         FlowController _flowController;
 
-        IntegrationController _integrationController;
-
         LowLevelKeyboardService _keyboardService;
 
         IClipboardManager _clipboardManager;
@@ -171,10 +169,8 @@ namespace Clipbox
 
             _trayService = new TrayIconService(_mainClipboardViewWindowService, _trayContextMenuService, _settingsService);
 
-            _searchService = new SearchService(new LuceneSearch());
-
-            _integrationController = new IntegrationController(_previewGenerationService, _searchService, _clipboardManager);
-
+            _searchService = new SearchService(_extentionLoader.SearchSupportExtensionContainer, _clipboardManager, new LuceneSearch());
+            
             if (!ThemeManager.IsLoaded)
             {
                 ThemeManager.LoadThemeFromSystemTheme();
@@ -293,7 +289,6 @@ namespace Clipbox
             TryDisposeObject(_trayService);
             TryDisposeObject(_trayBandService);
             TryDisposeObject(_trayContextMenuService);
-            TryDisposeObject(_integrationController);
             TryDisposeObject(_searchService);
         }
 

@@ -1,4 +1,5 @@
 ﻿using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
+using Clipbox.Core.Extensibility.Contracts.ExtentionTypes.GeneralTypes;
 using Clipbox.Infrastructure.Extensibility.Containers;
 using Clipbox.Infrastructure.Extensibility.Discovery;
 using System;
@@ -15,6 +16,8 @@ namespace Clipbox
 
         public ClipboardFormatPreviewExtentionContainer PreviewGeneratorsContainer { get; private set; }
 
+        public SearchSupportExtensionContainer SearchSupportExtensionContainer { get; private set; }
+
         public FlowExtentionContainer FlowExtentionContainer { get; private set; }
 
         public UIExtentionContainer UIExtentionContainer { get; private set; }
@@ -29,10 +32,12 @@ namespace Clipbox
 
             FormatsContainer = new ClipboardFormatExtentionContainer();
             PreviewGeneratorsContainer = new ClipboardFormatPreviewExtentionContainer();
+            SearchSupportExtensionContainer = new SearchSupportExtensionContainer();
 
-            // the above two containers contain stateless extentions and we can track their loading
+            // the above three containers contain stateless extentions and we can track their loading
             FormatsContainer.ExtentionResolved += (s, e) => StatelessExtentionResolved?.Invoke(this, e);
             PreviewGeneratorsContainer.ExtentionResolved += (s, e) => StatelessExtentionResolved?.Invoke(this, e);
+            SearchSupportExtensionContainer.ExtentionResolved += (s, e) => StatelessExtentionResolved?.Invoke(this, e);
 
             // these two are stateful and we can only guess when they are used
             FlowExtentionContainer = new FlowExtentionContainer();
@@ -73,6 +78,14 @@ namespace Clipbox
                 foreach (var ext in previewExtentions)
                 {
                     PreviewGeneratorsContainer.RegisterExtention(ext);
+                    LoadedTypes.Add(ext);
+                }
+
+                // find all extentions of type SearchSupportExtension
+                var searchSupportExtensionExtentions = walker.FindExtentions<SearchSupportExtension>();
+                foreach (var ext in searchSupportExtensionExtentions)
+                {
+                    SearchSupportExtensionContainer.RegisterExtention(ext);
                     LoadedTypes.Add(ext);
                 }
 

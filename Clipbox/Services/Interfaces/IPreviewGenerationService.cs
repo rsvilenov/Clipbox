@@ -11,7 +11,5 @@ namespace Clipbox.Services.Interfaces
         bool TryGetQuickPreviewDimentionInfo(string clipboardItemId, MonitorDimensions monitorDimensions, out CalibratedPreviewDimentionInfo previewDimensionInfo);
 
         PreviewDataTransferObject GetPreviewDataTransferObject(IClipboardItem clipboardItem, MonitorDimensions monitorDimensions);
-
-        event EventHandler<PreviewGenerationEventArgs> PreviewGenerated;
     }
 }

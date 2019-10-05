@@ -10,10 +10,6 @@ namespace Clipbox.Services.Interfaces
         /// </summary>
         /// <param name="searchTerms"></param>
         /// <returns></returns>
-        IEnumerable<string> FindSearchUnitIds(IEnumerable<ISearchTerm> searchTerms);
-
-        void StoreSearchUnit(SearchUnit searchUnit);
-
-        void DeleteSearchUnit(string unitId);
+        IEnumerable<string> FindClipboardItemIds(IEnumerable<ISearchTerm> searchTerms);
     }
 }
