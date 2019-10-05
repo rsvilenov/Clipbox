@@ -9,6 +9,7 @@ using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.Threading;
 using Clipbox.Infrastructure.UI.DataObjects;
 using Clipbox.Services.DataObjects;
+using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.Win32;
@@ -37,6 +38,8 @@ namespace Clipbox.Services
         private ConcurrentDictionary<string, PreviewDimensionInfo> _previewDimensionsDictionary;
 
         private SimpleDispatcher _bgGenerationDispatcher;
+
+        public event EventHandler<PreviewGenerationEventArgs> PreviewGenerated;
 
         public PreviewGenerationService(
             IClipboardManager clipboardManager,
@@ -113,6 +116,7 @@ namespace Clipbox.Services
                 IClipboardItem clipboardItem = _clipboardManager.GetClipboardItem(clipboardItemId, restoreShrinked: true);
                 PreviewDataTransferObject pdto = GeneratePreviewDataTransferObject(clipboardItem, itemRequestedHeight, itemRequestedWidth);
                 CacheGeneratedData(monitorDimensions, itemRequestedHeight, itemRequestedWidth, pdto, hasHeightBeenDpiScaled);
+                PreviewGenerated?.Invoke(this, new PreviewGenerationEventArgs(clipboardItem, pdto));
             });
         }
 

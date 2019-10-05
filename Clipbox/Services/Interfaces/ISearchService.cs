@@ -1,5 +1,4 @@
-﻿using Clipbox.Core.ClipboardContent.Interfaces;
-using Clipbox.Core.Search;
+﻿using Clipbox.Core.Search;
 using System.Collections.Generic;
 
 namespace Clipbox.Services.Interfaces
@@ -11,6 +10,10 @@ namespace Clipbox.Services.Interfaces
         /// </summary>
         /// <param name="searchTerms"></param>
         /// <returns></returns>
-        IEnumerable<IClipboardItem> FindClipboardItems(IEnumerable<ISearchTerm> searchTerms);
+        IEnumerable<string> FindSearchUnitIds(IEnumerable<ISearchTerm> searchTerms);
+
+        void StoreSearchUnit(SearchUnit searchUnit);
+
+        void DeleteSearchUnit(string unitId);
     }
 }

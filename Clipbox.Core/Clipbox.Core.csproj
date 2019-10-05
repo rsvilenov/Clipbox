@@ -94,7 +94,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Search\SearchTerms\SourceApplicationName.cs" />
     <Compile Include="Search\SearchTerms\SourceMachineName.cs" />
-    <Compile Include="Search\SearchTerms\SourceWindowName.cs" />
+    <Compile Include="Search\SearchTerms\SourceWindowCaption.cs" />
     <Compile Include="Search\SearchTerms\Tag.cs" />
     <Compile Include="Search\SearchTerms\TextFields.cs" />
     <Compile Include="Search\SearchUnit.cs" />

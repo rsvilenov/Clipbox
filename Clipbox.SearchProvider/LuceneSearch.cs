@@ -177,9 +177,9 @@ namespace Clipbox.SearchProvider
             {
                 return ((SourceMachineName)term).SearchValues;
             }
-            else if (term is SourceWindowName)
+            else if (term is SourceWindowCaption)
             {
-                return ((SourceWindowName)term).SearchValues;
+                return ((SourceWindowCaption)term).SearchValues;
             }
             else if (term is TextFields)
             {
