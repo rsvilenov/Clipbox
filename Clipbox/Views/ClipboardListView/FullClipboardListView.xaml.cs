@@ -6,6 +6,7 @@ using Clipbox.Views.EventArgsClasses;
 using Clipbox.Win32.Native;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Timers;
@@ -107,6 +108,20 @@ namespace Clipbox.Views.ClipboardListView
             _postSelectionUtilsTimer.Elapsed += _postSelectionUtilsTimer_Elapsed;
 
             LayoutUpdated += (sender, args) => _layoutSlidingTimer.Slide();
+        }
+
+        protected override void OnItemsChanged(NotifyCollectionChangedEventArgs e)
+        {
+            // when we perform search or add/remove items, we should adjust the group cache
+            InvalidateGroupCache();
+            base.OnItemsChanged(e);
+        }
+
+        private void InvalidateGroupCache()
+        {
+            // causes LoadItemsAndGroupsCachedInfo() to reload the cache on the next LayoutUpdated event.
+            _lastListViewItemCount = 0;
+            _groupNameGroupItemMapping.Clear();
         }
 
         private void _scrollbarValueChangedSlidingTimer_Elapsed(object sender, EventArgs e)
@@ -253,6 +268,16 @@ namespace Clipbox.Views.ClipboardListView
                 return;
             }
 
+            Debug.WriteLine("Loading group cached info.");
+
+            _groupNameGroupItemMapping.Clear();
+
+
+            if (this.Items.Count == 0)
+            {
+                return;
+            }
+
             CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(this.ItemsSource);
 
             if (view.Groups == null)
@@ -260,14 +285,8 @@ namespace Clipbox.Views.ClipboardListView
                 return;
             }
 
-            _groupNameGroupItemMapping.Clear();
-
             var groups = view.Groups.Cast<CollectionViewGroup>();
 
-            if (this.Items.Count == 0)
-            {
-                return;
-            }
 
             foreach (var group in groups)
             {

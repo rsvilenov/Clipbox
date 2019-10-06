@@ -1,4 +1,6 @@
-﻿using Clipbox.ExtendedClipboard.Interfaces;
+﻿using Clipbox.Core.Search;
+using Clipbox.Core.Search.SearchTerms;
+using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.UI.DataObjects;
 using Clipbox.Services.Interfaces;
 using System.Collections.Generic;
@@ -10,30 +12,6 @@ namespace Clipbox.ViewModels
     public class MainViewClipboardContentsViewModel : ClipboardContentsViewModelBase
     {
         private readonly ISearchService _searchService;
-
-        private string _currentVisibleItemsDateString;
-
-        public string CurrentVisibleItemsDateString
-        {
-            get { return _currentVisibleItemsDateString; }
-            set { SetField(ref _currentVisibleItemsDateString, value); }
-        }
-
-        private string _firstItemDateString;
-
-        public string FirstItemDateString
-        {
-            get { return _firstItemDateString; }
-            set { SetField(ref _firstItemDateString, value); }
-        }
-
-        private string _lastItemDateString;
-
-        public string LastItemDateString
-        {
-            get { return _lastItemDateString; }
-            set { SetField(ref _lastItemDateString, value); }
-        }
         
         public MainViewClipboardContentsViewModel(IClipboardManager clipboardManager,
             IPreviewGenerationService previewGenerationService,
@@ -44,9 +22,16 @@ namespace Clipbox.ViewModels
             _searchService = searchService;
         }
         
-        public IEnumerable<string> GetClipboardItemIds()
+        public IEnumerable<string> GetClipboardItemIds(IEnumerable<ISearchTerm> searchTerms)
         {
-            return base.ClipboardManager.GetAllItemIds();
+            if (searchTerms != null && searchTerms.Any())
+            {
+                return _searchService.FindClipboardItemIds(searchTerms);
+            }
+            else
+            {
+                return base.ClipboardManager.GetAllItemIds();
+            }
         }
         
         public void LoadAllItems(MonitorDimensions monitorDimensions, IEnumerable<string> clipboardItemIds)

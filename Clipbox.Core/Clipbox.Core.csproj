@@ -97,7 +97,7 @@
     <Compile Include="Search\SearchTerms\SourceMachineName.cs" />
     <Compile Include="Search\SearchTerms\SourceWindowCaption.cs" />
     <Compile Include="Search\SearchTerms\Tag.cs" />
-    <Compile Include="Search\SearchTerms\TextFields.cs" />
+    <Compile Include="Search\SearchTerms\Text.cs" />
     <Compile Include="Search\SearchUnit.cs" />
   </ItemGroup>
   <ItemGroup>

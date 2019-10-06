@@ -165,7 +165,7 @@ namespace Clipbox.Services
                 }
             }
 
-            var textSearchTerm = new TextFields(textFieldsList);
+            var textSearchTerm = new Text(textFieldsList);
             searchTerms.Add(textSearchTerm);
 
             var sourceApplicationNameSearchTerm = new SourceApplicationName(new List<string>

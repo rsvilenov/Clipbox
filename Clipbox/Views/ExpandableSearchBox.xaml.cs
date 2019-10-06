@@ -1,18 +1,8 @@
 ﻿using Clipbox.Infrastructure.UI.CustomControls;
+using Clipbox.Views.EventArgsClasses;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Clipbox.Views
 {
@@ -23,6 +13,8 @@ namespace Clipbox.Views
     {
         public event EventHandler Expanded;
 
+        public event EventHandler<SearchRequestEventArgs> SearchRequested;
+
         public double TextBoxExpandedWidth
         {
             get { return (double)GetValue(TextBoxExpandedWidthProperty); }
@@ -32,8 +24,7 @@ namespace Clipbox.Views
         public static readonly DependencyProperty TextBoxExpandedWidthProperty =
             DependencyProperty.Register(nameof(TextBoxExpandedWidth), typeof(double), typeof(ExpandableSearchBox), new PropertyMetadata(200d));
 
-
-
+        
         public ExpandableSearchBox()
         {
             InitializeComponent();
@@ -45,6 +36,7 @@ namespace Clipbox.Views
             string text = ((SearchTextBox)sender).Text;
 
             // fire search events/commands
+            SearchRequested.Invoke(this, new SearchRequestEventArgs(text));
         }
 
         private void Expander_Expanded(object sender, RoutedEventArgs e)
@@ -56,8 +48,8 @@ namespace Clipbox.Views
         private void Expander_Collapsed(object sender, RoutedEventArgs e)
         {
             searchTextBox.Text = string.Empty;
-
             // fire search events/commands
+            SearchRequested.Invoke(this, new SearchRequestEventArgs(string.Empty));
         }
     }
 }

@@ -9,7 +9,7 @@
         /// <summary>
         /// Text and Description
         /// </summary>
-        TextFields,
+        Text,
         Tag
     }
 }

@@ -1,4 +1,6 @@
-﻿using Clipbox.Infrastructure.Extensibility.Containers;
+﻿using Clipbox.Core.Search;
+using Clipbox.Core.Search.SearchTerms;
+using Clipbox.Infrastructure.Extensibility.Containers;
 using Clipbox.Infrastructure.Threading;
 using Clipbox.Infrastructure.UI;
 using Clipbox.Services.EventArgsClasses;
@@ -106,12 +108,17 @@ namespace Clipbox.Views
         {
             if ((bool)e.NewValue)
             {
-                IEnumerable<string> clipboardItemIds = _viewModel.GetClipboardItemIds(); // maybe pass filters to this method later
-
-                base.PerformHousekeeping(clipboardItemIds, out IReadOnlyCollection<string> removedClipboardItemIds);
-                
-                _viewModel.LoadAllItems(this.MonitorDimensions, clipboardItemIds.Except(removedClipboardItemIds));
+                LoadContents(null);
             }
+        }
+
+        private void LoadContents(IEnumerable<ISearchTerm> searchTerms)
+        {
+            IEnumerable<string> clipboardItemIds = _viewModel.GetClipboardItemIds(searchTerms); // maybe pass filters to this method later
+
+            base.PerformHousekeeping(clipboardItemIds, out IReadOnlyCollection<string> removedClipboardItemIds);
+
+            _viewModel.LoadAllItems(this.MonitorDimensions, clipboardItemIds.Except(removedClipboardItemIds));
         }
 
         public void ScheduleLoadingOfViewItem(string clipboardItemId)
@@ -323,6 +330,30 @@ namespace Clipbox.Views
             // TODO: the child should become visible when the container becomes visible... In this case it does not. Figure out why.
             MainListView.Visibility = Visibility.Visible;
             MainListView.Focus();
+        }
+
+        private void ExpandableSearchBox_SearchRequested(object sender, EventArgsClasses.SearchRequestEventArgs e)
+        {
+            MainListView.Visibility = Visibility.Hidden;
+
+            _viewModel.ClipboardViewItemWrappers.Clear();
+
+            Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
+            {
+                List<ISearchTerm> searchTerms = null;
+
+                if (!string.IsNullOrWhiteSpace(e.SearchString))
+                {
+
+                    searchTerms = new List<ISearchTerm>
+                    {
+                        new Text(new List<string> { e.SearchString })
+                    };
+                }
+
+                LoadContents(searchTerms);
+            }));
+            
         }
     }
 }

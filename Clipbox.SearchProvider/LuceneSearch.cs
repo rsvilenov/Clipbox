@@ -88,9 +88,9 @@ namespace Clipbox.SearchProvider
 
         private string GetDefaultSearchField(IEnumerable<ISearchTerm> searchTerms)
         {
-            if (searchTerms.Any(st => st.Category == SearchCategory.TextFields))
+            if (searchTerms.Any(st => st.Category == SearchCategory.Text))
             {
-                return SearchCategory.TextFields.ToString();
+                return SearchCategory.Text.ToString();
             }
 
             return searchTerms.First().Category.ToString();
@@ -157,7 +157,7 @@ namespace Clipbox.SearchProvider
                         foreach (ISearchTerm term in unit.SearchTerms)
                         {
                             string stringToStore = string.Join(" ; ", GetTermValuesAsStringCollection(term));
-                            document.Add(new Field(term.Category.ToString(), stringToStore, Field.Store.YES, Field.Index.ANALYZED));
+                            document.Add(new Field(term.Category.ToString(), stringToStore, Field.Store.NO, Field.Index.ANALYZED));
                         }
 
                         indexWriter.AddDocument(document);
@@ -196,9 +196,9 @@ namespace Clipbox.SearchProvider
             {
                 return ((SourceWindowCaption)term).SearchValues;
             }
-            else if (term is TextFields)
+            else if (term is Text)
             {
-                return ((TextFields)term).SearchValues;
+                return ((Text)term).SearchValues;
             }
             else if (term is Tag)
             {
