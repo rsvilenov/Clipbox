@@ -20,9 +20,6 @@
         <Border.Background>
             <SolidColorBrush Opacity="0.3" Color="Black" />
         </Border.Background>
-        <Border.CacheMode>
-            <BitmapCache />
-        </Border.CacheMode>
 
         <Border.Resources>
             <Storyboard x:Key="FadeInBackground">

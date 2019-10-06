@@ -38,9 +38,6 @@
         OverridesDefaultStyle="True"
         Tag="{DynamicResource CategoriesIcon}"
         Template="{StaticResource HorizontalLeftStretchyExpander}">
-        <Expander.CacheMode>
-            <BitmapCache />
-        </Expander.CacheMode>
         <customControls:SearchTextBox
             x:Name="searchTextBox"
             Width="{Binding TextBoxExpandedWidth}"

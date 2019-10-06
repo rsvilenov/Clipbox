@@ -153,9 +153,6 @@
                         <!--  right scroll button  -->
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
-                    <Grid.CacheMode>
-                        <BitmapCache />
-                    </Grid.CacheMode>
                     <Button
                         Name="scrollBtnLeft"
                         Grid.Column="0"

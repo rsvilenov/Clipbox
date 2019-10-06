@@ -95,9 +95,6 @@
             <RowDefinition />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <Grid.CacheMode>
-            <BitmapCache />
-        </Grid.CacheMode>
         <Button
             Name="scrollBtnUp"
             Grid.Row="0"
