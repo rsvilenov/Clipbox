@@ -3,6 +3,7 @@ using Clipbox.Core.Search.SearchTerms;
 using Clipbox.Infrastructure.Extensibility.Containers;
 using Clipbox.Infrastructure.Threading;
 using Clipbox.Infrastructure.UI;
+using Clipbox.Infrastructure.UI.CustomControls;
 using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
@@ -16,6 +17,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace Clipbox.Views
@@ -127,6 +129,12 @@ namespace Clipbox.Views
             _cancellableTaskManager.ScheduleTask(clipboardItemId, new Action<string>((taskId) =>
             {
                 ClipboardViewItemWrapper wrapper = _viewModel.GetViewItemWrapper(clipboardItemId);
+                if (wrapper == null)
+                {
+                    // by the time this task executes, the item may has been filtered out by the search or the filters...
+                    return;
+                }
+
                 _viewModel.TryGetPreviewDimensions(base.MonitorDimensions, wrapper, out ClipboardViewItemDimensionInfo cvItemDimInfo);
                 
                 // this optimization (updating the bindable properties in the dispatcher thread with background priority)
@@ -329,7 +337,12 @@ namespace Clipbox.Views
             MainListViewContainer.Visibility = Visibility.Visible;
             // TODO: the child should become visible when the container becomes visible... In this case it does not. Figure out why.
             MainListView.Visibility = Visibility.Visible;
-            MainListView.Focus();
+
+            // focus the mainlistview only if the contents changed due to things other than search
+            if (!(Keyboard.FocusedElement is TextBox))
+            {
+                MainListView.Focus();
+            }
         }
 
         private void ExpandableSearchBox_SearchRequested(object sender, EventArgsClasses.SearchRequestEventArgs e)

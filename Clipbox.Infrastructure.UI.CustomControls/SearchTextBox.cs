@@ -62,7 +62,7 @@ namespace Clipbox.Infrastructure.UI.CustomControls
         }
 
         public static readonly DependencyProperty SearchOnInputIdleDelayMSProperty =
-            DependencyProperty.Register(nameof(SearchOnInputIdleDelayMS), typeof(int), typeof(SearchTextBox), new PropertyMetadata(1000, SearchOnInputIdleDelayMS_PropertyChanged));
+            DependencyProperty.Register(nameof(SearchOnInputIdleDelayMS), typeof(int), typeof(SearchTextBox), new PropertyMetadata(500, SearchOnInputIdleDelayMS_PropertyChanged));
 
         private static void SearchOnInputIdleDelayMS_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {

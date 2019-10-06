@@ -83,7 +83,7 @@ namespace Clipbox.Infrastructure.UI
             {
                 if (_interval.TotalMilliseconds != value)
                 {
-                    _interval = TimeSpan.FromMilliseconds(DEFAULT_INTERVAL_MS);
+                    _interval = TimeSpan.FromMilliseconds(value);
                     _t.Interval = _interval;
                 }
             }

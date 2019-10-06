@@ -57,7 +57,7 @@ namespace Clipbox.ViewModels
         public ClipboardViewItemWrapper GetViewItemWrapper(string clipboardItemId)
         {
             var restoredClipboardItem = ClipboardManager.GetClipboardItem(clipboardItemId, restoreShrinked: true);
-            return _clipboardViewItemWrappers.First(w => w.Id == clipboardItemId);
+            return _clipboardViewItemWrappers.FirstOrDefault(w => w.Id == clipboardItemId);
         }
 
         public ClipboardViewItem GetViewItem(string clipboardItemId, MonitorDimensions monitorDimensions)
@@ -73,6 +73,11 @@ namespace Clipbox.ViewModels
         public void LoadViewItem(string clipboardItemId, MonitorDimensions monitorDimensions)
         {
             ClipboardViewItemWrapper wrapper = GetViewItemWrapper(clipboardItemId);
+            if (wrapper == null)
+            {
+                throw new InvalidOperationException($"The wrapper of {clipboardItemId} cannot be found. It could have been filtered off, but it should not have been.");
+            }
+
             wrapper.ViewItem = GetViewItem(clipboardItemId, monitorDimensions);
 
             if (TryGetPreviewDimensions(monitorDimensions, wrapper, out ClipboardViewItemDimensionInfo cvItemDimInfo))
