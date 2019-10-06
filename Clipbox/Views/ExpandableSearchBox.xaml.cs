@@ -47,9 +47,12 @@ namespace Clipbox.Views
 
         private void Expander_Collapsed(object sender, RoutedEventArgs e)
         {
-            searchTextBox.Text = string.Empty;
-            // fire search events/commands
-            SearchRequested.Invoke(this, new SearchRequestEventArgs(string.Empty));
+            if (!string.IsNullOrWhiteSpace(searchTextBox.Text))
+            {
+                searchTextBox.Text = string.Empty;
+                // fire search events/commands
+                SearchRequested.Invoke(this, new SearchRequestEventArgs(string.Empty));
+            }
         }
     }
 }
