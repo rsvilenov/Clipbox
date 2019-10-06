@@ -347,7 +347,7 @@ namespace Clipbox.Views
 
                     searchTerms = new List<ISearchTerm>
                     {
-                        new Text(new List<string> { e.SearchString })
+                        new TextSearchTerm(new List<string> { e.SearchString })
                     };
                 }
 

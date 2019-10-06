@@ -145,7 +145,7 @@ namespace Clipbox.Services
 
             List<ISearchTerm> searchTerms = new List<ISearchTerm>();
 
-            var contentTypeSearchTerm = new ClipboardContentType(clipboardItem
+            var contentTypeSearchTerm = new ClipboardContentTypeSearchTerm(clipboardItem
                 .ClipboardDataObjects
                 .Select(cdo => cdo.ContentClass)
                 .Distinct());
@@ -165,22 +165,22 @@ namespace Clipbox.Services
                 }
             }
 
-            var textSearchTerm = new Text(textFieldsList);
+            var textSearchTerm = new TextSearchTerm(textFieldsList);
             searchTerms.Add(textSearchTerm);
 
-            var sourceApplicationNameSearchTerm = new SourceApplicationName(new List<string>
+            var sourceApplicationNameSearchTerm = new SourceApplicationNameSearchTerm(new List<string>
             {
                 Path.GetFileNameWithoutExtension(clipboardItem.Source.SourceWindowInfo.ApplicationPath)
             });
             searchTerms.Add(sourceApplicationNameSearchTerm);
 
-            var sourceWindowCaptionSearchTerm = new SourceWindowCaption(new List<string>
+            var sourceWindowCaptionSearchTerm = new SearchTermSourceWindowCaption(new List<string>
             {
                 clipboardItem.Source.SourceWindowInfo.Caption
             });
             searchTerms.Add(sourceWindowCaptionSearchTerm);
 
-            var sourceMachineNameSearchTerm = new SourceMachineName(new List<string>
+            var sourceMachineNameSearchTerm = new SourceMachineNameSearchTerm(new List<string>
             {
                 clipboardItem.Source.MachineName
             });

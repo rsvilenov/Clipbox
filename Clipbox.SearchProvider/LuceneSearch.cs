@@ -180,29 +180,29 @@ namespace Clipbox.SearchProvider
 
         private IEnumerable<string> GetTermValuesAsStringCollection(ISearchTerm term)
         {
-            if (term is ClipboardContentType)
+            if (term is ClipboardContentTypeSearchTerm)
             {
-               return ((ClipboardContentType)term).SearchValues.Select(t => t.ToString());
+               return ((ClipboardContentTypeSearchTerm)term).SearchValues.Select(t => t.ToString());
             }
-            else if (term is SourceApplicationName)
+            else if (term is SourceApplicationNameSearchTerm)
             {
-                return ((SourceApplicationName)term).SearchValues;
+                return ((SourceApplicationNameSearchTerm)term).SearchValues;
             }
-            else if (term is SourceMachineName)
+            else if (term is SourceMachineNameSearchTerm)
             {
-                return ((SourceMachineName)term).SearchValues;
+                return ((SourceMachineNameSearchTerm)term).SearchValues;
             }
-            else if (term is SourceWindowCaption)
+            else if (term is SearchTermSourceWindowCaption)
             {
-                return ((SourceWindowCaption)term).SearchValues;
+                return ((SearchTermSourceWindowCaption)term).SearchValues;
             }
-            else if (term is Text)
+            else if (term is TextSearchTerm)
             {
-                return ((Text)term).SearchValues;
+                return ((TextSearchTerm)term).SearchValues;
             }
-            else if (term is Tag)
+            else if (term is TagSearchTerm)
             {
-                return ((Tag)term).SearchValues;
+                return ((TagSearchTerm)term).SearchValues;
             }
             else
             {

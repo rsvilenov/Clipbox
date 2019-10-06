@@ -48,7 +48,7 @@
     <Compile Include="ClipboardContent\Enums\ClipboardContentClass.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\GeneralTypes\SearchSupportExtension.cs" />
     <Compile Include="Search\Enums\SearchCategory.cs" />
-    <Compile Include="Search\SearchTerms\ClipboardContentType.cs" />
+    <Compile Include="Search\SearchTerms\ClipboardContentTypeSearchTerm.cs" />
     <Compile Include="Search\ISearchTerm.cs" />
     <Compile Include="Search\SearchTermBase.cs" />
     <Compile Include="Extensibility\Enums\HouseKeepingRegularity.cs" />
@@ -93,11 +93,11 @@
     <Compile Include="Extensibility\Exceptions\ClipioExtentionException.cs" />
     <Compile Include="ProductConstants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Search\SearchTerms\SourceApplicationName.cs" />
-    <Compile Include="Search\SearchTerms\SourceMachineName.cs" />
-    <Compile Include="Search\SearchTerms\SourceWindowCaption.cs" />
-    <Compile Include="Search\SearchTerms\Tag.cs" />
-    <Compile Include="Search\SearchTerms\Text.cs" />
+    <Compile Include="Search\SearchTerms\SourceApplicationNameSearchTerm.cs" />
+    <Compile Include="Search\SearchTerms\SourceMachineNameSearchTerm.cs" />
+    <Compile Include="Search\SearchTerms\SearchTermSourceWindowCaption.cs" />
+    <Compile Include="Search\SearchTerms\TagSearchTerm.cs" />
+    <Compile Include="Search\SearchTerms\TextSearchTerm.cs" />
     <Compile Include="Search\SearchUnit.cs" />
   </ItemGroup>
   <ItemGroup>
