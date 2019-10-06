@@ -3,17 +3,19 @@ using Clipbox.Core.Search.Enums;
 using Clipbox.Core.Search.SearchTerms;
 using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.Search;
+using Contrib.Regex;
 using Lucene.Net.Analysis.Standard;
 using Lucene.Net.Documents;
 using Lucene.Net.Index;
-using Lucene.Net.QueryParsers;
 using Lucene.Net.Search;
+using Lucene.Net.Search.Spans;
 using Lucene.Net.Store;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Clipbox.SearchProvider
 {
@@ -61,20 +63,12 @@ namespace Clipbox.SearchProvider
             List<string> searchUnitIds = new List<string>();
 
             DirectoryInfo dirInfo = GetIndexDirectoryInfo();
-            
+
             using (var indexDir = FSDirectory.Open(dirInfo))
             using (var indexReader = IndexReader.Open(indexDir, true))
             using (var indexSearcher = new IndexSearcher(indexReader))
-            using (var analyzer = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30))
             {
-                QueryParser queryParser = new QueryParser(Lucene.Net.Util.Version.LUCENE_30,
-                    GetDefaultSearchField(searchTerms),
-                    analyzer)
-                {
-                    AllowLeadingWildcard = true
-                };
-
-                var result = indexSearcher.Search(queryParser.Parse(BuildLuceneQuery(searchTerms)),
+                var result = indexSearcher.Search(ConstructLuceneQuery(searchTerms),
                     LUCENE_SEARCH_MAX_RESULT_COUNT);
 
                 foreach (var item in result.ScoreDocs)
@@ -85,7 +79,7 @@ namespace Clipbox.SearchProvider
 
             return searchUnitIds;
         }
-
+        
         private string GetDefaultSearchField(IEnumerable<ISearchTerm> searchTerms)
         {
             if (searchTerms.Any(st => st.Category == SearchCategory.Text))
@@ -96,37 +90,84 @@ namespace Clipbox.SearchProvider
             return searchTerms.First().Category.ToString();
         }
 
-        private string BuildLuceneQuery(IEnumerable<ISearchTerm> searchTerms)
+        private SpanNearQuery ConstructSpanNearQuery(string fieldName, string phrase, bool appendTrailingWildcard)
         {
+            List<SpanQuery> spanQueries = new List<SpanQuery>();
+            string[] words = phrase.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            
+            for (int i = 0; i < words.Length; i++)
+            {
+                string word = words[i];
+
+                SpanQuery sq = null;
+
+                if (i == words.Length - 1)
+                {
+                    word = Regex.Escape(word);
+
+                    // if the asterisk, passed with the search string by the user has been regex-escaped, 
+                    // unescape it and make it regex-usable (.*).
+                    word = word.Replace("\\*", ".*");
+                    
+                    if (!word.EndsWith(".*") && appendTrailingWildcard)
+                    {
+                        word = Regex.Escape(word);
+                        word = $"{word}.*";
+                    }
+
+                    sq = new SpanRegexQuery(new Term(fieldName, word));
+                }
+                else
+                {
+                    sq = new SpanTermQuery(new Term(fieldName, word));
+                }
+
+                spanQueries.Add(sq);
+            }
+
+            return new SpanNearQuery(spanQueries.ToArray(), 
+                5 /* the slop is not so important as the user will not expect to skip words when searching */,
+                true);
+        }
+
+
+        private Query ConstructLuceneQuery(IEnumerable<ISearchTerm> searchTerms)
+        {
+            BooleanQuery bq = new BooleanQuery();
+            
             StringBuilder luceneQuery = new StringBuilder();
 
             int searchTermsCount = searchTerms.Count();
             for (int i = 0; i < searchTermsCount; i++)
             {
-                if (i > 0 && i != searchTermsCount - 1)
-                {
-                    luceneQuery.Append(" AND ");
-                }
+                BooleanQuery subQuery = new BooleanQuery();
 
                 ISearchTerm searchTerm = searchTerms.ElementAt(i);
                 string category = searchTerm.Category.ToString();
                 IEnumerable<string> searchStringParts = GetTermValuesAsStringCollection(searchTerm);
                 
                 int partsCount = searchStringParts.Count();
-                luceneQuery.Append("(");
                 for (int j = 0; j < partsCount; j++)
                 {
-                    if (j > 0 && j != partsCount - 1)
+                    string part = searchStringParts.ElementAt(j).ToLower(); // the StandartAnalyzer makes everthing lowercase during the indexing
+                    if (searchTerm is ClipboardContentTypeSearchTerm)
                     {
-                        luceneQuery.Append(" OR ");
+                        subQuery.Add(new TermQuery(new Term(category, part)), Occur.SHOULD /* OR */);
                     }
-
-                    luceneQuery.AppendFormat("{0}:\"{1}\"", category, searchStringParts.ElementAt(j));
+                    //else if (searchTerm is TextSearchTerm)
+                    //{
+                    //    subQuery.Add(ConstructSpanNearQuery(category, part, appendTrailingWildcard: true), Occur.SHOULD);
+                    //}
+                    else
+                    {
+                        subQuery.Add(ConstructSpanNearQuery(category, part, appendTrailingWildcard: false), Occur.SHOULD);
+                    }
                 }
-                luceneQuery.Append(")");
+
+                bq.Add(subQuery, Occur.MUST /* AND */);
             }
 
-            return luceneQuery.ToString();
+            return bq;
         }
 
         public void StoreSearchUnits(IEnumerable<SearchUnit> searchUnits)
