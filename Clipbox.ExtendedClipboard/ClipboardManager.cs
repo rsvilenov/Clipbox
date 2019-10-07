@@ -26,7 +26,7 @@ namespace Clipbox.ExtendedClipboard
 {
     public sealed class ClipboardManager : IClipboardManager, IDisposable
     {
-        private const int MAX_CLIPBOARD_ITEMS_TO_KEEP = 35;
+        private const int MAX_CLIPBOARD_ITEMS_TO_KEEP = 100;
 
 #if DEBUG
         private const int CLIPBOARD_LISTENING_SUSPEND_INTERVAL_MS = 3000;
@@ -93,7 +93,9 @@ namespace Clipbox.ExtendedClipboard
         private void LoadFromDisk()
         {
             int itemNumber = 0;
-            foreach (ClipboardItem item in _persistenceHelper.ReadStoredClipboardItems(unshrink: false))
+            foreach (ClipboardItem item in _persistenceHelper
+                .ReadStoredClipboardItems(unshrink: false)
+                .OrderByDescending(ci => ci.EntryDateTicks))
             {
                 if (++itemNumber > MAX_CLIPBOARD_ITEMS_TO_KEEP)
                 {
@@ -129,7 +131,7 @@ namespace Clipbox.ExtendedClipboard
         {
             if (_clipboardItems.Any())
             {
-                var lastItem = _clipboardItems.First();
+                var lastItem = _clipboardItems.OrderBy(ci => ci.EntryDateTicks).Last();
                 RemoveClipboardItem(lastItem.Id);
             }
         }
