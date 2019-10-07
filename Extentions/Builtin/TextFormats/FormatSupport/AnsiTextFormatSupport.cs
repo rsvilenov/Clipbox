@@ -52,7 +52,7 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.FormatSupport
 
         public object ByteArrayToObject(byte[] byteArray)
         {
-            return Encoding.ASCII.GetString(byteArray);
+            return Encoding.UTF8.GetString(byteArray);
         }
 
         public byte[] ObjectToByteArray(ref object data)
@@ -61,7 +61,7 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.FormatSupport
 
             if (str != null)
             {
-                return Encoding.ASCII.GetBytes(str);
+                return Encoding.UTF8.GetBytes(str);
             }
 
             return null;

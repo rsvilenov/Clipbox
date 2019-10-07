@@ -26,7 +26,7 @@ namespace Clipbox.ExtendedClipboard
 {
     public sealed class ClipboardManager : IClipboardManager, IDisposable
     {
-        private const int MAX_CLIPBOARD_ITEMS_TO_KEEP = 100;
+        private const int MAX_CLIPBOARD_ITEMS_TO_KEEP = 1000;
 
 #if DEBUG
         private const int CLIPBOARD_LISTENING_SUSPEND_INTERVAL_MS = 3000;

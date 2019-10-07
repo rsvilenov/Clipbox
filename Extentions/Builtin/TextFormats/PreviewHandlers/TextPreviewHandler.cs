@@ -42,7 +42,7 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.PreviewHandlers
                     rtb.Background = System.Windows.Media.Brushes.Gainsboro;
                     rtb.SelectAll();
 
-                    var textBytes = Encoding.ASCII.GetBytes(text);
+                    var textBytes = Encoding.UTF8.GetBytes(text);
                     using (MemoryStream ms = new MemoryStream(textBytes))
                     {
                         rtb.Selection.Load(ms, DataFormats.Text);
