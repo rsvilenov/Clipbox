@@ -31,7 +31,7 @@ namespace Clipbox.Services
 
         private const int STORE_INTERVAL_MS = 3000;
         
-        private ManualResetEvent _lenghtySearchStoreOperationsMre;
+        private ManualResetEvent _pendingModifyOperationsMre;
 
         public SearchService(ISearchSupportExtensionContainer extensionContainer,
             IClipboardManager clipboardManager, 
@@ -44,7 +44,7 @@ namespace Clipbox.Services
             _removedClipboardItemIds = new List<string>();
             _addedClipboardItemIds = new List<string>();
 
-            _lenghtySearchStoreOperationsMre = new ManualResetEvent(false);
+            _pendingModifyOperationsMre = new ManualResetEvent(false);
 
             _clipboardItemsChangeSlidingTimer = new SlidingTimer
             {
@@ -62,6 +62,8 @@ namespace Clipbox.Services
         {
             lock (_listLockHandle)
             {
+                // do not allow searh operations until the modify operations has completed
+                _pendingModifyOperationsMre.Reset();
                 _removedClipboardItemIds.Add(e.ItemId);
             }
 
@@ -72,6 +74,7 @@ namespace Clipbox.Services
         {
             lock (_listLockHandle)
             {
+                _pendingModifyOperationsMre.Reset();
                 _removedClipboardItemIds.Add(e.ItemId);
                 _addedClipboardItemIds.Add(e.ItemId);
             }
@@ -83,6 +86,7 @@ namespace Clipbox.Services
         {
             lock (_listLockHandle)
             {
+                _pendingModifyOperationsMre.Reset();
                 _addedClipboardItemIds.Add(e.ItemId);
             }
 
@@ -98,18 +102,17 @@ namespace Clipbox.Services
 
                 _removedClipboardItemIds.Clear();
                 _addedClipboardItemIds.Clear();
-
+                
                 // start the long-running operation in a task to unlock the lists.
                 Task.Run(() =>
                 {
-                    _lenghtySearchStoreOperationsMre.Reset();
                     try
                     {
                         DoLenghtySearchStoreOperations(removedIds, addedIds);
                     }
                     finally
                     {
-                        _lenghtySearchStoreOperationsMre.Set();
+                        _pendingModifyOperationsMre.Set();
                     }
                 });
             }
@@ -128,14 +131,12 @@ namespace Clipbox.Services
                 _searchProvider.StoreSearchUnits(addedIds.Select(id => GenerateSearchUnit(id)));
             }
         }
-
-        public IEnumerable<string> FindSearchUnitIds(IEnumerable<ISearchTerm> searchTerms)
-        {
-            return _searchProvider.FindSearchUnitIds(searchTerms);
-        }
         
         public IEnumerable<string> FindClipboardItemIds(IEnumerable<ISearchTerm> searchTerms)
         {
+            // first wait for add/delete operations to finish
+            _pendingModifyOperationsMre.WaitOne();
+
             return _searchProvider.FindSearchUnitIds(searchTerms);
         }
 
@@ -194,7 +195,7 @@ namespace Clipbox.Services
         {
             // stop the timer
             _clipboardItemsChangeSlidingTimer.Dispose();
-            _lenghtySearchStoreOperationsMre.WaitOne(STORE_INTERVAL_MS * 3);
+            _pendingModifyOperationsMre.WaitOne(STORE_INTERVAL_MS * 3);
 
             if (_addedClipboardItemIds.Any() || _removedClipboardItemIds.Any())
             {

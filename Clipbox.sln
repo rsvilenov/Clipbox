@@ -52,6 +52,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clipbox.Infrastructure.UI.C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clipbox.SearchProvider", "Clipbox.SearchProvider\Clipbox.SearchProvider.csproj", "{A4CBB114-319B-4895-873C-BDBB6EA2B37D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clipbox.SearchProvider.Tests", "Clipbox.SearchProvider.Tests\Clipbox.SearchProvider.Tests.csproj", "{684FF525-481D-4191-991B-1CDE26FDFFC7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -301,6 +303,18 @@ Global
 		{A4CBB114-319B-4895-873C-BDBB6EA2B37D}.Release|x64.Build.0 = Release|Any CPU
 		{A4CBB114-319B-4895-873C-BDBB6EA2B37D}.Release|x86.ActiveCfg = Release|Any CPU
 		{A4CBB114-319B-4895-873C-BDBB6EA2B37D}.Release|x86.Build.0 = Release|Any CPU
+		{684FF525-481D-4191-991B-1CDE26FDFFC7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{684FF525-481D-4191-991B-1CDE26FDFFC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{684FF525-481D-4191-991B-1CDE26FDFFC7}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{684FF525-481D-4191-991B-1CDE26FDFFC7}.Debug|x64.Build.0 = Debug|Any CPU
+		{684FF525-481D-4191-991B-1CDE26FDFFC7}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{684FF525-481D-4191-991B-1CDE26FDFFC7}.Debug|x86.Build.0 = Debug|Any CPU
+		{684FF525-481D-4191-991B-1CDE26FDFFC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{684FF525-481D-4191-991B-1CDE26FDFFC7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{684FF525-481D-4191-991B-1CDE26FDFFC7}.Release|x64.ActiveCfg = Release|Any CPU
+		{684FF525-481D-4191-991B-1CDE26FDFFC7}.Release|x64.Build.0 = Release|Any CPU
+		{684FF525-481D-4191-991B-1CDE26FDFFC7}.Release|x86.ActiveCfg = Release|Any CPU
+		{684FF525-481D-4191-991B-1CDE26FDFFC7}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -187,13 +187,13 @@ namespace Clipbox.SearchProvider
                     foreach (SearchUnit unit in searchUnits)
                     {
                         // remove older index entry
-                        var searchQuery = new TermQuery(new Term(nameof(unit.Id), unit.Id));
+                        var searchQuery = new TermQuery(new Term(_searchUnitIdFieldName, unit.Id));
                         indexWriter.DeleteDocuments(searchQuery);
 
                         // create a Lucene document
                         Document document = new Document();
 
-                        document.Add(new Field(nameof(unit.Id), unit.Id, Field.Store.YES, Field.Index.NOT_ANALYZED));
+                        document.Add(new Field(_searchUnitIdFieldName, unit.Id, Field.Store.YES, Field.Index.NOT_ANALYZED));
 
                         foreach (ISearchTerm term in unit.SearchTerms)
                         {
