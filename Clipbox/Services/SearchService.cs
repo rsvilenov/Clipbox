@@ -180,7 +180,7 @@ namespace Clipbox.Services
             });
             searchTerms.Add(sourceApplicationNameSearchTerm);
 
-            var sourceWindowCaptionSearchTerm = new SearchTermSourceWindowCaption(new List<string>
+            var sourceWindowCaptionSearchTerm = new SourceWindowCaptionSearchTerm(new List<string>
             {
                 clipboardItem.Source.SourceWindowInfo.Caption
             });

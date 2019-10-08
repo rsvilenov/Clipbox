@@ -317,6 +317,7 @@
 
 
                 <views:ExpandableSearchBox
+                    x:Name="searchTextBox"
                     Grid.Column="1"
                     Height="45"
                     Margin="5"
@@ -369,7 +370,10 @@
                 <infBeh:FrameworkElementDpiScalingBehavior />
             </i:Interaction.Behaviors>
 
-            <views:FilterBand Grid.Row="0" />
+            <views:FilterBand
+                x:Name="filterBand"
+                Grid.Row="0"
+                SearchTermsChanged="FilterBand_SearchTermsChanged" />
 
             <Button
                 Grid.Row="1"

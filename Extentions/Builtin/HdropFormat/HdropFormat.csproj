@@ -59,6 +59,7 @@
     <Compile Include="FormatSupport\PreferredDropEffectFormatSupport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PreviewHandlers\WindowsThumbnailProvider.cs" />
+    <Compile Include="SearchSupport\HdropSearchSupport.cs" />
     <Compile Include="UIExtentions\PreferredDropEffect.xaml.cs">
       <DependentUpon>PreferredDropEffect.xaml</DependentUpon>
     </Compile>

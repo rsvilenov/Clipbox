@@ -1,6 +1,7 @@
 ﻿using Clipbox.Core.Search;
 using Clipbox.Core.Search.SearchTerms;
 using Clipbox.ExtendedClipboard.Interfaces;
+using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.DataObjects;
 using Clipbox.Services.Interfaces;
 using System.Collections.Generic;

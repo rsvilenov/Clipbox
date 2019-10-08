@@ -347,26 +347,36 @@ namespace Clipbox.Views
 
         private void ExpandableSearchBox_SearchRequested(object sender, EventArgsClasses.SearchRequestEventArgs e)
         {
+            UpdateListViewWithSearchTerms();
+        }
+        
+        private void FilterBand_SearchTermsChanged(object sender, EventArgs e)
+        {
+            UpdateListViewWithSearchTerms();
+        }
+
+        private void UpdateListViewWithSearchTerms()
+        {
             MainListView.Visibility = Visibility.Hidden;
 
             _viewModel.ClipboardViewItemWrappers.Clear();
 
             Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
             {
-                List<ISearchTerm> searchTerms = null;
+                List<ISearchTerm> searchTerms = new List<ISearchTerm>();
 
-                if (!string.IsNullOrWhiteSpace(e.SearchString))
+                if (!string.IsNullOrWhiteSpace(searchTextBox.SearchText))
                 {
-
-                    searchTerms = new List<ISearchTerm>
-                    {
-                        new TextSearchTerm(new List<string> { e.SearchString })
-                    };
+                    searchTerms.Add
+                    (
+                        new TextSearchTerm(new List<string> { searchTextBox.SearchText })
+                    );
                 }
+
+                searchTerms.AddRange(filterBand.SearchTerms);
 
                 LoadContents(searchTerms);
             }));
-            
         }
     }
 }

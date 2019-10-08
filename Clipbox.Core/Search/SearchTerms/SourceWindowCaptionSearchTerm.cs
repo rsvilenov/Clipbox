@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Clipbox.Core.Search.SearchTerms
 {
-    public class SearchTermSourceWindowCaption : SearchTermBase<string>
+    public class SourceWindowCaptionSearchTerm : SearchTermBase<string>
     {
-        public SearchTermSourceWindowCaption(IEnumerable<string> sourceWindowName)
+        public SourceWindowCaptionSearchTerm(IEnumerable<string> sourceWindowName)
         {
             SetSearchValues(sourceWindowName);
         }

@@ -233,9 +233,9 @@ namespace Clipbox.SearchProvider
             {
                 return ((SourceMachineNameSearchTerm)term).SearchValues;
             }
-            else if (term is SearchTermSourceWindowCaption)
+            else if (term is SourceWindowCaptionSearchTerm)
             {
-                return ((SearchTermSourceWindowCaption)term).SearchValues;
+                return ((SourceWindowCaptionSearchTerm)term).SearchValues;
             }
             else if (term is TextSearchTerm)
             {

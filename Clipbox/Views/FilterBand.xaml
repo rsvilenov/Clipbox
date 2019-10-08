@@ -89,7 +89,7 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid>
+    <Grid x:Name="mainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
@@ -134,10 +134,22 @@
                     Template="{StaticResource VerticalStretchyExpander}">
 
                     <StackPanel Margin="0,5" Orientation="Vertical">
-                        <ToggleButton Margin="5,3" Style="{StaticResource textToggleButton}" />
-                        <ToggleButton Margin="5,3" Style="{StaticResource imageToggleButton}" />
-                        <ToggleButton Margin="5,3" Style="{StaticResource fileToggleButton}" />
-                        <ToggleButton Margin="5,3" Style="{StaticResource generalToggleButton}" />
+                        <ToggleButton
+                            Margin="5,3"
+                            IsChecked="{Binding TextTypeSelected}"
+                            Style="{StaticResource textToggleButton}" />
+                        <ToggleButton
+                            Margin="5,3"
+                            IsChecked="{Binding ImageTypeSelected}"
+                            Style="{StaticResource imageToggleButton}" />
+                        <ToggleButton
+                            Margin="5,3"
+                            IsChecked="{Binding FileTypeSelected}"
+                            Style="{StaticResource fileToggleButton}" />
+                        <ToggleButton
+                            Margin="5,3"
+                            IsChecked="{Binding GeneralTypeSelected}"
+                            Style="{StaticResource generalToggleButton}" />
                     </StackPanel>
 
                 </Expander>
@@ -154,8 +166,14 @@
                     Template="{StaticResource VerticalStretchyExpander}">
 
                     <StackPanel Margin="0,5" Orientation="Vertical">
-                        <ToggleButton Margin="5,3" Style="{StaticResource myMachineToggleButton}" />
-                        <ToggleButton Margin="5,3" Style="{StaticResource allMachinesToggleButton}" />
+                        <ToggleButton
+                            Margin="5,3"
+                            IsChecked="{Binding LocalMachineSourceSelected}"
+                            Style="{StaticResource myMachineToggleButton}" />
+                        <ToggleButton
+                            Margin="5,3"
+                            IsChecked="{Binding CloudSourceSelected}"
+                            Style="{StaticResource allMachinesToggleButton}" />
                     </StackPanel>
 
                 </Expander>
