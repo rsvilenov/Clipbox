@@ -27,14 +27,13 @@ namespace Clipbox.Services
         private readonly List<string> _clipboardItemIdsScheduledForRemoval;
         private readonly List<string> _clipboardItemIdsScheduledForAdd;
 
-        private readonly List<string> _clipboardItemIdsBeingRemoved;
-        private readonly List<string> _clipboardItemIdsBeingAdded;
-
         private readonly object _listLockHandle = new object();
 
         private const int STORE_INTERVAL_MS = 3000;
         
         private ManualResetEvent _pendingModifyOperationsMre;
+
+        private HashSet<string> _allClipboardItemIds;
 
         public SearchService(ISearchSupportExtensionContainer extensionContainer,
             IClipboardManager clipboardManager, 
@@ -46,9 +45,8 @@ namespace Clipbox.Services
             
             _clipboardItemIdsScheduledForRemoval = new List<string>();
             _clipboardItemIdsScheduledForAdd = new List<string>();
-
-            _clipboardItemIdsBeingRemoved = new List<string>();
-            _clipboardItemIdsBeingAdded = new List<string>();
+            
+            _allClipboardItemIds = new HashSet<string>();
 
             _pendingModifyOperationsMre = new ManualResetEvent(false);
 
@@ -71,7 +69,14 @@ namespace Clipbox.Services
                 _clipboardItemIdsScheduledForRemoval.Add(e.ItemId);
             }
 
+            UpdateAllClipboardItemIds();
+
             _clipboardItemsChangeSlidingTimer.Slide();
+        }
+
+        private void UpdateAllClipboardItemIds()
+        {
+            _allClipboardItemIds = new HashSet<string>(_clipboardManager.GetAllItemIds());
         }
 
         private void _clipboardManager_ItemChanged(object sender, ExtendedClipboard.EventArgs.ClipboardManagerEventArgs e)
@@ -81,6 +86,8 @@ namespace Clipbox.Services
                 _clipboardItemIdsScheduledForRemoval.Add(e.ItemId);
                 _clipboardItemIdsScheduledForAdd.Add(e.ItemId);
             }
+
+            UpdateAllClipboardItemIds();
 
             _clipboardItemsChangeSlidingTimer.Slide();
         }
@@ -92,6 +99,8 @@ namespace Clipbox.Services
                 _clipboardItemIdsScheduledForAdd.Add(e.ItemId);
             }
 
+            UpdateAllClipboardItemIds();
+
             _clipboardItemsChangeSlidingTimer.Slide();
         }
 
@@ -99,8 +108,8 @@ namespace Clipbox.Services
         {
             lock (_listLockHandle)
             {
-                _clipboardItemIdsBeingRemoved.AddRange(_clipboardItemIdsScheduledForRemoval);
-                _clipboardItemIdsBeingAdded.AddRange(_clipboardItemIdsScheduledForAdd);
+                var idsToRemove = _clipboardItemIdsScheduledForRemoval.ToList();
+                var idsToAdd = _clipboardItemIdsScheduledForAdd.ToList();
 
                 // first reset the mre and then clear the lists so that the 
                 // dispose waits for us...
@@ -114,12 +123,10 @@ namespace Clipbox.Services
                 {
                     try
                     {
-                        DoLenghtySearchStoreOperations(_clipboardItemIdsBeingRemoved, _clipboardItemIdsBeingAdded);
+                        DoLenghtySearchStoreOperations(idsToRemove, idsToAdd);
                     }
                     finally
                     {
-                        _clipboardItemIdsBeingRemoved.Clear();
-                        _clipboardItemIdsBeingAdded.Clear();
                         _pendingModifyOperationsMre.Set();
                     }
                 });
@@ -142,14 +149,9 @@ namespace Clipbox.Services
 
         public IEnumerable<string> FindClipboardItemIds(IEnumerable<ISearchTerm> searchTerms)
         {
-            List<string> idsToExclude = new List<string>();
-            lock (_listLockHandle)
-            {
-                idsToExclude.AddRange(_clipboardItemIdsBeingRemoved.Union(_clipboardItemIdsScheduledForRemoval));
-            }
-
             return _searchProvider.FindSearchUnitIds(searchTerms)
-                .Except(idsToExclude);
+                // prevent returning of nonexistant ids due to outdated/corrupt index
+                .Where(id => _allClipboardItemIds.Contains(id));
         }
 
         private SearchUnit GenerateSearchUnit(string clipboardItemId)
