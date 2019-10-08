@@ -45,8 +45,8 @@ namespace Clipbox.Services
             
             _clipboardItemIdsScheduledForRemoval = new List<string>();
             _clipboardItemIdsScheduledForAdd = new List<string>();
-            
-            _allClipboardItemIds = new HashSet<string>();
+
+            _allClipboardItemIds = new HashSet<string>(_clipboardManager.GetAllItemIds());
 
             _pendingModifyOperationsMre = new ManualResetEvent(false);
 
@@ -67,16 +67,10 @@ namespace Clipbox.Services
             lock (_listLockHandle)
             {
                 _clipboardItemIdsScheduledForRemoval.Add(e.ItemId);
+                _allClipboardItemIds.Remove(e.ItemId);
             }
-
-            UpdateAllClipboardItemIds();
-
+            
             _clipboardItemsChangeSlidingTimer.Slide();
-        }
-
-        private void UpdateAllClipboardItemIds()
-        {
-            _allClipboardItemIds = new HashSet<string>(_clipboardManager.GetAllItemIds());
         }
 
         private void _clipboardManager_ItemChanged(object sender, ExtendedClipboard.EventArgs.ClipboardManagerEventArgs e)
@@ -87,8 +81,6 @@ namespace Clipbox.Services
                 _clipboardItemIdsScheduledForAdd.Add(e.ItemId);
             }
 
-            UpdateAllClipboardItemIds();
-
             _clipboardItemsChangeSlidingTimer.Slide();
         }
 
@@ -97,10 +89,9 @@ namespace Clipbox.Services
             lock (_listLockHandle)
             {
                 _clipboardItemIdsScheduledForAdd.Add(e.ItemId);
+                _allClipboardItemIds.Add(e.ItemId);
             }
-
-            UpdateAllClipboardItemIds();
-
+            
             _clipboardItemsChangeSlidingTimer.Slide();
         }
 
