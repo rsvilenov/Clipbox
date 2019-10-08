@@ -28,7 +28,12 @@ namespace Clipbox.Extentions.BuiltIn.HdropFormat.SearchSupport
                     continue;
                 }
 
-                fileNames.AppendFormat(" {0} ", Path.GetFileNameWithoutExtension(path));
+                try
+                {
+                    fileNames.AppendFormat(" {0} ", Path.GetFileNameWithoutExtension(path));
+                }
+                catch (ArgumentException)
+                { }
             }
 
             return fileNames.ToString();
