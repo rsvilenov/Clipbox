@@ -144,7 +144,7 @@ namespace Clipbox.SearchProvider
 
                 ISearchTerm searchTerm = searchTerms.ElementAt(i);
                 string category = searchTerm.Category.ToString();
-                IEnumerable<string> searchStringParts = GetTermValuesAsStringCollection(searchTerm);
+                IEnumerable<string> searchStringParts = searchTerm.SearchStringValues;
                 
                 int partsCount = searchStringParts.Count();
                 for (int j = 0; j < partsCount; j++)
@@ -197,7 +197,7 @@ namespace Clipbox.SearchProvider
 
                         foreach (ISearchTerm term in unit.SearchTerms)
                         {
-                            string stringToStore = string.Join(" ; ", GetTermValuesAsStringCollection(term));
+                            string stringToStore = string.Join(" ; ", term.SearchStringValues);
                             document.Add(new Field(term.Category.ToString(), stringToStore, Field.Store.NO, Field.Index.ANALYZED));
                         }
 
@@ -217,38 +217,6 @@ namespace Clipbox.SearchProvider
 
             var dirInfo = new System.IO.DirectoryInfo(indexDirectoryPath);
             return dirInfo;
-        }
-
-        private IEnumerable<string> GetTermValuesAsStringCollection(ISearchTerm term)
-        {
-            if (term is ClipboardContentTypeSearchTerm)
-            {
-               return ((ClipboardContentTypeSearchTerm)term).SearchValues.Select(t => t.ToString());
-            }
-            else if (term is SourceApplicationNameSearchTerm)
-            {
-                return ((SourceApplicationNameSearchTerm)term).SearchValues;
-            }
-            else if (term is SourceMachineNameSearchTerm)
-            {
-                return ((SourceMachineNameSearchTerm)term).SearchValues;
-            }
-            else if (term is SourceWindowCaptionSearchTerm)
-            {
-                return ((SourceWindowCaptionSearchTerm)term).SearchValues;
-            }
-            else if (term is TextSearchTerm)
-            {
-                return ((TextSearchTerm)term).SearchValues;
-            }
-            else if (term is TagSearchTerm)
-            {
-                return ((TagSearchTerm)term).SearchValues;
-            }
-            else
-            {
-                throw new ArgumentException("The term's type is not recognized.");
-            }
         }
     }
 }

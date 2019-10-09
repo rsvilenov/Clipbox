@@ -66,7 +66,7 @@ namespace Clipbox.Views
                 
                 SearchTerms.Add(new ClipboardContentTypeSearchTerm(contentClasses));
             }
-
+            
             SearchTermsChanged?.Invoke(this, new EventArgs());
             //if (LocalMachineSourceSelected || CloudSourceSelected)
             //{

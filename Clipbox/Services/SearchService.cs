@@ -9,7 +9,6 @@ using Clipbox.Infrastructure.UI;
 using Clipbox.Services.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -140,6 +139,14 @@ namespace Clipbox.Services
 
         public IEnumerable<string> FindClipboardItemIds(IEnumerable<ISearchTerm> searchTerms)
         {
+            foreach (var searchTerm in searchTerms)
+            { 
+                if (!searchTerm.Validate())
+                {
+                    throw new ArgumentException($"Invalid search term: {searchTerm}");
+                }
+            }
+
             return _searchProvider.FindSearchUnitIds(searchTerms)
                 // prevent returning of nonexistant ids due to outdated/corrupt index
                 .Where(id => _allClipboardItemIds.Contains(id));
@@ -150,13 +157,6 @@ namespace Clipbox.Services
             IClipboardItem clipboardItem = _clipboardManager.GetClipboardItem(clipboardItemId);
 
             List<ISearchTerm> searchTerms = new List<ISearchTerm>();
-
-            var contentTypeSearchTerm = new ClipboardContentTypeSearchTerm(clipboardItem
-                .ClipboardDataObjects
-                .Select(cdo => cdo.ContentClass)
-                .Distinct());
-
-            searchTerms.Add(contentTypeSearchTerm);
 
             var textFieldsList = new List<string>();
             
@@ -171,26 +171,44 @@ namespace Clipbox.Services
                 }
             }
 
-            var textSearchTerm = new TextSearchTerm(textFieldsList);
-            searchTerms.Add(textSearchTerm);
-
-            var sourceApplicationNameSearchTerm = new SourceApplicationNameSearchTerm(new List<string>
+            if (textFieldsList.Any())
             {
-                Path.GetFileNameWithoutExtension(clipboardItem.Source.SourceWindowInfo.ApplicationPath)
-            });
-            searchTerms.Add(sourceApplicationNameSearchTerm);
+                TextSearchTerm tTerm = new TextSearchTerm(textFieldsList);
+                if (tTerm.Validate())
+                {
+                    searchTerms.Add(tTerm);
+                }
+            }
 
-            var sourceWindowCaptionSearchTerm = new SourceWindowCaptionSearchTerm(new List<string>
+            ClipboardContentTypeSearchTerm ccTerm = new ClipboardContentTypeSearchTerm(clipboardItem);
+            if (ccTerm.Validate())
             {
-                clipboardItem.Source.SourceWindowInfo.Caption
-            });
-            searchTerms.Add(sourceWindowCaptionSearchTerm);
+                searchTerms.Add(ccTerm);
+            }
 
-            var sourceMachineNameSearchTerm = new SourceMachineNameSearchTerm(new List<string>
+            SourceApplicationNameSearchTerm sanTerm = new SourceApplicationNameSearchTerm(clipboardItem);
+            if (sanTerm.Validate())
             {
-                clipboardItem.Source.MachineName
-            });
-            searchTerms.Add(sourceMachineNameSearchTerm);
+                searchTerms.Add(sanTerm);
+            }
+
+            SourceMachineNameSearchTerm smTerm = new SourceMachineNameSearchTerm(clipboardItem);
+            if (smTerm.Validate())
+            {
+                searchTerms.Add(smTerm);
+            }
+
+            SourceWindowCaptionSearchTerm swTerm = new SourceWindowCaptionSearchTerm(clipboardItem);
+            if (swTerm.Validate())
+            {
+                searchTerms.Add(swTerm);
+            }
+
+            TagSearchTerm tagTerm = new TagSearchTerm(clipboardItem);
+            if (tagTerm.Validate())
+            {
+                searchTerms.Add(tagTerm);
+            }
 
 
             return new SearchUnit(clipboardItem.Id, searchTerms);
