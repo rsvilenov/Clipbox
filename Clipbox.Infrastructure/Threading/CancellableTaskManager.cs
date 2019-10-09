@@ -50,7 +50,10 @@ namespace Clipbox.Infrastructure.Threading
 
                 taskAction(taskId);
 
-                _cancellationTokens.TryRemove(internalId, out cts);
+                if (_cancellationTokens.TryRemove(internalId, out cts))
+                {
+                    cts.Dispose();
+                }
             }, token);
 
             if (_cancellationTokens.ContainsKey(internalId))

@@ -11,6 +11,8 @@ namespace Clipbox.ExtendedClipboard.ClipboardContent
 
         public string MachineName { get; internal set; }
 
+        public string MachineUniqueId { get; internal set; }
+
         public string UserName { get; internal set; }
     }
 }

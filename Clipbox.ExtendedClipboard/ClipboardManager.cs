@@ -373,6 +373,7 @@ namespace Clipbox.ExtendedClipboard
             {
                 SourceWindowInfo = GetForemostWindowInfo(),
                 MachineName = Environment.MachineName,
+                MachineUniqueId = MachineUtils.GetMachineGuid(),
                 UserName = Environment.UserName
             };
 
@@ -662,6 +663,7 @@ namespace Clipbox.ExtendedClipboard
             {
                 SourceWindowInfo = GetOwnWindowInfo(),
                 MachineName = Environment.MachineName,
+                MachineUniqueId = MachineUtils.GetMachineGuid(),
                 UserName = Environment.UserName
             };
 

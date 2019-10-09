@@ -6,6 +6,7 @@
         SourceApplicationName,
         SourceWindowName,
         SourceMachineName,
+        SourceMachineUniqueId,
         /// <summary>
         /// Text and Description
         /// </summary>

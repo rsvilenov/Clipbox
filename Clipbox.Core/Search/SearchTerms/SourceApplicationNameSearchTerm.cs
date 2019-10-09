@@ -17,9 +17,16 @@ namespace Clipbox.Core.Search.SearchTerms
 
         protected override IEnumerable<string> GetTermValuesFromClipboardItem(IClipboardItem clipboardItem)
         {
+            string appName = string.Empty;
+            string appPath = clipboardItem.Source.SourceWindowInfo.ApplicationPath;
+            if (string.IsNullOrWhiteSpace(appPath))
+            { 
+                appName = Path.GetFileNameWithoutExtension(appPath);
+            }
+
             return new string[]
             {
-                Path.GetFileNameWithoutExtension(clipboardItem.Source.SourceWindowInfo.ApplicationPath)
+                appName
             };
         }
 

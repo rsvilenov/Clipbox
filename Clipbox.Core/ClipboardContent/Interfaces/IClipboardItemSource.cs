@@ -8,6 +8,8 @@ namespace Clipbox.Core.ClipboardContent.Interfaces
 
         string MachineName { get; }
 
+        string MachineUniqueId { get; }
+
         string UserName { get; }
     }
 }

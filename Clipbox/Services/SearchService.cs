@@ -198,6 +198,12 @@ namespace Clipbox.Services
                 searchTerms.Add(smTerm);
             }
 
+            SourceMachineUniqueIdSearchTerm smuidTerm = new SourceMachineUniqueIdSearchTerm(clipboardItem);
+            if (smuidTerm.Validate())
+            {
+                searchTerms.Add(smuidTerm);
+            }
+
             SourceWindowCaptionSearchTerm swTerm = new SourceWindowCaptionSearchTerm(clipboardItem);
             if (swTerm.Validate())
             {

@@ -3,6 +3,8 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -100,6 +102,35 @@ namespace Clipbox.Win32
             catch (Exception)
             {
                 return null;
+            }
+        }
+
+        private static Bitmap GetSmallIconFromDirectoryPath(string directoryPath)
+        {
+            if (!Directory.Exists(directoryPath))
+            {
+                // use this method only for directories, as we have much better ways to
+                // get the icons for the files.
+                throw new ArgumentException("The path does not exist or is not a directory.");
+            }
+
+            // https://stackoverflow.com/questions/23666076/how-to-get-the-icon-associated-with-a-specific-folder
+
+            //Constants flags for SHGetFileInfo 
+            const uint SHGFI_ICON = 0x100;
+            //const uint SHGFI_LARGEICON = 0x000000000; // Large icon
+            const uint SHGFI_SMALLICON = 0x000000001; // Small icon
+
+            NativeStructures.SHFILEINFO shinfo = new NativeStructures.SHFILEINFO();
+            
+            Shell32.SHGetFileInfo(
+                directoryPath,
+                0, ref shinfo, (uint)Marshal.SizeOf(shinfo),
+                SHGFI_ICON | SHGFI_SMALLICON);
+
+            using (Icon i = Icon.FromHandle(shinfo.hIcon))
+            {
+                return i.ToBitmap();
             }
         }
 
@@ -319,15 +350,28 @@ namespace Clipbox.Win32
 
             //using (Process applicationProcess = Process.GetProcessById(applicationPid))
             //{
-                //applicationProcess.MainModule.FileName; // this program should be 64 bit in order for this to work
+            //applicationProcess.MainModule.FileName; // this program should be 64 bit in order for this to work
             //}
             string applicationPath = ProcessUtils.GetExecutablePath(applicationPid);
-            
-            WindowInfo windowInfo = new WindowInfo();
-            windowInfo.ApplicationPath = applicationPath;
-            windowInfo.Caption = windowCaption;
 
-            windowInfo.Icon = GetSmallWindowIcon(foregroundHWnd);
+            WindowInfo windowInfo = new WindowInfo
+            {
+                ApplicationPath = applicationPath
+            };
+
+            if (string.IsNullOrWhiteSpace(windowCaption)
+                && !string.IsNullOrWhiteSpace(applicationPath)
+                && applicationPath.All(c => !Path.GetInvalidPathChars().Contains(c))
+                && Path.GetFileNameWithoutExtension(applicationPath).Equals("explorer", StringComparison.OrdinalIgnoreCase))
+            {
+                windowInfo.Caption = "Desktop";
+                windowInfo.Icon = GetSmallIconFromDirectoryPath(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory));
+            }
+            else
+            {
+                windowInfo.Caption = windowCaption;
+                windowInfo.Icon = GetSmallWindowIcon(foregroundHWnd);
+            }
             
             return windowInfo;
         }

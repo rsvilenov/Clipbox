@@ -157,15 +157,15 @@ namespace Clipbox.ExtendedClipboard
 
         public void DeleteClipboardItemFromStorage(string clipboardItemId)
         {
-            // TODO: make sure this plays well with FileLocker, used by AppDataUtils file access operations
-            File.Delete
-            (
-                Path.Combine
+            string filePath = Path.Combine
                 (
                     AppDataUtils.GetAppDataDir(true),
                     Path.Combine(APPDATA_CACHE_SUBDIR, clipboardItemId)
-                )
-            );
+                );
+
+            // TODO: make sure this plays well with FileLocker, used by AppDataUtils file access operations
+            File.Delete(filePath);
+            File.Delete($"{filePath}.lock");
         }
 
         /// <summary>

@@ -11,6 +11,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Media.Imaging;
+using Clipbox.Win32;
 
 namespace Clipbox.ViewModels
 {
@@ -64,7 +65,7 @@ namespace Clipbox.ViewModels
                 // TODO: show a defalt icon here
             }
 
-            viewItem.IsCloudItem = clipboardItem.Source.MachineName != Environment.MachineName;
+            viewItem.IsCloudItem = clipboardItem.Source.MachineUniqueId != MachineUtils.GetMachineGuid();
             viewItem.SourceWindowMachineName = clipboardItem.Source.MachineName;
             viewItem.SourceWindowUserName = clipboardItem.Source.UserName;
             viewItem.SourceWindowCaption = clipboardItem.Source.SourceWindowInfo.Caption;

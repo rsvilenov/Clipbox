@@ -54,6 +54,7 @@
     <Compile Include="LLHooks\KeyboardLLHook.cs" />
     <Compile Include="LLHooks\MouseEventArgs.cs" />
     <Compile Include="LLHooks\MouseLLHook.cs" />
+    <Compile Include="MachineUtils.cs" />
     <Compile Include="MonitorUtils.cs" />
     <Compile Include="Native\Gdi32.cs" />
     <Compile Include="Native\Kernel32.cs" />
