@@ -2,6 +2,7 @@
 using Clipbox.Core.Search.Enums;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Clipbox.Core.Search.SearchTerms
 {
@@ -19,7 +20,8 @@ namespace Clipbox.Core.Search.SearchTerms
         {
             string appName = string.Empty;
             string appPath = clipboardItem.Source.SourceWindowInfo.ApplicationPath;
-            if (string.IsNullOrWhiteSpace(appPath))
+            if (string.IsNullOrWhiteSpace(appPath)
+                && appPath.All(c => !Path.GetInvalidPathChars().Contains(c)))
             { 
                 appName = Path.GetFileNameWithoutExtension(appPath);
             }
