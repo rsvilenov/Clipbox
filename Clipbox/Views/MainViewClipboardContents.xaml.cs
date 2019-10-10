@@ -75,6 +75,13 @@ namespace Clipbox.Views
 
         private SlidingTimer _uiExtentionGenerationSlidingTimer;
 
+        /// <summary>
+        /// This field provides not a nice solution to the problem of
+        /// running dispatcher actions or tasks, requiring resources,
+        /// destroyed by Dispose(), which run after the Dispose() has started...
+        /// </summary>
+        private bool _isDisposing;
+
         public MainViewClipboardContents(MainViewClipboardContentsViewModel vm, 
             UIExtentionContainer container, 
             ISettingsService settingsService)
@@ -128,24 +135,57 @@ namespace Clipbox.Views
             // run the slow-running operations in a separate task
             _cancellableTaskManager.ScheduleTask(clipboardItemId, new Action<string>((taskId) =>
             {
-                ClipboardViewItemWrapper wrapper = _viewModel.GetViewItemWrapper(clipboardItemId);
-                if (wrapper == null)
+                if (_isDisposing)
                 {
-                    // by the time this task executes, the item may has been filtered out by the search or the filters...
                     return;
                 }
 
-                _viewModel.TryGetPreviewDimensions(base.MonitorDimensions, wrapper, out ClipboardViewItemDimensionInfo cvItemDimInfo);
-                
+                ClipboardViewItemWrapper wrapper = null;
+                ClipboardViewItemDimensionInfo cvItemDimInfo = null;
+
+                try
+                {
+                    wrapper = _viewModel.GetViewItemWrapper(clipboardItemId);
+                    if (wrapper == null)
+                    {
+                        // by the time this task executes, the item may has been filtered out by the search or the filters...
+                        return;
+                    }
+
+                    _viewModel.TryGetPreviewDimensions(base.MonitorDimensions, wrapper, out cvItemDimInfo);
+                }
+                catch
+                {
+                    if (!_isDisposing)
+                    {
+                        throw;
+                    }
+                }
+
                 // this optimization (updating the bindable properties in the dispatcher thread with background priority)
                 // solves the problem with the items showing up painfully slowly...
                 // recommended by Mark Green in this thread:
                 // https://stackoverflow.com/questions/19510723/why-ui-is-freezing-during-wpf-datagrid-binding
                 Application.Current.Dispatcher.Invoke(new Action(() =>
                 {
-                    wrapper.ViewItem = _viewModel.GetViewItem(clipboardItemId, base.MonitorDimensions);
-                    wrapper.DimensionInfo = cvItemDimInfo;
-                    wrapper.IsViewItemLoaded = true;
+                    if (_isDisposing)
+                    {
+                        return;
+                    }
+
+                    try
+                    {
+                        wrapper.ViewItem = _viewModel.GetViewItem(clipboardItemId, base.MonitorDimensions);
+                        wrapper.DimensionInfo = cvItemDimInfo;
+                        wrapper.IsViewItemLoaded = true;
+                    }
+                    catch
+                    {
+                        if (!_isDisposing)
+                        {
+                            throw;
+                        }
+                    }
 
                 }), DispatcherPriority.Background);
             }));
@@ -159,6 +199,8 @@ namespace Clipbox.Views
 
         protected override void Dispose(bool disposing)
         {
+            _isDisposing = true;
+
             _uiExtentionGenerationSlidingTimer.Dispose();
 
             if (MainListView != null)
@@ -319,14 +361,29 @@ namespace Clipbox.Views
             Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background,
             (Action)(() =>
             {
-                if (IsLoadingOfUIExtensionsEnabled)
+                if (_isDisposing)
                 {
-                    base.LoadUIExtensions(MainListView);
+                    return;
                 }
-                else
+
+                try
                 {
-                    // re-enable the loading of the extensions
-                    IsLoadingOfUIExtensionsEnabled = true;
+                    if (IsLoadingOfUIExtensionsEnabled)
+                    {
+                        base.LoadUIExtensions(MainListView);
+                    }
+                    else
+                    {
+                        // re-enable the loading of the extensions
+                        IsLoadingOfUIExtensionsEnabled = true;
+                    }
+                }
+                catch
+                {
+                    if (!_isDisposing)
+                    {
+                        throw;
+                    }
                 }
             }));
 

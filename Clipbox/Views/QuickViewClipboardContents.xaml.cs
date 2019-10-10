@@ -34,7 +34,8 @@ namespace Clipbox.Views
         
         public static readonly DependencyProperty DimNonFocusedItemsProperty =
             DependencyProperty.Register(nameof(DimNonFocusedItems), typeof(bool), typeof(QuickViewClipboardContents), new PropertyMetadata(false));
-        
+
+        private bool _isDisposing;
 
         public QuickViewClipboardContents(QuickViewkClipboardContentsViewModel vm, UIExtentionContainer container, ISettingsService settingsService)
             : base (container, settingsService)
@@ -66,19 +67,49 @@ namespace Clipbox.Views
                     {
                         Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
                         {
-                            base.PerformHousekeeping(_viewModel.ClipboardViewItemWrappers.Select(w => w.Id), 
-                                out IReadOnlyCollection<string> removedClipboardItemIds);
+                            if (_isDisposing)
+                            {
+                                return;
+                            }
 
-                            _viewModel.RemoveClipboardItemWrappers(removedClipboardItemIds);
+                            try
+                            {
+                                base.PerformHousekeeping(_viewModel.ClipboardViewItemWrappers.Select(w => w.Id),
+                                    out IReadOnlyCollection<string> removedClipboardItemIds);
+
+                                _viewModel.RemoveClipboardItemWrappers(removedClipboardItemIds);
+                            }
+                            catch
+                            {
+                                if (!_isDisposing)
+                                {
+                                    throw;
+                                }
+                            }
                         }));
                     }))
                     .ContinueWith((t) =>
                     {
-                        if (base.MonitorDimensions != _oldMonitorDimensions)
+                        if (_isDisposing)
                         {
-                            _oldMonitorDimensions = base.MonitorDimensions;
+                            return;
+                        }
 
-                            LoadViewItems();
+                        try
+                        {
+                            if (base.MonitorDimensions != _oldMonitorDimensions)
+                            {
+                                _oldMonitorDimensions = base.MonitorDimensions;
+
+                                LoadViewItems();
+                            }
+                        }
+                        catch
+                        {
+                            if (!_isDisposing)
+                            {
+                                throw;
+                            }
                         }
                     });
                 }));
@@ -199,6 +230,8 @@ namespace Clipbox.Views
 
         protected override void Dispose(bool disposing)
         {
+            _isDisposing = true;
+
             _viewModel.Dispose();
             base.Dispose(disposing);
         }
