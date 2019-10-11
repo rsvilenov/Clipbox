@@ -38,6 +38,8 @@ namespace Clipbox.Core.Search
             }
         }
 
+        public TermOccurrence Occurrence { get; set; }
+
         public bool Validate()
         {
             return ValidateTerm();

@@ -3,21 +3,13 @@ using Clipbox.Core.Search;
 using Clipbox.Core.Search.SearchTerms;
 using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.Utils;
+using Clipbox.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Clipbox.Views
 {
@@ -38,6 +30,16 @@ namespace Clipbox.Views
         {
             ((FilterBand)d).RebuildSearchTermCollection();
         }
+        
+        public AsyncObservableCollection<string> SourceMachineUniqueIds
+        {
+            get { return (AsyncObservableCollection<string>)GetValue(SourceMachineUniqueIdsProperty); }
+            set { SetValue(SourceMachineUniqueIdsProperty, value); }
+        }
+
+        public static readonly DependencyProperty SourceMachineUniqueIdsProperty =
+            DependencyProperty.Register(nameof(SourceMachineUniqueIds), typeof(AsyncObservableCollection<string>), typeof(FilterBand), new PropertyMetadata(new AsyncObservableCollection<string>()));
+        
 
         private void RebuildSearchTermCollection()
         {
@@ -67,15 +69,47 @@ namespace Clipbox.Views
                 SearchTerms.Add(new ClipboardContentTypeSearchTerm(contentClasses));
             }
             
+            if (LocalMachineSourceSelected || CloudSourceSelected)
+            {
+                bool areBothSelected = LocalMachineSourceSelected && CloudSourceSelected;
+
+                if (LocalMachineSourceSelected)
+                {
+                    SourceMachineUniqueIdSearchTerm smUidTerm = new SourceMachineUniqueIdSearchTerm
+                        (new List<string> { MachineUtils.GetMachineGuid() })
+                    {
+                        Occurrence = areBothSelected ?
+                            Core.Search.Enums.TermOccurrence.NON_OBLIGATORY :
+                            Core.Search.Enums.TermOccurrence.OBLIGATORY
+                    };
+
+                    SearchTerms.Add(smUidTerm);
+                }
+
+                if (CloudSourceSelected)
+                {
+                    SourceMachineUniqueIdSearchTerm smUidTerm = new SourceMachineUniqueIdSearchTerm
+                        (new List<string> { MachineUtils.GetMachineGuid() })
+                    {
+                        Occurrence = areBothSelected ?
+                            Core.Search.Enums.TermOccurrence.NON_OBLIGATORY :
+                            Core.Search.Enums.TermOccurrence.NON_PRESENT
+                    };
+                    
+                    SearchTerms.Add(smUidTerm);
+                }
+
+                // hack: if we have added only non-obligatory search terms,
+                // the search will not be possible, so we should add
+                // some obligatory terms which will not affect the result.
+                if (SearchTerms.All(t => t.Occurrence == Core.Search.Enums.TermOccurrence.NON_OBLIGATORY))
+                {
+                    var allContentClasses = (ClipboardContentClass[])Enum.GetValues(typeof(ClipboardContentClass));
+                    SearchTerms.Add(new ClipboardContentTypeSearchTerm(allContentClasses));
+                }
+            }
+            
             SearchTermsChanged?.Invoke(this, new EventArgs());
-            //if (LocalMachineSourceSelected || CloudSourceSelected)
-            //{
-            //    List<string> sourceMachine = new List<string>();
-            //    if (LocalMachineSourceSelected)
-            //    {
-            //        sourceMachine.Add()
-            //    }
-            //}
         }
         
         public AsyncObservableCollection<ISearchTerm> SearchTerms

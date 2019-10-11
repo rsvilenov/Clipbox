@@ -133,6 +133,15 @@ namespace Clipbox.SearchProvider
 
         private Query ConstructLuceneQuery(IEnumerable<ISearchTerm> searchTerms)
         {
+            // we assume that MinimumNumberShouldMatch of the BooleanQuery will remain set to 0,
+            // as is the default value of that property.
+            // If no mandatory terms are included in the boolean query,
+            // Lucene will treat our Occur.Should as Occur.Must.
+            if (searchTerms.Count(st => st.Occurrence == TermOccurrence.OBLIGATORY || st.Occurrence == TermOccurrence.NON_PRESENT) == 0)
+            {
+                throw new InvalidOperationException($"The list of search terms must include at least one clause with occurrance set to {TermOccurrence.OBLIGATORY} or {TermOccurrence.NON_PRESENT}");
+            }
+
             BooleanQuery bq = new BooleanQuery();
             
             StringBuilder luceneQuery = new StringBuilder();
@@ -164,7 +173,22 @@ namespace Clipbox.SearchProvider
                     }
                 }
 
-                bq.Add(subQuery, Occur.MUST /* AND */);
+                Occur luceneTermRelation;
+                switch (searchTerm.Occurrence)
+                {
+                    case TermOccurrence.OBLIGATORY:
+                        luceneTermRelation = Occur.MUST;
+                        break;
+                    case TermOccurrence.NON_OBLIGATORY:
+                        luceneTermRelation = Occur.SHOULD;
+                        break;
+                    case TermOccurrence.NON_PRESENT:
+                        luceneTermRelation = Occur.MUST_NOT;
+                        break;
+                    default:
+                        throw new NotSupportedException($"{nameof(TermOccurrence)}.{searchTerm.Occurrence} is not supported by thus class.");
+                }
+                bq.Add(subQuery, luceneTermRelation);
             }
 
             return bq;

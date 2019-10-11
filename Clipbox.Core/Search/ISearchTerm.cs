@@ -8,6 +8,8 @@ namespace Clipbox.Core.Search
         SearchCategory Category { get; }
         
         IEnumerable<string> SearchStringValues { get; }
+        
+        TermOccurrence Occurrence { get; }
 
         bool Validate();
     }

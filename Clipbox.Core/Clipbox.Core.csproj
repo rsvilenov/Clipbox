@@ -48,6 +48,7 @@
     <Compile Include="ClipboardContent\Enums\ClipboardContentClass.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\GeneralTypes\SearchSupportExtension.cs" />
     <Compile Include="Search\Enums\SearchCategory.cs" />
+    <Compile Include="Search\Enums\TermOccurrence.cs" />
     <Compile Include="Search\SearchTerms\ClipboardContentTypeSearchTerm.cs" />
     <Compile Include="Search\ISearchTerm.cs" />
     <Compile Include="Search\SearchTermBase.cs" />
