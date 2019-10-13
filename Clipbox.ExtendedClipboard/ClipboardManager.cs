@@ -611,7 +611,10 @@ namespace Clipbox.ExtendedClipboard
 
             lock (_ioLockHandle)
             {
-                foreach (var clipboardItem in _clipboardItems.Where(item => !item.IsSynchronizedWithCloud && !item.IsTemporary))
+                foreach (var clipboardItem in _clipboardItems
+                    .Where(item => !item.IsSynchronizedWithCloud 
+                        && !item.IsTemporary 
+                        && item.ShouldTransfer))
                 {
                     // restore the data of the items so that they will be stored properly when updated
                     if (clipboardItem.IsShrinked)
