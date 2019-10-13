@@ -1,7 +1,7 @@
 ﻿using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.Infrastructure.UI;
-using Clipbox.Services.DataObjects;
 using System;
+using System.Linq;
 
 namespace Clipbox.ViewModels.BindableObjects
 {
@@ -81,8 +81,7 @@ namespace Clipbox.ViewModels.BindableObjects
         /// We will not bind this item.
         /// </summary>
         public IClipboardItem ClipboardItem { get; private set; }
-
-
+        
         private string GetFriendlyDateString(DateTime date)
         {
             // TODO: Translate 'Today' and 'Yesterday'.

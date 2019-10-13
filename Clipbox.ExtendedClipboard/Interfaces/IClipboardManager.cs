@@ -10,7 +10,9 @@ namespace Clipbox.ExtendedClipboard.Interfaces
     public interface IClipboardManager : IDisposable
     {
         // TODO: interface segregation principle...
-        
+
+        void EnableDisableSyncOfItem(string clipboardItemId, bool enable);
+
         void PinUnpinItemItem(string clipboardItemId, bool pin);
 
         void SuspendClipboardForwarding();

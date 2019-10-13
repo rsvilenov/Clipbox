@@ -5,7 +5,8 @@ using System;
 namespace Clipbox.ExtendedClipboard.ClipboardContent
 {
     [Serializable]
-    public class ClipboardDataObject : IClipboardDataObject
+    public class ClipboardDataObject : IClipboardDataObject,
+        IHaveByteArray // people should not access the byte array from IClipboardDataObject...
     {
         /// <summary>
         /// <see cref="IClipboardDataObject.ByteArray"/> 
@@ -13,7 +14,8 @@ namespace Clipbox.ExtendedClipboard.ClipboardContent
         public byte[] ByteArray { get; internal set; }
 
         /// <summary>
-        /// <see cref="IClipboardDataObject.IsTransferable"/> 
+        /// Indicates whether the data can have any meaning on another computer.
+        /// Filesystem paths, preferred drop effect and the like can't be transfered.
         /// </summary>
         public bool IsTransferable { get; internal set; }
         

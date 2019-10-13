@@ -430,6 +430,7 @@
                 CombinabilityCheckRequested="MainListView_CombinabilityCheckRequested"
                 GroupingComplete="MainListView_GroupingComplete"
                 ItemDeletionRequested="MainListView_ItemDeletionRequested"
+                ItemEnableDisableSyncRequested="MainListView_ItemEnableDisableSyncRequested"
                 ItemPinUnpinRequested="MainListView_ItemPinUnpinRequested"
                 ItemsSource="{Binding ClipboardViewItemWrappers}"
                 SelectionChangeCompleted="MainListView_SelectionChangeCompleted"

@@ -49,7 +49,7 @@ namespace Clipbox.ExtendedClipboard.ClipboardContent
         public IList<IClipboardDataObject> ClipboardDataObjects
         {
             get { return _clipboardDataObjects; }
-            set { _clipboardDataObjects = value; }
+            internal set { _clipboardDataObjects = value; }
         }
 
         public IWindowInfo SourceWindowInfo { get; }
@@ -58,7 +58,7 @@ namespace Clipbox.ExtendedClipboard.ClipboardContent
 
         internal ClipboardItem(
             string id,
-            IClipboardItemSource source, 
+            IClipboardItemSource source,
             IEnumerable<IClipboardDataObject> clipboardDataObjects)
         {
             Id = id;
@@ -68,7 +68,7 @@ namespace Clipbox.ExtendedClipboard.ClipboardContent
             EntryDateUtcTicks = DateTime.UtcNow.Ticks;
             ModifiedDateTicks = DateTime.Now.Ticks;
             ModifiedDateUtcTicks = DateTime.UtcNow.Ticks;
-           
+
             LivingObjects.Add(new ObjectInfo
             {
                 HashCode = GetHashCode(),
@@ -79,7 +79,7 @@ namespace Clipbox.ExtendedClipboard.ClipboardContent
         }
 
         internal ClipboardItem(
-            IClipboardItemSource source, 
+            IClipboardItemSource source,
             IEnumerable<IClipboardDataObject> clipboardDataObjects)
             : this(Guid.NewGuid().ToString(), source, clipboardDataObjects)
         { }
@@ -93,9 +93,9 @@ namespace Clipbox.ExtendedClipboard.ClipboardContent
         public long EntryDateUtcTicks { get; internal set; }
 
         public IClipboardItemSource Source { get; }
-        
+
         public bool IsPinned { get; set; }
-        
+
         public bool IsSynchronizedWithCloud { get; set; }
 
         /// <summary>
@@ -106,7 +106,20 @@ namespace Clipbox.ExtendedClipboard.ClipboardContent
         public long ModifiedDateTicks { get; set; }
 
         public long ModifiedDateUtcTicks { get; set; }
-        
+
         public bool IsTemporary { get; internal set; }
+        
+        /// <summary>
+        /// True of any of the ClipboardDataOnjects is transferable 
+        /// (ClipboardDataOnject.IsTransferable=true).
+        /// <see cref="IHaveTransferabilityInfo.CanTransfer"/>
+        /// </summary>
+        public bool CanTransfer { get; set; }
+
+        /// <summary>
+        /// Determines whether the item should be uploaded to the cloud.
+        /// <see cref="IHaveTransferabilityInfo.ShouldTransfer"/>
+        /// </summary>
+        public bool ShouldTransfer { get; internal set; }
     }
 }

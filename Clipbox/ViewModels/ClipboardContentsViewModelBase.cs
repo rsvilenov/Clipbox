@@ -159,6 +159,22 @@ namespace Clipbox.ViewModels
             }
         }
 
+        public void EnbleDisableSyncOfClipboardEntry(string clipboardItemId)
+        {
+            ClipboardViewItemWrapper wrapper = ClipboardViewItemWrappers.FirstOrDefault(w => w.Id == clipboardItemId);
+            if (wrapper == null)
+            {
+                throw new KeyNotFoundException($"No clipboard item with id {clipboardItemId} was found.");
+            }
+
+            if (!wrapper.IsViewItemLoaded)
+            {
+                throw new InvalidOperationException($"The view item for {clipboardItemId} is not loaded. Please load it first.");
+            }
+
+            ClipboardManager.EnableDisableSyncOfItem(wrapper.Id, wrapper.ViewItem.IsSyncEnabled);
+        }
+
         public void PinUnpinClipboardEntry(string clipboardItemId)
         {
             ClipboardViewItemWrapper wrapper = ClipboardViewItemWrappers.FirstOrDefault(w => w.Id == clipboardItemId);

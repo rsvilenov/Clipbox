@@ -75,6 +75,8 @@ namespace Clipbox.ViewModels
             viewItem.IsPinned = clipboardItem.IsPinned;
             IEnumerable<ClipboardContentClass> contentClasses = clipboardItem.ClipboardDataObjects.Select(cdo => cdo.ContentClass).Distinct();
             viewItem.ContentClasses = new AsyncObservableCollection<ClipboardContentClass>(contentClasses);
+            viewItem.IsItemTransferable = clipboardItem.CanTransfer;
+            viewItem.IsSyncEnabled = clipboardItem.ShouldTransfer;
 
             return viewItem;
         }

@@ -324,6 +324,11 @@ namespace Clipbox.Views
             base.RaiseCombinabilityCheckRequested(e);
         }
 
+        private void MainListView_ItemEnableDisableSyncRequested(object sender, EventArgsClasses.ClipboardItemManipulationEventArgs e)
+        {
+            _viewModel.EnbleDisableSyncOfClipboardEntry(e.ClipboardItemId);
+        }
+
         private void MainListView_ItemPinUnpinRequested(object sender, EventArgsClasses.ClipboardItemManipulationEventArgs e)
         {
             _viewModel.PinUnpinClipboardEntry(e.ClipboardItemId);
@@ -435,5 +440,6 @@ namespace Clipbox.Views
                 LoadContents(searchTerms);
             }));
         }
+
     }
 }

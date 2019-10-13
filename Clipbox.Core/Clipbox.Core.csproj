@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClipboardContent\Interfaces\IHaveMonitorInfo.cs" />
+    <Compile Include="ClipboardContent\Interfaces\IHaveTransferabilityInfo.cs" />
     <Compile Include="DisposableObject.cs" />
     <Compile Include="ClipboardContent\Enums\ClipboardContentClass.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\GeneralTypes\SearchSupportExtension.cs" />

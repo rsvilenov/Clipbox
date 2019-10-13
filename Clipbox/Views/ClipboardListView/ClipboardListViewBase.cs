@@ -40,6 +40,8 @@ namespace Clipbox.Views.ClipboardListView
 
         public event EventHandler<ClipboardItemManipulationEventArgs> ItemPinUnpinRequested;
 
+        public event EventHandler<ClipboardItemManipulationEventArgs> ItemEnableDisableSyncRequested;
+
         /// <summary>
         /// Contains the command for the Close and Pin buttons.
         /// We do not want these commands to be publicly accessible, but we cannot make the 
@@ -122,10 +124,13 @@ namespace Clipbox.Views.ClipboardListView
                 // wait for the binding operations to complete,
                 // so we can get the changed value of the IsPinned property
                 PinUnpinClipboardEntry = new DelegateCommand<ClipboardViewItem>(PinUnpinClipboardEntryHandler,
+                dispatcherPriority: DispatcherPriority.ContextIdle),
+
+                EnableDisableSyncOfClipboardEntry = new DelegateCommand<ClipboardViewItem>(EnableDisableSyncOfClipboardEntryHandler,
                 dispatcherPriority: DispatcherPriority.ContextIdle)
             };
         }
-
+        
         private void ClipboardListViewBase_MouseDown(object sender, MouseButtonEventArgs e)
         {
             // deselect the selected item on click on the blank space between them
@@ -153,6 +158,11 @@ namespace Clipbox.Views.ClipboardListView
             _loadedMultiItems.Clear();
         }
 
+        private void EnableDisableSyncOfClipboardEntryHandler(ClipboardViewItem parameter)
+        {
+            ItemEnableDisableSyncRequested?.Invoke(this, new ClipboardItemManipulationEventArgs(parameter.ClipboardItemId));
+        }
+        
         private void PinUnpinClipboardEntryHandler(ClipboardViewItem parameter)
         {
             ItemPinUnpinRequested?.Invoke(this, new ClipboardItemManipulationEventArgs(parameter.ClipboardItemId));
@@ -473,6 +483,8 @@ namespace Clipbox.Views.ClipboardListView
             public ICommand DeleteClipboardEntry { get; set; }
 
             public ICommand PinUnpinClipboardEntry { get; set; }
+
+            public ICommand EnableDisableSyncOfClipboardEntry { get; set; }
         }
     }
 }

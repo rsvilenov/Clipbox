@@ -142,7 +142,7 @@ namespace Clipbox.ExtendedClipboard
 
                     clipboardDataObjects.Add(originalCdo);
                 }
-
+                
                 yield return new ClipboardItem(clipboardItemId, persistableClipboardItem.Source, clipboardDataObjects)
                 {
                     IsShrinked = !anyShrinkedCdoRestored,
@@ -150,7 +150,9 @@ namespace Clipbox.ExtendedClipboard
                     EntryDateTicks = persistableClipboardItem.EntryDateTicks,
                     EntryDateUtcTicks = persistableClipboardItem.EntryDateUtcTicks,
                     ModifiedDateTicks = persistableClipboardItem.ModifiedDateTicks,
-                    ModifiedDateUtcTicks = persistableClipboardItem.ModifiedDateUtcTicks
+                    ModifiedDateUtcTicks = persistableClipboardItem.ModifiedDateUtcTicks,
+                    CanTransfer = persistableClipboardItem.CanTransfer,
+                    ShouldTransfer = persistableClipboardItem.ShouldTransfer
                 };
             }  
         }
@@ -218,7 +220,9 @@ namespace Clipbox.ExtendedClipboard
                 EntryDateTicks = transferableClipboardItem.EntryDateTicks,
                 EntryDateUtcTicks = transferableClipboardItem.EntryDateUtcTicks,
                 ModifiedDateTicks = transferableClipboardItem.ModifiedDateTicks,
-                ModifiedDateUtcTicks = transferableClipboardItem.ModifiedDateUtcTicks
+                ModifiedDateUtcTicks = transferableClipboardItem.ModifiedDateUtcTicks,
+                CanTransfer = false,
+                ShouldTransfer = false
             };
 
             return clipboardItem;

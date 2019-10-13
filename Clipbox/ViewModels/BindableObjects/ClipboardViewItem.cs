@@ -49,6 +49,26 @@ namespace Clipbox.ViewModels.BindableObjects
             set { SetField(ref _isCloudItem, value); }
         }
 
+        private bool _isItemTransferable;
+        /// <summary>
+        /// Indicates whether the item can be uploaded to the cloud.
+        /// </summary>
+        public bool IsItemTransferable
+        {
+            get { return _isItemTransferable; }
+            set { SetField(ref _isItemTransferable, value); }
+        }
+
+        private bool _isSyncEnabled;
+        /// <summary>
+        /// Indicates whether the item should be uploaded to the cloud.
+        /// </summary>
+        public bool IsSyncEnabled
+        {
+            get { return _isSyncEnabled; }
+            set { SetField(ref _isSyncEnabled, value); }
+        }
+
         private DateTime _dateCreated;
 
         public DateTime DateCreated

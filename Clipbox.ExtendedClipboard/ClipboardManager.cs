@@ -525,6 +525,7 @@ namespace Clipbox.ExtendedClipboard
             // clone the members marked with [NonSerialized]
 
             clonnedItem.ClipboardDataObjects = new List<IClipboardDataObject>();
+
             foreach (ClipboardDataObject cdo in item.ClipboardDataObjects)
             {
                 clonnedItem.ClipboardDataObjects.Add(new ClipboardDataObject
@@ -542,6 +543,10 @@ namespace Clipbox.ExtendedClipboard
                 });
             }
 
+            clonnedItem.CanTransfer = clonnedItem.
+                ClipboardDataObjects.
+                Any(cdo => (cdo as ClipboardDataObject)?.IsTransferable == true);
+            
             return clonnedItem;
         }
 
@@ -743,6 +748,31 @@ namespace Clipbox.ExtendedClipboard
 
         #region Edit methods
 
+        public void EnableDisableSyncOfItem(string clipboardItemId, bool enable)
+        {
+            lock (_ioLockHandle)
+            {
+                ClipboardItem item = _clipboardItems.Where(ci => ci.Id == clipboardItemId).FirstOrDefault();
+
+                if (item == null)
+                {
+                    throw new ArgumentException($"ClipboardItem with Id {clipboardItemId} was not found.");
+                }
+
+                // when we change the sync-ability a temporary item, it is no longer temporary
+                item.IsTemporary = false;
+
+                if (item.IsShrinked)
+                {
+                    _persistenceHelper.RestoreShrinkedClipboardItem(item);
+                }
+
+                item.ShouldTransfer = enable;
+
+                _persistenceHelper.StoreAndShrinkClipboardItem(item);
+            }
+        }
+
         public void PinUnpinItemItem(string clipboardItemId, bool pin)
         {
             lock (_ioLockHandle)
@@ -801,6 +831,7 @@ namespace Clipbox.ExtendedClipboard
                 }
 
                 clipboardItem.ClipboardDataObjects = filteredCdos.ToList();
+                clipboardItem.CanTransfer = filteredCdos.Any(cdo => (cdo as ClipboardDataObject)?.IsTransferable == true);
 
                 // invlidate the synchronized state of the item (it has changed)
                 clipboardItem.IsSynchronizedWithCloud = false;

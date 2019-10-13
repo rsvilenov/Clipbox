@@ -901,4 +901,52 @@
         </Viewbox>
     </ControlTemplate>
 
+    <ControlTemplate x:Key="SyncDisabledIcon">
+        <Viewbox>
+            <Grid Background="Transparent">
+                <Path
+                    Width="92"
+                    Height="92"
+                    Margin="0,0,0,0"
+                    Data="M27.750038,0L29.164039,1.4139996 23.163031,7.414999 23.163031,22.768999 28.038038,17.985999 29.69704,19.644999 22.34803,26.992999 15.00002,19.644999 16.659022,17.985999 21.163028,22.489999 21.163028,9.414999 8.1630111,22.413999 8.1630111,26.992999 6.1630083,26.992999 6.1630083,24.412999 2.5760036,27.999999 1.1620016,26.585999 6.1630083,21.584999 6.1630083,7.5029993 1.6590023,12.006999 0,10.348 7.3480098,3 14.69702,10.348 13.038017,12.006999 8.1630111,7.223999 8.1630111,19.585999 21.163028,6.5869989 21.163028,3 23.163031,3 23.163031,4.5869999z"
+                    Fill="{TemplateBinding Foreground}"
+                    RenderTransformOrigin="0.5,0.5"
+                    Stretch="Uniform">
+                    <Path.RenderTransform>
+                        <TransformGroup>
+                            <TransformGroup.Children>
+                                <RotateTransform Angle="0" />
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                            </TransformGroup.Children>
+                        </TransformGroup>
+                    </Path.RenderTransform>
+                </Path>
+            </Grid>
+        </Viewbox>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="SyncEnabledIcon">
+        <Viewbox>
+            <Grid Background="Transparent">
+                <Path
+                    Width="92"
+                    Height="92"
+                    Margin="0,0,0,0"
+                    Data="M21.162949,1.3275563E-05L23.162946,1.3275563E-05 23.162946,19.769022 28.037938,14.986071 29.696933,16.645004 22.347944,23.993014 14.999933,16.645004 16.658988,14.986071 21.162949,19.489969z M7.3479896,0L14.696979,7.3489868 13.037981,9.006984 8.1629882,4.2239925 8.1629882,23.992958 6.1629915,23.992958 6.1629915,4.5029919 1.6589975,9.006984 0,7.3489868z"
+                    Fill="{TemplateBinding Foreground}"
+                    RenderTransformOrigin="0.5,0.5"
+                    Stretch="Uniform">
+                    <Path.RenderTransform>
+                        <TransformGroup>
+                            <TransformGroup.Children>
+                                <RotateTransform Angle="0" />
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                            </TransformGroup.Children>
+                        </TransformGroup>
+                    </Path.RenderTransform>
+                </Path>
+            </Grid>
+        </Viewbox>
+    </ControlTemplate>
+
 </ResourceDictionary>
