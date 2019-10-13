@@ -13,6 +13,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:tile="clr-namespace:Clipbox.Views.ClipboardViewItemTile"
+    xmlns:vmEnums="clr-namespace:Clipbox.ViewModels.Enums"
     VerticalAlignment="Stretch"
     VerticalContentAlignment="Top"
     d:DesignHeight="450"
@@ -41,6 +42,8 @@
         <infConv:OrMultiValueConverter x:Key="OrMultiValueConverter" />
         <infConv:AndMultiValueConverter x:Key="AndMultiValueConverter" />
         <infConv:MathAddConverter x:Key="MathAddConverter" />
+        <infConv:BooleanToVisibilityMultiConverter x:Key="BooleanToVisibilityMultiConverter" />
+        <infConv:ComparisonConverter x:Key="ComparisonConverter" />
         <infConv:IsEqualOrGreaterThanConverter x:Key="IsEqualOrGreaterThanConverter" />
         <infConv:NullOrEmptyCollectionToBoolConverter x:Key="NullOrEmptyCollectionToBoolConverter" />
         <conv:ContentClassListContainsConverter x:Key="ContentClassListContainsConverter" />
@@ -362,32 +365,48 @@
 
                                                             </StackPanel>
 
-
-                                                            <ToggleButton
+                                                            <Grid
                                                                 Grid.Column="3"
                                                                 MaxWidth="25"
-                                                                Margin="0,0,5,0"
-                                                                Command="{Binding Path=ActionButtonsDataContext.EnableDisableSyncOfClipboardEntry, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
-                                                                CommandParameter="{Binding}"
-                                                                IsChecked="{Binding IsSyncEnabled}"
-                                                                Style="{DynamicResource ToggleBtnEnableDisableSync}">
-                                                                <i:Interaction.Behaviors>
-                                                                    <infBeh:FrameworkElementDpiScalingBehavior />
-                                                                </i:Interaction.Behaviors>
-                                                                <!--  Visible only if the ListViewItem is highlighted or selected (IsManipulationEnabled = true) OR the toggle button is checked  -->
-                                                                <ToggleButton.IsEnabled>
-                                                                    <MultiBinding Converter="{StaticResource OrMultiValueConverter}">
-                                                                        <Binding Path="IsManipulationEnabled" RelativeSource="{RelativeSource AncestorType={x:Type Border}}" />
-                                                                        <Binding Path="IsChecked" RelativeSource="{RelativeSource Self}" />
-                                                                    </MultiBinding>
-                                                                </ToggleButton.IsEnabled>
-                                                                <ToggleButton.Visibility>
-                                                                    <Binding
-                                                                        Converter="{StaticResource BooleanToVisibilityHiddenConverter}"
-                                                                        Path="IsEnabled"
-                                                                        RelativeSource="{RelativeSource Self}" />
-                                                                </ToggleButton.Visibility>
-                                                            </ToggleButton>
+                                                                Margin="0,0,5,0">
+                                                                <Grid.Style>
+                                                                    <Style TargetType="{x:Type Grid}">
+                                                                        <Setter Property="Visibility" Value="Visible" />
+                                                                        <Style.Triggers>
+                                                                            <!--
+                                                                                for items that come from the cloud we should never show this grid, so we can safely set its visibility to collapsed.
+                                                                                For other items, showing the grid may change the layout sizing, so in order to prevent that, we should hide it with Hidden.
+                                                                            -->
+                                                                            <DataTrigger Binding="{Binding IsCloudItem}" Value="True">
+                                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </Grid.Style>
+                                                                <ToggleButton
+                                                                    Command="{Binding Path=ActionButtonsDataContext.EnableDisableSyncOfClipboardEntry, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
+                                                                    CommandParameter="{Binding}"
+                                                                    IsChecked="{Binding SyncStatus, Mode=OneWay, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static vmEnums:CloudSyncStatus.SyncRequested}}"
+                                                                    IsEnabled="{Binding IsItemTransferable}"
+                                                                    Style="{DynamicResource ToggleBtnEnableDisableSync}">
+                                                                    <i:Interaction.Behaviors>
+                                                                        <infBeh:FrameworkElementDpiScalingBehavior />
+                                                                    </i:Interaction.Behaviors>
+                                                                    <!--  Visible only if the ListViewItem is highlighted or selected (IsManipulationEnabled = true) OR the toggle button is checked  -->
+                                                                    <ToggleButton.IsManipulationEnabled>
+                                                                        <MultiBinding Converter="{StaticResource OrMultiValueConverter}">
+                                                                            <Binding Path="IsManipulationEnabled" RelativeSource="{RelativeSource AncestorType={x:Type Border}}" />
+                                                                            <Binding Path="IsChecked" RelativeSource="{RelativeSource Self}" />
+                                                                        </MultiBinding>
+                                                                    </ToggleButton.IsManipulationEnabled>
+                                                                    <ToggleButton.Visibility>
+                                                                        <Binding
+                                                                            Converter="{StaticResource BooleanToVisibilityHiddenConverter}"
+                                                                            Path="IsManipulationEnabled"
+                                                                            RelativeSource="{RelativeSource Self}" />
+                                                                    </ToggleButton.Visibility>
+                                                                </ToggleButton>
+                                                            </Grid>
                                                         </Grid>
                                                     </DataTemplate>
                                                 </Setter.Value>

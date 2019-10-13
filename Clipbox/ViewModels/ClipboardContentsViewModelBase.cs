@@ -159,6 +159,10 @@ namespace Clipbox.ViewModels
             }
         }
 
+        protected virtual void OnSyncOfClipboardEntryEnabledOrDisabled(string clipboardItemId)
+        {
+        }
+
         public void EnbleDisableSyncOfClipboardEntry(string clipboardItemId)
         {
             ClipboardViewItemWrapper wrapper = ClipboardViewItemWrappers.FirstOrDefault(w => w.Id == clipboardItemId);
@@ -172,7 +176,17 @@ namespace Clipbox.ViewModels
                 throw new InvalidOperationException($"The view item for {clipboardItemId} is not loaded. Please load it first.");
             }
 
-            ClipboardManager.EnableDisableSyncOfItem(wrapper.Id, wrapper.ViewItem.IsSyncEnabled);
+            if (wrapper.ViewItem.SyncStatus == CloudSyncStatus.SyncDisabled)
+            {
+                wrapper.ViewItem.SyncStatus = CloudSyncStatus.SyncRequested;
+            }
+            else
+            {
+                wrapper.ViewItem.SyncStatus = CloudSyncStatus.SyncDisabled;
+            }
+
+            ClipboardManager.EnableDisableSyncOfItem(clipboardItemId, wrapper.ViewItem.SyncStatus != CloudSyncStatus.SyncDisabled);
+            OnSyncOfClipboardEntryEnabledOrDisabled(clipboardItemId);
         }
 
         public void PinUnpinClipboardEntry(string clipboardItemId)

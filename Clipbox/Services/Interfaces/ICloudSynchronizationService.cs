@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Clipbox.Services.EventArgsClasses;
+using System;
 using System.IO;
 
 namespace Clipbox.Services.Interfaces
@@ -14,5 +15,7 @@ namespace Clipbox.Services.Interfaces
         event EventHandler NetworkAvailabilityChanged;
 
         event EventHandler<ErrorEventArgs> ErrorOccurred;
+
+        event EventHandler<SyncEventArgs> ItemSynced;
     }
 }

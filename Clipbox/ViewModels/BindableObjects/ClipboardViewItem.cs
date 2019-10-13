@@ -1,5 +1,6 @@
 ﻿using Clipbox.Core.ClipboardContent.Enums;
 using Clipbox.Infrastructure.UI;
+using Clipbox.ViewModels.Enums;
 using System;
 using System.Windows.Media.Imaging;
 
@@ -59,14 +60,15 @@ namespace Clipbox.ViewModels.BindableObjects
             set { SetField(ref _isItemTransferable, value); }
         }
 
-        private bool _isSyncEnabled;
+        private CloudSyncStatus _syncStatus;
         /// <summary>
-        /// Indicates whether the item should be uploaded to the cloud.
+        /// Indicates whether the item should be uploaded to the cloud
+        /// as well as the status of the upload.
         /// </summary>
-        public bool IsSyncEnabled
+        public CloudSyncStatus SyncStatus
         {
-            get { return _isSyncEnabled; }
-            set { SetField(ref _isSyncEnabled, value); }
+            get { return _syncStatus; }
+            set { SetField(ref _syncStatus, value); }
         }
 
         private DateTime _dateCreated;

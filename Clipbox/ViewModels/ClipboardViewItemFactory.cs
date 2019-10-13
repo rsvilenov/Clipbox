@@ -1,9 +1,10 @@
-﻿using Clipbox.Core.ClipboardContent.Interfaces;
-using Clipbox.Core.ClipboardContent.Enums;
+﻿using Clipbox.Core.ClipboardContent.Enums;
+using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.ExtentionMethods;
 using Clipbox.Services.DataObjects;
 using Clipbox.ViewModels.BindableObjects;
+using Clipbox.Win32;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,7 +12,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Media.Imaging;
-using Clipbox.Win32;
 
 namespace Clipbox.ViewModels
 {
@@ -76,7 +76,6 @@ namespace Clipbox.ViewModels
             IEnumerable<ClipboardContentClass> contentClasses = clipboardItem.ClipboardDataObjects.Select(cdo => cdo.ContentClass).Distinct();
             viewItem.ContentClasses = new AsyncObservableCollection<ClipboardContentClass>(contentClasses);
             viewItem.IsItemTransferable = clipboardItem.CanTransfer;
-            viewItem.IsSyncEnabled = clipboardItem.ShouldTransfer;
 
             return viewItem;
         }

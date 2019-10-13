@@ -58,6 +58,8 @@
     <Compile Include="BindableObject.cs" />
     <Compile Include="Converters\AndMultiValueConverter.cs" />
     <Compile Include="Converters\BooleanToVisibilityHiddenConverter.cs" />
+    <Compile Include="Converters\BooleanToVisibilityMultiConverter.cs" />
+    <Compile Include="Converters\ComparisonConverter.cs" />
     <Compile Include="Converters\InverseBooleanConverter.cs" />
     <Compile Include="Converters\IsEqualOrGreaterThanConverter.cs" />
     <Compile Include="Converters\MathAddConverter.cs" />

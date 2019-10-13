@@ -2,6 +2,7 @@
 using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.UI.Utils;
+using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -29,6 +30,8 @@ namespace Clipbox.Services
         public event EventHandler NetworkAvailabilityChanged;
 
         public event EventHandler<ErrorEventArgs> ErrorOccurred;
+
+        public event EventHandler<SyncEventArgs> ItemSynced;
 
         private ICloudService _cloudService;
 
@@ -140,6 +143,7 @@ namespace Clipbox.Services
                 }
 
                 _clipboardManager.SetItemSynchronized(syncObject.Id);
+                ItemSynced?.Invoke(this, new SyncEventArgs(syncObject.Id));
             }
 
             DownloadNowOwnedCloudItems(existingCloudItems);
