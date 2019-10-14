@@ -386,7 +386,8 @@
                                                                         </Style.Triggers>
                                                                     </Style>
                                                                 </Grid.Style>
-                                                                <ToggleButton
+                                                                <ContentControl Template="{DynamicResource SyncCompleteIcon}" />
+                                                                <!--<ToggleButton
                                                                     Command="{Binding Path=ActionButtonsDataContext.EnableDisableSyncOfClipboardEntry, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
                                                                     CommandParameter="{Binding}"
                                                                     IsChecked="{Binding SyncStatus, Mode=OneWay, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static vmEnums:CloudSyncStatus.SyncRequested}}"
@@ -395,7 +396,9 @@
                                                                     <i:Interaction.Behaviors>
                                                                         <infBeh:FrameworkElementDpiScalingBehavior />
                                                                     </i:Interaction.Behaviors>
-                                                                    <!--  Visible only if the ListViewItem is highlighted or selected (IsManipulationEnabled = true) OR the toggle button is checked  -->
+                                                                -->
+                                                                <!--  Visible only if the ListViewItem is highlighted or selected (IsManipulationEnabled = true) OR the toggle button is checked  -->
+                                                                <!--
                                                                     <ToggleButton.IsManipulationEnabled>
                                                                         <MultiBinding Converter="{StaticResource OrMultiValueConverter}">
                                                                             <Binding Path="IsManipulationEnabled" RelativeSource="{RelativeSource AncestorType={x:Type Border}}" />
@@ -408,7 +411,7 @@
                                                                             Path="IsManipulationEnabled"
                                                                             RelativeSource="{RelativeSource Self}" />
                                                                     </ToggleButton.Visibility>
-                                                                </ToggleButton>
+                                                                </ToggleButton>-->
                                                             </Grid>
                                                         </Grid>
                                                     </DataTemplate>

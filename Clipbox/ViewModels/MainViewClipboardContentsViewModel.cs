@@ -58,6 +58,16 @@ namespace Clipbox.ViewModels
             set { SetField(ref _isCloudSyncAvailable, value); }
         }
 
+        protected override void OnSyncOfClipboardEntryEnabledOrDisabled(string clipboardItemId)
+        {
+            var wrapper = ClipboardViewItemWrappers.FirstOrDefault(w => w.Id == clipboardItemId);
+            if (wrapper != null && wrapper.IsViewItemLoaded && wrapper.ViewItem != null)
+            {
+                wrapper.ViewItem.SyncStatus = IsCloudSyncAvailable 
+                    ? CloudSyncStatus.Syncing : CloudSyncStatus.SyncRequested;
+            }
+        }
+
         public IEnumerable<string> GetClipboardItemIds(IEnumerable<ISearchTerm> searchTerms)
         {
             if (searchTerms != null && searchTerms.Any())
