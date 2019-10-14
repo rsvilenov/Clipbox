@@ -29,6 +29,8 @@ namespace Clipbox.Services
 
         public event EventHandler NetworkAvailabilityChanged;
 
+        public event EventHandler AuthenticationStateChanged;
+
         public event EventHandler<ErrorEventArgs> ErrorOccurred;
 
         public event EventHandler<SyncEventArgs> ItemSynced;
@@ -147,7 +149,6 @@ namespace Clipbox.Services
             }
 
             DownloadNowOwnedCloudItems(existingCloudItems);
-
         }
 
         private void DownloadNowOwnedCloudItems(List<string> existingCloudItems)
@@ -300,19 +301,25 @@ namespace Clipbox.Services
         {
             _isAuthenticating = true;
             IsAuthenticated = false;
-
+            
+            AuthenticationStateChanged?.Invoke(this, new EventArgs());
+            
             var authService = (IAuthenticatable)_cloudService;
             authService.InitiateAuthentication(null);
             authService.Authenticated += (sender, args) =>
             {
                 IsAuthenticated = true;
                 _isAuthenticating = false;
+
+                AuthenticationStateChanged?.Invoke(this, new EventArgs());
             };
 
             authService.AuthenticationFailed += (sender, args) =>
             {
                 IsAuthenticated = false;
                 _isAuthenticating = false;
+
+                AuthenticationStateChanged?.Invoke(this, new EventArgs());
             };
         }
 

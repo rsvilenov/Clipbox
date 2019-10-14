@@ -78,7 +78,17 @@ namespace Clipbox.Views.ClipboardListView
         public static readonly DependencyProperty AreSelectedItemsCombinableProperty =
             DependencyProperty.Register(nameof(AreSelectedItemsCombinable), typeof(bool), typeof(FullClipboardListView), new PropertyMetadata(true));
 
+        
+        public bool IsCloudSyncAvailable
+        {
+            get { return (bool)GetValue(IsCloudSyncAvailableProperty); }
+            set { SetValue(IsCloudSyncAvailableProperty, value); }
+        }
 
+        public static readonly DependencyProperty IsCloudSyncAvailableProperty =
+            DependencyProperty.Register(nameof(IsCloudSyncAvailable), typeof(bool), typeof(FullClipboardListView), new PropertyMetadata(false));
+
+        
         public FullClipboardListView()
         {
             InitializeComponent();

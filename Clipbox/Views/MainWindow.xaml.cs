@@ -77,7 +77,8 @@ namespace Clipbox.Views
             UIExtentionContainer uiExtContainer,
             ISettingsService settingsService, 
             MonitorUtils.DisplayMonitor monitor,
-            ISearchService searchService)
+            ISearchService searchService,
+            ICloudSynchronizationService cloudSyncService)
         {
             _clipboardManager = clipboardManager;
             _uiExtContainer = uiExtContainer;
@@ -92,7 +93,7 @@ namespace Clipbox.Views
 
             InitializeComponent();
 
-            _mainViewClipboardContents = new MainViewClipboardContents(new ViewModels.MainViewClipboardContentsViewModel(_clipboardManager, previewGenerationService, _settingsService, _searchService), _uiExtContainer, settingsService);
+            _mainViewClipboardContents = new MainViewClipboardContents(new ViewModels.MainViewClipboardContentsViewModel(_clipboardManager, previewGenerationService, _settingsService, _searchService, cloudSyncService), _uiExtContainer, settingsService);
             clipboardContents.Content = _mainViewClipboardContents;
             
             _mainViewClipboardContents.CombinabilityCheckRequested += _mainViewClipboardContents_CombinabilityCheckRequested;

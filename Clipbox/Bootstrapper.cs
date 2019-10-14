@@ -161,7 +161,8 @@ namespace Clipbox
                 _previewGenerationService, 
                 _extentionLoader.UIExtentionContainer, 
                 _settingsService,
-                _searchService);
+                _searchService,
+                _cloudSyncService);
 
 
             // Initialize the flow controller

@@ -429,6 +429,7 @@
                 ClipboardViewItemMaxHeight="{Binding Path=ClipboardViewItemMaxHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}}"
                 CombinabilityCheckRequested="MainListView_CombinabilityCheckRequested"
                 GroupingComplete="MainListView_GroupingComplete"
+                IsCloudSyncAvailable="{Binding IsCloudSyncAvailable, Mode=OneWay}"
                 ItemDeletionRequested="MainListView_ItemDeletionRequested"
                 ItemEnableDisableSyncRequested="MainListView_ItemEnableDisableSyncRequested"
                 ItemPinUnpinRequested="MainListView_ItemPinUnpinRequested"

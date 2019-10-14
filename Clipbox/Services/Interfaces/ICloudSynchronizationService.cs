@@ -4,7 +4,7 @@ using System.IO;
 
 namespace Clipbox.Services.Interfaces
 {
-    internal interface ICloudSynchronizationService
+    public interface ICloudSynchronizationService
     {
         bool IsNetworkAvailable { get; }
 
@@ -13,6 +13,8 @@ namespace Clipbox.Services.Interfaces
         bool IsEnabled { get; set; }
 
         event EventHandler NetworkAvailabilityChanged;
+
+        event EventHandler AuthenticationStateChanged;
 
         event EventHandler<ErrorEventArgs> ErrorOccurred;
 
