@@ -238,7 +238,7 @@
                                                             Command="{Binding Path=ActionButtonsDataContext.PinUnpinClipboardEntry, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
                                                             CommandParameter="{Binding}"
                                                             IsChecked="{Binding IsPinned}"
-                                                            Style="{DynamicResource ToggleBtnStar}">
+                                                            Style="{DynamicResource ToggleBtnPin}">
                                                             <i:Interaction.Behaviors>
                                                                 <infBeh:FrameworkElementDpiScalingBehavior />
                                                             </i:Interaction.Behaviors>

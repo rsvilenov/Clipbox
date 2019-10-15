@@ -95,7 +95,7 @@
         </Style.Triggers>
     </Style>
 
-    <Style x:Key="ToggleBtnStar" TargetType="{x:Type ToggleButton}">
+    <Style x:Key="ToggleBtnPin" TargetType="{x:Type ToggleButton}">
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderBrush" Value="Transparent" />
         <Setter Property="Foreground" Value="White" />
@@ -110,11 +110,11 @@
                             Name="content"
                             Margin="3"
                             Foreground="{TemplateBinding Foreground}"
-                            Template="{DynamicResource StarEmptyIcon}" />
+                            Template="{DynamicResource PinIcon}" />
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="ToggleButton.IsChecked" Value="True">
-                            <Setter TargetName="content" Property="Template" Value="{DynamicResource StarIcon}" />
+                            <Setter TargetName="content" Property="Template" Value="{DynamicResource UnpinIcon}" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

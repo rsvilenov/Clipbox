@@ -1016,4 +1016,52 @@
         </Viewbox>
     </ControlTemplate>
 
+    <ControlTemplate x:Key="UnpinIcon">
+        <Viewbox>
+            <Grid Background="Transparent">
+                <Path
+                    Width="88"
+                    Height="88"
+                    Margin="0,0,0,0"
+                    Data="M14.880981,0L19.746948,2.382996 19.768982,4.8090224 27.044983,4.7449965 31.877991,2.2780156 32,16.830998 27.127991,14.440006 19.85498,14.504032 19.871948,16.929997 15.047974,19.396001 14.951965,8.3099994 14.983948,12.122012 12.561951,12.145022 0,9.8809843 12.516968,7.2940082 14.942993,7.2760028z"
+                    Fill="{TemplateBinding Foreground}"
+                    RenderTransformOrigin="0.5,0.5"
+                    Stretch="Uniform">
+                    <Path.RenderTransform>
+                        <TransformGroup>
+                            <TransformGroup.Children>
+                                <RotateTransform Angle="271" />
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                            </TransformGroup.Children>
+                        </TransformGroup>
+                    </Path.RenderTransform>
+                </Path>
+            </Grid>
+        </Viewbox>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="PinIcon">
+        <Viewbox>
+            <Grid Background="Transparent">
+                <Path
+                    Width="86"
+                    Height="86"
+                    Margin="0,0,0,0"
+                    Data="M13,3.1930008L13,10.986998 13.000014,18.776999C14.452041,17.926001,16.599013,16.410002,17.281997,14.569998L17.52394,13.918997 27.693007,13.918997 30.000014,15.855001 30.000014,10.987001 29.999999,6.1190009 27.693,8.055001 17.524,8.055001 17.282,7.4040005C16.634,5.6580005,14.562,4.1150007,13,3.1930008z M11,0L12.406,0.6260004C12.613,0.71800041,17.189,2.7860003,18.869,6.0550008L26.965,6.0550008 30.193,3.3450007C30.513999,3.0740004 30.974,3.0100007 31.362,3.1890006 31.749999,3.3690004 31.999999,3.7610006 31.999999,4.1880007L31.999999,10.986998 32.000014,17.787001C32.000014,18.212996 31.750014,18.605001 31.361953,18.785002 30.973037,18.965002 30.514052,18.9 30.188003,18.625998L26.96498,15.918997 18.869033,15.918997C17.188979,19.188002,12.613051,21.256002,12.40602,21.347998L11.000014,21.973997 11.000014,11.987001 0,11.987001 0,9.987001 11,9.987001z"
+                    Fill="{TemplateBinding Foreground}"
+                    RenderTransformOrigin="0.5,0.5"
+                    Stretch="Uniform">
+                    <Path.RenderTransform>
+                        <TransformGroup>
+                            <TransformGroup.Children>
+                                <RotateTransform Angle="325" />
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                            </TransformGroup.Children>
+                        </TransformGroup>
+                    </Path.RenderTransform>
+                </Path>
+            </Grid>
+        </Viewbox>
+    </ControlTemplate>
+
 </ResourceDictionary>
