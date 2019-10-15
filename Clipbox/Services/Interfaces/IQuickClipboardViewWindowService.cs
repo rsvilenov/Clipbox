@@ -13,6 +13,8 @@ namespace Clipbox.Services.Interfaces
         void SaveChangedSettings();
 
         bool IsWindowVisible { get; }
+
+        void LoadClipboardItem(string clipboardItemId);
         
         IReadOnlyCollection<string> SelectedItemIds { get; }
 

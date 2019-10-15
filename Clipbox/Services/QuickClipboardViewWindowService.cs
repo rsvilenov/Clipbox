@@ -257,6 +257,11 @@ namespace Clipbox.Services
         {
             _previewControl.SaveChangedSettings();
         }
+        
+        public void LoadClipboardItem(string clipboardItemId)
+        {
+            _previewControl.LoadItem(clipboardItemId);
+        }
 
         public void Dispose()
         {

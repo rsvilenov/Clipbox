@@ -135,6 +135,11 @@ namespace Clipbox.Views
         {
             _viewModel.LoadWrappedPinnedItems(MonitorDimensions);
         }
+
+        public void LoadItem(string clipboardItemId)
+        {
+            _viewModel.ScheduleLoadingOfNewItem(clipboardItemId);
+        }
         
         public override void FocusNextItem()
         {

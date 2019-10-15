@@ -73,7 +73,7 @@ namespace Clipbox.ViewModels
         {
             if (RemoveItemWrapper(e.ItemId))
             {
-                AddNewItem(e.ItemId);
+                ScheduleLoadingOfNewItem(e.ItemId);
             }
         }
 
@@ -81,10 +81,10 @@ namespace Clipbox.ViewModels
         private async void ClipboardManager_ItemAdded(object sender, ClipboardManagerEventArgs e)
 #pragma warning restore CS1998 // This async method lacks 'await' operators and will run synchronously. Consider using the 'await' operator to await non-blocking API calls, or 'await Task.Run(...)' to do CPU-bound work on a background thread.
         {
-            AddNewItem(e.ItemId);
+            ScheduleLoadingOfNewItem(e.ItemId);
         }
 
-        private void AddNewItem(string clipboardItemId)
+        public void ScheduleLoadingOfNewItem(string clipboardItemId)
         {
             _newlyAddedItemsToLoadAndWrap.Enqueue(clipboardItemId);
 

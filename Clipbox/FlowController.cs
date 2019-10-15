@@ -81,6 +81,12 @@ namespace Clipbox
 
         private void _mainViewWindowService_SetItemsToClipboardRequested(object sender, SetToClipboardEventArgs e)
         {
+            // if the selected item is one, put it in the quick view for convnience to the user
+            if (e.SelectedItemIds.Count == 1)
+            {
+                ChargeQuickView(e.SelectedItemIds.Single());
+            }
+
             ChargeSystemClipboard(e.SelectedItemIds, e.SelectedMultiItemIds, e.KeepGeneratedItem);
         }
 
@@ -234,6 +240,11 @@ namespace Clipbox
             _quickViewWindowService.FocusNextItem();
         }
 
+        private void ChargeQuickView(string selectedItemId)
+        {
+            _quickViewWindowService.LoadClipboardItem(selectedItemId);
+        }
+        
         private void ChargeSystemClipboard(IReadOnlyCollection<string> selectedItemIds, IReadOnlyDictionary<string, IReadOnlyCollection<int>> selectedMultiItemIds, bool keepGeneratedItem)
         {
             if (!selectedItemIds.Any() && !selectedMultiItemIds.Any())
