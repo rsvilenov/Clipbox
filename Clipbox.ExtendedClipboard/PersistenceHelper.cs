@@ -286,7 +286,9 @@ namespace Clipbox.ExtendedClipboard
                     EntryDateTicks = clipboardItem.EntryDateTicks,
                     EntryDateUtcTicks = clipboardItem.EntryDateUtcTicks,
                     ModifiedDateTicks = clipboardItem.ModifiedDateTicks,
-                    ModifiedDateUtcTicks = clipboardItem.ModifiedDateUtcTicks
+                    ModifiedDateUtcTicks = clipboardItem.ModifiedDateUtcTicks,
+                    CanTransfer = clipboardItem.CanTransfer,
+                    ShouldTransfer = clipboardItem.ShouldTransfer
                 };
             }
 

@@ -1,6 +1,5 @@
 ﻿using Clipbox.Core.ClipboardContent.Enums;
 using Clipbox.Infrastructure.UI;
-using Clipbox.ViewModels.Enums;
 using System;
 using System.Windows.Media.Imaging;
 
@@ -40,6 +39,14 @@ namespace Clipbox.ViewModels.BindableObjects
             set { SetField(ref _sourceWindowUserName, value); }
         }
 
+        private bool _isPinned;
+
+        public bool IsPinned
+        {
+            get { return _isPinned; }
+            set { SetField(ref _isPinned, value); }
+        }
+
         private bool _isCloudItem;
         /// <summary>
         /// Indicates whether the item comes from the cloud and not from local computer.
@@ -48,27 +55,6 @@ namespace Clipbox.ViewModels.BindableObjects
         {
             get { return _isCloudItem; }
             set { SetField(ref _isCloudItem, value); }
-        }
-
-        private bool _isItemTransferable;
-        /// <summary>
-        /// Indicates whether the item can be uploaded to the cloud.
-        /// </summary>
-        public bool IsItemTransferable
-        {
-            get { return _isItemTransferable; }
-            set { SetField(ref _isItemTransferable, value); }
-        }
-
-        private CloudSyncStatus _syncStatus;
-        /// <summary>
-        /// Indicates whether the item should be uploaded to the cloud
-        /// as well as the status of the upload.
-        /// </summary>
-        public CloudSyncStatus SyncStatus
-        {
-            get { return _syncStatus; }
-            set { SetField(ref _syncStatus, value); }
         }
 
         private DateTime _dateCreated;
@@ -96,14 +82,6 @@ namespace Clipbox.ViewModels.BindableObjects
         {
             get { return _cotentClasses; }
             set { SetField(ref _cotentClasses, value); }
-        }
-
-        private bool _isPinned;
-
-        public bool IsPinned
-        {
-            get { return _isPinned; }
-            set { SetField(ref _isPinned, value); }
         }
 
         private string _clipboardItemId;

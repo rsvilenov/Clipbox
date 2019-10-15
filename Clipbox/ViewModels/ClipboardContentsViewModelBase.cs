@@ -171,21 +171,16 @@ namespace Clipbox.ViewModels
                 throw new KeyNotFoundException($"No clipboard item with id {clipboardItemId} was found.");
             }
 
-            if (!wrapper.IsViewItemLoaded)
+            if (wrapper.SyncStatus == CloudSyncStatus.SyncDisabled)
             {
-                throw new InvalidOperationException($"The view item for {clipboardItemId} is not loaded. Please load it first.");
-            }
-
-            if (wrapper.ViewItem.SyncStatus == CloudSyncStatus.SyncDisabled)
-            {
-                wrapper.ViewItem.SyncStatus = CloudSyncStatus.SyncRequested;
+                wrapper.SyncStatus = CloudSyncStatus.SyncRequested;
             }
             else
             {
-                wrapper.ViewItem.SyncStatus = CloudSyncStatus.SyncDisabled;
+                wrapper.SyncStatus = CloudSyncStatus.SyncDisabled;
             }
 
-            ClipboardManager.EnableDisableSyncOfItem(clipboardItemId, wrapper.ViewItem.SyncStatus != CloudSyncStatus.SyncDisabled);
+            ClipboardManager.EnableDisableSyncOfItem(clipboardItemId, wrapper.SyncStatus != CloudSyncStatus.SyncDisabled);
             OnSyncOfClipboardEntryEnabledOrDisabled(clipboardItemId);
         }
 
@@ -202,7 +197,7 @@ namespace Clipbox.ViewModels
                 throw new InvalidOperationException($"The view item for {clipboardItemId} is not loaded. Please load it first.");
             }
 
-            ClipboardManager.PinUnpinItemItem(wrapper.Id, wrapper.ViewItem.IsPinned);
+            ClipboardManager.PinUnpinItemItem(wrapper.Id, wrapper.ViewItem.IsPinned == true);
         }
 
         public void DeleteClipboardEntry(string clipboardItemId)

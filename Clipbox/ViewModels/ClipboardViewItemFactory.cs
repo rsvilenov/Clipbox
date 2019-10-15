@@ -72,10 +72,9 @@ namespace Clipbox.ViewModels
             viewItem.DateCreated = new DateTime(clipboardItem.EntryDateTicks);
             viewItem.DateModified = new DateTime(clipboardItem.ModifiedDateTicks);
             viewItem.ClipboardItemId = clipboardItem.Id;
-            viewItem.IsPinned = clipboardItem.IsPinned;
             IEnumerable<ClipboardContentClass> contentClasses = clipboardItem.ClipboardDataObjects.Select(cdo => cdo.ContentClass).Distinct();
             viewItem.ContentClasses = new AsyncObservableCollection<ClipboardContentClass>(contentClasses);
-            viewItem.IsItemTransferable = clipboardItem.CanTransfer;
+            viewItem.IsPinned = clipboardItem.IsPinned;
 
             return viewItem;
         }
