@@ -133,7 +133,17 @@ namespace Clipbox.Services
 
             if (addedIds.Any())
             {
-                _searchProvider.StoreSearchUnits(addedIds.Select(id => GenerateSearchUnit(id)));
+                List<SearchUnit> generatedSearchUnits = new List<SearchUnit>();
+
+                foreach (string id in addedIds)
+                {
+                    if (TryGenerateSearchUnit(id, out SearchUnit searchUnit))
+                    {
+                        generatedSearchUnits.Add(searchUnit);
+                    }
+                }
+
+                _searchProvider.StoreSearchUnits(generatedSearchUnits);
             }
         }
 
@@ -152,9 +162,21 @@ namespace Clipbox.Services
                 .Where(id => _allClipboardItemIds.Contains(id));
         }
 
-        private SearchUnit GenerateSearchUnit(string clipboardItemId)
+        private bool TryGenerateSearchUnit(string clipboardItemId, out SearchUnit searchUnit)
         {
-            IClipboardItem clipboardItem = _clipboardManager.GetClipboardItem(clipboardItemId);
+            IClipboardItem clipboardItem = null;
+            searchUnit = null;
+
+            // since we are running some time after the clipboardItemId has been last
+            // checked to exist, we may encounter an item which may not exist anymore.
+            try
+            {
+                clipboardItem = _clipboardManager.GetClipboardItem(clipboardItemId);
+            }
+            catch (ArgumentException)
+            {
+                return false;
+            }
 
             List<ISearchTerm> searchTerms = new List<ISearchTerm>();
 
@@ -217,7 +239,8 @@ namespace Clipbox.Services
             }
 
 
-            return new SearchUnit(clipboardItem.Id, searchTerms);
+            searchUnit = new SearchUnit(clipboardItem.Id, searchTerms);
+            return true;
         }
 
         public void Dispose()

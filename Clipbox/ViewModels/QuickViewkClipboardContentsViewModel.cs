@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace Clipbox.ViewModels
 {
@@ -96,8 +97,9 @@ namespace Clipbox.ViewModels
         }
 
         private void _loadNewlyAddedItemsSlidingTimer_Elapsed(object sender, EventArgs e)
-        {   
-            LoadAndWrapNewlyAddedItems();
+        {
+            Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.Background,
+                new Action(() => LoadAndWrapNewlyAddedItems()));
         }
 
         private void LoadAndWrapNewlyAddedItems()
@@ -173,11 +175,6 @@ namespace Clipbox.ViewModels
             }
 
             ClipboardItemsLoadingStage = ClipboardItemsLoadingStage.ViewItemsLoaded;
-        }
-
-        public IClipboardItem GetClipboardItem(string id, bool restoreShrinked)
-        {
-            return base.ClipboardManager.GetClipboardItem(id, restoreShrinked);
         }
     }
 }

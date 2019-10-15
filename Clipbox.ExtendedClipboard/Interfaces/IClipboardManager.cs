@@ -29,6 +29,14 @@ namespace Clipbox.ExtendedClipboard.Interfaces
 
         IEnumerable<string> GetAllItemIds(Func<IClipboardItem, bool> filterCondition = null);
 
+        /// <summary>
+        /// Gets an IClipboardItem
+        /// </summary>
+        /// <param name="id">The clipboard item id</param>
+        /// <param name="restoreShrinked">Restore the shrinked parts of the item,
+        /// such as the raw data. Default: false.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException">The id does not exist.</exception>
         IClipboardItem GetClipboardItem(string id, bool restoreShrinked = false);
 
         void Clear();
