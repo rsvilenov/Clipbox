@@ -4,6 +4,7 @@ using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.UI.DataObjects;
 using Clipbox.Services.Interfaces;
+using Clipbox.Settings;
 using Clipbox.ViewModels.Enums;
 using System;
 using System.Collections.Generic;

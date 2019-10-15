@@ -5,6 +5,7 @@ using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.DataObjects;
 using Clipbox.Services.DataObjects;
 using Clipbox.Services.Interfaces;
+using Clipbox.Settings;
 using Clipbox.ViewModels.BindableObjects;
 using Clipbox.ViewModels.Enums;
 using System;
@@ -184,6 +185,10 @@ namespace Clipbox.ViewModels
             OnSyncOfClipboardEntryEnabledOrDisabled(clipboardItemId);
         }
 
+        protected virtual void OnClipboardEntryPinnedUnpinned(string clipboardItemId)
+        {
+        }
+
         public void PinUnpinClipboardEntry(string clipboardItemId)
         {
             ClipboardViewItemWrapper wrapper = ClipboardViewItemWrappers.FirstOrDefault(w => w.Id == clipboardItemId);
@@ -197,7 +202,13 @@ namespace Clipbox.ViewModels
                 throw new InvalidOperationException($"The view item for {clipboardItemId} is not loaded. Please load it first.");
             }
 
-            ClipboardManager.PinUnpinItemItem(wrapper.Id, wrapper.ViewItem.IsPinned == true);
+            ClipboardManager.PinUnpinItemItem(clipboardItemId, wrapper.ViewItem.IsPinned);
+
+            if (wrapper.ViewItem.IsPinned
+                && SettingsService.GetSetting<bool>(SettingsKeys.IsAutomaticCloudSyncOfPinnedItemsEnabled))
+            {
+                ClipboardManager.EnableDisableSyncOfItem(clipboardItemId, true);
+            }
         }
 
         public void DeleteClipboardEntry(string clipboardItemId)

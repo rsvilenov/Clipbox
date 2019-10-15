@@ -166,5 +166,17 @@ namespace Clipbox {
                 this["AreFadeAnimationsEnabled"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool IsAutomaticCloudSyncOfPinnedItemsEnabled {
+            get {
+                return ((bool)(this["IsAutomaticCloudSyncOfPinnedItemsEnabled"]));
+            }
+            set {
+                this["IsAutomaticCloudSyncOfPinnedItemsEnabled"] = value;
+            }
+        }
     }
 }

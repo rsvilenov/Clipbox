@@ -131,7 +131,8 @@ namespace Clipbox
             _settingsService.SetSetting(SettingsKeys.MainClipboardViewBackgroundRenderMode, (int)MainClipboardViewBackgroundRenderMode.ImageBrush);
             _settingsService.SetSetting(SettingsKeys.IsBackgroundPreviewGenerationEnabled, true);
             _settingsService.SetSetting(SettingsKeys.AreFadeAnimationsEnabled, true);
-
+            _settingsService.SetSetting(SettingsKeys.IsAutomaticCloudSyncOfPinnedItemsEnabled, true);
+            
             _previewGenerationService = new PreviewGenerationService(_clipboardManager, _extentionLoader.PreviewGeneratorsContainer, _settingsService);
             
             // Initialize the view model - the quick view should show as fast as possible, so we will create it beforehand

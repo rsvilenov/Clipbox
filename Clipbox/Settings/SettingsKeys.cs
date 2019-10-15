@@ -23,5 +23,7 @@
         public const string IsBackgroundPreviewGenerationEnabled = nameof(IsBackgroundPreviewGenerationEnabled);
 
         public const string AreFadeAnimationsEnabled = nameof(AreFadeAnimationsEnabled);
+
+        public const string IsAutomaticCloudSyncOfPinnedItemsEnabled = nameof(IsAutomaticCloudSyncOfPinnedItemsEnabled);
     }
 }
