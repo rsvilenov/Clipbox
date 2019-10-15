@@ -4,6 +4,7 @@ using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.DataObjects;
 using Clipbox.Services.Interfaces;
+using Clipbox.Settings;
 using Clipbox.ViewModels.BindableObjects;
 using Clipbox.ViewModels.Enums;
 using System;
@@ -26,7 +27,7 @@ namespace Clipbox.ViewModels
             set { SetField(ref _selectedClipboardViewItemWrappers, value); }
         }
 
-        private List<string> _newlyAddedItemsToLoadAndWrap;
+        private Queue<string> _newlyAddedItemsToLoadAndWrap;
 
         private MonitorDimensions _lastUsedMonitorDimensions;
 
@@ -50,7 +51,7 @@ namespace Clipbox.ViewModels
             ClearClipboardEntries = new DelegateCommand(ClearAllClipboardEntriesHandler);
 
             SelectedClipboardViewItemWrappers = new List<ClipboardViewItemWrapper>();
-            _newlyAddedItemsToLoadAndWrap = new List<string>();
+            _newlyAddedItemsToLoadAndWrap = new Queue<string>();
 
             _loadNewlyAddedItemsSlidingTimer = new SlidingTimer();
             _loadNewlyAddedItemsSlidingTimer.IntervalMs = NEWLY_ADDED_ITEMS_LOAD_DELAY_MS;
@@ -84,12 +85,18 @@ namespace Clipbox.ViewModels
 
         private void AddNewItem(string clipboardItemId)
         {
-            _newlyAddedItemsToLoadAndWrap.Add(clipboardItemId);
+            _newlyAddedItemsToLoadAndWrap.Enqueue(clipboardItemId);
+
+            if (_newlyAddedItemsToLoadAndWrap.Count > SettingsService.GetSetting<int>(SettingsKeys.MaxNonPinnedItemsInQuickView))
+            {
+                _newlyAddedItemsToLoadAndWrap.Dequeue();
+            }
+
             _loadNewlyAddedItemsSlidingTimer.Slide();
         }
 
         private void _loadNewlyAddedItemsSlidingTimer_Elapsed(object sender, EventArgs e)
-        {
+        {   
             LoadAndWrapNewlyAddedItems();
         }
 
@@ -97,16 +104,23 @@ namespace Clipbox.ViewModels
         {
             if (_lastUsedMonitorDimensions == null)
             {
-                throw new InvalidCastException($"{nameof(_lastUsedMonitorDimensions)} is null. Call {nameof(ReloadWrappedItems)} first.");
+                throw new InvalidCastException($"{nameof(_lastUsedMonitorDimensions)} is null. Call {nameof(LoadWrappedPinnedItems)} first.");
             }
 
             ClipboardItemsLoadingStage = ClipboardItemsLoadingStage.Started;
 
-            base.LoadAndWrapItems(_lastUsedMonitorDimensions, _newlyAddedItemsToLoadAndWrap);
+            /* since we are using a queue, our newest items will be last, therefore we should reverse it */
+            IEnumerable<string> newlyAddedItemsByEntryOrderReversed = _newlyAddedItemsToLoadAndWrap.Reverse();
+
+            base.LoadAndWrapItems(_lastUsedMonitorDimensions,
+               newlyAddedItemsByEntryOrderReversed,
+               addAtBeginning: true);
+
+            RemoveOldItemWrappersExceedingLimit();
 
             ClipboardItemsLoadingStage = ClipboardItemsLoadingStage.WrappersLoaded;
 
-            foreach (string clipboardItemId in _newlyAddedItemsToLoadAndWrap)
+            foreach (string clipboardItemId in newlyAddedItemsByEntryOrderReversed)
             {
                 base.LoadViewItem(clipboardItemId, _lastUsedMonitorDimensions);
             }
@@ -116,15 +130,29 @@ namespace Clipbox.ViewModels
             ClipboardItemsLoadingStage = ClipboardItemsLoadingStage.ViewItemsLoaded;
         }
 
-        public void ReloadWrappedItems(MonitorDimensions monitorDimensions)
+        private void RemoveOldItemWrappersExceedingLimit()
+        {
+            IEnumerable<string> unPinnedItemWrappers = base.ClipboardViewItemWrappers
+                            .Where(w => !w.ClipboardItem.IsPinned)
+                            .Select(w => w.Id);
+            int nItemsToRemove = unPinnedItemWrappers.Count() - SettingsService.GetSetting<int>(SettingsKeys.MaxNonPinnedItemsInQuickView);
+            if (nItemsToRemove > 0)
+            {
+                IEnumerable<string> itemsToRemove = unPinnedItemWrappers.Reverse().Take(nItemsToRemove);
+                base.RemoveClipboardItemWrappers(itemsToRemove);
+            }
+        }
+
+        public void LoadWrappedPinnedItems(MonitorDimensions monitorDimensions)
         {
             ClipboardItemsLoadingStage = ClipboardItemsLoadingStage.Started;
 
             var clipboardItemIds = base.ClipboardManager.GetAllItemIds();
-
-            IEnumerable<string> allItemIds = base.ClipboardManager.GetAllItemIds();
+            
+            // load all pinned items
+            IEnumerable<string> pinnedItems = base.ClipboardManager.GetAllItemIds((item) => item.IsPinned);
             base.ClipboardViewItemWrappers.Clear();
-            base.LoadAndWrapItems(monitorDimensions, allItemIds, pinnedOnly: false);
+            base.LoadAndWrapItems(monitorDimensions, pinnedItems);
 
             ClipboardItemsLoadingStage = ClipboardItemsLoadingStage.WrappersLoaded;
 

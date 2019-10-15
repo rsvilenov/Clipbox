@@ -398,7 +398,7 @@
                                                                         </Style>
                                                                     </ContentControl.Style>
                                                                 </ContentControl>
-                                                                <ContentControl Template="{DynamicResource SyncCompleteIcon}"  ToolTip="Sync complete">
+                                                                <ContentControl Template="{DynamicResource SyncCompleteIcon}" ToolTip="Sync complete">
                                                                     <ContentControl.Style>
                                                                         <Style TargetType="{x:Type ContentControl}">
                                                                             <Setter Property="Visibility" Value="Collapsed" />
@@ -477,14 +477,10 @@
                                         <DataTrigger Binding="{Binding Path=ViewItem, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListViewItem}, Converter={StaticResource ObjectTypeCompareConverter}, ConverterParameter={x:Type localBindableObjects:ClipboardViewItem}}" Value="False">
                                             <Setter Property="Visibility" Value="Collapsed" />
                                         </DataTrigger>
-                                        <!--  when the item is not pinned, show the close button  -->
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding Path=ViewItem, Converter={StaticResource ObjectTypeCompareConverter}, ConverterParameter={x:Type localBindableObjects:ClipboardViewItem}}" Value="False" />
-                                                <Condition Binding="{Binding Path=ViewItem.IsPinned}" Value="False" />
-                                            </MultiDataTrigger.Conditions>
+                                        <!--  when the item is loaded, show the close button  -->
+                                        <DataTrigger Binding="{Binding Path=ViewItem, Converter={StaticResource ObjectTypeCompareConverter}, ConverterParameter={x:Type localBindableObjects:ClipboardViewItem}}" Value="False">
                                             <Setter Property="Visibility" Value="Visible" />
-                                        </MultiDataTrigger>
+                                        </DataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </ContentControl.Style>

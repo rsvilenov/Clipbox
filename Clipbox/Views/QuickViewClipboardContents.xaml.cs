@@ -131,9 +131,9 @@ namespace Clipbox.Views
             _viewModel.LoadViewItems(MonitorDimensions);
         }
 
-        public void LoadWrappedItems()
+        public void LoadWrappedPinnedItems()
         {
-            _viewModel.ReloadWrappedItems(MonitorDimensions);
+            _viewModel.LoadWrappedPinnedItems(MonitorDimensions);
         }
         
         public override void FocusNextItem()

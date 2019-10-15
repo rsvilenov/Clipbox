@@ -25,5 +25,7 @@
         public const string AreFadeAnimationsEnabled = nameof(AreFadeAnimationsEnabled);
 
         public const string IsAutomaticCloudSyncOfPinnedItemsEnabled = nameof(IsAutomaticCloudSyncOfPinnedItemsEnabled);
+
+        public const string MaxNonPinnedItemsInQuickView = nameof(MaxNonPinnedItemsInQuickView);
     }
 }

@@ -73,7 +73,7 @@ namespace Clipbox.Services
             });
 
 
-            _previewControl.LoadWrappedItems();
+            _previewControl.LoadWrappedPinnedItems();
 
             _sizeChangedSligingTimer = new SlidingTimer();
             _sizeChangedSligingTimer.Elapsed += _sizeChangedSligingTimer_Elapsed;

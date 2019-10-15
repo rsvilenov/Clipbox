@@ -178,5 +178,17 @@ namespace Clipbox {
                 this["IsAutomaticCloudSyncOfPinnedItemsEnabled"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("5")]
+        public int MaxNonPinnedItemsInQuickView {
+            get {
+                return ((int)(this["MaxNonPinnedItemsInQuickView"]));
+            }
+            set {
+                this["MaxNonPinnedItemsInQuickView"] = value;
+            }
+        }
     }
 }
