@@ -153,13 +153,12 @@ namespace Clipbox.ViewModels
 
         public void RemoveClipboardItemWrappers(IEnumerable<string> clipboardItemIds)
         {
-            var wrappersToRemove = ClipboardViewItemWrappers
-                .Where(w => clipboardItemIds.Contains(w.Id))
-                .ToList();
-
-            foreach (var wrapper in wrappersToRemove)
+            foreach (var id in clipboardItemIds
+                .ToList() /* materialize the IEnumerable in any case,
+                as it may carry an enumerator on the same collection that
+                we are going to modify in this loop */ )
             {
-                ClipboardViewItemWrappers.Remove(wrapper);
+                RemoveItemWrapper(id);
             }
         }
 
@@ -212,11 +211,17 @@ namespace Clipbox.ViewModels
             {
                 ClipboardManager.EnableDisableSyncOfItem(clipboardItemId, true);
             }
+
+            OnClipboardEntryPinnedUnpinned(clipboardItemId);
         }
 
         public void DeleteClipboardEntry(string clipboardItemId)
         {
             ClipboardManager.RemoveClipboardItem(clipboardItemId);
+        }
+
+        protected virtual void OnClipboardEntryWrapperRemoved(string clipboardItemId)
+        {
         }
 
         protected bool RemoveItemWrapper(string clipboardItemId)
@@ -227,6 +232,7 @@ namespace Clipbox.ViewModels
             {
                 ClipboardViewItemWrappers.Remove(itemToRemove);
                 success = true;
+                OnClipboardEntryWrapperRemoved(itemToRemove.Id);
             }
 
             return success;

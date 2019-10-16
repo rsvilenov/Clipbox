@@ -34,6 +34,8 @@ namespace Clipbox.ViewModels
 
         private SlidingTimer _loadNewlyAddedItemsSlidingTimer;
 
+        private bool _areNonPinnedItemsPresent;
+
         /// <summary>
         /// This delay is to reduce the occurance of the cases when many
         /// clipboard items has been added to the clipboard manager in a short time and each item
@@ -43,13 +45,14 @@ namespace Clipbox.ViewModels
         /// However, I am not sure how often these cases will happen and if I need this at all...
         /// </summary>
         private const int NEWLY_ADDED_ITEMS_LOAD_DELAY_MS = 200;
-
+        
         public QuickViewkClipboardContentsViewModel(IClipboardManager clipboardManager,
             IPreviewGenerationService previewGenerationService,
             ISettingsService settingsService)
                 : base(clipboardManager, previewGenerationService, settingsService)
         {
-            ClearClipboardEntries = new DelegateCommand(ClearAllClipboardEntriesHandler);
+            ClearClipboardEntries = new DelegateCommand(ClearAllClipboardEntriesHandler, 
+                () => _areNonPinnedItemsPresent);
 
             SelectedClipboardViewItemWrappers = new List<ClipboardViewItemWrapper>();
             _newlyAddedItemsToLoadAndWrap = new Queue<string>();
@@ -64,9 +67,7 @@ namespace Clipbox.ViewModels
 
         private void ClearAllClipboardEntriesHandler()
         {
-            base.ClipboardManager.Clear();
-            base.ClipboardManager.ClearSystemClipboard();
-            base.ClipboardViewItemWrappers.Clear();
+            base.RemoveClipboardItemWrappers(GetNonPinnedItems());
         }
 
         private void ClipboardManager_ItemChanged(object sender, ClipboardManagerEventArgs e)
@@ -86,6 +87,11 @@ namespace Clipbox.ViewModels
 
         public void ScheduleLoadingOfNewItem(string clipboardItemId)
         {
+            if (base.ClipboardViewItemWrappers.Any(w => w.Id == clipboardItemId))
+            {
+                return;
+            }
+
             _newlyAddedItemsToLoadAndWrap.Enqueue(clipboardItemId);
 
             if (_newlyAddedItemsToLoadAndWrap.Count > SettingsService.GetSetting<int>(SettingsKeys.MaxNonPinnedItemsInQuickView))
@@ -120,6 +126,13 @@ namespace Clipbox.ViewModels
 
             RemoveOldItemWrappersExceedingLimit();
 
+            bool areNonPinnedItemsPresentCurrent = GetNonPinnedItems().Any();
+            if (areNonPinnedItemsPresentCurrent != _areNonPinnedItemsPresent)
+            {
+                _areNonPinnedItemsPresent = areNonPinnedItemsPresentCurrent;
+                ((DelegateCommand)ClearClipboardEntries).RaiseCanExecuteChanged();
+            }
+
             ClipboardItemsLoadingStage = ClipboardItemsLoadingStage.WrappersLoaded;
 
             foreach (string clipboardItemId in newlyAddedItemsByEntryOrderReversed)
@@ -134,13 +147,12 @@ namespace Clipbox.ViewModels
 
         private void RemoveOldItemWrappersExceedingLimit()
         {
-            IEnumerable<string> unPinnedItemWrappers = base.ClipboardViewItemWrappers
-                            .Where(w => !w.ClipboardItem.IsPinned)
-                            .Select(w => w.Id);
-            int nItemsToRemove = unPinnedItemWrappers.Count() - SettingsService.GetSetting<int>(SettingsKeys.MaxNonPinnedItemsInQuickView);
+            IEnumerable<string> unPinnedItemIds = GetNonPinnedItems();
+
+            int nItemsToRemove = unPinnedItemIds.Count() - SettingsService.GetSetting<int>(SettingsKeys.MaxNonPinnedItemsInQuickView);
             if (nItemsToRemove > 0)
             {
-                IEnumerable<string> itemsToRemove = unPinnedItemWrappers.Reverse().Take(nItemsToRemove);
+                IEnumerable<string> itemsToRemove = unPinnedItemIds.Reverse().Take(nItemsToRemove);
                 base.RemoveClipboardItemWrappers(itemsToRemove);
             }
         }
@@ -175,6 +187,35 @@ namespace Clipbox.ViewModels
             }
 
             ClipboardItemsLoadingStage = ClipboardItemsLoadingStage.ViewItemsLoaded;
+        }
+
+        protected override void OnClipboardEntryWrapperRemoved(string clipboardItemId)
+        {
+            UpdateClearUnpinnedEntriesCanExecute();
+        }
+
+        protected override void OnClipboardEntryPinnedUnpinned(string clipboardItemId)
+        {
+            UpdateClearUnpinnedEntriesCanExecute();
+        }
+
+        private void UpdateClearUnpinnedEntriesCanExecute()
+        {
+            _areNonPinnedItemsPresent = GetNonPinnedItems().Any();
+
+            ((DelegateCommand)ClearClipboardEntries).RaiseCanExecuteChanged();
+        }
+
+        private List<string> GetNonPinnedItems()
+        {
+            return base.ClipboardViewItemWrappers
+                // if the item is loaded, check the view item,
+                // else - see the clipboard item
+                .Where(w => w.IsViewItemLoaded ? 
+                        !w.ViewItem.IsPinned : 
+                        !w.ClipboardItem.IsPinned)
+                 .Select(w => w.Id)
+                 .ToList();
         }
     }
 }

@@ -173,8 +173,8 @@
                 ClipboardViewItemMaxHeight="{Binding Path=ClipboardViewItemMaxHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}}"
                 CombinabilityCheckRequested="MainListView_CombinabilityCheckRequested"
                 DimNonFocusedItems="{Binding Path=DimNonFocusedItems, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}}"
-                ItemDeletionRequested="MainListView_ItemDeletionRequested"
                 ItemPinUnpinRequested="MainListView_ItemPinUnpinRequested"
+                ItemRemovalRequested="MainListView_ItemRemovalRequested"
                 ItemsSource="{Binding ClipboardViewItemWrappers}"
                 ScrollDownButton="{Binding ElementName=BtnScrollDown}"
                 ScrollUpButton="{Binding ElementName=BtnScrollUp}"
@@ -226,6 +226,7 @@
                     <infBeh:FrameworkElementDpiScalingBehavior />
                 </i:Interaction.Behaviors>
             </TextBlock>
+            <!--  Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}}"  -->
             <Button
                 Grid.Column="1"
                 Width="25"
@@ -235,9 +236,8 @@
                 VerticalAlignment="Stretch"
                 Click="ButtonClearItems_Click"
                 Command="{Binding ClearClipboardEntries}"
-                IsEnabled="{Binding Path=AreAnyItemsSelected, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}, Converter={StaticResource InverseBooleanConverter}}"
-                Style="{DynamicResource BtnTrash}"
-                Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+                IsEnabled="{Binding Path=AreAnyItemsSelected, ElementName=MainListView, Converter={StaticResource InverseBooleanConverter}}"
+                Style="{DynamicResource BtnTrash}">
                 <i:Interaction.Behaviors>
                     <infBeh:FrameworkElementDpiScalingBehavior />
                 </i:Interaction.Behaviors>

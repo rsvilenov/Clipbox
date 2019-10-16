@@ -200,12 +200,11 @@ namespace Clipbox.Views
             _viewModel.PinUnpinClipboardEntry(e.ClipboardItemId);
         }
 
-        private void MainListView_ItemDeletionRequested(object sender, EventArgsClasses.ClipboardItemManipulationEventArgs e)
+        private void MainListView_ItemRemovalRequested(object sender, EventArgsClasses.ClipboardItemManipulationEventArgs e)
         {
-            _viewModel.DeleteClipboardEntry(e.ClipboardItemId);
+            _viewModel.RemoveClipboardItemWrappers(new string[] { e.ClipboardItemId });
         }
 
-        
         public IReadOnlyCollection<string> GetSelectedItemIds()
         {
             return MainListView.GetSelectedItemIds();

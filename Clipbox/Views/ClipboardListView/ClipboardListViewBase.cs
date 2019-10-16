@@ -26,7 +26,7 @@ namespace Clipbox.Views.ClipboardListView
 
         private List<MultiItem> _loadedMultiItems;
 
-        private int _hashCodeOfItemUndergoingDeletion;
+        private int _hashCodeOfItemUndergoingDeletionOrRemoval;
         
         protected List<string> SelectedItemIds { get; set; }
 
@@ -37,6 +37,8 @@ namespace Clipbox.Views.ClipboardListView
         public event EventHandler<CombinabilityEventArgs> CombinabilityCheckRequested;
 
         public event EventHandler<ClipboardItemManipulationEventArgs> ItemDeletionRequested;
+
+        public event EventHandler<ClipboardItemManipulationEventArgs> ItemRemovalRequested;
 
         public event EventHandler<ClipboardItemManipulationEventArgs> ItemPinUnpinRequested;
 
@@ -119,7 +121,10 @@ namespace Clipbox.Views.ClipboardListView
                 DeleteClipboardEntry = new DelegateCommand<ClipboardViewItem>(DeleteClipboardEntryHandler,
                 /* disable the command until all deletion operations execute (it should be just one, so do it just in case... 
                  * and prevent the possibility of the user to click on the button twice in a row) */
-                (item) => item?.GetHashCode() != _hashCodeOfItemUndergoingDeletion),
+                (item) => item?.GetHashCode() != _hashCodeOfItemUndergoingDeletionOrRemoval),
+
+                RemoveClipboardEntry = new DelegateCommand<ClipboardViewItem>(RemoveClipboardEntryHandler,
+                (item) => item?.GetHashCode() != _hashCodeOfItemUndergoingDeletionOrRemoval),
 
                 // wait for the binding operations to complete,
                 // so we can get the changed value of the IsPinned property
@@ -171,8 +176,15 @@ namespace Clipbox.Views.ClipboardListView
         private void DeleteClipboardEntryHandler(ClipboardViewItem parameter)
         {
             // block consequent executions of the command until the entire delete operation is executed
-            _hashCodeOfItemUndergoingDeletion = parameter.GetHashCode();
+            _hashCodeOfItemUndergoingDeletionOrRemoval = parameter.GetHashCode();
             ItemDeletionRequested?.Invoke(this, new ClipboardItemManipulationEventArgs(parameter.ClipboardItemId));
+        }
+
+        private void RemoveClipboardEntryHandler(ClipboardViewItem parameter)
+        {
+            // block consequent executions of the command until the entire delete operation is executed
+            _hashCodeOfItemUndergoingDeletionOrRemoval = parameter.GetHashCode();
+            ItemRemovalRequested?.Invoke(this, new ClipboardItemManipulationEventArgs(parameter.ClipboardItemId));
         }
 
         public IReadOnlyCollection<string> GetSelectedItemIds()
@@ -481,6 +493,8 @@ namespace Clipbox.Views.ClipboardListView
         protected class ActionButtonsDataContextClass
         {
             public ICommand DeleteClipboardEntry { get; set; }
+
+            public ICommand RemoveClipboardEntry { get; set; }
 
             public ICommand PinUnpinClipboardEntry { get; set; }
 
