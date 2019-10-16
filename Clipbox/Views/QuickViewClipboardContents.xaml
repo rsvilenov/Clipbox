@@ -237,7 +237,7 @@
                 Click="ButtonClearItems_Click"
                 Command="{Binding ClearClipboardEntries}"
                 IsEnabled="{Binding Path=AreAnyItemsSelected, ElementName=MainListView, Converter={StaticResource InverseBooleanConverter}}"
-                Style="{DynamicResource BtnTrash}">
+                Style="{DynamicResource BtnWipe}">
                 <i:Interaction.Behaviors>
                     <infBeh:FrameworkElementDpiScalingBehavior />
                 </i:Interaction.Behaviors>
