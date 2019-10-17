@@ -96,14 +96,27 @@ namespace Clipbox.ViewModels
             wrapper.IsViewItemLoaded = false;
         }
 
-        public void LoadAndWrapItems(MonitorDimensions monitorDimensions, IEnumerable<string> clipboardItemIds, bool addAtBeginning = false)
+        public void LoadAndWrapItems(MonitorDimensions monitorDimensions, 
+            IEnumerable<string> clipboardItemIds, 
+            bool addAtBeginning = false,
+            bool orderByDateDesc = true)
         {
             List<IClipboardItem> clipboardItems = new List<IClipboardItem>();
             foreach (string clipboardItemId in clipboardItemIds)
             {
                 IClipboardItem clipboardItem = ClipboardManager.GetClipboardItem(clipboardItemId);
                 clipboardItems.Add(clipboardItem);
-                
+            }
+
+            if (orderByDateDesc)
+            {
+                clipboardItems = clipboardItems
+                    .OrderByDescending(item => item.EntryDateUtcTicks)
+                    .ToList();
+            }
+
+            foreach (IClipboardItem clipboardItem in clipboardItems)
+            { 
                 var wrapper = new ClipboardViewItemWrapper(clipboardItem);
 
                 if (TryGetPreviewDimensions(monitorDimensions, wrapper, out ClipboardViewItemDimensionInfo cvItemDimInfo))

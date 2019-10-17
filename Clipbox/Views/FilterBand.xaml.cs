@@ -10,6 +10,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Threading;
 
 namespace Clipbox.Views
 {
@@ -43,6 +44,11 @@ namespace Clipbox.Views
 
         private void RebuildSearchTermCollection()
         {
+            if (!(TypeExpander.IsExpanded || CloudExpander.IsExpanded))
+            {
+                return;
+            }
+
             SearchTerms.Clear();
 
             if (TextTypeSelected || ImageTypeSelected
@@ -191,17 +197,26 @@ namespace Clipbox.Views
             UncheckChildToggleButtons((Expander)sender);
         }
 
-        private static void UncheckChildToggleButtons(Expander sender)
+        private void UncheckChildToggleButtons(Expander sender)
         {
-            List<UIElement> toggleButtons = Traversing.GetVisualChildCollection(sender, (child) => child is ToggleButton);
-            foreach (UIElement child in toggleButtons)
+            if (SearchTerms.Any())
             {
-                var tglBtn = child as ToggleButton;
-                if (tglBtn != null)
-                {
-                    tglBtn.IsChecked = false;
-                }
+                SearchTerms.Clear();
+                SearchTermsChanged?.Invoke(this, new EventArgs());
             }
+
+            Dispatcher.BeginInvoke(DispatcherPriority.Background,
+                new Action(() =>
+                {
+                    List<UIElement> toggleButtons = Traversing.GetVisualChildCollection(sender, (child) => child is ToggleButton);
+                    foreach (UIElement child in toggleButtons)
+                    {
+                        if (child is ToggleButton tglBtn)
+                        {
+                            tglBtn.IsChecked = false;
+                        }
+                    }
+                }));
         }
     }
 }

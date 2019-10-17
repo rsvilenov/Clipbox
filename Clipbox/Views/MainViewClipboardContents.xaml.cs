@@ -419,12 +419,10 @@ namespace Clipbox.Views
 
         private void UpdateListViewWithSearchTerms()
         {
-            MainListView.Visibility = Visibility.Hidden;
-
-            _viewModel.ClipboardViewItemWrappers.Clear();
-
-            Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
+            Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
             {
+                MainListView.Visibility = Visibility.Hidden;
+
                 List<ISearchTerm> searchTerms = new List<ISearchTerm>();
 
                 if (!string.IsNullOrWhiteSpace(searchTextBox.SearchText))
@@ -436,7 +434,8 @@ namespace Clipbox.Views
                 }
 
                 searchTerms.AddRange(filterBand.SearchTerms);
-
+                
+                _viewModel.ClipboardViewItemWrappers.Clear();
                 LoadContents(searchTerms);
             }));
         }
