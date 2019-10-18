@@ -49,6 +49,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid>
+
         <Grid.RowDefinitions>
             <!--  top bar  -->
             <RowDefinition Height="Auto" />
@@ -72,6 +73,26 @@
                     Duration="0:0:0.7" />
             </Storyboard>
         </Grid.Resources>
+
+        <!--  dark overlay, indicating disabled state (used for highlighting popups)  -->
+        <Border
+            Grid.RowSpan="2"
+            Grid.ColumnSpan="2"
+            Panel.ZIndex="100">
+            <Border.Background>
+                <SolidColorBrush Opacity="0.4" Color="Black" />
+            </Border.Background>
+            <Border.Style>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding Path=IsEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type views:ClipboardViewControlBase}}}" Value="False">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+        </Border>
 
         <!--  loading indication panel  -->
         <Grid Grid.RowSpan="2" Grid.ColumnSpan="2">
@@ -301,13 +322,23 @@
                                 <localDialog:DialogPopup
                                     x:Name="deleteConfirmationPopup"
                                     MaxWidth="350"
-                                    DefaultButton="Yes"
+                                    DefaultButton="No"
                                     DialogAnswered="DeleteConfirmationPopup_DialogAnswered"
                                     DialogText="Are you sure you want to delete the selected item(s)?"
                                     DialogueType="YesNo"
                                     IsOpen="False"
                                     Placement="Bottom"
                                     PlacementTarget="{Binding ElementName=trashBtn}"
+                                    ReturnFocusTo="{Binding ElementName=MainListView}" />
+
+                                <localDialog:DialogPopup
+                                    x:Name="deleteSingleItemConfirmationPopup"
+                                    MaxWidth="350"
+                                    DefaultButton="No"
+                                    DialogText="Are you sure you want to delete this item?"
+                                    DialogueType="YesNo"
+                                    IsOpen="False"
+                                    Placement="Bottom"
                                     ReturnFocusTo="{Binding ElementName=MainListView}" />
                             </StackPanel>
 

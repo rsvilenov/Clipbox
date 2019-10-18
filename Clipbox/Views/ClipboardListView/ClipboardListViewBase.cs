@@ -175,14 +175,16 @@ namespace Clipbox.Views.ClipboardListView
 
         private void DeleteClipboardEntryHandler(ClipboardViewItem parameter)
         {
-            // block consequent executions of the command until the entire delete operation is executed
+            // block consequent executions of the command until the event handlers are executed
             _hashCodeOfItemUndergoingDeletionOrRemoval = parameter.GetHashCode();
             ItemDeletionRequested?.Invoke(this, new ClipboardItemManipulationEventArgs(parameter.ClipboardItemId));
+            // unblock the CanExecute of the command
+            _hashCodeOfItemUndergoingDeletionOrRemoval = 0;
         }
 
         private void RemoveClipboardEntryHandler(ClipboardViewItem parameter)
         {
-            // block consequent executions of the command until the entire delete operation is executed
+            // block consequent executions of the command until the entire remove operation is executed
             _hashCodeOfItemUndergoingDeletionOrRemoval = parameter.GetHashCode();
             ItemRemovalRequested?.Invoke(this, new ClipboardItemManipulationEventArgs(parameter.ClipboardItemId));
         }

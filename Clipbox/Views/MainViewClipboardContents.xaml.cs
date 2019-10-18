@@ -4,20 +4,25 @@ using Clipbox.Infrastructure.Extensibility.Containers;
 using Clipbox.Infrastructure.Threading;
 using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.CustomControls;
+using Clipbox.Infrastructure.UI.Theme.Enums;
 using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.ViewModels;
 using Clipbox.ViewModels.BindableObjects;
 using Clipbox.Views.ClipboardListView;
+using Clipbox.Views.Dialog.EventArgsClasses;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace Clipbox.Views
@@ -232,14 +237,21 @@ namespace Clipbox.Views
         private void TrashBtn_Click(object sender, RoutedEventArgs e)
         {
             deleteConfirmationPopup.IsOpen = true;
-
+            this.IsEnabled = false;
         }
         
         private void DeleteConfirmationPopup_DialogAnswered(object sender, Dialog.EventArgsClasses.DialogAnswerEventArgs e)
         {
-            if (e.SelectedButton == Dialog.Enums.DialogButtons.Yes)
+            try
             {
-                _viewModel.DeleteItems(MainListView.GetSelectedItemIds());
+                if (e.SelectedButton == Dialog.Enums.DialogButtons.Yes)
+                {
+                    _viewModel.DeleteItems(MainListView.GetSelectedItemIds());
+                }
+            }
+            finally
+            {
+                this.IsEnabled = true;
             }
         }
 
@@ -334,11 +346,101 @@ namespace Clipbox.Views
             _viewModel.PinUnpinClipboardEntry(e.ClipboardItemId);
         }
 
+
+        
+        /// <summary>
+        /// This method contains some really questionable code, but these days I am out of shape.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void MainListView_ItemDeletionRequested(object sender, EventArgsClasses.ClipboardItemManipulationEventArgs e)
         {
-            _viewModel.DeleteClipboardEntry(e.ClipboardItemId);
+            // find the selected list view item by the ClipboardItemId
+            var wrapper = _viewModel.ClipboardViewItemWrappers.FirstOrDefault(w => w.Id == e.ClipboardItemId);
+            if (wrapper == null)
+            {
+                throw new ArgumentException($"{nameof(_viewModel.ClipboardViewItemWrappers)} does not contain an item with id {e.ClipboardItemId}.");
+            }
+
+            if (!(MainListView.ItemContainerGenerator.ContainerFromItem(wrapper) is ListViewItem selectedListViewItem))
+            {
+                throw new ArgumentException($"The list view does not contain an item with id {e.ClipboardItemId}.");
+            }
+
+            // unselet all selected items, including the one that we are going to delete
+            MainListView.UnselectAll();
+            MainListView.UnselectMultiItemSubItems();
+            
+            // disable the entire control
+            this.IsEnabled = false;
+
+            // store the original border brush of the item
+            Brush oldBorderBrush = selectedListViewItem.BorderBrush;
+
+            // color the border with the alert brush
+            selectedListViewItem.BorderBrush = TryFindResource(ThemeBrush.AlertBrush1.ToString()) as Brush
+                ?? Brushes.Red;
+
+            // set the popup location to that of the selected listview item
+            deleteSingleItemConfirmationPopup.PlacementTarget = selectedListViewItem;
+                
+            // try to place the popup at the bottom of the item
+            deleteSingleItemConfirmationPopup.Placement = PlacementMode.Bottom;
+
+            // open the popup
+            deleteSingleItemConfirmationPopup.IsOpen = true;
+
+            // we are going to wait for the answer of the popup
+            AutoResetEvent dialogMre = new AutoResetEvent(false);
+
+            // declare an event handler which can access the variables in
+            // our stack frame and is such that we can unsubscribe it from the event later.
+            EventHandler<DialogAnswerEventArgs> answerHandler = (s, args) =>
+            {
+                dialogMre.Set();
+                if (args.SelectedButton == Dialog.Enums.DialogButtons.Yes)
+                {
+                    _viewModel.DeleteClipboardEntry(e.ClipboardItemId);
+                }
+                else
+                {
+                    // if the user clicks No, the listview item will remain in the
+                    // view, so we need to make it look as before - with its previous border brush.
+                    Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, 
+                        new Action(() => selectedListViewItem.BorderBrush = oldBorderBrush));
+                }
+            };
+
+            deleteSingleItemConfirmationPopup.DialogAnswered += answerHandler;
+            
+            // declare an event handler that will set the reset event upon closing the view,
+            // so that we can still execute the cleanup code if the user closes the view
+            // while the popup is still open.
+            DependencyPropertyChangedEventHandler visHandler = (s, args) => dialogMre.Set();
+            
+            this.IsVisibleChanged += visHandler;
+
+            // wait for the reset event in another task, so we do not block the ui thread 
+            Task.Run(() =>
+            {
+                dialogMre.WaitOne();
+                dialogMre.Dispose();
+
+                // unsubscribe from the event handlers
+                deleteSingleItemConfirmationPopup.DialogAnswered -= answerHandler;
+                this.IsVisibleChanged -= visHandler;
+
+                // if the view is still visible (if it is not being closed and we
+                // are not coming here from the event handler of IsVisibleChanged),
+                // then re-enable the entire control.
+                if (this.IsVisible)
+                {
+                    Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle,
+                        new Action(() => this.IsEnabled = true));
+                }
+            });
         }
-        
+
         private void MainListView_SelectionChangeCompleted(object sender, SelectionEventArgs e)
         {
             LoadUIExtensionsWithDelay();
@@ -439,6 +541,5 @@ namespace Clipbox.Views
                 LoadContents(searchTerms);
             }));
         }
-
     }
 }
