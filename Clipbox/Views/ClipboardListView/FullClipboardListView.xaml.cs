@@ -264,7 +264,12 @@ namespace Clipbox.Views.ClipboardListView
                 Rect bounds =
                 groupItem.TransformToAncestor(this).TransformBounds(new Rect(0.0, 0.0, groupItem.ActualWidth, groupItem.ActualHeight));
                 var rect = new Rect(0, 0, this.ActualWidth, this.ActualHeight);
-                if (rect.Contains(bounds.TopLeft) || rect.Contains(bounds.BottomRight))
+                
+                if (/* if the group is within the listview's bounds */
+                rect.Contains(bounds.TopLeft) || rect.Contains(bounds.BottomRight)
+                 /* or if the group is larger than the listview's height 
+                  * and its top and bottom are not within the visible area */
+                 || (bounds.Top < rect.Top && bounds.Bottom > rect.Bottom))
                 {
                     _visibleGroupNames.Add(groupName);
                 }
