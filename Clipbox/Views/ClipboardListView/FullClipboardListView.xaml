@@ -474,12 +474,8 @@
                                     <!--  hidden by default  -->
                                     <Setter Property="Visibility" Value="Hidden" />
                                     <Style.Triggers>
-                                        <!--  when the view item loads, set the visibility to collapsed, as the other button will have shown already and the height will not change  -->
-                                        <DataTrigger Binding="{Binding Path=ViewItem, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListViewItem}, Converter={StaticResource ObjectTypeCompareConverter}, ConverterParameter={x:Type localBindableObjects:ClipboardViewItem}}" Value="False">
-                                            <Setter Property="Visibility" Value="Collapsed" />
-                                        </DataTrigger>
                                         <!--  when the item is loaded, show the close button  -->
-                                        <DataTrigger Binding="{Binding Path=ViewItem, Converter={StaticResource ObjectTypeCompareConverter}, ConverterParameter={x:Type localBindableObjects:ClipboardViewItem}}" Value="False">
+                                        <DataTrigger Binding="{Binding Path=IsViewItemLoaded}" Value="True">
                                             <Setter Property="Visibility" Value="Visible" />
                                         </DataTrigger>
                                     </Style.Triggers>
@@ -490,7 +486,8 @@
                                 Margin="0,0,5,0"
                                 Command="{Binding Path=ActionButtonsDataContext.DeleteClipboardEntry, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
                                 CommandParameter="{Binding Path=ViewItem}"
-                                Style="{DynamicResource BtnClose}"
+                                Style="{DynamicResource BtnTrash}"
+                                ToolTip="Delete this item"
                                 Visibility="{Binding Path=IsManipulationEnabled, RelativeSource={RelativeSource AncestorType={x:Type Border}}, Converter={StaticResource BooleanToVisibilityConverter}}">
                                 <i:Interaction.Behaviors>
                                     <infBeh:FrameworkElementDpiScalingBehavior />

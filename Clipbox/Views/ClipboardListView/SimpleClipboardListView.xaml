@@ -255,6 +255,26 @@
                                                                     Path="IsEnabled"
                                                                     RelativeSource="{RelativeSource Self}" />
                                                             </ToggleButton.Visibility>
+                                                            <ToggleButton.ToolTip>
+                                                                <!--
+                                                                    the tooltip is not part of the visual tree, so we need to set its datacontext to that of
+                                                                    its placement target, in our case - the toggle button. Only then can we bind to properties
+                                                                    of that button.
+                                                                    https://wpf.2000things.com/2011/08/30/375-binding-something-in-a-tooltip-to-a-property-on-the-parent-control/
+                                                                -->
+                                                                <ToolTip DataContext="{Binding Path=PlacementTarget, RelativeSource={x:Static RelativeSource.Self}}">
+                                                                    <ToolTip.Style>
+                                                                        <Style TargetType="{x:Type ToolTip}">
+                                                                            <Setter Property="Content" Value="Pin item" />
+                                                                            <Style.Triggers>
+                                                                                <DataTrigger Binding="{Binding Path=IsChecked}" Value="True">
+                                                                                    <Setter Property="Content" Value="Unpin item" />
+                                                                                </DataTrigger>
+                                                                            </Style.Triggers>
+                                                                        </Style>
+                                                                    </ToolTip.Style>
+                                                                </ToolTip>
+                                                            </ToggleButton.ToolTip>
                                                         </ToggleButton>
 
                                                         <ContentControl Grid.Column="3">
@@ -278,6 +298,7 @@
                                                                 Command="{Binding Path=ActionButtonsDataContext.RemoveClipboardEntry, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
                                                                 CommandParameter="{Binding}"
                                                                 Style="{DynamicResource BtnClose}"
+                                                                ToolTip="Remove the item from view"
                                                                 Visibility="{Binding Path=IsManipulationEnabled, RelativeSource={RelativeSource AncestorType={x:Type Border}}, Converter={StaticResource BooleanToVisibilityConverter}}">
                                                                 <i:Interaction.Behaviors>
                                                                     <infBeh:FrameworkElementDpiScalingBehavior />
