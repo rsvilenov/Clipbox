@@ -48,24 +48,7 @@ namespace Clipbox.Views
 
         public static readonly DependencyProperty AreFadeAnimationsEnabledProperty =
             DependencyProperty.Register(nameof(AreFadeAnimationsEnabled), typeof(bool), typeof(MainViewClipboardContents), new PropertyMetadata(false));
-
         
-        /// <summary>
-        /// This view is the only one that allows for selection of incompatible items,
-        /// so this property seem to belong here.
-        /// </summary>
-        public bool AreSelectedItemsCombinable
-        {
-            get { return (bool)GetValue(AreSelectedItemsCombinableProperty); }
-            set { SetValue(AreSelectedItemsCombinableProperty, value); }
-        }
-        
-        public static readonly DependencyProperty AreSelectedItemsCombinableProperty =
-            DependencyProperty.Register(nameof(AreSelectedItemsCombinable), typeof(bool), typeof(MainViewClipboardContents), new PropertyMetadata(true));
-
-
-
-
         public bool IsShowingOfPostSelectionToolboxEnabled
         {
             get { return (bool)GetValue(IsLoadingOfPostSelectionToolboxEnabledProperty); }
