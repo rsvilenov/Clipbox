@@ -23,13 +23,12 @@ namespace Clipbox.Infrastructure.UI
 
         public void EnableSyncForCurrentUIThread()
         {
-            var dispatcherSyncContext = SynchronizationContext.Current as DispatcherSynchronizationContext;
-            if (dispatcherSyncContext == null)
+            if (!(SynchronizationContext.Current is DispatcherSynchronizationContext))
             {
                 throw new NotSupportedException("This method should be called on UI threads only.");
             }
 
-            EnableCollectionSynchronization(dispatcherSyncContext);
+            EnableCollectionSynchronization();
         }
 
         private void InvokeSynchronized(Action action)
@@ -38,7 +37,7 @@ namespace Clipbox.Infrastructure.UI
             {   
                 if (SynchronizationContext.Current is DispatcherSynchronizationContext)
                 {
-                    EnableCollectionSynchronization((DispatcherSynchronizationContext)SynchronizationContext.Current);
+                    EnableCollectionSynchronization();
                 }
                 // if we are calling the collection from non-UI threads only, the lock should be enough.
 
@@ -58,7 +57,7 @@ namespace Clipbox.Infrastructure.UI
             }
         }
 
-        private void EnableCollectionSynchronization(DispatcherSynchronizationContext syncContext)
+        private void EnableCollectionSynchronization()
         {
             // Ensure that we are running inside the UI thread, as this is a requirement for BindingOperations.EnableCollectionSynchronization().
             // The documentation explicitly states that "The call must occur on the UI thread."

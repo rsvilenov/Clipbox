@@ -102,7 +102,6 @@ namespace Clipbox.Services
 
         public void OpenOnMonitor(MonitorUtils.DisplayMonitor dm)
         {
-            MonitorUtils.DisplayMonitor currentMonitor = MonitorUtils.GetByCurrentMousePosition();
             bool resizeToDpi = ShouldResizeToDpi();
 
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
@@ -132,13 +131,7 @@ namespace Clipbox.Services
                         _mainWindow.CloseRequested += _mainWindow_CloseRequested;
 
                         mainWindow.ScaleMode = resizeToDpi ? DpiScaleMode.Custom : DpiScaleMode.None;
-
-                        mainWindow.SetMonitorDimensions(new MonitorDimensions
-                        {
-                            MonitorDPI = currentMonitor.Dpi,
-                            WorkAreaHeight = currentMonitor.WorkingArea.Height,
-                            WorkAreaWidth = currentMonitor.WorkingArea.Width
-                        });
+                        
 
                         _mainWindow.Show();
                     }

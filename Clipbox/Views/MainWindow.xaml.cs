@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -35,7 +36,9 @@ namespace Clipbox.Views
         private readonly MonitorUtils.DisplayMonitor _monitor;
         private readonly IClipboardManager _clipboardManager;
         private readonly UIExtentionContainer _uiExtContainer;
-
+        private readonly IPreviewGenerationService _previewGenerationService;
+        private readonly ICloudSynchronizationService _cloudSyncService;
+        
         private WallpaperWindow _wallpaperWindow;
 
         private MainClipboardViewBackgroundRenderMode _backgroundRenderMode;
@@ -85,6 +88,8 @@ namespace Clipbox.Views
             _settingsService = settingsService;
             _monitor = monitor;
             _searchService = searchService;
+            _cloudSyncService = cloudSyncService;
+            _previewGenerationService = previewGenerationService;
 
             if (!ThemeManager.IsLoaded)
             {
@@ -93,13 +98,29 @@ namespace Clipbox.Views
 
             InitializeComponent();
 
-            _mainViewClipboardContents = new MainViewClipboardContents(new ViewModels.MainViewClipboardContentsViewModel(_clipboardManager, previewGenerationService, _settingsService, _searchService, cloudSyncService), _uiExtContainer, settingsService);
-            clipboardContents.Content = _mainViewClipboardContents;
-            
+            _mainViewClipboardContents =
+                    new MainViewClipboardContents(
+                        new ViewModels.MainViewClipboardContentsViewModel(
+                            _clipboardManager,
+                            _previewGenerationService,
+                            _settingsService,
+                            _searchService,
+                            _cloudSyncService),
+                        _uiExtContainer,
+                        _settingsService);
+
+            _mainViewClipboardContents.SetMonitorDimensions(new MonitorDimensions
+            {
+                MonitorDPI = _monitor.Dpi,
+                WorkAreaHeight = _monitor.WorkingArea.Height,
+                WorkAreaWidth = _monitor.WorkingArea.Width
+            });
+
             _mainViewClipboardContents.CombinabilityCheckRequested += _mainViewClipboardContents_CombinabilityCheckRequested;
             _mainViewClipboardContents.SetItemsToClipboardRequested += _mainViewClipboardContents_SetItemsToClipboardRequested;
             _mainViewClipboardContents.HousekeepingRequested += _mainViewClipboardContents_HousekeepingRequested;
             _mainViewClipboardContents.CloseMainWindowRequested += _mainViewClipboardContents_CloseMainWindowRequested;
+
 
             _backgroundRenderMode = (MainClipboardViewBackgroundRenderMode)_settingsService.GetSetting<int>(SettingsKeys.MainClipboardViewBackgroundRenderMode);
 
@@ -168,14 +189,17 @@ namespace Clipbox.Views
         private void MainWindow_Shown(object sender, EventArgs e)
         {
             User32.SetForegroundWindow(Handle);
+
+            Task.Delay(300).ContinueWith(t =>
+            {
+                Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
+                {
+                    clipboardContents.Content = _mainViewClipboardContents;
+                }));
+            });
         }
 
         public new bool IsVisible { get; private set; }
-
-        public void SetMonitorDimensions(MonitorDimensions dimensions)
-        {
-            _mainViewClipboardContents.SetMonitorDimensions(dimensions);
-        }
 
         public new void Show()
         {
@@ -300,19 +324,14 @@ namespace Clipbox.Views
             }
         }
 
-        ~MainWindow()
-        {
-            Debug.WriteLine("GC MainWindow");
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
         public IReadOnlyList<IFlowParameter> GetFlowParameters()
         {
             return _mainViewClipboardContents.GetFlowParameters();
+        }
+
+        ~MainWindow()
+        {
+            Debug.WriteLine("GC MainWindow");
         }
     }
     

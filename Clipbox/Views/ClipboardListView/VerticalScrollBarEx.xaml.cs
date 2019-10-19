@@ -94,7 +94,11 @@ namespace Clipbox.Views.ClipboardListView
 
         private void UpdateButtonsVisibility()
         {
-            if (_parent == null)
+            if (_thumb == null)
+            {
+                _thumb = Traversing.GetVisualChildOfType<Thumb>(this);
+            }
+            if (_thumb == null || _parent == null)
             {
                 return;
             }

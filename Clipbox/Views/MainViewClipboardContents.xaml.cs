@@ -123,16 +123,45 @@ namespace Clipbox.Views
             if ((bool)e.NewValue)
             {
                 LoadContents(null);
+                //Dispatcher.BeginInvoke(DispatcherPriority.Background, 
+                //    new Action(() => LoadContents(null)));
             }
         }
 
         private void LoadContents(IEnumerable<ISearchTerm> searchTerms)
         {
-            IEnumerable<string> clipboardItemIds = _viewModel.GetClipboardItemIds(searchTerms); // maybe pass filters to this method later
+            if (!(SynchronizationContext.Current is DispatcherSynchronizationContext))
+            {
+                throw new InvalidOperationException("This method should be called from the dispatcher thread only/");
+            }
 
-            base.PerformHousekeeping(clipboardItemIds, out IReadOnlyCollection<string> removedClipboardItemIds);
+            _viewModel.ClipboardViewItemWrappers.EnableSyncForCurrentUIThread();
+            IEnumerable<string> clipboardItemIds = null;
+            IReadOnlyCollection<string> removedClipboardItemIds = null;
 
-            _viewModel.LoadAllItems(this.MonitorDimensions, clipboardItemIds.Except(removedClipboardItemIds));
+            Task.Run(() =>
+            {
+                if (_isDisposing)
+                {
+                    return;
+                }
+
+                clipboardItemIds = _viewModel.GetClipboardItemIds(searchTerms); // maybe pass filters to this method later
+
+                base.PerformHousekeeping(clipboardItemIds, out removedClipboardItemIds);
+
+            }).ContinueWith((t) =>
+            {
+                Dispatcher.BeginInvoke(DispatcherPriority.Background,
+                    new Action(() =>
+                    {
+                        if (_isDisposing)
+                        {
+                            return;
+                        }
+                        _viewModel.LoadAllItems(this.MonitorDimensions, clipboardItemIds.Except(removedClipboardItemIds));
+                    }));
+            });
         }
 
         public void ScheduleLoadingOfViewItem(string clipboardItemId)
