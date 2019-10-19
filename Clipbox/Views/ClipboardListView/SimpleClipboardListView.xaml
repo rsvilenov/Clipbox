@@ -170,7 +170,7 @@
                                                 RepeatBehavior="1x"
                                                 Storyboard.TargetProperty="Background.Color"
                                                 To="Red"
-                                                Duration="0:0:0.3" />
+                                                Duration="{x:Static lv:ClipboardListViewBase.HighlightColorAnimationDuration}" />
                                         </Storyboard>
                                     </BeginStoryboard>
                                 </DataTrigger.EnterActions>

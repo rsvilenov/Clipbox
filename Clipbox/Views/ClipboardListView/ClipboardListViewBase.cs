@@ -20,6 +20,8 @@ namespace Clipbox.Views.ClipboardListView
 {
     public abstract class ClipboardListViewBase : ListView
     {
+        public static readonly Duration HighlightColorAnimationDuration = new Duration(TimeSpan.FromMilliseconds(300));
+
         private string _lastSelectedItemId;
 
         private bool _areLastSelectedItemsCombinable;

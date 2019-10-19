@@ -25,7 +25,7 @@ namespace Clipbox.Views.ClipboardListView
     {
         private const int LAYOUT_TIMER_TIMEOUT_MS = 100;
         private const int SCROLLBAR_TIMER_TIMEOUT_MS = 300;
-
+        
         public event EventHandler<ClipboardItemManipulationEventArgs> ViewItemLoadingRequested;
 
         public event EventHandler<ClipboardItemManipulationEventArgs> ViewItemUnloadingRequested;

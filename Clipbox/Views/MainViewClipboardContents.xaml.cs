@@ -250,7 +250,10 @@ namespace Clipbox.Views
         
         private void SetToClipboardButton_Click(object sender, RoutedEventArgs e)
         {
-            SetSelectedItemsToClipboard();
+            if (MainListView.AreSelectedItemsCombinable)
+            {
+                SetSelectedItemsToClipboard();
+            }
         }
 
         private void TrashBtn_Click(object sender, RoutedEventArgs e)
@@ -277,14 +280,20 @@ namespace Clipbox.Views
         
         private void SetSelectedItemsToClipboard()
         {
+            if (!MainListView.AreSelectedItemsCombinable)
+            {
+                throw new InvalidOperationException("The selected items are not combinable. The possibility of calling this method with such items should have been ruled out.");
+            }
+
             //TODO: notify the user and close the window
             foreach (ClipboardViewItemWrapper wrapper in MainListView.SelectedItems)
             {
                 wrapper.ViewItem.RunItemAnimation();
             }
 
+            int delayMs = (int)ClipboardListViewBase.HighlightColorAnimationDuration.TimeSpan.TotalMilliseconds + 400;
             // allow the user to see the animation before closing the window/
-            Task.Delay(700) // the duration of the color animation (300) in the markup plus some extra time
+            Task.Delay(delayMs) // the duration of the color animation in the listview (FullClipboardListView) plus some extra time
                 .ContinueWith((t) =>
             {
                 Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
@@ -296,16 +305,31 @@ namespace Clipbox.Views
 
                     CloseMainWindowRequested?.Invoke(this, new EventArgs());
                 }));
-            });
+            },
+            TaskScheduler.FromCurrentSynchronizationContext());
             
         }
 
         private void MainListView_ClipboardItemContentControl_MouseDoubleClickDetection_DoubleClickDetected(object sender, EventArgs e)
         {
-            SetSelectedItemsToClipboard();
+            if (MainListView.AreSelectedItemsCombinable
+                && MainListView.GetSelectedItemIds().Count == 1
+                && MainListView.GetSelectedMultiItemsIds().Count == 0)
+            {
+                SetSelectedItemsToClipboard();
+            }
+            else
+            {
+                DoSingleClickOperations();
+            }
         }
 
         private void MainListView_ClipboardItemContentControl_MouseDoubleClickDetection_SingleClickDetected(object sender, EventArgs e)
+        {
+            DoSingleClickOperations();
+        }
+
+        private void DoSingleClickOperations()
         {
             IsLoadingOfUIExtensionsEnabled = true;
             Dispatcher.BeginInvoke(DispatcherPriority.Background,
@@ -313,7 +337,7 @@ namespace Clipbox.Views
                 {
                     IsShowingOfPostSelectionToolboxEnabled = true;
                     base.ClearLoadedUIExtensions();
-                    base.LoadUIExtensions((ClipboardListViewBase)sender);
+                    base.LoadUIExtensions(MainListView);
                 }
             ));
         }
@@ -330,7 +354,10 @@ namespace Clipbox.Views
             if (e.Key == System.Windows.Input.Key.Enter)
             {
                 e.Handled = true;
-                SetSelectedItemsToClipboard();
+                if (MainListView.AreSelectedItemsCombinable)
+                {
+                    SetSelectedItemsToClipboard();
+                }
             }
         }
 
