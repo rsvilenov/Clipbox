@@ -123,8 +123,6 @@ namespace Clipbox.Views
             if ((bool)e.NewValue)
             {
                 LoadContents(null);
-                //Dispatcher.BeginInvoke(DispatcherPriority.Background, 
-                //    new Action(() => LoadContents(null)));
             }
         }
 
@@ -132,7 +130,7 @@ namespace Clipbox.Views
         {
             if (!(SynchronizationContext.Current is DispatcherSynchronizationContext))
             {
-                throw new InvalidOperationException("This method should be called from the dispatcher thread only/");
+                throw new InvalidOperationException("This method should be called from the dispatcher thread only");
             }
 
             _viewModel.ClipboardViewItemWrappers.EnableSyncForCurrentUIThread();
@@ -161,7 +159,10 @@ namespace Clipbox.Views
                         }
                         _viewModel.LoadAllItems(this.MonitorDimensions, clipboardItemIds.Except(removedClipboardItemIds));
                     }));
-            });
+            },
+            // ensure that the code in ContinueWith executes on the main thread,
+            // which should be the UI thread, so we have access to the correct dispatcher
+            TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         public void ScheduleLoadingOfViewItem(string clipboardItemId)

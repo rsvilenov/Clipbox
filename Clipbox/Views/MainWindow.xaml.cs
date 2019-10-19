@@ -31,6 +31,8 @@ namespace Clipbox.Views
     /// </summary>
     public partial class MainWindow : AcryllicWindow, IMainWindow
     {
+        public static readonly Duration FadeInBackgroundAnimationDuration = new Duration(TimeSpan.FromMilliseconds(300));
+
         private readonly ISettingsService _settingsService;
         private readonly ISearchService _searchService;
         private readonly MonitorUtils.DisplayMonitor _monitor;
@@ -190,7 +192,8 @@ namespace Clipbox.Views
         {
             User32.SetForegroundWindow(Handle);
 
-            Task.Delay(300).ContinueWith(t =>
+            
+            Task.Delay(FadeInBackgroundAnimationDuration.TimeSpan).ContinueWith(t =>
             {
                 Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
                 {

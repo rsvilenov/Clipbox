@@ -27,7 +27,7 @@
                     Storyboard.TargetProperty="(UIElement.Opacity)"
                     From="0"
                     To="1"
-                    Duration="0:0:0.3" />
+                    Duration="{x:Static views:MainWindow.FadeInBackgroundAnimationDuration}" />
             </Storyboard>
         </Border.Resources>
 
