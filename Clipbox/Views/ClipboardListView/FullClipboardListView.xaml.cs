@@ -162,6 +162,7 @@ namespace Clipbox.Views.ClipboardListView
         private void StackPanel_Loaded(object sender, RoutedEventArgs e)
         {
             GroupingComplete?.Invoke(this, new EventArgs());
+            ((StackPanel)sender).Loaded -= StackPanel_Loaded;
         }
         
         private void WrapPanel_KeyUp(object sender, KeyEventArgs e)
@@ -196,6 +197,13 @@ namespace Clipbox.Views.ClipboardListView
 
                 ClipboardItemContentControl_MouseDoubleClickDetection_DoubleClickDetected?.Invoke(this, e);
             }
+        }
+
+        private void ContentControl_Unloaded(object sender, RoutedEventArgs e)
+        {
+            var contentControl = (ContentControl)sender;
+            contentControl.PreviewMouseLeftButtonDown -= ContentControl_PreviewMouseLeftButtonDown;
+            contentControl.Unloaded -= ContentControl_Unloaded;
         }
 
         private void PART_VerticalScrollBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
@@ -427,5 +435,6 @@ namespace Clipbox.Views.ClipboardListView
                 set { SetField(ref _lastItemDateString, value); }
             }
         }
+
     }
 }

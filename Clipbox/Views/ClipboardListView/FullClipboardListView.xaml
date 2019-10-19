@@ -501,7 +501,8 @@
                         Grid.Row="1"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Center"
-                        PreviewMouseLeftButtonDown="ContentControl_PreviewMouseLeftButtonDown">
+                        PreviewMouseLeftButtonDown="ContentControl_PreviewMouseLeftButtonDown"
+                        Unloaded="ContentControl_Unloaded">
 
                         <ContentControl.Style>
                             <Style TargetType="{x:Type ContentControl}">

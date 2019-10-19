@@ -1,6 +1,7 @@
 ﻿using Clipbox.Core.ClipboardContent.Enums;
 using Clipbox.Infrastructure.UI;
 using System;
+using System.Diagnostics;
 using System.Windows.Media.Imaging;
 
 namespace Clipbox.ViewModels.BindableObjects
@@ -104,6 +105,11 @@ namespace Clipbox.ViewModels.BindableObjects
         {
             IsItemAnimationRunRequested = true;
             IsItemAnimationRunRequested = false;
+        }
+
+        ~ClipboardViewItem()
+        {
+            Debug.WriteLine($"GCing viewitem for id {ClipboardItemId}");
         }
     }
 }

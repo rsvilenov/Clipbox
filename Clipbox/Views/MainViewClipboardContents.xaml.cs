@@ -158,6 +158,12 @@ namespace Clipbox.Views
                             return;
                         }
                         _viewModel.LoadAllItems(this.MonitorDimensions, clipboardItemIds.Except(removedClipboardItemIds));
+
+#if DEBUG
+                        GC.Collect();
+                        GC.WaitForPendingFinalizers();
+                        GC.Collect();
+#endif
                     }));
             },
             // ensure that the code in ContinueWith executes on the main thread,

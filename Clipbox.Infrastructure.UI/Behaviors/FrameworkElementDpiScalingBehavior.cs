@@ -16,10 +16,15 @@ namespace Clipbox.Infrastructure.UI.Behaviors
         private PerMonitorDpiWindow _pmDpiwindow;
 
         private bool _isDpiEventWired;
+        private bool _isUnloadedEventWired;
 
         protected override void OnAttached()
         {
             AssociatedObject.Loaded += AssociatedObject_Loaded;
+
+            AssociatedObject.Unloaded += AssociatedObject_Unloaded;
+            _isUnloadedEventWired = true;
+
             if (AssociatedObject.IsLoaded)
             {
                 Setup();
@@ -27,10 +32,15 @@ namespace Clipbox.Infrastructure.UI.Behaviors
             }
         }
 
+        private void AssociatedObject_Unloaded(object sender, RoutedEventArgs e)
+        {
+            UnsunscribeEventsIfSubscribed();
+        }
+
         private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
         {
             AssociatedObject.Loaded -= AssociatedObject_Loaded;
-
+            
             Setup();
             Scale();
         }
@@ -44,6 +54,7 @@ namespace Clipbox.Infrastructure.UI.Behaviors
             }
 
             _scaleFactor = _pmDpiwindow.ScaleFactor;
+
             _pmDpiwindow.DPIChanged += Wnd_DPIChanged;
             _isDpiEventWired = true;
         }
@@ -64,9 +75,20 @@ namespace Clipbox.Infrastructure.UI.Behaviors
 
         protected override void OnDetaching()
         {
+            UnsunscribeEventsIfSubscribed();
+        }
+
+        private void UnsunscribeEventsIfSubscribed()
+        {
             if (_isDpiEventWired)
             {
                 _pmDpiwindow.DPIChanged -= Wnd_DPIChanged;
+            }
+
+            if (_isUnloadedEventWired)
+            {
+                AssociatedObject.Unloaded -= AssociatedObject_Unloaded;
+                _isUnloadedEventWired = false;
             }
         }
     }
