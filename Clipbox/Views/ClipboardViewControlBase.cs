@@ -40,6 +40,8 @@ namespace Clipbox.Views
         protected MonitorDimensions MonitorDimensions { get; private set; }
         
         private Panel _uiExtentionContainer;
+
+        private object _extensionLoadingLockHandle = new object();
         
         public double ClipboardViewItemMaxHeight
         {
@@ -103,30 +105,48 @@ namespace Clipbox.Views
             }
         }
         
-
+        
         protected void LoadUIExtensions(ClipboardListViewBase mainListView)
         {
-            if (!mainListView.GetSelectedItemIds().Any() 
+            if (!mainListView.GetSelectedItemIds().Any()
                 && !mainListView.GetSelectedMultiItemsIds().Any())
             {
                 return;
             }
 
-            List<IClipboardItem> selectedClipboardItems = mainListView
-            .SelectedItems
-            .Cast<ClipboardViewItemWrapper>()
-            .Select(w => w.ClipboardItem)
-            .ToList();
-
-            var allExtentions = GetExtentions(selectedClipboardItems);
-            foreach (var extention in allExtentions)
+            // if ui extensions are or are being loaded, return
+            if (_uiExtentionContainer.Children.Count > 0)
             {
-                UIElement extentionUIElement = null;
-                extention.OnExtentionViewGenerating(selectedClipboardItems, ref extentionUIElement, new Size(_uiExtentionContainer.MaxWidth, _uiExtentionContainer.MaxHeight));
-                _uiExtentionContainer.Children.Add(extentionUIElement);
+                return;
             }
+            
+            lock (_extensionLoadingLockHandle)
+            {
+                // if the code inside the lock statement executed and set the 
+                // AreAnyUIExtensionsLoaded property to true, there is no need
+                // to execute it again after the lock has been released and there
+                // are any waiting threads
+                if (AreAnyUIExtensionsLoaded)
+                {
+                    return;
+                }
 
-            AreAnyUIExtensionsLoaded = allExtentions.Any();
+                List<IClipboardItem> selectedClipboardItems = mainListView
+                .SelectedItems
+                .Cast<ClipboardViewItemWrapper>()
+                .Select(w => w.ClipboardItem)
+                .ToList();
+
+                var allExtentions = GetExtentions(selectedClipboardItems);
+                foreach (var extention in allExtentions)
+                {
+                    UIElement extentionUIElement = null;
+                    extention.OnExtentionViewGenerating(selectedClipboardItems, ref extentionUIElement, new Size(_uiExtentionContainer.MaxWidth, _uiExtentionContainer.MaxHeight));
+                    _uiExtentionContainer.Children.Add(extentionUIElement);
+                }
+
+                AreAnyUIExtensionsLoaded = allExtentions.Any();
+            }
         }
 
         protected IEnumerable<UIExtention> GetExtentions(IEnumerable<IClipboardItem> clipboardItems)
