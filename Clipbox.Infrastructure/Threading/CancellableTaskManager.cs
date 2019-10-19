@@ -42,6 +42,8 @@ namespace Clipbox.Infrastructure.Threading
                         if (_cancellationTokens.TryRemove(internalId, out cts))
                         {
                             cts.Dispose();
+
+                            _internalIdToTaskIdMapping.TryRemove(internalId, out string _);
                         }
                         // stop the task here
                         return;
@@ -53,6 +55,8 @@ namespace Clipbox.Infrastructure.Threading
                 if (_cancellationTokens.TryRemove(internalId, out cts))
                 {
                     cts.Dispose();
+
+                    _internalIdToTaskIdMapping.TryRemove(internalId, out string _);
                 }
             }, token);
 
