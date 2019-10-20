@@ -87,7 +87,20 @@ namespace Clipbox.Views.ClipboardListView
         public static readonly DependencyProperty IsCloudSyncAvailableProperty =
             DependencyProperty.Register(nameof(IsCloudSyncAvailable), typeof(bool), typeof(FullClipboardListView), new PropertyMetadata(false));
 
-        
+
+
+
+        public bool IsFadeInOfItemsEnabled
+        {
+            get { return (bool)GetValue(IsFadeInOfItemsEnabledProperty); }
+            set { SetValue(IsFadeInOfItemsEnabledProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsFadeInOfItemsEnabledProperty =
+            DependencyProperty.Register(nameof(IsFadeInOfItemsEnabled), typeof(bool), typeof(FullClipboardListView), new PropertyMetadata(false));
+
+
+
         public FullClipboardListView()
         {
             InitializeComponent();

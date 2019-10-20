@@ -457,6 +457,7 @@
                 CombinabilityCheckRequested="MainListView_CombinabilityCheckRequested"
                 GroupingComplete="MainListView_GroupingComplete"
                 IsCloudSyncAvailable="{Binding IsCloudSyncAvailable, Mode=OneWay}"
+                IsFadeInOfItemsEnabled="{Binding AreFadeAnimationsEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type views:MainViewClipboardContents}}}"
                 ItemDeletionRequested="MainListView_ItemDeletionRequested"
                 ItemEnableDisableSyncRequested="MainListView_ItemEnableDisableSyncRequested"
                 ItemPinUnpinRequested="MainListView_ItemPinUnpinRequested"
