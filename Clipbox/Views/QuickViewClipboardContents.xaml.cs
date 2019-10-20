@@ -61,15 +61,26 @@ namespace Clipbox.Views
 
         private void MainListView_UncombinableItemsSelected(object sender, EventArgs e)
         {
-            var wrapper = MainListView.SelectedItems
-                .Cast<ClipboardViewItemWrapper>()
-                .LastOrDefault();
-
+            ClipboardViewItemWrapper wrapper = null;
+            var selectedSubItemIds = MainListView.GetSelectedMultiItemsIds();
+            if (selectedSubItemIds.Any())
+            {
+                wrapper = MainListView.Items
+                    .Cast<ClipboardViewItemWrapper>()
+                    .LastOrDefault(w => w.Id == selectedSubItemIds.Last().Key);
+            }
+            else
+            {
+                wrapper = MainListView.SelectedItems
+                    .Cast<ClipboardViewItemWrapper>()
+                    .LastOrDefault();
+            }
+            
             if (wrapper == null)
             {
                 throw new InvalidOperationException($"Either no items are selected or the selected items are not of type {nameof(ClipboardViewItemWrapper)}");
             }
-            
+
             if (!(MainListView.ItemContainerGenerator.ContainerFromItem(wrapper) is ListViewItem selectedListViewItem))
             {
                 throw new InvalidOperationException($"The list view does not contain an item with id {wrapper.Id}.");

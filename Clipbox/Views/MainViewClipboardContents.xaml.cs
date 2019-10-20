@@ -288,9 +288,23 @@ namespace Clipbox.Views
                 throw new InvalidOperationException("The selected items are not combinable. The possibility of calling this method with such items should have been ruled out.");
             }
 
+            List<ClipboardViewItemWrapper> wrappers = new List<ClipboardViewItemWrapper>();
+            var selectedSubItemIds = MainListView.GetSelectedMultiItemsIds();
+            if (selectedSubItemIds.Any())
+            {
+                wrappers.AddRange(MainListView.Items
+                    .Cast<ClipboardViewItemWrapper>()
+                    .Where(w => w.Id == selectedSubItemIds.Last().Key));
+            }
+
+            if (MainListView.SelectedItems.Count > 0)
+            {
+                wrappers.AddRange(MainListView.SelectedItems
+                        .Cast<ClipboardViewItemWrapper>());
+            }
             
             //TODO: notify the user and close the window
-            foreach (ClipboardViewItemWrapper wrapper in MainListView.SelectedItems)
+            foreach (ClipboardViewItemWrapper wrapper in wrappers)
             {
                 if (!(MainListView.ItemContainerGenerator.ContainerFromItem(wrapper) is ListViewItem selectedListViewItem))
                 {

@@ -1,5 +1,6 @@
 ﻿using Clipbox.Infrastructure.UI.Utils;
 using Clipbox.ViewModels.BindableObjects;
+using Clipbox.Views.Enums.ClipboardViewItemTile;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace Clipbox.Views.ClipboardViewItemTile
     /// <summary>
     /// Interaction logic for GroupItem.xaml
     /// </summary>
-    public partial class MultiItem : MultiItemBase
+    public partial class MultiItem : MultiItemBase, IAnimatableItem
     {
         public static readonly RoutedEvent SubItems_SelectionChangedEvent
         = EventManager.RegisterRoutedEvent(
@@ -100,6 +101,27 @@ namespace Clipbox.Views.ClipboardViewItemTile
         private void ListViewScrollTransferFocusBehavior_KeyboardFocusMovedOut(object sender, EventArgs e)
         {
             RaiseEvent(new RoutedEventArgs(SubItems_SubItemsFocusMovedOutEvent));
+        }
+
+        public void RunAnimation(AnimationPurpose animationPurpose)
+        {
+            if (subItemsListView.SelectedItems.Count > 0)
+            {
+                foreach (var selectedItem in subItemsListView.SelectedItems)
+                {
+                    ListViewItem selectedListViewItem = (ListViewItem)subItemsListView.ItemContainerGenerator.ContainerFromItem(selectedItem);
+                    if (!(selectedListViewItem.Template.FindName("Bd", selectedListViewItem) is Border border))
+                    {
+                        throw new InvalidOperationException("Cannot find an item named Bd in the selected subitem's content template.");
+                    }
+
+                    TileAnimationHelper.RunAnimation(border, animationPurpose);
+                }
+            }
+            else
+            {
+                TileAnimationHelper.RunAnimation(borderToAnimate, animationPurpose);
+            }
         }
     }
 }

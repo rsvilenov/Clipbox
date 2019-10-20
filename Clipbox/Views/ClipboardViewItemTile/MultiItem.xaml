@@ -43,6 +43,16 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
+        <!--  border to apply the color animations to  -->
+        <Border
+            x:Name="borderToAnimate"
+            Grid.RowSpan="4"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Background="Transparent"
+            BorderBrush="Transparent"
+            BorderThickness="0" />
+
         <Button
             Name="BtnScrollUpSubItem"
             Grid.Row="0"
