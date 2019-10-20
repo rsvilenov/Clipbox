@@ -128,15 +128,14 @@
         </Grid>
 
         <!--  top bar  -->
-        <Border Grid.Row="0" Grid.Column="1">
+        <Border
+            x:Name="TopBarGrid"
+            Visibility="Hidden"
+            Grid.Row="0"
+            Grid.Column="1">
             <Border.Style>
                 <Style TargetType="{x:Type Border}">
-                    <Setter Property="Visibility" Value="Collapsed" />
                     <Style.Triggers>
-                        <!--  the MainListViewContainer becomes visible only after the listview's grouping task has completed. See MainListView_GroupingComplete.  -->
-                        <DataTrigger Binding="{Binding ElementName=MainListViewContainer, Path=Visibility}" Value="Visible">
-                            <Setter Property="Visibility" Value="Visible" />
-                        </DataTrigger>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding Path=IsVisible, RelativeSource={RelativeSource Mode=Self}}" Value="True" />
@@ -363,17 +362,14 @@
 
         <!--  side bar  -->
         <Grid
+            x:Name="SideBarGrid"
             Grid.Row="0"
+            Visibility="Hidden"
             Grid.RowSpan="3"
             Grid.Column="0">
             <Grid.Style>
                 <Style TargetType="{x:Type Grid}">
-                    <Setter Property="Visibility" Value="Collapsed" />
                     <Style.Triggers>
-                        <!--  the MainListViewContainer becomes visible only after the listview's grouping task has completed. See MainListView_GroupingComplete.  -->
-                        <DataTrigger Binding="{Binding ElementName=MainListViewContainer, Path=Visibility}" Value="Visible">
-                            <Setter Property="Visibility" Value="Visible" />
-                        </DataTrigger>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding Path=IsVisible, RelativeSource={RelativeSource Mode=Self}}" Value="True" />

@@ -22,6 +22,31 @@
             <SolidColorBrush Color="Transparent" />
         </Grid.Background>-->
 
+        <Grid.Resources>
+            <Storyboard x:Key="FadeInItem">
+                <DoubleAnimation
+                    Storyboard.TargetProperty="(UIElement.Opacity)"
+                    From="0"
+                    To="1"
+                    Duration="0:0:0.7" />
+            </Storyboard>
+        </Grid.Resources>
+
+        <Grid.Style>
+            <Style TargetType="{x:Type Grid}">
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding Path=IsVisible, RelativeSource={RelativeSource Mode=Self}}" Value="True">
+                        <DataTrigger.EnterActions>
+                            <BeginStoryboard x:Name="FadeInItemContents" Storyboard="{StaticResource FadeInItem}" />
+                        </DataTrigger.EnterActions>
+                        <DataTrigger.ExitActions>
+                            <RemoveStoryboard BeginStoryboardName="FadeInItemContents" />
+                        </DataTrigger.ExitActions>
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Grid.Style>
+
         <Grid.Background>
             <SolidColorBrush Opacity="0.2" Color="{Binding PreviewContainerBackgroundColor}" />
         </Grid.Background>

@@ -143,7 +143,17 @@ namespace Clipbox.Views
                         {
                             return;
                         }
-                        _viewModel.LoadAllItems(this.MonitorDimensions, clipboardItemIds.Except(removedClipboardItemIds));
+
+                        var itemsToLoad = clipboardItemIds.Except(removedClipboardItemIds);
+
+                        // if there are no loaded items, we have to show the
+                        // MainListViewContainer because its GroupingComplete event will
+                        // not fire and the loading circle will not disappear
+                        if (!itemsToLoad.Any())
+                        {
+                            MainListViewContainer.Visibility = Visibility.Visible;
+                        }
+                        _viewModel.LoadAllItems(this.MonitorDimensions, itemsToLoad);
 
 #if DEBUG
                         GC.Collect();
@@ -573,6 +583,16 @@ namespace Clipbox.Views
 
         private void MainListView_GroupingComplete(object sender, EventArgs e)
         {
+            if (SideBarGrid.Visibility != Visibility.Visible)
+            {
+                SideBarGrid.Visibility = Visibility.Visible;
+            }
+
+            if (TopBarGrid.Visibility != Visibility.Visible)
+            {
+                TopBarGrid.Visibility = Visibility.Visible;
+            }
+
             MainListViewContainer.Visibility = Visibility.Visible;
             // TODO: the child should become visible when the container becomes visible... In this case it does not. Figure out why.
             MainListView.Visibility = Visibility.Visible;
@@ -598,7 +618,7 @@ namespace Clipbox.Views
         {
             Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
             {
-                MainListView.Visibility = Visibility.Hidden;
+                MainListViewContainer.Visibility = Visibility.Hidden;
 
                 List<ISearchTerm> searchTerms = new List<ISearchTerm>();
 
