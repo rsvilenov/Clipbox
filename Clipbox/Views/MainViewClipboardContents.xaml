@@ -130,9 +130,9 @@
         <!--  top bar  -->
         <Border
             x:Name="TopBarGrid"
-            Visibility="Hidden"
             Grid.Row="0"
-            Grid.Column="1">
+            Grid.Column="1"
+            Visibility="Collapsed">
             <Border.Style>
                 <Style TargetType="{x:Type Border}">
                     <Style.Triggers>
@@ -364,9 +364,9 @@
         <Grid
             x:Name="SideBarGrid"
             Grid.Row="0"
-            Visibility="Hidden"
             Grid.RowSpan="3"
-            Grid.Column="0">
+            Grid.Column="0"
+            Visibility="Collapsed">
             <Grid.Style>
                 <Style TargetType="{x:Type Grid}">
                     <Style.Triggers>

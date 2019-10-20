@@ -583,25 +583,31 @@ namespace Clipbox.Views
 
         private void MainListView_GroupingComplete(object sender, EventArgs e)
         {
-            if (SideBarGrid.Visibility != Visibility.Visible)
-            {
-                SideBarGrid.Visibility = Visibility.Visible;
-            }
+            // if we do not set the visibility in background, 
+            // the fade animations controlled by the triggers do not work
+            Dispatcher.BeginInvoke(DispatcherPriority.Background,
+                    new Action(() =>
+                    {
+                        if (SideBarGrid.Visibility != Visibility.Visible)
+                        {
+                            SideBarGrid.Visibility = Visibility.Visible;
+                        }
 
-            if (TopBarGrid.Visibility != Visibility.Visible)
-            {
-                TopBarGrid.Visibility = Visibility.Visible;
-            }
+                        if (TopBarGrid.Visibility != Visibility.Visible)
+                        {
+                            TopBarGrid.Visibility = Visibility.Visible;
+                        }
 
-            MainListViewContainer.Visibility = Visibility.Visible;
-            // TODO: the child should become visible when the container becomes visible... In this case it does not. Figure out why.
-            MainListView.Visibility = Visibility.Visible;
+                        MainListViewContainer.Visibility = Visibility.Visible;
+                        // TODO: the child should become visible when the container becomes visible... In this case it does not. Figure out why.
+                        MainListView.Visibility = Visibility.Visible;
 
-            // focus the mainlistview only if the contents changed due to things other than search
-            if (!(Keyboard.FocusedElement is TextBox))
-            {
-                MainListView.Focus();
-            }
+                        // focus the mainlistview only if the contents changed due to things other than search
+                        if (!(Keyboard.FocusedElement is TextBox))
+                        {
+                            MainListView.Focus();
+                        }
+                    }));
         }
 
         private void ExpandableSearchBox_SearchRequested(object sender, EventArgsClasses.SearchRequestEventArgs e)
