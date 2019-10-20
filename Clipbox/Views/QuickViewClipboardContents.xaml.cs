@@ -1,10 +1,14 @@
 ﻿using Clipbox.Infrastructure.Extensibility.Containers;
 using Clipbox.Infrastructure.UI.DataObjects;
+using Clipbox.Infrastructure.UI.Utils;
 using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.ViewModels;
+using Clipbox.ViewModels.BindableObjects;
 using Clipbox.ViewModels.Enums;
+using Clipbox.Views.ClipboardViewItemTile;
+using Clipbox.Views.Enums.ClipboardViewItemTile;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -51,6 +55,36 @@ namespace Clipbox.Views
             DimNonFocusedItems = _settingsService.GetSetting<bool>(SettingsKeys.DimNonFocusedItems);
             
             IsVisibleChanged += QuickViewClipboardContents_IsVisibleChanged;
+
+            MainListView.UncombinableItemsSelected += MainListView_UncombinableItemsSelected;
+        }
+
+        private void MainListView_UncombinableItemsSelected(object sender, EventArgs e)
+        {
+            var wrapper = MainListView.SelectedItems
+                .Cast<ClipboardViewItemWrapper>()
+                .LastOrDefault();
+
+            if (wrapper == null)
+            {
+                throw new InvalidOperationException($"Either no items are selected or the selected items are not of type {nameof(ClipboardViewItemWrapper)}");
+            }
+            
+            if (!(MainListView.ItemContainerGenerator.ContainerFromItem(wrapper) is ListViewItem selectedListViewItem))
+            {
+                throw new InvalidOperationException($"The list view does not contain an item with id {wrapper.Id}.");
+            }
+
+            var clipboardViewItemTile = Traversing.GetVisualChildOfType<ItemBase>(selectedListViewItem);
+            if (!(clipboardViewItemTile is IAnimatableItem animatableItem))
+            {
+                throw new InvalidOperationException($"The listviewitem for {wrapper.Id} does not implement {nameof(IAnimatableItem)}");
+            }
+
+            animatableItem.RunAnimation(AnimationPurpose.Error);
+
+            int errorTextDurationMs = TileAnimationHelper.COLOR_ANIMATION_DURATION_MS + 700;
+            ShowErrorTextTemporarily("Incompatible items.", errorTextDurationMs);
         }
 
         private void QuickViewClipboardContents_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -220,12 +254,7 @@ namespace Clipbox.Views
         {
             RaiseCombinabilityCheckRequested(args);
         }
-
-        private void MainListView_UncombinableItemsSelected(object sender, EventArgs args)
-        {
-            ShowErrorTextTemporarily("Incompatible items.", 1000);
-        }
-
+        
         private void MainListView_SelectionChangeCompleted(object sender, SelectionEventArgs e)
         {
             base.ClearLoadedUIExtensions();

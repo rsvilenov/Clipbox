@@ -4,7 +4,7 @@ using System.Windows.Media;
 
 namespace Clipbox.Views.ClipboardViewItemTile
 {
-    public class ItemBase : UserControl
+    public abstract class ItemBase : UserControl
     {
         public Color PreviewContainerBackgroundColor
         {

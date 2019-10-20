@@ -31,12 +31,23 @@
             <RowDefinition Height="40" />
         </Grid.RowDefinitions>
 
+        <!--  border to apply the color animations to  -->
+        <Border
+            x:Name="borderToAnimate"
+            Grid.RowSpan="2"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Background="Transparent"
+            BorderBrush="Transparent"
+            BorderThickness="0" />
+
         <!--  thumbnail area  -->
         <Grid
             Grid.Row="0"
             MinHeight="{Binding ThumbnailAreaMinHeight}"
             MaxHeight="{Binding ThumbnailAreaMaxHeight}"
             Margin="10">
+
             <Image
                 Width="{Binding ClipboardViewItem.PreviewItem.Image.Width}"
                 HorizontalAlignment="Stretch"

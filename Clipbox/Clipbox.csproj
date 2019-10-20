@@ -102,6 +102,9 @@
     <Compile Include="Views\ClipboardListView\SimpleClipboardListView.xaml.cs">
       <DependentUpon>SimpleClipboardListView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ClipboardViewItemTile\TileAnimationHelper.cs" />
+    <Compile Include="Views\ClipboardViewItemTile\Enums\AnimationPurpose.cs" />
+    <Compile Include="Views\ClipboardViewItemTile\IAnimatableItem.cs" />
     <Compile Include="Views\EventArgsClasses\ClipboardItemManipulationEventArgs.cs" />
     <Compile Include="Services\EventArgsClasses\CombinabilityEventArgs.cs" />
     <Compile Include="Services\EventArgsClasses\HousekeepingEventArgs.cs" />

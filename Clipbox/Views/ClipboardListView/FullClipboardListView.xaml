@@ -234,31 +234,6 @@
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="IsManipulationEnabled" Value="True" />
                             </Trigger>
-
-                            <!--
-                                When the last selected item(s) are going to be put in the system clipboard
-                                show that to the user by running the blink animation
-                            -->
-                            <DataTrigger Binding="{Binding Path=ViewItem.IsItemAnimationRunRequested}" Value="True">
-                                <DataTrigger.EnterActions>
-                                    <BeginStoryboard Name="Flash">
-                                        <Storyboard FillBehavior="Stop">
-                                            <!--
-                                                since wpf wants to freeze the storyboard, we cannot use dynamic resources here...
-                                                From="{DynamicResource AccentBrush}"
-                                                To="{DynamicResource AccentLight3Brush}"
-                                            -->
-                                            <ColorAnimation
-                                                AutoReverse="True"
-                                                FillBehavior="HoldEnd"
-                                                RepeatBehavior="1x"
-                                                Storyboard.TargetProperty="Background.Color"
-                                                To="White"
-                                                Duration="{x:Static lv:ClipboardListViewBase.HighlightColorAnimationDuration}" />
-                                        </Storyboard>
-                                    </BeginStoryboard>
-                                </DataTrigger.EnterActions>
-                            </DataTrigger>
                         </Style.Triggers>
                     </Style>
                 </Border.Style>

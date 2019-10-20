@@ -1,14 +1,13 @@
 ﻿using Clipbox.ViewModels.BindableObjects;
+using Clipbox.Views.Enums.ClipboardViewItemTile;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
 
 namespace Clipbox.Views.ClipboardViewItemTile
 {
     /// <summary>
     /// Interaction logic for SingleItem.xaml
     /// </summary>
-    public partial class SingleItem : SingleItemBase
+    public partial class SingleItem : SingleItemBase, IAnimatableItem
     {
         public SingleItem()
         {
@@ -24,11 +23,12 @@ namespace Clipbox.Views.ClipboardViewItemTile
         }
 
         public static readonly DependencyProperty ClipboardViewItemProperty =
-            DependencyProperty.Register(nameof(ClipboardViewItem), typeof(ClipboardViewItemSingle), typeof(SingleItem), new PropertyMetadata(null, ClipboardViewItem_ValueChanged));
+            DependencyProperty.Register(nameof(ClipboardViewItem), typeof(ClipboardViewItemSingle), typeof(SingleItem), new PropertyMetadata(null));
+        
 
-        private static void ClipboardViewItem_ValueChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        public void RunAnimation(AnimationPurpose animationPurpose)
         {
-            
+            TileAnimationHelper.RunAnimation(borderToAnimate, animationPurpose);
         }
 
         public bool IsDimmed

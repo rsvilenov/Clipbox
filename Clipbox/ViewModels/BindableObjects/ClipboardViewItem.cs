@@ -93,20 +93,6 @@ namespace Clipbox.ViewModels.BindableObjects
             set { SetField(ref _clipboardItemId, value); }
         }
 
-        private bool _isItemAnimationRunRequested;
-
-        public bool IsItemAnimationRunRequested
-        {
-            get { return _isItemAnimationRunRequested; }
-            private set { SetField(ref _isItemAnimationRunRequested, value); }
-        }
-
-        public void RunItemAnimation()
-        {
-            IsItemAnimationRunRequested = true;
-            IsItemAnimationRunRequested = false;
-        }
-
         ~ClipboardViewItem()
         {
             Debug.WriteLine($"GCing viewitem for id {ClipboardItemId}");

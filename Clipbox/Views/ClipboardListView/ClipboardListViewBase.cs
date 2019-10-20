@@ -428,9 +428,6 @@ namespace Clipbox.Views.ClipboardListView
                         if (latestSelectedItem != null)
                         {
                             this.SelectedItems.Remove(latestSelectedItem);
-
-                            // trigger the animation which shows that the item cannot be selected
-                            latestSelectedItem.ViewItem.RunItemAnimation();
                         }
                     }));
                     return;

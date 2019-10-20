@@ -5,13 +5,16 @@ using Clipbox.Infrastructure.Threading;
 using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.CustomControls;
 using Clipbox.Infrastructure.UI.Theme.Enums;
+using Clipbox.Infrastructure.UI.Utils;
 using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.ViewModels;
 using Clipbox.ViewModels.BindableObjects;
 using Clipbox.Views.ClipboardListView;
+using Clipbox.Views.ClipboardViewItemTile;
 using Clipbox.Views.Dialog.EventArgsClasses;
+using Clipbox.Views.Enums.ClipboardViewItemTile;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -285,13 +288,25 @@ namespace Clipbox.Views
                 throw new InvalidOperationException("The selected items are not combinable. The possibility of calling this method with such items should have been ruled out.");
             }
 
+            
             //TODO: notify the user and close the window
             foreach (ClipboardViewItemWrapper wrapper in MainListView.SelectedItems)
             {
-                wrapper.ViewItem.RunItemAnimation();
+                if (!(MainListView.ItemContainerGenerator.ContainerFromItem(wrapper) is ListViewItem selectedListViewItem))
+                {
+                    throw new InvalidOperationException($"The list view does not contain an item with id {wrapper.Id}.");
+                }
+
+                var clipboardViewItemTile = Traversing.GetVisualChildOfType<ItemBase>(selectedListViewItem);
+                if (!(clipboardViewItemTile is IAnimatableItem animatableItem))
+                {
+                    throw new InvalidOperationException($"The listviewitem for {wrapper.Id} does not implement {nameof(IAnimatableItem)}");
+                }
+
+                animatableItem.RunAnimation(AnimationPurpose.Success);
             }
 
-            int delayMs = (int)ClipboardListViewBase.HighlightColorAnimationDuration.TimeSpan.TotalMilliseconds + 400;
+            int delayMs = TileAnimationHelper.COLOR_ANIMATION_DURATION_MS + 400;
             // allow the user to see the animation before closing the window/
             Task.Delay(delayMs) // the duration of the color animation in the listview (FullClipboardListView) plus some extra time
                 .ContinueWith((t) =>
