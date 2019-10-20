@@ -4,6 +4,6 @@ namespace Clipbox.Views.ClipboardViewItemTile
 {
     public interface IAnimatableItem
     {
-        void RunAnimation(AnimationPurpose animationPurpose);
+        void RunNotificationAnimation(AnimationPurpose animationPurpose);
     }
 }

@@ -103,7 +103,7 @@ namespace Clipbox.Views.ClipboardViewItemTile
             RaiseEvent(new RoutedEventArgs(SubItems_SubItemsFocusMovedOutEvent));
         }
 
-        public void RunAnimation(AnimationPurpose animationPurpose)
+        public void RunNotificationAnimation(AnimationPurpose animationPurpose)
         {
             if (subItemsListView.SelectedItems.Count > 0)
             {

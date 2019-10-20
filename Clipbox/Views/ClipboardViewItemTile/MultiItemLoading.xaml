@@ -1,4 +1,4 @@
-﻿<local:MultiItemBase
+﻿<tile:MultiItemBase
     x:Class="Clipbox.Views.ClipboardViewItemTile.MultiItemLoading"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -8,11 +8,11 @@
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:infBeh="clr-namespace:Clipbox.Infrastructure.UI.Behaviors;assembly=Clipbox.Infrastructure.UI"
     xmlns:infWindows="clr-namespace:Clipbox.Infrastructure.UI.Windows;assembly=Clipbox.Infrastructure.UI"
-    xmlns:local="clr-namespace:Clipbox.Views.ClipboardViewItemTile"
     xmlns:localBeh="clr-namespace:Clipbox.Behaviors"
     xmlns:localConv="clr-namespace:Clipbox.Technical.Converters"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:tile="clr-namespace:Clipbox.Views.ClipboardViewItemTile"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -22,6 +22,36 @@
     </UserControl.Resources>
 
     <Grid x:Name="mainGrid">
+
+        <Grid.Resources>
+            <Storyboard x:Key="FadeInItem">
+                <DoubleAnimation
+                    Storyboard.TargetProperty="(UIElement.Opacity)"
+                    From="0"
+                    To="1"
+                    Duration="0:0:0.7" />
+            </Storyboard>
+        </Grid.Resources>
+
+        <Grid.Style>
+            <Style TargetType="{x:Type Grid}">
+                <Style.Triggers>
+                    <MultiDataTrigger>
+                        <MultiDataTrigger.Conditions>
+                            <Condition Binding="{Binding Path=IsVisible, RelativeSource={RelativeSource Mode=Self}}" Value="True" />
+                            <Condition Binding="{Binding Path=IsFadeInEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type tile:MultiItemLoading}}}" Value="True" />
+                        </MultiDataTrigger.Conditions>
+                        <MultiDataTrigger.EnterActions>
+                            <BeginStoryboard x:Name="FadeInItemContents" Storyboard="{StaticResource FadeInItem}" />
+                        </MultiDataTrigger.EnterActions>
+                        <MultiDataTrigger.ExitActions>
+                            <RemoveStoryboard BeginStoryboardName="FadeInItemContents" />
+                        </MultiDataTrigger.ExitActions>
+                    </MultiDataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Grid.Style>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="15" />
             <RowDefinition />
@@ -61,6 +91,7 @@
             Name="subItemsListView"
             Grid.Row="1"
             Background="Transparent"
+            BorderBrush="Transparent"
             BorderThickness="1"
             ItemsSource="{Binding PreviewItems}"
             ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -114,7 +145,7 @@
                     <UniformGrid
                         MaxWidth="500"
                         MaxHeight="500"
-                        Columns="{Binding Path=NumberOfUniformGridColumns, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=local:MultiItem}}" />
+                        Columns="{Binding Path=NumberOfUniformGridColumns, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=tile:MultiItemLoading}}" />
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
             <ListView.ItemTemplate>
@@ -195,4 +226,4 @@
 
         </ListView>
     </Grid>
-</local:MultiItemBase>
+</tile:MultiItemBase>

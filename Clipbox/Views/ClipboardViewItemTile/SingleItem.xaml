@@ -35,14 +35,18 @@
         <Grid.Style>
             <Style TargetType="{x:Type Grid}">
                 <Style.Triggers>
-                    <DataTrigger Binding="{Binding Path=IsVisible, RelativeSource={RelativeSource Mode=Self}}" Value="True">
-                        <DataTrigger.EnterActions>
+                    <MultiDataTrigger>
+                        <MultiDataTrigger.Conditions>
+                            <Condition Binding="{Binding Path=IsVisible, RelativeSource={RelativeSource Mode=Self}}" Value="True" />
+                            <Condition Binding="{Binding Path=IsFadeInEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type tile:SingleItem}}}" Value="True" />
+                        </MultiDataTrigger.Conditions>
+                        <MultiDataTrigger.EnterActions>
                             <BeginStoryboard x:Name="FadeInItemContents" Storyboard="{StaticResource FadeInItem}" />
-                        </DataTrigger.EnterActions>
-                        <DataTrigger.ExitActions>
+                        </MultiDataTrigger.EnterActions>
+                        <MultiDataTrigger.ExitActions>
                             <RemoveStoryboard BeginStoryboardName="FadeInItemContents" />
-                        </DataTrigger.ExitActions>
-                    </DataTrigger>
+                        </MultiDataTrigger.ExitActions>
+                    </MultiDataTrigger>
                 </Style.Triggers>
             </Style>
         </Grid.Style>

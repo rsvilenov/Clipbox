@@ -36,6 +36,35 @@
             <SolidColorBrush Opacity="0.2" Color="{Binding PreviewContainerBackgroundColor}" />
         </Grid.Background>
 
+        <Grid.Resources>
+            <Storyboard x:Key="FadeInItem">
+                <DoubleAnimation
+                    Storyboard.TargetProperty="(UIElement.Opacity)"
+                    From="0"
+                    To="1"
+                    Duration="0:0:0.7" />
+            </Storyboard>
+        </Grid.Resources>
+
+        <Grid.Style>
+            <Style TargetType="{x:Type Grid}">
+                <Style.Triggers>
+                    <MultiDataTrigger>
+                        <MultiDataTrigger.Conditions>
+                            <Condition Binding="{Binding Path=IsVisible, RelativeSource={RelativeSource Mode=Self}}" Value="True" />
+                            <Condition Binding="{Binding Path=IsFadeInEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type tile:MultiItem}}}" Value="True" />
+                        </MultiDataTrigger.Conditions>
+                        <MultiDataTrigger.EnterActions>
+                            <BeginStoryboard x:Name="FadeInItemContents" Storyboard="{StaticResource FadeInItem}" />
+                        </MultiDataTrigger.EnterActions>
+                        <MultiDataTrigger.ExitActions>
+                            <RemoveStoryboard BeginStoryboardName="FadeInItemContents" />
+                        </MultiDataTrigger.ExitActions>
+                    </MultiDataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Grid.Style>
+
         <Grid.RowDefinitions>
             <RowDefinition Height="15" />
             <RowDefinition />

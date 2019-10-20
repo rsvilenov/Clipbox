@@ -1,6 +1,5 @@
 ﻿using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.Utils;
-using Clipbox.Services.EventArgsClasses;
 using Clipbox.ViewModels.BindableObjects;
 using Clipbox.Views.EventArgsClasses;
 using Clipbox.Win32.Native;

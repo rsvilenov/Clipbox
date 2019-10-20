@@ -327,7 +327,7 @@ namespace Clipbox.Views
                     throw new InvalidOperationException($"The listviewitem for {wrapper.Id} does not implement {nameof(IAnimatableItem)}");
                 }
 
-                animatableItem.RunAnimation(AnimationPurpose.Success);
+                animatableItem.RunNotificationAnimation(AnimationPurpose.Success);
             }
 
             int delayMs = TileAnimationHelper.COLOR_ANIMATION_DURATION_MS + 400;

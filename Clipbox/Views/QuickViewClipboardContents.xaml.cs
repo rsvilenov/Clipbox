@@ -92,7 +92,7 @@ namespace Clipbox.Views
                 throw new InvalidOperationException($"The listviewitem for {wrapper.Id} does not implement {nameof(IAnimatableItem)}");
             }
 
-            animatableItem.RunAnimation(AnimationPurpose.Error);
+            animatableItem.RunNotificationAnimation(AnimationPurpose.Error);
 
             int errorTextDurationMs = TileAnimationHelper.COLOR_ANIMATION_DURATION_MS + 700;
             ShowErrorTextTemporarily("Incompatible items.", errorTextDurationMs);

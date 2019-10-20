@@ -25,8 +25,7 @@ namespace Clipbox.Views.ClipboardViewItemTile
         public static readonly DependencyProperty ClipboardViewItemProperty =
             DependencyProperty.Register(nameof(ClipboardViewItem), typeof(ClipboardViewItemSingle), typeof(SingleItem), new PropertyMetadata(null));
         
-
-        public void RunAnimation(AnimationPurpose animationPurpose)
+        public void RunNotificationAnimation(AnimationPurpose animationPurpose)
         {
             TileAnimationHelper.RunAnimation(borderToAnimate, animationPurpose);
         }
