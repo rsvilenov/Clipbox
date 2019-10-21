@@ -183,6 +183,10 @@ namespace Clipbox.ViewModels
             // which is the same as the lifetime of the program.
             _cloudSyncService.AuthenticationStateChanged -= _cloudSyncService_AuthenticationStateChanged;
             _cloudSyncService.ItemSynced -= _cloudSyncService_ItemSynced;
+            
+            // without cleaning this collection, we get a memory leak
+            // if the view is closed without the items are fully loaded.
+            ClipboardViewItemWrappers.Clear();
 
             base.Dispose(disposing);
         }

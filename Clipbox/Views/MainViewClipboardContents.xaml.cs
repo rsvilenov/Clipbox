@@ -214,7 +214,7 @@ namespace Clipbox.Views
         protected override void Dispose(bool disposing)
         {
             _isDisposing = true;
-
+            
             _uiExtentionGenerationSlidingTimer.Dispose();
 
             if (MainListView != null)
@@ -611,6 +611,9 @@ namespace Clipbox.Views
 
         /// <summary>
         /// This is not really safe as it does not use locking, but it will do for now...
+        /// I am afraid to implement locking in the Dispose method so I will take the risk
+        /// of leaving corrupt data after some exceptions from the disposed viewmodel's methods
+        /// and will implement simple checking of a volatile flat and try/catch instead.
         /// </summary>
         /// <param name="action"></param>
         private void PerformDisposeSafeOperation(Action action)
