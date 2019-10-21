@@ -69,7 +69,7 @@ namespace Clipbox.Views
         /// running dispatcher actions or tasks, requiring resources,
         /// destroyed by Dispose(), which run after the Dispose() has started...
         /// </summary>
-        private bool _isDisposing;
+        private volatile bool _isDisposing;
 
         public MainViewClipboardContents(MainViewClipboardContentsViewModel vm, 
             UIExtentionContainer container, 
@@ -123,12 +123,10 @@ namespace Clipbox.Views
 
             Task.Run(() =>
             {
-                if (_isDisposing)
-                {
-                    return;
-                }
-
-                clipboardItemIds = _viewModel.GetClipboardItemIds(searchTerms); // maybe pass filters to this method later
+                PerformDisposeSafeOperation
+                (
+                    () => clipboardItemIds = _viewModel.GetClipboardItemIds(searchTerms) // maybe pass filters to this method later
+                );
 
                 base.PerformHousekeeping(clipboardItemIds, out removedClipboardItemIds);
 
@@ -151,7 +149,11 @@ namespace Clipbox.Views
                         {
                             MainListViewContainer.Visibility = Visibility.Visible;
                         }
-                        _viewModel.LoadAllItems(this.MonitorDimensions, itemsToLoad);
+
+                        PerformDisposeSafeOperation
+                        (
+                            () => _viewModel.LoadAllItems(this.MonitorDimensions, itemsToLoad)
+                        );
 
 #if DEBUG
                         GC.Collect();
@@ -170,15 +172,10 @@ namespace Clipbox.Views
             // run the slow-running operations in a separate task
             _cancellableTaskManager.ScheduleTask(clipboardItemId, new Action<string>((taskId) =>
             {
-                if (_isDisposing)
-                {
-                    return;
-                }
-
                 ClipboardViewItemWrapper wrapper = null;
                 ClipboardViewItemDimensionInfo cvItemDimInfo = null;
 
-                try
+                PerformDisposeSafeOperation(() =>
                 {
                     wrapper = _viewModel.GetViewItemWrapper(clipboardItemId);
                     if (wrapper == null)
@@ -188,14 +185,8 @@ namespace Clipbox.Views
                     }
 
                     _viewModel.TryGetPreviewDimensions(base.MonitorDimensions, wrapper, out cvItemDimInfo);
-                }
-                catch
-                {
-                    if (!_isDisposing)
-                    {
-                        throw;
-                    }
-                }
+
+                });
 
                 // this optimization (updating the bindable properties in the dispatcher thread with background priority)
                 // solves the problem with the items showing up painfully slowly...
@@ -203,24 +194,12 @@ namespace Clipbox.Views
                 // https://stackoverflow.com/questions/19510723/why-ui-is-freezing-during-wpf-datagrid-binding
                 Application.Current.Dispatcher.Invoke(new Action(() =>
                 {
-                    if (_isDisposing)
-                    {
-                        return;
-                    }
-
-                    try
+                    PerformDisposeSafeOperation(() =>
                     {
                         wrapper.ViewItem = _viewModel.GetViewItem(clipboardItemId, base.MonitorDimensions);
                         wrapper.DimensionInfo = cvItemDimInfo;
                         wrapper.IsViewItemLoaded = true;
-                    }
-                    catch
-                    {
-                        if (!_isDisposing)
-                        {
-                            throw;
-                        }
-                    }
+                    });
 
                 }), DispatcherPriority.Background);
             }));
@@ -551,12 +530,7 @@ namespace Clipbox.Views
             Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background,
             (Action)(() =>
             {
-                if (_isDisposing)
-                {
-                    return;
-                }
-
-                try
+                PerformDisposeSafeOperation(() =>
                 {
                     if (IsLoadingOfUIExtensionsEnabled)
                     {
@@ -567,14 +541,7 @@ namespace Clipbox.Views
                         // re-enable the loading of the extensions
                         IsLoadingOfUIExtensionsEnabled = true;
                     }
-                }
-                catch
-                {
-                    if (!_isDisposing)
-                    {
-                        throw;
-                    }
-                }
+                });
             }));
 
         }
@@ -636,9 +603,34 @@ namespace Clipbox.Views
 
                 searchTerms.AddRange(filterBand.SearchTerms);
                 
+                
                 _viewModel.ClipboardViewItemWrappers.Clear();
                 LoadContents(searchTerms);
             }));
+        }
+
+        /// <summary>
+        /// This is not really safe as it does not use locking, but it will do for now...
+        /// </summary>
+        /// <param name="action"></param>
+        private void PerformDisposeSafeOperation(Action action)
+        {
+            if (_isDisposing)
+            {
+                return;
+            }
+
+            try
+            {
+                action();
+            }
+            catch
+            {
+                if (!_isDisposing)
+                {
+                    throw;
+                }
+            }
         }
     }
 }
