@@ -23,7 +23,7 @@ namespace Clipbox.Views.ClipboardListView
     public partial class FullClipboardListView : ClipboardListViewBase, IDisposable
     {
         private const int LAYOUT_TIMER_TIMEOUT_MS = 100;
-        private const int SCROLLBAR_TIMER_TIMEOUT_MS = 300;
+        private const int SCROLLBAR_TIMER_TIMEOUT_MS = 50;
         
         public event EventHandler<ClipboardItemManipulationEventArgs> ViewItemLoadingRequested;
 
