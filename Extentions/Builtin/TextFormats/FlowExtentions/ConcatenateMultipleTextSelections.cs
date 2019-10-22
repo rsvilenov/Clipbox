@@ -57,7 +57,7 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.FlowExtentions
                         if (rtfCdo != null)
                         {
                             string rtf = (string)rtfCdo.OriginalData;
-                            var rtfBytes = Encoding.ASCII.GetBytes(rtf);
+                            var rtfBytes = Encoding.UTF8.GetBytes(rtf);
                             using (MemoryStream ms = new MemoryStream(rtfBytes))
                             {
                                 rtb.Selection.Load(ms, DataFormats.Rtf);
@@ -66,34 +66,13 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.FlowExtentions
                             continue;
                         }
 
-                        IClipboardDataObject unicodeCdo = item.ClipboardDataObjects.FirstOrDefault(cdo => cdo.Format == "CF_UNICODETEXT");
+                        IClipboardDataObject unicodeCdo = item.ClipboardDataObjects.FirstOrDefault(cdo => cdo.Format == "CF_UNICODETEXT" || cdo.Format == "Text");
                         if (unicodeCdo != null)
                         {
                             string unicodeText = (string)unicodeCdo.OriginalData;
-                            var unicodeBytes = Encoding.Unicode.GetBytes(unicodeText);
-                            using (MemoryStream ms = new MemoryStream(unicodeBytes))
-                            {
-                                // we will set the dataformat to Rtf, because it seems that
-                                // UnicodeText is not supported.
-                                rtb.Selection.Load(ms, DataFormats.Rtf);
-                            }
+                            rtb.AppendText(unicodeText);
                             rtb.AppendText(separator);
-                            continue;
                         }
-
-                        IClipboardDataObject textCdo = item.ClipboardDataObjects.FirstOrDefault(cdo => cdo.Format == "Text");
-                        if (textCdo != null)
-                        {
-                            string text = (string)textCdo.OriginalData;
-                            var textBytes = Encoding.ASCII.GetBytes(text);
-                            using (MemoryStream ms = new MemoryStream(textBytes))
-                            {
-                                rtb.Selection.Load(ms, DataFormats.Text);
-                            }
-                            rtb.AppendText(separator);
-                            continue;
-                        }
-
                     }
 
 
