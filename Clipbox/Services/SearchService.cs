@@ -1,6 +1,7 @@
 ﻿using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes.GeneralTypes;
 using Clipbox.Core.Search;
+using Clipbox.Core.Search.IndexUnits;
 using Clipbox.Core.Search.SearchTerms;
 using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
@@ -128,22 +129,22 @@ namespace Clipbox.Services
         {
             if (removedIds.Any())
             {
-                _searchProvider.DeleteSearchUnits(removedIds);
+                _searchProvider.DeleteIndexEntries(removedIds);
             }
 
             if (addedIds.Any())
             {
-                List<SearchUnit> generatedSearchUnits = new List<SearchUnit>();
+                List<IndexEntry> generatedIndexEntries = new List<IndexEntry>();
 
                 foreach (string id in addedIds)
                 {
-                    if (TryGenerateSearchUnit(id, out SearchUnit searchUnit))
+                    if (TryGenerateIndexEntry(id, out IndexEntry indexEntry))
                     {
-                        generatedSearchUnits.Add(searchUnit);
+                        generatedIndexEntries.Add(indexEntry);
                     }
                 }
 
-                _searchProvider.StoreSearchUnits(generatedSearchUnits);
+                _searchProvider.StoreIndexEntries(generatedIndexEntries);
             }
         }
 
@@ -157,15 +158,15 @@ namespace Clipbox.Services
                 }
             }
 
-            return _searchProvider.FindSearchUnitIds(searchTerms)
+            return _searchProvider.FindIndexEntryIds(searchTerms)
                 // prevent returning of nonexistant ids due to outdated/corrupt index
                 .Where(id => _allClipboardItemIds.Contains(id));
         }
 
-        private bool TryGenerateSearchUnit(string clipboardItemId, out SearchUnit searchUnit)
+        private bool TryGenerateIndexEntry(string clipboardItemId, out IndexEntry indexEntry)
         {
             IClipboardItem clipboardItem = null;
-            searchUnit = null;
+            indexEntry = null;
 
             // since we are running some time after the clipboardItemId has been last
             // checked to exist, we may encounter an item which may not exist anymore.
@@ -178,7 +179,7 @@ namespace Clipbox.Services
                 return false;
             }
 
-            List<ISearchTerm> searchTerms = new List<ISearchTerm>();
+            List<IIndexUnit> indexUnits = new List<IIndexUnit>();
 
             var textFieldsList = new List<string>();
             
@@ -195,51 +196,51 @@ namespace Clipbox.Services
 
             if (textFieldsList.Any())
             {
-                TextSearchTerm tTerm = new TextSearchTerm(textFieldsList);
-                if (tTerm.Validate())
+                TextIndexUnit tUnit = new TextIndexUnit(textFieldsList);
+                if (tUnit.Validate())
                 {
-                    searchTerms.Add(tTerm);
+                    indexUnits.Add(tUnit);
                 }
             }
 
-            ClipboardContentTypeSearchTerm ccTerm = new ClipboardContentTypeSearchTerm(clipboardItem);
-            if (ccTerm.Validate())
+            ClipboardContentTypeIndexUnit ccUnit = new ClipboardContentTypeIndexUnit(clipboardItem);
+            if (ccUnit.Validate())
             {
-                searchTerms.Add(ccTerm);
+                indexUnits.Add(ccUnit);
             }
 
-            SourceApplicationNameSearchTerm sanTerm = new SourceApplicationNameSearchTerm(clipboardItem);
-            if (sanTerm.Validate())
+            SourceApplicationNameIndexUnit sanUnit = new SourceApplicationNameIndexUnit(clipboardItem);
+            if (sanUnit.Validate())
             {
-                searchTerms.Add(sanTerm);
+                indexUnits.Add(sanUnit);
             }
 
-            SourceMachineNameSearchTerm smTerm = new SourceMachineNameSearchTerm(clipboardItem);
-            if (smTerm.Validate())
+            SourceMachineNameIndexUnit smUnitm = new SourceMachineNameIndexUnit(clipboardItem);
+            if (smUnitm.Validate())
             {
-                searchTerms.Add(smTerm);
+                indexUnits.Add(smUnitm);
             }
 
-            SourceMachineUniqueIdSearchTerm smuidTerm = new SourceMachineUniqueIdSearchTerm(clipboardItem);
-            if (smuidTerm.Validate())
+            SourceMachineUniqueIdIndexUnit smuidUnit = new SourceMachineUniqueIdIndexUnit(clipboardItem);
+            if (smuidUnit.Validate())
             {
-                searchTerms.Add(smuidTerm);
+                indexUnits.Add(smuidUnit);
             }
 
-            SourceWindowCaptionSearchTerm swTerm = new SourceWindowCaptionSearchTerm(clipboardItem);
-            if (swTerm.Validate())
+            SourceWindowCaptionIndexUnit swUnit = new SourceWindowCaptionIndexUnit(clipboardItem);
+            if (swUnit.Validate())
             {
-                searchTerms.Add(swTerm);
+                indexUnits.Add(swUnit);
             }
 
-            TagSearchTerm tagTerm = new TagSearchTerm(clipboardItem);
-            if (tagTerm.Validate())
+            TagIndexUnit tagUnit = new TagIndexUnit(clipboardItem);
+            if (tagUnit.Validate())
             {
-                searchTerms.Add(tagTerm);
+                indexUnits.Add(tagUnit);
             }
 
 
-            searchUnit = new SearchUnit(clipboardItem.Id, searchTerms);
+            indexEntry = new IndexEntry(clipboardItem.Id, indexUnits);
             return true;
         }
 

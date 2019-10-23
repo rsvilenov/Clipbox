@@ -23,19 +23,19 @@ namespace Clipbox.SearchProvider
     {
         private const int LUCENE_SEARCH_MAX_RESULT_COUNT = 10000;
 
-        private readonly string _searchUnitIdFieldName;
+        private readonly string _indexEntryIdFieldName;
 
         public LuceneSearch()
         {
-            var searchUnitObj = new SearchUnit(null, Enumerable.Empty<ISearchTerm>());
-            _searchUnitIdFieldName = nameof(searchUnitObj.Id);
+            var indexEntryObj = new IndexEntry(null, Enumerable.Empty<IIndexUnit>());
+            _indexEntryIdFieldName = nameof(indexEntryObj.Id);
         }
 
-        public void DeleteSearchUnits(IEnumerable<string> searchUnitIds)
+        public void DeleteIndexEntries(IEnumerable<string> indexEntryIds)
         {
-            if (!searchUnitIds.Any())
+            if (!indexEntryIds.Any())
             {
-                throw new ArgumentException($"{nameof(searchUnitIds)} is empty");
+                throw new ArgumentException($"{nameof(indexEntryIds)} is empty");
             }
 
             DirectoryInfo dirInfo = GetIndexDirectoryInfo();
@@ -44,16 +44,16 @@ namespace Clipbox.SearchProvider
             {
                 using (var indexWriter = new IndexWriter(indexDir, analyzer, IndexWriter.MaxFieldLength.UNLIMITED))
                 {
-                    foreach (string unitId in searchUnitIds)
+                    foreach (string unitId in indexEntryIds)
                     {
-                        var searchQuery = new TermQuery(new Term(_searchUnitIdFieldName, unitId));
+                        var searchQuery = new TermQuery(new Term(_indexEntryIdFieldName, unitId));
                         indexWriter.DeleteDocuments(searchQuery);
                     }
                 }
             }
         }
 
-        public IEnumerable<string> FindSearchUnitIds(IEnumerable<ISearchTerm> searchTerms)
+        public IEnumerable<string> FindIndexEntryIds(IEnumerable<ISearchTerm> searchTerms)
         {
             if (!searchTerms.Any())
             {
@@ -73,7 +73,7 @@ namespace Clipbox.SearchProvider
 
                 foreach (var item in result.ScoreDocs)
                 {
-                    searchUnitIds.Add(indexReader.Document(item.Doc).GetField(_searchUnitIdFieldName).StringValue);
+                    searchUnitIds.Add(indexReader.Document(item.Doc).GetField(_indexEntryIdFieldName).StringValue);
                 }
             }
 
@@ -153,7 +153,7 @@ namespace Clipbox.SearchProvider
 
                 ISearchTerm searchTerm = searchTerms.ElementAt(i);
                 string category = searchTerm.Category.ToString();
-                IEnumerable<string> searchStringParts = searchTerm.SearchStringValues;
+                IEnumerable<string> searchStringParts = searchTerm.StringValues;
                 
                 int partsCount = searchStringParts.Count();
                 for (int j = 0; j < partsCount; j++)
@@ -194,11 +194,11 @@ namespace Clipbox.SearchProvider
             return bq;
         }
 
-        public void StoreSearchUnits(IEnumerable<SearchUnit> searchUnits)
+        public void StoreIndexEntries(IEnumerable<IndexEntry> indexEntries)
         {
-            if (!searchUnits.Any())
+            if (!indexEntries.Any())
             {
-                throw new ArgumentException($"{nameof(searchUnits)} is empty");
+                throw new ArgumentException($"{nameof(indexEntries)} is empty");
             }
 
             DirectoryInfo dirInfo = GetIndexDirectoryInfo();
@@ -208,21 +208,21 @@ namespace Clipbox.SearchProvider
             {
                 using (var indexWriter = new IndexWriter(indexDir, analyzer, IndexWriter.MaxFieldLength.UNLIMITED))
                 {
-                    foreach (SearchUnit unit in searchUnits)
+                    foreach (IndexEntry entry in indexEntries)
                     {
                         // remove older index entry
-                        var searchQuery = new TermQuery(new Term(_searchUnitIdFieldName, unit.Id));
+                        var searchQuery = new TermQuery(new Term(_indexEntryIdFieldName, entry.Id));
                         indexWriter.DeleteDocuments(searchQuery);
 
                         // create a Lucene document
                         Document document = new Document();
 
-                        document.Add(new Field(_searchUnitIdFieldName, unit.Id, Field.Store.YES, Field.Index.NOT_ANALYZED));
+                        document.Add(new Field(_indexEntryIdFieldName, entry.Id, Field.Store.YES, Field.Index.NOT_ANALYZED));
 
-                        foreach (ISearchTerm term in unit.SearchTerms)
+                        foreach (IIndexUnit unit in entry.IndexUnits)
                         {
-                            string stringToStore = string.Join(" ; ", term.SearchStringValues);
-                            document.Add(new Field(term.Category.ToString(), stringToStore, Field.Store.NO, Field.Index.ANALYZED));
+                            string stringToStore = string.Join(" ; ", unit.StringValues);
+                            document.Add(new Field(unit.Category.ToString(), stringToStore, Field.Store.NO, Field.Index.ANALYZED));
                         }
 
                         indexWriter.AddDocument(document);

@@ -1,4 +1,5 @@
 ﻿using Clipbox.Core.Search;
+using Clipbox.Core.Search.IndexUnits;
 using Clipbox.Core.Search.SearchTerms;
 using Clipbox.Infrastructure.Search;
 using NUnit.Framework;
@@ -24,22 +25,22 @@ namespace Clipbox.SearchProvider.Tests
         {
             string value = Guid.NewGuid().ToString();
             string key = Guid.NewGuid().ToString();
-            SearchUnit su = new SearchUnit(key, new List<ISearchTerm>
+            IndexEntry ie = new IndexEntry(key, new List<IIndexUnit>
             {
-                new TextSearchTerm(new List<string> { value })
+                new TextIndexUnit(new List<string> { value })
             });
 
-            _searchProvicer.StoreSearchUnits(new List<SearchUnit> { su });
+            _searchProvicer.StoreIndexEntries(new List<IndexEntry> { ie });
 
 
             ISearchTerm textSearchTerm = new TextSearchTerm(new List<string> { value });
-            IEnumerable<string> matchingIds = _searchProvicer.FindSearchUnitIds(new List<ISearchTerm> { textSearchTerm });
+            IEnumerable<string> matchingIds = _searchProvicer.FindIndexEntryIds(new List<ISearchTerm> { textSearchTerm });
 
             Assert.IsTrue(matchingIds.Contains(key));
             
-            _searchProvicer.DeleteSearchUnits(new List<string> { key });
+            _searchProvicer.DeleteIndexEntries(new List<string> { key });
 
-            matchingIds = _searchProvicer.FindSearchUnitIds(new List<ISearchTerm> { textSearchTerm });
+            matchingIds = _searchProvicer.FindIndexEntryIds(new List<ISearchTerm> { textSearchTerm });
 
             Assert.IsFalse(matchingIds.Contains(key));
         }

@@ -99,6 +99,9 @@
     <Compile Include="Services\Interfaces\ISearchService.cs" />
     <Compile Include="Services\SearchService.cs" />
     <Compile Include="ViewModels\Enums\CloudSyncStatus.cs" />
+    <Compile Include="Views\AdvancedFilters.xaml.cs">
+      <DependentUpon>AdvancedFilters.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ClipboardListView\SimpleClipboardListView.xaml.cs">
       <DependentUpon>SimpleClipboardListView.xaml</DependentUpon>
     </Compile>
@@ -219,6 +222,10 @@
     </Compile>
     <Compile Include="Views\WallpaperWindow.cs" />
     <Page Include="Resources\TrayContextMenu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\AdvancedFilters.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

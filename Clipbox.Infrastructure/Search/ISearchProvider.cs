@@ -5,10 +5,10 @@ namespace Clipbox.Infrastructure.Search
 {
     public interface ISearchProvider
     {
-        IEnumerable<string> FindSearchUnitIds(IEnumerable<ISearchTerm> searchTerms);
+        IEnumerable<string> FindIndexEntryIds(IEnumerable<ISearchTerm> searchTerms);
 
-        void StoreSearchUnits(IEnumerable<SearchUnit> searchUnits);
+        void StoreIndexEntries(IEnumerable<IndexEntry> indexEntries);
 
-        void DeleteSearchUnits(IEnumerable<string> searchUnitIds);
+        void DeleteIndexEntries(IEnumerable<string> indexEntryIds);
     }
 }

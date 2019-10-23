@@ -1,8 +1,6 @@
 ﻿using Clipbox.Core.ClipboardContent.Enums;
-using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.Core.Search.Enums;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Clipbox.Core.Search.SearchTerms
 {
@@ -12,18 +10,6 @@ namespace Clipbox.Core.Search.SearchTerms
             : base(contentClasses)
         { }
 
-        public ClipboardContentTypeSearchTerm(IClipboardItem clipboardItem)
-            : base(clipboardItem)
-        { }
-
-        protected override IEnumerable<ClipboardContentClass> GetTermValuesFromClipboardItem(IClipboardItem clipboardItem)
-        {
-            return clipboardItem
-                .ClipboardDataObjects
-                .Select(cdo => cdo.ContentClass)
-                .Distinct();
-        }
-
-        protected override SearchCategory SearchCategoryForTerm => SearchCategory.Type;
+        protected override SearchCategory SearchCategory => SearchCategory.Type;
     }
 }

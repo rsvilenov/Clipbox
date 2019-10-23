@@ -50,6 +50,18 @@
     <Compile Include="Extensibility\Contracts\ExtentionTypes\GeneralTypes\SearchSupportExtension.cs" />
     <Compile Include="Search\Enums\SearchCategory.cs" />
     <Compile Include="Search\Enums\TermOccurrence.cs" />
+    <Compile Include="Search\IIndexUnit.cs" />
+    <Compile Include="Search\IndexEntry.cs" />
+    <Compile Include="Search\IndexUnitBase.cs" />
+    <Compile Include="Search\IndexUnits\ClipboardContentTypeIndexUnit.cs" />
+    <Compile Include="Search\IndexUnits\SourceApplicationNameIndexUnit.cs" />
+    <Compile Include="Search\IndexUnits\SourceMachineNameIndexUnit.cs" />
+    <Compile Include="Search\IndexUnits\SourceMachineUniqueIdIndexUnit.cs" />
+    <Compile Include="Search\IndexUnits\SourceWindowCaptionIndexUnit.cs" />
+    <Compile Include="Search\IndexUnits\TagIndexUnit.cs" />
+    <Compile Include="Search\IndexUnits\TextIndexUnit.cs" />
+    <Compile Include="Search\ISearchObject.cs" />
+    <Compile Include="Search\SearchObjectBase.cs" />
     <Compile Include="Search\SearchTerms\ClipboardContentTypeSearchTerm.cs" />
     <Compile Include="Search\ISearchTerm.cs" />
     <Compile Include="Search\SearchTermBase.cs" />
@@ -101,7 +113,6 @@
     <Compile Include="Search\SearchTerms\SourceWindowCaptionSearchTerm.cs" />
     <Compile Include="Search\SearchTerms\TagSearchTerm.cs" />
     <Compile Include="Search\SearchTerms\TextSearchTerm.cs" />
-    <Compile Include="Search\SearchUnit.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Clipbox.Win32\Clipbox.Win32.csproj">
@@ -109,6 +120,7 @@
       <Name>Clipbox.Win32</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

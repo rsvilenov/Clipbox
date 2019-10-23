@@ -1,16 +1,9 @@
 ﻿using Clipbox.Core.Search.Enums;
-using System.Collections.Generic;
 
 namespace Clipbox.Core.Search
 {
-    public interface ISearchTerm
-    {
-        SearchCategory Category { get; }
-        
-        IEnumerable<string> SearchStringValues { get; }
-        
+    public interface ISearchTerm : ISearchObject
+    {   
         TermOccurrence Occurrence { get; }
-
-        bool Validate();
     }
 }
