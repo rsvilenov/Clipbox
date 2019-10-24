@@ -7,14 +7,29 @@ namespace Clipbox.Core.Search
 {
     public abstract class SearchObjectBase<T> : ISearchObject
     {
-        public IEnumerable<string> StringValues { get; protected set; }
+        private List<string> _stringValues = new List<string>();
 
+        public IEnumerable<string> StringValues
+        {
+            get { return _stringValues; }
+        }
+
+        private List<T> _values = new List<T>();
         /// <summary>
         /// The values in that collection are expanded this way: value1 OR value2 OR value3...
         /// </summary>
-        public IEnumerable<T> Values { get; protected set; }
+        public IEnumerable<T> Values
+        {
+            get { return _values; }
+        }
 
-        protected virtual IEnumerable<string> GetValuesAsStringCollection(IEnumerable<T> values)
+        protected void AddValueRange(IEnumerable<T> values)
+        {
+            _values.AddRange(values);
+            _stringValues.AddRange(GetValuesAsStringCollection(values));
+        }
+
+        private IEnumerable<string> GetValuesAsStringCollection(IEnumerable<T> values)
         {
             if (typeof(T) == typeof(string))
             {
@@ -26,7 +41,7 @@ namespace Clipbox.Core.Search
             }
         }
 
-        public Type SearchValueType
+        public Type ValueType
         {
             get
             {

@@ -1,6 +1,5 @@
 ﻿using Clipbox.Core.ClipboardContent.Interfaces;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Clipbox.Core.Search
 {
@@ -8,14 +7,13 @@ namespace Clipbox.Core.Search
     {
         public IndexUnitBase(IClipboardItem clipboardItem)
         {
-            Values = GetTermValuesFromClipboardItem(clipboardItem);
-            StringValues = GetValuesAsStringCollection(Values);
+            IEnumerable<T> values = GetTermValuesFromClipboardItem(clipboardItem);
+            AddValueRange(values);
         }
 
         public IndexUnitBase(IEnumerable<T> values)
         {
-            Values = values.ToList();
-            StringValues = GetValuesAsStringCollection(Values);
+            AddValueRange(values);
         }
 
 

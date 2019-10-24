@@ -1,6 +1,4 @@
-﻿using Clipbox.Core.ClipboardContent.Interfaces;
-using Clipbox.Core.Search.Enums;
-using System;
+﻿using Clipbox.Core.Search.Enums;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,8 +8,16 @@ namespace Clipbox.Core.Search
     {
         public SearchTermBase(IEnumerable<T> searchValues)
         {
-            Values = searchValues.ToList();
-            StringValues = GetValuesAsStringCollection(Values);
+            AddValueRange(searchValues.ToList());
+        }
+
+        public SearchTermBase()
+        {
+        }
+
+        public void AddValue(T value)
+        {
+            AddValueRange(new T[] { value });
         }
 
         public TermOccurrence Occurrence { get; set; }

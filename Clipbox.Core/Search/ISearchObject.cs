@@ -1,4 +1,5 @@
 ﻿using Clipbox.Core.Search.Enums;
+using System;
 using System.Collections.Generic;
 
 namespace Clipbox.Core.Search
@@ -8,6 +9,8 @@ namespace Clipbox.Core.Search
         SearchCategory Category { get; }
 
         IEnumerable<string> StringValues { get; }
+
+        Type ValueType { get; }
 
         bool Validate();
     }
