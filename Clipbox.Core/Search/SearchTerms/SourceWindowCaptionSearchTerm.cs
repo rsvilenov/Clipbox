@@ -9,6 +9,10 @@ namespace Clipbox.Core.Search.SearchTerms
             : base(sourceWindowName)
         { }
 
+        public SourceWindowCaptionSearchTerm()
+            : base()
+        { }
+
         protected override SearchCategory SearchCategory => SearchCategory.SourceWindowName;
     }
 }

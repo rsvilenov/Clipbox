@@ -5,16 +5,28 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="clr-namespace:Clipbox.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:searchEnum="clr-namespace:Clipbox.Core.Search.Enums;assembly=Clipbox.Core"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-    <Grid>
+    <Grid x:Name="mainGrid">
+        <Grid.Resources>
+            <ObjectDataProvider
+                x:Key="searchCategoryEnum"
+                MethodName="GetValues"
+                ObjectType="{x:Type sys:Enum}">
+                <ObjectDataProvider.MethodParameters>
+                    <x:Type TypeName="searchEnum:SearchCategory" />
+                </ObjectDataProvider.MethodParameters>
+            </ObjectDataProvider>
+        </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <ListView Grid.Row="0">
+        <ListView Grid.Row="0" ItemsSource="{Binding AvailableSearchTerms}">
             <ListView.ItemContainerStyle>
                 <Style TargetType="{x:Type ListViewItem}">
                     <Setter Property="Background" Value="Transparent" />
@@ -36,6 +48,44 @@
                             <ColumnDefinition />
                             <ColumnDefinition />
                         </Grid.ColumnDefinitions>
+                        <ComboBox
+                            Grid.Column="0"
+                            DisplayMemberPath="SelectedSearchCategory"
+                            ItemsSource="{Binding Source={StaticResource searchCategoryEnum}}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock>
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding}" Value="Tag">
+                                                        <Setter Property="Text" Value="Item Tag" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding}" Value="Type">
+                                                        <Setter Property="Text" Value="Content type" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding}" Value="Type">
+                                                        <Setter Property="Text" Value="Content type" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding}" Value="SourceApplicationName">
+                                                        <Setter Property="Text" Value="Source application name" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding}" Value="SourceWindowName">
+                                                        <Setter Property="Text" Value="Source window caption" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding}" Value="SourceMachineName">
+                                                        <Setter Property="Text" Value="Source machine name" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding}" Value="Text">
+                                                        <Setter Property="Text" Value="Text (for text content types)" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>

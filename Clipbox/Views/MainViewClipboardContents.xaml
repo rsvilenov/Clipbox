@@ -318,6 +318,15 @@
                                     Click="TrashBtn_Click"
                                     Style="{DynamicResource BtnTrash}" />
 
+                                <Popup
+                                    x:Name="advancedSearchPopup"
+                                    MinWidth="350"
+                                    MinHeight="200"
+                                    Placement="Center"
+                                    PlacementTarget="{Binding ElementName=MainListView}">
+                                    <views:AdvancedFilters />
+                                </Popup>
+
                                 <localDialog:DialogPopup
                                     x:Name="deleteConfirmationPopup"
                                     MaxWidth="350"
@@ -400,6 +409,7 @@
             <views:FilterBand
                 x:Name="filterBand"
                 Grid.Row="0"
+                AdvancedSearchOpenRequested="FilterBand_AdvancedSearchOpenRequested"
                 SearchTermsChanged="FilterBand_SearchTermsChanged" />
 
             <Button

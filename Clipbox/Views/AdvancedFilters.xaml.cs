@@ -4,6 +4,7 @@ using Clipbox.Infrastructure.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -25,14 +26,14 @@ namespace Clipbox.Views
     {
 
 
-        public AsyncObservableCollection<SearchTermFilterItem> AvailableSearchTerms
+        public AsyncObservableCollection<SearchTermFilterItemWrapper> AvailableSearchTerms
         {
-            get { return (AsyncObservableCollection<SearchTermFilterItem>)GetValue(AvailableSearchTermsProperty); }
+            get { return (AsyncObservableCollection<SearchTermFilterItemWrapper>)GetValue(AvailableSearchTermsProperty); }
             set { SetValue(AvailableSearchTermsProperty, value); }
         }
 
         public static readonly DependencyProperty AvailableSearchTermsProperty =
-            DependencyProperty.Register(nameof(AvailableSearchTerms), typeof(AsyncObservableCollection<SearchTermFilterItem>), typeof(AdvancedFilters), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(AvailableSearchTerms), typeof(AsyncObservableCollection<SearchTermFilterItemWrapper>), typeof(AdvancedFilters), new PropertyMetadata(null));
 
         
         public bool IsOptionAnySelected
@@ -42,32 +43,114 @@ namespace Clipbox.Views
         }
 
         public static readonly DependencyProperty IsOptionAnySelectedProperty =
-            DependencyProperty.Register(nameof(IsOptionAnySelected), typeof(bool), typeof(bool), new PropertyMetadata(false));
+            DependencyProperty.Register(nameof(IsOptionAnySelected), typeof(bool), typeof(AdvancedFilters), new PropertyMetadata(false));
 
-
+        private Dictionary<SearchCategory, Type> _searchCategoryTermTypeMapping;
+        private Dictionary<SearchCategory, Type> _searchCategoryValueTypeMapping;
 
         public AdvancedFilters()
         {
             InitializeComponent();
+
+            this.mainGrid.DataContext = this;
+
+            _searchCategoryValueTypeMapping = new Dictionary<SearchCategory, Type>();
+            _searchCategoryTermTypeMapping = new Dictionary<SearchCategory, Type>();
+
+            LoadTypeMappings();
+
+            AvailableSearchTerms = new AsyncObservableCollection<SearchTermFilterItemWrapper>
+            {
+                new SearchTermFilterItemWrapper
+                {
+
+                }
+            };
         }
 
-        private void LoadAvailableSearchTerms()
+        private void LoadTypeMappings()
         {
+            Assembly coreAsm = Assembly.GetAssembly(typeof(ISearchTerm));
+            IEnumerable<ISearchTerm> searchTermInstances = coreAsm.GetTypes()
+                .Where(t => !t.IsAbstract && t.GetInterfaces().Contains(typeof(ISearchTerm)))
+                .Select(t => (ISearchTerm)Activator.CreateInstance(t));
+
             foreach (SearchCategory cat in Enum.GetValues(typeof(SearchCategory)))
             {
-                //AvailableSearchTerms.Add(new SearchTermFilterItem
-                //{
-                //});
+                ISearchTerm searchTermInstance = searchTermInstances
+                    .Where(i => i.Category == cat)
+                    .SingleOrDefault();
+
+                if (searchTermInstance == null)
+                {
+                    throw new InvalidOperationException($"There are either no search terms for " +
+                        $"category {cat} or there are more than one term for that category. " +
+                        $"Either case it invalid.");
+                }
+
+                _searchCategoryValueTypeMapping.Add(cat, searchTermInstance.ValueType);
+                _searchCategoryTermTypeMapping.Add(cat, searchTermInstance.GetType());   
             }
+        }
+
+        public SearchTermFilterItem GetSearchTermFilterItem(SearchCategory category)
+        {
+            Type termType = _searchCategoryTermTypeMapping[category];
+            Type valueType = _searchCategoryValueTypeMapping[category];
+
+            return new SearchTermFilterItem(category, termType, valueType);
+        }
+        
+        public class SearchTermFilterItemWrapper : BindableObject
+        {
+            private SearchCategory _selectedSearchCategory;
+            public SearchCategory SelectedSearchCategory
+            {
+                get { return _selectedSearchCategory; }
+                set { SetField(ref _selectedSearchCategory, value); }
+            }
+
+            private SearchTermFilterItem _searchTermFilterItem;
+            public SearchTermFilterItem SearchTermFilterItem
+            {
+                get { return _searchTermFilterItem; }
+                set { SetField(ref _searchTermFilterItem, value); }
+            }
+        }
+        
+        public enum MatchOption
+        {
+            Equals,
+            DoesNotEqual,
+            Contains,
+            DoesNotContain
         }
 
         public class SearchTermFilterItem : BindableObject
         {
-            ISearchTerm _searchTerm;
- 
-            public SearchTermFilterItem(SearchCategory searchCategory)
+            private readonly SearchCategory _searchCategory;
+            private readonly Type _searchTermType;
+
+            public SearchTermFilterItem(SearchCategory searchCategory, 
+                Type searchTermType, 
+                Type searchValueType)
             {
-                //_searchTerm = 
+                SearchValueType = searchValueType;
+                SearchTermDisplayText = searchCategory.ToString();
+
+                _searchCategory = searchCategory;
+                _searchTermType = searchTermType;
+            }
+
+            public ISearchTerm GetSearchTerm()
+            {
+                var listType = typeof(List<>);
+                var constructedListType = listType.MakeGenericType(SearchValueType);
+
+                var listInstance = Activator.CreateInstance(constructedListType);
+                constructedListType.GetMethod("Add").Invoke(listInstance, new object[] { SearchValue });
+
+                return (ISearchTerm)Activator.CreateInstance(_searchTermType, new object[] { listInstance });
             }
 
             private Type _searchValueType;
@@ -84,8 +167,8 @@ namespace Clipbox.Views
                 set { SetField(ref _searchTermDisplayText, value); }
             }
 
-            private string _searchValue;
-            public string SearchValue
+            private object _searchValue;
+            public object SearchValue
             {
                 get { return _searchValue; }
                 set { SetField(ref _searchValue, value); }
@@ -97,16 +180,6 @@ namespace Clipbox.Views
                 get { return _selectedMatchOption; }
                 set { SetField(ref _selectedMatchOption, value); }
             }
-
-            public enum MatchOption
-            {
-                Equals,
-                DoesNotEqual,
-                Contains,
-                DoesNotContain
-            }
-
-
         }
     }
 }

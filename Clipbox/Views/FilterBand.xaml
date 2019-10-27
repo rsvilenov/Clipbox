@@ -166,6 +166,8 @@
 
                 <ToggleButton Margin="5,10" Style="{StaticResource sourceWindowToggleButton}" />
 
+                <Button Margin="5,10" Click="Button_Click" />
+
             </StackPanel>
         </ScrollViewer>
 

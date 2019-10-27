@@ -8,7 +8,11 @@ namespace Clipbox.Core.Search.SearchTerms
         public SourceApplicationNameSearchTerm(IEnumerable<string> sourceApplicationNames)
             : base(sourceApplicationNames)
         { }
-        
+
+        public SourceApplicationNameSearchTerm()
+            : base()
+        { }
+
         protected override SearchCategory SearchCategory => SearchCategory.SourceApplicationName;
 
     }

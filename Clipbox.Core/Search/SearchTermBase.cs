@@ -19,7 +19,7 @@ namespace Clipbox.Core.Search
         {
             AddValueRange(new T[] { value });
         }
-
+        
         public TermOccurrence Occurrence { get; set; }
         
         public override string ToString()

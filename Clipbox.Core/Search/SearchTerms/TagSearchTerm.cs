@@ -9,6 +9,10 @@ namespace Clipbox.Core.Search.SearchTerms
             : base(tags)
         { }
 
+        public TagSearchTerm()
+            : base()
+        { }
+
         protected override SearchCategory SearchCategory => SearchCategory.Tag;
     }
 }

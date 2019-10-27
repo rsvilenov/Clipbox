@@ -19,6 +19,8 @@ namespace Clipbox.Views
     /// </summary>
     public partial class FilterBand : UserControl
     {
+        public event EventHandler AdvancedSearchOpenRequested;
+
         public FilterBand()
         {
             InitializeComponent();
@@ -217,6 +219,11 @@ namespace Clipbox.Views
                         }
                     }
                 }));
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            AdvancedSearchOpenRequested?.Invoke(this, new EventArgs());
         }
     }
 }

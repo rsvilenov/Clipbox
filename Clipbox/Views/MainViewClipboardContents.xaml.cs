@@ -635,5 +635,11 @@ namespace Clipbox.Views
                 }
             }
         }
+
+        private void FilterBand_AdvancedSearchOpenRequested(object sender, EventArgs e)
+        {
+            advancedSearchPopup.IsOpen = true;
+            this.IsEnabled = false;
+        }
     }
 }

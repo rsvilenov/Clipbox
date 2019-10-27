@@ -10,6 +10,10 @@ namespace Clipbox.Core.Search.SearchTerms
             : base(contentClasses)
         { }
 
+        public ClipboardContentTypeSearchTerm()
+            : base()
+        { }
+
         protected override SearchCategory SearchCategory => SearchCategory.Type;
     }
 }

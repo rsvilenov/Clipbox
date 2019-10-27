@@ -9,6 +9,10 @@ namespace Clipbox.Core.Search.SearchTerms
             : base(sourceMachineUniqueIds)
         { }
 
+        public SourceMachineUniqueIdSearchTerm()
+            : base()
+        { }
+
         protected override SearchCategory SearchCategory => SearchCategory.SourceMachineUniqueId;
     }
 }
