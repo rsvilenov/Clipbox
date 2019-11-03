@@ -12,6 +12,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
+using Clipbox.Extentions.BuiltIn.TextFormats.IntermediateFormats;
 
 namespace Clipbox.Extentions.BuiltIn.TextFormats.FlowExtentions
 {
@@ -21,7 +22,10 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.FlowExtentions
         public override bool OnQueryModify(IEnumerable<IClipboardItem> items)
         {
             return items.Count() > 1
-                && items.All(item => item.ClipboardDataObjects.Any(cdo => cdo.ClipboardFormatName == "Rich Text Format" || cdo.ClipboardFormatName == "CF_UNICODETEXT" || cdo.ClipboardFormatName == "Text"));
+                && items.All(item => item.ClipboardDataObjects
+                    .Any(cdo => cdo.IntermediateFormatObject is RichTextIntermediateFormat
+                    || cdo.IntermediateFormatObject is UnicodeTextIntermediateFormat 
+                    || cdo.IntermediateFormatObject is TextIntermediateFormat));
         }
 
         public override IGeneratedClipboardItem OnPerformModifyRequested(IEnumerable<IClipboardItem> items)
@@ -53,10 +57,10 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.FlowExtentions
                         // Change the selection each time, so that Selection.Load() does not overweite the previous contents
                         rtb.Selection.Select(rtb.Document.ContentEnd, rtb.Document.ContentEnd);
 
-                        IClipboardDataObject rtfCdo = item.ClipboardDataObjects.FirstOrDefault(cdo => cdo.ClipboardFormatName == "Rich Text Format");
+                        IClipboardDataObject rtfCdo = item.ClipboardDataObjects.FirstOrDefault(cdo => cdo.IntermediateFormatObject is RichTextIntermediateFormat);
                         if (rtfCdo != null)
                         {
-                            string rtf = (string)rtfCdo.OriginalData;
+                            string rtf = ((RichTextIntermediateFormat)rtfCdo.IntermediateFormatObject).Rtf;
                             var rtfBytes = Encoding.UTF8.GetBytes(rtf);
                             using (MemoryStream ms = new MemoryStream(rtfBytes))
                             {
@@ -66,11 +70,21 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.FlowExtentions
                             continue;
                         }
 
-                        IClipboardDataObject unicodeCdo = item.ClipboardDataObjects.FirstOrDefault(cdo => cdo.ClipboardFormatName == "CF_UNICODETEXT" || cdo.ClipboardFormatName == "Text");
+                        IClipboardDataObject unicodeCdo = item.ClipboardDataObjects
+                        .FirstOrDefault(cdo => cdo.IntermediateFormatObject is UnicodeTextIntermediateFormat);
                         if (unicodeCdo != null)
                         {
-                            string unicodeText = (string)unicodeCdo.OriginalData;
+                            string unicodeText = ((UnicodeTextIntermediateFormat)unicodeCdo.IntermediateFormatObject).Text;
                             rtb.AppendText(unicodeText);
+                            rtb.AppendText(separator);
+                        }
+
+                        IClipboardDataObject textCdo = item.ClipboardDataObjects
+                        .FirstOrDefault(cdo => cdo.IntermediateFormatObject is TextIntermediateFormat);
+                        if (textCdo != null)
+                        {
+                            string text = ((TextIntermediateFormat)textCdo.IntermediateFormatObject).Text;
+                            rtb.AppendText(text);
                             rtb.AppendText(separator);
                         }
                     }
@@ -92,11 +106,11 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.FlowExtentions
 
                     if (!IsParameterSet(FlowParameters.RemoveFormatting, true))
                     {
-                        generated.AddFormatAndData("Rich Text Format", rtfFromRtb);
+                        generated.AddFormatAndIntermediateFormatObject("Rich Text Format", new RichTextIntermediateFormat(rtfFromRtb));
                     }
 
-                    generated.AddFormatAndData("CF_UNICODETEXT", textWithoutFormatting, ClipboardContentClass.Text);
-                    generated.AddFormatAndData("Text", textWithoutFormatting, ClipboardContentClass.Text);
+                    generated.AddFormatAndIntermediateFormatObject("CF_UNICODETEXT", new UnicodeTextIntermediateFormat(textWithoutFormatting));
+                    generated.AddFormatAndIntermediateFormatObject("Text", new TextIntermediateFormat(textWithoutFormatting));
                 }));
             }
             
