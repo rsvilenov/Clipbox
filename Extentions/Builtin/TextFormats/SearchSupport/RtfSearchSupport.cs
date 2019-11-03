@@ -1,5 +1,6 @@
 ﻿using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes.GeneralTypes;
+using Clipbox.Extentions.BuiltIn.TextFormats.IntermediateFormats;
 using Clipbox.Infrastructure.UI.Utils;
 using System;
 using System.IO;
@@ -11,17 +12,13 @@ using System.Windows.Threading;
 namespace Clipbox.Extentions.BuiltIn.TextFormats.SearchSupport
 {
     [ClipboxExtention(Author = "Clipbox", Description = "", Version = 0.1)]
-    [ClipboardFormat("Rich Text Format")]
-    public class RtfSearchSupport : SearchSupportExtension
+    [IntermediateFormatSupport("{D8F8C369-7F81-4138-9718-4F34EB1BD669}")]
+    public class RtfSearchSupport : SearchSupportExtension<RichTextIntermediateFormat>
     {
-        public override string GetSearchTextData(object data)
+        protected override string GetSearchTextData(RichTextIntermediateFormat intermediateFormat)
         {
-            if (!(data is string rtf))
-            {
-                throw new ArgumentException("data is null or not a string");
-            }
-
             string text = string.Empty;
+            string rtf = intermediateFormat.Rtf;
 
             using (OwnThreadDispatcher _dispatcher = new OwnThreadDispatcher())
             {
@@ -45,7 +42,7 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.SearchSupport
                     }));
             }
 
-            return text;
+            return text?.ReplaceNonAlphaWith(' ');
         }
     }
 }

@@ -14,16 +14,10 @@ namespace Clipbox.ExtendedClipboard.ClipboardContent
         
         public object Tag { get; set; }
 
-        public long EntryDateTicks { get; set; }
-
-        public long EntryDateUtcTicks { get; set; }
-        
-        public long ModifiedDateTicks { get; set; }
-
-        public long ModifiedDateUtcTicks { get; set; }
-
         #endregion
 
         public bool IsPinned { get; set; }
+
+        public ITimestampInfo TimestampInfo { get; set; }
     }
 }

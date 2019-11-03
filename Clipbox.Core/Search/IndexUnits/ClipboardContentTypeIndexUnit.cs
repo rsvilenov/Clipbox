@@ -17,7 +17,7 @@ namespace Clipbox.Core.Search.IndexUnits
         {
             return clipboardItem
                 .ClipboardDataObjects
-                .Select(cdo => cdo.ContentClass)
+                .Select(cdo => cdo.IntermediateFormatObject.ContentClass)
                 .Distinct();
         }
     }

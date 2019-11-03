@@ -1,4 +1,5 @@
 ﻿using Clipbox.Core.ClipboardContent.Interfaces;
+using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes.GeneralTypes;
 using Clipbox.Core.Search;
 using Clipbox.Core.Search.IndexUnits;
@@ -185,10 +186,10 @@ namespace Clipbox.Services
             
             foreach (IClipboardDataObject cdo in clipboardItem.ClipboardDataObjects)
             {
-                SearchSupportExtension ext = _extensionContainer.ResolveSearchSupport(cdo.Format);
+                ISearchSupport ext = _extensionContainer.ResolveSearchSupport(cdo.ClipboardFormatName);
                 if (ext != null)
                 {
-                    string searchText = ext.GetSearchTextData(cdo.OriginalData);
+                    string searchText = ext.GetSearchTextData(cdo.IntermediateFormatObject);
 
                     textFieldsList.Add(searchText);
                 }

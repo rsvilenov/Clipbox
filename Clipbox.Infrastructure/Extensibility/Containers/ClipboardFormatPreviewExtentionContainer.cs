@@ -8,7 +8,7 @@ using System.Collections.Concurrent;
 namespace Clipbox.Infrastructure.Extensibility.Containers
 {
     public class ClipboardFormatPreviewExtentionContainer :
-        BaseExtentionContainer<IPreviewHandler, RegularFactory>,
+        BaseExtentionContainer<IPreviewGenerator, RegularFactory>,
         IClipboardFormatPreviewExtentionContainer,
         INotifyExtentionResolved
     {
@@ -17,7 +17,7 @@ namespace Clipbox.Infrastructure.Extensibility.Containers
 
         public event EventHandler<ExtentionEventArgs> ExtentionResolved;
 
-        public IPreviewHandler ResolveClipboardPreviewHandler(string format)
+        public IPreviewGenerator ResolveClipboardPreviewGenerator(string format)
         {
             if (_clipboardFormatPreviewExtentionMapping.ContainsKey(format))
             {

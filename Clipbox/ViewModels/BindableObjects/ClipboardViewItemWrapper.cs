@@ -15,7 +15,7 @@ namespace Clipbox.ViewModels.BindableObjects
             ClipboardItem = clipboardItem;
 
             Id = clipboardItem.Id;
-            DateCreated = new DateTime(clipboardItem.EntryDateTicks);
+            DateCreated = new DateTime(clipboardItem.TimestampInfo.EntryDateTicks);
             IsItemTransferable = clipboardItem.CanTransfer;
         }
 

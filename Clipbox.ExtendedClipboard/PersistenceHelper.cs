@@ -1,4 +1,5 @@
-﻿using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
+﻿using Clipbox.Core.Extensibility.Contracts;
+using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using Clipbox.Core.Extensibility.Exceptions;
 using Clipbox.ExtendedClipboard.ClipboardContent;
 using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
@@ -19,20 +20,15 @@ namespace Clipbox.ExtendedClipboard
 
         private const string APPDATA_CACHE_SUBDIR = "ClipboardDataCache";
 
-        private IClipboardFormatExtentionContainer _formatExtentionContainer;
+        private IPersistenceSupportExtensionContainer _persistenceExtentionContainer;
 
-        public PersistenceHelper(IClipboardFormatExtentionContainer clipboardFormatExtentionContainer)
+        public PersistenceHelper(IPersistenceSupportExtensionContainer persistenceSupportExtentionContainer)
         {
-            _formatExtentionContainer = clipboardFormatExtentionContainer;
+            _persistenceExtentionContainer = persistenceSupportExtentionContainer;
         }
         
         public void StoreAndShrinkClipboardItem(ClipboardItem clipboardItem)
         {
-            if (clipboardItem.IsShrinked)
-            {
-                throw new ArgumentException($"ClipboardItem with id{clipboardItem.Id} has already been shrinked. Please restore it first.");
-            }
-
             // generate persistable clipboard item
             PersistableClipboardItem persistableClipboardItem = GeneratePersistableClipboardItem(clipboardItem);
             if (persistableClipboardItem == null)
@@ -41,16 +37,34 @@ namespace Clipbox.ExtendedClipboard
                 return;
             }
 
-            bool anyCdoShrinked = false;
+            // if the item is persistable and is modified, then we should be
+            // able to load it from the disk. If the item's modified ticks is
+            // different, we should proceed with saving. Otherwise - we stop here.
+            if (clipboardItem.IsModified)
+            {
+                // load from disk
+                PersistableClipboardItem savedPersistableClipboardItem = LoadPersistableClipboardItemFromDisk(clipboardItem);
+                
+                // check to see if it has really been modified
+                if (persistableClipboardItem.TimestampInfo.ModifiedDateUtcTicks == savedPersistableClipboardItem.TimestampInfo.ModifiedDateUtcTicks)
+                {
+                    return;
+                }
+
+                // load the original clipboard data objects in order to prevent the
+                // possibility of someone modifying the object somewhere accidentally
+                // or with bad intentions in mind and then we save it here. CDOs should
+                // not be modifiable.
+                RestoreClipboardDataObjects(clipboardItem, persistableClipboardItem);
+            }
 
             // shrink the original item if necessary
             foreach (PersistableClipboardDataObject persistableCdo in persistableClipboardItem.PersistableClipboardDataObjects)
             {
                 if (persistableCdo.ByteArray.LongLength > MAX_CDO_SIZE)
                 {
-                    ClipboardDataObject originalCdo = (ClipboardDataObject)clipboardItem.ClipboardDataObjects.First(cdo => cdo.Format == persistableCdo.Format);
-                    originalCdo.OriginalData = null;
-                    anyCdoShrinked = true;
+                    ClipboardDataObject originalCdo = (ClipboardDataObject)clipboardItem.ClipboardDataObjects.First(cdo => cdo.ClipboardFormatName == persistableCdo.ClipboardFormatName);
+                    originalCdo.IntermediateFormatObject = null;
 #if DEBUG
                     GC.Collect();
                     GC.WaitForPendingFinalizers();
@@ -58,8 +72,6 @@ namespace Clipbox.ExtendedClipboard
 #endif
                 }
             }
-
-            clipboardItem.IsShrinked = anyCdoShrinked;
 
             EnsureAppDataCacheSubdirExists();
             // save the persistable item to disk
@@ -71,26 +83,38 @@ namespace Clipbox.ExtendedClipboard
         public void RestoreShrinkedClipboardItem(ClipboardItem clipboardItem)
         {
             EnsureAppDataCacheSubdirExists();
+            PersistableClipboardItem persistableClipboardItem = LoadPersistableClipboardItemFromDisk(clipboardItem);
+            RestoreClipboardDataObjects(clipboardItem, persistableClipboardItem);
+        }
 
-            // load from disk
-            byte[] clipboardItemBytes = AppDataUtils.ReadBytesFromApplicationData(Path.Combine(APPDATA_CACHE_SUBDIR, clipboardItem.Id));
-            PersistableClipboardItem persistableClipboardItem = DeserializeObject<PersistableClipboardItem>(clipboardItemBytes);
-
-            bool anyCdoRestored = false;
-
+        private void RestoreClipboardDataObjects(ClipboardItem clipboardItem, PersistableClipboardItem persistableClipboardItem)
+        {
             foreach (PersistableClipboardDataObject persistableCdo in persistableClipboardItem.PersistableClipboardDataObjects)
             {
                 // find the original clipboard data object
-                ClipboardDataObject originalCdo = (ClipboardDataObject)clipboardItem.ClipboardDataObjects.FirstOrDefault(cdo => cdo.Format == persistableCdo.Format);
+                ClipboardDataObject originalCdo = (ClipboardDataObject)clipboardItem.ClipboardDataObjects.FirstOrDefault(cdo => cdo.ClipboardFormatName == persistableCdo.ClipboardFormatName);
                 if (originalCdo != null)
                 {
-                    originalCdo.ByteArray = persistableCdo.ByteArray;
-                    originalCdo.OriginalData = GetOriginalData(originalCdo.Format, originalCdo.ByteArray);
-                    anyCdoRestored = true;
+                    if (TryGetCdoFromPersistableCdo(persistableCdo, out ClipboardDataObject persistedClipboardDataObject))
+                    {
+                        originalCdo.IntermediateFormatObject = persistedClipboardDataObject.IntermediateFormatObject;
+                    }
                 }
             }
+        }
 
-            clipboardItem.IsShrinked = !anyCdoRestored;
+        private PersistableClipboardItem LoadPersistableClipboardItemFromDisk(ClipboardItem clipboardItem)
+        {
+            string itemFilePath = Path.Combine(APPDATA_CACHE_SUBDIR, clipboardItem.Id);
+            if (!File.Exists(itemFilePath))
+            {
+                throw new ArgumentException($"No stored data can be found for clipboard item id {clipboardItem.Id}");
+            }
+
+            // load from disk
+            byte[] clipboardItemBytes = AppDataUtils.ReadBytesFromApplicationData(itemFilePath);
+            PersistableClipboardItem persistableClipboardItem = DeserializeObject<PersistableClipboardItem>(clipboardItemBytes);
+            return persistableClipboardItem;
         }
 
         public IEnumerable<ClipboardItem> ReadStoredClipboardItems(bool unshrink = false)
@@ -119,38 +143,31 @@ namespace Clipbox.ExtendedClipboard
 
                     continue;
                 }
-
-                bool anyShrinkedCdoRestored = false;
+                
                 // restore the clipboard data objects
                 foreach (PersistableClipboardDataObject persistableCdo in persistableClipboardItem.PersistableClipboardDataObjects)
                 {
                     ClipboardDataObject originalCdo = new ClipboardDataObject
                     {
-                        Format = persistableCdo.Format,
-                        ContentClass = persistableCdo.ContentClass,
-                        IsTransferable = persistableCdo.IsTransferable,
-                        FormatExtentionName = persistableCdo.FormatExtentionName,
-                        FormatExtentionVersion = persistableCdo.FormatExtentionVersion
+                        ClipboardFormatName = persistableCdo.ClipboardFormatName
                     };
 
                     if (unshrink)
                     {
-                        originalCdo.ByteArray = persistableCdo.ByteArray;
-                        originalCdo.OriginalData = GetOriginalData(originalCdo.Format, originalCdo.ByteArray);
-                        anyShrinkedCdoRestored = true;
+                        if (TryGetCdoFromPersistableCdo(persistableCdo, out ClipboardDataObject clipboardDataObject))
+                        {
+                            originalCdo.IntermediateFormatObject = clipboardDataObject.IntermediateFormatObject;
+                        }
                     }
 
                     clipboardDataObjects.Add(originalCdo);
                 }
+
+                TimestampInfo tsInfo = new TimestampInfo(persistableClipboardItem.TimestampInfo);
                 
-                yield return new ClipboardItem(clipboardItemId, persistableClipboardItem.Source, clipboardDataObjects)
+                yield return new ClipboardItem(clipboardItemId, persistableClipboardItem.Source, clipboardDataObjects, tsInfo)
                 {
-                    IsShrinked = !anyShrinkedCdoRestored,
                     IsPinned = persistableClipboardItem.IsPinned,
-                    EntryDateTicks = persistableClipboardItem.EntryDateTicks,
-                    EntryDateUtcTicks = persistableClipboardItem.EntryDateUtcTicks,
-                    ModifiedDateTicks = persistableClipboardItem.ModifiedDateTicks,
-                    ModifiedDateUtcTicks = persistableClipboardItem.ModifiedDateUtcTicks,
                     CanTransfer = persistableClipboardItem.CanTransfer,
                     ShouldTransfer = persistableClipboardItem.ShouldTransfer
                 };
@@ -179,7 +196,9 @@ namespace Clipbox.ExtendedClipboard
         {
             if (clipboardItem.IsShrinked)
             {
-                throw new ArgumentException($"ClipboardItem with id{clipboardItem.Id} has already been shrinked. Please restore it first.");
+                // restore a copy of the item
+                clipboardItem = clipboardItem.ShallowClone();
+                RestoreShrinkedClipboardItem(clipboardItem);
             }
 
             var persistableClipboardItem = GeneratePersistableClipboardItem(clipboardItem);
@@ -199,35 +218,82 @@ namespace Clipbox.ExtendedClipboard
             return Compress(SerializeObject(transferableClipboardItem));
         }
 
-        public ClipboardItem GetClipboardItemFromCloudItemByteArray(byte[] itemData)
+        private PersistableClipboardDataObject GetPersistableCdoFromTransferableCdo(TransferableClipboardDataObject transferableCdo)
         {
-            var transferableClipboardItem = DeserializeObject<TransferableClipboardItem>(Decompress(itemData));
-
-            var clipboardDataObjects = transferableClipboardItem.TransferableClipboardDataObjects.Select
-                (tcdo => new ClipboardDataObject
-                {
-                    ByteArray = tcdo.ByteArray,
-                    ContentClass = tcdo.ContentClass,
-                    Format = tcdo.Format,
-                    FormatExtentionName = tcdo.FormatExtentionName,
-                    FormatExtentionVersion = tcdo.FormatExtentionVersion,
-                    IsTransferable = true
-                });
-
-            var clipboardItem = new ClipboardItem(transferableClipboardItem.Id, transferableClipboardItem.Source, clipboardDataObjects)
+            return new PersistableClipboardDataObject
             {
-                IsSynchronizedWithCloud = true,
-                EntryDateTicks = transferableClipboardItem.EntryDateTicks,
-                EntryDateUtcTicks = transferableClipboardItem.EntryDateUtcTicks,
-                ModifiedDateTicks = transferableClipboardItem.ModifiedDateTicks,
-                ModifiedDateUtcTicks = transferableClipboardItem.ModifiedDateUtcTicks,
-                CanTransfer = false,
-                ShouldTransfer = false
+                ByteArray = transferableCdo.ByteArray,
+                ClipboardFormatName = transferableCdo.ClipboardFormatName,
+                ContentClass = transferableCdo.ContentClass,
+                IntermediateFormatGuid = transferableCdo.IntermediateFormatGuid,
+                IsTransferable = true
             };
-
-            return clipboardItem;
         }
 
+        [HandleProcessCorruptedStateExceptions]
+        private bool TryGetCdoFromPersistableCdo(PersistableClipboardDataObject persistableCdo, out ClipboardDataObject clipboardDataObject)
+        {
+            clipboardDataObject = null;
+
+            var persistenceExtention = _persistenceExtentionContainer.ResolvePersistenceSupport(persistableCdo.IntermediateFormatGuid);
+            if (persistenceExtention == null)
+            {
+                throw new InvalidOperationException($"No suitable persistence support extention found for {persistableCdo.IntermediateFormatGuid}, therefore deserialization is not possible.");
+            }
+
+            IIntermediateFormat intermediateFormatObj = null;
+
+            try { intermediateFormatObj = persistenceExtention.ByteArrayToIntermediateFormat(persistableCdo.ByteArray); }
+            catch (Exception ex) { throw new ClipboxExtentionException(nameof(persistenceExtention.ByteArrayToIntermediateFormat), persistenceExtention.GetType(), ex); }
+
+            bool deserializationSuccess = intermediateFormatObj != null;
+
+            if (deserializationSuccess)
+            {
+                clipboardDataObject = new ClipboardDataObject
+                {
+                    IntermediateFormatObject = intermediateFormatObj,
+                    ClipboardFormatName = persistableCdo.ClipboardFormatName
+                };
+            }
+
+            return deserializationSuccess;
+        }
+
+        public bool TryGetClipboardItemFromCloudItemByteArray(byte[] itemData, out ClipboardItem clipboardItem)
+        {
+            clipboardItem = null;
+
+            var transferableClipboardItem = DeserializeObject<TransferableClipboardItem>(Decompress(itemData));
+
+            List<ClipboardDataObject> clipboardDataObjects = new List<ClipboardDataObject>();
+
+            foreach (TransferableClipboardDataObject tdto in transferableClipboardItem.TransferableClipboardDataObjects)
+            {
+                PersistableClipboardDataObject persistableCdo = GetPersistableCdoFromTransferableCdo(tdto);
+                if (TryGetCdoFromPersistableCdo(persistableCdo, out ClipboardDataObject clipboardDataObject))
+                {
+                    clipboardDataObjects.Add(clipboardDataObject);
+                }
+            }
+
+            bool hasSuccessfllyRestoredCdos = clipboardDataObjects.Any();
+
+            if (hasSuccessfllyRestoredCdos)
+            {
+                TimestampInfo tsInfo = new TimestampInfo(transferableClipboardItem.TimestampInfo);
+
+                clipboardItem = new ClipboardItem(transferableClipboardItem.Id, transferableClipboardItem.Source, clipboardDataObjects, tsInfo)
+                {
+                    IsSynchronizedWithCloud = true,
+                    CanTransfer = false,
+                    ShouldTransfer = false
+                };
+            }
+
+            return hasSuccessfllyRestoredCdos;
+        }
+        
         private byte[] SerializeObject(object item)
         {
             using (MemoryStream ms = new MemoryStream())
@@ -248,29 +314,6 @@ namespace Clipbox.ExtendedClipboard
             }
         }
         
-        [HandleProcessCorruptedStateExceptions]
-        private object GetOriginalData(string clipboardFormat, byte[] byteArray)
-        {
-            object originalData = null;
-
-            var formatExtention = _formatExtentionContainer.ResolveClipboardFormatSupport(clipboardFormat);
-            if (formatExtention != null && formatExtention is IPersistableFormat)
-            {
-                var persistableFormatExtention = (IPersistableFormat)formatExtention;
-
-                try
-                {
-                    originalData = persistableFormatExtention.ByteArrayToObject(byteArray);
-                }
-                catch (Exception ex)
-                {
-                    throw new ClipboxExtentionException(nameof(persistableFormatExtention.ByteArrayToObject), persistableFormatExtention.GetType(), ex);
-                }
-            }
-
-            return originalData;
-        }
-
         private PersistableClipboardItem GeneratePersistableClipboardItem(ClipboardItem clipboardItem)
         {
             var persistableCdos = GeneratePersistableClipboardDataObjects(clipboardItem.ClipboardDataObjects.Cast<ClipboardDataObject>()).ToList();
@@ -283,10 +326,7 @@ namespace Clipbox.ExtendedClipboard
                     Id = clipboardItem.Id,
                     IsPinned = clipboardItem.IsPinned,
                     PersistableClipboardDataObjects = persistableCdos,
-                    EntryDateTicks = clipboardItem.EntryDateTicks,
-                    EntryDateUtcTicks = clipboardItem.EntryDateUtcTicks,
-                    ModifiedDateTicks = clipboardItem.ModifiedDateTicks,
-                    ModifiedDateUtcTicks = clipboardItem.ModifiedDateUtcTicks,
+                    TimestampInfo = clipboardItem.TimestampInfo,
                     CanTransfer = clipboardItem.CanTransfer,
                     ShouldTransfer = clipboardItem.ShouldTransfer
                 };
@@ -331,10 +371,7 @@ namespace Clipbox.ExtendedClipboard
                     Id = persistableClipboardItem.Id,
                     IsPinned = persistableClipboardItem.IsPinned,
                     TransferableClipboardDataObjects = transferableCdos,
-                    EntryDateTicks = persistableClipboardItem.EntryDateTicks,
-                    EntryDateUtcTicks = persistableClipboardItem.EntryDateUtcTicks,
-                    ModifiedDateTicks = persistableClipboardItem.ModifiedDateTicks,
-                    ModifiedDateUtcTicks = persistableClipboardItem.ModifiedDateUtcTicks
+                    TimestampInfo = persistableClipboardItem.TimestampInfo
                 };
             }
 
@@ -349,9 +386,8 @@ namespace Clipbox.ExtendedClipboard
                 {
                     ByteArray = cdo.ByteArray,
                     ContentClass = cdo.ContentClass,
-                    Format = cdo.Format,
-                    FormatExtentionName = cdo.FormatExtentionName,
-                    FormatExtentionVersion = cdo.FormatExtentionVersion
+                    ClipboardFormatName = cdo.ClipboardFormatName,
+                    IntermediateFormatGuid = cdo.IntermediateFormatGuid
                 });
         }
         
@@ -360,37 +396,31 @@ namespace Clipbox.ExtendedClipboard
         {
             foreach (ClipboardDataObject cdo in clipboardDataObjects)
             {
-                var formatExtention = _formatExtentionContainer.ResolveClipboardFormatSupport(cdo.Format);
-                if (formatExtention == null)
+                var persistenceExtention = _persistenceExtentionContainer.ResolvePersistenceSupport(cdo.IntermediateFormatObject.FormatGuid);
+                if (persistenceExtention == null)
                 {
-                    throw new InvalidOperationException("No suitable clipboard format support extention found, therefore serialization is not possible.");
+                    throw new InvalidOperationException($"No suitable persistence support extention found for {cdo.IntermediateFormatObject.FormatGuid}, therefore serialization is not possible.");
                 }
 
-                if (formatExtention is IPersistableFormat)
+                byte[] dataBytes = null;
+
+                try { dataBytes = persistenceExtention.IntermediateFormatToByteArray(cdo.IntermediateFormatObject); }
+                catch (Exception ex) { throw new ClipboxExtentionException(nameof(persistenceExtention.IntermediateFormatToByteArray), persistenceExtention.GetType(), ex); }
+
+                if (dataBytes == null)
                 {
-                    var persistableFormatExtention = formatExtention as IPersistableFormat;
-                    byte[] dataBytes = null;
-                    object clipboardData = cdo.OriginalData;
-
-                    try { dataBytes = persistableFormatExtention.ObjectToByteArray(ref clipboardData); }
-                    catch (Exception ex) { throw new ClipboxExtentionException(nameof(persistableFormatExtention.ObjectToByteArray), persistableFormatExtention.GetType(), ex); }
-
-                    if (dataBytes == null)
-                    {
-                        continue;
-                    }
-
-                    yield return new PersistableClipboardDataObject
-                    {
-                        Format = cdo.Format,
-                        ContentClass = cdo.ContentClass,
-                        FormatExtentionName = cdo.FormatExtentionName,
-                        FormatExtentionVersion = cdo.FormatExtentionVersion,
-                        ByteArray = dataBytes,
-                        // check whether the contents can be transferred to another computer...
-                        IsTransferable = !persistableFormatExtention.RequiresSameMachine
-                    };
+                    continue;
                 }
+
+                yield return new PersistableClipboardDataObject
+                {
+                    ClipboardFormatName = cdo.ClipboardFormatName,
+                    ContentClass = cdo.IntermediateFormatObject.ContentClass,
+                    IntermediateFormatGuid = cdo.IntermediateFormatObject.FormatGuid,
+                    ByteArray = dataBytes,
+                    // check whether the contents can be transferred to another computer...
+                    IsTransferable = cdo.IntermediateFormatObject.IsTransferable
+                };
 
             }
         }

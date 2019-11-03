@@ -55,11 +55,14 @@
     <Compile Include="FlowParameters.cs" />
     <Compile Include="FormatSupport\HdropFormatSupport.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="PreviewHandlers\HdropPreviewHandler.cs" />
+    <Compile Include="IntermediateFormats\FilesystemPathsIntermediateFormat.cs" />
+    <Compile Include="IntermediateFormats\PreferredDropEffectIntermediateFormat.cs" />
+    <Compile Include="PersistenceSupport\FilesystemPathsPersistenceSupport.cs" />
+    <Compile Include="PreviewGenerators\FilesystemPathsPreviewGenerator.cs" />
     <Compile Include="FormatSupport\PreferredDropEffectFormatSupport.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PreviewHandlers\WindowsThumbnailProvider.cs" />
-    <Compile Include="SearchSupport\HdropSearchSupport.cs" />
+    <Compile Include="PreviewGenerators\WindowsThumbnailProvider.cs" />
+    <Compile Include="SearchSupport\FilesystemPathsSearchSupport.cs" />
     <Compile Include="UIExtentions\PreferredDropEffect.xaml.cs">
       <DependentUpon>PreferredDropEffect.xaml</DependentUpon>
     </Compile>

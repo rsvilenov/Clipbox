@@ -125,7 +125,7 @@ namespace Clipbox
             {
                 IEnumerable<string> matchingClipboardItemIds = _clipboardManager.GetAllItemIds(filterCondition: (item) =>
                     clipboardItemIds.Contains(item.Id) &&
-                    item.ClipboardDataObjects.Any(cdo => cdo.Format == hkTask.ClipboardFormat));
+                    item.ClipboardDataObjects.Any(cdo => cdo.ClipboardFormatName == hkTask.ClipboardFormat));
 
                 foreach (string clipboardItemId in matchingClipboardItemIds)
                 {
@@ -304,7 +304,7 @@ namespace Clipbox
             // set the selected/generated item in the clipboard
             _clipboardManager.SetCurrentItem(currentItem.Id);
 
-            Debug.WriteLine("Simulating Ctrl+V: " + currentItem.ClipboardDataObjects.First().OriginalData.ToString());
+            Debug.WriteLine("Simulating Ctrl+V: " + currentItem.ClipboardDataObjects.First().IntermediateFormatObject?.GetType()?.Name);
             // simulate Ctrl+V in order to really paste the item
             _keyboardService.SimulateCtrlV();
 

@@ -42,15 +42,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="Types\MetafilePictContainer.cs" />
+    <Compile Include="IntermediateFormats\BitmapIntermediateFormat.cs" />
+    <Compile Include="IntermediateFormats\DibV5IntermediateFormat.cs" />
+    <Compile Include="IntermediateFormats\MetafileIntermediateFormat.cs" />
+    <Compile Include="IntermediateFormats\MetafilePictIntermediateFormat.cs" />
+    <Compile Include="PersistenceSupport\BitmapPersistenceSupport.cs" />
+    <Compile Include="PersistenceSupport\DibV5PersistenceSupport.cs" />
+    <Compile Include="PersistenceSupport\MetafilePersistenceSupport.cs" />
+    <Compile Include="PreviewGenerators\MetafilePreviewGenerator.cs" />
     <Compile Include="FormatSupport\BitmapFormatSupport.cs" />
     <Compile Include="FormatSupport\EnhMetafileFormatSupport.cs" />
     <Compile Include="FormatSupport\DibV5FormatSupport.cs" />
     <Compile Include="FormatSupport\MetafilePictFormatSupport.cs" />
-    <Compile Include="PreviewHandlers\DibV5PreviewHandler.cs" />
-    <Compile Include="PreviewHandlers\ImagePreviewHandler.cs" />
-    <Compile Include="PreviewHandlers\MetafilePictPreviewHandler.cs" />
+    <Compile Include="PreviewGenerators\DibV5PreviewGenerator.cs" />
+    <Compile Include="PreviewGenerators\BitmapPreviewGenerator.cs" />
+    <Compile Include="PreviewGenerators\MetafilePictPreviewGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Win32.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

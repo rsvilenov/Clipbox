@@ -21,7 +21,7 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.FlowExtentions
         public override bool OnQueryModify(IEnumerable<IClipboardItem> items)
         {
             return items.Count() > 1
-                && items.All(item => item.ClipboardDataObjects.Any(cdo => cdo.Format == "Rich Text Format" || cdo.Format == "CF_UNICODETEXT" || cdo.Format == "Text"));
+                && items.All(item => item.ClipboardDataObjects.Any(cdo => cdo.ClipboardFormatName == "Rich Text Format" || cdo.ClipboardFormatName == "CF_UNICODETEXT" || cdo.ClipboardFormatName == "Text"));
         }
 
         public override IGeneratedClipboardItem OnPerformModifyRequested(IEnumerable<IClipboardItem> items)
@@ -53,7 +53,7 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.FlowExtentions
                         // Change the selection each time, so that Selection.Load() does not overweite the previous contents
                         rtb.Selection.Select(rtb.Document.ContentEnd, rtb.Document.ContentEnd);
 
-                        IClipboardDataObject rtfCdo = item.ClipboardDataObjects.FirstOrDefault(cdo => cdo.Format == "Rich Text Format");
+                        IClipboardDataObject rtfCdo = item.ClipboardDataObjects.FirstOrDefault(cdo => cdo.ClipboardFormatName == "Rich Text Format");
                         if (rtfCdo != null)
                         {
                             string rtf = (string)rtfCdo.OriginalData;
@@ -66,7 +66,7 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.FlowExtentions
                             continue;
                         }
 
-                        IClipboardDataObject unicodeCdo = item.ClipboardDataObjects.FirstOrDefault(cdo => cdo.Format == "CF_UNICODETEXT" || cdo.Format == "Text");
+                        IClipboardDataObject unicodeCdo = item.ClipboardDataObjects.FirstOrDefault(cdo => cdo.ClipboardFormatName == "CF_UNICODETEXT" || cdo.ClipboardFormatName == "Text");
                         if (unicodeCdo != null)
                         {
                             string unicodeText = (string)unicodeCdo.OriginalData;

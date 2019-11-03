@@ -21,21 +21,21 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.FlowExtentions
         {
             return items.Count() == 1 
                 && IsParameterSet(FlowParameters.RemoveFormatting, true)
-                && items.Single().ClipboardDataObjects.Any(cdo => cdo.Format == "Rich Text Format");
+                && items.Single().ClipboardDataObjects.Any(cdo => cdo.ClipboardFormatName == "Rich Text Format");
         }
 
         public override IGeneratedClipboardItem OnPerformModifyRequested(IEnumerable<IClipboardItem> items)
         {
             var generated = new GeneratedClipboardItem();
-            IClipboardDataObject textCdo = items.Single().ClipboardDataObjects.FirstOrDefault(cdo => cdo.Format == "CF_UNICODETEXT" || cdo.Format == "Text");
+            IClipboardDataObject textCdo = items.Single().ClipboardDataObjects.FirstOrDefault(cdo => cdo.ClipboardFormatName == "CF_UNICODETEXT" || cdo.ClipboardFormatName == "Text");
 
             if (textCdo != null)
             {
-                generated.AddFormatAndData(textCdo.Format, textCdo.OriginalData, ClipboardContentClass.Text);
+                generated.AddFormatAndData(textCdo.ClipboardFormatName, textCdo.OriginalData, ClipboardContentClass.Text);
             }
             else
             {
-                IClipboardDataObject rtfCdo = items.Single().ClipboardDataObjects.FirstOrDefault(cdo => cdo.Format == "Rich Text Format");
+                IClipboardDataObject rtfCdo = items.Single().ClipboardDataObjects.FirstOrDefault(cdo => cdo.ClipboardFormatName == "Rich Text Format");
                 string rtf = (string)rtfCdo.OriginalData;
 
                 using (SimpleDispatcher dispatcher = new SimpleDispatcher())

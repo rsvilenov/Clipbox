@@ -1,6 +1,6 @@
 ﻿using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
-using Clipbox.Core.ClipboardContent.Enums;
+using Clipbox.Extentions.BuiltIn.HdropFormat.IntermediateFormats;
 using Clipbox.Win32;
 using Clipbox.Win32.Native;
 using System;
@@ -14,7 +14,7 @@ namespace Clipbox.Extentions.BuiltIn.HdropFormat.FormatSupport
 {
     [ClipboxExtention(Author = "Clipbox", Description = "File collection from explorer", Version = 0.1)]
     [ClipboardFormat("CF_HDROP")]
-    public class HdropFormatSupport : ClipboardFormatSupport, IPersistableFormat
+    public class HdropFormatSupport : ClipboardFormatSupport<FilesystemPathsIntermediateFormat>
     {
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public struct DROPFILES
@@ -27,80 +27,8 @@ namespace Clipbox.Extentions.BuiltIn.HdropFormat.FormatSupport
 
         [DllImport("shell32.dll", CharSet = CharSet.Auto)]
         private static extern int DragQueryFile(IntPtr hDrop, uint iFile, StringBuilder lpszFile, int cch);
-
-        public bool RequiresSameMachine
-        {
-            get
-            {
-                return true; // the paths will hardly be present on another machine
-            }
-        }
-
-        public object ByteArrayToObject(byte[] byteArray)
-        {
-            if (byteArray == null)
-            {
-                throw new ArgumentNullException("bytaArray");
-            }
-
-            string hdropString = Encoding.Unicode.GetString(byteArray);
-
-            string[] filePaths = hdropString.Split(new string[] { "\0" }, StringSplitOptions.RemoveEmptyEntries);
-            return filePaths;
-        }
-
-
-        public byte[] ObjectToByteArray(ref object data)
-        {
-            string[] stringArray = data as string[];
-            if (stringArray == null)
-            {
-                throw new ArgumentException("data must be string[]");
-            }
-            // convert the string array to hdrop string and then to bytearray
-            string hdropString = StringArrayToNullDelimitedString(stringArray);
-            return Encoding.Unicode.GetBytes(hdropString);
-        }
-
-        private string StringArrayToNullDelimitedString(string[] stringArray)
-        {
-            string zeroDelimitedString = stringArray.
-                Select(str => str + char.MinValue).
-                Aggregate((str1, str2) => str1 + str2);
-
-            return zeroDelimitedString + char.MinValue;
-        }
-
-        public override IntPtr DataToPtr(ref object data)
-        {
-            if (!(data is string[]))
-            {
-                throw new ArgumentException("data is not a string[]");
-            }
-
-            string pathsString = StringArrayToNullDelimitedString((string[])data);
-            var pathsBytes = Encoding.Unicode.GetBytes(pathsString);
-            
-            DROPFILES structure = new DROPFILES();
-            structure.pFiles = Marshal.SizeOf(structure);
-            structure.fWide = true;
-
-
-            int totalSize = Marshal.SizeOf(structure) + pathsBytes.Length;
-
-
-            IntPtr hGlobal = MarshalExt.CreateHGlobalMovable(totalSize, (hGlobalLocked) =>
-            {
-                Marshal.StructureToPtr(structure, hGlobalLocked, false);
-                IntPtr pathsPtr = new IntPtr(hGlobalLocked.ToInt64() + Marshal.SizeOf(structure));
-
-                Marshal.Copy(pathsBytes, 0, pathsPtr, pathsBytes.Length);
-            });
-
-            return hGlobal;
-        }
-
-        public override object PtrToData(IntPtr hClipboardData)
+        
+        protected override FilesystemPathsIntermediateFormat GetIntermediateFormat(IntPtr hClipboardData)
         {
             IntPtr hDrop = Kernel32.GlobalLock(hClipboardData);
 
@@ -119,7 +47,7 @@ namespace Clipbox.Extentions.BuiltIn.HdropFormat.FormatSupport
                     // error by calling GetLastError, so we will just assume that
                     MarshalExt.ThrowOnWin32Error();
                 }
-                
+
                 if (fileNum > 0)
                 {
                     for (uint i = 0; i < fileNum; i++)
@@ -147,7 +75,15 @@ namespace Clipbox.Extentions.BuiltIn.HdropFormat.FormatSupport
 
                         if (lpszFile.Length > 0)
                         {
-                            pathList.Add(lpszFile.ToString());
+                            string path = lpszFile.ToString();
+
+                            // sometimes I get control characters instead of paths in the beginning of the hdrop string
+                            if (path.Any(cc => char.IsControl(cc)))
+                            {
+                                continue;
+                            }
+
+                            pathList.Add(path);
                         }
                     }
                 }
@@ -156,11 +92,32 @@ namespace Clipbox.Extentions.BuiltIn.HdropFormat.FormatSupport
             {
                 Kernel32.GlobalUnlock(hDrop);
             }
-            
-            return pathList.ToArray();
+
+            return new FilesystemPathsIntermediateFormat(pathList);
         }
 
-        public override ClipboardContentClass ContentClass => ClipboardContentClass.File;
+        protected override IntPtr GetPtr(FilesystemPathsIntermediateFormat intermediateFormat)
+        {
+            string pathsString = Common.GetNullDelimitedString(intermediateFormat.Paths);
+            var pathsBytes = Encoding.Unicode.GetBytes(pathsString);
 
+            DROPFILES structure = new DROPFILES();
+            structure.pFiles = Marshal.SizeOf(structure);
+            structure.fWide = true;
+
+
+            int totalSize = Marshal.SizeOf(structure) + pathsBytes.Length;
+
+
+            IntPtr hGlobal = MarshalExt.CreateHGlobalMovable(totalSize, (hGlobalLocked) =>
+            {
+                Marshal.StructureToPtr(structure, hGlobalLocked, false);
+                IntPtr pathsPtr = new IntPtr(hGlobalLocked.ToInt64() + Marshal.SizeOf(structure));
+
+                Marshal.Copy(pathsBytes, 0, pathsPtr, pathsBytes.Length);
+            });
+
+            return hGlobal;
+        }
     }
 }

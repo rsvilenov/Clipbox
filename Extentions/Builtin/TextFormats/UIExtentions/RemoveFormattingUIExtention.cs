@@ -22,7 +22,7 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.UIExtentions
         public override bool OnShouldShow(IEnumerable<IClipboardItem> concatinatedItems)
         {
             return concatinatedItems.Count() >= 1 
-                && concatinatedItems.All(item => item.ClipboardDataObjects.Any(obj => obj.Format == "Rich Text Format"));
+                && concatinatedItems.All(item => item.ClipboardDataObjects.Any(obj => obj.ClipboardFormatName == "Rich Text Format"));
         }
 
         public override void OnExtentionViewGenerating(IEnumerable<IClipboardItem> concatinatedItems, ref UIElement additionalViewElement, Size availableSize)

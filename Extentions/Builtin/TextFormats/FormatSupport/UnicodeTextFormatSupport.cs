@@ -1,39 +1,17 @@
 ﻿using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
+using Clipbox.Extentions.BuiltIn.TextFormats.IntermediateFormats;
+using Clipbox.Win32;
 using System;
 using System.Runtime.InteropServices;
-using System.Text;
-using Clipbox.Win32;
-using Clipbox.Core.ClipboardContent.Enums;
 
 namespace Clipbox.Extentions.BuiltIn.TextFormats.FormatSupport
 {
     [ClipboxExtention(Author = "Clipbox", Description = "Unicode text formats", Version = 0.1)]
     [ClipboardFormat("CF_UNICODETEXT")]
-    public class UnicodeTextFormatSupport : ClipboardFormatSupport, IPersistableFormat
+    public class UnicodeTextFormatSupport : ClipboardFormatSupport<UnicodeTextIntermediateFormat>
     {
-        public override IntPtr DataToPtr(ref object data)
-        {
-            if (!(data is string))
-            {
-                throw new ArgumentException("data is not a string");
-            }
-
-            // thanks to kolibridev's Clippy (in github)
-            // Marshal.StringToHGlobalUni allocates using LocalAlloc with LMEM_FIXED
-            IntPtr hMemLocal = Marshal.StringToHGlobalUni((string)data);
-            try
-            {
-                int size = ((string)data).Length * 2 + 1;
-                return MarshalExt.HMemToHGlobalMemMovable(hMemLocal, (uint)size);
-            }
-            finally
-            {
-                Marshal.FreeHGlobal(hMemLocal);
-            }
-        }
-
-        public override object PtrToData(IntPtr hClipboardData)
+        protected override UnicodeTextIntermediateFormat GetIntermediateFormat(IntPtr hClipboardData)
         {
             IntPtr hMemLocal = MarshalExt.HGlobalMemMovableToHMem(hClipboardData);
             string str = Marshal.PtrToStringUni(hMemLocal);
@@ -44,29 +22,23 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.FormatSupport
                 str = str.TrimEnd(new char[] { '\0' });
             }
 
-            return str;
+            return new UnicodeTextIntermediateFormat(str);
         }
 
-        public object ByteArrayToObject(byte[] byteArray)
+        protected override IntPtr GetPtr(UnicodeTextIntermediateFormat intermediateFormat)
         {
-            return Encoding.Unicode.GetString(byteArray);
-        }
-
-        public byte[] ObjectToByteArray(ref object data)
-        {
-            string str = data as string;
-
-            if (str != null)
+            // thanks to kolibridev's Clippy (in github)
+            // Marshal.StringToHGlobalUni allocates using LocalAlloc with LMEM_FIXED
+            IntPtr hMemLocal = Marshal.StringToHGlobalUni(intermediateFormat.Text);
+            try
             {
-                return Encoding.Unicode.GetBytes(str);
+                int size = intermediateFormat.Text.Length * 2 + 1;
+                return MarshalExt.HMemToHGlobalMemMovable(hMemLocal, (uint)size);
             }
-
-            return null;
+            finally
+            {
+                Marshal.FreeHGlobal(hMemLocal);
+            }
         }
-
-        public bool RequiresSameMachine => false;
-
-        public override ClipboardContentClass ContentClass => ClipboardContentClass.Text;
-
     }
 }

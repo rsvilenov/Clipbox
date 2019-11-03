@@ -1,42 +1,17 @@
 ﻿using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
-using System.Text;
+using Clipbox.Extentions.BuiltIn.TextFormats.IntermediateFormats;
+using Clipbox.Win32;
 using System;
 using System.Runtime.InteropServices;
-using Clipbox.Win32;
-using Clipbox.Core.ClipboardContent.Enums;
 
 namespace Clipbox.Extentions.BuiltIn.TextFormats.FormatSupport
 {
     [ClipboxExtention(Author = "Clipbox", Description = "ANSI text formats", Version = 0.1)]
     [ClipboardFormat("Text")]
-    // the original Rtf is ANSI, and it seems that everything
-    // that is sent to the clipboard as Rtf is ANSI
-    [ClipboardFormat("Rich Text Format")]
-    public class AnsiTextFormatSupport : ClipboardFormatSupport, IPersistableFormat
+    public class AnsiTextFormatSupport : ClipboardFormatSupport<TextIntermediateFormat>
     {
-        public override IntPtr DataToPtr(ref object data)
-        {
-            if (!(data is string))
-            {
-                throw new ArgumentException("data is not a string");
-            }
-
-            // thanks to kolibridev's Clippy (in github)
-            // Marshal.StringToHGlobalAnsi allocates using LocalAlloc with LMEM_FIXED
-            IntPtr hMemLocal = Marshal.StringToHGlobalAnsi((string)data);
-            try
-            {
-                int size = ((string)data).Length + 1;
-                return MarshalExt.HMemToHGlobalMemMovable(hMemLocal, (uint)size);
-            }
-            finally
-            {
-                Marshal.FreeHGlobal(hMemLocal);
-            }
-        }
-        
-        public override object PtrToData(IntPtr hClipboardData)
+        protected override TextIntermediateFormat GetIntermediateFormat(IntPtr hClipboardData)
         {
             IntPtr hMemLocal = MarshalExt.HGlobalMemMovableToHMem(hClipboardData);
             string str = Marshal.PtrToStringAnsi(hMemLocal);
@@ -47,28 +22,23 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.FormatSupport
                 str = str.TrimEnd(new char[] { '\0' });
             }
 
-            return str;
+            return new TextIntermediateFormat(str);
         }
-
-        public object ByteArrayToObject(byte[] byteArray)
+        
+        protected override IntPtr GetPtr(TextIntermediateFormat intermediateFormat)
         {
-            return Encoding.UTF8.GetString(byteArray);
-        }
-
-        public byte[] ObjectToByteArray(ref object data)
-        {
-            string str = data as string;
-
-            if (str != null)
+            // thanks to kolibridev's Clippy (in github)
+            // Marshal.StringToHGlobalAnsi allocates using LocalAlloc with LMEM_FIXED
+            IntPtr hMemLocal = Marshal.StringToHGlobalAnsi(intermediateFormat.Text);
+            try
             {
-                return Encoding.UTF8.GetBytes(str);
+                int size = intermediateFormat.Text.Length + 1;
+                return MarshalExt.HMemToHGlobalMemMovable(hMemLocal, (uint)size);
             }
-
-            return null;
+            finally
+            {
+                Marshal.FreeHGlobal(hMemLocal);
+            }
         }
-
-        public bool RequiresSameMachine => false;
-
-        public override ClipboardContentClass ContentClass => ClipboardContentClass.Text;
     }
 }

@@ -5,7 +5,7 @@ namespace Clipbox.Extentions.BuiltIn.HdropFormat.Enums
 
     // https://msdn.microsoft.com/en-us/library/windows/desktop/ms693457(v=vs.85).aspx
     [Flags]
-    internal enum DropEffects : uint
+    public enum DropEffects : uint
     {
         DROPEFFECT_NONE = 0,
         DROPEFFECT_COPY = 1,

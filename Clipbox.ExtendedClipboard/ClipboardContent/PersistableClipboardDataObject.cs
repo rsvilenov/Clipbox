@@ -1,11 +1,12 @@
-﻿using Clipbox.Core.ClipboardContent.Interfaces;
-using Clipbox.Core.ClipboardContent.Enums;
+﻿using Clipbox.Core.ClipboardContent.Enums;
+using Clipbox.Core.ClipboardContent.Interfaces;
 using System;
 
 namespace Clipbox.ExtendedClipboard.ClipboardContent
 {
     [Serializable]
-    internal class PersistableClipboardDataObject : IHaveByteArray, IHaveClipboardFormat, IHaveExtentionInfo
+    internal class PersistableClipboardDataObject : 
+        IHaveByteArray, IHaveClipboardFormat, IHaveContentClass
     {
         /// <summary>
         /// <see cref="IHaveByteArray.ByteArray"/> 
@@ -19,17 +20,15 @@ namespace Clipbox.ExtendedClipboard.ClipboardContent
         public bool IsTransferable { get; internal set; }
 
         /// <summary>
-        /// <see cref="IHaveClipboardFormat.Format"/> 
+        /// <see cref="IHaveClipboardFormat.ClipboardFormatName"/> 
         /// </summary>
-        public string Format { get; internal set; }
+        public string ClipboardFormatName { get; internal set; }
 
         /// <summary>
-        /// <see cref="IHaveClipboardFormat.ContentClass"/> 
+        /// <see cref="IHaveContentClass.ContentClass"/> 
         /// </summary>
         public ClipboardContentClass ContentClass { get; internal set; }
 
-        public string FormatExtentionName { get; set; }
-
-        public double FormatExtentionVersion { get; set; }
+        public string IntermediateFormatGuid { get; internal set; }
     }
 }

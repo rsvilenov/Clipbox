@@ -1,8 +1,8 @@
 ﻿using Clipbox.Core.ClipboardContent.Interfaces;
+using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using Clipbox.Core.Extensibility.Contracts.PreviewData;
 using Clipbox.Core.Extensibility.Exceptions;
-using Clipbox.ExtendedClipboard.ClipboardContent;
 using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
 using Clipbox.Infrastructure.Persistence;
@@ -148,15 +148,13 @@ namespace Clipbox.Services
 
         private PreviewDataTransferObject GeneratePreviewDataTransferObject(IClipboardItem clipboardItem, int itemRequestedHeight, int itemRequestedWidth)
         {
-            PreviewDataTransferObject pdto = null;
-
-            IPreviewHandler previewHandler = null;
-            ClipboardDataObject cdoForPreview = null;
+            IPreviewGenerator previewGenerator = null;
+            IClipboardDataObject cdoForPreview = null;
             // get the first preview handler - it should be for the clipboard format with the highest priority
-            foreach (ClipboardDataObject cdo in clipboardItem.ClipboardDataObjects)
+            foreach (IClipboardDataObject cdo in clipboardItem.ClipboardDataObjects)
             {
-                previewHandler = _clipboardFormatPreviewExtContainer.ResolveClipboardPreviewHandler(cdo.Format);
-                if (previewHandler != null)
+                previewGenerator = _clipboardFormatPreviewExtContainer.ResolveClipboardPreviewGenerator(cdo.ClipboardFormatName);
+                if (previewGenerator != null)
                 {
                     cdoForPreview = cdo;
                     break;
@@ -164,21 +162,12 @@ namespace Clipbox.Services
             }
 
             // TODO: create a default preview handler
-            if (previewHandler == null)
+            if (previewGenerator == null)
             {
                 throw new FormatException($"Unable to find a suitable preview handler for this item.");
             }
 
-            if (previewHandler is IManyPreviewHandler)
-            {
-                var manyPreviewHandler = previewHandler as IManyPreviewHandler;
-                pdto = GetPdtoForGroup(itemRequestedHeight, itemRequestedWidth, previewHandler, cdoForPreview, manyPreviewHandler);
-            }
-            else
-            {
-                pdto = GetPdtoForSingle(itemRequestedHeight, itemRequestedWidth, previewHandler, cdoForPreview);
-            }
-
+            PreviewDataTransferObject pdto = GetPdto(itemRequestedHeight, itemRequestedWidth, previewGenerator, cdoForPreview);
             pdto.ClipboardItemId = clipboardItem.Id;
 
             return pdto;
@@ -297,9 +286,7 @@ namespace Clipbox.Services
 
         private ConcurrentDictionary<string, PreviewDimensionInfo> LoadStoredOrInitializePreviewDimensionsInfo()
         {
-            ConcurrentDictionary<string, PreviewDimensionInfo> dictionary = null;
-
-            if (!TryLoadStorePreviewDimensionsDictionary(out dictionary))
+            if (!TryLoadStorePreviewDimensionsDictionary(out ConcurrentDictionary<string, PreviewDimensionInfo> dictionary))
             {
                 dictionary = new ConcurrentDictionary<string, PreviewDimensionInfo>();
             }
@@ -318,52 +305,77 @@ namespace Clipbox.Services
             };
         }
 
-        private PreviewDataTransferObject GetPdtoForSingle(int itemRequestedHeight, int itemRequestedWidth, IPreviewHandler previewHandler, ClipboardDataObject cdoForPreview)
+        [HandleProcessCorruptedStateExceptions]
+        private PreviewDataTransferObject GetPdto(int itemRequestedHeight, 
+            int itemRequestedWidth, 
+            IPreviewGenerator previewGenerator, 
+            IClipboardDataObject cdoForPreview)
         {
-            return new PreviewDataTransferObject
+            PreviewDataTransferObject pdto = new PreviewDataTransferObject
             {
-                IsGroup = false,
-                PreviewItems = new List<PreviewItemTransferObject>
-                {
-                    GetClipboardPreviewItemForSingle(cdoForPreview.OriginalData, previewHandler, itemRequestedWidth, itemRequestedHeight)
-                }
+                PreviewItems = new List<PreviewItemTransferObject>()
             };
-        }
-
-        private PreviewDataTransferObject GetPdtoForGroup(int itemRequestedHeight, int itemRequestedWidth, IPreviewHandler previewHandler, ClipboardDataObject cdoForPreview, IManyPreviewHandler manyPreviewHandler)
-        {
-            PreviewDataTransferObject pdto = new PreviewDataTransferObject();
-
-            try { manyPreviewHandler.SetData(cdoForPreview.OriginalData); }
-            catch (Exception ex) { throw new ClipboxExtentionException(nameof(manyPreviewHandler.SetData), manyPreviewHandler.GetType(), ex); }
-
-            int itemsCount = 0;
-            try { itemsCount = manyPreviewHandler.GetItemsTotalCount(); }
-            catch (Exception ex) { throw new ClipboxExtentionException(nameof(manyPreviewHandler.SetData), manyPreviewHandler.GetType(), ex); }
-
-            if (itemsCount == 1)
+            
+            if (previewGenerator is ISinglePreviewGenerator)
             {
+                ISinglePreviewGenerator singlePreviewGenerator = previewGenerator as ISinglePreviewGenerator;
+                
+                IPreviewData previewData = null;
+                try { previewData = singlePreviewGenerator.GetPreview(cdoForPreview.IntermediateFormatObject, itemRequestedWidth, itemRequestedHeight); } // TODO: find a way to determine the preview dimentions
+                catch (Exception ex) { throw new ClipboxExtentionException(nameof(singlePreviewGenerator.GetPreview), singlePreviewGenerator.GetType(), ex); }
+
+                PreviewItemTransferObject pito = PreviewItemTransferObject.FromPreviewData(previewData);
+                pdto.PreviewItems.Add(pito);
                 pdto.IsGroup = false;
-                pdto.PreviewItems = new List<PreviewItemTransferObject>
-                    {
-                        GetClipboardPreviewItemForSingle(cdoForPreview.OriginalData, previewHandler, itemRequestedWidth, itemRequestedHeight)
-                    };
             }
-            else if (itemsCount > 1)
+            else if (previewGenerator is IManyPreviewGenerator)
             {
-                pdto.IsGroup = true;
-                pdto.PreviewItems = GetClipboardPreviewItemsForGroup(manyPreviewHandler, itemsCount, itemRequestedWidth, itemRequestedHeight);
-                int itemsWithNoPreview = itemsCount - pdto.PreviewItems.Count();
-                pdto.NumberOfItemsWithoutPreview = itemsWithNoPreview;
-            }
-            else
-            {
-                throw new ClipboxExtentionException($"The preview extention returned invalid items count: {itemsCount}.", manyPreviewHandler.GetType());
-            }
+                IManyPreviewGenerator manyPreviewGenerator = previewGenerator as IManyPreviewGenerator;
 
+                try { manyPreviewGenerator.SetData(cdoForPreview.IntermediateFormatObject); }
+                catch (Exception ex) { throw new ClipboxExtentionException(nameof(manyPreviewGenerator.SetData), manyPreviewGenerator.GetType(), ex); }
+
+                int itemsCount = 0;
+                try { itemsCount = manyPreviewGenerator.GetItemsTotalCount(); }
+                catch (Exception ex) { throw new ClipboxExtentionException(nameof(manyPreviewGenerator.SetData), manyPreviewGenerator.GetType(), ex); }
+
+                if (itemsCount == 0)
+                {
+                    throw new InvalidOperationException($"{manyPreviewGenerator.GetType().Name}.{nameof(manyPreviewGenerator.GetItemsTotalCount)} returned 0 and no exception was detected. This indicates a mistake in the preview generator extension's logic.");
+                }
+
+                int maxPreviewItemsInGroupItem = _settingsService.GetSetting<int>(SettingsKeys.MaxPreviewItemsInGroupItem);
+
+                IEnumerable<IPreviewData> previewDataCollection = null;
+                try { previewDataCollection = manyPreviewGenerator.GetPreview(itemRequestedWidth, itemRequestedHeight, maxPreviewItemsInGroupItem); }
+                catch (Exception ex) { throw new ClipboxExtentionException(nameof(manyPreviewGenerator.GetPreview), manyPreviewGenerator.GetType(), ex); }
+
+                if (itemsCount == 0)
+                {
+                    throw new InvalidOperationException($"{manyPreviewGenerator.GetType().Name}.{nameof(manyPreviewGenerator.GetPreview)} returned 0 previews and no exception was detected. This indicates a mistake in the preview generator extension's logic.");
+                }
+
+                foreach (IPreviewData previewData in previewDataCollection)
+                {
+                    PreviewItemTransferObject pito = PreviewItemTransferObject.FromPreviewData(previewData);
+                    pdto.PreviewItems.Add(pito);
+                }
+
+                if (itemsCount > 1)
+                {
+                    int itemsWithNoPreview = itemsCount - pdto.PreviewItems.Count();
+                    pdto.NumberOfItemsWithoutPreview = itemsWithNoPreview;
+                    pdto.IsGroup = true;
+                }
+                else
+                {
+                    pdto.IsGroup = false;
+                }
+            }
+            
             return pdto;
         }
-
+        
         private int CalculateItemRequestedHeight(MonitorDimensions monitorDimensions, out bool hasHeightBeenDpiScaled)
         {
             double itemHeight = monitorDimensions.WorkAreaHeight * _settingsService.GetSetting<double>(SettingsKeys.PreviewItemHeightRatio);
@@ -381,93 +393,7 @@ namespace Clipbox.Services
 
             return (int)itemHeight;
         }
-
-        [HandleProcessCorruptedStateExceptions]
-        private PreviewItemTransferObject GetClipboardPreviewItemForSingle(object data, IPreviewHandler previewHandler, int previewWidth, int previewHeight)
-        {
-            Debug.Assert(previewHandler != null);
-
-            PreviewItemTransferObject pito = null;
-
-            if (previewHandler.PreviewDataType == typeof(ImagePreviewData))
-            {
-                PreviewHandler<ImagePreviewData> imagePreviewHandler = (PreviewHandler<ImagePreviewData>)previewHandler;
-                ImagePreviewData imagePreviewData = null;
-
-                try { imagePreviewData = imagePreviewHandler.GetPreview(data, previewWidth, previewHeight); } // TODO: find a way to determine the preview dimentions
-                catch (Exception ex) { throw new ClipboxExtentionException(nameof(imagePreviewHandler.GetPreview), previewHandler.GetType(), ex); }
-
-                using (imagePreviewData)
-                {
-                    pito = PreviewItemTransferObject.FromImagePreviewData(imagePreviewData);
-                }
-            }
-            else if (previewHandler.PreviewDataType == typeof(FilePreviewData))
-            {
-                ManyPreviewHandler<FilePreviewData> filePreviewHandler = (ManyPreviewHandler<FilePreviewData>)previewHandler;
-                IEnumerable<FilePreviewData> previewDataCollection = Enumerable.Empty<FilePreviewData>();
-
-                int maxPreviewItemsInGroupItem = _settingsService.GetSetting<int>(SettingsKeys.MaxPreviewItemsInGroupItem);
-
-                try { previewDataCollection = filePreviewHandler.GetPreview(previewWidth, previewHeight, maxPreviewItemsInGroupItem); }
-                catch (Exception ex) { throw new ClipboxExtentionException(nameof(filePreviewHandler.GetPreview), previewHandler.GetType(), ex); }
-
-                Debug.Assert(previewDataCollection != null);
-                Debug.Assert(previewDataCollection.Any());
-
-                var filePreviewData = previewDataCollection.First();
-
-                using (filePreviewData)
-                {
-                    pito = PreviewItemTransferObject.FromFilePreviewData(filePreviewData);
-                };
-            }
-            else
-            {
-                throw new NotImplementedException($"{previewHandler.PreviewDataType.Name} is not supported yet.");
-            }
-
-            return pito;
-        }
-
-        [HandleProcessCorruptedStateExceptions]
-        private List<PreviewItemTransferObject> GetClipboardPreviewItemsForGroup(IManyPreviewHandler previewHandler, int itemsCount, int previewWidth, int previewHeight)
-        {
-            Debug.Assert(previewHandler != null);
-
-            List<PreviewItemTransferObject> pitos = new List<PreviewItemTransferObject>();
-
-            if (previewHandler.PreviewDataType == typeof(FilePreviewData))
-            {
-                IEnumerable<FilePreviewData> previewDataCollection;
-                var filePreviewHandler = previewHandler as ManyPreviewHandler<FilePreviewData>;
-
-                int maxPreviewItemsInGroupItem = _settingsService.GetSetting<int>(SettingsKeys.MaxPreviewItemsInGroupItem);
-
-                try { previewDataCollection = filePreviewHandler.GetPreview(previewWidth, previewHeight, maxPreviewItemsInGroupItem); }
-                catch (Exception ex) { throw new ClipboxExtentionException(nameof(filePreviewHandler.GetPreview), filePreviewHandler.GetType(), ex); }
-                
-                foreach (var previewData in previewDataCollection)
-                {
-                    PreviewItemTransferObject pito = null;
-
-                    using (previewData)
-                    {
-                        pito = PreviewItemTransferObject.FromFilePreviewData(previewData);
-                    }
-
-                    pitos.Add(pito);
-                }
-            }
-            else
-            {
-                throw new NotImplementedException($"{previewHandler.PreviewDataType.Name} is not supported yet.");
-            }
-
-            return pitos;
-        }
-
-
+        
         public bool TryGetQuickPreviewDimentionInfo(string clipboardItemId, MonitorDimensions monitorDimensions, out CalibratedPreviewDimentionInfo previewDimensionInfo)
         {
             PreviewDimensionInfo pdInfo = null;

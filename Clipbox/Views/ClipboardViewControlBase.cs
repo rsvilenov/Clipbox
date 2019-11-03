@@ -9,7 +9,6 @@ using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.ViewModels.BindableObjects;
 using Clipbox.Views.ClipboardListView;
-using Clipbox.Views.ClipboardViewItemTile;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

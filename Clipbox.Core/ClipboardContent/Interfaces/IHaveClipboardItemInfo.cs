@@ -11,12 +11,6 @@
 
         IClipboardItemSource Source { get; }
 
-        long EntryDateTicks { get; }
-
-        long EntryDateUtcTicks { get; }
-
-        long ModifiedDateTicks { get; }
-
-        long ModifiedDateUtcTicks { get; }
+        ITimestampInfo TimestampInfo { get; }
     }
 }

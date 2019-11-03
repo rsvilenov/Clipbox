@@ -1,53 +1,18 @@
-﻿using Clipbox.Core.ClipboardContent.Enums;
-using Clipbox.Core.ClipboardContent.Interfaces;
-using System;
+﻿using Clipbox.Core.ClipboardContent.Interfaces;
+using Clipbox.Core.Extensibility.Contracts;
 
 namespace Clipbox.ExtendedClipboard.ClipboardContent
 {
-    [Serializable]
-    public class ClipboardDataObject : IClipboardDataObject,
-        IHaveByteArray // people should not access the byte array from IClipboardDataObject...
+    internal class ClipboardDataObject : IClipboardDataObject
     {
         /// <summary>
-        /// <see cref="IClipboardDataObject.ByteArray"/> 
+        /// The container of the processed clipboard data.
         /// </summary>
-        public byte[] ByteArray { get; internal set; }
-
-        /// <summary>
-        /// Indicates whether the data can have any meaning on another computer.
-        /// Filesystem paths, preferred drop effect and the like can't be transfered.
-        /// </summary>
-        public bool IsTransferable { get; internal set; }
+        public IIntermediateFormat IntermediateFormatObject { get; internal set; }
         
-        [NonSerialized]
-        private object _originalData;
-
         /// <summary>
-        /// <see cref="IClipboardDataObject.OriginalData"/> 
+        /// <see cref="IHaveClipboardFormat.ClipboardFormatName"/> 
         /// </summary>
-        public object OriginalData
-        {
-            get { return _originalData; }
-            internal set { _originalData = value; }
-        }
-
-        /// <summary>
-        /// <see cref="IHaveClipboardFormat.Format"/> 
-        /// </summary>
-        public string Format { get; internal set; }
-
-        /// <summary>
-        /// <see cref="IHaveClipboardFormat.ContentClass"/> 
-        /// </summary>
-        public ClipboardContentClass ContentClass { get; internal set; }
-
-        public string FormatExtentionName { get; set; }
-
-        public double FormatExtentionVersion { get; set; }
-
-        /// <summary>
-        /// Don't allow this object to be constructed outside of our assembly
-        /// </summary>
-        internal ClipboardDataObject() { }
+        public string ClipboardFormatName { get; internal set; }
     }
 }

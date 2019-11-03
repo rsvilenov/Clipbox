@@ -4,8 +4,11 @@ using System.Runtime.InteropServices.ComTypes;
 
 namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes
 {
+    /// <summary>
+    /// TODO: make these OLE types inherit from a common type along with IClipboardFormaSupport types
+    /// </summary>
     public abstract class OleClientClipboardFormatSupport 
-        : DisposableObject, IClipboardFormatSupport
+        : DisposableObject
     {
         public virtual ClipboardContentClass ContentClass { get { return ClipboardContentClass.Unknown; } }
 

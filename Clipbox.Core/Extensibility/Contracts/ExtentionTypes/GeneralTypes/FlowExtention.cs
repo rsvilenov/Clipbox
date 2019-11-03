@@ -55,7 +55,9 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes
         }
 
         /// <summary>
-        /// Allows implementing custom login for modifying clipboard entries before they are pasted.
+        /// Allows implementing custom logic for modifying clipboard entries before they are pasted.
+        /// Since IClipboardItem is not modifiable, this method generates an object of type IGeneratedClipboardItem,
+        /// which contains the modified data.
         /// </summary>
         /// <param name="items"></param>
         /// <returns></returns>
@@ -122,9 +124,9 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes
         /// </summary>
         protected class GeneratedClipboardItem : IGeneratedClipboardItem
         {
-            public void AddFormatAndData(string format, object data, ClipboardContentClass contentClass = ClipboardContentClass.Unknown)
+            public void AddFormatAndIntermediateFormatObject(string format, IIntermediateFormat intermediateFormatObj)
             {
-                _clipboardDataObjects.Add(new GeneratedClipboardDataObject { Format = format, Data = data, ContentClass = contentClass });
+                _clipboardDataObjects.Add(new GeneratedClipboardDataObject { ClipboardFormatName = format, IntermediateFormatObject = intermediateFormatObj });
             }
 
             private List<IGeneratedClipboardDataObject> _clipboardDataObjects = new List<IGeneratedClipboardDataObject>();
@@ -144,11 +146,9 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes
 
         private class GeneratedClipboardDataObject : IGeneratedClipboardDataObject
         {
-            public object Data { get; set; }
+            public IIntermediateFormat IntermediateFormatObject { get; set; }
 
-            public string Format { get; set; }
-
-            public ClipboardContentClass ContentClass { get; set; }
+            public string ClipboardFormatName { get; set; }
         }
 
         protected class HouseKeepingResult : IHouseKeepingResult

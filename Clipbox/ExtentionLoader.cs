@@ -21,7 +21,9 @@ namespace Clipbox
         public FlowExtentionContainer FlowExtentionContainer { get; private set; }
 
         public UIExtentionContainer UIExtentionContainer { get; private set; }
-        
+
+        public PersistenceSupportExtensionContainer PersistenceSupportExtensionContainer { get; private set; }
+
         public List<Type> LoadedTypes { get; private set; }
 
         public EventHandler<ExtentionEventArgs> StatelessExtentionResolved;
@@ -33,11 +35,13 @@ namespace Clipbox
             FormatsContainer = new ClipboardFormatExtentionContainer();
             PreviewGeneratorsContainer = new ClipboardFormatPreviewExtentionContainer();
             SearchSupportExtensionContainer = new SearchSupportExtensionContainer();
+            PersistenceSupportExtensionContainer = new PersistenceSupportExtensionContainer();
 
             // the above three containers contain stateless extentions and we can track their loading
             FormatsContainer.ExtentionResolved += (s, e) => StatelessExtentionResolved?.Invoke(this, e);
             PreviewGeneratorsContainer.ExtentionResolved += (s, e) => StatelessExtentionResolved?.Invoke(this, e);
             SearchSupportExtensionContainer.ExtentionResolved += (s, e) => StatelessExtentionResolved?.Invoke(this, e);
+            PersistenceSupportExtensionContainer.ExtentionResolved += (s, e) => StatelessExtentionResolved?.Invoke(this, e);
 
             // these two are stateful and we can only guess when they are used
             FlowExtentionContainer = new FlowExtentionContainer();
@@ -47,8 +51,13 @@ namespace Clipbox
             string[] ClipboxBaseAssemblies =
             {
                 "Clipbox.Infrastructure.dll",
+                "Clipbox.Infrastructure.UI.dll",
+                "Clipbox.Infrastructure.UI.CustomControls.dll",
                 "Clipbox.Win32.dll",
-                "Clipbox.ExtendedClipboard.dll"
+                "Clipbox.ExtendedClipboard.dll",
+                "Clipbox.Core.dll",
+                "Clipbox.SearchProvider.dll",
+                "Clipbox.CloudServices.dll"
             };
 
             // Load the extention assemblies
@@ -74,18 +83,26 @@ namespace Clipbox
                 }
 
                 // find all extentions of type IPreviewHandler
-                var previewExtentions = walker.FindExtentions<IPreviewHandler>();
+                var previewExtentions = walker.FindExtentions<IPreviewGenerator>();
                 foreach (var ext in previewExtentions)
                 {
                     PreviewGeneratorsContainer.RegisterExtention(ext);
                     LoadedTypes.Add(ext);
                 }
 
-                // find all extentions of type SearchSupportExtension
-                var searchSupportExtensionExtentions = walker.FindExtentions<SearchSupportExtension>();
+                // find all extentions of type ISearchSupport
+                var searchSupportExtensionExtentions = walker.FindExtentions<ISearchSupport>();
                 foreach (var ext in searchSupportExtensionExtentions)
                 {
                     SearchSupportExtensionContainer.RegisterExtention(ext);
+                    LoadedTypes.Add(ext);
+                }
+
+                // find all extentions of type IPersistenceSupport
+                var persistenceExtentions = walker.FindExtentions<IPersistenceSupport>();
+                foreach (var ext in persistenceExtentions)
+                {
+                    PersistenceSupportExtensionContainer.RegisterExtention(ext);
                     LoadedTypes.Add(ext);
                 }
 

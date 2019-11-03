@@ -1,9 +1,9 @@
-﻿using Clipbox.Core.Extensibility.Contracts.ExtentionTypes.GeneralTypes;
+﻿using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 
 namespace Clipbox.Infrastructure.Extensibility.Containers.Interfaces
 {
     public interface ISearchSupportExtensionContainer
     {
-        SearchSupportExtension ResolveSearchSupport(string format);
+        ISearchSupport ResolveSearchSupport(string intermediateFormatGuid);
     }
 }

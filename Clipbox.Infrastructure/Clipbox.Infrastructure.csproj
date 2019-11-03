@@ -48,7 +48,9 @@
     <Compile Include="Extensibility\Containers\ClipboardFormatExtentionContainer.cs" />
     <Compile Include="Extensibility\Containers\ClipboardFormatPreviewExtentionContainer.cs" />
     <Compile Include="Extensibility\Containers\FlowExtentionContainer.cs" />
+    <Compile Include="Extensibility\Containers\Interfaces\IPersistenceSupportExtensionContainer.cs" />
     <Compile Include="Extensibility\Containers\Interfaces\ISearchSupportExtensionContainer.cs" />
+    <Compile Include="Extensibility\Containers\PersistenceSupportExtensionContainer.cs" />
     <Compile Include="Extensibility\Containers\SearchSupportExtensionContainer.cs" />
     <Compile Include="Extensibility\Containers\UIExtentionContainer.cs" />
     <Compile Include="Extensibility\Containers\EventArgs\ExtentionEventArgs.cs" />

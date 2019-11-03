@@ -1,22 +1,16 @@
 ﻿using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes.GeneralTypes;
-using System;
+using Clipbox.Extentions.BuiltIn.TextFormats.IntermediateFormats;
 
 namespace Clipbox.Extentions.BuiltIn.TextFormats.SearchSupport
 {
     [ClipboxExtention(Author = "Clipbox", Description = "", Version = 0.1)]
-    [ClipboardFormat("Text")]
-    [ClipboardFormat("CF_UNICODETEXT")]
-    public class TextSearchSupport : SearchSupportExtension
+    [IntermediateFormatSupport("{89BCFB06-B1FC-4C0D-BFE6-9643BED5A172}")]
+    public class TextSearchSupport : SearchSupportExtension<TextIntermediateFormat>
     {
-        public override string GetSearchTextData(object data)
+        protected override string GetSearchTextData(TextIntermediateFormat intermediateFormat)
         {
-            if (!(data is string text))
-            {
-                throw new ArgumentException("data is null or not a string");
-            }
-
-            return text;
+            return intermediateFormat.Text.ReplaceNonAlphaWith(' ');
         }
     }
 }

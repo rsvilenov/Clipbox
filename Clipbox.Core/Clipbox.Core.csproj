@@ -43,11 +43,20 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClipboardContent\Interfaces\IHaveContentClass.cs" />
     <Compile Include="ClipboardContent\Interfaces\IHaveMonitorInfo.cs" />
     <Compile Include="ClipboardContent\Interfaces\IHaveTransferabilityInfo.cs" />
+    <Compile Include="ClipboardContent\Interfaces\IIHaveIntermediateFormat.cs" />
+    <Compile Include="ClipboardContent\Interfaces\ITimestampInfo.cs" />
     <Compile Include="DisposableObject.cs" />
     <Compile Include="ClipboardContent\Enums\ClipboardContentClass.cs" />
+    <Compile Include="Extensibility\Attributes\IntermediateFormatSupportAttribute.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\GeneralTypes\SearchSupportExtension.cs" />
+    <Compile Include="Extensibility\Contracts\ExtentionTypes\IPersistenceSupport.cs" />
+    <Compile Include="Extensibility\Contracts\ExtentionTypes\IPreviewGenerator.cs" />
+    <Compile Include="Extensibility\Contracts\ExtentionTypes\ISearchSupport.cs" />
+    <Compile Include="Extensibility\Contracts\ExtentionTypes\PersistenceTypes\PersistenceSupportExtension.cs" />
+    <Compile Include="Extensibility\Contracts\IIntermediateFormat.cs" />
     <Compile Include="Search\Enums\SearchCategory.cs" />
     <Compile Include="Search\Enums\TermOccurrence.cs" />
     <Compile Include="Search\IIndexUnit.cs" />
@@ -80,18 +89,15 @@
     <Compile Include="ClipboardContent\Interfaces\IHaveByteArray.cs" />
     <Compile Include="ClipboardContent\Interfaces\IHaveClipboardFormat.cs" />
     <Compile Include="ClipboardContent\Interfaces\IHaveClipboardItemInfo.cs" />
-    <Compile Include="ClipboardContent\Interfaces\IHaveData.cs" />
-    <Compile Include="ClipboardContent\Interfaces\IHaveExtentionInfo.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\FormatSupportTypes\ClipboardFormatSupport.cs" />
-    <Compile Include="Extensibility\Contracts\ExtentionTypes\FormatSupportTypes\IPersistableFormat.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\FormatSupportTypes\OleClientClipboardFormatSupport.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\FormatSupportTypes\OleClipboardFormatSupport.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\GeneralTypes\FlowExtention.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\GeneralTypes\ParametrizedExtention.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\GeneralTypes\UIExtention.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\IClipboardFormatSupport.cs" />
-    <Compile Include="Extensibility\Contracts\ExtentionTypes\PreviewGenerationTypes\ManyPreviewHandler.cs" />
-    <Compile Include="Extensibility\Contracts\ExtentionTypes\PreviewGenerationTypes\PreviewHandler.cs" />
+    <Compile Include="Extensibility\Contracts\ExtentionTypes\PreviewGenerationTypes\ManyPreviewGenerator.cs" />
+    <Compile Include="Extensibility\Contracts\ExtentionTypes\PreviewGenerationTypes\SinglePreviewGenerator.cs" />
     <Compile Include="Extensibility\Contracts\FlowParameter.cs" />
     <Compile Include="Extensibility\Contracts\IClipboxExtention.cs" />
     <Compile Include="Extensibility\Contracts\IExtentionInfo.cs" />

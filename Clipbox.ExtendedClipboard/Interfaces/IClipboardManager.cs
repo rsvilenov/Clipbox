@@ -54,7 +54,7 @@ namespace Clipbox.ExtendedClipboard.Interfaces
 
         IReadOnlyList<ClipboardSyncObject> GetItemsForCloudSynchronization();
 
-        void AddItemFromCloud(byte[] itemData);
+        bool TryAddItemFromCloud(byte[] itemData);
 
         void SetItemSynchronized(string id);
 

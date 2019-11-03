@@ -4,6 +4,6 @@ namespace Clipbox.Infrastructure.Extensibility.Containers.Interfaces
 {
     public interface IClipboardFormatPreviewExtentionContainer
     {
-        IPreviewHandler ResolveClipboardPreviewHandler(string format);
+        IPreviewGenerator ResolveClipboardPreviewGenerator(string format);
     }
 }

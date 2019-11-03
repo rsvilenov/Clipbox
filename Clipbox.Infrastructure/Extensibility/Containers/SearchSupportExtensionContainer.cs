@@ -1,5 +1,5 @@
 ﻿using Clipbox.Core.Extensibility.Attributes;
-using Clipbox.Core.Extensibility.Contracts.ExtentionTypes.GeneralTypes;
+using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
 using Clipbox.Infrastructure.Factories;
 using System;
@@ -8,21 +8,21 @@ using System.Collections.Concurrent;
 namespace Clipbox.Infrastructure.Extensibility.Containers
 {
     public class SearchSupportExtensionContainer :
-        BaseExtentionContainer<SearchSupportExtension, WeakFactory>,
+        BaseExtentionContainer<ISearchSupport, WeakFactory>,
         ISearchSupportExtensionContainer,
         INotifyExtentionResolved,
         IExtentionInfoProvider
     {
-        private ConcurrentDictionary<string, Type> _clipboardFormatExtentionMapping =
+        private ConcurrentDictionary<string, Type> _intermediateFormatGuidExtentionMapping =
             new ConcurrentDictionary<string, Type>();
 
         public event EventHandler<ExtentionEventArgs> ExtentionResolved;
 
-        public SearchSupportExtension ResolveSearchSupport(string format)
+        public ISearchSupport ResolveSearchSupport(string intermediateFormatGuid)
         {
-            if (_clipboardFormatExtentionMapping.ContainsKey(format))
+            if (_intermediateFormatGuidExtentionMapping.ContainsKey(intermediateFormatGuid))
             {
-                var extentionInstance = Resolve(_clipboardFormatExtentionMapping[format]);
+                var extentionInstance = Resolve(_intermediateFormatGuidExtentionMapping[intermediateFormatGuid]);
                 ExtentionResolved?.Invoke(this, new ExtentionEventArgs { ExtentionType = extentionInstance.GetType() });
                 return extentionInstance;
             }
@@ -32,20 +32,20 @@ namespace Clipbox.Infrastructure.Extensibility.Containers
 
         public override void RegisterExtention(Type type)
         {
-            if (!ClipboardFormatAttribute.IsDefinedFor(type))
+            if (!IntermediateFormatSupportAttribute.IsDefinedFor(type))
             {
-                throw new InvalidOperationException($"Type {type.FullName} does not have a ClipboardFormat attribute");
+                throw new InvalidOperationException($"Type {type.FullName} does not have a {nameof(IntermediateFormatSupportAttribute)} attribute");
             }
 
-            foreach (var format in ClipboardFormatAttribute.GetFormats(type))
-            {
-                if (_clipboardFormatExtentionMapping.ContainsKey(format))
-                {
-                    throw new InvalidOperationException($"There is already an extention, registered for clipboard format {format}");
-                }
+            string intermediateFormatGuid = IntermediateFormatSupportAttribute.GetIntermediateFormatGuidFor(type);
 
-                _clipboardFormatExtentionMapping.TryAdd(format, type);
+            if (_intermediateFormatGuidExtentionMapping.ContainsKey(intermediateFormatGuid))
+            {
+                throw new InvalidOperationException($"There is already an {nameof(ISearchSupport)} extention, registered for intermediate format guid {intermediateFormatGuid}");
             }
+
+            _intermediateFormatGuidExtentionMapping.TryAdd(intermediateFormatGuid, type);
+
 
             base.RegisterExtention(type);
         }

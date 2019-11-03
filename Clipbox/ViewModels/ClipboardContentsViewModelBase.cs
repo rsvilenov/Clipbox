@@ -111,7 +111,7 @@ namespace Clipbox.ViewModels
             if (orderByDateDesc)
             {
                 clipboardItems = clipboardItems
-                    .OrderByDescending(item => item.EntryDateUtcTicks)
+                    .OrderByDescending(item => item.TimestampInfo.EntryDateUtcTicks)
                     .ToList();
             }
 

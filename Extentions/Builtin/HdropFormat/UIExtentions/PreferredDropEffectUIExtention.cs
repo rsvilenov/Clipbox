@@ -1,6 +1,7 @@
 ﻿using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
+using Clipbox.Extentions.BuiltIn.HdropFormat.IntermediateFormats;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -14,7 +15,7 @@ namespace Clipbox.Extentions.BuiltIn.HdropFormat.UIExtentions
 
         public override bool OnShouldShow(IEnumerable<IClipboardItem> concatinatedItems)
         {
-            return concatinatedItems.All(item => item.ClipboardDataObjects.Any(cdo => cdo.Format == "CF_HDROP"));
+            return concatinatedItems.All(item => item.ClipboardDataObjects.Any(cdo => cdo.ClipboardFormatName == "CF_HDROP"));
         }
 
         public override void OnExtentionViewGenerating(IEnumerable<IClipboardItem> selectedItems, ref UIElement additionalViewElement, Size availableSize)
@@ -22,7 +23,13 @@ namespace Clipbox.Extentions.BuiltIn.HdropFormat.UIExtentions
             _extentionUI = new PreferredDropEffect();
             additionalViewElement = _extentionUI;
 
-            bool isPreferredDropEffectCut = selectedItems.Count() == 1 && Common.GetDropEffectFromClipboardItem(selectedItems.First()) == Enums.DropEffects.DROPEFFECT_MOVE;
+            IClipboardItem firstSelectedItem = selectedItems.First();
+            PreferredDropEffectIntermediateFormat dropEffectIntermediateFormat = firstSelectedItem.ClipboardDataObjects
+                .Select(cdo => cdo.IntermediateFormatObject)
+                .FirstOrDefault(ifo => ifo is PreferredDropEffectIntermediateFormat) as PreferredDropEffectIntermediateFormat;
+
+            bool isPreferredDropEffectCut = selectedItems.Count() == 1 
+                && dropEffectIntermediateFormat.DropEffect == Enums.DropEffects.DROPEFFECT_MOVE;
 
             _extentionUI.SetSelectedDropEffect(isPreferredDropEffectCut ?
                 Enums.DropEffects.DROPEFFECT_MOVE :

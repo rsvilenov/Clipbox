@@ -1,8 +1,8 @@
 ﻿using Clipbox.Core.ClipboardContent.Interfaces;
-using Clipbox.Core.ClipboardContent.Enums;
 using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using Clipbox.Extentions.BuiltIn.HdropFormat.Enums;
+using Clipbox.Extentions.BuiltIn.HdropFormat.IntermediateFormats;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,7 +14,7 @@ namespace Clipbox.Extentions.BuiltIn.HdropFormat.FlowExtentions
         public override bool OnQueryModify(IEnumerable<IClipboardItem> items)
         {
             // if all items have a CD_HDROP clipboard item in them, we can combine the targets...
-            bool canCombine = items.All(item => item.ClipboardDataObjects.Any(cdo => cdo.Format == "CF_HDROP"));
+            bool canCombine = items.All(item => item.ClipboardDataObjects.Any(cdo => cdo.IntermediateFormatObject is PreferredDropEffectIntermediateFormat));
             return canCombine;
         }
 
@@ -28,10 +28,12 @@ namespace Clipbox.Extentions.BuiltIn.HdropFormat.FlowExtentions
             {
                 foreach (string clipboardItemId in multyItemsSelectionParameter.Keys)
                 {
-                    var allPathsInItem = items.First(item => item.Id == clipboardItemId).ClipboardDataObjects.Single(cdo => cdo.Format == "CF_HDROP").OriginalData as string[];
+                    var allPathsInItem = items.First(item => item.Id == clipboardItemId)
+                        .ClipboardDataObjects.First(cdo => cdo.IntermediateFormatObject is FilesystemPathsIntermediateFormat)
+                        .IntermediateFormatObject as FilesystemPathsIntermediateFormat;
                     foreach (int index in multyItemsSelectionParameter[clipboardItemId])
                     {
-                        selectedPaths.Add(allPathsInItem[index]);
+                        selectedPaths.Add(allPathsInItem.Paths[index]);
                     }
                     multySelectionItemIds.Add(clipboardItemId);
                 }
@@ -40,18 +42,18 @@ namespace Clipbox.Extentions.BuiltIn.HdropFormat.FlowExtentions
             // there shouldn't be more than one hdrop object in the list
             var hDropClipboardDataObjects = items
                 .Where(item => !multySelectionItemIds.Contains(item.Id))
-                .Select(item => item.ClipboardDataObjects.Single(cdo => cdo.Format == "CF_HDROP"));
+                .Select(item => item.ClipboardDataObjects.Single(cdo => cdo.IntermediateFormatObject is FilesystemPathsIntermediateFormat));
 
             // select all other format types and distinct by format type (i.e. Firefox puts image+file in the clipboard)
             var nonHdropClipboardDataObjects = items
                 .Where(item => !multySelectionItemIds.Contains(item.Id))
-                .SelectMany(item => item.ClipboardDataObjects.Where(cdo => cdo.Format != "CF_HDROP"))
-                .GroupBy(cdo => cdo.Format)
+                .SelectMany(item => item.ClipboardDataObjects.Where(cdo => cdo.IntermediateFormatObject is FilesystemPathsIntermediateFormat == false))
+                .GroupBy(cdo => cdo.ClipboardFormatName)
                 .Select(gr => gr.First());
 
 
             List<string> singleItemsSelectedPaths = hDropClipboardDataObjects.
-                SelectMany(hd => new List<string>(hd.OriginalData as string[])).
+                SelectMany(hd => new List<string>(((FilesystemPathsIntermediateFormat)hd.IntermediateFormatObject).Paths)).
                 ToList();
 
             selectedPaths.AddRange(singleItemsSelectedPaths);
@@ -60,7 +62,10 @@ namespace Clipbox.Extentions.BuiltIn.HdropFormat.FlowExtentions
             DropEffects dropEffectToSet = DropEffects.DROPEFFECT_COPY;
             if (requestedDropEffect != null)
             {
-                bool shouldChangeDropEffect = items.Select(item => Common.GetDropEffectFromClipboardItem(item)).Any(de => de != requestedDropEffect);
+                bool shouldChangeDropEffect = items
+                    .SelectMany(item => item.ClipboardDataObjects)
+                    .Where(cdo => cdo.IntermediateFormatObject is PreferredDropEffectIntermediateFormat)
+                    .Any(cdo => ((PreferredDropEffectIntermediateFormat)cdo.IntermediateFormatObject).DropEffect != requestedDropEffect);
                 if (shouldChangeDropEffect)
                 {
                     dropEffectToSet = requestedDropEffect.Value;
@@ -68,11 +73,12 @@ namespace Clipbox.Extentions.BuiltIn.HdropFormat.FlowExtentions
             }
 
             var generated = new GeneratedClipboardItem();
-            generated.AddFormatAndData("Preferred DropEffect", (uint)dropEffectToSet, ClipboardContentClass.AuxilliaryData); 
-            generated.AddFormatAndData("CF_HDROP", selectedPaths.Distinct().ToArray(), ClipboardContentClass.File);
+            generated.AddFormatAndIntermediateFormatObject("Preferred DropEffect", new PreferredDropEffectIntermediateFormat(dropEffectToSet));
+            generated.AddFormatAndIntermediateFormatObject("CF_HDROP", new FilesystemPathsIntermediateFormat(selectedPaths.Distinct()));
+
             foreach (IClipboardDataObject cdo in nonHdropClipboardDataObjects)
             {
-                generated.AddFormatAndData(cdo.Format, cdo.OriginalData);
+                generated.AddFormatAndIntermediateFormatObject(cdo.ClipboardFormatName, cdo.IntermediateFormatObject);
             }
             return generated;
         }

@@ -1,6 +1,6 @@
-﻿using Clipbox.Core.ClipboardContent.Enums;
-using Clipbox.Core.Extensibility.Attributes;
+﻿using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
+using Clipbox.Extentions.BuiltIn.ImageFormats.IntermediateFormats;
 using Clipbox.Win32;
 using Clipbox.Win32.Native;
 using System;
@@ -11,55 +11,10 @@ namespace Clipbox.Extentions.BuiltIn.ImageFormats.FormatSupport
 {
     [ClipboxExtention(Author = "Clipbox", Description = "", Version = 0.1)]
     [ClipboardFormat("CF_DIBV5")]
-    public class DibV5FormatSupport
-        : ClipboardFormatSupport, IPersistableFormat
+    public class DibV5FormatSupport : ClipboardFormatSupport<DibV5IntermediateFormat>
     {
-        public bool RequiresSameMachine
-        {
-            get
-            {
-                return false;
-            }
-        }
 
-        public object ByteArrayToObject(byte[] byteArray)
-        {
-            return byteArray;
-        }
-
-        public byte[] ObjectToByteArray(ref object data)
-        {
-            if (!(data is byte[]))
-            {
-                throw new ArgumentException("data should be byte[]");
-            }
-
-            return data as byte[];
-        }
-
-        public override IntPtr DataToPtr(ref object data)
-        {
-            if (!(data is byte[]))
-            {
-                throw new ArgumentException("data should be byte[]");
-            }
-            byte[] byteArray = (byte[])data;
-
-            IntPtr hMemLocal = Marshal.AllocHGlobal(byteArray.Length);
-
-            try
-            {
-                Marshal.Copy(byteArray, 0, hMemLocal, byteArray.Length);
-
-                return MarshalExt.HMemToHGlobalMemMovable(hMemLocal, (uint)byteArray.Length);
-            }
-            finally
-            {
-                Marshal.FreeHGlobal(hMemLocal);
-            }
-        }
-
-        public override object PtrToData(IntPtr hClipboardData)
+        protected override DibV5IntermediateFormat GetIntermediateFormat(IntPtr hClipboardData)
         {
             if (hClipboardData == IntPtr.Zero)
             {
@@ -84,7 +39,7 @@ namespace Clipbox.Extentions.BuiltIn.ImageFormats.FormatSupport
             {
                 byte[] data = new byte[dataSize];
                 Marshal.Copy(source, data, 0, dataSize);
-                return data;
+                return new DibV5IntermediateFormat(data);
             }
             finally
             {
@@ -98,7 +53,7 @@ namespace Clipbox.Extentions.BuiltIn.ImageFormats.FormatSupport
 
             //try
             //{
-                
+
             //}
             //finally
             //{
@@ -106,6 +61,22 @@ namespace Clipbox.Extentions.BuiltIn.ImageFormats.FormatSupport
             //}
         }
 
-        public override ClipboardContentClass ContentClass => ClipboardContentClass.Image;
+        protected override IntPtr GetPtr(DibV5IntermediateFormat intermediateFormat)
+        {
+            byte[] byteArray = intermediateFormat.GetDibV5Bytes();
+
+            IntPtr hMemLocal = Marshal.AllocHGlobal(byteArray.Length);
+
+            try
+            {
+                Marshal.Copy(byteArray, 0, hMemLocal, byteArray.Length);
+
+                return MarshalExt.HMemToHGlobalMemMovable(hMemLocal, (uint)byteArray.Length);
+            }
+            finally
+            {
+                Marshal.FreeHGlobal(hMemLocal);
+            }
+        }
     }
 }

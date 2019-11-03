@@ -1,72 +1,19 @@
-﻿using Clipbox.Extentions.BuiltIn.ImageFormats.Types;
-using Clipbox.Core.Extensibility.Attributes;
+﻿using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
-using System;
-using System.Runtime.InteropServices;
+using Clipbox.Extentions.BuiltIn.ImageFormats.IntermediateFormats;
 using Clipbox.Win32;
 using Clipbox.Win32.Native;
-using Clipbox.Core.ClipboardContent.Enums;
+using System;
+using System.Runtime.InteropServices;
 
 namespace Clipbox.Extentions.BuiltIn.ImageFormats.FormatSupport
 {
 
     [ClipboxExtention(Author = "Clipbox", Description = "", Version = 0.1)]
     [ClipboardFormat("CF_METAFILEPICT")]
-    public class MetafilePictFormatSupport : ClipboardFormatSupport, IPersistableFormat
+    public class MetafilePictFormatSupport : ClipboardFormatSupport<MetafilePictIntermediateFormat>
     {
-        public bool RequiresSameMachine
-        {
-            get
-            {
-                return false;
-            }
-        }
-
-        public byte[] ObjectToByteArray(ref object data)
-        {
-            return null;
-        }
-
-
-
-        public object ByteArrayToObject(byte[] byteArray)
-        {
-            return null;
-        }
-        
-
-        public override IntPtr DataToPtr(ref object data)
-        {
-            if (!(data is MetafilePictContainer))
-            {
-                throw new ArgumentException("data should be MetafileContainer");
-            }
-
-            MetafilePictContainer mfContainer = (MetafilePictContainer)data;
-            byte[] metafileBits = mfContainer.MetafileBits;
-
-            // Create a metafile
-            IntPtr hMetafile = Gdi32.SetMetaFileBitsEx((uint)metafileBits.Length +(uint) Marshal.SizeOf<NativeStructures.METAFILEPICT>(), metafileBits);
-
-
-            var mfp = new NativeStructures.METAFILEPICT()
-            {
-                mm = (int)mfContainer.MappingMode,
-                xExt = mfContainer.UnitsX,
-                yExt = mfContainer.UnitsY,
-                hMF = hMetafile
-            };
-
-            IntPtr hGlobal = MarshalExt.CreateHGlobalMovable(Marshal.SizeOf(typeof(NativeStructures.METAFILEPICT)), 
-                (hGlobalLocked) =>
-            {
-                Marshal.StructureToPtr(mfp, hGlobalLocked, false);
-            });
-
-            return hGlobal;
-        }
-
-        public override object PtrToData(IntPtr hClipboardData)
+        protected override MetafilePictIntermediateFormat GetIntermediateFormat(IntPtr hClipboardData)
         {
             IntPtr hMetafilePict = Kernel32.GlobalLock(hClipboardData);
 
@@ -81,13 +28,11 @@ namespace Clipbox.Extentions.BuiltIn.ImageFormats.FormatSupport
                 byte[] bits = new byte[metaSize];
                 Marshal.Copy(buffer, bits, 0, (int)metaSize);
 
-                var result = new MetafilePictContainer
-                {
-                    MetafileBits = bits,
-                    MappingMode = (NativeEnums.DeviceContextMapMode)mfPict.mm,
-                    UnitsX = mfPict.xExt,
-                    UnitsY = mfPict.yExt
-                };
+                var result = new MetafilePictIntermediateFormat
+                (bits, 
+                (NativeEnums.DeviceContextMapMode)mfPict.mm,
+                mfPict.xExt,
+                mfPict.yExt);
 
                 return result;
             }
@@ -95,6 +40,34 @@ namespace Clipbox.Extentions.BuiltIn.ImageFormats.FormatSupport
             {
                 Kernel32.GlobalUnlock(hClipboardData);
             }
+        }
+
+        protected override IntPtr GetPtr(MetafilePictIntermediateFormat intermediateFormat)
+        {
+            // TODO: set the original metafile back to the intermediate format object,
+            // because it may have become invalidated
+            
+            byte[] metafileBytes = intermediateFormat.MetafileBytes;
+
+            // Create a metafile
+            IntPtr hMetafile = Gdi32.SetMetaFileBitsEx((uint)metafileBytes.Length + (uint)Marshal.SizeOf<NativeStructures.METAFILEPICT>(), metafileBytes);
+
+
+            var mfp = new NativeStructures.METAFILEPICT()
+            {
+                mm = (int)intermediateFormat.MappingMode,
+                xExt = intermediateFormat.UnitsX,
+                yExt = intermediateFormat.UnitsY,
+                hMF = hMetafile
+            };
+
+            IntPtr hGlobal = MarshalExt.CreateHGlobalMovable(Marshal.SizeOf(typeof(NativeStructures.METAFILEPICT)),
+                (hGlobalLocked) =>
+                {
+                    Marshal.StructureToPtr(mfp, hGlobalLocked, false);
+                });
+
+            return hGlobal;
         }
 
         public override void OnClipboardFailure(IntPtr hClipboardData)
@@ -113,9 +86,6 @@ namespace Clipbox.Extentions.BuiltIn.ImageFormats.FormatSupport
                 base.OnClipboardFailure(hClipboardData);
             }
         }
-
-        public override ClipboardContentClass ContentClass => ClipboardContentClass.Image;
-
     }
 
 }

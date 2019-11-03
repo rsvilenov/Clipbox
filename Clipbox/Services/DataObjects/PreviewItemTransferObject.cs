@@ -1,4 +1,5 @@
-﻿using Clipbox.Core.Extensibility.Contracts.PreviewData;
+﻿using Clipbox.Core.Extensibility.Contracts;
+using Clipbox.Core.Extensibility.Contracts.PreviewData;
 using Clipbox.Infrastructure.ExtentionMethods;
 using System;
 using System.Drawing;
@@ -17,7 +18,20 @@ namespace Clipbox.Services.DataObjects
 
         public PreviewDimensions PreviewDimensions { get; set; }
 
-        public static PreviewItemTransferObject FromFilePreviewData(FilePreviewData filePreviewData)
+        public static PreviewItemTransferObject FromPreviewData(IPreviewData previewData)
+        {
+            switch (previewData)
+            {
+                case FilePreviewData fpd:
+                    return FromFilePreviewData(fpd);
+                case ImagePreviewData ipd:
+                    return FromImagePreviewData(ipd);
+                default:
+                    throw new NotSupportedException($"{previewData.GetType().Name} is not supported.");
+            }
+        }
+
+        private static PreviewItemTransferObject FromFilePreviewData(FilePreviewData filePreviewData)
         {
             byte[] bitmapData = null;
             Size bmpSize = Size.Empty;
@@ -45,7 +59,7 @@ namespace Clipbox.Services.DataObjects
             };
         }
 
-        public static PreviewItemTransferObject FromImagePreviewData(ImagePreviewData imagePreviewData)
+        private static PreviewItemTransferObject FromImagePreviewData(ImagePreviewData imagePreviewData)
         {
             byte[] bitmapData = null;
             Size bmpSize = Size.Empty;

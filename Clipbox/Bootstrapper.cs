@@ -111,7 +111,7 @@ namespace Clipbox
             };
 
             // Initialize the clipboard manager
-            _clipboardManager = new ClipboardManager(_clipboardListenerService, _extentionLoader.FormatsContainer);
+            _clipboardManager = new ClipboardManager(_clipboardListenerService, _extentionLoader.FormatsContainer, _extentionLoader.PersistenceSupportExtensionContainer);
 
             // Initialize the settings service
             _settingsService = new SettingsService();
