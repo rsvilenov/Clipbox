@@ -12,16 +12,16 @@ namespace Clipbox.Infrastructure.Extensibility.Containers
         IClipboardFormatPreviewExtentionContainer,
         INotifyExtentionResolved
     {
-        private ConcurrentDictionary<string, Type> _clipboardFormatPreviewExtentionMapping =
+        private ConcurrentDictionary<string, Type> _intermediateFormatGuidExtentionMapping =
             new ConcurrentDictionary<string, Type>();
 
         public event EventHandler<ExtentionEventArgs> ExtentionResolved;
 
-        public IPreviewGenerator ResolveClipboardPreviewGenerator(string format)
+        public IPreviewGenerator ResolveClipboardPreviewGenerator(string formatGuid)
         {
-            if (_clipboardFormatPreviewExtentionMapping.ContainsKey(format))
+            if (_intermediateFormatGuidExtentionMapping.ContainsKey(formatGuid))
             {
-                var extentionInstance = Resolve(_clipboardFormatPreviewExtentionMapping[format]);
+                var extentionInstance = Resolve(_intermediateFormatGuidExtentionMapping[formatGuid]);
                 ExtentionResolved?.Invoke(this, new ExtentionEventArgs { ExtentionType = extentionInstance.GetType() });
                 return extentionInstance;
             }
@@ -31,20 +31,19 @@ namespace Clipbox.Infrastructure.Extensibility.Containers
 
         public override void RegisterExtention(Type type)
         {
-            if (!ClipboardFormatAttribute.IsDefinedFor(type))
+            if (!IntermediateFormatSupportAttribute.IsDefinedFor(type))
             {
-                throw new InvalidOperationException($"Type {type.FullName} does not have a ClipboardFormat attribute");
+                throw new InvalidOperationException($"Type {type.FullName} does not have a {nameof(IntermediateFormatSupportAttribute)} attribute");
             }
 
-            foreach (var format in ClipboardFormatAttribute.GetFormats(type))
-            {
-                if (_clipboardFormatPreviewExtentionMapping.ContainsKey(format))
-                {
-                    throw new InvalidOperationException($"There is already apreview handler, registered for clipboard format {format}");
-                }
+            string intermediateFormatGuid = IntermediateFormatSupportAttribute.GetIntermediateFormatGuidFor(type);
 
-                _clipboardFormatPreviewExtentionMapping.TryAdd(format, type);
+            if (_intermediateFormatGuidExtentionMapping.ContainsKey(intermediateFormatGuid))
+            {
+                throw new InvalidOperationException($"There is already an {nameof(ISearchSupport)} extention, registered for intermediate format guid {intermediateFormatGuid}");
             }
+
+            _intermediateFormatGuidExtentionMapping.TryAdd(intermediateFormatGuid, type);
 
             base.RegisterExtention(type);
         }

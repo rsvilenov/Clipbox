@@ -106,7 +106,7 @@ namespace Clipbox.ExtendedClipboard
         private PersistableClipboardItem LoadPersistableClipboardItemFromDisk(ClipboardItem clipboardItem)
         {
             string itemFilePath = Path.Combine(APPDATA_CACHE_SUBDIR, clipboardItem.Id);
-            if (!File.Exists(itemFilePath))
+            if (!AppDataUtils.CheckFileExists(itemFilePath))
             {
                 throw new ArgumentException($"No stored data can be found for clipboard item id {clipboardItem.Id}");
             }
@@ -399,7 +399,7 @@ namespace Clipbox.ExtendedClipboard
                 var persistenceExtention = _persistenceExtentionContainer.ResolvePersistenceSupport(cdo.IntermediateFormatObject.FormatGuid);
                 if (persistenceExtention == null)
                 {
-                    throw new InvalidOperationException($"No suitable persistence support extention found for {cdo.IntermediateFormatObject.FormatGuid}, therefore serialization is not possible.");
+                    continue;
                 }
 
                 byte[] dataBytes = null;

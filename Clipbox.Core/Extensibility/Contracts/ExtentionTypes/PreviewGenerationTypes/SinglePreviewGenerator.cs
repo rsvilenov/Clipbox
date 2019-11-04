@@ -2,7 +2,7 @@
 
 namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes
 {
-    public abstract class SinglePreviewGenerator<TIntermediateFormat, TPreviewData> : IPreviewGenerator
+    public abstract class SinglePreviewGenerator<TIntermediateFormat, TPreviewData> : ISinglePreviewGenerator
         where TIntermediateFormat : IIntermediateFormat
         where TPreviewData : IPreviewData
     {

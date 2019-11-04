@@ -4,6 +4,7 @@ using Clipbox.Extentions.BuiltIn.ImageFormats.IntermediateFormats;
 
 namespace Clipbox.Extentions.BuiltIn.ImageFormats.PersistenceSupport
 {
+    [ClipboxExtention(Author = "Clipbox", Description = "", Version = 0.1)]
     [IntermediateFormatSupport("{CFCA3819-C2EF-4F94-B9B7-49D402CA0652}")]
     public class DibV5PersistenceSupport : PersistenceSupportExtension<DibV5IntermediateFormat>
     {

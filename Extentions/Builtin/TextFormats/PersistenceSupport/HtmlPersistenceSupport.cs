@@ -5,6 +5,7 @@ using System.Text;
 
 namespace Clipbox.Extentions.BuiltIn.TextFormats.PersistenceSupport
 {
+    [ClipboxExtention(Author = "Clipbox", Description = "", Version = 0.1)]
     [IntermediateFormatSupport("{5E4E9C1F-A324-42A4-AE9E-AA64DD871CC8}")]
     public class HtmlPersistenceSupport : PersistenceSupportExtension<HtmlIntermediateFormat>
     {

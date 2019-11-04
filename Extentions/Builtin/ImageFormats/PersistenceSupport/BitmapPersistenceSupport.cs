@@ -7,6 +7,7 @@ using System.IO;
 
 namespace Clipbox.Extentions.BuiltIn.ImageFormats.PersistenceSupport
 {
+    [ClipboxExtention(Author = "Clipbox", Description = "", Version = 0.1)]
     [IntermediateFormatSupport("{4422E0FD-3DD7-4B10-B167-DB63BB97D6E1}")]
     public class BitmapPersistenceSupport : PersistenceSupportExtension<BitmapIntermediateFormat>
     {

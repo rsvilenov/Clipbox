@@ -119,15 +119,28 @@ namespace Clipbox.Services
         [HandleProcessCorruptedStateExceptions]
         public PreviewDataTransferObject GetPreviewDataTransferObject(IClipboardItem clipboardItem, MonitorDimensions monitorDimensions)
         {
-            bool hasHeightBeenDpiScaled = false;
-            int itemRequestedHeight = CalculateItemRequestedHeight(monitorDimensions, out hasHeightBeenDpiScaled);
+            if (clipboardItem == null)
+            {
+                throw new ArgumentNullException(nameof(clipboardItem));
+            }
+
+            if (clipboardItem?.ClipboardDataObjects.Any() == false)
+            {
+                throw new ArgumentException($"{clipboardItem.Id} does not have any {nameof(clipboardItem.ClipboardDataObjects)}");
+            }
+
+            int itemRequestedHeight = CalculateItemRequestedHeight(monitorDimensions, out bool hasHeightBeenDpiScaled);
             int itemRequestedWidth = itemRequestedHeight;
-
-            PreviewDataTransferObject pdto = null;
-
-            if (!TryGetStoredPreviewDataTransferObject(clipboardItem.Id, itemRequestedWidth, itemRequestedHeight, out pdto))
+            
+            if (!TryGetStoredPreviewDataTransferObject(clipboardItem.Id, itemRequestedWidth, itemRequestedHeight, out PreviewDataTransferObject pdto))
             {
                 pdto = GeneratePreviewDataTransferObject(clipboardItem, itemRequestedHeight, itemRequestedWidth);
+                if (!pdto.PreviewItems.Any())
+                {
+                    throw new InvalidOperationException($"Preview items generation failed for id {clipboardItem.Id}. " +
+                        $"Clipboard formats: {string.Join("; ", clipboardItem.ClipboardDataObjects.Select(cdo => cdo.ClipboardFormatName))}");
+                }
+
                 CacheGeneratedData(monitorDimensions, itemRequestedHeight, itemRequestedWidth, pdto, hasHeightBeenDpiScaled);
             }
 
@@ -153,7 +166,7 @@ namespace Clipbox.Services
             // get the first preview handler - it should be for the clipboard format with the highest priority
             foreach (IClipboardDataObject cdo in clipboardItem.ClipboardDataObjects)
             {
-                previewGenerator = _clipboardFormatPreviewExtContainer.ResolveClipboardPreviewGenerator(cdo.ClipboardFormatName);
+                previewGenerator = _clipboardFormatPreviewExtContainer.ResolveClipboardPreviewGenerator(cdo.IntermediateFormatObject.FormatGuid);
                 if (previewGenerator != null)
                 {
                     cdoForPreview = cdo;

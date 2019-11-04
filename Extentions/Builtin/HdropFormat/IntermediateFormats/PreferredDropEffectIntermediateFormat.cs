@@ -11,7 +11,6 @@ namespace Clipbox.Extentions.BuiltIn.HdropFormat.IntermediateFormats
 
         public PreferredDropEffectIntermediateFormat(DropEffects dropEffect)
         {
-
             DropEffect = dropEffect;
         }
 

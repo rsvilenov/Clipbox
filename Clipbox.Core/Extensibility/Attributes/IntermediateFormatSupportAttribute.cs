@@ -9,10 +9,12 @@ namespace Clipbox.Core.Extensibility.Attributes
     {
         public IntermediateFormatSupportAttribute(string formatGuid)
         {
-            if (Guid.TryParse(formatGuid, out Guid result))
+            if (!Guid.TryParse(formatGuid, out Guid result))
             {
                 throw new InvalidOperationException($"{formatGuid} is not a valid Guid.");
             }
+
+            FormatGuid = formatGuid;
         }
 
         public string FormatGuid { get; }
