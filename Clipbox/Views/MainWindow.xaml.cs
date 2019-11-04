@@ -1,8 +1,10 @@
-﻿using Clipbox.Core.Extensibility.Contracts;
+﻿using Clipbox.Core;
+using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.Extensibility.Containers;
 using Clipbox.Infrastructure.UI.DataObjects;
 using Clipbox.Infrastructure.UI.ExtentionMethods;
+using Clipbox.Infrastructure.UI.Resources;
 using Clipbox.Infrastructure.UI.Theme;
 using Clipbox.Infrastructure.UI.Windows;
 using Clipbox.Services.EventArgsClasses;
@@ -17,6 +19,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -99,6 +102,13 @@ namespace Clipbox.Views
             }
 
             InitializeComponent();
+
+            Title = ProductConstants.PRODUCT_NAME;
+
+            using (Bitmap bmpIcon = ResourceUtils.GetApplicationIcon())
+            {
+                Icon = bmpIcon.ToBitmapSource();
+            }
 
             _mainViewClipboardContents =
                     new MainViewClipboardContents(

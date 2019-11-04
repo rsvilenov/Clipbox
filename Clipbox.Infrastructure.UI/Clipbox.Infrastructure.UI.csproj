@@ -72,6 +72,7 @@
     <Compile Include="ExtentionMethods\BitmapSourceExtentions.cs" />
     <Compile Include="ExtentionMethods\MetafileExtentions.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Resources\ResourceUtils.cs" />
     <Compile Include="SlidingTimer.cs" />
     <Compile Include="Utils\DispatcherUtils.cs" />
     <Compile Include="Utils\FormattedTextMeasuring.cs" />
@@ -106,37 +107,43 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Styles\Brushes.xaml">
+    <Page Include="Resources\Styles\Brushes.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Styles\Buttons.xaml">
+    <Page Include="Resources\Styles\Buttons.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Styles\ContextMenu.xaml">
+    <Page Include="Resources\Styles\ContextMenu.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Styles\Expander.xaml">
+    <Page Include="Resources\Styles\Expander.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Styles\Icons.xaml">
+    <Page Include="Resources\Styles\Icons.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Styles\ScrollBar.xaml">
+    <Page Include="Resources\Styles\ScrollBar.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Styles\Style.xaml">
+    <Page Include="Resources\Styles\Style.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\Clip-WF.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Images\Clip-WF.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

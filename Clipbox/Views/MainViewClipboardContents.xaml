@@ -20,7 +20,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Clipbox.Infrastructure.UI;component/Styles/Style.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Clipbox.Infrastructure.UI;component/Resources/Styles/Style.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Views/Styles/ToggleButtonBaseStyle.xaml" />
             </ResourceDictionary.MergedDictionaries>
 

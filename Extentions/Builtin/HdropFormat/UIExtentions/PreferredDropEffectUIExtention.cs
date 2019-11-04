@@ -29,7 +29,7 @@ namespace Clipbox.Extentions.BuiltIn.HdropFormat.UIExtentions
                 .FirstOrDefault(ifo => ifo is PreferredDropEffectIntermediateFormat) as PreferredDropEffectIntermediateFormat;
 
             bool isPreferredDropEffectCut = selectedItems.Count() == 1 
-                && dropEffectIntermediateFormat.DropEffect == Enums.DropEffects.DROPEFFECT_MOVE;
+                && dropEffectIntermediateFormat?.DropEffect == Enums.DropEffects.DROPEFFECT_MOVE;
 
             _extentionUI.SetSelectedDropEffect(isPreferredDropEffectCut ?
                 Enums.DropEffects.DROPEFFECT_MOVE :

@@ -243,7 +243,7 @@ namespace Clipbox.Infrastructure.UI.Theme
         {
             var defaultStyleDictionary = new ResourceDictionary();
             defaultStyleDictionary.Source =
-                new Uri("/Clipbox.Infrastructure.UI;component/Styles/Style.xaml",
+                new Uri("/Clipbox.Infrastructure.UI;component/Resources/Styles/Style.xaml",
                         UriKind.RelativeOrAbsolute);
             Application.Current.Resources.MergedDictionaries.Add(defaultStyleDictionary);
         }

@@ -380,16 +380,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Images\Clip-WF.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="TODO.txt" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Images\Settings.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\Images\Clip-WF.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Images\Sync.png" />

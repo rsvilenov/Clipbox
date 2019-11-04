@@ -18,6 +18,7 @@ using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
 using Clipbox.Services.EventArgsClasses;
+using Clipbox.Infrastructure.UI.Resources;
 
 namespace Clipbox.Services
 {
@@ -57,8 +58,7 @@ namespace Clipbox.Services
                 ToolTipText = ProductConstants.PRODUCT_NAME
             };
 
-            using (var iconStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Clipbox.Resources.Images.Clip-WF.png"))
-            using (Bitmap bmpIcon = (Bitmap)Bitmap.FromStream(iconStream))
+            using (Bitmap bmpIcon = ResourceUtils.GetApplicationIcon())
             {
                 _taskbarIcon.Icon = bmpIcon.ToIcon();
             }
