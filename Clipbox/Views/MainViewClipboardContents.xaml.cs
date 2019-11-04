@@ -511,10 +511,16 @@ namespace Clipbox.Views
         {
             // SelectionChangeCompleted fires after the combinability check has finished,
             // so it is completely safe to check the compatibility property here.
-            if ((MainListView.AreAnyItemsSelected || MainListView.AreAnyItemsSelected)
-                && MainListView.AreSelectedItemsCombinable)
+            if (MainListView.AreAnyItemsSelected || MainListView.AreAnyItemsSelected)
             {
-                LoadUIExtensionsWithDelay();
+                if (MainListView.AreSelectedItemsCombinable)
+                {
+                    LoadUIExtensionsWithDelay();
+                }
+            }
+            else
+            {
+                base.ClearLoadedUIExtensions();
             }
         }
 
