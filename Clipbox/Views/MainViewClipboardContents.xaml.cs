@@ -353,7 +353,11 @@ namespace Clipbox.Views
                 {
                     IsShowingOfPostSelectionToolboxEnabled = true;
                     base.ClearLoadedUIExtensions();
-                    base.LoadUIExtensions(MainListView);
+                    if ((MainListView.AreAnyItemsSelected || MainListView.AreAnyItemsSelected)
+                        && MainListView.AreSelectedItemsCombinable)
+                    {
+                        base.LoadUIExtensions(MainListView);
+                    }
                 }
             ));
         }
@@ -505,7 +509,13 @@ namespace Clipbox.Views
 
         private void MainListView_SelectionChangeCompleted(object sender, SelectionEventArgs e)
         {
-            LoadUIExtensionsWithDelay();
+            // SelectionChangeCompleted fires after the combinability check has finished,
+            // so it is completely safe to check the compatibility property here.
+            if ((MainListView.AreAnyItemsSelected || MainListView.AreAnyItemsSelected)
+                && MainListView.AreSelectedItemsCombinable)
+            {
+                LoadUIExtensionsWithDelay();
+            }
         }
 
         /// <summary>

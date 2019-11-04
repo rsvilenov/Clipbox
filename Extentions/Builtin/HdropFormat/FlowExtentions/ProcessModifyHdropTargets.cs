@@ -14,7 +14,7 @@ namespace Clipbox.Extentions.BuiltIn.HdropFormat.FlowExtentions
         public override bool OnQueryModify(IEnumerable<IClipboardItem> items)
         {
             // if all items have a CD_HDROP clipboard item in them, we can combine the targets...
-            bool canCombine = items.All(item => item.ClipboardDataObjects.Any(cdo => cdo.IntermediateFormatObject is PreferredDropEffectIntermediateFormat));
+            bool canCombine = items.All(item => item.ClipboardDataObjects.Any(cdo => cdo.IntermediateFormatObject is FilesystemPathsIntermediateFormat));
             return canCombine;
         }
 
