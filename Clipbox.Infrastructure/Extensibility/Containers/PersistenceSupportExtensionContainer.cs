@@ -18,6 +18,11 @@ namespace Clipbox.Infrastructure.Extensibility.Containers
 
         public event EventHandler<ExtentionEventArgs> ExtentionResolved;
 
+        public bool CheckIsIntermediateFormatSupported(string intermediateFormatGuid)
+        {
+            return _intermediateFormatGuidExtentionMapping.ContainsKey(intermediateFormatGuid);
+        }
+
         public IPersistenceSupport ResolvePersistenceSupport(string intermediateFormatGuid)
         {
             if (_intermediateFormatGuidExtentionMapping.ContainsKey(intermediateFormatGuid))

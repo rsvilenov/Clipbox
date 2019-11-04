@@ -46,7 +46,7 @@ namespace Clipbox.Extentions.BuiltIn.HdropFormat.FlowExtentions
                 var hdropTarget = item.ClipboardDataObjects.First(cdo => cdo.ClipboardFormatName == "CF_HDROP");
                 if (hdropTarget.IntermediateFormatObject is FilesystemPathsIntermediateFormat)
                 {
-                    IEnumerable<string> allPaths = ((FilesystemPathsIntermediateFormat)hdropTarget).Paths;
+                    IEnumerable<string> allPaths = ((FilesystemPathsIntermediateFormat)hdropTarget.IntermediateFormatObject).Paths;
                     IEnumerable<string> nonExistentPaths = allPaths.Where(path => !FileOrDirectoryExists(path));
                     // if any of the files in the item do not exist any more, 
                     // remove the whole item (for now)

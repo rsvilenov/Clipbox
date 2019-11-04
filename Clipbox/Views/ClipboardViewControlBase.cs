@@ -136,6 +136,13 @@ namespace Clipbox.Views
                 .Select(w => w.ClipboardItem)
                 .ToList();
 
+                IEnumerable<ClipboardViewItemWrapper> multiItemItemWrappers = mainListView
+                    .Items
+                    .Cast<ClipboardViewItemWrapper>()
+                    .Where(item => mainListView.GetSelectedMultiItemsIds().Keys.Contains(item.Id));
+
+                selectedClipboardItems.AddRange(multiItemItemWrappers.Select(w => w.ClipboardItem));
+
                 var allExtentions = GetExtentions(selectedClipboardItems);
                 foreach (var extention in allExtentions)
                 {

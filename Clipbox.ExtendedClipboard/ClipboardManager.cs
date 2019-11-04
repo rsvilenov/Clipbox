@@ -586,7 +586,7 @@ namespace Clipbox.ExtendedClipboard
             {
                 // validate that we have a registered extension for the specified clipboard format
                 var formatExtention = _formatExtentionContainer.ResolveClipboardFormatSupport(generatedCdo.ClipboardFormatName);
-                if (formatExtention != null)
+                if (formatExtention == null)
                 {
                     throw new InvalidOperationException($"Unsupported clipboard format: {generatedCdo.ClipboardFormatName}");
                 }

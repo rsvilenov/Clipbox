@@ -29,13 +29,14 @@ namespace Clipbox.ExtendedClipboard
         
         public void StoreAndShrinkClipboardItem(ClipboardItem clipboardItem)
         {
-            // generate persistable clipboard item
-            PersistableClipboardItem persistableClipboardItem = GeneratePersistableClipboardItem(clipboardItem);
-            if (persistableClipboardItem == null)
+            if (!CheckIsClipboardItemPersistable(clipboardItem))
             {
                 // the item is not persistable
                 return;
             }
+
+            // generate persistable clipboard item
+            PersistableClipboardItem persistableClipboardItem = GeneratePersistableClipboardItem(clipboardItem);
 
             // if the item is persistable and is modified, then we should be
             // able to load it from the disk. If the item's modified ticks is
@@ -390,7 +391,20 @@ namespace Clipbox.ExtendedClipboard
                     IntermediateFormatGuid = cdo.IntermediateFormatGuid
                 });
         }
-        
+
+        private bool CheckIsClipboardItemPersistable(ClipboardItem item)
+        {
+            if (!item.ClipboardDataObjects.Any())
+            {
+                throw new ArgumentException($"{nameof(item.ClipboardDataObjects)} is empty.");
+            }
+
+            return item.ClipboardDataObjects.Any(cdo => 
+            _persistenceExtentionContainer.CheckIsIntermediateFormatSupported(cdo.IntermediateFormatObject.FormatGuid));
+            
+        }
+
+
         [HandleProcessCorruptedStateExceptions]
         private IEnumerable<PersistableClipboardDataObject> GeneratePersistableClipboardDataObjects(IEnumerable<ClipboardDataObject> clipboardDataObjects)
         {
