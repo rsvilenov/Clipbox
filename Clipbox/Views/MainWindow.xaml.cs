@@ -43,6 +43,8 @@ namespace Clipbox.Views
         private readonly UIExtentionContainer _uiExtContainer;
         private readonly IPreviewGenerationService _previewGenerationService;
         private readonly ICloudSynchronizationService _cloudSyncService;
+
+        private bool _isProperCloseInitiated;
         
         private WallpaperWindow _wallpaperWindow;
 
@@ -95,7 +97,7 @@ namespace Clipbox.Views
             _searchService = searchService;
             _cloudSyncService = cloudSyncService;
             _previewGenerationService = previewGenerationService;
-
+            
             if (!ThemeManager.IsLoaded)
             {
                 ThemeManager.LoadThemeFromSystemTheme();
@@ -230,6 +232,8 @@ namespace Clipbox.Views
         
         public new void Close()
         {
+            _isProperCloseInitiated = true;
+
             if (_backgroundRenderMode == MainClipboardViewBackgroundRenderMode.GDI)
             {
                 DetachFromWallpaperParent();
@@ -279,9 +283,32 @@ namespace Clipbox.Views
                 _wallpaperWindow = null;
             }
         }
-        
+
+        protected override IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+            // Disable wm_close unless a proper close procedure is initiated.
+            // Handling the Closing event and setting its CancelEventArgs.Cancel to true didn't help,
+            // so I am resorting to handling the window message directly.
+            if (msg == NativeConstants.WmConstants.WM_CLOSE)
+            {
+                handled = !_isProperCloseInitiated;
+            }
+
+            return base.WndProc(hwnd, msg, wParam, lParam, ref handled);
+        }
+
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            // if the window is being closed by means other than by using the new Close() method,
+            // called by MainClipboardViewWindowService, then cancel that operation and request the service,
+            // to close the window properly.
+            if (!_isProperCloseInitiated)
+            {
+                e.Cancel = true;
+                //CloseRequested?.Invoke(this, new EventArgs());
+                return;
+            }
+
             if (_backgroundRenderMode == MainClipboardViewBackgroundRenderMode.GDI)
             {
                 DetachFromWallpaperParent();
