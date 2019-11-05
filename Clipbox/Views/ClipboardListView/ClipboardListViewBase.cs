@@ -108,6 +108,22 @@ namespace Clipbox.Views.ClipboardListView
             protected set { SetValue(AreAnySubItemsSelectedPropertyKey, value); }
         }
 
+
+        /// <summary>
+        /// Suppresses the post-selection logic implemented in <see cref="ClipboardListViewBase"/>
+        /// and disables the following events:
+        /// <see cref="ClipboardListViewBase.CombinabilityCheckRequested"/>
+        /// <see cref="ClipboardListViewBase.SelectionChangeCompleted"/>
+        /// </summary>
+        public bool SuppressCustomSelectionProcessing
+        {
+            get { return (bool)GetValue(SuppressCustomSelectionProcessingProperty); }
+            set { SetValue(SuppressCustomSelectionProcessingProperty, value); }
+        }
+        
+        public static readonly DependencyProperty SuppressCustomSelectionProcessingProperty =
+            DependencyProperty.Register(nameof(SuppressCustomSelectionProcessing), typeof(bool), typeof(ClipboardListViewBase), new PropertyMetadata(false));
+        
         public ClipboardListViewBase()
         {
             SelectedItemIds = new List<string>();
@@ -208,6 +224,11 @@ namespace Clipbox.Views.ClipboardListView
 
         protected override void OnSelectionChanged(SelectionChangedEventArgs e)
         {
+            if (SuppressCustomSelectionProcessing)
+            {
+                return;
+            }
+
             var lastSelectedItem = e.AddedItems.Cast<object>().LastOrDefault() as ClipboardViewItemWrapper;
             // set the value of _lastSelectedItemId if the item is a single item or a group (both are descendants of ClipboardViewItem)
             // but not a sub-item,which is of type ClipboardViewSubItem and for which setting of _lastSelectedItemId
@@ -290,6 +311,11 @@ namespace Clipbox.Views.ClipboardListView
 
         private void MultiItem_SubItems_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (SuppressCustomSelectionProcessing)
+            {
+                return;
+            }
+
             Debug.WriteLine("MultiItemListView_SelectionChanged");
             MultiItem multiItemUserControl = (MultiItem)sender;
             ListView multiItemListView = multiItemUserControl.GetSubItemsListView();

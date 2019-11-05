@@ -265,7 +265,33 @@ namespace Clipbox.Views
             {
                 if (e.SelectedButton == Dialog.Enums.DialogButtons.Yes)
                 {
-                    _viewModel.DeleteItems(MainListView.GetSelectedItemIds());
+                    IReadOnlyCollection<string> selectedItemIds = MainListView.GetSelectedItemIds();
+
+                    MainListViewContainer.Visibility = Visibility.Hidden;
+                    // disable the post-selection logic and the compatibility checks, 
+                    // as the items in the item collection will change during deletion,
+                    // and compatibility checks normally will be requested.
+                    MainListView.SuppressCustomSelectionProcessing = true;
+
+                    Task.Run(() =>
+                    {
+                        try
+                        {
+                            PerformDisposeSafeOperation
+                            (
+                                () => _viewModel.DeleteItems(selectedItemIds)
+                            );
+                        }
+                        finally
+                        {
+                            Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
+                            {
+                                // re-enable the post-selection logic and the compatibility checks
+                                MainListView.SuppressCustomSelectionProcessing = false;
+                                MainListViewContainer.Visibility = Visibility.Visible;
+                            }));
+                        }
+                    });
                 }
             }
             finally
