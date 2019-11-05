@@ -87,24 +87,24 @@
         </Grid>
 
         <!--  label "No contents"  -->
-        <Label
+        <TextBlock
             Grid.Row="0"
-            Width="250"
-            Height="100"
-            HorizontalContentAlignment="Center"
-            VerticalContentAlignment="Center"
+            Grid.RowSpan="2"
+            Margin="30"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
             Background="Transparent"
-            Content="The clipboard is empty."
             FontSize="16"
-            FontWeight="Bold"
-            Foreground="White">
-            <Label.Style>
-                <Style TargetType="Label">
+            Foreground="White"
+            Text="No clipboard items to show."
+            TextWrapping="WrapWithOverflow">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock">
                     <Setter Property="Visibility" Value="Collapsed" />
                     <Style.Triggers>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding ClipboardItemsLoadingStage}" Value="{x:Static localEnums:ClipboardItemsLoadingStage.WrappersLoaded}" />
+                                <Condition Binding="{Binding ClipboardItemsLoadingStage}" Value="{x:Static localEnums:ClipboardItemsLoadingStage.ViewItemsLoaded}" />
                                 <Condition Binding="{Binding ClipboardViewItemWrappers.Count}" Value="0" />
                             </MultiDataTrigger.Conditions>
                             <MultiDataTrigger.Setters>
@@ -113,8 +113,11 @@
                         </MultiDataTrigger>
                     </Style.Triggers>
                 </Style>
-            </Label.Style>
-        </Label>
+            </TextBlock.Style>
+            <i:Interaction.Behaviors>
+                <infBeh:FrameworkElementDpiScalingBehavior />
+            </i:Interaction.Behaviors>
+        </TextBlock>
 
         <!--  clipboard contents grid  -->
         <Grid Grid.Row="0">

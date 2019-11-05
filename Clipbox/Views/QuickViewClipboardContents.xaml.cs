@@ -145,7 +145,6 @@ namespace Clipbox.Views
                             if (base.MonitorDimensions != _oldMonitorDimensions)
                             {
                                 _oldMonitorDimensions = base.MonitorDimensions;
-
                                 LoadViewItems();
                             }
                         }
