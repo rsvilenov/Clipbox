@@ -483,7 +483,7 @@
                                 CommandParameter="{Binding Path=ViewItem}"
                                 Style="{DynamicResource BtnTrash}"
                                 ToolTip="Delete this item"
-                                Visibility="{Binding Path=IsManipulationEnabled, RelativeSource={RelativeSource AncestorType={x:Type Border}}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                Visibility="{Binding Path=IsManipulationEnabled, RelativeSource={RelativeSource AncestorType={x:Type Border}}, Converter={StaticResource BooleanToVisibilityHiddenConverter}}">
                                 <i:Interaction.Behaviors>
                                     <infBeh:FrameworkElementDpiScalingBehavior />
                                 </i:Interaction.Behaviors>
