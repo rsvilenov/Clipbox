@@ -163,7 +163,26 @@ namespace Clipbox.ExtendedClipboard.ClipboardContent
 
         public ClipboardItem ShallowClone()
         {
-            return (ClipboardItem)this.MemberwiseClone();
+            var clone = (ClipboardItem)this.MemberwiseClone();
+
+            // we need to create new clipboard data objects and
+            // copy the references to their intermediate format
+            // objects. If we just copy the references to the
+            // clipboard data objets, then after we restore their
+            // full data, they will stay restored as they will becreateNewEmptyCdos: true
+            // the same objects, referenced by the ClipboardItems
+            // in the main collection of the ClipboardManager class.
+            var newClipboardDataObjects = new List<IClipboardDataObject>();
+            foreach (var cdo in clone.ClipboardDataObjects)
+            {
+                newClipboardDataObjects.Add(new ClipboardDataObject
+                {
+                    ClipboardFormatName = cdo.ClipboardFormatName,
+                    IntermediateFormatObject = cdo.IntermediateFormatObject
+                });
+            }
+            clone.ClipboardDataObjects = newClipboardDataObjects;
+            return clone;
         }
 
         ~ClipboardItem()
