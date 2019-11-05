@@ -173,7 +173,7 @@ namespace Clipbox.Services
             // checked to exist, we may encounter an item which may not exist anymore.
             try
             {
-                clipboardItem = _clipboardManager.GetClipboardItem(clipboardItemId);
+                clipboardItem = _clipboardManager.GetClipboardItem(clipboardItemId, restoreShrinked: true);
             }
             catch (ArgumentException)
             {

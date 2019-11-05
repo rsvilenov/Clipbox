@@ -82,8 +82,10 @@ namespace Clipbox.Views
 
             _cancellableTaskManager = new CancellableTaskManager();
 
-            _uiExtentionGenerationSlidingTimer = new SlidingTimer();
-            _uiExtentionGenerationSlidingTimer.IntervalMs = LoadingOfUIExtensionsDelayMs;
+            _uiExtentionGenerationSlidingTimer = new SlidingTimer
+            {
+                IntervalMs = LoadingOfUIExtensionsDelayMs
+            };
             _uiExtentionGenerationSlidingTimer.Elapsed += _uiExtentionGenerationSlidingTimer_Elapsed;
 
 
@@ -148,6 +150,11 @@ namespace Clipbox.Views
                         if (!itemsToLoad.Any())
                         {
                             MainListViewContainer.Visibility = Visibility.Visible;
+                            // we should also show the top and side bars, so that the
+                            // user knows that what is shown on the screen is actually
+                            // the application and not an empty desktop :)
+                            TopBarGrid.Visibility = Visibility.Visible;
+                            SideBarGrid.Visibility = Visibility.Visible;
                         }
 
                         PerformDisposeSafeOperation
@@ -543,7 +550,7 @@ namespace Clipbox.Views
 
         private void _uiExtentionGenerationSlidingTimer_Elapsed(object sender, EventArgs e)
         {
-            Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background,
+            Dispatcher.BeginInvoke(DispatcherPriority.Background,
             (Action)(() =>
             {
                 PerformDisposeSafeOperation(() =>

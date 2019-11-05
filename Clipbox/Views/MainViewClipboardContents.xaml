@@ -429,13 +429,13 @@
             the scrollviewer jumps awkwardly to the next group...
         -->
         <!--  We load this view hidden, so that it can group its items before we show it; Then we show it from GroupItem's template Loaded event.  -->
-        <Border
+        <Grid
             x:Name="MainListViewContainer"
             Grid.Row="1"
             Grid.Column="1"
             Visibility="Hidden">
-            <Border.Style>
-                <Style TargetType="{x:Type Border}">
+            <Grid.Style>
+                <Style TargetType="{x:Type Grid}">
                     <Style.Triggers>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
@@ -451,7 +451,38 @@
                         </MultiDataTrigger>
                     </Style.Triggers>
                 </Style>
-            </Border.Style>
+            </Grid.Style>
+
+            <!--  label "No contents"  -->
+            <Label
+                Grid.Row="0"
+                Width="250"
+                Height="100"
+                HorizontalContentAlignment="Center"
+                VerticalContentAlignment="Center"
+                Background="Transparent"
+                Content="No items to show."
+                FontSize="16"
+                FontWeight="Bold"
+                Foreground="White">
+                <Label.Style>
+                    <Style TargetType="Label">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding ClipboardViewItemWrappers.Count}" Value="0" />
+                                </MultiDataTrigger.Conditions>
+                                <MultiDataTrigger.Setters>
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </MultiDataTrigger.Setters>
+                            </MultiDataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Label.Style>
+            </Label>
+
+            <!--  main list view  -->
             <lv:FullClipboardListView
                 x:Name="MainListView"
                 Margin="10"
@@ -476,6 +507,6 @@
                 ViewItemLoadingCancelRequested="MainListView_ViewItemLoadingCancelRequested"
                 ViewItemLoadingRequested="MainListView_ViewItemLoadingRequested"
                 ViewItemUnloadingRequested="MainListView_ViewItemUnloadingRequested" />
-        </Border>
+        </Grid>
     </Grid>
 </views:ClipboardViewControlBase>

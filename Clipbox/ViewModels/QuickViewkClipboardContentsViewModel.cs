@@ -28,6 +28,14 @@ namespace Clipbox.ViewModels
             set { SetField(ref _selectedClipboardViewItemWrappers, value); }
         }
 
+        private ClipboardItemsLoadingStage _clipboardItemLoadingStage;
+
+        public ClipboardItemsLoadingStage ClipboardItemsLoadingStage
+        {
+            get { return _clipboardItemLoadingStage; }
+            set { SetField(ref _clipboardItemLoadingStage, value); }
+        }
+        
         private Queue<string> _newlyAddedItemsToLoadAndWrap;
 
         private MonitorDimensions _lastUsedMonitorDimensions;

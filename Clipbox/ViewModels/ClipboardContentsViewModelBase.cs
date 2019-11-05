@@ -23,15 +23,7 @@ namespace Clipbox.ViewModels
             get { return _clipboardViewItemWrappers; }
             set { SetField(ref _clipboardViewItemWrappers, value); }
         }
-
-        private ClipboardItemsLoadingStage _clipboardItemLoadingStage;
-
-        public ClipboardItemsLoadingStage ClipboardItemsLoadingStage
-        {
-            get { return _clipboardItemLoadingStage; }
-            set { SetField(ref _clipboardItemLoadingStage, value); }
-        }
-
+        
         protected IClipboardManager ClipboardManager { get; private set; }
         protected ISettingsService SettingsService { get; private set; }
         protected IPreviewGenerationService PreviewGenerationService { get; private set; }
