@@ -26,6 +26,12 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.PreviewGenerators.Common
             {
                 Background = System.Windows.Media.Brushes.Gainsboro
             };
+
+            if (format == TextFormat.Text)
+            {
+                rtb.FontSize = 8;
+            }
+
             rtb.SelectAll();
 
             var textDataBytes = Encoding.UTF8.GetBytes(textData);

@@ -31,7 +31,7 @@ namespace Clipbox.Services
         private const int PREVIEW_GENERATION_TIMEOUT_MS = 2000;
 
         private IClipboardManager _clipboardManager;
-        private IClipboardFormatPreviewExtentionContainer _clipboardFormatPreviewExtContainer;
+        private IPreviewGeneratorExtentionContainer _clipboardFormatPreviewExtContainer;
         private ISettingsService _settingsService;
 
         private ConcurrentDictionary<string, PreviewDimensionInfo> _previewDimensionsDictionary;
@@ -40,7 +40,7 @@ namespace Clipbox.Services
 
         public PreviewGenerationService(
             IClipboardManager clipboardManager,
-            IClipboardFormatPreviewExtentionContainer clipboardFormatPreviewExtContainer, 
+            IPreviewGeneratorExtentionContainer clipboardFormatPreviewExtContainer, 
             ISettingsService settingsService)
         {
             _clipboardManager = clipboardManager;
@@ -161,25 +161,18 @@ namespace Clipbox.Services
 
         private PreviewDataTransferObject GeneratePreviewDataTransferObject(IClipboardItem clipboardItem, int itemRequestedHeight, int itemRequestedWidth)
         {
-            IPreviewGenerator previewGenerator = null;
-            IClipboardDataObject cdoForPreview = null;
-            // get the first preview handler - it should be for the clipboard format with the highest priority
-            foreach (IClipboardDataObject cdo in clipboardItem.ClipboardDataObjects)
-            {
-                previewGenerator = _clipboardFormatPreviewExtContainer.ResolveClipboardPreviewGenerator(cdo.IntermediateFormatObject.FormatGuid);
-                if (previewGenerator != null)
-                {
-                    cdoForPreview = cdo;
-                    break;
-                }
-            }
-
+            IEnumerable<string> formatGuids = clipboardItem.ClipboardDataObjects.Select(cdo => cdo.IntermediateFormatObject.FormatGuid);
+            KeyValuePair<string, IPreviewGenerator>? formatGuidPreviewGeneratorPair = _clipboardFormatPreviewExtContainer.ResolveClipboardPreviewGeneratorWithHighestPriority(formatGuids.ToArray());
+            
             // TODO: create a default preview handler
-            if (previewGenerator == null)
+            if (formatGuidPreviewGeneratorPair == null)
             {
                 throw new FormatException($"Unable to find a suitable preview handler for this item.");
             }
 
+            IPreviewGenerator previewGenerator = formatGuidPreviewGeneratorPair.Value.Value;
+            IClipboardDataObject cdoForPreview = clipboardItem.ClipboardDataObjects.Single(cdo => cdo.IntermediateFormatObject.FormatGuid == formatGuidPreviewGeneratorPair.Value.Key);
+            
             PreviewDataTransferObject pdto = GetPdto(itemRequestedHeight, itemRequestedWidth, previewGenerator, cdoForPreview);
             pdto.ClipboardItemId = clipboardItem.Id;
 

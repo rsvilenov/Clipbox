@@ -14,7 +14,7 @@ namespace Clipbox
     {
         public ClipboardFormatExtentionContainer FormatsContainer { get; private set; }
 
-        public ClipboardFormatPreviewExtentionContainer PreviewGeneratorsContainer { get; private set; }
+        public PreviewGeneratorExtentionContainer PreviewGeneratorsContainer { get; private set; }
 
         public SearchSupportExtensionContainer SearchSupportExtensionContainer { get; private set; }
 
@@ -33,7 +33,7 @@ namespace Clipbox
             LoadedTypes = new List<Type>();
 
             FormatsContainer = new ClipboardFormatExtentionContainer();
-            PreviewGeneratorsContainer = new ClipboardFormatPreviewExtentionContainer();
+            PreviewGeneratorsContainer = new PreviewGeneratorExtentionContainer();
             SearchSupportExtensionContainer = new SearchSupportExtensionContainer();
             PersistenceSupportExtensionContainer = new PersistenceSupportExtensionContainer();
 

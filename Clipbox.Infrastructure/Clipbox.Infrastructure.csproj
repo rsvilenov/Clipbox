@@ -46,7 +46,7 @@
     <Compile Include="Encryption\MD5Hash.cs" />
     <Compile Include="Extensibility\Containers\BaseExtentionContainer.cs" />
     <Compile Include="Extensibility\Containers\ClipboardFormatExtentionContainer.cs" />
-    <Compile Include="Extensibility\Containers\ClipboardFormatPreviewExtentionContainer.cs" />
+    <Compile Include="Extensibility\Containers\PreviewGeneratorExtentionContainer.cs" />
     <Compile Include="Extensibility\Containers\FlowExtentionContainer.cs" />
     <Compile Include="Extensibility\Containers\Interfaces\IPersistenceSupportExtensionContainer.cs" />
     <Compile Include="Extensibility\Containers\Interfaces\ISearchSupportExtensionContainer.cs" />
@@ -55,7 +55,7 @@
     <Compile Include="Extensibility\Containers\UIExtentionContainer.cs" />
     <Compile Include="Extensibility\Containers\EventArgs\ExtentionEventArgs.cs" />
     <Compile Include="Extensibility\Containers\Interfaces\IClipboardFormatExtentionContainer.cs" />
-    <Compile Include="Extensibility\Containers\Interfaces\IClipboardFormatPreviewExtentionContainer.cs" />
+    <Compile Include="Extensibility\Containers\Interfaces\IPreviewGeneratorExtentionContainer.cs" />
     <Compile Include="Extensibility\Containers\Interfaces\IExtentionInfoProvider.cs" />
     <Compile Include="Extensibility\Containers\Interfaces\INotifyExtentionResolved.cs" />
     <Compile Include="Extensibility\Discovery\AssemblyWalker.cs" />
