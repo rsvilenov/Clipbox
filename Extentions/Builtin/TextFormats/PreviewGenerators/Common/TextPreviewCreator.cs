@@ -29,6 +29,7 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.PreviewGenerators.Common
 
             if (format == TextFormat.Text)
             {
+                // TODO: consider changing this according to the dpi, or perhaps scaling the entire RichTextBox
                 rtb.FontSize = 14;
             }
 
@@ -70,7 +71,8 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.PreviewGenerators.Common
                 newRtbWidth = desiredPreviewWidth;
             }
 
-            rtb.Measure(new System.Windows.Size(newRtbWidth, maxRtbHeight));
+            // hack: after the measuring phase, it seems that the desired hight is less than the text height, hence maxRtbHeight + 20 
+            rtb.Measure(new System.Windows.Size(newRtbWidth, maxRtbHeight+20));
             rtb.Arrange(new Rect(rtb.DesiredSize));
             rtb.UpdateLayout();
 
