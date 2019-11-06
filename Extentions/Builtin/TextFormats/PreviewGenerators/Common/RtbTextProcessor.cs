@@ -6,7 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
 
-namespace Clipbox.Extentions.BuiltIn.TextFormats.PreviewGenerators
+namespace Clipbox.Extentions.BuiltIn.TextFormats.PreviewGenerators.Common
 {
     public class RtbTextProcessor
     {

@@ -5,11 +5,13 @@ using System.Text;
 using System.Windows.Documents;
 using System.Windows.Media;
 
-namespace Clipbox.Extentions.BuiltIn.TextFormats.PreviewGenerators
+namespace Clipbox.Extentions.BuiltIn.TextFormats.PreviewGenerators.Common
 {
     /// <summary>
     /// This code is not mine. It comes from this blog:
     /// https://www.cnblogs.com/xunyiHe/p/10538959.html
+    /// These methods appear to be the same as those in Min Zhu's answer in this thread:
+    /// https://social.msdn.microsoft.com/Forums/vstudio/en-US/6cd49173-b06d-4749-85aa-f6ab46c7d4af/wpf-rich-text-box-width-size-adjust-to-text?forum=wpf
     /// </summary>
     public static class FlowDocumentToFormattedTextConverter
     {
