@@ -29,7 +29,7 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.PreviewGenerators.Common
 
             if (format == TextFormat.Text)
             {
-                rtb.FontSize = 8;
+                rtb.FontSize = 14;
             }
 
             rtb.SelectAll();
