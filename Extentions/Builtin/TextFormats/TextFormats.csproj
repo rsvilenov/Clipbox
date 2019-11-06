@@ -62,9 +62,11 @@
     <Compile Include="PersistenceSupport\RichTextPersistenceSupport.cs" />
     <Compile Include="PersistenceSupport\TextPersistenceSupport.cs" />
     <Compile Include="PersistenceSupport\UnicodeTextPersistenceSupport.cs" />
+    <Compile Include="PreviewGenerators\FlowDocumentToFormattedTextConverter.cs" />
     <Compile Include="PreviewGenerators\HtmlPreviewGenerator.cs" />
     <Compile Include="PreviewGenerators\RtfPreviewGenerator.cs" />
     <Compile Include="PreviewGenerators\TextPreviewGenerator.cs" />
+    <Compile Include="PreviewGenerators\RtbTextProcessor.cs" />
     <Compile Include="PreviewGenerators\UnicodeTextPreviewGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SearchSupport\UnicodeTextSearchSupport.cs" />

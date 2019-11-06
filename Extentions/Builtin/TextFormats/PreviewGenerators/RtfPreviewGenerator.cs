@@ -8,9 +8,11 @@ using Clipbox.Infrastructure.UI.Utils;
 using System;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -44,8 +46,10 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.PreviewGenerators
                             rtb.Selection.Load(ms, DataFormats.Rtf);
                         }
 
-                        textLength = rtb.Selection.Text.Length;
-                        wordCount = rtb.Selection.Text.Split(new char[] { ' ' },
+
+                        string text = rtb.Selection.Text;
+                        textLength = text.Length;
+                        wordCount = text.Split(new char[] { ' ' },
                             StringSplitOptions.RemoveEmptyEntries).Length;
 
                         rtb.HorizontalAlignment = HorizontalAlignment.Center;
@@ -58,13 +62,45 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.PreviewGenerators
 
                         //}
 
-                        rtb.Measure(new System.Windows.Size(previewWidth, previewHeight));
+
+                        double maxRtbWidth = previewWidth * 3;
+                        double maxRtbHeight = previewHeight * 3;
+
+                        rtb.Measure(new System.Windows.Size(maxRtbWidth, maxRtbHeight));
                         rtb.Arrange(new Rect(rtb.DesiredSize));
 
                         rtb.UpdateLayout();
 
-                        RenderTargetBitmap rtBmp = new RenderTargetBitmap((int)rtb.ActualWidth, (int)rtb.ActualHeight, 96, 96, PixelFormats.Pbgra32);
-                        rtBmp.Render(rtb);
+                        RtbTextProcessor rtbProc = new RtbTextProcessor();
+                        rtbProc.AdjustSpacing(rtb);
+                        rtbProc.TrimSeparatorCharSeries(rtb, RtbTextProcessor.SeparatorChars.Enter);
+                        rtbProc.TrimSeparatorCharSeries(rtb, RtbTextProcessor.SeparatorChars.Space);
+                        rtbProc.TrimSeparatorCharSeries(rtb, RtbTextProcessor.SeparatorChars.Tab);
+
+                        //Rect charRect = rtbProc.GetRectOfFirstActualCharacter(rtb);
+                        //Rect longestLineRect = rtbProc.GetRectOfLastCharOfTheLongestLine(rtb);
+
+                        FormattedText ft = FlowDocumentToFormattedTextConverter.GetFormattedText(rtb.Document);
+                        //rtb.Width = ft.WidthIncludingTrailingWhitespace;
+                        //rtb.Height = previewHeight;
+                        double newRtbWidth = ft.WidthIncludingTrailingWhitespace;
+                        if (newRtbWidth > maxRtbWidth)
+                        {
+                            newRtbWidth = maxRtbWidth;
+                        }
+                        else if (newRtbWidth < previewWidth)
+                        {
+                            newRtbWidth = previewWidth;
+                        }
+
+                        rtb.Measure(new System.Windows.Size(newRtbWidth, maxRtbHeight));
+                        rtb.Arrange(new Rect(rtb.DesiredSize));
+
+                        rtb.UpdateLayout();
+                        RenderTargetBitmap rtBmp = RenderVisual(rtb);
+                        
+                        //new RenderTargetBitmap((int)rtb.ActualWidth, (int)rtb.ActualHeight, 96, 96, PixelFormats.Pbgra32);
+                        //rtBmp.Render(rtb);
 
                         //DrawingVisual dv = new DrawingVisual();
                         //Rect bounds = new Rect(new System.Windows.Point(), rtb.DesiredSize); //VisualTreeHelper.GetDescendantBounds(rtb);
@@ -88,18 +124,29 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.PreviewGenerators
                             //    previewBmp = previewBmp.GetResized((int)((double)previewBmp.Width * 1.3), (int)((double)previewBmp.Height * 1.3));
                             //}
 
-                            if (previewBmp.Width == previewWidth && previewBmp.Height == previewHeight)
-                            {
-                                preview = previewBmp.DeepClone();
-                            }
-                            else if (previewBmp.Width > previewWidth || previewBmp.Height > previewHeight)
-                            {
-                                throw new InvalidOperationException("The RichTextBox should have been resized to the thumbnail size already.");
-                            }
-                            else // if the preview is smaller than the preview size, superimpose it at the center of a transparent canvas
-                            {
-                                preview = previewBmp.GetCenteredOverTransparentCanvas(previewWidth, previewHeight);
-                            }
+
+
+                            //if (previewBmp.Width == previewWidth && previewBmp.Height == previewHeight)
+                            //{
+                               preview = previewBmp.DeepClone();
+                            //}
+                            //else if (previewBmp.Height > previewHeight)
+                            //{
+
+                            //double width = ft.WidthIncludingTrailingWhitespace < previewWidth * 3 ? ft.WidthIncludingTrailingWhitespace : previewWidth * 3;
+                            //preview = previewBmp.Crop(new Rectangle
+                            //{
+                            //    X = 0,
+                            //    Y = 0,
+                            //    Width = (int)width,
+                            //    Height = previewHeight
+                            //});
+                            //    //throw new InvalidOperationException("The RichTextBox should have been resized to the thumbnail size already.");
+                            //}
+                            //else // if the preview is smaller than the preview size, superimpose it at the center of a transparent canvas
+                            //{
+                            //    preview = previewBmp.GetCenteredOverTransparentCanvas(previewWidth, previewHeight);
+                            //}
                         }
                     }));
             }
@@ -110,6 +157,31 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.PreviewGenerators
                 Annotation = $"{wordCount}/{textLength}"
             };
 
+        }
+
+        /// <summary>
+        /// https://stackoverflow.com/questions/14118003/snapshot-of-an-wpf-canvas-area-using-rendertargetbitmap
+        /// ILIA BROUDNO's answer
+        /// </summary>
+        /// <param name="elt"></param>
+        /// <returns></returns>
+        private RenderTargetBitmap RenderVisual(UIElement elt)
+        {
+            PresentationSource source = PresentationSource.FromVisual(elt);
+            RenderTargetBitmap rtb = new RenderTargetBitmap((int)elt.RenderSize.Width,
+                  (int)elt.RenderSize.Height, 96, 96, PixelFormats.Default);
+
+            VisualBrush sourceBrush = new VisualBrush(elt);
+            DrawingVisual drawingVisual = new DrawingVisual();
+            DrawingContext drawingContext = drawingVisual.RenderOpen();
+            using (drawingContext)
+            {
+                drawingContext.DrawRectangle(sourceBrush, null, new Rect(new System.Windows.Point(0, 0),
+                      new System.Windows.Point(elt.RenderSize.Width, elt.RenderSize.Height)));
+            }
+            rtb.Render(drawingVisual);
+
+            return rtb;
         }
 
         //// The methods below are taken from Min Zhu's answer in this thread:
