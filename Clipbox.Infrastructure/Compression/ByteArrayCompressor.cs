@@ -11,6 +11,7 @@ namespace Clipbox.Infrastructure.Compression
             using (DeflateStream dstream = new DeflateStream(output, CompressionLevel.Optimal))
             {
                 dstream.Write(data, 0, data.Length);
+                dstream.Close(); // very important! otherwise ToArray() will return zero bytes
                 return output.ToArray();
             }
         }
@@ -22,6 +23,7 @@ namespace Clipbox.Infrastructure.Compression
             using (DeflateStream dstream = new DeflateStream(input, CompressionMode.Decompress))
             {
                 dstream.CopyTo(output);
+                dstream.Close();
                 return output.ToArray();
             }
         }

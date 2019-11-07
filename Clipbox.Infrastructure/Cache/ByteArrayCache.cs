@@ -35,39 +35,47 @@ namespace Clipbox.Infrastructure.Cache
 
             _totalCacheSize += arrayToCache.LongLength;
 
-            List<string> keysOldestFirst = _cache
-                .OrderBy(co => co.Value.LastAccessedTicks)
-                .Select(co => co.Key)
-                .ToList();
-
-            foreach(string keyToRemove in keysOldestFirst)
+            if (_totalCacheSize >= _maxSize)
             {
-                if (_cache.TryRemove(keyToRemove, out CacheObject obj))
-                {
-                    _totalCacheSize -= obj.ByteArray.LongLength;
-                }
+                ShrinkToMaxSize();
+            }
+        }
 
+        private void ShrinkToMaxSize()
+        {
+            List<string> keysOldestFirst = _cache
+                                .OrderBy(co => co.Value.LastAccessedTicks)
+                                .Select(co => co.Key)
+                                .ToList();
+
+            foreach (string keyToRemove in keysOldestFirst)
+            {
                 if (_totalCacheSize < _maxSize)
                 {
                     break;
+                }
+
+                if (_cache.TryRemove(keyToRemove, out CacheObject obj))
+                {
+                    _totalCacheSize -= obj.ByteArray.LongLength;
                 }
             }
         }
 
         public bool TryGet(string key, out byte[] byteArray)
         {
+            byteArray = null;
             bool success = _cache.TryGetValue(key, out CacheObject obj);
 
             if (success)
             {
                 obj.UpdateLastAccessTicks();
+
+                byteArray = _compressData ?
+                    ByteArrayCompressor.Decompress(obj.ByteArray) :
+                    obj.ByteArray.ToArray();
             }
-
-            byteArray = _compressData ?
-                ByteArrayCompressor.Decompress(obj.ByteArray) :
-                obj.ByteArray.ToArray();
             
-
             return success;
         }
 

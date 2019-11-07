@@ -4,6 +4,7 @@ using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using Clipbox.Core.Extensibility.Contracts.PreviewData;
 using Clipbox.Core.Extensibility.Exceptions;
 using Clipbox.ExtendedClipboard.Interfaces;
+using Clipbox.Infrastructure.Cache;
 using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
 using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.Threading;
@@ -30,6 +31,7 @@ namespace Clipbox.Services
     {
         private const string APP_DATA_SUBDIR = "PreviewDataCache";
         private const int PREVIEW_GENERATION_TIMEOUT_MS = 6000;
+        private const long PREVIEW_BYTE_ARRAY_CACHE_MAX_SIZE_BYTES = 10 * 1024 * 1024;
 
         private IClipboardManager _clipboardManager;
         private IPreviewGeneratorExtentionContainer _clipboardFormatPreviewExtContainer;
@@ -41,6 +43,8 @@ namespace Clipbox.Services
 
         private ConcurrentDictionary<string, ManualResetEvent> _resetEventsForClipboardItemIds;
         private ConcurrentDictionary<string, bool> _clipboardItemIdsWithCompletedTasks;
+
+        private readonly ByteArrayCache _byteArrayCache;
 
         public PreviewGenerationService(
             IClipboardManager clipboardManager,
@@ -57,6 +61,8 @@ namespace Clipbox.Services
 
             _resetEventsForClipboardItemIds = new ConcurrentDictionary<string, ManualResetEvent>();
             _clipboardItemIdsWithCompletedTasks = new ConcurrentDictionary<string, bool>();
+
+            _byteArrayCache = new ByteArrayCache(PREVIEW_BYTE_ARRAY_CACHE_MAX_SIZE_BYTES, compressData: true);
 
             _clipboardManager.ItemAdded += _clipboardManager_ItemAdded;
             _clipboardManager.ItemChanged += _clipboardManager_ItemChanged;
@@ -149,10 +155,10 @@ namespace Clipbox.Services
             PreviewDataTransferObject pdto = null;
             
             // wait for the generation task if such is running
-            bool hasTaskExisted = WaitForPreviewGenerationTaskResult(clipboardItem, monitorDimensions, out pdto);
+            bool hasTaskBeenRunning = WaitForPreviewGenerationTaskResult(clipboardItem, monitorDimensions, out pdto);
 
             // if no task existed
-            if (!hasTaskExisted
+            if (!hasTaskBeenRunning
                 // and if we could not load any saved data
                 && !TryGetStoredPreviewDataTransferObject(clipboardItem.Id, monitorDimensions, out pdto)
                 // and if the background generation is not enabled
@@ -237,9 +243,15 @@ namespace Clipbox.Services
 
             SavePreviewDimensionInfoToDictionary(pdto.ClipboardItemId, pdInfo);
 
+            // serialize
+            byte[] serializedData = pdto.ToByteArray();
+
+            // store in the byte array cache
+            _byteArrayCache.AddOrUpdate(pdto.ClipboardItemId, serializedData);
+
             // store to disk
             StorePreviewDimensionsDictionaryТoDisk();
-            StorePreviewDataTransferObjectToDisk(pdto, itemRequestedWidth, itemRequestedHeight);
+            StoreSerializedPreviewDataTransferObjectToDisk(pdto.ClipboardItemId, serializedData, itemRequestedWidth, itemRequestedHeight);
         }
 
         private PreviewDataTransferObject GeneratePreviewDataTransferObject(IClipboardItem clipboardItem, int itemRequestedHeight, int itemRequestedWidth)
@@ -273,37 +285,38 @@ namespace Clipbox.Services
             }
         }
 
-        private void StorePreviewDataTransferObjectToDisk(PreviewDataTransferObject pdto, int itemRequestedWidth, int itemRequestedHeight)
+        private void StoreSerializedPreviewDataTransferObjectToDisk(string clipboardItemId, byte[] serializedPdto, int itemRequestedWidth, int itemRequestedHeight)
         {
-            // serialize
-            byte[] serializedData = pdto.ToByteArray();
-
             EnsureAppDataSubDirExists();
 
-            string fileName = $"{pdto.ClipboardItemId}_{itemRequestedWidth}_{itemRequestedHeight}.pdto";
+            string fileName = $"{clipboardItemId}_{itemRequestedWidth}_{itemRequestedHeight}.pdto";
 
-            AppDataUtils.WriteToApplicationData(Path.Combine(APP_DATA_SUBDIR, fileName), serializedData);
+            AppDataUtils.WriteToApplicationData(Path.Combine(APP_DATA_SUBDIR, fileName), serializedPdto);
         }
 
-        private bool TryGetStoredPreviewDataTransferObject(string clipboardItemId,MonitorDimensions monitorDimensions, out PreviewDataTransferObject pdto)
+        private bool TryGetStoredPreviewDataTransferObject(string clipboardItemId, MonitorDimensions monitorDimensions, out PreviewDataTransferObject pdto)
         {
             pdto = null;
-            
-            int itemRequestedHeight = CalculateItemRequestedHeight(monitorDimensions, out bool hasHeightBeenDpiScaled);
-            int itemRequestedWidth = itemRequestedHeight;
 
-            string relativeFilePath = Path.Combine(APP_DATA_SUBDIR, $"{clipboardItemId}_{itemRequestedWidth}_{itemRequestedHeight}.pdto");
-            if (!AppDataUtils.CheckFileExists(relativeFilePath))
+            if (!_byteArrayCache.TryGet(clipboardItemId, out byte[] pdtoByteArray))
             {
-                return false;
-            }
+                int itemRequestedHeight = CalculateItemRequestedHeight(monitorDimensions, out bool hasHeightBeenDpiScaled);
+                int itemRequestedWidth = itemRequestedHeight;
 
-            byte[] fileData = AppDataUtils.ReadBytesFromApplicationData(relativeFilePath);
+                string relativeFilePath = Path.Combine(APP_DATA_SUBDIR, $"{clipboardItemId}_{itemRequestedWidth}_{itemRequestedHeight}.pdto");
+                if (!AppDataUtils.CheckFileExists(relativeFilePath))
+                {
+                    return false;
+                }
+
+                pdtoByteArray = AppDataUtils.ReadBytesFromApplicationData(relativeFilePath);
+                _byteArrayCache.AddOrUpdate(clipboardItemId, pdtoByteArray);
+            }
 
             // deserialize
             try
             {
-                pdto = PreviewDataTransferObject.FromByteArray(fileData);
+                pdto = PreviewDataTransferObject.FromByteArray(pdtoByteArray);
             }
             catch (SerializationException sex)
             {
