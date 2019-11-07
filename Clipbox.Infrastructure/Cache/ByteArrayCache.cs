@@ -1,6 +1,7 @@
 ﻿using Clipbox.Infrastructure.Compression;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Clipbox.Infrastructure.Cache
@@ -34,10 +35,22 @@ namespace Clipbox.Infrastructure.Cache
 
             _totalCacheSize += arrayToCache.LongLength;
 
-            while (_totalCacheSize > _maxSize)
+            List<string> keysOldestFirst = _cache
+                .OrderBy(co => co.Value.LastAccessedTicks)
+                .Select(co => co.Key)
+                .ToList();
+
+            foreach(string keyToRemove in keysOldestFirst)
             {
-                string keyToRemove = _cache.OrderBy(co => co.Value.LastAccessedTicks).First().Key;
-                _cache.TryRemove(keyToRemove, out CacheObject _);
+                if (_cache.TryRemove(keyToRemove, out CacheObject obj))
+                {
+                    _totalCacheSize -= obj.ByteArray.LongLength;
+                }
+
+                if (_totalCacheSize < _maxSize)
+                {
+                    break;
+                }
             }
         }
 
