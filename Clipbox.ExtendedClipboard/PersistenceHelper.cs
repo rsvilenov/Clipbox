@@ -1,13 +1,12 @@
 ﻿using Clipbox.Core.Extensibility.Contracts;
-using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using Clipbox.Core.Extensibility.Exceptions;
 using Clipbox.ExtendedClipboard.ClipboardContent;
+using Clipbox.Infrastructure.Compression;
 using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
 using Clipbox.Infrastructure.Persistence;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Runtime.ExceptionServices;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -216,7 +215,7 @@ namespace Clipbox.ExtendedClipboard
                 return null;
             }
 
-            return Compress(SerializeObject(transferableClipboardItem));
+            return ByteArrayCompressor.Compress(SerializeObject(transferableClipboardItem));
         }
 
         private PersistableClipboardDataObject GetPersistableCdoFromTransferableCdo(TransferableClipboardDataObject transferableCdo)
@@ -265,7 +264,7 @@ namespace Clipbox.ExtendedClipboard
         {
             clipboardItem = null;
 
-            var transferableClipboardItem = DeserializeObject<TransferableClipboardItem>(Decompress(itemData));
+            var transferableClipboardItem = DeserializeObject<TransferableClipboardItem>(ByteArrayCompressor.Decompress(itemData));
 
             List<ClipboardDataObject> clipboardDataObjects = new List<ClipboardDataObject>();
 
@@ -335,28 +334,7 @@ namespace Clipbox.ExtendedClipboard
 
             return null;
         }
-
-        public static byte[] Compress(byte[] data)
-        {
-            using (MemoryStream output = new MemoryStream())
-            using (DeflateStream dstream = new DeflateStream(output, CompressionLevel.Optimal))
-            {
-                dstream.Write(data, 0, data.Length);
-                return output.ToArray();
-            }
-        }
-
-        public static byte[] Decompress(byte[] data)
-        {
-            using (MemoryStream input = new MemoryStream(data))
-            using (MemoryStream output = new MemoryStream())
-            using (DeflateStream dstream = new DeflateStream(input, CompressionMode.Decompress))
-            {
-                dstream.CopyTo(output);
-                return output.ToArray();
-            }
-        }
-
+        
         private TransferableClipboardItem GenerateTransferableClipboardItem(PersistableClipboardItem persistableClipboardItem)
         {
             var transferableCdos = GenerateTransferableClipboardDataObject(persistableClipboardItem.PersistableClipboardDataObjects).
