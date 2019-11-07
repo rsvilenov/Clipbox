@@ -90,14 +90,14 @@ namespace Clipbox.Services
             }
         }
 
-        private void EnqueuePreviewGenerationTask(string clipboardItemId)
+        private void EnqueuePreviewGenerationTask(string clipboardItemId, MonitorDimensions monitorDimensions = null)
         {
             var mre = new ManualResetEvent(false);
             _resetEventsForClipboardItemIds.AddOrUpdate(clipboardItemId, mre, (id, e) => e);
 
             _bgGenerationDispatcher.BeginInvoke(() =>
             {
-                var task = StartPreviewGenerationTask(clipboardItemId);
+                var task = StartPreviewGenerationTask(clipboardItemId, monitorDimensions);
 
                 // do not block the queue - abandon the tasks that do not finish on time
                 task.Wait(TimeSpan.FromMilliseconds(PREVIEW_GENERATION_TIMEOUT_MS));
@@ -107,17 +107,20 @@ namespace Clipbox.Services
             });
         }
 
-        private Task StartPreviewGenerationTask(string clipboardItemId)
+        private Task StartPreviewGenerationTask(string clipboardItemId, MonitorDimensions monitorDimensions = null)
         {
             return Task.Run(() =>
             {
-                MonitorUtils.DisplayMonitor currentMonitor = MonitorUtils.GetByForegroundWindow();
-                MonitorDimensions monitorDimensions = new MonitorDimensions
+                if (monitorDimensions == null)
                 {
-                    MonitorDPI = currentMonitor.Dpi,
-                    WorkAreaHeight = currentMonitor.WorkingArea.Height,
-                    WorkAreaWidth = currentMonitor.WorkingArea.Width
-                };
+                    MonitorUtils.DisplayMonitor currentMonitor = MonitorUtils.GetByForegroundWindow();
+                    monitorDimensions = new MonitorDimensions
+                    {
+                        MonitorDPI = currentMonitor.Dpi,
+                        WorkAreaHeight = currentMonitor.WorkingArea.Height,
+                        WorkAreaWidth = currentMonitor.WorkingArea.Width
+                    };
+                }
 
                 int itemRequestedHeight = CalculateItemRequestedHeight(monitorDimensions, out bool hasHeightBeenDpiScaled);
                 int itemRequestedWidth = itemRequestedHeight;
@@ -143,92 +146,23 @@ namespace Clipbox.Services
                 throw new ArgumentException($"{clipboardItem.Id} does not have any {nameof(clipboardItem.ClipboardDataObjects)}");
             }
 
-            int itemRequestedHeight = CalculateItemRequestedHeight(monitorDimensions, out bool hasHeightBeenDpiScaled);
-            int itemRequestedWidth = itemRequestedHeight;
-
             PreviewDataTransferObject pdto = null;
+            
+            // wait for the generation task if such is running
+            bool hasTaskExisted = WaitForPreviewGenerationTaskResult(clipboardItem, monitorDimensions, out pdto);
 
-            if (_settingsService.GetSetting<bool>(SettingsKeys.IsBackgroundPreviewGenerationEnabled))
+            // if no task existed
+            if (!hasTaskExisted
+                // and if we could not load any saved data
+                && !TryGetStoredPreviewDataTransferObject(clipboardItem.Id, monitorDimensions, out pdto)
+                // and if the background generation is not enabled
+                && !_settingsService.GetSetting<bool>(SettingsKeys.IsBackgroundPreviewGenerationEnabled))
             {
-                if (_resetEventsForClipboardItemIds.TryRemove(clipboardItem.Id, out ManualResetEvent mre))
-                {
-                    // wait for the abandon timeout of the task to pass
-                    mre.WaitOne();
-                    mre.Dispose();
-
-                    // check if the task has actually completed
-                    if (_clipboardItemIdsWithCompletedTasks.TryRemove(clipboardItem.Id, out bool isFinished) && isFinished)
-                    {
-                        // if the task is completed, then there should be saved preview data; get it
-                        if (!TryGetStoredPreviewDataTransferObject(clipboardItem.Id, itemRequestedWidth, itemRequestedHeight, out PreviewDataTransferObject savedPdto))
-                        {
-                            throw new InvalidOperationException("The preview generation task has finished, but there is no preview saved.");
-                        }
-
-                        pdto = savedPdto;
-                    }
-                    else
-                    {
-
-                        // If the generation task is not completed, 
-                        // do not wait for its completion as it may have hanged.
-                        // Run a new task instead.
-                        Task.Run(() =>
-                        {
-                            pdto = GeneratePreviewDataTransferObject(clipboardItem, itemRequestedHeight, itemRequestedWidth);
-                        })
-                        .Wait(PREVIEW_GENERATION_TIMEOUT_MS);
-
-                        if (pdto != null && pdto.PreviewItems.Any())
-                        {
-                            CacheGeneratedData(monitorDimensions, itemRequestedHeight, itemRequestedWidth, pdto, hasHeightBeenDpiScaled);
-                        }
-                    }
-                }
-                else
-                {
-                    // If there is no generation task that has been running,
-                    // and if there is an already saved preview from previous runs of the program,
-                    // load that data.
-                    if (TryGetStoredPreviewDataTransferObject(clipboardItem.Id, itemRequestedWidth, itemRequestedHeight, out PreviewDataTransferObject savedPdto))
-                    {
-                        pdto = savedPdto;
-                    }
-                    else
-                    {
-                        // if there is no saved data, run a preview generation task
-                        Task.Run(() =>
-                        {
-                            pdto = GeneratePreviewDataTransferObject(clipboardItem, itemRequestedHeight, itemRequestedWidth);
-                        })
-                        .Wait(PREVIEW_GENERATION_TIMEOUT_MS);
-
-                        if (pdto != null && pdto.PreviewItems.Any())
-                        {
-                            CacheGeneratedData(monitorDimensions, itemRequestedHeight, itemRequestedWidth, pdto, hasHeightBeenDpiScaled);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                if (TryGetStoredPreviewDataTransferObject(clipboardItem.Id, itemRequestedWidth, itemRequestedHeight, out PreviewDataTransferObject savedPdto))
-                {
-                    pdto = savedPdto;
-                }
-                else
-                {
-                    Task.Run(() =>
-                    {
-                        pdto = GeneratePreviewDataTransferObject(clipboardItem, itemRequestedHeight, itemRequestedWidth);
-                    })
-                    .Wait(PREVIEW_GENERATION_TIMEOUT_MS);
-
-                    if (pdto != null && pdto.PreviewItems.Any())
-                    {
-                        CacheGeneratedData(monitorDimensions, itemRequestedHeight, itemRequestedWidth, pdto, hasHeightBeenDpiScaled);
-                    }
-                }
+                // enqueue a task
+                EnqueuePreviewGenerationTask(clipboardItem.Id, monitorDimensions);
+                // and wait for its completion
+                WaitForPreviewGenerationTaskResult(clipboardItem, monitorDimensions, out pdto);
+                // if we do not have a preview by now, abandon
             }
 
             if (pdto == null)
@@ -252,6 +186,48 @@ namespace Clipbox.Services
             }
 
             return pdto;
+        }
+
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="clipboardItem"></param>
+        /// <param name="monitorDimensions"></param>
+        /// <param name="pdto"></param>
+        /// <returns>True if there was a task, regardless of wheter it has completed or not; False if there were no task at all.</returns>
+        private bool WaitForPreviewGenerationTaskResult(IClipboardItem clipboardItem, MonitorDimensions monitorDimensions, out PreviewDataTransferObject pdto)
+        {
+            pdto = null;
+
+
+            if (_resetEventsForClipboardItemIds.TryRemove(clipboardItem.Id, out ManualResetEvent mre))
+            {
+                // wait for the abandon timeout of the task to pass
+                mre.WaitOne();
+                mre.Dispose();
+
+                // TODO: lock the code above up to the point where the new task is added in the dictionary,
+                // so that no duplicate tasks are scheduled.
+
+                // check if the task has actually completed
+                if (_clipboardItemIdsWithCompletedTasks.TryRemove(clipboardItem.Id, out bool isFinished) && isFinished)
+                {
+                    // if the task is completed, then there should be saved preview data; get it
+                    if (!TryGetStoredPreviewDataTransferObject(clipboardItem.Id, monitorDimensions, out PreviewDataTransferObject savedPdto))
+                    {
+                        throw new InvalidOperationException("The preview generation task has finished, but there is no preview saved.");
+                    }
+
+                    pdto = savedPdto;
+                }
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         private void CacheGeneratedData(MonitorDimensions monitorDimensions, int itemRequestedHeight, int itemRequestedWidth, PreviewDataTransferObject pdto, bool havePreviewDimensionsBeenDpiScaled)
@@ -309,9 +285,12 @@ namespace Clipbox.Services
             AppDataUtils.WriteToApplicationData(Path.Combine(APP_DATA_SUBDIR, fileName), serializedData);
         }
 
-        private bool TryGetStoredPreviewDataTransferObject(string clipboardItemId, int itemRequestedWidth, int itemRequestedHeight, out PreviewDataTransferObject pdto)
+        private bool TryGetStoredPreviewDataTransferObject(string clipboardItemId,MonitorDimensions monitorDimensions, out PreviewDataTransferObject pdto)
         {
             pdto = null;
+            
+            int itemRequestedHeight = CalculateItemRequestedHeight(monitorDimensions, out bool hasHeightBeenDpiScaled);
+            int itemRequestedWidth = itemRequestedHeight;
 
             string relativeFilePath = Path.Combine(APP_DATA_SUBDIR, $"{clipboardItemId}_{itemRequestedWidth}_{itemRequestedHeight}.pdto");
             if (!AppDataUtils.CheckFileExists(relativeFilePath))
