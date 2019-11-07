@@ -21,6 +21,7 @@ using System.Linq;
 using System.Runtime.ExceptionServices;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Clipbox.Services
@@ -28,7 +29,7 @@ namespace Clipbox.Services
     public class PreviewGenerationService : IPreviewGenerationService, IDisposable
     {
         private const string APP_DATA_SUBDIR = "PreviewDataCache";
-        private const int PREVIEW_GENERATION_TIMEOUT_MS = 2000;
+        private const int PREVIEW_GENERATION_TIMEOUT_MS = 6000;
 
         private IClipboardManager _clipboardManager;
         private IPreviewGeneratorExtentionContainer _clipboardFormatPreviewExtContainer;
@@ -37,6 +38,9 @@ namespace Clipbox.Services
         private ConcurrentDictionary<string, PreviewDimensionInfo> _previewDimensionsDictionary;
 
         private SimpleDispatcher _bgGenerationDispatcher;
+
+        private ConcurrentDictionary<string, ManualResetEvent> _waitHandlesForClipboardItemIds;
+        private ConcurrentDictionary<string, bool> _clipboardItemIdsWithCompletedTasks;
 
         public PreviewGenerationService(
             IClipboardManager clipboardManager,
@@ -51,6 +55,9 @@ namespace Clipbox.Services
 
             _bgGenerationDispatcher = new SimpleDispatcher();
 
+            _waitHandlesForClipboardItemIds = new ConcurrentDictionary<string, ManualResetEvent>();
+            _clipboardItemIdsWithCompletedTasks = new ConcurrentDictionary<string, bool>();
+
             _clipboardManager.ItemAdded += _clipboardManager_ItemAdded;
             _clipboardManager.ItemChanged += _clipboardManager_ItemChanged;
             _clipboardManager.ItemRemoved += _clipboardManager_ItemRemoved;
@@ -58,8 +65,7 @@ namespace Clipbox.Services
 
         private void _clipboardManager_ItemRemoved(object sender, ExtendedClipboard.EventArgs.ClipboardManagerEventArgs e)
         {
-            PreviewDimensionInfo pdi = null;
-            _previewDimensionsDictionary.TryRemove(e.ItemId, out pdi);
+            _previewDimensionsDictionary.TryRemove(e.ItemId, out PreviewDimensionInfo pdi);
 
             // remove the info for this item from cache/stored preview data
             DeleteStoredPreviewDataTransferObject(e.ItemId);
@@ -86,11 +92,18 @@ namespace Clipbox.Services
 
         private void EnqueuePreviewGenerationTask(string clipboardItemId)
         {
+            var mre = new ManualResetEvent(false);
+            _waitHandlesForClipboardItemIds.AddOrUpdate(clipboardItemId, mre, (id, e) => e);
+
             _bgGenerationDispatcher.BeginInvoke(() =>
             {
                 var task = StartPreviewGenerationTask(clipboardItemId);
+
                 // do not block the queue - abandon the tasks that do not finish on time
                 task.Wait(TimeSpan.FromMilliseconds(PREVIEW_GENERATION_TIMEOUT_MS));
+
+                // signal the event
+                mre.Set();
             });
         }
 
@@ -106,13 +119,14 @@ namespace Clipbox.Services
                     WorkAreaWidth = currentMonitor.WorkingArea.Width
                 };
 
-                bool hasHeightBeenDpiScaled = false;
-                int itemRequestedHeight = CalculateItemRequestedHeight(monitorDimensions, out hasHeightBeenDpiScaled);
+                int itemRequestedHeight = CalculateItemRequestedHeight(monitorDimensions, out bool hasHeightBeenDpiScaled);
                 int itemRequestedWidth = itemRequestedHeight;
 
                 IClipboardItem clipboardItem = _clipboardManager.GetClipboardItem(clipboardItemId, restoreShrinked: true);
                 PreviewDataTransferObject pdto = GeneratePreviewDataTransferObject(clipboardItem, itemRequestedHeight, itemRequestedWidth);
                 CacheGeneratedData(monitorDimensions, itemRequestedHeight, itemRequestedWidth, pdto, hasHeightBeenDpiScaled);
+                
+                _clipboardItemIdsWithCompletedTasks.TryAdd(clipboardItem.Id, true);
             });
         }
 
@@ -131,17 +145,76 @@ namespace Clipbox.Services
 
             int itemRequestedHeight = CalculateItemRequestedHeight(monitorDimensions, out bool hasHeightBeenDpiScaled);
             int itemRequestedWidth = itemRequestedHeight;
-            
-            if (!TryGetStoredPreviewDataTransferObject(clipboardItem.Id, itemRequestedWidth, itemRequestedHeight, out PreviewDataTransferObject pdto))
-            {
-                pdto = GeneratePreviewDataTransferObject(clipboardItem, itemRequestedHeight, itemRequestedWidth);
-                if (!pdto.PreviewItems.Any())
-                {
-                    throw new InvalidOperationException($"Preview items generation failed for id {clipboardItem.Id}. " +
-                        $"Clipboard formats: {string.Join("; ", clipboardItem.ClipboardDataObjects.Select(cdo => cdo.ClipboardFormatName))}");
-                }
 
-                CacheGeneratedData(monitorDimensions, itemRequestedHeight, itemRequestedWidth, pdto, hasHeightBeenDpiScaled);
+            PreviewDataTransferObject pdto = null;
+
+            if (_settingsService.GetSetting<bool>(SettingsKeys.IsBackgroundPreviewGenerationEnabled))
+            {
+                if (_waitHandlesForClipboardItemIds.TryGetValue(clipboardItem.Id, out ManualResetEvent mre))
+                {
+                    // wait for the abandon timeout of the task to pass
+                    mre.WaitOne();
+                    mre.Dispose();
+
+                    // check if the task has actually completed
+                    if (_clipboardItemIdsWithCompletedTasks.TryRemove(clipboardItem.Id, out bool isFinished) && isFinished)
+                    {
+                        // if the task is completed, then there should be saved preview data; get it
+                        if (!TryGetStoredPreviewDataTransferObject(clipboardItem.Id, itemRequestedWidth, itemRequestedHeight, out PreviewDataTransferObject savedPdto))
+                        {
+                            throw new InvalidOperationException("The preview generation task has finished, but there is no preview saved.");
+                        }
+
+                        pdto = savedPdto;
+                    }
+                    else
+                    {
+                        // If the task is not completed, do not wait for its completion as it may have hanged.
+                        // Run a new task instead.
+                        Task.Run(() => 
+                        {
+                            pdto = GeneratePreviewDataTransferObject(clipboardItem, itemRequestedHeight, itemRequestedWidth);
+                        })
+                        .Wait(PREVIEW_GENERATION_TIMEOUT_MS);
+                    }
+                }
+            }
+            else
+            {
+                if (TryGetStoredPreviewDataTransferObject(clipboardItem.Id, itemRequestedWidth, itemRequestedHeight, out PreviewDataTransferObject savedPdto))
+                {
+                    pdto = savedPdto;
+                }
+                else
+                {
+                    Task.Run(() =>
+                    {
+                        pdto = GeneratePreviewDataTransferObject(clipboardItem, itemRequestedHeight, itemRequestedWidth);
+                    })
+                    .Wait(PREVIEW_GENERATION_TIMEOUT_MS);
+
+                    CacheGeneratedData(monitorDimensions, itemRequestedHeight, itemRequestedWidth, pdto, hasHeightBeenDpiScaled);
+                }
+            }
+
+            if (pdto == null)
+            {
+                pdto = new PreviewDataTransferObject
+                {
+                    ClipboardItemId = clipboardItem.Id
+                };
+
+                pdto.PreviewItems.Add(new PreviewItemTransferObject
+                {
+
+                });
+                //throw new InvalidOperationException($"Preview items generation failed for id {clipboardItem.Id}.");
+            }
+            
+            if (!pdto.PreviewItems.Any())
+            {
+                throw new InvalidOperationException($"Preview items generation failed for id {clipboardItem.Id}. " +
+                    $"Clipboard formats: {string.Join("; ", clipboardItem.ClipboardDataObjects.Select(cdo => cdo.ClipboardFormatName))}");
             }
 
             return pdto;
@@ -167,7 +240,7 @@ namespace Clipbox.Services
             // TODO: create a default preview handler
             if (formatGuidPreviewGeneratorPair == null)
             {
-                throw new FormatException($"Unable to find a suitable preview handler for this item.");
+                throw new KeyNotFoundException($"Unable to find a suitable preview handler for this item.");
             }
 
             IPreviewGenerator previewGenerator = formatGuidPreviewGeneratorPair.Value.Value;
