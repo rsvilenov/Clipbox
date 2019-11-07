@@ -39,7 +39,7 @@ namespace Clipbox.Services
 
         private SimpleDispatcher _bgGenerationDispatcher;
 
-        private ConcurrentDictionary<string, ManualResetEvent> _waitHandlesForClipboardItemIds;
+        private ConcurrentDictionary<string, ManualResetEvent> _resetEventsForClipboardItemIds;
         private ConcurrentDictionary<string, bool> _clipboardItemIdsWithCompletedTasks;
 
         public PreviewGenerationService(
@@ -55,7 +55,7 @@ namespace Clipbox.Services
 
             _bgGenerationDispatcher = new SimpleDispatcher();
 
-            _waitHandlesForClipboardItemIds = new ConcurrentDictionary<string, ManualResetEvent>();
+            _resetEventsForClipboardItemIds = new ConcurrentDictionary<string, ManualResetEvent>();
             _clipboardItemIdsWithCompletedTasks = new ConcurrentDictionary<string, bool>();
 
             _clipboardManager.ItemAdded += _clipboardManager_ItemAdded;
@@ -93,7 +93,7 @@ namespace Clipbox.Services
         private void EnqueuePreviewGenerationTask(string clipboardItemId)
         {
             var mre = new ManualResetEvent(false);
-            _waitHandlesForClipboardItemIds.AddOrUpdate(clipboardItemId, mre, (id, e) => e);
+            _resetEventsForClipboardItemIds.AddOrUpdate(clipboardItemId, mre, (id, e) => e);
 
             _bgGenerationDispatcher.BeginInvoke(() =>
             {
@@ -150,7 +150,7 @@ namespace Clipbox.Services
 
             if (_settingsService.GetSetting<bool>(SettingsKeys.IsBackgroundPreviewGenerationEnabled))
             {
-                if (_waitHandlesForClipboardItemIds.TryGetValue(clipboardItem.Id, out ManualResetEvent mre))
+                if (_resetEventsForClipboardItemIds.TryRemove(clipboardItem.Id, out ManualResetEvent mre))
                 {
                     // wait for the abandon timeout of the task to pass
                     mre.WaitOne();
@@ -169,13 +169,44 @@ namespace Clipbox.Services
                     }
                     else
                     {
-                        // If the task is not completed, do not wait for its completion as it may have hanged.
+
+                        // If the generation task is not completed, 
+                        // do not wait for its completion as it may have hanged.
                         // Run a new task instead.
-                        Task.Run(() => 
+                        Task.Run(() =>
                         {
                             pdto = GeneratePreviewDataTransferObject(clipboardItem, itemRequestedHeight, itemRequestedWidth);
                         })
                         .Wait(PREVIEW_GENERATION_TIMEOUT_MS);
+
+                        if (pdto != null && pdto.PreviewItems.Any())
+                        {
+                            CacheGeneratedData(monitorDimensions, itemRequestedHeight, itemRequestedWidth, pdto, hasHeightBeenDpiScaled);
+                        }
+                    }
+                }
+                else
+                {
+                    // If there is no generation task that has been running,
+                    // and if there is an already saved preview from previous runs of the program,
+                    // load that data.
+                    if (TryGetStoredPreviewDataTransferObject(clipboardItem.Id, itemRequestedWidth, itemRequestedHeight, out PreviewDataTransferObject savedPdto))
+                    {
+                        pdto = savedPdto;
+                    }
+                    else
+                    {
+                        // if there is no saved data, run a preview generation task
+                        Task.Run(() =>
+                        {
+                            pdto = GeneratePreviewDataTransferObject(clipboardItem, itemRequestedHeight, itemRequestedWidth);
+                        })
+                        .Wait(PREVIEW_GENERATION_TIMEOUT_MS);
+
+                        if (pdto != null && pdto.PreviewItems.Any())
+                        {
+                            CacheGeneratedData(monitorDimensions, itemRequestedHeight, itemRequestedWidth, pdto, hasHeightBeenDpiScaled);
+                        }
                     }
                 }
             }
@@ -193,7 +224,10 @@ namespace Clipbox.Services
                     })
                     .Wait(PREVIEW_GENERATION_TIMEOUT_MS);
 
-                    CacheGeneratedData(monitorDimensions, itemRequestedHeight, itemRequestedWidth, pdto, hasHeightBeenDpiScaled);
+                    if (pdto != null && pdto.PreviewItems.Any())
+                    {
+                        CacheGeneratedData(monitorDimensions, itemRequestedHeight, itemRequestedWidth, pdto, hasHeightBeenDpiScaled);
+                    }
                 }
             }
 
@@ -554,6 +588,14 @@ namespace Clipbox.Services
             _clipboardManager.ItemAdded -= _clipboardManager_ItemAdded;
             _clipboardManager.ItemChanged -= _clipboardManager_ItemChanged;
             _clipboardManager.ItemRemoved -= _clipboardManager_ItemRemoved;
+
+            // Dispose of the manual reset events for the tasks,
+            // whose previde data has not been requested and the tasks - removed from the collection;
+            // Abandon the associated tasks, if there are any.
+            foreach (ManualResetEvent mre in _resetEventsForClipboardItemIds.Values)
+            {
+                mre.Dispose();
+            }
         }
     }
 }
