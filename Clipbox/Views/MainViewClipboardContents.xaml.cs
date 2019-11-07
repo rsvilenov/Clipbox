@@ -176,12 +176,14 @@ namespace Clipbox.Views
 
         public void ScheduleLoadingOfViewItem(string clipboardItemId)
         {
+
+            ClipboardViewItemWrapper wrapper = null;
+            ClipboardViewItemDimensionInfo cvItemDimInfo = null;
+            ClipboardViewItem viewItem = null;
+
             // run the slow-running operations in a separate task
             _cancellableTaskManager.ScheduleTask(clipboardItemId, new Action<string>((taskId) =>
             {
-                ClipboardViewItemWrapper wrapper = null;
-                ClipboardViewItemDimensionInfo cvItemDimInfo = null;
-
                 PerformDisposeSafeOperation(() =>
                 {
                     wrapper = _viewModel.GetViewItemWrapper(clipboardItemId);
@@ -192,7 +194,7 @@ namespace Clipbox.Views
                     }
 
                     _viewModel.TryGetPreviewDimensions(base.MonitorDimensions, wrapper, out cvItemDimInfo);
-
+                    viewItem = _viewModel.GetViewItem(clipboardItemId, base.MonitorDimensions);
                 });
 
                 // this optimization (updating the bindable properties in the dispatcher thread with background priority)
@@ -203,7 +205,7 @@ namespace Clipbox.Views
                 {
                     PerformDisposeSafeOperation(() =>
                     {
-                        wrapper.ViewItem = _viewModel.GetViewItem(clipboardItemId, base.MonitorDimensions);
+                        wrapper.ViewItem = viewItem;
                         wrapper.DimensionInfo = cvItemDimInfo;
                         wrapper.IsViewItemLoaded = true;
                     });

@@ -33,16 +33,17 @@ namespace Clipbox.Services
         private const int PREVIEW_GENERATION_TIMEOUT_MS = 6000;
         private const long PREVIEW_BYTE_ARRAY_CACHE_MAX_SIZE_BYTES = 10 * 1024 * 1024;
 
-        private IClipboardManager _clipboardManager;
-        private IPreviewGeneratorExtentionContainer _clipboardFormatPreviewExtContainer;
-        private ISettingsService _settingsService;
+        private readonly IClipboardManager _clipboardManager;
+        private readonly IPreviewGeneratorExtentionContainer _clipboardFormatPreviewExtContainer;
+        private readonly ISettingsService _settingsService;
 
-        private ConcurrentDictionary<string, PreviewDimensionInfo> _previewDimensionsDictionary;
+        private readonly ConcurrentDictionary<string, PreviewDimensionInfo> _previewDimensionsDictionary;
 
-        private SimpleDispatcher _bgGenerationDispatcher;
+        private readonly SimpleDispatcher _bgGenerationDispatcher;
+        private readonly SimpleDispatcher _storeToDiskDispatcher;
 
-        private ConcurrentDictionary<string, ManualResetEvent> _resetEventsForClipboardItemIds;
-        private ConcurrentDictionary<string, bool> _clipboardItemIdsWithCompletedTasks;
+        private readonly ConcurrentDictionary<string, ManualResetEvent> _resetEventsForClipboardItemIds;
+        private readonly ConcurrentDictionary<string, bool> _clipboardItemIdsWithCompletedTasks;
 
         private readonly ByteArrayCache _byteArrayCache;
 
@@ -58,6 +59,7 @@ namespace Clipbox.Services
             _previewDimensionsDictionary = LoadStoredOrInitializePreviewDimensionsInfo();
 
             _bgGenerationDispatcher = new SimpleDispatcher();
+            _storeToDiskDispatcher = new SimpleDispatcher();
 
             _resetEventsForClipboardItemIds = new ConcurrentDictionary<string, ManualResetEvent>();
             _clipboardItemIdsWithCompletedTasks = new ConcurrentDictionary<string, bool>();
@@ -83,7 +85,7 @@ namespace Clipbox.Services
             if (_settingsService.GetSetting<bool>(SettingsKeys.IsBackgroundPreviewGenerationEnabled))
             {
                 // spawn threads here
-                EnqueuePreviewGenerationTask(e.ItemId);
+                TryEnqueuePreviewGenerationTask(e.ItemId);
             }
         }
 
@@ -92,15 +94,20 @@ namespace Clipbox.Services
             if (_settingsService.GetSetting<bool>(SettingsKeys.IsBackgroundPreviewGenerationEnabled))
             {
                 // spawn threads here
-                EnqueuePreviewGenerationTask(e.ItemId);
+                TryEnqueuePreviewGenerationTask(e.ItemId);
             }
         }
 
-        private void EnqueuePreviewGenerationTask(string clipboardItemId, MonitorDimensions monitorDimensions = null)
+        private bool TryEnqueuePreviewGenerationTask(string clipboardItemId, MonitorDimensions monitorDimensions = null)
         {
             var mre = new ManualResetEvent(false);
-            _resetEventsForClipboardItemIds.AddOrUpdate(clipboardItemId, mre, (id, e) => e);
-
+            if (!_resetEventsForClipboardItemIds.TryAdd(clipboardItemId, mre))
+            {
+                // we already a running task
+                return false;
+            }
+            
+            // enqueue a task
             _bgGenerationDispatcher.BeginInvoke(() =>
             {
                 var task = StartPreviewGenerationTask(clipboardItemId, monitorDimensions);
@@ -111,6 +118,8 @@ namespace Clipbox.Services
                 // signal the event
                 mre.Set();
             });
+
+            return true;
         }
 
         private Task StartPreviewGenerationTask(string clipboardItemId, MonitorDimensions monitorDimensions = null)
@@ -160,12 +169,10 @@ namespace Clipbox.Services
             // if no task existed
             if (!hasTaskBeenRunning
                 // and if we could not load any saved data
-                && !TryGetStoredPreviewDataTransferObject(clipboardItem.Id, monitorDimensions, out pdto)
-                // and if the background generation is not enabled
-                && !_settingsService.GetSetting<bool>(SettingsKeys.IsBackgroundPreviewGenerationEnabled))
-            {
-                // enqueue a task
-                EnqueuePreviewGenerationTask(clipboardItem.Id, monitorDimensions);
+                && !TryGetStoredPreviewDataTransferObject(clipboardItem.Id, monitorDimensions, out pdto))
+            { 
+                // schedule a preview generation task if it is not sheduled already
+                TryEnqueuePreviewGenerationTask(clipboardItem.Id, monitorDimensions);
                 // and wait for its completion
                 WaitForPreviewGenerationTaskResult(clipboardItem, monitorDimensions, out pdto);
                 // if we do not have a preview by now, abandon
@@ -205,8 +212,7 @@ namespace Clipbox.Services
         private bool WaitForPreviewGenerationTaskResult(IClipboardItem clipboardItem, MonitorDimensions monitorDimensions, out PreviewDataTransferObject pdto)
         {
             pdto = null;
-
-
+            
             if (_resetEventsForClipboardItemIds.TryRemove(clipboardItem.Id, out ManualResetEvent mre))
             {
                 // wait for the abandon timeout of the task to pass
@@ -240,18 +246,22 @@ namespace Clipbox.Services
         {
             PreviewDimensionInfo pdInfo = GetPreviewDimensionsInfo(pdto, monitorDimensions);
             pdInfo.ArePreviewDimensionsDpiScaled = havePreviewDimensionsBeenDpiScaled;
+            string clipboardItemId = pdto.ClipboardItemId;
 
-            SavePreviewDimensionInfoToDictionary(pdto.ClipboardItemId, pdInfo);
+            SavePreviewDimensionInfoToDictionary(clipboardItemId, pdInfo);
 
             // serialize
             byte[] serializedData = pdto.ToByteArray();
 
             // store in the byte array cache
-            _byteArrayCache.AddOrUpdate(pdto.ClipboardItemId, serializedData);
+            _byteArrayCache.AddOrUpdate(clipboardItemId, serializedData);
 
-            // store to disk
-            StorePreviewDimensionsDictionaryТoDisk();
-            StoreSerializedPreviewDataTransferObjectToDisk(pdto.ClipboardItemId, serializedData, itemRequestedWidth, itemRequestedHeight);
+            // schedule storeing to disk
+            _storeToDiskDispatcher.BeginInvoke(() =>
+            {
+                StorePreviewDimensionsDictionaryТoDisk();
+                StoreSerializedPreviewDataTransferObjectToDisk(clipboardItemId, serializedData, itemRequestedWidth, itemRequestedHeight);
+            });
         }
 
         private PreviewDataTransferObject GeneratePreviewDataTransferObject(IClipboardItem clipboardItem, int itemRequestedHeight, int itemRequestedWidth)
