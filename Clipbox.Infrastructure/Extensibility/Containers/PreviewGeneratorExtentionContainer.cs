@@ -42,6 +42,7 @@ namespace Clipbox.Infrastructure.Extensibility.Containers
                     TypeAndPriority tp = _intermediateFormatGuidExtentionMapping[formatGuid];
                     if (tp.Priority > highestPriority)
                     {
+                        highestPriority = tp.Priority;
                         extensionType = tp.Type;
                         finalFormatGuid = formatGuid;
                     }
