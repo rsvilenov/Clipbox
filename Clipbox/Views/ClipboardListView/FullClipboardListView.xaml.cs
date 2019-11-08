@@ -46,11 +46,11 @@ namespace Clipbox.Views.ClipboardListView
         
         private Timer _postSelectionUtilsTimer;
 
-        private SlidingTimer _scrollbarValueChangedSlidingTimer;
+        private SlidingTimer _scrollbarThumbPositionChangedSlidingTimer;
 
         private SlidingTimer _layoutSlidingTimer;
 
-        private ScrollBar _scrollBar;
+        private VerticalScrollBarEx _scrollBar;
 
         private int _lastListViewItemCount = 0;
         private Dictionary<string, GroupItem> _groupNameGroupItemMapping = new Dictionary<string, GroupItem>();
@@ -114,11 +114,11 @@ namespace Clipbox.Views.ClipboardListView
             };
             _layoutSlidingTimer.Elapsed += _layoutSlidingTimer_Elapsed;
 
-            _scrollbarValueChangedSlidingTimer = new SlidingTimer
+            _scrollbarThumbPositionChangedSlidingTimer = new SlidingTimer
             {
                 IntervalMs = SCROLLBAR_TIMER_TIMEOUT_MS
             };
-            _scrollbarValueChangedSlidingTimer.Elapsed += _scrollbarValueChangedSlidingTimer_Elapsed;
+            _scrollbarThumbPositionChangedSlidingTimer.Elapsed += _scrollbarThumbPositionChangedSlidingTimer_Elapsed;
 
             DoubleClickDetectionWaitIntervalMs = User32.GetDoubleClickTime();
 
@@ -147,7 +147,7 @@ namespace Clipbox.Views.ClipboardListView
             _groupNameGroupItemMapping.Clear();
         }
 
-        private void _scrollbarValueChangedSlidingTimer_Elapsed(object sender, EventArgs e)
+        private void _scrollbarThumbPositionChangedSlidingTimer_Elapsed(object sender, EventArgs e)
         {
             LoadUnloadFullViewOfVisibleItems();
         }
@@ -219,39 +219,22 @@ namespace Clipbox.Views.ClipboardListView
             contentControl.Unloaded -= ContentControl_Unloaded;
         }
 
-        private void PART_VerticalScrollBar_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void PART_VerticalScrollBar_ScrollBarThumbPositionChanged(object sender, EventArgsClasses.ScrollBarThumbPositionEventArgs e)
         {
-            TryAdjustScrollThumbLabel();
-            _scrollbarValueChangedSlidingTimer.Slide();
+            AdjustScrollThumbLabel(e.ThumbRect);
+            _scrollbarThumbPositionChangedSlidingTimer.Slide();
         }
 
-        private bool TryAdjustScrollThumbLabel()
+        private void AdjustScrollThumbLabel(Rect thumbRect)
         {
-            if (_scrollBar == null)
+            if (thumbRect.IsEmpty)
             {
-                return false;
+                throw new ArgumentException($"{nameof(thumbRect)} is empty.");
             }
-
-            //// find the listview control
-            //ListView listView = Traversing.FindParent<ListView>(_scrollBar);
-            //if (listView == null)
-            //{
-            //    Debug.WriteLine("listView (still) not found.");
-            //    return false;
-            //}
 
             UpdateVisibleGroupsCache();
-
-            // find the thumb and its location
-            Thumb thumb = Traversing.GetVisualChildOfType<Thumb>(_scrollBar);
-            if (thumb == null)
-            {
-                Debug.WriteLine("thumb (still) not found.");
-                return false;
-            }
-
-            Point relativeThumbPoint = thumb.TranslatePoint(new Point(0, 0), _scrollBar);
-            double thumbYPos = relativeThumbPoint.Y;
+            
+            double thumbYPos = thumbRect.Y;
 
             foreach (string groupName in _visibleGroupNames)
             {
@@ -263,14 +246,12 @@ namespace Clipbox.Views.ClipboardListView
                 GroupItem groupItem = _groupNameGroupItemMapping[groupName];
                 Point groupItemRelativeLocation = groupItem.TranslatePoint(new Point(0, 0), this);
 
-                if (thumbYPos + thumb.ActualHeight >= groupItemRelativeLocation.Y &&
+                if (thumbYPos + thumbRect.Height >= groupItemRelativeLocation.Y &&
                     thumbYPos <= groupItemRelativeLocation.Y + groupItem.ActualHeight)
                 {
                     ScrollBarDataContext.CurrentVisibleItemsDateString = groupName;
                 }
             }
-
-            return true;
         }
 
         private List<string> _visibleGroupNames = new List<string>();
@@ -358,7 +339,11 @@ namespace Clipbox.Views.ClipboardListView
 
             _lastListViewItemCount = this.Items.Count;
 
-            TryAdjustScrollThumbLabel();
+            if (_scrollBar != null && _scrollBar.TryGetThumbRect(out Rect thumbRect))
+            {
+                AdjustScrollThumbLabel(thumbRect);
+            }
+
             LoadUnloadFullViewOfVisibleItems();
         }
 
@@ -406,19 +391,23 @@ namespace Clipbox.Views.ClipboardListView
 
         private void PART_ScrollContentPresenter_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            TryAdjustScrollThumbLabel();
+            if (_scrollBar != null && _scrollBar.TryGetThumbRect(out Rect thumbRect))
+            {
+                AdjustScrollThumbLabel(thumbRect);
+            }
+
             LoadUnloadFullViewOfVisibleItems();
         }
 
         private void PART_VerticalScrollBar_Loaded(object sender, RoutedEventArgs e)
         {
-            _scrollBar = (ScrollBar)sender;
+            _scrollBar = (VerticalScrollBarEx)sender;
         }
 
         public void Dispose()
         {
             _postSelectionUtilsTimer.Dispose();
-            _scrollbarValueChangedSlidingTimer.Dispose();
+            _scrollbarThumbPositionChangedSlidingTimer.Dispose();
             _layoutSlidingTimer.Dispose();
         }
 
@@ -448,6 +437,5 @@ namespace Clipbox.Views.ClipboardListView
                 set { SetField(ref _lastItemDateString, value); }
             }
         }
-
     }
 }

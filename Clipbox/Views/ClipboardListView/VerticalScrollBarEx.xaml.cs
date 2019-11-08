@@ -1,5 +1,7 @@
 ﻿using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.Utils;
+using Clipbox.Views.ClipboardListView.EventArgsClasses;
+using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,6 +24,8 @@ namespace Clipbox.Views.ClipboardListView
         private Point? _bottomButtonRelativeLocation;
 
         private double _lastThumbTopPosition;
+
+        public event EventHandler<ScrollBarThumbPositionEventArgs> ScrollBarThumbPositionChanged;
 
         public VerticalScrollBarEx()
         {
@@ -50,15 +54,33 @@ namespace Clipbox.Views.ClipboardListView
 
         private void VerticalScrollBarEx_LayoutUpdated(object sender, System.EventArgs e)
         {
-            if (_thumb != null && _thumb.IsLoaded)
+            if (TryGetThumbRect(out Rect thumbRect))
             {
-                Point thumbRelativeLocation = _thumb.TranslatePoint(new Point(0, 0), this);
-                if (_lastThumbTopPosition != thumbRelativeLocation.Y)
+                if (_lastThumbTopPosition != thumbRect.Y)
                 {
                     UpdateButtonsVisibility();
-                    _lastThumbTopPosition = thumbRelativeLocation.Y;
+                    _lastThumbTopPosition = thumbRect.Y;
+                    
+                    ScrollBarThumbPositionChanged?.Invoke(this, new ScrollBarThumbPositionEventArgs(thumbRect));
                 }
             }
+        }
+
+        public bool TryGetThumbRect(out Rect thumbRect)
+        {
+            thumbRect = new Rect();
+
+            if (_thumb == null || !_thumb.IsLoaded)
+            {
+                return false;
+            }
+
+            Point thumbRelativeLocation = _thumb.TranslatePoint(new Point(0, 0), this);
+
+            thumbRect.Location = thumbRelativeLocation;
+            thumbRect.Size = _thumb.RenderSize;
+
+            return true;
         }
 
         private bool TryLoadAndStoreTopBottomButtonsLocations(bool forceLoad = false)

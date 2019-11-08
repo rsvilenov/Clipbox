@@ -102,6 +102,7 @@
     <Compile Include="Views\AdvancedFilters.xaml.cs">
       <DependentUpon>AdvancedFilters.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ClipboardListView\EventArgsClasses\ScrollBarThumbPositionEventArgs.cs" />
     <Compile Include="Views\ClipboardListView\SimpleClipboardListView.xaml.cs">
       <DependentUpon>SimpleClipboardListView.xaml</DependentUpon>
     </Compile>

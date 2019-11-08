@@ -194,6 +194,7 @@ namespace Clipbox.Views
                     }
 
                     _viewModel.TryGetPreviewDimensions(base.MonitorDimensions, wrapper, out cvItemDimInfo);
+                    
                     viewItem = _viewModel.GetViewItem(clipboardItemId, base.MonitorDimensions);
                 });
 
