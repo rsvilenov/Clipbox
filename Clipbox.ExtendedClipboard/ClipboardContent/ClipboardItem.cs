@@ -173,13 +173,22 @@ namespace Clipbox.ExtendedClipboard.ClipboardContent
             // the same objects, referenced by the ClipboardItems
             // in the main collection of the ClipboardManager class.
             var newClipboardDataObjects = new List<IClipboardDataObject>();
-            foreach (var cdo in clone.ClipboardDataObjects)
+            foreach (var icdo in clone.ClipboardDataObjects)
             {
-                newClipboardDataObjects.Add(new ClipboardDataObject
+                ClipboardDataObject newCdo = null;
+                if (icdo.IntermediateFormatObject != null)
                 {
-                    ClipboardFormatName = cdo.ClipboardFormatName,
-                    IntermediateFormatObject = cdo.IntermediateFormatObject
-                });
+                    newCdo = new ClipboardDataObject(clipboardFormatName: icdo.ClipboardFormatName, intermediateFormatObject: icdo.IntermediateFormatObject);
+                }
+                else if (icdo is ClipboardDataObject cdo)
+                {
+                    newCdo = new ClipboardDataObject(clipboardFormatName: icdo.ClipboardFormatName, intermediateFormatGuid: cdo.IntermediateFormatGuid);
+                }
+                else
+                {
+                    throw new InvalidOperationException($"The cdo for format {icdo.ClipboardFormatName} is neither unshrinked, nor it is of type {nameof(ClipboardDataObject)}.");
+                }
+                newClipboardDataObjects.Add(newCdo);
             }
             clone.ClipboardDataObjects = newClipboardDataObjects;
             return clone;

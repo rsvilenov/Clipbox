@@ -143,35 +143,38 @@ namespace Clipbox.ExtendedClipboard
 
                     continue;
                 }
-                
+
                 // restore the clipboard data objects
                 foreach (PersistableClipboardDataObject persistableCdo in persistableClipboardItem.PersistableClipboardDataObjects)
                 {
-                    ClipboardDataObject originalCdo = new ClipboardDataObject
-                    {
-                        ClipboardFormatName = persistableCdo.ClipboardFormatName
-                    };
+                    ClipboardDataObject originalCdo = null;
+
 
                     if (unshrink)
                     {
-                        if (TryGetCdoFromPersistableCdo(persistableCdo, out ClipboardDataObject clipboardDataObject))
+                        if (TryGetCdoFromPersistableCdo(persistableCdo, out ClipboardDataObject restoredCdo))
                         {
-                            originalCdo.IntermediateFormatObject = clipboardDataObject.IntermediateFormatObject;
+                            originalCdo = new ClipboardDataObject(restoredCdo.ClipboardFormatName, restoredCdo.IntermediateFormatObject);
                         }
                     }
+                    else
+                    {
+                        originalCdo = new ClipboardDataObject(persistableCdo.ClipboardFormatName, persistableCdo.IntermediateFormatGuid);
+                    }
+
 
                     clipboardDataObjects.Add(originalCdo);
-                }
 
-                TimestampInfo tsInfo = new TimestampInfo(persistableClipboardItem.TimestampInfo);
-                
-                yield return new ClipboardItem(clipboardItemId, persistableClipboardItem.Source, clipboardDataObjects, tsInfo)
-                {
-                    IsPinned = persistableClipboardItem.IsPinned,
-                    CanTransfer = persistableClipboardItem.CanTransfer,
-                    ShouldTransfer = persistableClipboardItem.ShouldTransfer
-                };
-            }  
+                    TimestampInfo tsInfo = new TimestampInfo(persistableClipboardItem.TimestampInfo);
+
+                    yield return new ClipboardItem(clipboardItemId, persistableClipboardItem.Source, clipboardDataObjects, tsInfo)
+                    {
+                        IsPinned = persistableClipboardItem.IsPinned,
+                        CanTransfer = persistableClipboardItem.CanTransfer,
+                        ShouldTransfer = persistableClipboardItem.ShouldTransfer
+                    };
+                }
+            }
         }
 
         public void DeleteClipboardItemFromStorage(string clipboardItemId)
@@ -250,11 +253,7 @@ namespace Clipbox.ExtendedClipboard
 
             if (deserializationSuccess)
             {
-                clipboardDataObject = new ClipboardDataObject
-                {
-                    IntermediateFormatObject = intermediateFormatObj,
-                    ClipboardFormatName = persistableCdo.ClipboardFormatName
-                };
+                clipboardDataObject = new ClipboardDataObject(clipboardFormatName: persistableCdo.ClipboardFormatName, intermediateFormatObject: intermediateFormatObj);
             }
 
             return deserializationSuccess;
@@ -377,8 +376,8 @@ namespace Clipbox.ExtendedClipboard
                 throw new ArgumentException($"{nameof(item.ClipboardDataObjects)} is empty.");
             }
 
-            return item.ClipboardDataObjects.Any(cdo => 
-            _persistenceExtentionContainer.CheckIsIntermediateFormatSupported(cdo.IntermediateFormatObject.FormatGuid));
+            return item.ClipboardDataObjects.OfType<ClipboardDataObject>().Any(cdo => 
+            _persistenceExtentionContainer.CheckIsIntermediateFormatSupported(cdo.IntermediateFormatGuid));
             
         }
 

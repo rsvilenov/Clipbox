@@ -468,11 +468,7 @@ namespace Clipbox.ExtendedClipboard
                     }
                     catch (Exception ex) { throw new ClipboxExtentionException(nameof(formatSupportExtention.PtrToIntermediateFormat), formatSupportExtention.GetType(), ex); }
 
-                    yield return new ClipboardDataObject
-                    {
-                        ClipboardFormatName = format.Value,
-                        IntermediateFormatObject = intermediateFormatObj
-                    };
+                    yield return new ClipboardDataObject(clipboardFormatName: format.Value, intermediateFormatObject: intermediateFormatObj);
                 }
             }
             finally
@@ -591,11 +587,7 @@ namespace Clipbox.ExtendedClipboard
                     throw new InvalidOperationException($"Unsupported clipboard format: {generatedCdo.ClipboardFormatName}");
                 }
 
-                var cdo = new ClipboardDataObject
-                {
-                    ClipboardFormatName = generatedCdo.ClipboardFormatName,
-                    IntermediateFormatObject = generatedCdo.IntermediateFormatObject
-                };
+                var cdo = new ClipboardDataObject(clipboardFormatName: generatedCdo.ClipboardFormatName, intermediateFormatObject: generatedCdo.IntermediateFormatObject);
 
                 newClipboardDataObjects.Add(cdo);
             }
