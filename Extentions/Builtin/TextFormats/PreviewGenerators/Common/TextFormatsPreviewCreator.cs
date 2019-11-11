@@ -2,23 +2,26 @@
 using Clipbox.Infrastructure.ExtentionMethods;
 using Clipbox.Infrastructure.UI.ExtentionMethods;
 using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace Clipbox.Extentions.BuiltIn.TextFormats.PreviewGenerators.Common
 {
-    public static class TextPreviewCreator
+    public class TextFormatsPreviewCreator
     {
         public enum TextFormat
         {
             Text,
             Rtf
         }
+
 
         public static ImagePreviewData GeneratePreview(string textData, TextFormat format, int desiredPreviewWidth, int maxPreviewHeight)
         {
@@ -27,19 +30,39 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.PreviewGenerators.Common
                 Background = System.Windows.Media.Brushes.Gainsboro
             };
 
-            if (format == TextFormat.Text)
-            {
-                // TODO: consider changing this according to the dpi, or perhaps scaling the entire RichTextBox
-                rtb.FontSize = 14;
-            }
-
             rtb.SelectAll();
 
-            var textDataBytes = Encoding.UTF8.GetBytes(textData);
-            using (MemoryStream ms = new MemoryStream(textDataBytes))
+            try
             {
-                rtb.Selection.Load(ms, format == TextFormat.Text ? DataFormats.Text : DataFormats.Rtf);
+                RtfProcessor rp = new RtfProcessor(Colors.Brown, 18 * 2);
+                if (format == TextFormat.Text)
+                {
+                    if (!rp.TryLoadFromText(textData, 14 * 2))
+                    {
+                        rtb.FontSize = 14;
+                        string rtfFromRtb = GetRtfUsingRichTextBox(textData, rtb);
+                        rp.LoadFromRtf(rtfFromRtb);
+                    }
+                }
+                else
+                {
+                    rp.LoadFromRtf(textData);
+                }
+
+                rp.ReplaceSpacingChar(RtfProcessor.SpacingChars.Space);
+                rp.ReplaceSpacingChar(RtfProcessor.SpacingChars.Tab);
+                rp.ReplaceSpacingChar(RtfProcessor.SpacingChars.LineBreak);
+
+                string res = rp.GetProcessedRtf();
+                LoadTextDataIntoRichTextBox(res, TextFormat.Rtf, rtb);
             }
+            catch
+            {
+                // load the text directly
+                LoadTextDataIntoRichTextBox(textData, format, rtb);
+            }
+
+
 
             string text = rtb.Selection.Text;
             int textLength = text.Length;
@@ -53,12 +76,6 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.PreviewGenerators.Common
 
             rtb.UpdateLayout();
 
-            RtbTextProcessor rtbProc = new RtbTextProcessor();
-            rtbProc.AdjustSpacing(rtb);
-            rtbProc.TrimSeparatorCharSeries(rtb, RtbTextProcessor.SeparatorChars.Enter);
-            rtbProc.TrimSeparatorCharSeries(rtb, RtbTextProcessor.SeparatorChars.Space);
-            rtbProc.TrimSeparatorCharSeries(rtb, RtbTextProcessor.SeparatorChars.Tab);
-            
             FormattedText ft = FlowDocumentToFormattedTextConverter.GetFormattedText(rtb.Document);
 
             double newRtbWidth = ft.WidthIncludingTrailingWhitespace;
@@ -72,7 +89,7 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.PreviewGenerators.Common
             }
 
             // hack: after the measuring phase, it seems that the desired hight is less than the text height, hence maxRtbHeight + 20 
-            rtb.Measure(new System.Windows.Size(newRtbWidth, maxRtbHeight+20));
+            rtb.Measure(new System.Windows.Size(newRtbWidth, maxRtbHeight + 20));
             rtb.Arrange(new Rect(rtb.DesiredSize));
             rtb.UpdateLayout();
 
@@ -111,6 +128,39 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.PreviewGenerators.Common
             };
         }
 
+        private static void LoadTextDataIntoRichTextBox(string textData, TextFormat format, RichTextBox rtb)
+        {
+            var textDataBytes = Encoding.UTF8.GetBytes(textData);
+
+            TextRange wholeDoc = new TextRange(rtb.Document.ContentStart, rtb.Document.ContentEnd);
+            using (MemoryStream ms = new MemoryStream(textDataBytes))
+            {
+                wholeDoc.Load(ms, format == TextFormat.Text ? DataFormats.Text : DataFormats.Rtf);
+            }
+        }
+
+        private static string GetRtfUsingRichTextBox(string textData, RichTextBox rtb)
+        {
+            var textDataBytes2 = Encoding.UTF8.GetBytes(textData);
+            using (MemoryStream ms = new MemoryStream(textDataBytes2))
+            {
+                rtb.Selection.Load(ms, DataFormats.Text);
+            }
+
+            string rtfFromRtb = string.Empty;
+            using (MemoryStream ms = new MemoryStream())
+            {
+                TextRange range2 = new TextRange(rtb.Document.ContentStart, rtb.Document.ContentEnd);
+                range2.Save(ms, DataFormats.Rtf);
+                ms.Seek(0, SeekOrigin.Begin);
+                using (StreamReader sr = new StreamReader(ms))
+                {
+                    rtfFromRtb = sr.ReadToEnd();
+                    return rtfFromRtb;
+                }
+            }
+        }
+
         /// <summary>
         /// https://stackoverflow.com/questions/14118003/snapshot-of-an-wpf-canvas-area-using-rendertargetbitmap
         /// ILIA BROUDNO's answer
@@ -135,7 +185,5 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.PreviewGenerators.Common
 
             return rtb;
         }
-
-
     }
 }

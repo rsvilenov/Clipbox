@@ -63,8 +63,10 @@
     <Compile Include="PersistenceSupport\TextPersistenceSupport.cs" />
     <Compile Include="PersistenceSupport\UnicodeTextPersistenceSupport.cs" />
     <Compile Include="PreviewGenerators\Common\FlowDocumentToFormattedTextConverter.cs" />
-    <Compile Include="PreviewGenerators\Common\TextPreviewCreator.cs" />
+    <Compile Include="PreviewGenerators\Common\TextFormatsPreviewCreator.cs" />
+    <Compile Include="PreviewGenerators\Common\TextPreviewCreatorSlow.cs" />
     <Compile Include="PreviewGenerators\HtmlPreviewGenerator.cs" />
+    <Compile Include="PreviewGenerators\Common\RtfRtfProcessor.cs" />
     <Compile Include="PreviewGenerators\RtfPreviewGenerator.cs" />
     <Compile Include="PreviewGenerators\TextPreviewGenerator.cs" />
     <Compile Include="PreviewGenerators\Common\RtbTextProcessor.cs" />

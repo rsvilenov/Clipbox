@@ -160,7 +160,8 @@ namespace Clipbox.Services
             }
 
             return _searchProvider.FindIndexEntryIds(searchTerms)
-                // prevent returning of nonexistant ids due to outdated/corrupt index
+                // prevent returning of nonexistant ids due to outdated/corrupt index, 
+                // or due to non-persistable items having been indexed
                 .Where(id => _allClipboardItemIds.Contains(id));
         }
 

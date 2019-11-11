@@ -139,9 +139,10 @@ namespace Clipbox.Services
 
                 int itemRequestedHeight = CalculateItemRequestedHeight(monitorDimensions, out bool hasHeightBeenDpiScaled);
                 int itemRequestedWidth = itemRequestedHeight;
-
+                
                 IClipboardItem clipboardItem = _clipboardManager.GetClipboardItem(clipboardItemId, restoreShrinked: true);
                 PreviewDataTransferObject pdto = GeneratePreviewDataTransferObject(clipboardItem, itemRequestedHeight, itemRequestedWidth);
+                
                 CacheGeneratedData(monitorDimensions, itemRequestedHeight, itemRequestedWidth, pdto, hasHeightBeenDpiScaled);
                 
                 _clipboardItemIdsWithCompletedTasks.TryAdd(clipboardItem.Id, true);
@@ -436,6 +437,7 @@ namespace Clipbox.Services
                 ISinglePreviewGenerator singlePreviewGenerator = previewGenerator as ISinglePreviewGenerator;
                 
                 IPreviewData previewData = null;
+
                 try { previewData = singlePreviewGenerator.GetPreview(cdoForPreview.IntermediateFormatObject, itemRequestedWidth, itemRequestedHeight); } // TODO: find a way to determine the preview dimentions
                 catch (Exception ex) { throw new ClipboxExtentionException(nameof(singlePreviewGenerator.GetPreview), singlePreviewGenerator.GetType(), ex); }
 

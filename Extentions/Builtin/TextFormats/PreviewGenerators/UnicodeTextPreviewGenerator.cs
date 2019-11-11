@@ -24,7 +24,7 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.PreviewGenerators
                 _dispatcher.Invoke(DispatcherPriority.Background,
                     new Action(() =>
                     {
-                        preview = TextPreviewCreator.GeneratePreview(text, TextPreviewCreator.TextFormat.Text, previewWidth, previewHeight);
+                        preview = TextFormatsPreviewCreator.GeneratePreview(text, TextFormatsPreviewCreator.TextFormat.Text, previewWidth, previewHeight);
                     }));
             }
 
