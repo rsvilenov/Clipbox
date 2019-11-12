@@ -111,12 +111,16 @@ namespace Clipbox.Services
             _bgGenerationDispatcher.BeginInvoke(() =>
             {
                 var task = StartPreviewGenerationTask(clipboardItemId, monitorDimensions);
+                
+                // do not block the queue - wait in a separate task
+                Task.Run(() =>
+                {
+                    // abandon the tasks that do not finish on time
+                    task.Wait(TimeSpan.FromMilliseconds(PREVIEW_GENERATION_TIMEOUT_MS));
 
-                // do not block the queue - abandon the tasks that do not finish on time
-                task.Wait(TimeSpan.FromMilliseconds(PREVIEW_GENERATION_TIMEOUT_MS));
-
-                // signal the event
-                mre.Set();
+                    // signal the event
+                    mre.Set();
+                });
             });
 
             return true;
@@ -280,6 +284,7 @@ namespace Clipbox.Services
             IClipboardDataObject cdoForPreview = clipboardItem.ClipboardDataObjects.Single(cdo => cdo.IntermediateFormatObject.FormatGuid == formatGuidPreviewGeneratorPair.Value.Key);
             
             PreviewDataTransferObject pdto = GetPdto(itemRequestedHeight, itemRequestedWidth, previewGenerator, cdoForPreview);
+            
             pdto.ClipboardItemId = clipboardItem.Id;
 
             return pdto;
