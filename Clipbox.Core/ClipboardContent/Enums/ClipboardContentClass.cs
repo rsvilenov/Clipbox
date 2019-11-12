@@ -10,6 +10,7 @@
         AuxilliaryData,
         Text,
         Image,
-        File
+        File,
+        RichText
     }
 }

@@ -4,6 +4,7 @@ using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using Clipbox.Extentions.BuiltIn.TextFormats.IntermediateFormats;
 
 namespace Clipbox.Extentions.BuiltIn.TextFormats.UIExtentions
 {
@@ -22,7 +23,7 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.UIExtentions
         public override bool OnShouldShow(IEnumerable<IClipboardItem> concatinatedItems)
         {
             return concatinatedItems.Count() >= 1 
-                && concatinatedItems.All(item => item.ClipboardDataObjects.Any(obj => obj.ClipboardFormatName == "Rich Text Format"));
+                && concatinatedItems.All(item => item.ClipboardDataObjects.Any(obj => obj.IntermediateFormatObject is RichTextIntermediateFormat));
         }
 
         public override void OnExtentionViewGenerating(IEnumerable<IClipboardItem> concatinatedItems, ref UIElement additionalViewElement, Size availableSize)

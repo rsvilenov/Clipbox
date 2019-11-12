@@ -16,6 +16,6 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.IntermediateFormats
 
         public bool IsTransferable => true;
 
-        public ClipboardContentClass ContentClass => ClipboardContentClass.Text;
+        public ClipboardContentClass ContentClass => ClipboardContentClass.RichText;
     }
 }
