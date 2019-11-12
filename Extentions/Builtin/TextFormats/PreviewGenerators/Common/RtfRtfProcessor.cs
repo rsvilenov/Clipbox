@@ -45,7 +45,11 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.PreviewGenerators.Common
             if (ContainsUnicodeCharacter(text))
                 return false;
 
-            text = text.Replace("\t", @"\tab ").Replace("\r\n", "\\par\r\n");
+            text = text
+                .Replace("\\",@"\\")
+                .Replace("\t", @"\tab ").Replace("\r\n", "\\par\r\n")
+                .Replace("{", @"\{")
+                .Replace("}", @"\}");
 
             StringBuilder newRtfSb = new StringBuilder();
             newRtfSb.AppendLine(@"{\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang2057{\fonttbl{\f0\fnil\fcharset0 Calibri;}}");

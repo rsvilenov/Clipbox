@@ -5,6 +5,7 @@ using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -27,7 +28,7 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.PreviewGenerators.Common
         {
             RichTextBox rtb = new RichTextBox
             {
-                Background = System.Windows.Media.Brushes.Gainsboro
+                Background = System.Windows.Media.Brushes.Gainsboro,
             };
 
             rtb.SelectAll();
@@ -62,14 +63,17 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.PreviewGenerators.Common
                 LoadTextDataIntoRichTextBox(textData, format, rtb);
             }
 
-
-
             string text = rtb.Selection.Text;
             int textLength = text.Length;
             int wordCount = text.Split(new char[] { ' ' },
                 StringSplitOptions.RemoveEmptyEntries).Length;
             double maxRtbWidth = desiredPreviewWidth * 3;
             double maxRtbHeight = desiredPreviewWidth * 3;
+
+            if (format == TextFormat.Text)
+            {
+                AdjustLineSpacing(rtb);
+            }
 
             rtb.Measure(new System.Windows.Size(maxRtbWidth, maxRtbHeight));
             rtb.Arrange(new Rect(rtb.DesiredSize));
@@ -126,6 +130,15 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.PreviewGenerators.Common
                 Preview = preview,
                 Annotation = $"{wordCount}/{textLength}"
             };
+        }
+
+        private static void AdjustLineSpacing(RichTextBox rtb)
+        {
+            foreach (Paragraph p in rtb.Document.Blocks.OfType<Paragraph>())
+            {
+                p.Margin = new Thickness(0);
+                p.LineHeight = 2;
+            }
         }
 
         private static void LoadTextDataIntoRichTextBox(string textData, TextFormat format, RichTextBox rtb)
