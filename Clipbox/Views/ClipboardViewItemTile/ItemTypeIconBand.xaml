@@ -100,7 +100,7 @@
                     </ContentControl>
 
                     <ContentControl
-                        MaxHeight="17"
+                        MaxHeight="16"
                         Margin="5,0,0,0"
                         Foreground="#e4e4e6"
                         Template="{DynamicResource ClassRichTextIcon}"

@@ -161,19 +161,18 @@ namespace Clipbox.ExtendedClipboard
                     {
                         originalCdo = new ClipboardDataObject(persistableCdo.ClipboardFormatName, persistableCdo.IntermediateFormatGuid);
                     }
-
-
+                    
                     clipboardDataObjects.Add(originalCdo);
-
-                    TimestampInfo tsInfo = new TimestampInfo(persistableClipboardItem.TimestampInfo);
-
-                    yield return new ClipboardItem(clipboardItemId, persistableClipboardItem.Source, clipboardDataObjects, tsInfo)
-                    {
-                        IsPinned = persistableClipboardItem.IsPinned,
-                        CanTransfer = persistableClipboardItem.CanTransfer,
-                        ShouldTransfer = persistableClipboardItem.ShouldTransfer
-                    };
                 }
+                
+                TimestampInfo tsInfo = new TimestampInfo(persistableClipboardItem.TimestampInfo);
+
+                yield return new ClipboardItem(clipboardItemId, persistableClipboardItem.Source, clipboardDataObjects, tsInfo)
+                {
+                    IsPinned = persistableClipboardItem.IsPinned,
+                    CanTransfer = persistableClipboardItem.CanTransfer,
+                    ShouldTransfer = persistableClipboardItem.ShouldTransfer
+                };
             }
         }
 
