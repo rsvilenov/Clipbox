@@ -62,7 +62,15 @@ namespace Clipbox.ViewModels.BindableObjects
             get { return _isViewItemLoaded; }
             set { SetField(ref _isViewItemLoaded, value); }
         }
-        
+
+        private bool _isShownIntoView;
+
+        public bool IsShownIntoView
+        {
+            get { return _isShownIntoView; }
+            set { SetField(ref _isShownIntoView, value); }
+        }
+
         private bool _isSelected;
 
         public bool IsSelected

@@ -370,12 +370,15 @@ namespace Clipbox.Views.ClipboardListView
                     if ((rect.Contains(bounds.TopLeft) || rect.Contains(bounds.BottomRight))
                         && !lviVm.IsViewItemLoaded)
                     {
+                        lviVm.IsShownIntoView = true;
                         // load the full view item
                         ViewItemLoadingRequested?.Invoke(this, new ClipboardItemManipulationEventArgs(lviVm.Id));
                     }
                 }
                 else
                 {
+                    lviVm.IsShownIntoView = false;
+
                     ViewItemLoadingCancelRequested?.Invoke(this, new ClipboardItemManipulationEventArgs(lviVm.Id));
 
                     if (lviVm.IsViewItemLoaded

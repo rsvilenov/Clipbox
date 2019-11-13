@@ -156,6 +156,7 @@ namespace Clipbox.Services
         [HandleProcessCorruptedStateExceptions]
         public PreviewDataTransferObject GetPreviewDataTransferObject(IClipboardItem clipboardItem, MonitorDimensions monitorDimensions)
         {
+            System.Threading.Thread.Sleep(3000);
             if (clipboardItem == null)
             {
                 throw new ArgumentNullException(nameof(clipboardItem));

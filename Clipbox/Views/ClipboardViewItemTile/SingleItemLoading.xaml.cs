@@ -36,11 +36,19 @@ namespace Clipbox.Views.ClipboardViewItemTile
         }
 
         public static readonly DependencyProperty ViewItemDimensionsProperty =
-            DependencyProperty.Register(nameof(ViewItemDimensions), typeof(ClipboardViewSubItemDimension), typeof(SingleItemLoading), new PropertyMetadata(null, ViewItemDimensions_PropertyChanged));
+            DependencyProperty.Register(nameof(ViewItemDimensions), typeof(ClipboardViewSubItemDimension), typeof(SingleItemLoading), new PropertyMetadata(null));
 
-        private static void ViewItemDimensions_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+
+
+        public bool IsShownIntoView
         {
-            
+            get { return (bool)GetValue(IsShownIntoViewProperty); }
+            set { SetValue(IsShownIntoViewProperty, value); }
         }
+
+        public static readonly DependencyProperty IsShownIntoViewProperty =
+            DependencyProperty.Register(nameof(IsShownIntoView), typeof(bool), typeof(SingleItemLoading), new PropertyMetadata(false));
+
+
     }
 }

@@ -26,6 +26,23 @@
                     To="1"
                     Duration="0:0:0.7" />
             </Storyboard>
+            <Storyboard x:Key="FadiInWithDelay">
+                <DoubleAnimationUsingKeyFrames BeginTime="0:0:0" Storyboard.TargetProperty="Opacity">
+                    <SplineDoubleKeyFrame KeyTime="0:0:0.5" Value="0" />
+                </DoubleAnimationUsingKeyFrames>
+                <ObjectAnimationUsingKeyFrames
+                    BeginTime="0:0:1.5"
+                    Storyboard.TargetProperty="Visibility"
+                    Duration="0">
+                    <DiscreteObjectKeyFrame Value="{x:Static Visibility.Visible}" />
+                </ObjectAnimationUsingKeyFrames>
+                <DoubleAnimation
+                    BeginTime="0:0:1.5"
+                    Storyboard.TargetProperty="(UIElement.Opacity)"
+                    From="0"
+                    To="0.4"
+                    Duration="0:0:0.7" />
+            </Storyboard>
         </Grid.Resources>
 
         <Grid.Style>
@@ -52,6 +69,31 @@
             MinHeight="{Binding ThumbnailAreaMinHeight}"
             MaxHeight="{Binding ThumbnailAreaMaxHeight}"
             Margin="10">
+
+            <ContentControl
+                Width="30"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Foreground="Gray"
+                Opacity="0.4"
+                Template="{DynamicResource LoadingSolidIcon}"
+                Visibility="Hidden">
+                <ContentControl.Style>
+                    <Style TargetType="ContentControl">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=IsShownIntoView}" Value="True">
+                                <DataTrigger.EnterActions>
+                                    <BeginStoryboard x:Name="DelayShowStoryboard" Storyboard="{StaticResource FadiInWithDelay}" />
+                                </DataTrigger.EnterActions>
+                                <DataTrigger.ExitActions>
+                                    <RemoveStoryboard BeginStoryboardName="DelayShowStoryboard" />
+                                </DataTrigger.ExitActions>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+
+                </ContentControl.Style>
+            </ContentControl>
             <!--  leave this transparent for now... just to occupy the space  -->
             <Rectangle
                 Width="{Binding ViewItemDimensions.PreviewWidth}"
