@@ -40,7 +40,7 @@
                     BeginTime="0:0:1.5"
                     Storyboard.TargetProperty="(UIElement.Opacity)"
                     From="0"
-                    To="0.4"
+                    To="0.6"
                     Duration="0:0:0.7" />
             </Storyboard>
         </Grid.Resources>
