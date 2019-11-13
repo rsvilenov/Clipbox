@@ -1,4 +1,5 @@
 ﻿using Clipbox.Core;
+using Clipbox.Core.ClipboardContent.Enums;
 using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
@@ -354,6 +355,7 @@ namespace Clipbox.ExtendedClipboard
             {
                 SourceWindowInfo = GetForemostWindowInfo(),
                 MachineName = Environment.MachineName,
+                MachineType = MachineType.PC,
                 MachineUniqueId = MachineUtils.GetMachineGuid(),
                 UserName = Environment.UserName
             };
@@ -572,6 +574,7 @@ namespace Clipbox.ExtendedClipboard
             {
                 SourceWindowInfo = GetOwnWindowInfo(),
                 MachineName = Environment.MachineName,
+                MachineType = MachineType.PC,
                 MachineUniqueId = MachineUtils.GetMachineGuid(),
                 UserName = Environment.UserName
             };

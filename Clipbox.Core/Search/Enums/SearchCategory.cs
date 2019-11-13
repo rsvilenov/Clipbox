@@ -7,6 +7,7 @@
         SourceWindowName,
         SourceMachineName,
         SourceMachineUniqueId,
+        SourceMachineType,
         /// <summary>
         /// Text and Description
         /// </summary>

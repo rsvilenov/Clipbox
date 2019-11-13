@@ -67,6 +67,7 @@ namespace Clipbox.ViewModels
 
             viewItem.IsCloudItem = clipboardItem.Source.MachineUniqueId != MachineUtils.GetMachineGuid();
             viewItem.SourceWindowMachineName = clipboardItem.Source.MachineName;
+            viewItem.SourceMachineType = clipboardItem.Source.MachineType;
             viewItem.SourceWindowUserName = clipboardItem.Source.UserName;
             viewItem.SourceWindowCaption = clipboardItem.Source.SourceWindowInfo.Caption;
             viewItem.DateCreated = new DateTime(clipboardItem.TimestampInfo.EntryDateTicks);

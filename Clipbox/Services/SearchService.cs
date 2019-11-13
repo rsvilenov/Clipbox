@@ -229,6 +229,12 @@ namespace Clipbox.Services
                 indexUnits.Add(smuidUnit);
             }
 
+            SourceMachineTypeIndexUnit smtUnitm = new SourceMachineTypeIndexUnit(clipboardItem);
+            if (smUnitm.Validate())
+            {
+                indexUnits.Add(smUnitm);
+            }
+
             SourceWindowCaptionIndexUnit swUnit = new SourceWindowCaptionIndexUnit(clipboardItem);
             if (swUnit.Validate())
             {

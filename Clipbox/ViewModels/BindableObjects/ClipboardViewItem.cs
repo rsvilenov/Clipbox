@@ -40,6 +40,14 @@ namespace Clipbox.ViewModels.BindableObjects
             set { SetField(ref _sourceWindowUserName, value); }
         }
 
+        private MachineType _sourceMachineType;
+
+        public MachineType SourceMachineType
+        {
+            get { return _sourceMachineType; }
+            set { SetField(ref _sourceMachineType, value); }
+        }
+
         private bool _isPinned;
 
         public bool IsPinned
