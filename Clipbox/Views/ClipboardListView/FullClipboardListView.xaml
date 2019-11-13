@@ -653,6 +653,7 @@
                                                     <DataTemplate>
                                                         <tile:MultiItemLoading
                                                             IsFadeInEnabled="False"
+                                                            IsShownIntoView="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.IsShownIntoView}"
                                                             NumberOfItemsWithoutPreview="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.DimensionInfo.NumberOfItemsWithoutPreview}"
                                                             ViewSubItemDimensions="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.DimensionInfo.Dimensions, Mode=OneWay}">
                                                             <tile:MultiItemLoading.Height>

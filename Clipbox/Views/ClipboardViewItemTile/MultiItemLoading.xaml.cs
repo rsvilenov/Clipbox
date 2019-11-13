@@ -107,5 +107,15 @@ namespace Clipbox.Views.ClipboardViewItemTile
                 _viewModel.PreviewItems.Add(item);
             }
         }
+
+        public bool IsShownIntoView
+        {
+            get { return (bool)GetValue(IsShownIntoViewProperty); }
+            set { SetValue(IsShownIntoViewProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsShownIntoViewProperty =
+            DependencyProperty.Register(nameof(IsShownIntoView), typeof(bool), typeof(MultiItemLoading), new PropertyMetadata(false));
+
     }
 }
