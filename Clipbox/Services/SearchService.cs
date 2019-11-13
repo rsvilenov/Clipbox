@@ -230,9 +230,9 @@ namespace Clipbox.Services
             }
 
             SourceMachineTypeIndexUnit smtUnitm = new SourceMachineTypeIndexUnit(clipboardItem);
-            if (smUnitm.Validate())
+            if (smtUnitm.Validate())
             {
-                indexUnits.Add(smUnitm);
+                indexUnits.Add(smtUnitm);
             }
 
             SourceWindowCaptionIndexUnit swUnit = new SourceWindowCaptionIndexUnit(clipboardItem);
