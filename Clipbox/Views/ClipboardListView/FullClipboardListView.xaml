@@ -562,6 +562,7 @@
                                                     <DataTemplate>
                                                         <tile:SingleItemLoading
                                                             IsFadeInEnabled="False"
+                                                            IsLoadingIndicatorFadeInEnabled="{Binding Path=IsFadeInOfItemsEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type lv:FullClipboardListView}}}"
                                                             IsShownIntoView="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.IsShownIntoView}"
                                                             PreviewContainerBackgroundColor="{DynamicResource TaskbarColor}"
                                                             ThumbnailAreaMaxHeight="{Binding Path=ClipboardViewItemMaxHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type lv:ClipboardListViewBase}}}"
@@ -653,6 +654,7 @@
                                                     <DataTemplate>
                                                         <tile:MultiItemLoading
                                                             IsFadeInEnabled="False"
+                                                            IsLoadingIndicatorFadeInEnabled="{Binding Path=IsFadeInOfItemsEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type lv:FullClipboardListView}}}"
                                                             IsShownIntoView="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.IsShownIntoView}"
                                                             NumberOfItemsWithoutPreview="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.DimensionInfo.NumberOfItemsWithoutPreview}"
                                                             ViewSubItemDimensions="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.DimensionInfo.Dimensions, Mode=OneWay}">

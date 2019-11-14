@@ -55,7 +55,7 @@
                 <Style.Triggers>
                     <MultiDataTrigger>
                         <MultiDataTrigger.Conditions>
-                            <Condition Binding="{Binding Path=IsVisible, RelativeSource={RelativeSource Mode=Self}}" Value="True" />
+                            <Condition Binding="{Binding Path=IsShownIntoView, RelativeSource={RelativeSource Mode=Self}}" Value="True" />
                             <Condition Binding="{Binding Path=IsFadeInEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type tile:MultiItemLoading}}}" Value="True" />
                         </MultiDataTrigger.Conditions>
                         <MultiDataTrigger.EnterActions>
@@ -189,6 +189,7 @@
                                                             Width="30"
                                                             HorizontalAlignment="Center"
                                                             VerticalAlignment="Center"
+                                                            DataContext="{Binding Path=DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=tile:MultiItemLoading}}"
                                                             Foreground="Gray"
                                                             Opacity="0.4"
                                                             Template="{DynamicResource LoadingSolidIcon}"
@@ -196,14 +197,25 @@
                                                             <ContentControl.Style>
                                                                 <Style TargetType="ContentControl">
                                                                     <Style.Triggers>
-                                                                        <DataTrigger Binding="{Binding Path=IsShownIntoView, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=tile:MultiItemLoading}}" Value="True">
-                                                                            <DataTrigger.EnterActions>
+                                                                        <MultiDataTrigger>
+                                                                            <MultiDataTrigger.Conditions>
+                                                                                <Condition Binding="{Binding Path=IsShownIntoView}" Value="True" />
+                                                                                <Condition Binding="{Binding Path=IsLoadingIndicatorFadeInEnabled}" Value="True" />
+                                                                            </MultiDataTrigger.Conditions>
+                                                                            <MultiDataTrigger.EnterActions>
                                                                                 <BeginStoryboard x:Name="DelayShowStoryboard" Storyboard="{StaticResource FadiInWithDelay}" />
-                                                                            </DataTrigger.EnterActions>
-                                                                            <DataTrigger.ExitActions>
+                                                                            </MultiDataTrigger.EnterActions>
+                                                                            <MultiDataTrigger.ExitActions>
                                                                                 <RemoveStoryboard BeginStoryboardName="DelayShowStoryboard" />
-                                                                            </DataTrigger.ExitActions>
-                                                                        </DataTrigger>
+                                                                            </MultiDataTrigger.ExitActions>
+                                                                        </MultiDataTrigger>
+                                                                        <MultiDataTrigger>
+                                                                            <MultiDataTrigger.Conditions>
+                                                                                <Condition Binding="{Binding Path=IsShownIntoView}" Value="True" />
+                                                                                <Condition Binding="{Binding Path=IsLoadingIndicatorFadeInEnabled}" Value="False" />
+                                                                            </MultiDataTrigger.Conditions>
+                                                                            <Setter Property="Visibility" Value="Visible" />
+                                                                        </MultiDataTrigger>
                                                                     </Style.Triggers>
                                                                 </Style>
                                                             </ContentControl.Style>

@@ -50,5 +50,16 @@ namespace Clipbox.Views.ClipboardViewItemTile
             DependencyProperty.Register(nameof(IsShownIntoView), typeof(bool), typeof(SingleItemLoading), new PropertyMetadata(false));
 
 
+
+        public bool IsLoadingIndicatorFadeInEnabled
+        {
+            get { return (bool)GetValue(IsLoadingIndicatorFadeInEnabledProperty); }
+            set { SetValue(IsLoadingIndicatorFadeInEnabledProperty, value); }
+        }
+        
+        public static readonly DependencyProperty IsLoadingIndicatorFadeInEnabledProperty =
+            DependencyProperty.Register(nameof(IsLoadingIndicatorFadeInEnabled), typeof(bool), typeof(SingleItemLoading), new PropertyMetadata(false));
+
+
     }
 }
