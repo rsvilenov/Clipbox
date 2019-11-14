@@ -50,8 +50,8 @@
                 <Style.Triggers>
                     <MultiDataTrigger>
                         <MultiDataTrigger.Conditions>
-                            <Condition Binding="{Binding Path=IsShownIntoView, RelativeSource={RelativeSource Mode=Self}}" Value="True" />
-                            <Condition Binding="{Binding Path=IsFadeInEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type tile:SingleItemLoading}}}" Value="True" />
+                            <Condition Binding="{Binding Path=IsShownIntoView}" Value="True" />
+                            <Condition Binding="{Binding Path=IsFadeInEnabled}" Value="True" />
                         </MultiDataTrigger.Conditions>
                         <MultiDataTrigger.EnterActions>
                             <BeginStoryboard x:Name="FadeInItemContents" Storyboard="{StaticResource FadeInItem}" />
@@ -75,11 +75,11 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Foreground="Gray"
-                Opacity="0.4"
-                Template="{DynamicResource LoadingSolidIcon}"
-                Visibility="Hidden">
+                Template="{DynamicResource LoadingSolidIcon}">
                 <ContentControl.Style>
                     <Style TargetType="ContentControl">
+                        <Setter Property="Visibility" Value="Hidden" />
+                        <Setter Property="Opacity" Value="0.6" />
                         <Style.Triggers>
                             <MultiDataTrigger>
                                 <MultiDataTrigger.Conditions>

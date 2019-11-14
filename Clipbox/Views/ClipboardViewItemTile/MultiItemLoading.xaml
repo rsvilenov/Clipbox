@@ -191,11 +191,11 @@
                                                             VerticalAlignment="Center"
                                                             DataContext="{Binding Path=DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=tile:MultiItemLoading}}"
                                                             Foreground="Gray"
-                                                            Opacity="0.4"
-                                                            Template="{DynamicResource LoadingSolidIcon}"
-                                                            Visibility="Hidden">
+                                                            Template="{DynamicResource LoadingSolidIcon}">
                                                             <ContentControl.Style>
                                                                 <Style TargetType="ContentControl">
+                                                                    <Setter Property="Visibility" Value="Hidden" />
+                                                                    <Setter Property="Opacity" Value="0.6" />
                                                                     <Style.Triggers>
                                                                         <MultiDataTrigger>
                                                                             <MultiDataTrigger.Conditions>
