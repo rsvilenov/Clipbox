@@ -94,6 +94,7 @@
     <Compile Include="Services\DataObjects\PreviewDimensionInfo.cs" />
     <Compile Include="Services\DataObjects\PreviewDimensions.cs" />
     <Compile Include="Services\DataObjects\PreviewItemTransferObject.cs" />
+    <Compile Include="Services\Enums\PreviewGenerationStatus.cs" />
     <Compile Include="Services\Enums\TrayIconVisibilityPreference.cs" />
     <Compile Include="Services\EventArgsClasses\SyncEventArgs.cs" />
     <Compile Include="Services\Interfaces\ISearchService.cs" />

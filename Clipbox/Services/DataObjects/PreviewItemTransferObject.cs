@@ -1,6 +1,7 @@
 ﻿using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.PreviewData;
 using Clipbox.Infrastructure.ExtentionMethods;
+using Clipbox.Services.Enums;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -17,6 +18,8 @@ namespace Clipbox.Services.DataObjects
         public string Description { get; set; }
 
         public PreviewDimensions PreviewDimensions { get; set; }
+
+        public PreviewGenerationStatus PreviewGenereationStatus { get; set; }
 
         public static PreviewItemTransferObject FromPreviewData(IPreviewData previewData)
         {
@@ -55,6 +58,7 @@ namespace Clipbox.Services.DataObjects
                 Description = filePreviewData.Path,
                 Text = filePreviewData.Annotation,
                 BitmapData = bitmapData,
+                PreviewGenereationStatus = bitmapData != null ? PreviewGenerationStatus.Success : PreviewGenerationStatus.NoBitmapDataGenerated,
                 PreviewDimensions = bmpSize == Size.Empty ? null : PreviewDimensions.FromDrawingSize(bmpSize)
             };
         }
@@ -91,6 +95,7 @@ namespace Clipbox.Services.DataObjects
             {
                 Text = imagePreviewData.Annotation,
                 BitmapData = bitmapData,
+                PreviewGenereationStatus = bitmapData != null ? PreviewGenerationStatus.Success : PreviewGenerationStatus.NoBitmapDataGenerated,
                 PreviewDimensions = bmpSize == Size.Empty ? null : PreviewDimensions.FromDrawingSize(bmpSize)
             };
         }

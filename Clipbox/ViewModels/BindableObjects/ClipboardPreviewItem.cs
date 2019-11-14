@@ -1,10 +1,19 @@
 ﻿using Clipbox.Infrastructure.UI;
+using Clipbox.Services.Enums;
 using System.Windows.Media.Imaging;
 
 namespace Clipbox.ViewModels.BindableObjects
 {
     public class ClipboardPreviewItem : BindableObject
     {
+        private PreviewGenerationStatus _previewGenerationStatus;
+
+        public PreviewGenerationStatus PreviewGenerationStatus
+        {
+            get { return _previewGenerationStatus; }
+            set { SetField(ref _previewGenerationStatus, value); }
+        }
+
         private BitmapSource _image;
 
         public BitmapSource Image

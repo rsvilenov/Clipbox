@@ -10,6 +10,7 @@ using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.Threading;
 using Clipbox.Infrastructure.UI.DataObjects;
 using Clipbox.Services.DataObjects;
+using Clipbox.Services.Enums;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.Win32;
@@ -193,9 +194,9 @@ namespace Clipbox.Services
 
                 pdto.PreviewItems.Add(new PreviewItemTransferObject
                 {
-
+                    // TODO: this is not entirely accurate, as the reason for failure may not be a timeout
+                    PreviewGenereationStatus = PreviewGenerationStatus.Timeout
                 });
-                //throw new InvalidOperationException($"Preview items generation failed for id {clipboardItem.Id}.");
             }
             
             if (!pdto.PreviewItems.Any())
@@ -274,19 +275,30 @@ namespace Clipbox.Services
         {
             IEnumerable<string> formatGuids = clipboardItem.ClipboardDataObjects.Select(cdo => cdo.IntermediateFormatObject.FormatGuid);
             KeyValuePair<string, IPreviewGenerator>? formatGuidPreviewGeneratorPair = _clipboardFormatPreviewExtContainer.ResolveClipboardPreviewGeneratorWithHighestPriority(formatGuids.ToArray());
-            
-            // TODO: create a default preview handler
-            if (formatGuidPreviewGeneratorPair == null)
-            {
-                throw new KeyNotFoundException($"Unable to find a suitable preview handler for this item.");
-            }
 
-            IPreviewGenerator previewGenerator = formatGuidPreviewGeneratorPair.Value.Value;
-            IClipboardDataObject cdoForPreview = clipboardItem.ClipboardDataObjects.Single(cdo => cdo.IntermediateFormatObject.FormatGuid == formatGuidPreviewGeneratorPair.Value.Key);
-            
-            PreviewDataTransferObject pdto = GetPdto(itemRequestedHeight, itemRequestedWidth, previewGenerator, cdoForPreview);
-            
-            pdto.ClipboardItemId = clipboardItem.Id;
+            PreviewDataTransferObject pdto;
+
+            if (formatGuidPreviewGeneratorPair != null)
+            {
+                IPreviewGenerator previewGenerator = formatGuidPreviewGeneratorPair.Value.Value;
+                IClipboardDataObject cdoForPreview = clipboardItem.ClipboardDataObjects.Single(cdo => cdo.IntermediateFormatObject.FormatGuid == formatGuidPreviewGeneratorPair.Value.Key);
+
+                pdto = GetPdto(itemRequestedHeight, itemRequestedWidth, previewGenerator, cdoForPreview);
+
+                pdto.ClipboardItemId = clipboardItem.Id;
+            }
+            else
+            {
+                pdto = new PreviewDataTransferObject
+                {
+                    ClipboardItemId = clipboardItem.Id
+                };
+
+                pdto.PreviewItems.Add(new PreviewItemTransferObject
+                {
+                    PreviewGenereationStatus = PreviewGenerationStatus.NoGeneratorFound
+                });
+            }
 
             return pdto;
         }

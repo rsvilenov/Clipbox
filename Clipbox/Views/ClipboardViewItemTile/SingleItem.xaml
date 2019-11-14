@@ -2,10 +2,13 @@
     x:Class="Clipbox.Views.ClipboardViewItemTile.SingleItem"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:core="clr-namespace:Clipbox.Core;assembly=Clipbox.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:infBeh="clr-namespace:Clipbox.Infrastructure.UI.Behaviors;assembly=Clipbox.Infrastructure.UI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:servicesEnums="clr-namespace:Clipbox.Services.Enums"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:tile="clr-namespace:Clipbox.Views.ClipboardViewItemTile"
     d:DesignHeight="450"
     d:DesignWidth="800"
@@ -75,21 +78,135 @@
             Grid.Row="0"
             MinHeight="{Binding ThumbnailAreaMinHeight}"
             MaxHeight="{Binding ThumbnailAreaMaxHeight}"
-            Margin="10">
+            Margin="10"
+            Background="Transparent">
 
-            <Image
+            <ContentControl
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Background="Transparent"
+                DataContext="{Binding ClipboardViewItem.PreviewItem}">
+                <ContentControl.Style>
+
+                    <Style TargetType="{x:Type ContentControl}">
+
+                        <Setter Property="ContentTemplate">
+                            <Setter.Value>
+                                <DataTemplate>
+                                    <Border
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        Background="Transparent"
+                                        Tag="{TemplateBinding ToolTip}">
+                                        <ContentPresenter Content="{TemplateBinding Content}" />
+                                    </Border>
+                                </DataTemplate>
+                            </Setter.Value>
+                        </Setter>
+
+                        <Setter Property="Content">
+                            <Setter.Value>
+                                <ContentControl Width="30" Template="{DynamicResource PreviewFailureIcon}" />
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="ToolTip">
+                            <Setter.Value>
+                                <TextBlock Text="Something went wrong.">
+                                    <i:Interaction.Behaviors>
+                                        <infBeh:FrameworkElementDpiScalingBehavior />
+                                    </i:Interaction.Behaviors>
+                                </TextBlock>
+                            </Setter.Value>
+                        </Setter>
+
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding PreviewGenerationStatus}" Value="{x:Static servicesEnums:PreviewGenerationStatus.NoGeneratorFound}">
+                                <Setter Property="Content">
+                                    <Setter.Value>
+                                        <ContentControl Width="30" Template="{DynamicResource PreviewNotAvailableIcon}">
+                                            <i:Interaction.Behaviors>
+                                                <infBeh:FrameworkElementDpiScalingBehavior />
+                                            </i:Interaction.Behaviors>
+                                        </ContentControl>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="ToolTip">
+                                    <Setter.Value>
+                                        <TextBlock>
+                                            <Run Text="{x:Static core:ProductConstants.PRODUCT_NAME}" />
+                                            <Run Text="doesn't know how to generate a preview for this item." />
+                                            <i:Interaction.Behaviors>
+                                                <infBeh:FrameworkElementDpiScalingBehavior />
+                                            </i:Interaction.Behaviors>
+                                        </TextBlock>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding PreviewGenerationStatus}" Value="{x:Static servicesEnums:PreviewGenerationStatus.Timeout}">
+                                <Setter Property="Content">
+                                    <Setter.Value>
+                                        <ContentControl Width="30" Template="{DynamicResource PreviewNotAvailableIcon}">
+                                            <i:Interaction.Behaviors>
+                                                <infBeh:FrameworkElementDpiScalingBehavior />
+                                            </i:Interaction.Behaviors>
+                                        </ContentControl>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="ToolTip">
+                                    <Setter.Value>
+                                        <TextBlock Text="The preview generation for this item took too long.">
+                                            <i:Interaction.Behaviors>
+                                                <infBeh:FrameworkElementDpiScalingBehavior />
+                                            </i:Interaction.Behaviors>
+                                        </TextBlock>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding PreviewGenerationStatus}" Value="{x:Static servicesEnums:PreviewGenerationStatus.Success}">
+                                <Setter Property="Content">
+                                    <Setter.Value>
+                                        <!--
+                                            this image should not be dpi-scaled here, as it is a raster image and cannot be scaled smoothly.
+                                            Its dimensions are determined according to the monitor size and dpi settings prior to its generation.
+                                        -->
+                                        <Image
+                                            Width="{Binding Image.Width}"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Stretch"
+                                            Source="{Binding Image}"
+                                            Stretch="Uniform" />
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="ToolTip">
+                                    <Setter.Value>
+                                        <TextBlock Text="{Binding Description}">
+                                            <!--  the tooltip, however, should be dpi-scaled  -->
+                                            <i:Interaction.Behaviors>
+                                                <infBeh:FrameworkElementDpiScalingBehavior />
+                                            </i:Interaction.Behaviors>
+                                        </TextBlock>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </ContentControl.Style>
+            </ContentControl>
+
+            <!--<Image
                 Width="{Binding ClipboardViewItem.PreviewItem.Image.Width}"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
                 Source="{Binding ClipboardViewItem.PreviewItem.Image}"
                 Stretch="Uniform"
-                ToolTip="{Binding ClipboardViewItem.PreviewItem.Description}" />
+                ToolTip="{Binding ClipboardViewItem.PreviewItem.Description}" />-->
 
             <!--  dim the item by placing a semi-transparent black rectangle on top of it  -->
             <Rectangle
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
                 Fill="Black"
+                IsHitTestVisible="False"
                 Opacity="0.3"
                 Visibility="{Binding IsDimmed, Converter={StaticResource BooleanToVisibilityConverter}}" />
 

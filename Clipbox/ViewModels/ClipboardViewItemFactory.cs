@@ -91,6 +91,7 @@ namespace Clipbox.ViewModels
             {
                 Text = pito.Text,
                 Description = pito.Description,
+                PreviewGenerationStatus = pito.PreviewGenereationStatus,
                 Image = pito.BitmapData != null ? BitmapSourceFromBitmapByteArray(pito.BitmapData) : null
             };
 
