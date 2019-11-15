@@ -33,6 +33,7 @@ namespace Clipbox.Services
         private const string APP_DATA_SUBDIR = "PreviewDataCache";
         private const int PREVIEW_GENERATION_TIMEOUT_MS = 6000;
         private const long PREVIEW_BYTE_ARRAY_CACHE_MAX_SIZE_BYTES = 10 * 1024 * 1024;
+        private const int MAX_SIMULTANEOUS_PREVIEW_GENERATION_TASKS = 5;
 
         private readonly IClipboardManager _clipboardManager;
         private readonly IPreviewGeneratorExtentionContainer _clipboardFormatPreviewExtContainer;
@@ -42,6 +43,8 @@ namespace Clipbox.Services
 
         private readonly SimpleDispatcher _bgGenerationDispatcher;
         private readonly SimpleDispatcher _storeToDiskDispatcher;
+
+        private readonly SemaphoreSlim _maxTasksSemaphore;
 
         private readonly ConcurrentDictionary<string, ManualResetEvent> _resetEventsForClipboardItemIds;
         private readonly ConcurrentDictionary<string, bool> _clipboardItemIdsWithCompletedTasks;
@@ -61,6 +64,8 @@ namespace Clipbox.Services
 
             _bgGenerationDispatcher = new SimpleDispatcher();
             _storeToDiskDispatcher = new SimpleDispatcher();
+
+            _maxTasksSemaphore = new SemaphoreSlim(MAX_SIMULTANEOUS_PREVIEW_GENERATION_TASKS);
 
             _resetEventsForClipboardItemIds = new ConcurrentDictionary<string, ManualResetEvent>();
             _clipboardItemIdsWithCompletedTasks = new ConcurrentDictionary<string, bool>();
@@ -111,7 +116,19 @@ namespace Clipbox.Services
             // enqueue a task
             _bgGenerationDispatcher.BeginInvoke(() =>
             {
-                var task = StartPreviewGenerationTask(clipboardItemId, monitorDimensions);
+                _maxTasksSemaphore.Wait();
+
+                var task = Task.Run(() =>
+                {
+                    try
+                    {
+                        GeneratePreview(clipboardItemId, monitorDimensions);
+                    }
+                    finally
+                    {
+                        _maxTasksSemaphore.Release();
+                    }
+                });
                 
                 // do not block the queue - wait in a separate task
                 Task.Run(() =>
@@ -127,31 +144,28 @@ namespace Clipbox.Services
             return true;
         }
 
-        private Task StartPreviewGenerationTask(string clipboardItemId, MonitorDimensions monitorDimensions = null)
+        private void GeneratePreview(string clipboardItemId, MonitorDimensions monitorDimensions = null)
         {
-            return Task.Run(() =>
+            if (monitorDimensions == null)
             {
-                if (monitorDimensions == null)
+                MonitorUtils.DisplayMonitor currentMonitor = MonitorUtils.GetByForegroundWindow();
+                monitorDimensions = new MonitorDimensions
                 {
-                    MonitorUtils.DisplayMonitor currentMonitor = MonitorUtils.GetByForegroundWindow();
-                    monitorDimensions = new MonitorDimensions
-                    {
-                        MonitorDPI = currentMonitor.Dpi,
-                        WorkAreaHeight = currentMonitor.WorkingArea.Height,
-                        WorkAreaWidth = currentMonitor.WorkingArea.Width
-                    };
-                }
+                    MonitorDPI = currentMonitor.Dpi,
+                    WorkAreaHeight = currentMonitor.WorkingArea.Height,
+                    WorkAreaWidth = currentMonitor.WorkingArea.Width
+                };
+            }
 
-                int itemRequestedHeight = CalculateItemRequestedHeight(monitorDimensions, out bool hasHeightBeenDpiScaled);
-                int itemRequestedWidth = itemRequestedHeight;
-                
-                IClipboardItem clipboardItem = _clipboardManager.GetClipboardItem(clipboardItemId, restoreShrinked: true);
-                PreviewDataTransferObject pdto = GeneratePreviewDataTransferObject(clipboardItem, itemRequestedHeight, itemRequestedWidth);
-                
-                CacheGeneratedData(monitorDimensions, itemRequestedHeight, itemRequestedWidth, pdto, hasHeightBeenDpiScaled);
-                
-                _clipboardItemIdsWithCompletedTasks.TryAdd(clipboardItem.Id, true);
-            });
+            int itemRequestedHeight = CalculateItemRequestedHeight(monitorDimensions, out bool hasHeightBeenDpiScaled);
+            int itemRequestedWidth = itemRequestedHeight;
+
+            IClipboardItem clipboardItem = _clipboardManager.GetClipboardItem(clipboardItemId, restoreShrinked: true);
+            PreviewDataTransferObject pdto = GeneratePreviewDataTransferObject(clipboardItem, itemRequestedHeight, itemRequestedWidth);
+
+            CacheGeneratedData(monitorDimensions, itemRequestedHeight, itemRequestedWidth, pdto, hasHeightBeenDpiScaled);
+
+            _clipboardItemIdsWithCompletedTasks.TryAdd(clipboardItem.Id, true);
         }
 
         [HandleProcessCorruptedStateExceptions]

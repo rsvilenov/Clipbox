@@ -156,11 +156,13 @@ namespace Clipbox.Views
                             TopBarGrid.Visibility = Visibility.Visible;
                             SideBarGrid.Visibility = Visibility.Visible;
                         }
-
-                        PerformDisposeSafeOperation
-                        (
-                            () => _viewModel.LoadAllItems(this.MonitorDimensions, itemsToLoad)
-                        );
+                        else
+                        {
+                            PerformDisposeSafeOperation
+                            (
+                                () => _viewModel.LoadAllItems(this.MonitorDimensions, itemsToLoad)
+                            );
+                        }
 
 #if DEBUG
                         GC.Collect();
