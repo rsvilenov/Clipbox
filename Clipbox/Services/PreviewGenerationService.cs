@@ -51,6 +51,8 @@ namespace Clipbox.Services
 
         private readonly ByteArrayCache _byteArrayCache;
 
+        private bool _disposeBegun;
+
         public PreviewGenerationService(
             IClipboardManager clipboardManager,
             IPreviewGeneratorExtentionContainer clipboardFormatPreviewExtContainer, 
@@ -109,14 +111,26 @@ namespace Clipbox.Services
             var mre = new ManualResetEvent(false);
             if (!_resetEventsForClipboardItemIds.TryAdd(clipboardItemId, mre))
             {
-                // we already a running task
+                // we already have a running task
                 return false;
             }
             
             // enqueue a task
             _bgGenerationDispatcher.BeginInvoke(() =>
             {
+
+                if (_disposeBegun)
+                {
+                    return;
+                }
+
                 _maxTasksSemaphore.Wait();
+
+                if (_disposeBegun)
+                {
+                    return;
+                }
+
 
                 var task = Task.Run(() =>
                 {
@@ -620,6 +634,8 @@ namespace Clipbox.Services
 
         public void Dispose()
         {
+            _disposeBegun = true;
+
             _clipboardManager.ItemAdded -= _clipboardManager_ItemAdded;
             _clipboardManager.ItemChanged -= _clipboardManager_ItemChanged;
             _clipboardManager.ItemRemoved -= _clipboardManager_ItemRemoved;
@@ -637,6 +653,8 @@ namespace Clipbox.Services
             // quit gracefully.
             _bgGenerationDispatcher.Dispose();
             _storeToDiskDispatcher.Dispose();
+
+            _maxTasksSemaphore.Dispose();
         }
     }
 }
