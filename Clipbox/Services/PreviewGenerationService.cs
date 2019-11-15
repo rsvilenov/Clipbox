@@ -157,7 +157,6 @@ namespace Clipbox.Services
         [HandleProcessCorruptedStateExceptions]
         public PreviewDataTransferObject GetPreviewDataTransferObject(IClipboardItem clipboardItem, MonitorDimensions monitorDimensions)
         {
-            System.Threading.Thread.Sleep(3000);
             if (clipboardItem == null)
             {
                 throw new ArgumentNullException(nameof(clipboardItem));
@@ -618,6 +617,12 @@ namespace Clipbox.Services
             {
                 mre.Dispose();
             }
+
+            // dispose the SimpleDispatcher instances. If we do not do that, they will
+            // keep a thread busy forever and the application will never be able to
+            // quit gracefully.
+            _bgGenerationDispatcher.Dispose();
+            _storeToDiskDispatcher.Dispose();
         }
     }
 }
