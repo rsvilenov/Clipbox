@@ -657,6 +657,7 @@
                                                             IsLoadingIndicatorFadeInEnabled="{Binding Path=IsFadeInOfItemsEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type lv:FullClipboardListView}}}"
                                                             IsShownIntoView="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.IsShownIntoView}"
                                                             NumberOfItemsWithoutPreview="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.DimensionInfo.NumberOfItemsWithoutPreview}"
+                                                            PreviewContainerBackgroundColor="{DynamicResource TaskbarColor}"
                                                             ViewSubItemDimensions="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.DimensionInfo.Dimensions, Mode=OneWay}">
                                                             <tile:MultiItemLoading.Height>
                                                                 <MultiBinding Converter="{StaticResource MathAddConverter}">

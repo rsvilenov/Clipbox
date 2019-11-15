@@ -64,47 +64,49 @@
             </Style>
         </Grid.Style>
 
+        <ContentControl
+            Width="30"
+            Grid.RowSpan="2"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Foreground="Gray"
+            Template="{DynamicResource LoadingSolidIcon}">
+            <ContentControl.Style>
+                <Style TargetType="ContentControl">
+                    <Setter Property="Visibility" Value="Hidden" />
+                    <Setter Property="Opacity" Value="0.6" />
+                    <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Path=IsShownIntoView}" Value="True" />
+                                <Condition Binding="{Binding Path=IsLoadingIndicatorFadeInEnabled}" Value="True" />
+                            </MultiDataTrigger.Conditions>
+                            <MultiDataTrigger.EnterActions>
+                                <BeginStoryboard x:Name="DelayShowStoryboard" Storyboard="{StaticResource FadiInWithDelay}" />
+                            </MultiDataTrigger.EnterActions>
+                            <MultiDataTrigger.ExitActions>
+                                <RemoveStoryboard BeginStoryboardName="DelayShowStoryboard" />
+                            </MultiDataTrigger.ExitActions>
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding Path=IsShownIntoView}" Value="True" />
+                                <Condition Binding="{Binding Path=IsLoadingIndicatorFadeInEnabled}" Value="False" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Visibility" Value="Visible" />
+                        </MultiDataTrigger>
+                    </Style.Triggers>
+                </Style>
+
+            </ContentControl.Style>
+        </ContentControl>
+
         <Grid
             Grid.Row="0"
             MinHeight="{Binding ThumbnailAreaMinHeight}"
             MaxHeight="{Binding ThumbnailAreaMaxHeight}"
             Margin="10">
 
-            <ContentControl
-                Width="30"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                Foreground="Gray"
-                Template="{DynamicResource LoadingSolidIcon}">
-                <ContentControl.Style>
-                    <Style TargetType="ContentControl">
-                        <Setter Property="Visibility" Value="Hidden" />
-                        <Setter Property="Opacity" Value="0.6" />
-                        <Style.Triggers>
-                            <MultiDataTrigger>
-                                <MultiDataTrigger.Conditions>
-                                    <Condition Binding="{Binding Path=IsShownIntoView}" Value="True" />
-                                    <Condition Binding="{Binding Path=IsLoadingIndicatorFadeInEnabled}" Value="True" />
-                                </MultiDataTrigger.Conditions>
-                                <MultiDataTrigger.EnterActions>
-                                    <BeginStoryboard x:Name="DelayShowStoryboard" Storyboard="{StaticResource FadiInWithDelay}" />
-                                </MultiDataTrigger.EnterActions>
-                                <MultiDataTrigger.ExitActions>
-                                    <RemoveStoryboard BeginStoryboardName="DelayShowStoryboard" />
-                                </MultiDataTrigger.ExitActions>
-                            </MultiDataTrigger>
-                            <MultiDataTrigger>
-                                <MultiDataTrigger.Conditions>
-                                    <Condition Binding="{Binding Path=IsShownIntoView}" Value="True" />
-                                    <Condition Binding="{Binding Path=IsLoadingIndicatorFadeInEnabled}" Value="False" />
-                                </MultiDataTrigger.Conditions>
-                                <Setter Property="Visibility" Value="Visible" />
-                            </MultiDataTrigger>
-                        </Style.Triggers>
-                    </Style>
-
-                </ContentControl.Style>
-            </ContentControl>
             <!--  leave this transparent for now... just to occupy the space  -->
             <Rectangle
                 Width="{Binding ViewItemDimensions.PreviewWidth}"

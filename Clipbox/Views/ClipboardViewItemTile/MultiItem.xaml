@@ -409,6 +409,17 @@
                                                                                 </Setter.Value>
                                                                             </Setter>
                                                                         </DataTrigger>
+
+                                                                        <!--  do not try to show a tooltip if the item's description is null or empty  -->
+                                                                        <MultiDataTrigger>
+                                                                            <MultiDataTrigger.Conditions>
+                                                                                <!--  if the preview is generated successfully  -->
+                                                                                <Condition Binding="{Binding PreviewGenerationStatus}" Value="{x:Static servicesEnums:PreviewGenerationStatus.Success}" />
+                                                                                <!--  and if the description is null or empty  -->
+                                                                                <Condition Binding="{Binding Description, TargetNullValue=''}" Value="" />
+                                                                            </MultiDataTrigger.Conditions>
+                                                                            <Setter Property="ToolTip" Value="{x:Null}" />
+                                                                        </MultiDataTrigger>
                                                                     </Style.Triggers>
                                                                 </Style>
                                                             </ContentControl.Style>

@@ -178,7 +178,7 @@
                                                 <ControlTemplate>
                                                     <Grid>
                                                         <Grid.Background>
-                                                            <SolidColorBrush Opacity="0.1" Color="DarkGray" />
+                                                            <SolidColorBrush Opacity="0.2" Color="{Binding PreviewContainerBackgroundColor, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=tile:MultiItemLoading}}" />
                                                         </Grid.Background>
                                                         <Grid.RowDefinitions>
                                                             <RowDefinition Height="*" />
@@ -186,6 +186,7 @@
                                                         </Grid.RowDefinitions>
 
                                                         <ContentControl
+                                                            Grid.RowSpan="2"
                                                             Width="30"
                                                             HorizontalAlignment="Center"
                                                             VerticalAlignment="Center"
@@ -221,12 +222,13 @@
                                                             </ContentControl.Style>
                                                         </ContentControl>
 
+                                                        <!--  do not fill this rectangle with color for now, just allow it to take up the space of the preview item  -->
                                                         <Rectangle
                                                             Grid.Row="0"
                                                             Width="{Binding PreviewWidth}"
                                                             Height="{Binding PreviewHeight}"
                                                             Margin="5"
-                                                            Fill="Black"
+                                                            Fill="Transparent"
                                                             Opacity="0.2" />
                                                     </Grid>
                                                 </ControlTemplate>
