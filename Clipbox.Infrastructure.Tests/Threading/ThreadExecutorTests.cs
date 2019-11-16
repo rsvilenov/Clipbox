@@ -16,11 +16,12 @@ namespace Clipbox.Infrastructure.Tests.Threading
             Action<CancellationToken> tTask = new Action<CancellationToken>((token) =>
             {
                 bool cancelRequested = false;
-                token.Register(() => cancelRequested = true);
-
-                while (!cancelRequested)
+                using (CancellationTokenRegistration ctr = token.Register(() => cancelRequested = true))
                 {
-                    Thread.Sleep(100);
+                    while (!cancelRequested)
+                    {
+                        Thread.Sleep(100);
+                    }
                 }
             });
 
@@ -46,7 +47,7 @@ namespace Clipbox.Infrastructure.Tests.Threading
 
             Action<CancellationToken> tTask = new Action<CancellationToken>((token) =>
             {
-                token.Register(() => 
+                using (CancellationTokenRegistration ctr = token.Register(() =>
                 {
                     if (throwInCancel)
                     {
@@ -54,11 +55,12 @@ namespace Clipbox.Infrastructure.Tests.Threading
                     }
 
                     // do not do anything to cancel the task, so that it be aborted by the ThreadExecutor
-                });
-
-                while (true)
+                }))
                 {
-                    Thread.Sleep(100);
+                    while (true)
+                    {
+                        Thread.Sleep(100);
+                    }
                 }
             });
 
@@ -91,14 +93,15 @@ namespace Clipbox.Infrastructure.Tests.Threading
         {
             Action<CancellationToken> tTask = new Action<CancellationToken>((token) =>
             {
-                token.Register(() =>
+                using (CancellationTokenRegistration ctr = token.Register(() =>
                 {
                     // throw some random exception, as
                     // this code should not be called.
                     throw new ArgumentException();
-                });
-
-                Thread.Sleep(timeout / 2);
+                }))
+                {
+                    Thread.Sleep(timeout / 2);
+                }
             });
 
             using (ThreadExecutor te = new ThreadExecutor(tTask, timeout))
@@ -124,16 +127,17 @@ namespace Clipbox.Infrastructure.Tests.Threading
 
             Action<CancellationToken> tTask = new Action<CancellationToken>((token) =>
             {
-                token.Register(() =>
+                using (CancellationTokenRegistration ctr = token.Register(() =>
                 {
                     if (throwInCancel)
                     {
                         throw exceptionToThrowInCancel;
                     }
-                });
-
-                Thread.Sleep(timeout / 2);
-                throw exceptionToThrowInWorkerCode;
+                }))
+                {
+                    Thread.Sleep(timeout / 2);
+                    throw exceptionToThrowInWorkerCode;
+                }
             });
             
             using (ThreadExecutor te = new ThreadExecutor(tTask, timeout))
@@ -167,16 +171,17 @@ namespace Clipbox.Infrastructure.Tests.Threading
 
             Action<CancellationToken> tTask = new Action<CancellationToken>((token) =>
             {
-                token.Register(() =>
+                using (CancellationTokenRegistration ctr = token.Register(() =>
                 {
                     if (throwInCancel)
                     {
                         throw exceptionToThrowInCancel;
                     }
-                });
-
-                System.Threading.Thread.Sleep(timeout * 2);
-                throw exceptionToThrowInWorkerCode;
+                }))
+                {
+                    Thread.Sleep(timeout * 2);
+                    throw exceptionToThrowInWorkerCode;
+                }
             });
             
             using (ThreadExecutor te = new ThreadExecutor(tTask, timeout, cancelTimeout))
@@ -213,18 +218,19 @@ namespace Clipbox.Infrastructure.Tests.Threading
 
             Action<CancellationToken> tTask = new Action<CancellationToken>((token) =>
             {
-                token.Register(() =>
+                using (CancellationTokenRegistration ctr = token.Register(() =>
                 {
                     if (throwInCancel)
                     {
                         throw exceptionToThrowInCancel;
                     }
-                });
-
-                Thread.Sleep(threadRunningTime);
-                if (throwInWorkerCode)
+                }))
                 {
-                    throw exceptionToThrowInWorkerCode;
+                    Thread.Sleep(threadRunningTime);
+                    if (throwInWorkerCode)
+                    {
+                        throw exceptionToThrowInWorkerCode;
+                    }
                 }
             });
 
