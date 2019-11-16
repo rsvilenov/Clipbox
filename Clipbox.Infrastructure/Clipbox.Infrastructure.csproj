@@ -91,7 +91,6 @@
     <Compile Include="Testing\TestUtils.cs" />
     <Compile Include="Threading\CancellableTaskManager.cs" />
     <Compile Include="Threading\Enums\ExecutionStage.cs" />
-    <Compile Include="Threading\Interfaces\IThreadExecutorTask.cs" />
     <Compile Include="Threading\SimpleDispatcher.cs" />
     <Compile Include="Threading\StaUtils.cs" />
     <Compile Include="Threading\ThreadExecutor.cs" />

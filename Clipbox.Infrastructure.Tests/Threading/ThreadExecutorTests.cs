@@ -1,56 +1,27 @@
 ﻿using Clipbox.Infrastructure.Threading;
 using Clipbox.Infrastructure.Threading.Enums;
-using Clipbox.Infrastructure.Threading.Interfaces;
 using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace Clipbox.Infrastructure.Tests.Threading
 {
     [TestFixture]
     public class ThreadExecutorTests
     {
-        private class ThreadExecutorTask : IThreadExecutorTask
-        {
-            private readonly Action<ThreadExecutorTask> _runAction;
-
-            private readonly Action<ThreadExecutorTask> _cancelAction;
-
-            public bool CancelRequested { get; set; }
-
-            public ThreadExecutorTask(Action<ThreadExecutorTask> runAction, Action<ThreadExecutorTask> cancelAction)
-            {
-                _runAction = runAction;
-                _cancelAction = cancelAction;
-            }
-
-            public void Cancel()
-            {
-                _cancelAction.Invoke(this);
-            }
-
-            public void Run()
-            {
-                _runAction.Invoke(this);
-            }
-        }
 
         [TestCase(1000)]
         public void TestThreadTimeoutCancel(int timeout)
         {
-            ThreadExecutorTask tTask = new ThreadExecutorTask((t) =>
+            Action<CancellationToken> tTask = new Action<CancellationToken>((token) =>
             {
-                while (!t.CancelRequested)
+                bool cancelRequested = false;
+                token.Register(() => cancelRequested = true);
+
+                while (!cancelRequested)
                 {
-                    System.Threading.Thread.Sleep(100);
+                    Thread.Sleep(100);
                 }
-            },
-            (t) =>
-            {
-                t.CancelRequested = true;
             });
 
             using (ThreadExecutor te = new ThreadExecutor(tTask, timeout))
@@ -73,21 +44,22 @@ namespace Clipbox.Infrastructure.Tests.Threading
         {
             ArgumentException exceptionToThrowInCancel = new ArgumentException();
 
-            ThreadExecutorTask tTask = new ThreadExecutorTask((t) =>
+            Action<CancellationToken> tTask = new Action<CancellationToken>((token) =>
             {
-                while (!t.CancelRequested)
+                token.Register(() => 
                 {
-                    System.Threading.Thread.Sleep(100);
-                }
-            },
-            (t) =>
-            {
-                if (throwInCancel)
-                {
-                    throw exceptionToThrowInCancel;
-                }
+                    if (throwInCancel)
+                    {
+                        throw exceptionToThrowInCancel;
+                    }
 
-                // do not do anything to cancel the task, so that it be aborted by the ThreadExecutor
+                    // do not do anything to cancel the task, so that it be aborted by the ThreadExecutor
+                });
+
+                while (true)
+                {
+                    Thread.Sleep(100);
+                }
             });
 
             using (ThreadExecutor te = new ThreadExecutor(tTask, timeout))
@@ -117,15 +89,16 @@ namespace Clipbox.Infrastructure.Tests.Threading
         [TestCase(1000)]
         public void TestThreadFinishBeforeTimeout(int timeout)
         {
-            ThreadExecutorTask tTask = new ThreadExecutorTask((t) =>
+            Action<CancellationToken> tTask = new Action<CancellationToken>((token) =>
             {
-                System.Threading.Thread.Sleep(timeout / 2);
-            },
-            (t) =>
-            {
-                // throw some random exception, as
-                // this code should not be called.
-                throw new ArgumentException();
+                token.Register(() =>
+                {
+                    // throw some random exception, as
+                    // this code should not be called.
+                    throw new ArgumentException();
+                });
+
+                Thread.Sleep(timeout / 2);
             });
 
             using (ThreadExecutor te = new ThreadExecutor(tTask, timeout))
@@ -149,19 +122,20 @@ namespace Clipbox.Infrastructure.Tests.Threading
             ArgumentException exceptionToThrowInCancel = new ArgumentException();
             ArgumentNullException exceptionToThrowInWorkerCode = new ArgumentNullException();
 
-            ThreadExecutorTask tTask = new ThreadExecutorTask((t) =>
+            Action<CancellationToken> tTask = new Action<CancellationToken>((token) =>
             {
-                System.Threading.Thread.Sleep(timeout / 2);
-                throw exceptionToThrowInWorkerCode;
-            },
-            (t) =>
-            {
-                if (throwInCancel)
+                token.Register(() =>
                 {
-                    throw exceptionToThrowInCancel;
-                }
-            });
+                    if (throwInCancel)
+                    {
+                        throw exceptionToThrowInCancel;
+                    }
+                });
 
+                Thread.Sleep(timeout / 2);
+                throw exceptionToThrowInWorkerCode;
+            });
+            
             using (ThreadExecutor te = new ThreadExecutor(tTask, timeout))
             {
                 te.Start();
@@ -191,19 +165,20 @@ namespace Clipbox.Infrastructure.Tests.Threading
             ArgumentException exceptionToThrowInCancel = new ArgumentException();
             ArgumentNullException exceptionToThrowInWorkerCode = new ArgumentNullException();
 
-            ThreadExecutorTask tTask = new ThreadExecutorTask((t) =>
+            Action<CancellationToken> tTask = new Action<CancellationToken>((token) =>
             {
+                token.Register(() =>
+                {
+                    if (throwInCancel)
+                    {
+                        throw exceptionToThrowInCancel;
+                    }
+                });
+
                 System.Threading.Thread.Sleep(timeout * 2);
                 throw exceptionToThrowInWorkerCode;
-            },
-            (t) =>
-            {
-                if (throwInCancel)
-                {
-                    throw exceptionToThrowInCancel;
-                }
             });
-
+            
             using (ThreadExecutor te = new ThreadExecutor(tTask, timeout, cancelTimeout))
             {
                 te.Start();
@@ -236,19 +211,20 @@ namespace Clipbox.Infrastructure.Tests.Threading
             ArgumentException exceptionToThrowInCancel = new ArgumentException();
             ArgumentNullException exceptionToThrowInWorkerCode = new ArgumentNullException();
 
-            ThreadExecutorTask tTask = new ThreadExecutorTask((t) =>
+            Action<CancellationToken> tTask = new Action<CancellationToken>((token) =>
             {
-                System.Threading.Thread.Sleep(threadRunningTime);
+                token.Register(() =>
+                {
+                    if (throwInCancel)
+                    {
+                        throw exceptionToThrowInCancel;
+                    }
+                });
+
+                Thread.Sleep(threadRunningTime);
                 if (throwInWorkerCode)
                 {
                     throw exceptionToThrowInWorkerCode;
-                }
-            },
-            (t) =>
-            {
-                if (throwInCancel)
-                {
-                    throw exceptionToThrowInCancel;
                 }
             });
 

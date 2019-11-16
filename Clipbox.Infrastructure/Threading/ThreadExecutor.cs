@@ -1,5 +1,4 @@
 ﻿using Clipbox.Infrastructure.Threading.Enums;
-using Clipbox.Infrastructure.Threading.Interfaces;
 using System;
 using System.Threading;
 
@@ -15,7 +14,7 @@ namespace Clipbox.Infrastructure.Threading
 
         private readonly int _cancelTimeoutMs;
 
-        private readonly IThreadExecutorTask _teTask;
+        private readonly Action<CancellationToken> _teTask;
 
         private readonly int _timeoutMs;
 
@@ -26,6 +25,8 @@ namespace Clipbox.Infrastructure.Threading
         private Timer _cancellationTimer;
 
         private readonly ManualResetEvent _workerThreadWaitMre;
+
+        private readonly CancellationTokenSource _cancellationTokenSource;
 
         private ExecutionStage _currentStage;
 
@@ -41,20 +42,21 @@ namespace Clipbox.Infrastructure.Threading
 
         private volatile bool _isDisposing;
 
-        public ThreadExecutor(IThreadExecutorTask teTask, int timeoutMs, int cancelTimeoutMs = CANCEL_DEFAULT_TIMEOUT_MS)
+        public ThreadExecutor(Action<CancellationToken> teTask, int timeoutMs, int cancelTimeoutMs = CANCEL_DEFAULT_TIMEOUT_MS)
         {
             _teTask = teTask ?? throw new ArgumentNullException(nameof(teTask));
             _timeoutMs = timeoutMs;
             _cancelTimeoutMs = cancelTimeoutMs;
 
             _workerThreadWaitMre = new ManualResetEvent(false);
-            
+            _cancellationTokenSource = new CancellationTokenSource();
+
             _workerThread = new Thread(() =>
             {
                 _currentStage = ExecutionStage.Started;
                 try
                 {
-                    _teTask.Run();
+                    _teTask.Invoke(_cancellationTokenSource.Token);
                     _currentStage = _currentStage == ExecutionStage.CancelRequested ?
                         ExecutionStage.Cancelled : ExecutionStage.Completed;
                 }
@@ -134,7 +136,7 @@ namespace Clipbox.Infrastructure.Threading
                     {
                         _lastStageBeforeCancelRequest = _currentStage;
                         _currentStage = ExecutionStage.CancelRequested;
-                        _teTask.Cancel();
+                        _cancellationTokenSource.Cancel(throwOnFirstException: true);
                     }
                 }
             }
@@ -218,7 +220,7 @@ namespace Clipbox.Infrastructure.Threading
                 _lastStageBeforeCancelRequest : _currentStage;
         }
 
-        public void Cancel()
+        public void RequestCancel()
         {
             if (_isDisposing)
             {
@@ -235,7 +237,7 @@ namespace Clipbox.Infrastructure.Threading
 
         public void Dispose()
         {
-            if (_isDisposing)
+            if (!_isDisposing)
             {
                 _isDisposing = true;
 
@@ -246,6 +248,7 @@ namespace Clipbox.Infrastructure.Threading
                 }
 
                 _workerThreadWaitMre.Dispose();
+                _cancellationTokenSource.Dispose();
             }
         }
     }
