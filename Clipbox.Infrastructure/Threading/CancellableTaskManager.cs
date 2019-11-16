@@ -18,7 +18,7 @@ namespace Clipbox.Infrastructure.Threading
             // cancel the first task. (the linq method is thread-safe as it relies on GetEnumerator)
             if (_internalIdToTaskIdMapping.Any(kvp => kvp.Value == taskId))
             {
-                CancelScheduledTask(taskId);
+                CancelStartingOfScheduledTask(taskId);
             }
 
             CancellationTokenSource tokenSource = new CancellationTokenSource();
@@ -76,7 +76,11 @@ namespace Clipbox.Infrastructure.Threading
             return task;
         }
 
-        public void CancelScheduledTask(string taskId)
+        /// <summary>
+        /// Cancels the starting of tasks, which has not already started.
+        /// </summary>
+        /// <param name="taskId"></param>
+        public void CancelStartingOfScheduledTask(string taskId)
         {
             // linq uses GetEnumerator, which takes a snapshot of the dictionary's content,
             // so the code below should be thread-safe

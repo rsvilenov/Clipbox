@@ -219,7 +219,8 @@ namespace Clipbox.Views
 
         public void CancelLoadingOfViewItem(string clipboardItemId)
         {
-            _cancellableTaskManager.CancelScheduledTask(taskId: clipboardItemId);
+            // if the task has not already started, do not start it.
+            _cancellableTaskManager.CancelStartingOfScheduledTask(taskId: clipboardItemId);
         }
         
 
