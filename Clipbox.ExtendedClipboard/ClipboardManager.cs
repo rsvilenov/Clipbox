@@ -18,6 +18,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Security;
+using System.Threading.Tasks;
 using System.Timers;
 
 namespace Clipbox.ExtendedClipboard
@@ -25,6 +26,9 @@ namespace Clipbox.ExtendedClipboard
     public sealed class ClipboardManager : IClipboardManager, IDisposable
     {
         private const int MAX_CLIPBOARD_ITEMS_TO_KEEP = 1000;
+
+        // the maximum time an extension is allowed to lock the system clipboard
+        private const int FORMAT_SUPPORT_EXTENSION_TIMEOUT = 1000;
 
 #if DEBUG
         private const int CLIPBOARD_LISTENING_SUSPEND_INTERVAL_MS = 3000;
@@ -464,13 +468,21 @@ namespace Clipbox.ExtendedClipboard
 
                     IIntermediateFormat intermediateFormatObj = null;
 
-                    try
+                    Task.Run(() =>
                     {
-                        intermediateFormatObj = formatSupportExtention.PtrToIntermediateFormat(clipboardDataPtr);
-                    }
-                    catch (Exception ex) { throw new ClipboxExtentionException(nameof(formatSupportExtention.PtrToIntermediateFormat), formatSupportExtention.GetType(), ex); }
+                        try
+                        {
+                            intermediateFormatObj = formatSupportExtention.PtrToIntermediateFormat(clipboardDataPtr);
+                        }
+                        catch (Exception ex) { throw new ClipboxExtentionException(nameof(formatSupportExtention.PtrToIntermediateFormat), formatSupportExtention.GetType(), ex); }
 
-                    yield return new ClipboardDataObject(clipboardFormatName: format.Value, intermediateFormatObject: intermediateFormatObj);
+                    })
+                    .Wait(FORMAT_SUPPORT_EXTENSION_TIMEOUT);
+
+                    if (intermediateFormatObj != null)
+                    {
+                        yield return new ClipboardDataObject(clipboardFormatName: format.Value, intermediateFormatObject: intermediateFormatObj);
+                    }
                 }
             }
             finally
