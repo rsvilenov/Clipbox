@@ -51,6 +51,7 @@
     <Compile Include="Persistence\AppDataUtilsTests.cs" />
     <Compile Include="Persistence\FileLockerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Threading\ThreadExecutorTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
