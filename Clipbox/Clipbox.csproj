@@ -97,6 +97,7 @@
     <Compile Include="Services\Enums\PreviewGenerationStatus.cs" />
     <Compile Include="Services\Enums\TrayIconVisibilityPreference.cs" />
     <Compile Include="Services\EventArgsClasses\SyncEventArgs.cs" />
+    <Compile Include="Services\Exceptions\PreviewGenerationException.cs" />
     <Compile Include="Services\Interfaces\ISearchService.cs" />
     <Compile Include="Services\SearchService.cs" />
     <Compile Include="ViewModels\Enums\CloudSyncStatus.cs" />

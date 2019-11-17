@@ -101,6 +101,11 @@ namespace Clipbox.Infrastructure.Threading
                 || _workerThread.ThreadState.HasFlag(ThreadState.WaitSleepJoin)))
             {
                 _currentStage = ExecutionStage.AbortFromTimeoutRequested;
+                // we will not wait for the code that may run in the thread after
+                // the ThreadAbortException has been raised, i.e. "finally" blocks 
+                // in the code, running in the thread. The user of that class
+                // has the option to wait for the thread's completion, including
+                // after an abort has been initiated, by using the Wait() method.
                 try { _workerThread.Abort(); } catch { }
             }
         }

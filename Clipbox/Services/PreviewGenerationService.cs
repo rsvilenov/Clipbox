@@ -8,9 +8,11 @@ using Clipbox.Infrastructure.Cache;
 using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
 using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.Threading;
+using Clipbox.Infrastructure.Threading.Enums;
 using Clipbox.Infrastructure.UI.DataObjects;
 using Clipbox.Services.DataObjects;
 using Clipbox.Services.Enums;
+using Clipbox.Services.Exceptions;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.Win32;
@@ -45,9 +47,8 @@ namespace Clipbox.Services
         private readonly SimpleDispatcher _storeToDiskDispatcher;
 
         private readonly SemaphoreSlim _maxTasksSemaphore;
-
-        private readonly ConcurrentDictionary<string, ManualResetEvent> _resetEventsForClipboardItemIds;
-        private readonly ConcurrentDictionary<string, bool> _clipboardItemIdsWithCompletedTasks;
+        
+        private readonly ConcurrentDictionary<string, ThreadExecutor> _threadExecutorsForClipboardItemIds;
 
         private readonly ByteArrayCache _byteArrayCache;
 
@@ -69,8 +70,7 @@ namespace Clipbox.Services
 
             _maxTasksSemaphore = new SemaphoreSlim(MAX_SIMULTANEOUS_PREVIEW_GENERATION_TASKS);
 
-            _resetEventsForClipboardItemIds = new ConcurrentDictionary<string, ManualResetEvent>();
-            _clipboardItemIdsWithCompletedTasks = new ConcurrentDictionary<string, bool>();
+            _threadExecutorsForClipboardItemIds = new ConcurrentDictionary<string, ThreadExecutor>();
 
             _byteArrayCache = new ByteArrayCache(PREVIEW_BYTE_ARRAY_CACHE_MAX_SIZE_BYTES, compressData: true);
 
@@ -107,14 +107,7 @@ namespace Clipbox.Services
         }
 
         private bool TryEnqueuePreviewGenerationTask(string clipboardItemId, MonitorDimensions monitorDimensions = null)
-        {
-            var mre = new ManualResetEvent(false);
-            if (!_resetEventsForClipboardItemIds.TryAdd(clipboardItemId, mre))
-            {
-                // we already have a running task
-                return false;
-            }
-            
+        {            
             // enqueue a task
             _bgGenerationDispatcher.BeginInvoke(() =>
             {
@@ -131,34 +124,35 @@ namespace Clipbox.Services
                     return;
                 }
 
+                if (_threadExecutorsForClipboardItemIds.TryGetValue(clipboardItemId, out ThreadExecutor _))
+                {
+                    // we already have a running thread
+                    return;
+                }
 
-                var task = Task.Run(() =>
+                ThreadExecutor te = new ThreadExecutor((cancellationToken) =>
                 {
                     try
                     {
-                        GeneratePreview(clipboardItemId, monitorDimensions);
+                        GeneratePreview(clipboardItemId, cancellationToken, monitorDimensions);
                     }
                     finally
                     {
                         _maxTasksSemaphore.Release();
                     }
-                });
-                
-                // do not block the queue - wait in a separate task
-                Task.Run(() =>
-                {
-                    // abandon the tasks that do not finish on time
-                    task.Wait(TimeSpan.FromMilliseconds(PREVIEW_GENERATION_TIMEOUT_MS));
 
-                    // signal the event
-                    mre.Set();
-                });
+                }, PREVIEW_GENERATION_TIMEOUT_MS);
+
+                te.Start();
+
+                // this will fail if we already have a thread there
+                _threadExecutorsForClipboardItemIds.TryAdd(clipboardItemId, te);
             });
 
             return true;
         }
 
-        private void GeneratePreview(string clipboardItemId, MonitorDimensions monitorDimensions = null)
+        private void GeneratePreview(string clipboardItemId, CancellationToken cancellationToken, MonitorDimensions monitorDimensions = null)
         {
             if (monitorDimensions == null)
             {
@@ -175,11 +169,9 @@ namespace Clipbox.Services
             int itemRequestedWidth = itemRequestedHeight;
 
             IClipboardItem clipboardItem = _clipboardManager.GetClipboardItem(clipboardItemId, restoreShrinked: true);
-            PreviewDataTransferObject pdto = GeneratePreviewDataTransferObject(clipboardItem, itemRequestedHeight, itemRequestedWidth);
+            PreviewDataTransferObject pdto = GeneratePreviewDataTransferObject(clipboardItem, itemRequestedHeight, itemRequestedWidth, cancellationToken);
 
             CacheGeneratedData(monitorDimensions, itemRequestedHeight, itemRequestedWidth, pdto, hasHeightBeenDpiScaled);
-
-            _clipboardItemIdsWithCompletedTasks.TryAdd(clipboardItem.Id, true);
         }
 
         [HandleProcessCorruptedStateExceptions]
@@ -247,25 +239,43 @@ namespace Clipbox.Services
         {
             pdto = null;
             
-            if (_resetEventsForClipboardItemIds.TryRemove(clipboardItem.Id, out ManualResetEvent mre))
+            if (_threadExecutorsForClipboardItemIds.TryRemove(clipboardItem.Id, out ThreadExecutor threadExecutor))
             {
-                // wait for the abandon timeout of the task to pass
-                mre.WaitOne();
-                mre.Dispose();
-
-                // TODO: lock the code above up to the point where the new task is added in the dictionary,
-                // so that no duplicate tasks are scheduled.
-
-                // check if the task has actually completed
-                if (_clipboardItemIdsWithCompletedTasks.TryRemove(clipboardItem.Id, out bool isFinished) && isFinished)
+                try
                 {
-                    // if the task is completed, then there should be saved preview data; get it
-                    if (!TryGetStoredPreviewDataTransferObject(clipboardItem.Id, monitorDimensions, out PreviewDataTransferObject savedPdto))
-                    {
-                        throw new InvalidOperationException("The preview generation task has finished, but there is no preview saved.");
-                    }
+                    // wait for the abandon timeout of the task to pass
+                    ExecutionStage stage = threadExecutor.WaitUntilTimeoutReached();
 
-                    pdto = savedPdto;
+                    // TODO: lock the code above up to the point where the new task is added in the dictionary,
+                    // so that no duplicate tasks are scheduled.
+
+                    // check if the task has actually completed
+                    if (stage == ExecutionStage.Completed)
+                    {
+                        // if the task is completed, then there should be saved preview data; get it
+                        if (!TryGetStoredPreviewDataTransferObject(clipboardItem.Id, monitorDimensions, out PreviewDataTransferObject savedPdto))
+                        {
+                            throw new InvalidOperationException("The preview generation task has finished, but there is no preview saved.");
+                        }
+
+                        pdto = savedPdto;
+                    }
+                    else if (stage == ExecutionStage.Error)
+                    {
+                        try
+                        {
+                            Exception ex = threadExecutor.GetException();
+                            throw new PreviewGenerationException($"Preview generation failed for {clipboardItem.Id}", ex);
+                        }
+                        catch (InvalidOperationException ioex)
+                        {
+                            throw new InvalidOperationException($"Wrong usage of {nameof(ThreadExecutor)} or internal error in its code.", ioex);
+                        }
+                    }
+                }
+                finally
+                {
+                    threadExecutor.Dispose();
                 }
 
                 return true;
@@ -297,8 +307,9 @@ namespace Clipbox.Services
                 StoreSerializedPreviewDataTransferObjectToDisk(clipboardItemId, serializedData, itemRequestedWidth, itemRequestedHeight);
             });
         }
+        
 
-        private PreviewDataTransferObject GeneratePreviewDataTransferObject(IClipboardItem clipboardItem, int itemRequestedHeight, int itemRequestedWidth)
+        private PreviewDataTransferObject GeneratePreviewDataTransferObject(IClipboardItem clipboardItem, int itemRequestedHeight, int itemRequestedWidth, CancellationToken cancellationToken)
         {
             IEnumerable<string> formatGuids = clipboardItem.ClipboardDataObjects.Select(cdo => cdo.IntermediateFormatObject.FormatGuid);
             KeyValuePair<string, IPreviewGenerator>? formatGuidPreviewGeneratorPair = _clipboardFormatPreviewExtContainer.ResolveClipboardPreviewGeneratorWithHighestPriority(formatGuids.ToArray());
@@ -309,8 +320,26 @@ namespace Clipbox.Services
             {
                 IPreviewGenerator previewGenerator = formatGuidPreviewGeneratorPair.Value.Value;
                 IClipboardDataObject cdoForPreview = clipboardItem.ClipboardDataObjects.Single(cdo => cdo.IntermediateFormatObject.FormatGuid == formatGuidPreviewGeneratorPair.Value.Key);
+                IIntermediateFormat intermediateFormatObjectForPreview = cdoForPreview.IntermediateFormatObject;
+                
+                if (previewGenerator is IHaveCancellationToken cancellableGenerator)
+                {
+                    cancellableGenerator.CancellationToken = cancellationToken;
+                }
 
-                pdto = GetPdto(itemRequestedHeight, itemRequestedWidth, previewGenerator, cdoForPreview);
+                if (previewGenerator is ISinglePreviewGenerator singlePreviewGenerator)
+                {
+                    pdto = GeneratePdtoForSingleItem(itemRequestedHeight, itemRequestedWidth, singlePreviewGenerator, intermediateFormatObjectForPreview);
+                }
+                else if (previewGenerator is IManyPreviewGenerator manyPreviewGenerator)
+                {
+                    int maxPreviewItemsInGroupItem = _settingsService.GetSetting<int>(SettingsKeys.MaxPreviewItemsInGroupItem);
+                    pdto = GeneratePdtoForMultiItem(itemRequestedHeight, itemRequestedWidth, manyPreviewGenerator, intermediateFormatObjectForPreview, maxPreviewItemsInGroupItem);
+                }
+                else
+                {
+                    throw new InvalidOperationException($"{previewGenerator.GetType().Name} is neither {nameof(ISinglePreviewGenerator)} nor {nameof(IManyPreviewGenerator)}.");
+                }
 
                 pdto.ClipboardItemId = clipboardItem.Id;
             }
@@ -325,6 +354,84 @@ namespace Clipbox.Services
                 {
                     PreviewGenereationStatus = PreviewGenerationStatus.NoGeneratorFound
                 });
+            }
+
+            return pdto;
+        }
+
+        [HandleProcessCorruptedStateExceptions]
+        public PreviewDataTransferObject GeneratePdtoForSingleItem(int itemRequestedHeight,
+            int itemRequestedWidth,
+            ISinglePreviewGenerator previewGenerator,
+            IIntermediateFormat intermediateFormatObject)
+        {
+            ISinglePreviewGenerator singlePreviewGenerator = previewGenerator as ISinglePreviewGenerator;
+
+            IPreviewData previewData = null;
+
+            try { previewData = singlePreviewGenerator.GetPreview(intermediateFormatObject, itemRequestedWidth, itemRequestedHeight); } // TODO: find a way to determine the preview dimentions
+            catch (Exception ex) { throw new ClipboxExtentionException(nameof(singlePreviewGenerator.GetPreview), singlePreviewGenerator.GetType(), ex); }
+
+            PreviewItemTransferObject pito = PreviewItemTransferObject.FromPreviewData(previewData);
+
+            PreviewDataTransferObject pdto = new PreviewDataTransferObject
+            {
+                PreviewItems = new List<PreviewItemTransferObject> { pito },
+                IsGroup = false
+            };
+
+            return pdto;
+        }
+
+        [HandleProcessCorruptedStateExceptions]
+        public PreviewDataTransferObject GeneratePdtoForMultiItem(int itemRequestedHeight,
+            int itemRequestedWidth,
+            IManyPreviewGenerator previewGenerator,
+            IIntermediateFormat intermediateFormatObject,
+            int maxPreviewItemsInGroupItem)
+        {
+
+            PreviewDataTransferObject pdto = new PreviewDataTransferObject
+            {
+                PreviewItems = new List<PreviewItemTransferObject>()
+            };
+
+            try { previewGenerator.SetData(intermediateFormatObject); }
+            catch (Exception ex) { throw new ClipboxExtentionException(nameof(previewGenerator.SetData), previewGenerator.GetType(), ex); }
+
+            int itemsCount = 0;
+            try { itemsCount = previewGenerator.GetItemsTotalCount(); }
+            catch (Exception ex) { throw new ClipboxExtentionException(nameof(previewGenerator.SetData), previewGenerator.GetType(), ex); }
+
+            if (itemsCount == 0)
+            {
+                throw new InvalidOperationException($"{previewGenerator.GetType().Name}.{nameof(previewGenerator.GetItemsTotalCount)} returned 0 and no exception was detected. This indicates a mistake in the preview generator extension's logic.");
+            }
+
+            IEnumerable<IPreviewData> previewDataCollection = null;
+            try { previewDataCollection = previewGenerator.GetPreview(itemRequestedWidth, itemRequestedHeight, maxPreviewItemsInGroupItem); }
+            catch (Exception ex) { throw new ClipboxExtentionException(nameof(previewGenerator.GetPreview), previewGenerator.GetType(), ex); }
+
+            if (itemsCount == 0)
+            {
+                throw new InvalidOperationException($"{previewGenerator.GetType().Name}.{nameof(previewGenerator.GetPreview)} returned 0 previews and no exception was detected. This indicates a mistake in the preview generator extension's logic.");
+            }
+
+            foreach (IPreviewData previewData in previewDataCollection)
+            {
+                PreviewItemTransferObject pito = PreviewItemTransferObject.FromPreviewData(previewData);
+                pdto.PreviewItems.Add(pito);
+            }
+
+            if (itemsCount > 1)
+            {
+                int itemsWithNoPreview = itemsCount - pdto.PreviewItems.Count();
+                pdto.NumberOfItemsWithoutPreview = itemsWithNoPreview;
+                pdto.IsGroup = true;
+            }
+            else
+            {
+                pdto.IsGroup = false;
             }
 
             return pdto;
@@ -465,78 +572,6 @@ namespace Clipbox.Services
                 NumberOfItemsWithoutPreview = pdto.NumberOfItemsWithoutPreview
             };
         }
-
-        [HandleProcessCorruptedStateExceptions]
-        private PreviewDataTransferObject GetPdto(int itemRequestedHeight, 
-            int itemRequestedWidth, 
-            IPreviewGenerator previewGenerator, 
-            IClipboardDataObject cdoForPreview)
-        {
-            PreviewDataTransferObject pdto = new PreviewDataTransferObject
-            {
-                PreviewItems = new List<PreviewItemTransferObject>()
-            };
-            
-            if (previewGenerator is ISinglePreviewGenerator)
-            {
-                ISinglePreviewGenerator singlePreviewGenerator = previewGenerator as ISinglePreviewGenerator;
-                
-                IPreviewData previewData = null;
-
-                try { previewData = singlePreviewGenerator.GetPreview(cdoForPreview.IntermediateFormatObject, itemRequestedWidth, itemRequestedHeight); } // TODO: find a way to determine the preview dimentions
-                catch (Exception ex) { throw new ClipboxExtentionException(nameof(singlePreviewGenerator.GetPreview), singlePreviewGenerator.GetType(), ex); }
-
-                PreviewItemTransferObject pito = PreviewItemTransferObject.FromPreviewData(previewData);
-                pdto.PreviewItems.Add(pito);
-                pdto.IsGroup = false;
-            }
-            else if (previewGenerator is IManyPreviewGenerator)
-            {
-                IManyPreviewGenerator manyPreviewGenerator = previewGenerator as IManyPreviewGenerator;
-
-                try { manyPreviewGenerator.SetData(cdoForPreview.IntermediateFormatObject); }
-                catch (Exception ex) { throw new ClipboxExtentionException(nameof(manyPreviewGenerator.SetData), manyPreviewGenerator.GetType(), ex); }
-
-                int itemsCount = 0;
-                try { itemsCount = manyPreviewGenerator.GetItemsTotalCount(); }
-                catch (Exception ex) { throw new ClipboxExtentionException(nameof(manyPreviewGenerator.SetData), manyPreviewGenerator.GetType(), ex); }
-
-                if (itemsCount == 0)
-                {
-                    throw new InvalidOperationException($"{manyPreviewGenerator.GetType().Name}.{nameof(manyPreviewGenerator.GetItemsTotalCount)} returned 0 and no exception was detected. This indicates a mistake in the preview generator extension's logic.");
-                }
-
-                int maxPreviewItemsInGroupItem = _settingsService.GetSetting<int>(SettingsKeys.MaxPreviewItemsInGroupItem);
-
-                IEnumerable<IPreviewData> previewDataCollection = null;
-                try { previewDataCollection = manyPreviewGenerator.GetPreview(itemRequestedWidth, itemRequestedHeight, maxPreviewItemsInGroupItem); }
-                catch (Exception ex) { throw new ClipboxExtentionException(nameof(manyPreviewGenerator.GetPreview), manyPreviewGenerator.GetType(), ex); }
-
-                if (itemsCount == 0)
-                {
-                    throw new InvalidOperationException($"{manyPreviewGenerator.GetType().Name}.{nameof(manyPreviewGenerator.GetPreview)} returned 0 previews and no exception was detected. This indicates a mistake in the preview generator extension's logic.");
-                }
-
-                foreach (IPreviewData previewData in previewDataCollection)
-                {
-                    PreviewItemTransferObject pito = PreviewItemTransferObject.FromPreviewData(previewData);
-                    pdto.PreviewItems.Add(pito);
-                }
-
-                if (itemsCount > 1)
-                {
-                    int itemsWithNoPreview = itemsCount - pdto.PreviewItems.Count();
-                    pdto.NumberOfItemsWithoutPreview = itemsWithNoPreview;
-                    pdto.IsGroup = true;
-                }
-                else
-                {
-                    pdto.IsGroup = false;
-                }
-            }
-            
-            return pdto;
-        }
         
         private int CalculateItemRequestedHeight(MonitorDimensions monitorDimensions, out bool hasHeightBeenDpiScaled)
         {
@@ -640,12 +675,12 @@ namespace Clipbox.Services
             _clipboardManager.ItemChanged -= _clipboardManager_ItemChanged;
             _clipboardManager.ItemRemoved -= _clipboardManager_ItemRemoved;
 
-            // Dispose of the manual reset events for the tasks,
-            // whose previde data has not been requested and the tasks - removed from the collection;
-            // Abandon the associated tasks, if there are any.
-            foreach (ManualResetEvent mre in _resetEventsForClipboardItemIds.Values)
+            // Dispose any thread executors. Their dispose method will wait for
+            // them to finish or if the timeout is reached, it will wait for them
+            // to be cancelled or aborted.
+            foreach (ThreadExecutor te in _threadExecutorsForClipboardItemIds.Values)
             {
-                mre.Dispose();
+                te.Dispose();
             }
 
             // dispose the SimpleDispatcher instances. If we do not do that, they will
