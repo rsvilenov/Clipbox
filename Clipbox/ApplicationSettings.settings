@@ -44,5 +44,14 @@
     <Setting Name="MaxNonPinnedItemsInQuickView" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">5</Value>
     </Setting>
+    <Setting Name="PreviewGenerationTimeout" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">6000</Value>
+    </Setting>
+    <Setting Name="PreviewCacheMaxSize" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">10485760</Value>
+    </Setting>
+    <Setting Name="MaxSimultaneousPreviewTasks" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">5</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

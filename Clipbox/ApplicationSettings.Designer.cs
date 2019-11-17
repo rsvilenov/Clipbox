@@ -190,5 +190,41 @@ namespace Clipbox {
                 this["MaxNonPinnedItemsInQuickView"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("6000")]
+        public int PreviewGenerationTimeout {
+            get {
+                return ((int)(this["PreviewGenerationTimeout"]));
+            }
+            set {
+                this["PreviewGenerationTimeout"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10485760")]
+        public int PreviewCacheMaxSize {
+            get {
+                return ((int)(this["PreviewCacheMaxSize"]));
+            }
+            set {
+                this["PreviewCacheMaxSize"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("5")]
+        public int MaxSimultaneousPreviewTasks {
+            get {
+                return ((int)(this["MaxSimultaneousPreviewTasks"]));
+            }
+            set {
+                this["MaxSimultaneousPreviewTasks"] = value;
+            }
+        }
     }
 }

@@ -31,9 +31,6 @@ namespace Clipbox.Services
     public class PreviewGenerationService : IPreviewGenerationService, IDisposable
     {
         private const string APP_DATA_SUBDIR = "PreviewDataCache";
-        private const int PREVIEW_GENERATION_TIMEOUT_MS = 6000;
-        private const long PREVIEW_BYTE_ARRAY_CACHE_MAX_SIZE_BYTES = 10 * 1024 * 1024;
-        private const int MAX_SIMULTANEOUS_PREVIEW_GENERATION_TASKS = 5;
 
         private readonly IClipboardManager _clipboardManager;
         private readonly IPreviewGeneratorExtentionContainer _clipboardFormatPreviewExtContainer;
@@ -53,6 +50,8 @@ namespace Clipbox.Services
 
         private bool _disposeBegun;
 
+        private int _previewGenerationTimeoutMs;
+
         public PreviewGenerationService(
             IClipboardManager clipboardManager,
             IPreviewGeneratorExtentionContainer clipboardFormatPreviewExtContainer, 
@@ -67,12 +66,16 @@ namespace Clipbox.Services
             _bgGenerationDispatcher = new SimpleDispatcher();
             _storeToDiskDispatcher = new SimpleDispatcher();
 
-            _maxTasksSemaphore = new SemaphoreSlim(MAX_SIMULTANEOUS_PREVIEW_GENERATION_TASKS);
+            int maxSimultaneousPreviewGenerationTasks = _settingsService.GetSetting<int>(SettingsKeys.MaxSimultaneousPreviewTasks);
+            _maxTasksSemaphore = new SemaphoreSlim(maxSimultaneousPreviewGenerationTasks);
 
             _threadExecutorsForClipboardItemIds = new ConcurrentDictionary<string, ThreadExecutor>();
             _mreStartedForClipboardItemIds = new ConcurrentDictionary<string, ManualResetEvent>();
 
-            _byteArrayCache = new ByteArrayCache(PREVIEW_BYTE_ARRAY_CACHE_MAX_SIZE_BYTES, compressData: true);
+            int previewByteArrayCacheMaxSizeBytes = _settingsService.GetSetting<int>(SettingsKeys.PreviewCacheMaxSize);
+            _byteArrayCache = new ByteArrayCache(previewByteArrayCacheMaxSizeBytes, compressData: true);
+
+            _previewGenerationTimeoutMs = _settingsService.GetSetting<int>(SettingsKeys.PreviewGenerationTimeout);
 
             _clipboardManager.ItemAdded += _clipboardManager_ItemAdded;
             _clipboardManager.ItemChanged += _clipboardManager_ItemChanged;
@@ -125,7 +128,7 @@ namespace Clipbox.Services
                     _maxTasksSemaphore.Release();
                 }
 
-            }, PREVIEW_GENERATION_TIMEOUT_MS);
+            }, _previewGenerationTimeoutMs);
             
             if (!_threadExecutorsForClipboardItemIds.TryAdd(clipboardItemId, te))
             {

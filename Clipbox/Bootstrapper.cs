@@ -133,7 +133,12 @@ namespace Clipbox
             _settingsService.SetSetting(SettingsKeys.AreFadeAnimationsEnabled, true);
             _settingsService.SetSetting(SettingsKeys.IsAutomaticCloudSyncOfPinnedItemsEnabled, true);
             _settingsService.SetSetting(SettingsKeys.MaxNonPinnedItemsInQuickView, 5);
-            
+
+            // changing of these requires restrat for the change to take effect
+            _settingsService.SetSetting(SettingsKeys.PreviewGenerationTimeout, 6000);
+            _settingsService.SetSetting(SettingsKeys.PreviewCacheMaxSize, 10485760);
+            _settingsService.SetSetting(SettingsKeys.MaxSimultaneousPreviewTasks, 5);
+
             _previewGenerationService = new PreviewGenerationService(_clipboardManager, _extentionLoader.PreviewGeneratorsContainer, _settingsService);
             
             // Initialize the view model - the quick view should show as fast as possible, so we will create it beforehand

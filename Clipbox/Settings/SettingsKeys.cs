@@ -27,5 +27,11 @@
         public const string IsAutomaticCloudSyncOfPinnedItemsEnabled = nameof(IsAutomaticCloudSyncOfPinnedItemsEnabled);
 
         public const string MaxNonPinnedItemsInQuickView = nameof(MaxNonPinnedItemsInQuickView);
+
+        public const string PreviewGenerationTimeout = nameof(PreviewGenerationTimeout);
+
+        public const string PreviewCacheMaxSize = nameof(PreviewCacheMaxSize);
+
+        public const string MaxSimultaneousPreviewTasks = nameof(MaxSimultaneousPreviewTasks);
     }
 }
