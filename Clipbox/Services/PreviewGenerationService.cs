@@ -1,7 +1,6 @@
 ﻿using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
-using Clipbox.Core.Extensibility.Contracts.PreviewData;
 using Clipbox.Core.Extensibility.Exceptions;
 using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.Cache;
@@ -26,7 +25,6 @@ using System.Runtime.ExceptionServices;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Clipbox.Services
 {
@@ -47,7 +45,8 @@ namespace Clipbox.Services
         private readonly SimpleDispatcher _storeToDiskDispatcher;
 
         private readonly SemaphoreSlim _maxTasksSemaphore;
-        
+
+        private readonly ConcurrentDictionary<string, ManualResetEvent> _mreStartedForClipboardItemIds;
         private readonly ConcurrentDictionary<string, ThreadExecutor> _threadExecutorsForClipboardItemIds;
 
         private readonly ByteArrayCache _byteArrayCache;
@@ -71,6 +70,7 @@ namespace Clipbox.Services
             _maxTasksSemaphore = new SemaphoreSlim(MAX_SIMULTANEOUS_PREVIEW_GENERATION_TASKS);
 
             _threadExecutorsForClipboardItemIds = new ConcurrentDictionary<string, ThreadExecutor>();
+            _mreStartedForClipboardItemIds = new ConcurrentDictionary<string, ManualResetEvent>();
 
             _byteArrayCache = new ByteArrayCache(PREVIEW_BYTE_ARRAY_CACHE_MAX_SIZE_BYTES, compressData: true);
 
@@ -107,46 +107,52 @@ namespace Clipbox.Services
         }
 
         private bool TryEnqueuePreviewGenerationTask(string clipboardItemId, MonitorDimensions monitorDimensions = null)
-        {            
+        {
+            if (_threadExecutorsForClipboardItemIds.TryGetValue(clipboardItemId, out ThreadExecutor _))
+            {
+                // we already have a running thread
+                return false;
+            }
+
+            ThreadExecutor te = new ThreadExecutor((cancellationToken) =>
+            {
+                try
+                {
+                    GeneratePreview(clipboardItemId, cancellationToken, monitorDimensions);
+                }
+                finally
+                {
+                    _maxTasksSemaphore.Release();
+                }
+
+            }, PREVIEW_GENERATION_TIMEOUT_MS);
+            
+            if (!_threadExecutorsForClipboardItemIds.TryAdd(clipboardItemId, te))
+            {
+                // we already have a running thread
+                return false;
+            }
+
+            ManualResetEvent mre = new ManualResetEvent(false);
+            if (!_mreStartedForClipboardItemIds.TryAdd(clipboardItemId, mre))
+            {
+                throw new InvalidOperationException("At this point there shouldn't be possible for the code to try adding a mre for an existing clipboard item id. But it just did.");
+            }
+
             // enqueue a task
             _bgGenerationDispatcher.BeginInvoke(() =>
             {
-
                 if (_disposeBegun)
                 {
                     return;
                 }
-
+                
                 _maxTasksSemaphore.Wait();
-
-                if (_disposeBegun)
-                {
-                    return;
-                }
-
-                if (_threadExecutorsForClipboardItemIds.TryGetValue(clipboardItemId, out ThreadExecutor _))
-                {
-                    // we already have a running thread
-                    return;
-                }
-
-                ThreadExecutor te = new ThreadExecutor((cancellationToken) =>
-                {
-                    try
-                    {
-                        GeneratePreview(clipboardItemId, cancellationToken, monitorDimensions);
-                    }
-                    finally
-                    {
-                        _maxTasksSemaphore.Release();
-                    }
-
-                }, PREVIEW_GENERATION_TIMEOUT_MS);
 
                 te.Start();
 
-                // this will fail if we already have a thread there
-                _threadExecutorsForClipboardItemIds.TryAdd(clipboardItemId, te);
+                // indicate to the listeners that we have strated the thread
+                mre.Set();
             });
 
             return true;
@@ -200,7 +206,12 @@ namespace Clipbox.Services
                 // schedule a preview generation task if it is not sheduled already
                 TryEnqueuePreviewGenerationTask(clipboardItem.Id, monitorDimensions);
                 // and wait for its completion
-                WaitForPreviewGenerationTaskResult(clipboardItem, monitorDimensions, out pdto);
+                bool hasTheNewTaskBeenStarted = WaitForPreviewGenerationTaskResult(clipboardItem, monitorDimensions, out pdto);
+                if (!hasTheNewTaskBeenStarted)
+                {
+                    throw new InvalidOperationException($"It seems that the newly enqueued task for clipboard item with id {clipboardItem.Id} has not been started.");
+                }
+
                 // if we do not have a preview by now, abandon
             }
 
@@ -243,6 +254,20 @@ namespace Clipbox.Services
             {
                 try
                 {
+                    if (!_mreStartedForClipboardItemIds.TryRemove(clipboardItem.Id, out ManualResetEvent mre))
+                    {
+                        throw new InvalidOperationException($"No ManualResetEvent was registered for clipboard item with id {clipboardItem.Id}");
+                    }
+
+                    try
+                    {
+                        mre.WaitOne();
+                    }
+                    finally
+                    {
+                        mre.Dispose();
+                    }
+
                     // wait for the abandon timeout of the task to pass
                     ExecutionStage stage = threadExecutor.WaitUntilTimeoutReached();
 
@@ -678,9 +703,14 @@ namespace Clipbox.Services
             // Dispose any thread executors. Their dispose method will wait for
             // them to finish or if the timeout is reached, it will wait for them
             // to be cancelled or aborted.
-            foreach (ThreadExecutor te in _threadExecutorsForClipboardItemIds.Values)
+            foreach (var idTePair in _threadExecutorsForClipboardItemIds)
             {
-                te.Dispose();
+                idTePair.Value.Dispose();
+            }
+
+            foreach (var idMrePair in _mreStartedForClipboardItemIds)
+            {
+                idMrePair.Value.Dispose();
             }
 
             // dispose the SimpleDispatcher instances. If we do not do that, they will
