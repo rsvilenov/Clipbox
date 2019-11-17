@@ -1,6 +1,7 @@
 ﻿using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
+using Clipbox.Core.Extensibility.Contracts.ExtentionTypes.PreviewGenerationTypes;
 using Clipbox.Core.Extensibility.Exceptions;
 using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.Cache;
@@ -48,10 +49,10 @@ namespace Clipbox.Services
 
         private readonly ByteArrayCache _byteArrayCache;
 
+        private readonly int _previewGenerationTimeoutMs;
+
         private bool _disposeBegun;
-
-        private int _previewGenerationTimeoutMs;
-
+        
         public PreviewGenerationService(
             IClipboardManager clipboardManager,
             IPreviewGeneratorExtentionContainer clipboardFormatPreviewExtContainer, 
@@ -142,7 +143,8 @@ namespace Clipbox.Services
                 throw new InvalidOperationException("At this point there shouldn't be possible for the code to try adding a mre for an existing clipboard item id. But it just did.");
             }
 
-            // enqueue a task
+            // enqueue a task - we will wait inside and want to block the
+            // processing queue, but not the calling thread (this method).
             _bgGenerationDispatcher.BeginInvoke(() =>
             {
                 if (_disposeBegun)
@@ -182,8 +184,7 @@ namespace Clipbox.Services
 
             CacheGeneratedData(monitorDimensions, itemRequestedHeight, itemRequestedWidth, pdto, hasHeightBeenDpiScaled);
         }
-
-        [HandleProcessCorruptedStateExceptions]
+        
         public PreviewDataTransferObject GetPreviewDataTransferObject(IClipboardItem clipboardItem, MonitorDimensions monitorDimensions)
         {
             if (clipboardItem == null)
@@ -215,7 +216,9 @@ namespace Clipbox.Services
                     throw new InvalidOperationException($"It seems that the newly enqueued task for clipboard item with id {clipboardItem.Id} has not been started.");
                 }
 
-                // if we do not have a preview by now, abandon
+                // if we do not have a preview by now, abandon; the ThreadExecutor will try to
+                // cancel the thread gracefully and if the thread's code does not cooperate,
+                // it will try to abort it.
             }
 
             if (pdto == null)
@@ -227,14 +230,15 @@ namespace Clipbox.Services
 
                 pdto.PreviewItems.Add(new PreviewItemTransferObject
                 {
-                    // TODO: this is not entirely accurate, as the reason for failure may not be a timeout
+                    // if we have reached this point, the code of the preview generation
+                    // extension has run too long and is now either being
+                    //(or has already been) cancelled /aborted
                     PreviewGenereationStatus = PreviewGenerationStatus.Timeout
                 });
             }
-            
-            if (!pdto.PreviewItems.Any())
+            else if (pdto.PreviewItems?.Any() == false)
             {
-                throw new InvalidOperationException($"Preview items generation failed for id {clipboardItem.Id}. " +
+                throw new InvalidOperationException($"Preview items generation failed for id {clipboardItem.Id}. No preview items were generated. " +
                     $"Clipboard formats: {string.Join("; ", clipboardItem.ClipboardDataObjects.Select(cdo => cdo.ClipboardFormatName))}");
             }
 
@@ -273,10 +277,7 @@ namespace Clipbox.Services
 
                     // wait for the abandon timeout of the task to pass
                     ExecutionStage stage = threadExecutor.WaitUntilTimeoutReached();
-
-                    // TODO: lock the code above up to the point where the new task is added in the dictionary,
-                    // so that no duplicate tasks are scheduled.
-
+                    
                     // check if the task has actually completed
                     if (stage == ExecutionStage.Completed)
                     {
@@ -339,7 +340,15 @@ namespace Clipbox.Services
 
         private PreviewDataTransferObject GeneratePreviewDataTransferObject(IClipboardItem clipboardItem, int itemRequestedHeight, int itemRequestedWidth, CancellationToken cancellationToken)
         {
-            IEnumerable<string> formatGuids = clipboardItem.ClipboardDataObjects.Select(cdo => cdo.IntermediateFormatObject.FormatGuid);
+            IEnumerable<string> formatGuids = clipboardItem.ClipboardDataObjects
+                .Where(cdo => cdo.IntermediateFormatObject != null)
+                .Select(cdo => cdo.IntermediateFormatObject.FormatGuid);
+
+            if (!formatGuids.Any())
+            {
+                throw new InvalidOperationException($"No clipboard formats found in the clipboard item with id {clipboardItem.Id}");
+            }
+
             KeyValuePair<string, IPreviewGenerator>? formatGuidPreviewGeneratorPair = _clipboardFormatPreviewExtContainer.ResolveClipboardPreviewGeneratorWithHighestPriority(formatGuids.ToArray());
 
             PreviewDataTransferObject pdto;
@@ -350,7 +359,7 @@ namespace Clipbox.Services
                 IClipboardDataObject cdoForPreview = clipboardItem.ClipboardDataObjects.Single(cdo => cdo.IntermediateFormatObject.FormatGuid == formatGuidPreviewGeneratorPair.Value.Key);
                 IIntermediateFormat intermediateFormatObjectForPreview = cdoForPreview.IntermediateFormatObject;
                 
-                if (previewGenerator is IHaveCancellationToken cancellableGenerator)
+                if (previewGenerator is ICancellablePreviewGenerator cancellableGenerator)
                 {
                     cancellableGenerator.CancellationToken = cancellationToken;
                 }
@@ -716,12 +725,14 @@ namespace Clipbox.Services
                 idMrePair.Value.Dispose();
             }
 
-            // dispose the SimpleDispatcher instances. If we do not do that, they will
+            // Dispose the SimpleDispatcher instances. If we do not do that, they will
             // keep a thread busy forever and the application will never be able to
             // quit gracefully.
             _bgGenerationDispatcher.Dispose();
             _storeToDiskDispatcher.Dispose();
 
+            // At this point we have waited for the completion of all tasks, so the semaphore's Release()
+            // method will not throw ObjectDisposedException. So we can safely dispose of it here.
             _maxTasksSemaphore.Dispose();
         }
     }

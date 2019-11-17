@@ -4,7 +4,6 @@
     {
         Waiting,
         Started,
-        TimeoutReached,
         Completed,
         CancelRequested,
         Cancelled,

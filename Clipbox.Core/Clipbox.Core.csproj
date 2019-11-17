@@ -54,7 +54,7 @@
     <Compile Include="Extensibility\Attributes\IntermediateFormatSupportAttribute.cs" />
     <Compile Include="Extensibility\Attributes\PreviewPriorityAttribute.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\GeneralTypes\SearchSupportExtension.cs" />
-    <Compile Include="Extensibility\Contracts\ExtentionTypes\IHaveCancellationToken.cs" />
+    <Compile Include="Extensibility\Contracts\ExtentionTypes\PreviewGenerationTypes\ICancellablePreviewGenerator.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\IPersistenceSupport.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\IPreviewGenerator.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\ISearchSupport.cs" />
