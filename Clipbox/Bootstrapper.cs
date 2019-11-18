@@ -139,6 +139,9 @@ namespace Clipbox
             _settingsService.SetSetting(SettingsKeys.PreviewCacheMaxSize, 10485760);
             _settingsService.SetSetting(SettingsKeys.MaxSimultaneousPreviewTasks, 5);
 
+            // overrides MaxSimultaneousPreviewTasks
+            _settingsService.SetSetting(SettingsKeys.AutoDetermineMaxSimultaneousPreviewTasks, true);
+
             _previewGenerationService = new PreviewGenerationService(_clipboardManager, _extentionLoader.PreviewGeneratorsContainer, _settingsService);
             
             // Initialize the view model - the quick view should show as fast as possible, so we will create it beforehand

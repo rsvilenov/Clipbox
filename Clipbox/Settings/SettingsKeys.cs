@@ -33,5 +33,7 @@
         public const string PreviewCacheMaxSize = nameof(PreviewCacheMaxSize);
 
         public const string MaxSimultaneousPreviewTasks = nameof(MaxSimultaneousPreviewTasks);
+
+        public const string AutoDetermineMaxSimultaneousPreviewTasks = nameof(AutoDetermineMaxSimultaneousPreviewTasks);
     }
 }

@@ -67,7 +67,16 @@ namespace Clipbox.Services
             _bgGenerationDispatcher = new SimpleDispatcher();
             _storeToDiskDispatcher = new SimpleDispatcher();
 
-            int maxSimultaneousPreviewGenerationTasks = _settingsService.GetSetting<int>(SettingsKeys.MaxSimultaneousPreviewTasks);
+            int maxSimultaneousPreviewGenerationTasks;
+            if (_settingsService.GetSetting<bool>(SettingsKeys.AutoDetermineMaxSimultaneousPreviewTasks))
+            {
+                maxSimultaneousPreviewGenerationTasks = Environment.ProcessorCount;
+            }
+            else
+            {
+                maxSimultaneousPreviewGenerationTasks = _settingsService.GetSetting<int>(SettingsKeys.MaxSimultaneousPreviewTasks);
+            }
+
             _maxTasksSemaphore = new SemaphoreSlim(maxSimultaneousPreviewGenerationTasks);
 
             _threadExecutorsForClipboardItemIds = new ConcurrentDictionary<string, ThreadExecutor>();
@@ -300,6 +309,10 @@ namespace Clipbox.Services
                         {
                             throw new InvalidOperationException($"Wrong usage of {nameof(ThreadExecutor)} or internal error in its code.", ioex);
                         }
+                    }
+                    else
+                    {
+
                     }
                 }
                 finally

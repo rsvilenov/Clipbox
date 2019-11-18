@@ -226,5 +226,17 @@ namespace Clipbox {
                 this["MaxSimultaneousPreviewTasks"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool AutoDetermineMaxSimultaneousPreviewTasks {
+            get {
+                return ((bool)(this["AutoDetermineMaxSimultaneousPreviewTasks"]));
+            }
+            set {
+                this["AutoDetermineMaxSimultaneousPreviewTasks"] = value;
+            }
+        }
     }
 }
