@@ -171,10 +171,8 @@
                                         -->
                                         <Image
                                             Width="{Binding Image.Width}"
-                                            HorizontalAlignment="Stretch"
-                                            VerticalAlignment="Stretch"
-                                            Source="{Binding Image}"
-                                            Stretch="Uniform" />
+                                            RenderOptions.BitmapScalingMode="LowQuality"
+                                            Source="{Binding Image}" />
                                     </Setter.Value>
                                 </Setter>
                             </DataTrigger>

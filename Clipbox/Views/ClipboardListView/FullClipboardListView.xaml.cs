@@ -364,16 +364,35 @@ namespace Clipbox.Views.ClipboardListView
                     ListViewItem lvi = (ListViewItem)this.ItemContainerGenerator.ContainerFromItem(lviVm);
 
                     // check if the item is within the bounds of the clipboard view
-                    Rect bounds =
+                    Rect lviItemRect =
                         lvi.TransformToAncestor(this).TransformBounds(new Rect(0.0, 0.0, lvi.ActualWidth, lvi.ActualHeight));
-                    var rect = new Rect(0, 0, this.ActualWidth, this.ActualHeight);
-                    if ((rect.Contains(bounds.TopLeft) || rect.Contains(bounds.BottomRight))
-                        && !lviVm.IsViewItemLoaded)
+                    var listViewVisibleAreaRect = new Rect(0, 0, this.ActualWidth, this.ActualHeight);
+                    bool isListViewItemInVisibleArea = listViewVisibleAreaRect.Contains(lviItemRect.TopLeft) || listViewVisibleAreaRect.Contains(lviItemRect.BottomRight);
+
+                    if (isListViewItemInVisibleArea)
                     {
-                        lviVm.IsShownIntoView = true;
-                        // load the full view item
-                        ViewItemLoadingRequested?.Invoke(this, new ClipboardItemManipulationEventArgs(lviVm.Id));
+                        if (!lviVm.IsViewItemLoaded)
+                        {
+                            lviVm.IsShownIntoView = true;
+                            // load the full view item
+                            ViewItemLoadingRequested?.Invoke(this, new ClipboardItemManipulationEventArgs(lviVm.Id));
+                        }
                     }
+                    else
+                    {
+                        lviVm.IsShownIntoView = false;
+
+                        ViewItemLoadingCancelRequested?.Invoke(this, new ClipboardItemManipulationEventArgs(lviVm.Id));
+
+                        if (lviVm.IsViewItemLoaded
+                        && !lviVm.IsSelected  /* do not unload the selected items */
+                        && !SelectedMultiItemsIds.ContainsKey(lviVm.Id)) /* do not unload the multi items with selected subitems */
+                        {
+                            // unload the item to save up memory
+                            ViewItemUnloadingRequested?.Invoke(this, new ClipboardItemManipulationEventArgs(lviVm.Id));
+                        }
+                    }
+
                 }
                 else
                 {

@@ -140,7 +140,7 @@ namespace Clipbox
             _settingsService.SetSetting(SettingsKeys.MaxSimultaneousPreviewTasks, 5);
 
             // overrides MaxSimultaneousPreviewTasks
-            _settingsService.SetSetting(SettingsKeys.AutoDetermineMaxSimultaneousPreviewTasks, true);
+            _settingsService.SetSetting(SettingsKeys.AutoDetermineMaxSimultaneousPreviewTasks, false);
 
             _previewGenerationService = new PreviewGenerationService(_clipboardManager, _extentionLoader.PreviewGeneratorsContainer, _settingsService);
             
