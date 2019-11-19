@@ -100,8 +100,20 @@ namespace Clipbox.Views.ClipboardListView
         public static readonly DependencyProperty IsFadeInOfItemsEnabledProperty =
             DependencyProperty.Register(nameof(IsFadeInOfItemsEnabled), typeof(bool), typeof(FullClipboardListView), new PropertyMetadata(false));
 
+        
+        public int NumOfNotYetVisibleRowsToPreload
+        {
+            get { return (int)GetValue(NumOfNotYetVisibleRowsToPreloadProperty); }
+            set { SetValue(NumOfNotYetVisibleRowsToPreloadProperty, value); }
+        }
+        
+        public static readonly DependencyProperty NumOfNotYetVisibleRowsToPreloadProperty =
+            DependencyProperty.Register(nameof(NumOfNotYetVisibleRowsToPreload), typeof(int), typeof(FullClipboardListView), new PropertyMetadata(0));
 
 
+
+        private Rect _listViewVisibleArea;
+        
         public FullClipboardListView()
         {
             InitializeComponent();
@@ -263,15 +275,18 @@ namespace Clipbox.Views.ClipboardListView
             {
                 GroupItem groupItem = _groupNameGroupItemMapping[groupName];
 
-                Rect bounds =
-                groupItem.TransformToAncestor(this).TransformBounds(new Rect(0.0, 0.0, groupItem.ActualWidth, groupItem.ActualHeight));
-                var rect = new Rect(0, 0, this.ActualWidth, this.ActualHeight);
+                Rect groupItemBounds =
+                    groupItem.TransformToAncestor(this).TransformBounds(new Rect(0.0, 0.0, groupItem.ActualWidth, groupItem.ActualHeight));
                 
                 if (/* if the group is within the listview's bounds */
-                rect.Contains(bounds.TopLeft) || rect.Contains(bounds.BottomRight)
+                /* (the top line is within visible bounds */
+                (_listViewVisibleArea.Y < groupItemBounds.Y && _listViewVisibleArea.Height > groupItemBounds.Y) 
+                || 
+                /* or the bottom line is within visible bounds) */
+                (_listViewVisibleArea.Y < groupItemBounds.Y + groupItemBounds.Height && _listViewVisibleArea.Height > groupItemBounds.Y + groupItemBounds.Height)
                  /* or if the group is larger than the listview's height 
                   * and its top and bottom are not within the visible area */
-                 || (bounds.Top < rect.Top && bounds.Bottom > rect.Bottom))
+                 || (groupItemBounds.Top < _listViewVisibleArea.Top && groupItemBounds.Bottom > _listViewVisibleArea.Bottom))
                 {
                     _visibleGroupNames.Add(groupName);
                 }
@@ -332,6 +347,15 @@ namespace Clipbox.Views.ClipboardListView
                 }
 
                 _groupNameGroupItemMapping.Add(groupName, groupItem);
+
+                // memorize the list view visible area here
+                // and set the preload window, according to the row size
+                if (_listViewVisibleArea == default(Rect))
+                {
+                    // ignore the margins for now, maybe include them some other day...
+                    double preloadWindowSize = firstLvi.ActualHeight * NumOfNotYetVisibleRowsToPreload;
+                    _listViewVisibleArea = new Rect(0, -(preloadWindowSize), this.ActualWidth, this.ActualHeight + preloadWindowSize);
+                }
             }
 
             ScrollBarDataContext.FirstItemDateString = _groupNameGroupItemMapping.First().Key;
@@ -366,8 +390,15 @@ namespace Clipbox.Views.ClipboardListView
                     // check if the item is within the bounds of the clipboard view
                     Rect lviItemRect =
                         lvi.TransformToAncestor(this).TransformBounds(new Rect(0.0, 0.0, lvi.ActualWidth, lvi.ActualHeight));
-                    var listViewVisibleAreaRect = new Rect(0, 0, this.ActualWidth, this.ActualHeight);
-                    bool isListViewItemInVisibleArea = listViewVisibleAreaRect.Contains(lviItemRect.TopLeft) || listViewVisibleAreaRect.Contains(lviItemRect.BottomRight);
+
+                    bool isListViewItemInVisibleArea =
+                        /* the top line is within visible bounds */
+                        (_listViewVisibleArea.Y < lviItemRect.Y && _listViewVisibleArea.Height > lviItemRect.Y)
+                        ||
+                        /* bottom line is within visible bounds */
+                        (_listViewVisibleArea.Y < lviItemRect.Y + lviItemRect.Height && _listViewVisibleArea.Height > lviItemRect.Y + lviItemRect.Height);
+
+                        //_listViewVisibleArea.Contains(lviItemRect.TopLeft) || _listViewVisibleArea.Contains(lviItemRect.BottomRight);
 
                     if (isListViewItemInVisibleArea)
                     {

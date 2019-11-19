@@ -503,6 +503,7 @@
                 ItemEnableDisableSyncRequested="MainListView_ItemEnableDisableSyncRequested"
                 ItemPinUnpinRequested="MainListView_ItemPinUnpinRequested"
                 ItemsSource="{Binding ClipboardViewItemWrappers}"
+                NumOfNotYetVisibleRowsToPreload="{Binding Path=NumOfNotYetVisibleRowsToPreload, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}}"
                 SelectionChangeCompleted="MainListView_SelectionChangeCompleted"
                 ViewItemLoadingCancelRequested="MainListView_ViewItemLoadingCancelRequested"
                 ViewItemLoadingRequested="MainListView_ViewItemLoadingRequested"

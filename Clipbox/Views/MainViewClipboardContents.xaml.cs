@@ -59,7 +59,18 @@ namespace Clipbox.Views
         public static readonly DependencyProperty IsLoadingOfPostSelectionToolboxEnabledProperty =
             DependencyProperty.Register(nameof(IsShowingOfPostSelectionToolboxEnabled), typeof(bool), typeof(MainViewClipboardContents), new PropertyMetadata(false));
 
-        
+
+        public int NumOfNotYetVisibleRowsToPreload
+        {
+            get { return (int)GetValue(NumOfNotYetVisibleRowsToPreloadProperty); }
+            set { SetValue(NumOfNotYetVisibleRowsToPreloadProperty, value); }
+        }
+
+        public static readonly DependencyProperty NumOfNotYetVisibleRowsToPreloadProperty =
+            DependencyProperty.Register(nameof(NumOfNotYetVisibleRowsToPreload), typeof(int), typeof(MainViewClipboardContents), new PropertyMetadata(0));
+
+
+
         private CancellableTaskManager _cancellableTaskManager;
 
         private SlidingTimer _uiExtentionGenerationSlidingTimer;
@@ -94,6 +105,16 @@ namespace Clipbox.Views
 
             // this setting should not change while this view is open, so no SettingChanged subscription is needed.
             AreFadeAnimationsEnabled = settingsService.GetSetting<bool>(SettingsKeys.AreFadeAnimationsEnabled);
+
+            
+            int numOfNotYetVisibleRowsToPreload = settingsService.GetSetting<int>(SettingsKeys.NumOfNotYetVisibleRowsToPreload);
+             
+            if (NumOfNotYetVisibleRowsToPreload < 0)
+            {
+                throw new InvalidOperationException($"Setting {nameof(SettingsKeys.NumOfNotYetVisibleRowsToPreload)} should be equal to 0 or greater than 0.");
+            }
+
+            NumOfNotYetVisibleRowsToPreload = numOfNotYetVisibleRowsToPreload;
         }
 
         private void MainViewClipboardContents_Loaded(object sender, RoutedEventArgs e)

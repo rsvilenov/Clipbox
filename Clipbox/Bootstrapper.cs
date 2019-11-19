@@ -134,6 +134,8 @@ namespace Clipbox
             _settingsService.SetSetting(SettingsKeys.IsAutomaticCloudSyncOfPinnedItemsEnabled, true);
             _settingsService.SetSetting(SettingsKeys.MaxNonPinnedItemsInQuickView, 5);
 
+            _settingsService.SetSetting(SettingsKeys.NumOfNotYetVisibleRowsToPreload, 0);
+
             // changing of these requires restrat for the change to take effect
             _settingsService.SetSetting(SettingsKeys.PreviewGenerationTimeout, 6000);
             _settingsService.SetSetting(SettingsKeys.PreviewCacheMaxSize, 10485760);
