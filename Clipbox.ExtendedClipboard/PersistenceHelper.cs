@@ -159,7 +159,7 @@ namespace Clipbox.ExtendedClipboard
                     }
                     else
                     {
-                        originalCdo = new ClipboardDataObject(persistableCdo.ClipboardFormatName, persistableCdo.IntermediateFormatGuid);
+                        originalCdo = new ClipboardDataObject(persistableCdo.ClipboardFormatName, persistableCdo.IntermediateFormatMetadata);
                     }
                     
                     clipboardDataObjects.Add(originalCdo);
@@ -226,8 +226,7 @@ namespace Clipbox.ExtendedClipboard
             {
                 ByteArray = transferableCdo.ByteArray,
                 ClipboardFormatName = transferableCdo.ClipboardFormatName,
-                ContentClass = transferableCdo.ContentClass,
-                IntermediateFormatGuid = transferableCdo.IntermediateFormatGuid,
+                IntermediateFormatMetadata = new SerializableIntermediateFormatMetadata(transferableCdo.IntermediateFormatMetadata),
                 IsTransferable = true
             };
         }
@@ -237,10 +236,10 @@ namespace Clipbox.ExtendedClipboard
         {
             clipboardDataObject = null;
 
-            var persistenceExtention = _persistenceExtentionContainer.ResolvePersistenceSupport(persistableCdo.IntermediateFormatGuid);
+            var persistenceExtention = _persistenceExtentionContainer.ResolvePersistenceSupport(persistableCdo.IntermediateFormatMetadata.FormatGuid);
             if (persistenceExtention == null)
             {
-                throw new InvalidOperationException($"No suitable persistence support extention found for {persistableCdo.IntermediateFormatGuid}, therefore deserialization is not possible.");
+                throw new InvalidOperationException($"No suitable persistence support extention found for {persistableCdo.IntermediateFormatMetadata.FormatGuid}, therefore deserialization is not possible.");
             }
 
             IIntermediateFormat intermediateFormatObj = null;
@@ -362,9 +361,8 @@ namespace Clipbox.ExtendedClipboard
                 Select(cdo => new TransferableClipboardDataObject
                 {
                     ByteArray = cdo.ByteArray,
-                    ContentClass = cdo.ContentClass,
                     ClipboardFormatName = cdo.ClipboardFormatName,
-                    IntermediateFormatGuid = cdo.IntermediateFormatGuid
+                    IntermediateFormatMetadata = new SerializableIntermediateFormatMetadata(cdo.IntermediateFormatMetadata)
                 });
         }
 
@@ -376,7 +374,7 @@ namespace Clipbox.ExtendedClipboard
             }
 
             return item.ClipboardDataObjects.OfType<ClipboardDataObject>().Any(cdo => 
-            _persistenceExtentionContainer.CheckIsIntermediateFormatSupported(cdo.IntermediateFormatGuid));
+            _persistenceExtentionContainer.CheckIsIntermediateFormatSupported(cdo.IntermediateFormatMetadata.FormatGuid));
             
         }
 
@@ -386,7 +384,7 @@ namespace Clipbox.ExtendedClipboard
         {
             foreach (ClipboardDataObject cdo in clipboardDataObjects)
             {
-                var persistenceExtention = _persistenceExtentionContainer.ResolvePersistenceSupport(cdo.IntermediateFormatObject.FormatGuid);
+                var persistenceExtention = _persistenceExtentionContainer.ResolvePersistenceSupport(cdo.IntermediateFormatMetadata.FormatGuid);
                 if (persistenceExtention == null)
                 {
                     continue;
@@ -405,11 +403,8 @@ namespace Clipbox.ExtendedClipboard
                 yield return new PersistableClipboardDataObject
                 {
                     ClipboardFormatName = cdo.ClipboardFormatName,
-                    ContentClass = cdo.IntermediateFormatObject.ContentClass,
-                    IntermediateFormatGuid = cdo.IntermediateFormatObject.FormatGuid,
-                    ByteArray = dataBytes,
-                    // check whether the contents can be transferred to another computer...
-                    IsTransferable = cdo.IntermediateFormatObject.IsTransferable
+                    IntermediateFormatMetadata = new SerializableIntermediateFormatMetadata(cdo.IntermediateFormatMetadata),
+                    ByteArray = dataBytes
                 };
 
             }

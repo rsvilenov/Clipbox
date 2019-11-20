@@ -4,10 +4,8 @@ using Clipbox.Win32.Native;
 
 namespace Clipbox.Extentions.BuiltIn.ImageFormats.IntermediateFormats
 {
-    public class MetafilePictIntermediateFormat : IIntermediateFormat
+    public class MetafilePictIntermediateFormat : IntermediateFormatBase
     {
-        public string FormatGuid => "{D77A8959-A11B-457E-892F-1D34BC925E87}";
-
         public MetafilePictIntermediateFormat(byte[] metafileBytes, 
             NativeEnums.DeviceContextMapMode mappingMode,
             int unitsX,
@@ -26,9 +24,13 @@ namespace Clipbox.Extentions.BuiltIn.ImageFormats.IntermediateFormats
         public int UnitsX { get; }
 
         public int UnitsY { get; }
-
-        public bool IsTransferable => false;
-
-        public ClipboardContentClass ContentClass => ClipboardContentClass.Image;
+        
+        protected override IntermediateFormatMetadata CreateMetadata()
+        {
+            return new IntermediateFormatMetadata(
+                formatGuid: "{D77A8959-A11B-457E-892F-1D34BC925E87}",
+                contentClass: ClipboardContentClass.Image,
+                isTransferable: false);
+        }
     }
 }

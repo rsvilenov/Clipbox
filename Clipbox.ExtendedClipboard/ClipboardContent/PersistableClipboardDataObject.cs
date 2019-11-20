@@ -1,12 +1,11 @@
-﻿using Clipbox.Core.ClipboardContent.Enums;
-using Clipbox.Core.ClipboardContent.Interfaces;
+﻿using Clipbox.Core.ClipboardContent.Interfaces;
 using System;
 
 namespace Clipbox.ExtendedClipboard.ClipboardContent
 {
     [Serializable]
     internal class PersistableClipboardDataObject : 
-        IHaveByteArray, IHaveClipboardFormat, IHaveContentClass
+        IHaveByteArray, IHaveClipboardFormat
     {
         /// <summary>
         /// <see cref="IHaveByteArray.ByteArray"/> 
@@ -23,12 +22,7 @@ namespace Clipbox.ExtendedClipboard.ClipboardContent
         /// <see cref="IHaveClipboardFormat.ClipboardFormatName"/> 
         /// </summary>
         public string ClipboardFormatName { get; internal set; }
-
-        /// <summary>
-        /// <see cref="IHaveContentClass.ContentClass"/> 
-        /// </summary>
-        public ClipboardContentClass ContentClass { get; internal set; }
-
-        public string IntermediateFormatGuid { get; internal set; }
+        
+        public SerializableIntermediateFormatMetadata IntermediateFormatMetadata { get; internal set; }
     }
 }

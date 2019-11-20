@@ -180,13 +180,9 @@ namespace Clipbox.ExtendedClipboard.ClipboardContent
                 {
                     newCdo = new ClipboardDataObject(clipboardFormatName: icdo.ClipboardFormatName, intermediateFormatObject: icdo.IntermediateFormatObject);
                 }
-                else if (icdo is ClipboardDataObject cdo)
-                {
-                    newCdo = new ClipboardDataObject(clipboardFormatName: icdo.ClipboardFormatName, intermediateFormatGuid: cdo.IntermediateFormatGuid);
-                }
                 else
                 {
-                    throw new InvalidOperationException($"The cdo for format {icdo.ClipboardFormatName} is neither unshrinked, nor it is of type {nameof(ClipboardDataObject)}.");
+                    newCdo = new ClipboardDataObject(clipboardFormatName: icdo.ClipboardFormatName, intermediateFormatMetatada: icdo.IntermediateFormatMetadata);
                 }
                 newClipboardDataObjects.Add(newCdo);
             }

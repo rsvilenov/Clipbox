@@ -6,10 +6,8 @@ using System.Linq;
 
 namespace Clipbox.Extentions.BuiltIn.HdropFormat.IntermediateFormats
 {
-    public class FilesystemPathsIntermediateFormat : IIntermediateFormat
+    public class FilesystemPathsIntermediateFormat : IntermediateFormatBase
     {
-        public string FormatGuid => "{3D2C252F-7838-49C2-9D5D-C6B4C92320D3}";
-
         public FilesystemPathsIntermediateFormat(IEnumerable<string> paths)
         {
             if (paths == null)
@@ -32,8 +30,12 @@ namespace Clipbox.Extentions.BuiltIn.HdropFormat.IntermediateFormats
 
         public IReadOnlyList<string> Paths { get; }
 
-        public bool IsTransferable => false;
-
-        public ClipboardContentClass ContentClass => ClipboardContentClass.File;
+        protected override IntermediateFormatMetadata CreateMetadata()
+        {
+            return new IntermediateFormatMetadata(
+                formatGuid: "{3D2C252F-7838-49C2-9D5D-C6B4C92320D3}", 
+                contentClass: ClipboardContentClass.File,
+                isTransferable: false);
+        }
     }
 }

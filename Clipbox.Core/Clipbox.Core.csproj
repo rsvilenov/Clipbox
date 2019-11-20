@@ -44,7 +44,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClipboardContent\Enums\MachineType.cs" />
-    <Compile Include="ClipboardContent\Interfaces\IHaveContentClass.cs" />
     <Compile Include="ClipboardContent\Interfaces\IHaveMonitorInfo.cs" />
     <Compile Include="ClipboardContent\Interfaces\IHaveTransferabilityInfo.cs" />
     <Compile Include="ClipboardContent\Interfaces\IIHaveIntermediateFormat.cs" />
@@ -60,6 +59,8 @@
     <Compile Include="Extensibility\Contracts\ExtentionTypes\ISearchSupport.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\PersistenceTypes\PersistenceSupportExtension.cs" />
     <Compile Include="Extensibility\Contracts\IIntermediateFormat.cs" />
+    <Compile Include="Extensibility\Contracts\IIntermediateFormatMetadata.cs" />
+    <Compile Include="Extensibility\Contracts\IntermediateFormatBase.cs" />
     <Compile Include="Search\Enums\SearchCategory.cs" />
     <Compile Include="Search\Enums\TermOccurrence.cs" />
     <Compile Include="Search\IIndexUnit.cs" />

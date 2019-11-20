@@ -5,5 +5,7 @@ namespace Clipbox.Core.ClipboardContent.Interfaces
     public interface IIHaveIntermediateFormat
     {
         IIntermediateFormat IntermediateFormatObject { get; }
+
+        IIntermediateFormatMetadata IntermediateFormatMetadata { get; }
     }
 }

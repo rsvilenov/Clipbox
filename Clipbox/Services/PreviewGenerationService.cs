@@ -353,9 +353,14 @@ namespace Clipbox.Services
 
         private PreviewDataTransferObject GeneratePreviewDataTransferObject(IClipboardItem clipboardItem, int itemRequestedHeight, int itemRequestedWidth, CancellationToken cancellationToken)
         {
+            if (clipboardItem.IsShrinked)
+            {
+                throw new ArgumentException($"{nameof(clipboardItem)} is shrinked.");
+            }
+
             IEnumerable<string> formatGuids = clipboardItem.ClipboardDataObjects
-                .Where(cdo => cdo.IntermediateFormatObject != null)
-                .Select(cdo => cdo.IntermediateFormatObject.FormatGuid);
+                .Where(cdo => cdo.IntermediateFormatMetadata != null)
+                .Select(cdo => cdo.IntermediateFormatMetadata.FormatGuid);
 
             if (!formatGuids.Any())
             {
@@ -369,7 +374,7 @@ namespace Clipbox.Services
             if (formatGuidPreviewGeneratorPair != null)
             {
                 IPreviewGenerator previewGenerator = formatGuidPreviewGeneratorPair.Value.Value;
-                IClipboardDataObject cdoForPreview = clipboardItem.ClipboardDataObjects.Single(cdo => cdo.IntermediateFormatObject.FormatGuid == formatGuidPreviewGeneratorPair.Value.Key);
+                IClipboardDataObject cdoForPreview = clipboardItem.ClipboardDataObjects.Single(cdo => cdo.IntermediateFormatMetadata.FormatGuid == formatGuidPreviewGeneratorPair.Value.Key);
                 IIntermediateFormat intermediateFormatObjectForPreview = cdoForPreview.IntermediateFormatObject;
                 
                 if (previewGenerator is ICancellablePreviewGenerator cancellableGenerator)

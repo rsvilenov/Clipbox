@@ -481,6 +481,11 @@ namespace Clipbox.ExtendedClipboard
 
                     if (intermediateFormatObj != null)
                     {
+                        if (intermediateFormatObj.Metadata == null)
+                        {
+                            throw new InvalidOperationException($"The intermediate format object for clipboard format {format.Key} does not have metadata set.");
+                        }
+
                         yield return new ClipboardDataObject(clipboardFormatName: format.Value, intermediateFormatObject: intermediateFormatObj);
                     }
                 }
@@ -710,7 +715,7 @@ namespace Clipbox.ExtendedClipboard
                 clipboardItem.BeginEdit();
 
                 clipboardItem.ClipboardDataObjects = filteredCdos.ToList();
-                clipboardItem.CanTransfer = filteredCdos.Any(cdo => cdo.IntermediateFormatObject?.IsTransferable == true);
+                clipboardItem.CanTransfer = filteredCdos.Any(cdo => cdo.IntermediateFormatMetadata.IsTransferable);
 
                 // invlidate the synchronized state of the item (it has changed)
                 clipboardItem.IsSynchronizedWithCloud = false;

@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Clipbox.Extentions.BuiltIn.ImageFormats.IntermediateFormats
 {
-    public class DibV5IntermediateFormat : IIntermediateFormat
+    public class DibV5IntermediateFormat : IntermediateFormatBase
     {
         public DibV5IntermediateFormat(byte[] dibV5bytes)
         {
@@ -23,11 +23,13 @@ namespace Clipbox.Extentions.BuiltIn.ImageFormats.IntermediateFormats
         {
             return _dibV5bytes.ToArray();
         }
-
-        public string FormatGuid => "{CFCA3819-C2EF-4F94-B9B7-49D402CA0652}";
-
-        public bool IsTransferable => false;
-
-        public ClipboardContentClass ContentClass => ClipboardContentClass.Image;
+        
+        protected override IntermediateFormatMetadata CreateMetadata()
+        {
+            return new IntermediateFormatMetadata(
+                formatGuid: "{CFCA3819-C2EF-4F94-B9B7-49D402CA0652}",
+                contentClass: ClipboardContentClass.Image,
+                isTransferable: false);
+        }
     }
 }

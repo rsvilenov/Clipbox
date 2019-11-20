@@ -1,14 +1,11 @@
 ﻿using Clipbox.Core.ClipboardContent.Enums;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Extentions.BuiltIn.HdropFormat.Enums;
-using System;
 
 namespace Clipbox.Extentions.BuiltIn.HdropFormat.IntermediateFormats
 {
-    public class PreferredDropEffectIntermediateFormat : IIntermediateFormat
+    public class PreferredDropEffectIntermediateFormat : IntermediateFormatBase
     {
-        public string FormatGuid => "{8E4402B8-E9ED-4234-9E6C-B4629D673F5C}";
-
         public PreferredDropEffectIntermediateFormat(DropEffects dropEffect)
         {
             DropEffect = dropEffect;
@@ -16,8 +13,12 @@ namespace Clipbox.Extentions.BuiltIn.HdropFormat.IntermediateFormats
 
         public DropEffects DropEffect { get; }
 
-        public bool IsTransferable => false;
-
-        public ClipboardContentClass ContentClass => ClipboardContentClass.AuxilliaryData;
+        protected override IntermediateFormatMetadata CreateMetadata()
+        {
+            return new IntermediateFormatMetadata(
+                formatGuid: "{8E4402B8-E9ED-4234-9E6C-B4629D673F5C}",
+                contentClass: ClipboardContentClass.AuxilliaryData,
+                isTransferable: false);
+        }
     }
 }

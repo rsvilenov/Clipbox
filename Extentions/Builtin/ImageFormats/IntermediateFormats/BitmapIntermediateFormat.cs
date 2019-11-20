@@ -6,10 +6,8 @@ using System.Drawing;
 
 namespace Clipbox.Extentions.BuiltIn.ImageFormats.IntermediateFormats
 {
-    public class BitmapIntermediateFormat : DisposableObject, IIntermediateFormat
+    public class BitmapIntermediateFormat : IntermediateFormatBase
     {
-        public string FormatGuid => "{4422E0FD-3DD7-4B10-B167-DB63BB97D6E1}";
-
         /// <summary>
         /// This constructor copies the bitmap data, so the passed bitmap
         /// reference can be disposed of safely.
@@ -41,8 +39,12 @@ namespace Clipbox.Extentions.BuiltIn.ImageFormats.IntermediateFormats
 
         private Bitmap _bitmap;
 
-        public bool IsTransferable => false;
-
-        public ClipboardContentClass ContentClass => ClipboardContentClass.Image;
+        protected override IntermediateFormatMetadata CreateMetadata()
+        {
+            return new IntermediateFormatMetadata(
+                formatGuid: "{4422E0FD-3DD7-4B10-B167-DB63BB97D6E1}",
+                contentClass: ClipboardContentClass.Image,
+                isTransferable: false);
+        }
     }
 }

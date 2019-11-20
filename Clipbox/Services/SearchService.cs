@@ -187,7 +187,7 @@ namespace Clipbox.Services
             
             foreach (IClipboardDataObject cdo in clipboardItem.ClipboardDataObjects)
             {
-                ISearchSupport ext = _extensionContainer.ResolveSearchSupport(cdo.IntermediateFormatObject.FormatGuid);
+                ISearchSupport ext = _extensionContainer.ResolveSearchSupport(cdo.IntermediateFormatMetadata.FormatGuid);
                 if (ext != null)
                 {
                     string searchText = ext.GetSearchTextData(cdo.IntermediateFormatObject);

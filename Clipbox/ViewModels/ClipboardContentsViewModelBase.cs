@@ -55,9 +55,9 @@ namespace Clipbox.ViewModels
 
         public ClipboardViewItem GetViewItem(string clipboardItemId, MonitorDimensions monitorDimensions)
         {
-            var restoredClipboardItem = ClipboardManager.GetClipboardItem(clipboardItemId, restoreShrinked: true);
-            PreviewDataTransferObject pdto = PreviewGenerationService.GetPreviewDataTransferObject(restoredClipboardItem, monitorDimensions);
-            return ClipboardViewItemFactory.CreateFromPreviewDataTransferObject(restoredClipboardItem, pdto);
+            ClipboardViewItemWrapper wrapper = GetViewItemWrapper(clipboardItemId);
+            PreviewDataTransferObject pdto = PreviewGenerationService.GetPreviewDataTransferObject(wrapper.ClipboardItem, monitorDimensions);
+            return ClipboardViewItemFactory.CreateFromPreviewDataTransferObject(wrapper.ClipboardItem, pdto);
         }
         
         [Obsolete("Use GetViewItemWrapper, GetViewItem and TryGetPreviewDimensions from within the view " +

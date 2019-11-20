@@ -6,10 +6,8 @@ using System.Drawing.Imaging;
 
 namespace Clipbox.Extentions.BuiltIn.ImageFormats.IntermediateFormats
 {
-    public class MetafileIntermediateFormat : DisposableObject, IIntermediateFormat
+    public class MetafileIntermediateFormat :IntermediateFormatBase
     {
-        public string FormatGuid => "{69BD2743-DADE-4B24-B3A1-5B6D73BDAE32}";
-
         public MetafileIntermediateFormat(Metafile metafile)
         {
             if (metafile == null)
@@ -48,8 +46,12 @@ namespace Clipbox.Extentions.BuiltIn.ImageFormats.IntermediateFormats
 
         private Metafile _metafile;
 
-        public bool IsTransferable => false;
-
-        public ClipboardContentClass ContentClass => ClipboardContentClass.Image;
+        protected override IntermediateFormatMetadata CreateMetadata()
+        {
+            return new IntermediateFormatMetadata(
+                formatGuid: "{69BD2743-DADE-4B24-B3A1-5B6D73BDAE32}",
+                contentClass: ClipboardContentClass.Image,
+                isTransferable: false);
+        }
     }
 }

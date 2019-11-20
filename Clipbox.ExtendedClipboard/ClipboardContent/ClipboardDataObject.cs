@@ -1,21 +1,27 @@
 ﻿using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.Core.Extensibility.Contracts;
+using System;
 
 namespace Clipbox.ExtendedClipboard.ClipboardContent
 {
     internal class ClipboardDataObject : IClipboardDataObject
     {
-
         internal ClipboardDataObject(string clipboardFormatName, IIntermediateFormat intermediateFormatObject)
         {
             IntermediateFormatObject = intermediateFormatObject;
-            IntermediateFormatGuid = intermediateFormatObject.FormatGuid;
+
+            if (intermediateFormatObject.Metadata == null)
+            {
+                throw new ArgumentException($"The metadata for {intermediateFormatObject.GetType().Name} has not been set.");
+            }
+            IntermediateFormatMetadata = intermediateFormatObject.Metadata.ShallowClone();
+
             ClipboardFormatName = clipboardFormatName;
         }
 
-        internal ClipboardDataObject(string clipboardFormatName, string intermediateFormatGuid)
+        internal ClipboardDataObject(string clipboardFormatName, IIntermediateFormatMetadata intermediateFormatMetatada)
         {
-            IntermediateFormatGuid = intermediateFormatGuid;
+            IntermediateFormatMetadata = intermediateFormatMetatada.ShallowClone();
             ClipboardFormatName = clipboardFormatName;
         }
         /// <summary>
@@ -24,16 +30,13 @@ namespace Clipbox.ExtendedClipboard.ClipboardContent
         public IIntermediateFormat IntermediateFormatObject { get; internal set; }
         
         /// <summary>
+        /// The metadata of the intermediate format.
+        /// </summary>
+        public IIntermediateFormatMetadata IntermediateFormatMetadata { get; internal set; }
+        
+        /// <summary>
         /// <see cref="IHaveClipboardFormat.ClipboardFormatName"/> 
         /// </summary>
         public string ClipboardFormatName { get; internal set; }
-
-        /// <summary>
-        /// This diplicates <see cref="IIntermediateFormat.FormatGuid"/>
-        /// but it is necessary for accessing intermediate format objects
-        /// when they are "shrinked" (meaning: set to null). This is used
-        /// only by the <see cref="PersistenceHelper"/> class.
-        /// </summary>
-        internal string IntermediateFormatGuid { get; }
     }
 }

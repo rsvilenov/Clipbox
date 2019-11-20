@@ -126,7 +126,7 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes
         {
             public void AddFormatAndIntermediateFormatObject(string format, IIntermediateFormat intermediateFormatObj)
             {
-                _clipboardDataObjects.Add(new GeneratedClipboardDataObject { ClipboardFormatName = format, IntermediateFormatObject = intermediateFormatObj });
+                _clipboardDataObjects.Add(new GeneratedClipboardDataObject(format, intermediateFormatObj));
             }
 
             private List<IGeneratedClipboardDataObject> _clipboardDataObjects = new List<IGeneratedClipboardDataObject>();
@@ -146,9 +146,18 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes
 
         private class GeneratedClipboardDataObject : IGeneratedClipboardDataObject
         {
+            public GeneratedClipboardDataObject(string clipboardFormatName, IIntermediateFormat intermediateFormat)
+            {
+                ClipboardFormatName = clipboardFormatName;
+                IntermediateFormatObject = intermediateFormat ?? throw new ArgumentNullException(nameof(intermediateFormat));
+                IntermediateFormatMetadata = intermediateFormat.Metadata ?? throw new ArgumentException("Metadata has not been specified.");
+            }
+
             public IIntermediateFormat IntermediateFormatObject { get; set; }
 
-            public string ClipboardFormatName { get; set; }
+            public IIntermediateFormatMetadata IntermediateFormatMetadata { get; }
+
+            public string ClipboardFormatName { get; }
         }
 
         protected class HouseKeepingResult : IHouseKeepingResult
