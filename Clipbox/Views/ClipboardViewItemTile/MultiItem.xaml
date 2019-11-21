@@ -391,9 +391,8 @@
                                                                                         Its dimensions are determined according to the monitor size and dpi settings prior to its generation.
                                                                                     -->
                                                                                     <Image
+                                                                                        Name="subItemPreviewImage"
                                                                                         Width="{Binding Image.Width}"
-                                                                                        HorizontalAlignment="Stretch"
-                                                                                        VerticalAlignment="Stretch"
                                                                                         Source="{Binding Image}"
                                                                                         Stretch="Uniform" />
                                                                                 </Setter.Value>

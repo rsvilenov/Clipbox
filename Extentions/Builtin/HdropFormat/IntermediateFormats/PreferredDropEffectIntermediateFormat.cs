@@ -13,7 +13,7 @@ namespace Clipbox.Extentions.BuiltIn.HdropFormat.IntermediateFormats
 
         public DropEffects DropEffect { get; }
 
-        protected override IntermediateFormatMetadata CreateMetadata()
+        protected override IntermediateFormatMetadata DefineMetadata()
         {
             return new IntermediateFormatMetadata(
                 formatGuid: "{8E4402B8-E9ED-4234-9E6C-B4629D673F5C}",

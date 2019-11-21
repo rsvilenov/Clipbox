@@ -12,7 +12,7 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.IntermediateFormats
 
         public string Html { get; }
         
-        protected override IntermediateFormatMetadata CreateMetadata()
+        protected override IntermediateFormatMetadata DefineMetadata()
         {
             return new IntermediateFormatMetadata(
                 formatGuid: "{5E4E9C1F-A324-42A4-AE9E-AA64DD871CC8}",

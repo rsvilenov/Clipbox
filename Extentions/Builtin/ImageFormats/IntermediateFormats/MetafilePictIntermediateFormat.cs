@@ -25,7 +25,7 @@ namespace Clipbox.Extentions.BuiltIn.ImageFormats.IntermediateFormats
 
         public int UnitsY { get; }
         
-        protected override IntermediateFormatMetadata CreateMetadata()
+        protected override IntermediateFormatMetadata DefineMetadata()
         {
             return new IntermediateFormatMetadata(
                 formatGuid: "{D77A8959-A11B-457E-892F-1D34BC925E87}",

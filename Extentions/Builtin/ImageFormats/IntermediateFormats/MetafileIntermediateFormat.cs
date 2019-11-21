@@ -46,7 +46,7 @@ namespace Clipbox.Extentions.BuiltIn.ImageFormats.IntermediateFormats
 
         private Metafile _metafile;
 
-        protected override IntermediateFormatMetadata CreateMetadata()
+        protected override IntermediateFormatMetadata DefineMetadata()
         {
             return new IntermediateFormatMetadata(
                 formatGuid: "{69BD2743-DADE-4B24-B3A1-5B6D73BDAE32}",

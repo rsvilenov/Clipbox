@@ -39,7 +39,7 @@ namespace Clipbox.Extentions.BuiltIn.ImageFormats.IntermediateFormats
 
         private Bitmap _bitmap;
 
-        protected override IntermediateFormatMetadata CreateMetadata()
+        protected override IntermediateFormatMetadata DefineMetadata()
         {
             return new IntermediateFormatMetadata(
                 formatGuid: "{4422E0FD-3DD7-4B10-B167-DB63BB97D6E1}",

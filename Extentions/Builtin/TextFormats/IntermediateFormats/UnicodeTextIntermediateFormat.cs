@@ -12,7 +12,7 @@ namespace Clipbox.Extentions.BuiltIn.TextFormats.IntermediateFormats
 
         public string Text { get; }
         
-        protected override IntermediateFormatMetadata CreateMetadata()
+        protected override IntermediateFormatMetadata DefineMetadata()
         {
             return new IntermediateFormatMetadata(
                 formatGuid: "{CAF7A257-882B-46CE-A26D-679D228EA8B7}",

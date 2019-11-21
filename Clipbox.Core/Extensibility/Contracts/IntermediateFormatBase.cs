@@ -8,10 +8,10 @@ namespace Clipbox.Core.Extensibility.Contracts
 
         public IIntermediateFormatMetadata Metadata
         {
-            get { return _metadata ?? (_metadata = CreateMetadata()); }
+            get { return _metadata ?? (_metadata = DefineMetadata()); }
         }
 
-        protected abstract IntermediateFormatMetadata CreateMetadata();
+        protected abstract IntermediateFormatMetadata DefineMetadata();
 
         protected class IntermediateFormatMetadata : IIntermediateFormatMetadata
         {

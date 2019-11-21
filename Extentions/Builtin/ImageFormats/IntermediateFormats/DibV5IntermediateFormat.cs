@@ -24,7 +24,7 @@ namespace Clipbox.Extentions.BuiltIn.ImageFormats.IntermediateFormats
             return _dibV5bytes.ToArray();
         }
         
-        protected override IntermediateFormatMetadata CreateMetadata()
+        protected override IntermediateFormatMetadata DefineMetadata()
         {
             return new IntermediateFormatMetadata(
                 formatGuid: "{CFCA3819-C2EF-4F94-B9B7-49D402CA0652}",

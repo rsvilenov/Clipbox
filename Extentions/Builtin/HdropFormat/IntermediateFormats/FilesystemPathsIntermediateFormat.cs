@@ -30,7 +30,7 @@ namespace Clipbox.Extentions.BuiltIn.HdropFormat.IntermediateFormats
 
         public IReadOnlyList<string> Paths { get; }
 
-        protected override IntermediateFormatMetadata CreateMetadata()
+        protected override IntermediateFormatMetadata DefineMetadata()
         {
             return new IntermediateFormatMetadata(
                 formatGuid: "{3D2C252F-7838-49C2-9D5D-C6B4C92320D3}", 
