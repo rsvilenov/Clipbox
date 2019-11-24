@@ -65,8 +65,8 @@
         </Grid.Style>
 
         <ContentControl
-            Width="30"
             Grid.RowSpan="2"
+            Width="30"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Foreground="Gray"
@@ -101,26 +101,26 @@
             </ContentControl.Style>
         </ContentControl>
 
-        <Grid
+        <!--<Grid
             Grid.Row="0"
             MinHeight="{Binding ThumbnailAreaMinHeight}"
             MaxHeight="{Binding ThumbnailAreaMaxHeight}"
-            Margin="10">
+            Margin="10">-->
 
-            <!--  leave this transparent for now... just to occupy the space  -->
-            <Rectangle
-                Width="{Binding ViewItemDimensions.PreviewWidth}"
-                Height="{Binding ViewItemDimensions.PreviewHeight}"
-                VerticalAlignment="Center"
-                Fill="Transparent" />
-            <!--
-                to show a dark rectangle occupying the exact space that will be used by
-                the preview, use the follwing properties on the above grid:
-                
-                Fill="Black"
-                Opacity="0.1"
-            -->
-        </Grid>
+        <!--  leave this transparent for now... just to occupy the space  -->
+        <Control
+            Width="{Binding ViewItemDimensions.PreviewWidth}"
+            Height="{Binding ViewItemDimensions.PreviewHeight}"
+            Margin="10"
+            VerticalAlignment="Center" />
+        <!--
+            to show a dark rectangle occupying the exact space that will be used by
+            the preview, use the follwing properties on the above grid:
+            
+            Fill="Black"
+            Opacity="0.1"
+        -->
+        <!--</Grid>-->
 
     </Grid>
 </tile:SingleItemBase>

@@ -49,7 +49,6 @@ namespace Clipbox.ViewModels
 
         public ClipboardViewItemWrapper GetViewItemWrapper(string clipboardItemId)
         {
-            var restoredClipboardItem = ClipboardManager.GetClipboardItem(clipboardItemId, restoreShrinked: false);
             return _clipboardViewItemWrappers.FirstOrDefault(w => w.Id == clipboardItemId);
         }
 

@@ -1,4 +1,5 @@
 ﻿using Clipbox.Core.ClipboardContent.Interfaces;
+using Clipbox.Infrastructure.CLR;
 using Clipbox.Infrastructure.Persistence;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Linq;
 
 namespace Clipbox.ExtendedClipboard.ClipboardContent
 {
-    internal class ClipboardItem : IClipboardItem, ICloudSynchronizable, IEditableObject
+    internal class ClipboardItem : TrackableObject, IClipboardItem, ICloudSynchronizable, IEditableObject
     {
         internal ClipboardItem(
             string id,
@@ -31,14 +32,6 @@ namespace Clipbox.ExtendedClipboard.ClipboardContent
             {
                 TimestampInfo = timestampInfo;
             }
-
-            _livingObjects.Add(new ObjectInfo
-            {
-                HashCode = GetHashCode(),
-                Id = Id,
-                AllocationStackTrace = new StackTrace().ToString(),
-                CreateDate = DateTime.Now
-            });
         }
 
         internal ClipboardItem(
@@ -193,26 +186,7 @@ namespace Clipbox.ExtendedClipboard.ClipboardContent
         ~ClipboardItem()
         {
             Debug.WriteLine($"GC-ing {Id} - {Source?.SourceWindowInfo?.Caption}");
-
-            Debug.WriteLine($"Alive objects: {_livingObjects.Count} - {string.Join(",", _livingObjects.Select(obj => obj.Id + " " + obj.CreateDate.ToString() + Environment.NewLine).ToList<string>())}");
-
-            if (_livingObjects.Any(obj => obj.HashCode == GetHashCode()))
-            {
-                _livingObjects.Remove(_livingObjects.First(d => d.HashCode == GetHashCode()));
-            }
         }
-
-        private class ObjectInfo
-        {
-            public int HashCode { get; set; }
-
-            public string Id { get; set; }
-
-            public DateTime CreateDate { get; set; }
-
-            public string AllocationStackTrace { get; set; }
-        }
-
-        private static List<ObjectInfo> _livingObjects { get; set; } = new List<ObjectInfo>();
+        
     }
 }

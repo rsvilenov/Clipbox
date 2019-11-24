@@ -199,11 +199,9 @@ namespace Clipbox.Views
 
         public void ScheduleLoadingOfViewItem(string clipboardItemId)
         {
-
             ClipboardViewItemWrapper wrapper = null;
             ClipboardViewItemDimensionInfo cvItemDimInfo = null;
             ClipboardViewItem viewItem = null;
-
             // run the slow-running operations in a separate task
             _cancellableTaskManager.ScheduleTask(clipboardItemId, new Action<string>((taskId) =>
             {
@@ -215,12 +213,10 @@ namespace Clipbox.Views
                         // by the time this task executes, the item may has been filtered out by the search or the filters...
                         return;
                     }
-
-                    _viewModel.TryGetPreviewDimensions(base.MonitorDimensions, wrapper, out cvItemDimInfo);
                     
                     viewItem = _viewModel.GetViewItem(clipboardItemId, base.MonitorDimensions);
+                    _viewModel.TryGetPreviewDimensions(base.MonitorDimensions, wrapper, out cvItemDimInfo);
                 });
-
                 // this optimization (updating the bindable properties in the dispatcher thread with background priority)
                 // solves the problem with the items showing up painfully slowly...
                 // recommended by Mark Green in this thread:
@@ -358,7 +354,7 @@ namespace Clipbox.Views
                     throw new InvalidOperationException($"The list view does not contain an item with id {wrapper.Id}.");
                 }
 
-                var clipboardViewItemTile = Traversing.GetVisualChildOfType<ItemBase>(selectedListViewItem);
+                var clipboardViewItemTile = Traversing.GetVisualChildOfType<ItemPresenterBase>(selectedListViewItem);
                 if (!(clipboardViewItemTile is IAnimatableItem animatableItem))
                 {
                     throw new InvalidOperationException($"The listviewitem for {wrapper.Id} does not implement {nameof(IAnimatableItem)}");
@@ -443,7 +439,10 @@ namespace Clipbox.Views
 
         private void MainListView_ViewItemLoadingRequested(object sender, EventArgsClasses.ClipboardItemManipulationEventArgs e)
         {
-            ScheduleLoadingOfViewItem(e.ClipboardItemId);
+            Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() =>
+            {
+                ScheduleLoadingOfViewItem(e.ClipboardItemId);
+            }));
         }
 
         private void MainListView_ViewItemLoadingCancelRequested(object sender, EventArgsClasses.ClipboardItemManipulationEventArgs e)

@@ -108,6 +108,10 @@
     <Compile Include="Views\ClipboardListView\SimpleClipboardListView.xaml.cs">
       <DependentUpon>SimpleClipboardListView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\ClipboardViewItemTile\ContentTypeIconBand.cs" />
+    <Compile Include="Views\ClipboardViewItemTile\ItemPresenterBase.cs" />
+    <Compile Include="Views\ClipboardViewItemTile\MultiItemPresenter.cs" />
+    <Compile Include="Views\ClipboardViewItemTile\SingleItemPresenter.cs" />
     <Compile Include="Views\ClipboardViewItemTile\TileAnimationHelper.cs" />
     <Compile Include="Views\ClipboardViewItemTile\Enums\AnimationPurpose.cs" />
     <Compile Include="Views\ClipboardViewItemTile\IAnimatableItem.cs" />
@@ -225,6 +229,22 @@
     </Compile>
     <Compile Include="Views\WallpaperWindow.cs" />
     <Page Include="Resources\TrayContextMenu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\ContentTypeIconBand.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\MultiItemPresenter.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\SingleItemPresenter.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

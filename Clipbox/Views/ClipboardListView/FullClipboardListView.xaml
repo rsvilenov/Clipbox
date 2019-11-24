@@ -297,7 +297,7 @@
                                                                 <ColumnDefinition Width="Auto" />
                                                             </Grid.ColumnDefinitions>
 
-                                                            <tile:ItemTypeIconBand
+                                                            <tile:ContentTypeIconBand
                                                                 Grid.Column="0"
                                                                 MaxHeight="30"
                                                                 ContentClasses="{Binding Path=ViewItem.ContentClasses}"
@@ -305,7 +305,7 @@
                                                                 <i:Interaction.Behaviors>
                                                                     <infBeh:FrameworkElementDpiScalingBehavior />
                                                                 </i:Interaction.Behaviors>
-                                                            </tile:ItemTypeIconBand>
+                                                            </tile:ContentTypeIconBand>
 
                                                             <StackPanel
                                                                 Grid.Column="1"
@@ -551,59 +551,22 @@
                         <ContentControl.Style>
                             <Style TargetType="{x:Type ContentControl}">
                                 <Style.Triggers>
-                                    <MultiDataTrigger>
-                                        <MultiDataTrigger.Conditions>
-                                            <Condition Binding="{Binding Path=DimensionInfo.IsViewItemGroup, FallbackValue=False}" Value="False" />
-                                            <Condition Binding="{Binding Path=IsViewItemLoaded}" Value="False" />
-                                        </MultiDataTrigger.Conditions>
-                                        <MultiDataTrigger.Setters>
-                                            <Setter Property="ContentTemplate">
-                                                <Setter.Value>
-                                                    <DataTemplate>
-                                                        <tile:SingleItemLoading
-                                                            IsFadeInEnabled="False"
-                                                            IsLoadingIndicatorFadeInEnabled="{Binding Path=IsFadeInOfItemsEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type lv:FullClipboardListView}}}"
-                                                            IsShownIntoView="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.IsShownIntoView}"
-                                                            PreviewContainerBackgroundColor="{DynamicResource TaskbarColor}"
-                                                            ThumbnailAreaMaxHeight="{Binding Path=ClipboardViewItemMaxHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type lv:ClipboardListViewBase}}}"
-                                                            ThumbnailAreaMinHeight="{Binding Path=ThumbnailAreaMaxHeight, RelativeSource={RelativeSource Mode=Self}}"
-                                                            ViewItemDimensions="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.DimensionInfo.Dimensions[0]}" />
-                                                    </DataTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </MultiDataTrigger.Setters>
-                                    </MultiDataTrigger>
 
-                                    <MultiDataTrigger>
-                                        <MultiDataTrigger.Conditions>
-                                            <Condition Binding="{Binding Path=DimensionInfo.IsViewItemGroup, FallbackValue=False}" Value="False" />
-                                            <Condition Binding="{Binding Path=IsViewItemLoaded}" Value="True" />
-                                        </MultiDataTrigger.Conditions>
-                                        <MultiDataTrigger.Setters>
-                                            <Setter Property="ContentTemplate">
-                                                <Setter.Value>
-                                                    <DataTemplate>
-                                                        <tile:SingleItem
-                                                            ClipboardViewItem="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.ViewItem}"
-                                                            IsFadeInEnabled="{Binding Path=IsFadeInOfItemsEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type lv:FullClipboardListView}}}"
-                                                            ThumbnailAreaMaxHeight="{Binding Path=ClipboardViewItemMaxHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type lv:ClipboardListViewBase}}}"
-                                                            ThumbnailAreaMinHeight="{Binding Path=ThumbnailAreaMaxHeight, RelativeSource={RelativeSource Mode=Self}}">
-                                                            <tile:SingleItem.Style>
-                                                                <Style TargetType="{x:Type tile:SingleItem}">
-                                                                    <Setter Property="PreviewContainerBackgroundColor" Value="{DynamicResource TaskbarColor}" />
-                                                                    <Style.Triggers>
-                                                                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.IsSelected}" Value="True">
-                                                                            <Setter Property="PreviewContainerBackgroundColor" Value="Transparent" />
-                                                                        </DataTrigger>
-                                                                    </Style.Triggers>
-                                                                </Style>
-                                                            </tile:SingleItem.Style>
-                                                        </tile:SingleItem>
-                                                    </DataTemplate>
-                                                </Setter.Value>
-                                            </Setter>
-                                        </MultiDataTrigger.Setters>
-                                    </MultiDataTrigger>
+                                    <DataTrigger Binding="{Binding Path=DimensionInfo.IsViewItemGroup, FallbackValue=False}" Value="False">
+                                        <Setter Property="ContentTemplate">
+                                            <Setter.Value>
+                                                <DataTemplate>
+                                                    <tile:SingleItemPresenter
+                                                        IsFadeInEnabled="{Binding Path=IsFadeInOfItemsEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type lv:FullClipboardListView}}}"
+                                                        IsLoadingIndicatorFadeInEnabled="True"
+                                                        PreviewContainerBackgroundColor="{DynamicResource TaskbarColor}"
+                                                        ThumbnailAreaMaxHeight="{Binding Path=ClipboardViewItemMaxHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type lv:ClipboardListViewBase}}}"
+                                                        ThumbnailAreaMinHeight="{Binding Path=ThumbnailAreaMaxHeight, RelativeSource={RelativeSource Mode=Self}}"
+                                                        ViewItemWrapper="{Binding Mode=OneTime, RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}, Path=DataContext}" />
+                                                </DataTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
 
                                     <MultiDataTrigger>
                                         <MultiDataTrigger.Conditions>

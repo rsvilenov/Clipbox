@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="Cache\ByteArrayCache.cs" />
     <Compile Include="CLR\ClrHelpers.cs" />
+    <Compile Include="CLR\TrackableObject.cs" />
     <Compile Include="Compression\ByteArrayCompressor.cs" />
     <Compile Include="Encryption\MD5Hash.cs" />
     <Compile Include="Extensibility\Containers\BaseExtentionContainer.cs" />

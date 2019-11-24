@@ -170,7 +170,7 @@
                                             Its dimensions are determined according to the monitor size and dpi settings prior to its generation.
                                         -->
                                         <Image
-                                            Width="{Binding Image.Width}"
+                                            Width="{Binding Image.Width, Mode=OneTime}"
                                             RenderOptions.BitmapScalingMode="LowQuality"
                                             Source="{Binding Image}" />
                                     </Setter.Value>

@@ -1,0 +1,9 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="/Themes/ContentTypeIconBand.xaml" />
+        <ResourceDictionary Source="/Themes/SingleItemPresenter.xaml" />
+        <ResourceDictionary Source="/Themes/MultiItemPresenter.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+</ResourceDictionary>
