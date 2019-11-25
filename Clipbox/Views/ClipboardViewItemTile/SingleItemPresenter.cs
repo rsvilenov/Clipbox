@@ -12,16 +12,7 @@ namespace Clipbox.Views.ClipboardViewItemTile
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(SingleItemPresenter), new FrameworkPropertyMetadata(typeof(SingleItemPresenter)));
         }
-
-        public bool IsLoadingIndicatorFadeInEnabled
-        {
-            get { return (bool)GetValue(IsLoadingIndicatorFadeInEnabledProperty); }
-            set { SetValue(IsLoadingIndicatorFadeInEnabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty IsLoadingIndicatorFadeInEnabledProperty =
-            DependencyProperty.Register(nameof(IsLoadingIndicatorFadeInEnabled), typeof(bool), typeof(SingleItemPresenter), new PropertyMetadata(false));
-
+        
         public void RunNotificationAnimation(AnimationPurpose animationPurpose)
         {
             if (GetTemplateChild("PART_BorderToAnimate") is Border borderToAnimate)
@@ -59,18 +50,7 @@ namespace Clipbox.Views.ClipboardViewItemTile
         public static readonly DependencyProperty ThumbnailAreaMinHeightProperty =
             DependencyProperty.Register(nameof(ThumbnailAreaMinHeight), typeof(double), typeof(SingleItemPresenter), new PropertyMetadata(0d));
 
-
-
-        public ClipboardViewItemWrapper ViewItemWrapper
-        {
-            get { return (ClipboardViewItemWrapper)GetValue(ViewItemWrapperProperty); }
-            set { SetValue(ViewItemWrapperProperty, value); }
-        }
-
-        public static readonly DependencyProperty ViewItemWrapperProperty =
-            DependencyProperty.Register(nameof(ViewItemWrapper), typeof(ClipboardViewItemWrapper), typeof(SingleItemPresenter), new PropertyMetadata(null));
-
-
+        
     }
 
 

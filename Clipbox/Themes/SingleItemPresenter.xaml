@@ -325,37 +325,34 @@
 
             </Grid>
 
-            <Label
+
+            <!--  TODO: calculate the MaxWidth dynamically  -->
+            <TextBlock
                 Grid.Row="1"
-                HorizontalContentAlignment="Center"
-                VerticalContentAlignment="Center"
+                MaxWidth="200"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
                 FontSize="12"
-                Foreground="White">
+                Foreground="White"
+                Text="{Binding ViewItem.PreviewItem.Text, Mode=OneTime}"
+                TextBlock.TextTrimming="CharacterEllipsis"
+                ToolTipService.Placement="Center">
                 <i:Interaction.Behaviors>
                     <infBeh:FrameworkElementDpiScalingBehavior />
                 </i:Interaction.Behaviors>
-                <Label.Content>
-                    <!--  TODO: calculate the MaxWidth dynamically  -->
-                    <TextBlock
-                        MaxWidth="200"
-                        Text="{Binding ViewItem.PreviewItem.Text, Mode=OneTime}"
-                        TextBlock.TextTrimming="CharacterEllipsis"
-                        ToolTipService.Placement="Center">
-                        <TextBlock.ToolTip>
-                            <!--  the tooltip won't scale with the textblock, probably because it is not part of its visual tree  -->
-                            <ToolTip>
-                                <ToolTip.Content>
-                                    <TextBlock FontSize="12" Text="{Binding ViewItem.PreviewItem.Text, Mode=OneTime}">
-                                        <!--<TextBlock.LayoutTransform>
+                <TextBlock.ToolTip>
+                    <!--  the tooltip won't scale with the textblock, probably because it is not part of its visual tree  -->
+                    <ToolTip>
+                        <ToolTip.Content>
+                            <TextBlock FontSize="12" Text="{Binding ViewItem.PreviewItem.Text, Mode=OneTime}">
+                                <!--<TextBlock.LayoutTransform>
                                                                                                 <ScaleTransform CenterX="0" CenterY="0" ScaleX="{Binding Path=ScaleFactor, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=infWindows:PerMonitorDpiWindow}}" ScaleY="{Binding}" />
                                                                                             </TextBlock.LayoutTransform>-->
-                                    </TextBlock>
-                                </ToolTip.Content>
-                            </ToolTip>
-                        </TextBlock.ToolTip>
-                    </TextBlock>
-                </Label.Content>
-            </Label>
+                            </TextBlock>
+                        </ToolTip.Content>
+                    </ToolTip>
+                </TextBlock.ToolTip>
+            </TextBlock>
 
         </Grid>
     </ControlTemplate>
