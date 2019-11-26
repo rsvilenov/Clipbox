@@ -1080,7 +1080,7 @@
                     RenderTransformOrigin="0.5,0.5"
                     Stretch="Uniform">
                     <Path.RenderTransform>
-                        <RotateTransform x:Name="pathAnimatedTransform" Angle="0" />
+                        <RotateTransform Angle="0" />
                     </Path.RenderTransform>
                     <Path.Style>
                         <Style TargetType="Path">
@@ -1089,7 +1089,7 @@
                                     <DataTrigger.EnterActions>
                                         <BeginStoryboard x:Name="rotateBeginSb">
                                             <!--  set the framerate to a lower value, so the animation does not occupy much of the cpu power. Animations are cpu intensive, so this is important.  -->
-                                            <Storyboard Timeline.DesiredFrameRate="25" Storyboard.TargetProperty="Opacity">
+                                            <Storyboard Timeline.DesiredFrameRate="25">
                                                 <DoubleAnimation
                                                     RepeatBehavior="Forever"
                                                     Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)"
