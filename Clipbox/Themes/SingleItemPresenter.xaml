@@ -194,13 +194,17 @@
                 MinHeight="{TemplateBinding ThumbnailAreaMinHeight}"
                 MaxHeight="{TemplateBinding ThumbnailAreaMaxHeight}"
                 Margin="10"
-                Background="Transparent">
-
+                Background="Transparent"
+                DataContext="{Binding ViewItem.PreviewItem}">
+                <!--
+                    Do not set the DataContext on the control below because it is not
+                    set before the triggers try to evaluate its properties...
+                    Set the DataContext to the enclosing grid. That solves the problem.
+                -->
                 <Control
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
-                    Background="Transparent"
-                    DataContext="{Binding ViewItem.PreviewItem, Mode=OneTime}">
+                    Background="Transparent">
                     <Control.Style>
 
                         <Style TargetType="{x:Type Control}">

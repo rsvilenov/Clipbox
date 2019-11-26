@@ -48,7 +48,7 @@
                                                     <MultiDataTrigger>
                                                         <MultiDataTrigger.Conditions>
                                                             <Condition Binding="{Binding}" Value="{x:Static coreCcEnums:ClipboardContentClass.File}" />
-                                                            <Condition Binding="{Binding Path=IsGroupItem, ElementName=PART_ItemsControl}" Value="False" />
+                                                            <Condition Binding="{Binding Path=IsGroupItem, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ContentTypeIconBand}}}" Value="False" />
                                                         </MultiDataTrigger.Conditions>
                                                         <Setter Property="Visibility" Value="Visible" />
                                                     </MultiDataTrigger>
@@ -71,7 +71,7 @@
                                                     <MultiDataTrigger>
                                                         <MultiDataTrigger.Conditions>
                                                             <Condition Binding="{Binding}" Value="{x:Static coreCcEnums:ClipboardContentClass.File}" />
-                                                            <Condition Binding="{Binding Path=IsGroupItem, ElementName=PART_ItemsControl}" Value="True" />
+                                                            <Condition Binding="{Binding Path=IsGroupItem, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ContentTypeIconBand}}}" Value="True" />
                                                         </MultiDataTrigger.Conditions>
                                                         <Setter Property="Visibility" Value="Visible" />
                                                     </MultiDataTrigger>
@@ -129,7 +129,7 @@
                                                     <MultiDataTrigger>
                                                         <MultiDataTrigger.Conditions>
                                                             <Condition Binding="{Binding}" Value="{x:Static coreCcEnums:ClipboardContentClass.GeneralContent}" />
-                                                            <Condition Binding="{Binding Path=IsGroupItem, ElementName=PART_ItemsControl}" Value="False" />
+                                                            <Condition Binding="{Binding Path=IsGroupItem, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ContentTypeIconBand}}}" Value="False" />
                                                         </MultiDataTrigger.Conditions>
                                                         <Setter Property="Visibility" Value="Visible" />
                                                     </MultiDataTrigger>
@@ -151,7 +151,7 @@
                                                     <MultiDataTrigger>
                                                         <MultiDataTrigger.Conditions>
                                                             <Condition Binding="{Binding}" Value="{x:Static coreCcEnums:ClipboardContentClass.GeneralContent}" />
-                                                            <Condition Binding="{Binding Path=IsGroupItem, ElementName=PART_ItemsControl}" Value="True" />
+                                                            <Condition Binding="{Binding Path=IsGroupItem, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ContentTypeIconBand}}}" Value="True" />
                                                         </MultiDataTrigger.Conditions>
                                                         <Setter Property="Visibility" Value="Visible" />
                                                     </MultiDataTrigger>

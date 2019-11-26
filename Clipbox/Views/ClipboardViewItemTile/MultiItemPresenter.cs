@@ -14,14 +14,14 @@ namespace Clipbox.Views.ClipboardViewItemTile
             DefaultStyleKeyProperty.OverrideMetadata(typeof(MultiItemPresenter), new FrameworkPropertyMetadata(typeof(MultiItemPresenter)));
         }
 
-        public MultiItemLoadingSubItemsInfo SubItemsInfo
+        public ClipboardViewItemInfo ViewItemInfo
         {
-            get { return (MultiItemLoadingSubItemsInfo)GetValue(SubItemsInfoProperty); }
-            set { SetValue(SubItemsInfoProperty, value); }
+            get { return (ClipboardViewItemInfo)GetValue(ViewItemInfoProperty); }
+            set { SetValue(ViewItemInfoProperty, value); }
         }
 
-        public static readonly DependencyProperty SubItemsInfoProperty =
-            DependencyProperty.Register(nameof(SubItemsInfo), typeof(MultiItemLoadingSubItemsInfo), typeof(MultiItemPresenter),
+        public static readonly DependencyProperty ViewItemInfoProperty =
+            DependencyProperty.Register(nameof(ViewItemInfo), typeof(ClipboardViewItemInfo), typeof(MultiItemPresenter),
                 new PropertyMetadata(null));
 
 
@@ -39,7 +39,7 @@ namespace Clipbox.Views.ClipboardViewItemTile
 
         public MultiItemPresenter()
         {
-            SubItemsInfo = new MultiItemLoadingSubItemsInfo();
+            ViewItemInfo = new ClipboardViewItemInfo();
             Loaded += MultiItemPresenter_Loaded;
         }
 
@@ -51,7 +51,7 @@ namespace Clipbox.Views.ClipboardViewItemTile
 
                 if (ViewItemWrapper != null && ViewItemWrapper.DimensionInfo != null)
                 {
-                    SubItemsInfo.LoadFromViewDimensionInfo(ViewItemWrapper.DimensionInfo);
+                    ViewItemInfo.LoadFromClipboardViewItemWrapper(ViewItemWrapper);
                     UpdateNumberOfUniformGridColumns();
                 }
             }));
@@ -65,19 +65,19 @@ namespace Clipbox.Views.ClipboardViewItemTile
         {
             if (newValue != null && newValue.DimensionInfo != null)
             {
-                SubItemsInfo.LoadFromViewDimensionInfo(newValue.DimensionInfo);
+                ViewItemInfo.LoadFromClipboardViewItemWrapper(newValue);
                 UpdateNumberOfUniformGridColumns();
             }
         }
 
         private void UpdateNumberOfUniformGridColumns()
         {
-            NumberOfUniformGridColumns = SubItemsInfo.TotalClipboardItemsCount <= 4 ? 2 : 3;
+            NumberOfUniformGridColumns = ViewItemInfo.TotalClipboardItemsCount <= 4 ? 2 : 3;
         }
 
-        public class MultiItemLoadingSubItemsInfo : BindableObject
+        public class ClipboardViewItemInfo : BindableObject
         {
-            public MultiItemLoadingSubItemsInfo()
+            public ClipboardViewItemInfo()
             {
                 _previewItems = new AsyncObservableCollection<ClipboardViewSubItemBase>();
                 _previewItems.CollectionChanged += _previewItems_CollectionChanged;
@@ -88,28 +88,38 @@ namespace Clipbox.Views.ClipboardViewItemTile
                 UpdateTotalClipboardItemsCount();
             }
 
-            public void LoadFromViewDimensionInfo(ClipboardViewItemDimensionInfo dimensionInfo)
+            public void LoadFromClipboardViewItemWrapper(ClipboardViewItemWrapper wrapper)
             {
-                if (dimensionInfo == null)
+                if (wrapper == null)
                 {
-                    throw new ArgumentNullException(nameof(dimensionInfo));
+                    throw new ArgumentNullException(nameof(wrapper));
                 }
 
-                if (dimensionInfo.Dimensions == null || !dimensionInfo.Dimensions.Any())
+                if (wrapper.DimensionInfo?.Dimensions == null || !wrapper.DimensionInfo.Dimensions.Any())
                 {
-                    throw new ArgumentException($"{nameof(dimensionInfo.Dimensions)} is either null or empty.");
+                    throw new ArgumentException($"{nameof(wrapper.DimensionInfo.Dimensions)} is either null or empty.");
                 }
 
-                NumberOfItemsWithoutPreview = dimensionInfo.NumberOfItemsWithoutPreview;
+                ViewItemWrapper = wrapper;
+
+                NumberOfItemsWithoutPreview = wrapper.DimensionInfo.NumberOfItemsWithoutPreview;
 
                 PreviewItems.Clear();
-                foreach (var item in dimensionInfo.Dimensions)
+                foreach (var item in wrapper.DimensionInfo.Dimensions)
                 {
                     PreviewItems.Add(item);
                 }
 
                 UpdateTotalClipboardItemsCount();
                 UpdatePreviewItemsWithNMoreItem();
+            }
+
+            public ClipboardViewItemWrapper _viewItemWrapper;
+
+            public ClipboardViewItemWrapper ViewItemWrapper
+            {
+                get { return _viewItemWrapper; }
+                set { SetField(ref _viewItemWrapper, value); }
             }
 
             private AsyncObservableCollection<ClipboardViewSubItemBase> _previewItems;
