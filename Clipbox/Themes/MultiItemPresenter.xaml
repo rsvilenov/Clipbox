@@ -436,7 +436,6 @@
                 <i:Interaction.Behaviors>
                     <localBeh:ListViewScrollButtonBehavior ButtonScrollDirection="Up" ScrollButton="{Binding ElementName=BtnScrollUpSubItem}" />
                     <localBeh:ListViewScrollButtonBehavior ButtonScrollDirection="Down" ScrollButton="{Binding ElementName=BtnScrollDownSubItem}" />
-                    <localBeh:ListViewScrollTransferFocusBehavior />
                 </i:Interaction.Behaviors>
                 <ListView.ItemContainerStyle>
                     <Style TargetType="{x:Type ListViewItem}">

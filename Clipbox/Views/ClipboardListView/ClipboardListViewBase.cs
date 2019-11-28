@@ -26,8 +26,8 @@ namespace Clipbox.Views.ClipboardListView
 
         private bool _areLastSelectedItemsCombinable;
 
-        private List<MultiItem> _loadedMultiItems;
-
+        private List<MultiItemPresenter> _loadedMultiItemPresenters;
+        
         private int _hashCodeOfItemUndergoingDeletionOrRemoval;
         
         protected List<string> SelectedItemIds { get; set; }
@@ -128,7 +128,7 @@ namespace Clipbox.Views.ClipboardListView
         {
             SelectedItemIds = new List<string>();
             SelectedMultiItemsIds = new Dictionary<string, List<int>>();
-            _loadedMultiItems = new List<MultiItem>();
+            _loadedMultiItemPresenters = new List<MultiItemPresenter>();
 
             Unloaded += ClipboardListViewBase_Unloaded;
 
@@ -170,15 +170,15 @@ namespace Clipbox.Views.ClipboardListView
             // TODO: figure out why
             ActionButtonsDataContext = null;
 
-            foreach (var multiItem in _loadedMultiItems)
+            foreach (var multiItem in _loadedMultiItemPresenters)
             {
-                multiItem.SubItems_SelectionChanged -= MultiItem_SubItems_SelectionChanged;
+                multiItem.SubItems_SelectionChanged -= MultiItemPresenter_SubItems_SelectionChanged;
                 multiItem.SubItems_SubItemsFocusMovedOut -= MultiItem_SubItems_SubItemsFocusMovedOut;
-                multiItem.Unloaded -= MultiItem_Unloaded;
-                multiItem.Loaded -= MultiItem_Loaded;
+                multiItem.Unloaded -= MultiItemPresenter_Unloaded;
+                multiItem.Loaded -= MultiItemPresenter_Loaded;
             }
 
-            _loadedMultiItems.Clear();
+            _loadedMultiItemPresenters.Clear();
         }
 
         private void EnableDisableSyncOfClipboardEntryHandler(ClipboardViewItem parameter)
@@ -255,9 +255,9 @@ namespace Clipbox.Views.ClipboardListView
 
         public void UnselectMultiItemSubItems()
         {
-            foreach (MultiItem multiItem in _loadedMultiItems)
+            foreach (MultiItemPresenter multiItemPresenter in _loadedMultiItemPresenters)
             {
-                multiItem.GetSubItemsListView()?.UnselectAll();
+                multiItemPresenter.GetSubItemsListView()?.UnselectAll();
             }
         }
 
@@ -277,12 +277,12 @@ namespace Clipbox.Views.ClipboardListView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        protected void MultiItem_Loaded(object sender, RoutedEventArgs e)
+        protected void MultiItemPresenter_Loaded(object sender, RoutedEventArgs e)
         {
-            var multiItem = (MultiItem)sender;
-            multiItem.SubItems_SelectionChanged += MultiItem_SubItems_SelectionChanged;
-            multiItem.SubItems_SubItemsFocusMovedOut += MultiItem_SubItems_SubItemsFocusMovedOut;
-            _loadedMultiItems.Add(multiItem);
+            MultiItemPresenter multiItemPresenter = (MultiItemPresenter)sender;
+            multiItemPresenter.SubItems_SelectionChanged += MultiItemPresenter_SubItems_SelectionChanged;
+            multiItemPresenter.SubItems_SubItemsFocusMovedOut += MultiItem_SubItems_SubItemsFocusMovedOut;
+            _loadedMultiItemPresenters.Add(multiItemPresenter);
         }
 
         /// <summary>
@@ -290,48 +290,48 @@ namespace Clipbox.Views.ClipboardListView
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        protected void MultiItem_Unloaded(object sender, RoutedEventArgs e)
+        protected void MultiItemPresenter_Unloaded(object sender, RoutedEventArgs e)
         {
-            MultiItem multiItem = (MultiItem)sender;
+            MultiItemPresenter multiItemPresenter = (MultiItemPresenter)sender;
 
-            multiItem.SubItems_SelectionChanged -= MultiItem_SubItems_SelectionChanged;
-            multiItem.SubItems_SubItemsFocusMovedOut -= MultiItem_SubItems_SubItemsFocusMovedOut;
-            multiItem.Unloaded -= MultiItem_Unloaded;
-            multiItem.Loaded -= MultiItem_Loaded;
+            multiItemPresenter.SubItems_SelectionChanged -= MultiItemPresenter_SubItems_SelectionChanged;
+            multiItemPresenter.SubItems_SubItemsFocusMovedOut -= MultiItem_SubItems_SubItemsFocusMovedOut;
+            multiItemPresenter.Unloaded -= MultiItemPresenter_Unloaded;
+            multiItemPresenter.Loaded -= MultiItemPresenter_Unloaded;
 
-            _loadedMultiItems.Remove(multiItem);
+            _loadedMultiItemPresenters.Remove(multiItemPresenter);
         }
 
         private void MultiItem_SubItems_SubItemsFocusMovedOut(object sender, RoutedEventArgs e)
         {
-            MultiItem multiItem = (MultiItem)sender;
+            MultiItemPresenter multiItemPresenter = (MultiItemPresenter)sender;
 
-            Traversing.FindParent<ListViewItem>(multiItem).Focus();
+            Traversing.FindParent<ListViewItem>(multiItemPresenter).Focus();
         }
 
-        private void MultiItem_SubItems_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void MultiItemPresenter_SubItems_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (SuppressCustomSelectionProcessing)
             {
                 return;
             }
 
-            Debug.WriteLine("MultiItemListView_SelectionChanged");
-            MultiItem multiItemUserControl = (MultiItem)sender;
-            ListView multiItemListView = multiItemUserControl.GetSubItemsListView();
-
-            var mainViewItem = multiItemUserControl.ClipboardViewItem;
-            if (mainViewItem == null)
-            {
-                return;
-            }
-
-            ClipboardViewItemWrapper mainViewItemWrapper = this.Items.Cast<ClipboardViewItemWrapper>().
-                        SingleOrDefault(item => item.ViewItem == mainViewItem);
+            Debug.WriteLine("MultiItemPresenter_SubItems_SelectionChanged");
+            MultiItemPresenter multiItemPresenter = (MultiItemPresenter)sender;
+            ListView multiItemListView = multiItemPresenter.GetSubItemsListView();
+            
+            ClipboardViewItemWrapper mainViewItemWrapper = multiItemPresenter.ViewItemWrapper;
             if (mainViewItemWrapper == null)
             {
                 throw new InvalidOperationException("The selected item is not present in the ClipboardViewItemWrappers collection in the ViewModel.");
             }
+
+            if (!mainViewItemWrapper.IsViewItemLoaded)
+            {
+                return;
+            }
+
+            var mainViewItem = mainViewItemWrapper.ViewItem;
 
             _lastSelectedItemId = mainViewItem?.ClipboardItemId;
 

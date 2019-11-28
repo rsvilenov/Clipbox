@@ -33,8 +33,7 @@ namespace Clipbox.Views.ClipboardViewItemTile
             DependencyProperty.Register(nameof(ViewItemInfo), typeof(ClipboardViewItemInfo), typeof(MultiItemPresenter),
                 new PropertyMetadata(null));
 
-
-
+        
         public int NumberOfUniformGridColumns
         {
             get { return (int)GetValue(NumberOfUniformGridColumnsProperty); }
@@ -47,7 +46,7 @@ namespace Clipbox.Views.ClipboardViewItemTile
 
         public static readonly RoutedEvent SubItems_SelectionChangedEvent
         = EventManager.RegisterRoutedEvent(
-            "SubItems_SelectionChanged",
+            nameof(SubItems_SelectionChanged),
             RoutingStrategy.Bubble,
             typeof(SelectionChangedEventHandler),
             typeof(MultiItemPresenter));
@@ -57,10 +56,25 @@ namespace Clipbox.Views.ClipboardViewItemTile
             add { AddHandler(SubItems_SelectionChangedEvent, value); }
             remove { RemoveHandler(SubItems_SelectionChangedEvent, value); }
         }
-        
+
+        public static readonly RoutedEvent SubItems_SubItemsFocusMovedOutEvent
+        = EventManager.RegisterRoutedEvent(
+            nameof(SubItems_SubItemsFocusMovedOut),
+            RoutingStrategy.Bubble,
+            typeof(EventHandler<RoutedEventArgs>),
+            typeof(MultiItemPresenter));
+
+        public event EventHandler<RoutedEventArgs> SubItems_SubItemsFocusMovedOut
+        {
+            add { AddHandler(SubItems_SubItemsFocusMovedOutEvent, value); }
+            remove { RemoveHandler(SubItems_SubItemsFocusMovedOutEvent, value); }
+        }
+
         private ListView _subItemsListView;
 
         private Border _borderToAnimate;
+
+        private ListViewScrollTransferFocusBehavior _focusBehavior;
 
         public MultiItemPresenter()
         {
@@ -69,15 +83,40 @@ namespace Clipbox.Views.ClipboardViewItemTile
             OnApplyTemplate();
         }
 
+        public ListView GetSubItemsListView()
+        {
+            return _subItemsListView;
+        }
+
         public override void OnApplyTemplate()
         {
             if (ViewItemWrapper?.IsViewItemLoaded == true)
             {
                 _subItemsListView = GetTemplateChild("PART_SubItemsListView") as ListView;
                 _borderToAnimate = GetTemplateChild("PART_BorderToAnimate") as Border;
+
+                if (_subItemsListView != null)
+                {
+                    _subItemsListView.Unloaded += _subItemsListView_Unloaded;
+
+                    _focusBehavior = new ListViewScrollTransferFocusBehavior();
+                    _focusBehavior.KeyboardFocusMovedOut += _focusBehavior_KeyboardFocusMovedOut;
+                    Interaction.GetBehaviors(_subItemsListView).Add(_focusBehavior);
+                }
             }
         }
-        
+
+        private void _subItemsListView_Unloaded(object sender, RoutedEventArgs e)
+        {
+            _subItemsListView.Unloaded -= _subItemsListView_Unloaded;
+            _focusBehavior.KeyboardFocusMovedOut -= _focusBehavior_KeyboardFocusMovedOut;
+        }
+
+        private void _focusBehavior_KeyboardFocusMovedOut(object sender, EventArgs e)
+        {
+            RaiseEvent(new RoutedEventArgs(SubItems_SubItemsFocusMovedOutEvent));
+        }
+
         private static void SubListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ListView lv = (ListView)sender;
