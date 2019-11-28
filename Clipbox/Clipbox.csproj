@@ -189,6 +189,7 @@
     <Compile Include="Views\Dialog\Enums\DialogTypes.cs" />
     <Compile Include="Views\Dialog\EventArgsClasses\DialogAnswerEventArgs.cs" />
     <Compile Include="Views\EventArgsClasses\SearchRequestEventArgs.cs" />
+    <Compile Include="Views\EventArgsClasses\UncombinableItemsEventArgs.cs" />
     <Compile Include="Views\ExpandableSearchBox.xaml.cs">
       <DependentUpon>ExpandableSearchBox.xaml</DependentUpon>
     </Compile>

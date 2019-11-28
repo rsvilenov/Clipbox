@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Clipbox.Views.EventArgsClasses;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -9,7 +10,7 @@ namespace Clipbox.Views.ClipboardListView
     /// </summary>
     public partial class SimpleClipboardListView : ClipboardListViewBase
     {
-        public event EventHandler<EventArgs> UncombinableItemsSelected;
+        public event EventHandler<UncombinableItemsEventArgs> UncombinableItemsSelected;
 
         /// <summary>
         /// Place a semi-transparent veil over the item when it is not focused
@@ -85,7 +86,7 @@ namespace Clipbox.Views.ClipboardListView
         {
             if (!args.AreItemsCombinable)
             {
-                UncombinableItemsSelected?.Invoke(this, new EventArgs());
+                UncombinableItemsSelected?.Invoke(this, new UncombinableItemsEventArgs(base.LastSelectedItemId));
                 args.CancelLastSelection = true;
             }
         }

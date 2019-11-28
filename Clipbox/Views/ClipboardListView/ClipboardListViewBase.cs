@@ -21,9 +21,7 @@ namespace Clipbox.Views.ClipboardListView
     public abstract class ClipboardListViewBase : ListView
     {
         public static readonly Duration HighlightColorAnimationDuration = new Duration(TimeSpan.FromMilliseconds(300));
-
-        private string _lastSelectedItemId;
-
+        
         private bool _areLastSelectedItemsCombinable;
 
         private List<MultiItemPresenter> _loadedMultiItemPresenters;
@@ -123,7 +121,10 @@ namespace Clipbox.Views.ClipboardListView
         
         public static readonly DependencyProperty SuppressCustomSelectionProcessingProperty =
             DependencyProperty.Register(nameof(SuppressCustomSelectionProcessing), typeof(bool), typeof(ClipboardListViewBase), new PropertyMetadata(false));
-        
+
+
+        protected string LastSelectedItemId { get; set; }
+
         public ClipboardListViewBase()
         {
             SelectedItemIds = new List<string>();
@@ -230,12 +231,12 @@ namespace Clipbox.Views.ClipboardListView
             }
 
             var lastSelectedItem = e.AddedItems.Cast<object>().LastOrDefault() as ClipboardViewItemWrapper;
-            // set the value of _lastSelectedItemId if the item is a single item or a group (both are descendants of ClipboardViewItem)
-            // but not a sub-item,which is of type ClipboardViewSubItem and for which setting of _lastSelectedItemId
+            // set the value of LastSelectedItemId if the item is a single item or a group (both are descendants of ClipboardViewItem)
+            // but not a sub-item,which is of type ClipboardViewSubItem and for which setting of LastSelectedItemId
             // is handled by MultiItemListView_SelectionChanged
             if (lastSelectedItem != null && lastSelectedItem.ViewItem is ClipboardViewItem)
             {
-                _lastSelectedItemId = lastSelectedItem.ViewItem.ClipboardItemId;
+                LastSelectedItemId = lastSelectedItem.ViewItem.ClipboardItemId;
 
             }
 
@@ -333,7 +334,7 @@ namespace Clipbox.Views.ClipboardListView
 
             var mainViewItem = mainViewItemWrapper.ViewItem;
 
-            _lastSelectedItemId = mainViewItem?.ClipboardItemId;
+            LastSelectedItemId = mainViewItem?.ClipboardItemId;
 
             IEnumerable<ClipboardViewSubItemBase> selectedItems = multiItemListView.SelectedItems.Cast<ClipboardViewSubItemBase>();
             IEnumerable<int> selectedIndices = selectedItems.Select(item => multiItemListView.Items.IndexOf(item));
@@ -374,7 +375,7 @@ namespace Clipbox.Views.ClipboardListView
 
                 if (args.CancelLastSelection)
                 {
-                    Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, (Action)(() =>
+                    Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, (Action)(() =>
                     {
                         multiItemListView.UnselectAll();
                         SelectedMultiItemsIds.Remove(mainViewItem.ClipboardItemId);
@@ -415,7 +416,7 @@ namespace Clipbox.Views.ClipboardListView
         {
             Debug.WriteLine("SelectionChanged");
 
-            if (_lastSelectedItemId == null)
+            if (LastSelectedItemId == null)
             {
                 return;
             }
@@ -447,7 +448,7 @@ namespace Clipbox.Views.ClipboardListView
                     ClipboardViewItemWrapper latestSelectedItem = this
                         .Items
                         .Cast<ClipboardViewItemWrapper>()
-                        .Single(item => item.Id == _lastSelectedItemId);
+                        .Single(item => item.Id == LastSelectedItemId);
 
                     Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, (Action)(() =>
                     {

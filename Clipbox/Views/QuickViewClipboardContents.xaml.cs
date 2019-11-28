@@ -9,6 +9,7 @@ using Clipbox.ViewModels.BindableObjects;
 using Clipbox.ViewModels.Enums;
 using Clipbox.Views.ClipboardViewItemTile;
 using Clipbox.Views.Enums.ClipboardViewItemTile;
+using Clipbox.Views.EventArgsClasses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,22 +60,11 @@ namespace Clipbox.Views
             MainListView.UncombinableItemsSelected += MainListView_UncombinableItemsSelected;
         }
 
-        private void MainListView_UncombinableItemsSelected(object sender, EventArgs e)
+        private void MainListView_UncombinableItemsSelected(object sender, UncombinableItemsEventArgs e)
         {
-            ClipboardViewItemWrapper wrapper = null;
-            var selectedSubItemIds = MainListView.GetSelectedMultiItemsIds();
-            if (selectedSubItemIds.Any())
-            {
-                wrapper = MainListView.Items
+            ClipboardViewItemWrapper wrapper = MainListView.Items
                     .Cast<ClipboardViewItemWrapper>()
-                    .LastOrDefault(w => w.Id == selectedSubItemIds.Last().Key);
-            }
-            else
-            {
-                wrapper = MainListView.SelectedItems
-                    .Cast<ClipboardViewItemWrapper>()
-                    .LastOrDefault();
-            }
+                    .SingleOrDefault(w => w.Id == e.LastSelectedItemId);
             
             if (wrapper == null)
             {
