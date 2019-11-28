@@ -58,7 +58,7 @@
                     <Style.Triggers>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding Path=DataContext.ViewItemWrapper.IsShownIntoView, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}" Value="True" />
+                                <Condition Binding="{Binding Path=IsShownIntoView, RelativeSource={RelativeSource Mode=TemplatedParent}}" Value="True" />
                                 <Condition Binding="{Binding Path=IsEnabled, ElementName=IsLoadingIndicatorFadeInEnabledProxyElement}" Value="True" />
                             </MultiDataTrigger.Conditions>
                             <MultiDataTrigger.EnterActions>
@@ -70,7 +70,7 @@
                         </MultiDataTrigger>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding Path=DataContext.ViewItemWrapper.IsShownIntoView, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=ListView}}" Value="True" />
+                                <Condition Binding="{Binding Path=IsShownIntoView, RelativeSource={RelativeSource Mode=TemplatedParent}}" Value="True" />
                                 <Condition Binding="{Binding Path=IsEnabled, ElementName=IsLoadingIndicatorFadeInEnabledProxyElement}" Value="False" />
                             </MultiDataTrigger.Conditions>
                             <Setter Property="Visibility" Value="Visible" />
@@ -84,7 +84,7 @@
                     <Style.Triggers>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding Path=ViewItemWrapper.IsShownIntoView}" Value="True" />
+                                <Condition Binding="{Binding Path=IsShownIntoView, RelativeSource={RelativeSource Mode=TemplatedParent}}" Value="True" />
                                 <Condition Binding="{Binding Path=IsLoadingFadeInEnabled, RelativeSource={RelativeSource Mode=TemplatedParent}}" Value="True" />
                             </MultiDataTrigger.Conditions>
                             <MultiDataTrigger.EnterActions>

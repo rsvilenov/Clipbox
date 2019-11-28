@@ -52,7 +52,7 @@
                     <Style.Triggers>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding Path=IsShownIntoView}" Value="True" />
+                                <Condition Binding="{Binding Path=IsShownIntoView, RelativeSource={RelativeSource Mode=TemplatedParent}}" Value="True" />
                                 <Condition Binding="{Binding Path=IsLoadingFadeInEnabled, RelativeSource={RelativeSource Mode=TemplatedParent}}" Value="True" />
                             </MultiDataTrigger.Conditions>
                             <MultiDataTrigger.EnterActions>
@@ -81,7 +81,7 @@
                         <Style.Triggers>
                             <MultiDataTrigger>
                                 <MultiDataTrigger.Conditions>
-                                    <Condition Binding="{Binding Path=IsShownIntoView}" Value="True" />
+                                    <Condition Binding="{Binding Path=IsShownIntoView, RelativeSource={RelativeSource Mode=TemplatedParent}}" Value="True" />
                                     <!--  bind to IsEnabled of the content control, which is in turn bound to IsLoadingIndicatorFadeInEnabled of the main contorl  -->
                                     <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Mode=Self}}" Value="True" />
                                 </MultiDataTrigger.Conditions>
@@ -94,7 +94,7 @@
                             </MultiDataTrigger>
                             <MultiDataTrigger>
                                 <MultiDataTrigger.Conditions>
-                                    <Condition Binding="{Binding Path=IsShownIntoView}" Value="True" />
+                                    <Condition Binding="{Binding Path=IsShownIntoView, RelativeSource={RelativeSource Mode=TemplatedParent}}" Value="True" />
                                     <Condition Binding="{Binding IsEnabled, RelativeSource={RelativeSource Mode=Self}}" Value="False" />
                                 </MultiDataTrigger.Conditions>
                                 <Setter Property="Visibility" Value="Visible" />

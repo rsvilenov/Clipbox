@@ -60,6 +60,16 @@ namespace Clipbox.Views.ClipboardViewItemTile
             DependencyProperty.Register(nameof(IsDimmed), typeof(bool), typeof(ItemPresenterBase), new PropertyMetadata(false));
 
 
+        public bool IsShownIntoView
+        {
+            get { return (bool)GetValue(IsShownIntoViewProperty); }
+            set { SetValue(IsShownIntoViewProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsShownIntoViewProperty =
+            DependencyProperty.Register(nameof(IsShownIntoView), typeof(bool), typeof(ItemPresenterBase), new PropertyMetadata(false));
+        
+
         public ClipboardViewItemWrapper ViewItemWrapper
         {
             get { return (ClipboardViewItemWrapper)GetValue(ViewItemWrapperProperty); }

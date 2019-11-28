@@ -7,14 +7,13 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Interactivity;
 
 namespace Clipbox.Views.ClipboardViewItemTile
 {
     [TemplatePart(Name = "PART_SubItemsListView", Type = typeof(ListView))]
     [TemplatePart(Name = "PART_BorderToAnimate", Type = typeof(Border))]
-    public class MultiItemPresenter : ItemPresenterBase
+    public class MultiItemPresenter : ItemPresenterBase, IAnimatableItem
     {
         static MultiItemPresenter()
         {

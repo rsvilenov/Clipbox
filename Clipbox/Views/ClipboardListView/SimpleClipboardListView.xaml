@@ -40,9 +40,9 @@
         <conv:ObjectTypeCompareConverter x:Key="ObjectTypeCompareConverter" />
 
         <!--  we cannot subscribe to an event in an inline style, so we need a resource for circumventing this limitation of WPF  -->
-        <Style x:Key="MultiItemStyleForSubItems_EventTriggersStyle" TargetType="{x:Type tile:MultiItem}">
-            <EventSetter Event="Unloaded" Handler="MultiItem_Unloaded" />
-            <EventSetter Event="Loaded" Handler="MultiItem_Loaded" />
+        <Style x:Key="MultiItemPresenterStyleForSubItems_EventTriggersStyle" TargetType="{x:Type tile:MultiItemPresenter}">
+            <EventSetter Event="Unloaded" Handler="MultiItemPresenter_Unloaded" />
+            <EventSetter Event="Loaded" Handler="MultiItemPresenter_Loaded" />
         </Style>
     </ListView.Resources>
     <i:Interaction.Behaviors>
@@ -291,7 +291,65 @@
                         <ContentControl.Style>
                             <Style TargetType="{x:Type ContentControl}">
                                 <Style.Triggers>
-                                    <MultiDataTrigger>
+
+                                    <DataTrigger Binding="{Binding Path=DimensionInfo.IsViewItemGroup, FallbackValue=False}" Value="False">
+                                        <Setter Property="ContentTemplate">
+                                            <Setter.Value>
+                                                <DataTemplate>
+                                                    <tile:SingleItemPresenter
+                                                        IsFadeInEnabled="{Binding Path=IsFadeInOfItemsEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type lv:FullClipboardListView}}}"
+                                                        IsLoadingFadeInEnabled="False"
+                                                        IsLoadingIndicatorFadeInEnabled="True"
+                                                        IsShownIntoView="True"
+                                                        PreviewContainerBackgroundColor="{DynamicResource TaskbarColor}"
+                                                        ThumbnailAreaMaxHeight="{Binding Path=ClipboardViewItemMaxHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type lv:ClipboardListViewBase}}}"
+                                                        ThumbnailAreaMinHeight="{Binding Path=ThumbnailAreaMaxHeight, RelativeSource={RelativeSource Mode=Self}}"
+                                                        ViewItemWrapper="{Binding Mode=OneTime, RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}, Path=DataContext}" />
+                                                </DataTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+
+                                    <DataTrigger Binding="{Binding Path=DimensionInfo.IsViewItemGroup, FallbackValue=False}" Value="True">
+                                        <Setter Property="ContentTemplate">
+                                            <Setter.Value>
+                                                <DataTemplate>
+                                                    <tile:MultiItemPresenter
+                                                        IsFadeInEnabled="{Binding Path=IsFadeInOfItemsEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type lv:FullClipboardListView}}}"
+                                                        IsLoadingFadeInEnabled="False"
+                                                        IsLoadingIndicatorFadeInEnabled="True"
+                                                        IsShownIntoView="False"
+                                                        PreviewContainerBackgroundColor="{DynamicResource TaskbarColor}"
+                                                        ViewItemWrapper="{Binding Mode=OneTime, RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}, Path=DataContext}">
+
+                                                        <tile:MultiItemPresenter.Height>
+                                                            <MultiBinding Converter="{StaticResource MathAddConverter}">
+                                                                <Binding Path="ClipboardViewItemMaxHeight" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type lv:ClipboardListViewBase}}" />
+                                                                <Binding>
+                                                                    <Binding.Source>
+                                                                        <!--  pad the height so that it matches the total height of the single view items  -->
+
+                                                                        <sys:Double>60</sys:Double>
+                                                                    </Binding.Source>
+                                                                </Binding>
+                                                            </MultiBinding>
+                                                        </tile:MultiItemPresenter.Height>
+                                                        <tile:MultiItemPresenter.Style>
+                                                            <Style BasedOn="{StaticResource MultiItemPresenterStyleForSubItems_EventTriggersStyle}" TargetType="{x:Type tile:MultiItemPresenter}">
+                                                                <Setter Property="PreviewContainerBackgroundColor" Value="{DynamicResource TaskbarColor}" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.IsSelected}" Value="True">
+                                                                        <Setter Property="PreviewContainerBackgroundColor" Value="Transparent" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </tile:MultiItemPresenter.Style>
+                                                    </tile:MultiItemPresenter>
+                                                </DataTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+                                    <!--<MultiDataTrigger>
                                         <MultiDataTrigger.Conditions>
                                             <Condition Binding="{Binding Path=DimensionInfo.IsViewItemGroup, FallbackValue=False}" Value="False" />
                                             <Condition Binding="{Binding Path=IsViewItemLoaded}" Value="False" />
@@ -327,13 +385,17 @@
                                                             IsFadeInEnabled="False"
                                                             ThumbnailAreaMaxHeight="{Binding Path=ClipboardViewItemMaxHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type lv:ClipboardListViewBase}}}"
                                                             ThumbnailAreaMinHeight="{Binding Path=ThumbnailAreaMaxHeight, RelativeSource={RelativeSource Mode=Self}}">
-                                                            <!--
-                                                                Set MinWidth to the tile.
-                                                                If the preview is too narrow, when the buttons appear, the tile expands and this cause flickering.
-                                                                This may lead to tiles moving to the next line on mouseover, which makes them impossible to be clicked.
-                                                            -->
+                                    -->
+                                    <!--
+                                        Set MinWidth to the tile.
+                                        If the preview is too narrow, when the buttons appear, the tile expands and this cause flickering.
+                                        This may lead to tiles moving to the next line on mouseover, which makes them impossible to be clicked.
+                                    -->
+                                    <!--
                                                             <tile:SingleItem.MinWidth>150</tile:SingleItem.MinWidth>
-                                                            <!--  If the setting DimNonFocusedItems is set to true, the tiles are dimmed when they are not highlighted or selected.  -->
+                                    -->
+                                    <!--  If the setting DimNonFocusedItems is set to true, the tiles are dimmed when they are not highlighted or selected.  -->
+                                    <!--
                                                             <tile:SingleItem.IsDimmed>
                                                                 <MultiBinding Converter="{StaticResource AndMultiValueConverter}">
                                                                     <Binding
@@ -375,7 +437,9 @@
                                                                     <Binding>
                                                                         <Binding.Source>
 
-                                                                            <!--  pad the height so that it matches the total height of the single view items  -->
+                                    -->
+                                    <!--  pad the height so that it matches the total height of the single view items  -->
+                                    <!--
 
                                                                             <sys:Double>60</sys:Double>
                                                                         </Binding.Source>
@@ -407,7 +471,9 @@
                                                                     <Binding Path="ClipboardViewItemMaxHeight" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type lv:ClipboardListViewBase}}" />
                                                                     <Binding>
                                                                         <Binding.Source>
-                                                                            <!--  pad the height so that it matches the total height of the single view items  -->
+                                    -->
+                                    <!--  pad the height so that it matches the total height of the single view items  -->
+                                    <!--
                                                                             <sys:Double>60</sys:Double>
                                                                         </Binding.Source>
                                                                     </Binding>
@@ -431,7 +497,7 @@
                                                 </Setter.Value>
                                             </Setter>
                                         </MultiDataTrigger.Setters>
-                                    </MultiDataTrigger>
+                                    </MultiDataTrigger>-->
                                 </Style.Triggers>
                             </Style>
                         </ContentControl.Style>

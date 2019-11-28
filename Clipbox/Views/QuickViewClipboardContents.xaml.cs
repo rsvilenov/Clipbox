@@ -86,7 +86,7 @@ namespace Clipbox.Views
                 throw new InvalidOperationException($"The list view does not contain an item with id {wrapper.Id}.");
             }
 
-            var clipboardViewItemTile = Traversing.GetVisualChildOfType<ItemBase>(selectedListViewItem);
+            var clipboardViewItemTile = Traversing.GetVisualChildOfType<ItemPresenterBase>(selectedListViewItem);
             if (!(clipboardViewItemTile is IAnimatableItem animatableItem))
             {
                 throw new InvalidOperationException($"The listviewitem for {wrapper.Id} does not implement {nameof(IAnimatableItem)}");
