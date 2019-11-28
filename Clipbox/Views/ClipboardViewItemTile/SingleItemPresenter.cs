@@ -21,15 +21,6 @@ namespace Clipbox.Views.ClipboardViewItemTile
             }
         }
 
-        public bool IsDimmed
-        {
-            get { return (bool)GetValue(IsDimmedProperty); }
-            set { SetValue(IsDimmedProperty, value); }
-        }
-
-        public static readonly DependencyProperty IsDimmedProperty =
-            DependencyProperty.Register(nameof(IsDimmed), typeof(bool), typeof(SingleItemPresenter), new PropertyMetadata(false));
-
         public double ThumbnailAreaMaxHeight
         {
             get { return (double)GetValue(ThumbnailAreaMaxHeightProperty); }

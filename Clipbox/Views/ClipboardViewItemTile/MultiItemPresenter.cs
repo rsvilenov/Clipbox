@@ -1,12 +1,16 @@
 ﻿using Clipbox.Infrastructure.UI;
 using Clipbox.ViewModels.BindableObjects;
+using Clipbox.Views.Enums.ClipboardViewItemTile;
 using System;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace Clipbox.Views.ClipboardViewItemTile
 {
+    [TemplatePart(Name = "PART_SubItemsListView", Type = typeof(ListView))]
+    [TemplatePart(Name = "PART_BorderToAnimate", Type = typeof(Border))]
     public class MultiItemPresenter : ItemPresenterBase
     {
         static MultiItemPresenter()
@@ -31,16 +35,53 @@ namespace Clipbox.Views.ClipboardViewItemTile
             get { return (int)GetValue(NumberOfUniformGridColumnsProperty); }
             set { SetValue(NumberOfUniformGridColumnsProperty, value); }
         }
-
+        
         public static readonly DependencyProperty NumberOfUniformGridColumnsProperty =
             DependencyProperty.Register(nameof(NumberOfUniformGridColumns), typeof(int), typeof(MultiItemPresenter),
                 new PropertyMetadata(0));
 
+        public static readonly RoutedEvent SubItems_SelectionChangedEvent
+        = EventManager.RegisterRoutedEvent(
+            "SubItems_SelectionChanged",
+            RoutingStrategy.Bubble,
+            typeof(SelectionChangedEventHandler),
+            typeof(MultiItemPresenter));
+
+        public event SelectionChangedEventHandler SubItems_SelectionChanged
+        {
+            add { AddHandler(SubItems_SelectionChangedEvent, value); }
+            remove { RemoveHandler(SubItems_SelectionChangedEvent, value); }
+        }
+
+
+        private ListView _subItemsListView;
+
+        private Border _borderToAnimate;
 
         public MultiItemPresenter()
         {
             ViewItemInfo = new ClipboardViewItemInfo();
             Loaded += MultiItemPresenter_Loaded;
+            OnApplyTemplate();
+        }
+
+        public override void OnApplyTemplate()
+        {
+            if (ViewItemWrapper?.IsViewItemLoaded == true)
+            {
+                _subItemsListView = GetTemplateChild("PART_SubItemsListView") as ListView;
+                _borderToAnimate = GetTemplateChild("PART_BorderToAnimate") as Border;
+
+                if (_subItemsListView != null)
+                {
+                    EventManager.RegisterClassHandler(typeof(ListView), ListView.SelectionChangedEvent, new SelectionChangedEventHandler(SubListView_SelectionChanged));
+                }
+            }
+        }
+
+        private void SubListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            RaiseEvent(new SelectionChangedEventArgs(SubItems_SelectionChangedEvent, e.AddedItems, e.RemovedItems));
         }
 
         private void MultiItemPresenter_Loaded(object sender, RoutedEventArgs e)
@@ -49,16 +90,12 @@ namespace Clipbox.Views.ClipboardViewItemTile
             {
                 // update these when all binding operations has completed
 
-                if (ViewItemWrapper != null && ViewItemWrapper.DimensionInfo != null)
+                if (ViewItemWrapper != null && !ViewItemWrapper.IsViewItemLoaded && ViewItemWrapper.DimensionInfo != null)
                 {
                     ViewItemInfo.LoadFromClipboardViewItemWrapper(ViewItemWrapper);
                     UpdateNumberOfUniformGridColumns();
                 }
             }));
-        }
-
-        public override void OnApplyTemplate()
-        {
         }
 
         protected override void OnViewItemWrapperPropertyChanged(ClipboardViewItemWrapper newValue)
@@ -73,6 +110,32 @@ namespace Clipbox.Views.ClipboardViewItemTile
         private void UpdateNumberOfUniformGridColumns()
         {
             NumberOfUniformGridColumns = ViewItemInfo.TotalClipboardItemsCount <= 4 ? 2 : 3;
+        }
+
+        public void RunNotificationAnimation(AnimationPurpose animationPurpose)
+        {
+            if (ViewItemWrapper?.IsViewItemLoaded == false)
+            {
+                return;
+            }
+
+            if (_subItemsListView.SelectedItems.Count > 0)
+            {
+                foreach (var selectedItem in _subItemsListView.SelectedItems)
+                {
+                    ListViewItem selectedListViewItem = (ListViewItem)_subItemsListView.ItemContainerGenerator.ContainerFromItem(selectedItem);
+                    if (!(selectedListViewItem.Template.FindName("Bd", selectedListViewItem) is Border border))
+                    {
+                        throw new InvalidOperationException("Cannot find an item named Bd in the selected subitem's content template.");
+                    }
+
+                    TileAnimationHelper.RunAnimation(border, animationPurpose);
+                }
+            }
+            else
+            {
+                TileAnimationHelper.RunAnimation(_borderToAnimate, animationPurpose);
+            }
         }
 
         public class ClipboardViewItemInfo : BindableObject

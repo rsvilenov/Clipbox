@@ -17,7 +17,7 @@
 
             <Grid.Background>
                 <!--  here templatebinding does not work  -->
-                <SolidColorBrush Opacity="0.2" Color="{Binding PreviewContainerBackgroundColor, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:SingleItemPresenter}}}" />
+                <SolidColorBrush Opacity="0.2" Color="{Binding PreviewContainerBackgroundColor, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
             </Grid.Background>
 
             <Grid.Resources>
@@ -53,7 +53,7 @@
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding Path=IsShownIntoView}" Value="True" />
-                                <Condition Binding="{Binding Path=IsLoadingFadeInEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:SingleItemPresenter}}}" Value="True" />
+                                <Condition Binding="{Binding Path=IsLoadingFadeInEnabled, RelativeSource={RelativeSource Mode=TemplatedParent}}" Value="True" />
                             </MultiDataTrigger.Conditions>
                             <MultiDataTrigger.EnterActions>
                                 <BeginStoryboard x:Name="FadeInItemContents" Storyboard="{StaticResource FadeInItem}" />
@@ -156,7 +156,7 @@
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding Path=IsVisible, RelativeSource={RelativeSource Mode=Self}}" Value="True" />
-                                <Condition Binding="{Binding Path=IsFadeInEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:SingleItemPresenter}}}" Value="True" />
+                                <Condition Binding="{Binding Path=IsFadeInEnabled, RelativeSource={RelativeSource Mode=TemplatedParent}}" Value="True" />
                             </MultiDataTrigger.Conditions>
                             <MultiDataTrigger.EnterActions>
                                 <BeginStoryboard x:Name="FadeInItemContents" Storyboard="{StaticResource FadeInItem}" />
@@ -170,7 +170,7 @@
             </Grid.Style>
 
             <Grid.Background>
-                <SolidColorBrush Opacity="0.2" Color="{Binding PreviewContainerBackgroundColor, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:SingleItemPresenter}}}" />
+                <SolidColorBrush Opacity="0.2" Color="{Binding PreviewContainerBackgroundColor, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
             </Grid.Background>
 
             <Grid.RowDefinitions>

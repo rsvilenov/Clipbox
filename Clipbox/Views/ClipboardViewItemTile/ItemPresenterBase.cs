@@ -50,6 +50,16 @@ namespace Clipbox.Views.ClipboardViewItemTile
             DependencyProperty.Register(nameof(IsLoadingIndicatorFadeInEnabled), typeof(bool), typeof(ItemPresenterBase), new PropertyMetadata(false));
 
 
+        public bool IsDimmed
+        {
+            get { return (bool)GetValue(IsDimmedProperty); }
+            set { SetValue(IsDimmedProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsDimmedProperty =
+            DependencyProperty.Register(nameof(IsDimmed), typeof(bool), typeof(ItemPresenterBase), new PropertyMetadata(false));
+
+
         public ClipboardViewItemWrapper ViewItemWrapper
         {
             get { return (ClipboardViewItemWrapper)GetValue(ViewItemWrapperProperty); }
