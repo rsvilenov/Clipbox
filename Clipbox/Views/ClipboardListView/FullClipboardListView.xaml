@@ -54,6 +54,11 @@
             <EventSetter Event="Loaded" Handler="MultiItem_Loaded" />
         </Style>
 
+        <Style x:Key="MultiItemPresenterStyleForSubItems_EventTriggersStyle" TargetType="{x:Type tile:MultiItemPresenter}">
+            <EventSetter Event="Unloaded" Handler="MultiItemPresenter_Unloaded" />
+            <EventSetter Event="Loaded" Handler="MultiItemPresenter_Loaded" />
+        </Style>
+
         <ControlTemplate x:Key="MinimalisticScrollViewerControlTemplate" TargetType="{x:Type ScrollViewer}">
             <Grid x:Name="Grid" Background="{TemplateBinding Background}">
                 <Grid.ColumnDefinitions>
@@ -592,6 +597,16 @@
                                                                 </Binding>
                                                             </MultiBinding>
                                                         </tile:MultiItemPresenter.Height>
+                                                        <tile:MultiItemPresenter.Style>
+                                                            <Style BasedOn="{StaticResource MultiItemPresenterStyleForSubItems_EventTriggersStyle}" TargetType="{x:Type tile:MultiItemPresenter}">
+                                                                <Setter Property="PreviewContainerBackgroundColor" Value="{DynamicResource TaskbarColor}" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType={x:Type ContentControl}}, Path=DataContext.IsSelected}" Value="True">
+                                                                        <Setter Property="PreviewContainerBackgroundColor" Value="Transparent" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </tile:MultiItemPresenter.Style>
                                                     </tile:MultiItemPresenter>
                                                 </DataTemplate>
                                             </Setter.Value>

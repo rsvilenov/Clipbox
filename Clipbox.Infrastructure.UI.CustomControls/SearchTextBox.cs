@@ -244,7 +244,11 @@ namespace Clipbox.Infrastructure.UI.CustomControls
             SetControlsVisibility();
 
             Text = _textBox.Text;
-            _searchSlidingTimer.Slide();
+
+            if (!string.IsNullOrWhiteSpace(Text))
+            {
+                _searchSlidingTimer.Slide();
+            }
         }
 
         private void SetControlsVisibility()

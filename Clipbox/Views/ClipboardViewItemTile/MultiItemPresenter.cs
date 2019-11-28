@@ -1,4 +1,5 @@
-﻿using Clipbox.Infrastructure.UI;
+﻿using Clipbox.Behaviors;
+using Clipbox.Infrastructure.UI;
 using Clipbox.ViewModels.BindableObjects;
 using Clipbox.Views.Enums.ClipboardViewItemTile;
 using System;
@@ -6,6 +7,8 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Interactivity;
 
 namespace Clipbox.Views.ClipboardViewItemTile
 {
@@ -16,6 +19,8 @@ namespace Clipbox.Views.ClipboardViewItemTile
         static MultiItemPresenter()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(MultiItemPresenter), new FrameworkPropertyMetadata(typeof(MultiItemPresenter)));
+
+            EventManager.RegisterClassHandler(typeof(ListView), ListView.SelectionChangedEvent, new SelectionChangedEventHandler(SubListView_SelectionChanged));
         }
 
         public ClipboardViewItemInfo ViewItemInfo
@@ -52,8 +57,7 @@ namespace Clipbox.Views.ClipboardViewItemTile
             add { AddHandler(SubItems_SelectionChangedEvent, value); }
             remove { RemoveHandler(SubItems_SelectionChangedEvent, value); }
         }
-
-
+        
         private ListView _subItemsListView;
 
         private Border _borderToAnimate;
@@ -71,17 +75,13 @@ namespace Clipbox.Views.ClipboardViewItemTile
             {
                 _subItemsListView = GetTemplateChild("PART_SubItemsListView") as ListView;
                 _borderToAnimate = GetTemplateChild("PART_BorderToAnimate") as Border;
-
-                if (_subItemsListView != null)
-                {
-                    EventManager.RegisterClassHandler(typeof(ListView), ListView.SelectionChangedEvent, new SelectionChangedEventHandler(SubListView_SelectionChanged));
-                }
             }
         }
-
-        private void SubListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        
+        private static void SubListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            RaiseEvent(new SelectionChangedEventArgs(SubItems_SelectionChangedEvent, e.AddedItems, e.RemovedItems));
+            ListView lv = (ListView)sender;
+            lv.RaiseEvent(new SelectionChangedEventArgs(SubItems_SelectionChangedEvent, e.AddedItems, e.RemovedItems));
         }
 
         private void MultiItemPresenter_Loaded(object sender, RoutedEventArgs e)

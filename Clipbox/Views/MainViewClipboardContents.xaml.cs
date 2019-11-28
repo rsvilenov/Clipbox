@@ -199,12 +199,13 @@ namespace Clipbox.Views
 
         public void ScheduleLoadingOfViewItem(string clipboardItemId)
         {
-            ClipboardViewItemWrapper wrapper = null;
-            ClipboardViewItemDimensionInfo cvItemDimInfo = null;
-            ClipboardViewItem viewItem = null;
             // run the slow-running operations in a separate task
             _cancellableTaskManager.ScheduleTask(clipboardItemId, new Action<string>((taskId) =>
             {
+                ClipboardViewItemWrapper wrapper = null;
+                ClipboardViewItemDimensionInfo cvItemDimInfo = null;
+                ClipboardViewItem viewItem = null;
+
                 PerformDisposeSafeOperation(() =>
                 {
                     wrapper = _viewModel.GetViewItemWrapper(clipboardItemId);

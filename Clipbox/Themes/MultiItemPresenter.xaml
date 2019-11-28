@@ -387,7 +387,7 @@
                 </i:Interaction.Behaviors>
                 <TextBlock.Text>
                     <MultiBinding StringFormat="{}{0} of {1} selected">
-                        <Binding ElementName="subItemsListView" Path="SelectedItems.Count" />
+                        <Binding ElementName="PART_SubItemsListView" Path="SelectedItems.Count" />
                         <Binding Path="ViewItem.TotalClipboardItemsCount" />
                     </MultiBinding>
                 </TextBlock.Text>
@@ -395,7 +395,7 @@
                     <Style TargetType="TextBlock">
                         <Setter Property="Visibility" Value="Visible" />
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding Path=SelectedItems.Count, ElementName=subItemsListView}" Value="0">
+                            <DataTrigger Binding="{Binding Path=SelectedItems.Count, ElementName=PART_SubItemsListView}" Value="0">
                                 <Setter Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
                         </Style.Triggers>
@@ -417,7 +417,7 @@
                     <Style TargetType="TextBlock">
                         <Setter Property="Visibility" Value="Collapsed" />
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding Path=SelectedItems.Count, ElementName=subItemsListView}" Value="0">
+                            <DataTrigger Binding="{Binding Path=SelectedItems.Count, ElementName=PART_SubItemsListView}" Value="0">
                                 <Setter Property="Visibility" Value="Visible" />
                             </DataTrigger>
                         </Style.Triggers>
@@ -426,7 +426,7 @@
             </TextBlock>
 
             <ListView
-                Name="subItemsListView"
+                Name="PART_SubItemsListView"
                 Grid.Row="1"
                 Background="Transparent"
                 BorderThickness="1"
@@ -436,7 +436,7 @@
                 <i:Interaction.Behaviors>
                     <localBeh:ListViewScrollButtonBehavior ButtonScrollDirection="Up" ScrollButton="{Binding ElementName=BtnScrollUpSubItem}" />
                     <localBeh:ListViewScrollButtonBehavior ButtonScrollDirection="Down" ScrollButton="{Binding ElementName=BtnScrollDownSubItem}" />
-                    <!--<localBeh:ListViewScrollTransferFocusBehavior KeyboardFocusMovedOut="ListViewScrollTransferFocusBehavior_KeyboardFocusMovedOut" />-->
+                    <localBeh:ListViewScrollTransferFocusBehavior />
                 </i:Interaction.Behaviors>
                 <ListView.ItemContainerStyle>
                     <Style TargetType="{x:Type ListViewItem}">

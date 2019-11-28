@@ -490,5 +490,15 @@ namespace Clipbox.Views.ClipboardListView
                 set { SetField(ref _lastItemDateString, value); }
             }
         }
+
+        private void MultiItemPresenter_Unloaded(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void MultiItemPresenter_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

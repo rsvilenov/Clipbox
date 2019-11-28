@@ -21,9 +21,21 @@ namespace Clipbox.Behaviors
         protected override void OnAttached()
         {
             AssociatedObject.Loaded += AssociatedObject_Loaded;
+            AssociatedObject.Unloaded += AssociatedObject_Unloaded;
             if (AssociatedObject.IsLoaded)
             {
                 Setup();
+            }
+        }
+
+        private void AssociatedObject_Unloaded(object sender, RoutedEventArgs e)
+        {
+            AssociatedObject.Unloaded -= AssociatedObject_Unloaded;
+
+            if (_areInputEventsWired)
+            {
+                AssociatedObject.PreviewMouseWheel -= AssociatedObject_PreviewMouseWheel;
+                AssociatedObject.PreviewKeyDown -= AssociatedObject_PreviewKeyDown;
             }
         }
 
@@ -117,16 +129,6 @@ namespace Clipbox.Behaviors
                 };
 
                 AssociatedObject.RaiseEvent(e2);
-            }
-        }
-        
-
-        protected override void OnDetaching()
-        {
-            if (_areInputEventsWired)
-            {
-                AssociatedObject.PreviewMouseWheel -= AssociatedObject_PreviewMouseWheel;
-                AssociatedObject.PreviewKeyDown -= AssociatedObject_PreviewKeyDown;
             }
         }
     }
