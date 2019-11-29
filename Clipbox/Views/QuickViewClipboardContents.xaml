@@ -66,24 +66,15 @@
                     </Style.Triggers>
                 </Style>
             </Grid.Style>
-            <vis:SprocketControl
-                Grid.RowSpan="3"
-                Grid.ColumnSpan="3"
-                Width="60"
-                Height="60"
+
+            <ContentControl
+                x:Name="LoadingIndicator"
+                Width="50"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                AlphaTicksPercentage="50"
-                InnerRadius="0.3"
-                Interval="60"
-                IsIndeterminate="True"
-                LowestAlpha="50"
-                OuterRadius="0.5"
-                StartAngle="-90"
-                TickColor="White"
-                TickCount="12"
-                TickStyle="Triangle"
-                TickWidth="3" />
+                Foreground="Gray"
+                Template="{DynamicResource MainLoadingIcon}" />
+
         </Grid>
 
         <!--  label "No contents"  -->
