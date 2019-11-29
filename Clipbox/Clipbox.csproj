@@ -198,6 +198,10 @@
     </Compile>
     <Compile Include="Views\Interfaces\IMainWindow.cs" />
     <Compile Include="Views\Interfaces\ITrayContextMenu.cs" />
+    <Compile Include="Views\LoadingIndicatorPopup.xaml.cs">
+      <DependentUpon>LoadingIndicatorPopup.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\LoadingPopupGovernor.cs" />
     <Compile Include="Views\MainViewClipboardContents.xaml.cs">
       <DependentUpon>MainViewClipboardContents.xaml</DependentUpon>
     </Compile>
@@ -290,6 +294,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\FilterBand.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\LoadingIndicatorPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

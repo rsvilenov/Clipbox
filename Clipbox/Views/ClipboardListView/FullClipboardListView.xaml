@@ -22,7 +22,6 @@
     Background="Transparent"
     BorderThickness="0"
     FocusVisualStyle="{x:Null}"
-    ItemsSource="{Binding ClipboardViewItemWrappers}"
     ScrollViewer.CanContentScroll="False"
     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
     ScrollViewer.VerticalScrollBarVisibility="Visible"
@@ -30,7 +29,7 @@
     mc:Ignorable="d">
 
     <i:Interaction.Behaviors>
-        <localBeh:ListViewGroupingBehavior GroupByPropertyName="DateCreatedFriendly" />
+        <localBeh:ListViewGroupingBehavior GroupByPropertyName="DateCreatedFriendly" IsEnabled="{Binding IsInnerGroupingEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type lv:FullClipboardListView}}}" />
         <localBeh:ListViewOnFocusSelectFirstItemBehavior />
     </i:Interaction.Behaviors>
     <ListView.Resources>

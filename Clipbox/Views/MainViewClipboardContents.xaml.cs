@@ -22,6 +22,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -143,6 +144,8 @@ namespace Clipbox.Views
             _viewModel.ClipboardViewItemWrappers.EnableSyncForCurrentUIThread();
             IEnumerable<string> clipboardItemIds = null;
             IReadOnlyCollection<string> removedClipboardItemIds = null;
+            
+            LoadingPopupGoverner.OpenPopup(Window.GetWindow(this));
 
             Task.Run(() =>
             {
@@ -185,11 +188,11 @@ namespace Clipbox.Views
                             );
                         }
 
-#if DEBUG
-                        GC.Collect();
-                        GC.WaitForPendingFinalizers();
-                        GC.Collect();
-#endif
+                        //#if DEBUG
+                        //                        GC.Collect();
+                        //                        GC.WaitForPendingFinalizers();
+                        //                        GC.Collect();
+                        //#endif
                     }));
             },
             // ensure that the code in ContinueWith executes on the main thread,
@@ -624,6 +627,8 @@ namespace Clipbox.Views
 
         private void MainListView_GroupingComplete(object sender, EventArgs e)
         {
+            LoadingPopupGoverner.ClosePopup();
+
             // if we do not set the visibility in background, 
             // the fade animations controlled by the triggers do not work
             Dispatcher.BeginInvoke(DispatcherPriority.Background,

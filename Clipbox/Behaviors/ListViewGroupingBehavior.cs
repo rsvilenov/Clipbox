@@ -8,6 +8,16 @@ namespace Clipbox.Behaviors
 {
     public class ListViewGroupingBehavior : Behavior<ListView>
     {
+        public bool IsEnabled
+        {
+            get { return (bool)GetValue(IsEnabledProperty); }
+            set { SetValue(IsEnabledProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsEnabledProperty =
+            DependencyProperty.Register(nameof(IsEnabled), typeof(bool), typeof(ListViewGroupingBehavior), new PropertyMetadata(true));
+
+        
         public string GroupByPropertyName
         {
             get { return (string)GetValue(GroupByPropertyNameProperty); }
@@ -20,9 +30,12 @@ namespace Clipbox.Behaviors
         protected override void OnAttached()
         {
             AssociatedObject.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, new Action(() => {
-                CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(AssociatedObject.ItemsSource);
-                PropertyGroupDescription groupDescription = new PropertyGroupDescription(GroupByPropertyName);
-                view.GroupDescriptions.Add(groupDescription);
+                if (IsEnabled)
+                {
+                    CollectionView view = (CollectionView)CollectionViewSource.GetDefaultView(AssociatedObject.ItemsSource);
+                    PropertyGroupDescription groupDescription = new PropertyGroupDescription(GroupByPropertyName);
+                    view.GroupDescriptions.Add(groupDescription);
+                }
             }));
         }
     }

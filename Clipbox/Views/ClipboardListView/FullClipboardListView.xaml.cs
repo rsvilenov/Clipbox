@@ -112,7 +112,19 @@ namespace Clipbox.Views.ClipboardListView
 
 
 
+        public bool IsInnerGroupingEnabled
+        {
+            get { return (bool)GetValue(IsInnerGroupingEnabledProperty); }
+            set { SetValue(IsInnerGroupingEnabledProperty, value); }
+        }
+        
+        public static readonly DependencyProperty IsInnerGroupingEnabledProperty =
+            DependencyProperty.Register(nameof(IsInnerGroupingEnabled), typeof(bool), typeof(FullClipboardListView), new PropertyMetadata(false));
+        
+
         private Rect _listViewVisibleArea;
+
+        private bool _isGroupingRequested;
         
         public FullClipboardListView()
         {
@@ -147,9 +159,17 @@ namespace Clipbox.Views.ClipboardListView
 
         protected override void OnItemsChanged(NotifyCollectionChangedEventArgs e)
         {
+            // we want to indicate that the GroupingCompleted event should fire,
+            // after the grouping is done (the group template has loaded)
+            SetIsGroupingRequested();
             // when we perform search or add/remove items, we should adjust the group cache
             InvalidateGroupCache();
             base.OnItemsChanged(e);
+        }
+
+        private void SetIsGroupingRequested()
+        {
+            _isGroupingRequested = true;
         }
 
         private void InvalidateGroupCache()
@@ -186,7 +206,15 @@ namespace Clipbox.Views.ClipboardListView
         /// <param name="e"></param>
         private void StackPanel_Loaded(object sender, RoutedEventArgs e)
         {
-            GroupingComplete?.Invoke(this, new EventArgs());
+            // fire GroupingComplete just for the first stack panel,
+            // as when the first panel is loaded, that means that the
+            // grouping operation has completed and the groups are shown
+            if (_isGroupingRequested)
+            {
+                _isGroupingRequested = false;
+                GroupingComplete?.Invoke(this, new EventArgs());
+            }
+
             ((StackPanel)sender).Loaded -= StackPanel_Loaded;
         }
         
