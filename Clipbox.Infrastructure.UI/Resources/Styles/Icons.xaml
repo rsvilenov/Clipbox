@@ -1068,46 +1068,85 @@
         </Viewbox>
     </ControlTemplate>
 
+    <ControlTemplate x:Key="MainLoadingIcon">
+        <Viewbox>
+            <Path
+                Width="88"
+                Height="88"
+                Margin="0,0,0,0"
+                Data="M14.892256,6.3221557E-06C14.981648,-0.00010277117 15.066522,0.0012094774 15.146769,0.0032082279 15.783801,0.006199074 16.12377,0.008213223 16.12377,0.0082130842 16.12377,0.008213223 15.786791,0.044193252 15.153788,0.11221659 14.836768,0.13821739 14.4498,0.18420713 14.002773,0.29519886 13.554769,0.39520452 13.036757,0.47821185 12.479744,0.67120409 11.344721,0.96719235 10.037697,1.566188 8.670737,2.4191803 7.312688,3.287187 5.926685,4.4961953 4.7376444,6.059175 3.555623,7.6241688 2.6006552,9.5571412 2.0846576,11.718141 2.0216076,11.988128 1.9596562,12.26013 1.8966061,12.534145 1.8616325,12.806148 1.8265979,13.079125 1.7916244,13.354149 1.6966525,13.881123 1.6936007,14.500138 1.6766329,15.11311 1.63464,15.658121 1.7396218,16.268134 1.7535989,16.851108 1.8226306,17.437104 1.9246216,18.02612 2.0406508,18.614098 2.5956504,20.945079 3.6976537,23.240081 5.3686945,25.113055 6.1657016,26.086074 7.1676671,26.873055 8.187699,27.614049 9.254729,28.292054 10.382733,28.891051 11.590756,29.281032 13.964747,30.121055 16.614804,30.239036 19.060818,29.766046 21.488888,29.212064 23.803919,28.150058 25.594895,26.539073 27.393929,24.957082 28.813929,23.030089 29.640965,20.964091 29.832984,20.444106 30.063945,19.942094 30.184003,19.413106 30.335982,18.892112 30.475997,18.377101 30.549973,17.872098 30.59697,17.619109 30.643969,17.368104 30.690966,17.119111 30.713,16.851108 30.735949,16.585118 30.757983,16.32212 30.778979,16.058112 30.799977,15.796121 30.820973,15.53712 30.822011,15.297131 30.822987,15.058119 30.823964,14.822127 30.789965,12.857141 30.400984,11.063146 29.837989,9.5491456 29.267975,8.0351772 28.528952,6.8061799 27.83595,5.8611779 27.133916,4.9201736 26.500912,4.2361869 26.047904,3.7931964 25.578904,3.3621988 25.3289,3.132189 25.3289,3.132189 25.3289,3.132189 25.602891,3.3331768 26.116934,3.710189 26.613951,4.1101803 27.350959,4.7071924 28.138932,5.6181678 28.925929,6.525176 29.792945,7.7271652 30.518967,9.2601461 31.241997,10.790136 31.822022,12.660151 31.966006,14.770125 31.979983,15.046125 32.002019,15.272137 32.008977,15.597117 32.002995,15.856118 31.997988,16.119117 31.992984,16.384131 31.985964,16.649114 31.979006,16.917117 31.971987,17.188111 31.937991,17.472106 31.904971,17.759124 31.869996,18.048123 31.822022,18.637109 31.688964,19.205098 31.549008,19.779101 31.438962,20.364089 31.215996,20.924083 31.025992,21.506082 30.21098,23.812068 28.747948,26.040053 26.759949,27.853063 24.795935,29.69204 22.229863,31.020036 19.459872,31.654036 16.674803,32.217023 13.710777,32.114026 10.947742,31.174027 9.5707118,30.719043 8.2887131,30.026053 7.0847193,29.241055 5.926685,28.393067 4.8046619,27.483069 3.9086546,26.37605 2.0166027,24.248071 0.87858824,21.595101 0.31760727,18.979117 0.20261557,18.31811 0.10660609,17.656096 0.048621898,17.002109 0.041602848,16.33512 -0.045373319,15.709116 0.031593082,15.031111 0.07462327,14.420121 0.099586954,13.826131 0.23258434,13.174127 0.28660096,12.858149 0.34159432,12.543148 0.39561109,12.230131 0.47758232,11.931152 0.55961458,11.634156 0.64060913,11.339145 1.2975997,8.9811563 2.4696111,6.938168 3.8446278,5.3381705 5.2116491,3.7221822 6.7957141,2.5631918 8.293718,1.7762088 9.7997185,1.0021958 11.195732,0.50219858 12.384772,0.29321513 12.967787,0.1412081 13.505757,0.10321392 13.968775,0.059207953 14.315261,0.013454588 14.624083,0.00033400917 14.892256,6.3221557E-06z"
+                Fill="{TemplateBinding Foreground}"
+                RenderTransformOrigin="0.5,0.5"
+                Stretch="Uniform">
+                <Path.RenderTransform>
+                    <RotateTransform Angle="0" />
+                </Path.RenderTransform>
+                <Path.Style>
+                    <Style TargetType="Path">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsVisible, RelativeSource={RelativeSource Mode=Self}}" Value="True">
+                                <DataTrigger.EnterActions>
+                                    <BeginStoryboard x:Name="rotateBeginSb">
+                                        <!--  set the framerate to a lower value, so the animation does not occupy much of the cpu power. Animations are cpu intensive, so this is important.  -->
+                                        <Storyboard Timeline.DesiredFrameRate="30">
+                                            <DoubleAnimation
+                                                RepeatBehavior="Forever"
+                                                Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)"
+                                                To="-360"
+                                                Duration="0:0:2" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.EnterActions>
+                                <!--  remove the storyboard when the control is not visible, otherwise it will continue to use the cpu  -->
+                                <DataTrigger.ExitActions>
+                                    <StopStoryboard BeginStoryboardName="rotateBeginSb" />
+                                </DataTrigger.ExitActions>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Path.Style>
+            </Path>
+        </Viewbox>
+    </ControlTemplate>
+
     <ControlTemplate x:Key="LoadingSolidIcon">
         <Viewbox>
-            <Grid>
-                <Path
-                    Width="90"
-                    Height="90"
-                    Margin="0,0,0,0"
-                    Data="M15.938994,0C23.835997,0,30.372999,5.7720337,31.636999,13.33905L28.546995,13.33905C27.320997,7.4790039 22.136,3.0640259 15.938994,3.0640259 8.8319998,3.0640259 3.0510023,8.868042 3.0510026,16 3.0510023,23.132019 8.8319998,28.936035 15.938994,28.936035 22.136,28.936035 26.964994,25.150024 30.208998,18.767029 28.964994,26.215027 23.994993,31.822021 16.306997,31.996033L15.999999,31.999023 15.999999,32 15.938994,32 14.291999,32 14.291999,31.915039 13.908996,31.871033C6.0639949,30.870056 -5.5485998E-08,24.14502 0,16 -5.5485998E-08,7.1640015 7.1350017,0 15.938994,0z"
-                    Fill="{TemplateBinding Foreground}"
-                    RenderTransformOrigin="0.5,0.5"
-                    Stretch="Uniform">
-                    <Path.RenderTransform>
-                        <RotateTransform Angle="0" />
-                    </Path.RenderTransform>
-                    <Path.Style>
-                        <Style TargetType="Path">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsVisible, RelativeSource={RelativeSource Mode=Self}}" Value="True">
-                                    <DataTrigger.EnterActions>
-                                        <BeginStoryboard x:Name="rotateBeginSb">
-                                            <!--  set the framerate to a lower value, so the animation does not occupy much of the cpu power. Animations are cpu intensive, so this is important.  -->
-                                            <Storyboard Timeline.DesiredFrameRate="25">
-                                                <DoubleAnimation
-                                                    RepeatBehavior="Forever"
-                                                    Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)"
-                                                    To="-360"
-                                                    Duration="0:0:1" />
-                                            </Storyboard>
-                                        </BeginStoryboard>
-                                    </DataTrigger.EnterActions>
-                                    <!--  remove the storyboard when the control is not visible, otherwise it will continue to use the cpu  -->
-                                    <DataTrigger.ExitActions>
-                                        <StopStoryboard BeginStoryboardName="rotateBeginSb" />
-                                    </DataTrigger.ExitActions>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Path.Style>
-                </Path>
-            </Grid>
+            <Path
+                Width="90"
+                Height="90"
+                Margin="0,0,0,0"
+                Data="M15.938994,0C23.835997,0,30.372999,5.7720337,31.636999,13.33905L28.546995,13.33905C27.320997,7.4790039 22.136,3.0640259 15.938994,3.0640259 8.8319998,3.0640259 3.0510023,8.868042 3.0510026,16 3.0510023,23.132019 8.8319998,28.936035 15.938994,28.936035 22.136,28.936035 26.964994,25.150024 30.208998,18.767029 28.964994,26.215027 23.994993,31.822021 16.306997,31.996033L15.999999,31.999023 15.999999,32 15.938994,32 14.291999,32 14.291999,31.915039 13.908996,31.871033C6.0639949,30.870056 -5.5485998E-08,24.14502 0,16 -5.5485998E-08,7.1640015 7.1350017,0 15.938994,0z"
+                Fill="{TemplateBinding Foreground}"
+                RenderTransformOrigin="0.5,0.5"
+                Stretch="Uniform">
+                <Path.RenderTransform>
+                    <RotateTransform Angle="0" />
+                </Path.RenderTransform>
+                <Path.Style>
+                    <Style TargetType="Path">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsVisible, RelativeSource={RelativeSource Mode=Self}}" Value="True">
+                                <DataTrigger.EnterActions>
+                                    <BeginStoryboard x:Name="rotateBeginSb">
+                                        <!--  set the framerate to a lower value, so the animation does not occupy much of the cpu power. Animations are cpu intensive, so this is important.  -->
+                                        <Storyboard Timeline.DesiredFrameRate="25">
+                                            <DoubleAnimation
+                                                RepeatBehavior="Forever"
+                                                Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)"
+                                                To="-360"
+                                                Duration="0:0:1" />
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </DataTrigger.EnterActions>
+                                <!--  remove the storyboard when the control is not visible, otherwise it will continue to use the cpu  -->
+                                <DataTrigger.ExitActions>
+                                    <StopStoryboard BeginStoryboardName="rotateBeginSb" />
+                                </DataTrigger.ExitActions>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Path.Style>
+            </Path>
         </Viewbox>
     </ControlTemplate>
 

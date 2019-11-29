@@ -22,6 +22,6 @@
         VerticalAlignment="Center"
         Foreground="Gray"
         Opacity="0"
-        Template="{DynamicResource LoadingSolidIcon}" />
+        Template="{DynamicResource MainLoadingIcon}" />
 
 </Window>
