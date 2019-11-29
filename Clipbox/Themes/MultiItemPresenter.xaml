@@ -236,7 +236,6 @@
                                                                 Grid.Row="0"
                                                                 Width="{Binding PreviewWidth}"
                                                                 Height="{Binding PreviewHeight}"
-                                                                Margin="5"
                                                                 Fill="Transparent"
                                                                 Opacity="0.2" />
                                                         </Grid>
