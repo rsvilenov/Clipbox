@@ -7,11 +7,9 @@
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:infBeh="clr-namespace:Clipbox.Infrastructure.UI.Behaviors;assembly=Clipbox.Infrastructure.UI"
     xmlns:infPropAp="clr-namespace:Clipbox.Infrastructure.UI.AttachedProperties;assembly=Clipbox.Infrastructure.UI"
-    xmlns:infWindows="clr-namespace:Clipbox.Infrastructure.UI.Windows;assembly=Clipbox.Infrastructure.UI"
     xmlns:local="clr-namespace:Clipbox.Views.ClipboardViewItemTile"
     xmlns:localBeh="clr-namespace:Clipbox.Behaviors"
     xmlns:localConv="clr-namespace:Clipbox.Technical.Converters"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:servicesEnums="clr-namespace:Clipbox.Services.Enums"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
 
@@ -58,7 +56,7 @@
                     <Style.Triggers>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding Path=IsShownIntoView, RelativeSource={RelativeSource Mode=TemplatedParent}}" Value="True" />
+                                <Condition Binding="{Binding Path=IsEnabled, ElementName=IsShownIntoViewProxyElement}" Value="True" />
                                 <Condition Binding="{Binding Path=IsEnabled, ElementName=IsLoadingIndicatorFadeInEnabledProxyElement}" Value="True" />
                             </MultiDataTrigger.Conditions>
                             <MultiDataTrigger.EnterActions>
@@ -70,7 +68,7 @@
                         </MultiDataTrigger>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding Path=IsShownIntoView, RelativeSource={RelativeSource Mode=TemplatedParent}}" Value="True" />
+                                <Condition Binding="{Binding Path=IsEnabled, ElementName=IsShownIntoViewProxyElement}" Value="True" />
                                 <Condition Binding="{Binding Path=IsEnabled, ElementName=IsLoadingIndicatorFadeInEnabledProxyElement}" Value="False" />
                             </MultiDataTrigger.Conditions>
                             <Setter Property="Visibility" Value="Visible" />
@@ -108,6 +106,11 @@
             <UIElement
                 x:Name="IsLoadingIndicatorFadeInEnabledProxyElement"
                 IsEnabled="{TemplateBinding IsLoadingIndicatorFadeInEnabled}"
+                Visibility="Collapsed" />
+
+            <UIElement
+                x:Name="IsShownIntoViewProxyElement"
+                IsEnabled="{TemplateBinding IsShownIntoView}"
                 Visibility="Collapsed" />
 
             <Button

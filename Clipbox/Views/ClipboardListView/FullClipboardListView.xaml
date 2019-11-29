@@ -560,7 +560,7 @@
                                                         IsFadeInEnabled="{Binding Path=IsFadeInOfItemsEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type lv:FullClipboardListView}}}"
                                                         IsLoadingFadeInEnabled="False"
                                                         IsLoadingIndicatorFadeInEnabled="True"
-                                                        IsShownIntoView="{Binding Path=IsShownIntoView}"
+                                                        IsShownIntoView="{Binding Path=DataContext.IsShownIntoView, RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}}"
                                                         PreviewContainerBackgroundColor="{DynamicResource TaskbarColor}"
                                                         ThumbnailAreaMaxHeight="{Binding Path=ClipboardViewItemMaxHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type lv:ClipboardListViewBase}}}"
                                                         ThumbnailAreaMinHeight="{Binding Path=ThumbnailAreaMaxHeight, RelativeSource={RelativeSource Mode=Self}}"
@@ -578,7 +578,7 @@
                                                         IsFadeInEnabled="{Binding Path=IsFadeInOfItemsEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type lv:FullClipboardListView}}}"
                                                         IsLoadingFadeInEnabled="False"
                                                         IsLoadingIndicatorFadeInEnabled="True"
-                                                        IsShownIntoView="{Binding Path=IsShownIntoView}"
+                                                        IsShownIntoView="{Binding Path=DataContext.IsShownIntoView, RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}}"
                                                         PreviewContainerBackgroundColor="{DynamicResource TaskbarColor}"
                                                         ViewItemWrapper="{Binding Mode=OneTime, RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}, Path=DataContext}">
 
