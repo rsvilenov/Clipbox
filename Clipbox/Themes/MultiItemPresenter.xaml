@@ -56,8 +56,8 @@
                     <Style.Triggers>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding Path=IsEnabled, ElementName=IsShownIntoViewProxyElement}" Value="True" />
-                                <Condition Binding="{Binding Path=IsEnabled, ElementName=IsLoadingIndicatorFadeInEnabledProxyElement}" Value="True" />
+                                <Condition Binding="{Binding Path=IsShownIntoView, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MultiItemPresenter}}}" Value="True" />
+                                <Condition Binding="{Binding Path=IsLoadingIndicatorFadeInEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MultiItemPresenter}}}" Value="True" />
                             </MultiDataTrigger.Conditions>
                             <MultiDataTrigger.EnterActions>
                                 <BeginStoryboard x:Name="DelayShowStoryboard" Storyboard="{StaticResource FadiInWithDelay}" />
@@ -68,8 +68,8 @@
                         </MultiDataTrigger>
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding Path=IsEnabled, ElementName=IsShownIntoViewProxyElement}" Value="True" />
-                                <Condition Binding="{Binding Path=IsEnabled, ElementName=IsLoadingIndicatorFadeInEnabledProxyElement}" Value="False" />
+                                <Condition Binding="{Binding Path=IsShownIntoView, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MultiItemPresenter}}}" Value="True" />
+                                <Condition Binding="{Binding Path=IsLoadingIndicatorFadeInEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:MultiItemPresenter}}}" Value="False" />
                             </MultiDataTrigger.Conditions>
                             <Setter Property="Visibility" Value="Visible" />
                         </MultiDataTrigger>
@@ -102,16 +102,6 @@
                 <RowDefinition Height="15" />
                 <RowDefinition Height="25" />
             </Grid.RowDefinitions>
-
-            <UIElement
-                x:Name="IsLoadingIndicatorFadeInEnabledProxyElement"
-                IsEnabled="{TemplateBinding IsLoadingIndicatorFadeInEnabled}"
-                Visibility="Collapsed" />
-
-            <UIElement
-                x:Name="IsShownIntoViewProxyElement"
-                IsEnabled="{TemplateBinding IsShownIntoView}"
-                Visibility="Collapsed" />
 
             <Button
                 Name="BtnScrollUpSubItem"
