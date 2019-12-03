@@ -22,6 +22,7 @@ namespace Clipbox.SearchProvider
     public class LuceneSearch : ISearchProvider
     {
         private const int LUCENE_SEARCH_MAX_RESULT_COUNT = 10000;
+        private const int LUCENE_MAX_CLAUSES_COUNT = 100000;
 
         private readonly string _indexEntryIdFieldName;
 
@@ -68,12 +69,13 @@ namespace Clipbox.SearchProvider
             using (var indexReader = IndexReader.Open(indexDir, true))
             using (var indexSearcher = new IndexSearcher(indexReader))
             {
-                var result = indexSearcher.Search(ConstructLuceneQuery(searchTerms),
+                IEnumerable<ScoreDoc> scoreDocs = RunLiceneQuery(indexSearcher, 
+                    ConstructLuceneQuery(searchTerms),
                     LUCENE_SEARCH_MAX_RESULT_COUNT);
 
-                foreach (var item in result.ScoreDocs)
+                foreach (var scoreDoc in scoreDocs)
                 {
-                    searchUnitIds.Add(indexReader.Document(item.Doc).GetField(_indexEntryIdFieldName).StringValue);
+                    searchUnitIds.Add(indexReader.Document(scoreDoc.Doc).GetField(_indexEntryIdFieldName).StringValue);
                 }
             }
 
@@ -241,6 +243,32 @@ namespace Clipbox.SearchProvider
 
             var dirInfo = new System.IO.DirectoryInfo(indexDirectoryPath);
             return dirInfo;
+        }
+
+        private IEnumerable<ScoreDoc> RunLiceneQuery(IndexSearcher searcher, Query query, int maxResultCount)
+        {
+            IEnumerable<ScoreDoc> scoreDocs = null;
+
+            while (BooleanQuery.MaxClauseCount < LUCENE_MAX_CLAUSES_COUNT)
+            {
+                try
+                {
+                    TopDocs td = searcher.Search(query, maxResultCount);
+
+                    if (td != null && td.ScoreDocs != null)
+                    {
+                        scoreDocs = td.ScoreDocs;
+                    }
+
+                    break;
+                }
+                catch (BooleanQuery.TooManyClauses)
+                {
+                    BooleanQuery.MaxClauseCount *= 2;
+                }
+            }
+
+            return scoreDocs ?? Enumerable.Empty<ScoreDoc>();
         }
     }
 }
