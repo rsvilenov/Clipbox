@@ -39,28 +39,44 @@ namespace Clipbox.Views
                 throw new ArgumentNullException(nameof(parent));
             }
 
-            SetParent(parent);
-
-            Point locationFromScreen = Parent.PointToScreen(new Point(0, 0));
-            Point parentSize = Parent.PointToScreen(new Point(Parent.ActualWidth, Parent.ActualHeight));
-
-            // Transform screen point to WPF device independent point
-
-            PresentationSource source = PresentationSource.FromVisual(Parent);
-
-            Point targetPoints = source.CompositionTarget.TransformFromDevice.Transform(locationFromScreen);
-            Point parentSizePoint = source.CompositionTarget.TransformFromDevice.Transform(parentSize);
-
-            _ownThreadDispatcher = new OwnThreadDispatcher();
-            _ownThreadDispatcher.Invoke(System.Windows.Threading.DispatcherPriority.Send,
-                new Action(() =>
+            lock (_lockHandle)
+            {
+                if (_popup != null)
                 {
-                    _popup = new LoadingIndicatorPopup();
+                    return;
+                }
 
-                    _popup.Closed += _popup_Closed;
-                    _popup.SourceInitialized += _popup_SourceInitialized;
-                    _popup.Show();
-                }));
+                SetParent(parent);
+
+                Point locationFromScreen = Parent.PointToScreen(new Point(0, 0));
+                Point parentSize = Parent.PointToScreen(new Point(Parent.ActualWidth, Parent.ActualHeight));
+
+                // Transform screen point to WPF device independent point
+
+                PresentationSource source = PresentationSource.FromVisual(Parent);
+
+                Point targetPoints = source.CompositionTarget.TransformFromDevice.Transform(locationFromScreen);
+                Point parentSizePoint = source.CompositionTarget.TransformFromDevice.Transform(parentSize);
+
+                _ownThreadDispatcher = new OwnThreadDispatcher();
+                _ownThreadDispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Send,
+                    new Action(() =>
+                    {
+                        lock (_lockHandle)
+                        {
+                            if (_popup != null)
+                            {
+                                return;
+                            }
+
+                            _popup = new LoadingIndicatorPopup();
+
+                            _popup.Closed += _popup_Closed;
+                            _popup.SourceInitialized += _popup_SourceInitialized;
+                            _popup.Show();
+                        }
+                    }));
+            }
         }
 
         private static void _popup_SourceInitialized(object sender, EventArgs e)
