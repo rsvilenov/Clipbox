@@ -22,7 +22,7 @@ namespace Clipbox.SearchProvider
     public class LuceneSearch : ISearchProvider
     {
         private const int LUCENE_SEARCH_MAX_RESULT_COUNT = 10000;
-        private const int LUCENE_MAX_CLAUSES_COUNT = 100000;
+        private const int LUCENE_MAX_CLAUSES_COUNT = 50000;
 
         private readonly string _indexEntryIdFieldName;
 
