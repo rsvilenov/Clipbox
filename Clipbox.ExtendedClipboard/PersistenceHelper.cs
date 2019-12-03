@@ -33,20 +33,17 @@ namespace Clipbox.ExtendedClipboard
                 // the item is not persistable
                 return;
             }
-
-            // generate persistable clipboard item
-            PersistableClipboardItem persistableClipboardItem = GeneratePersistableClipboardItem(clipboardItem);
-
+            
             // if the item is persistable and is modified, then we should be
             // able to load it from the disk. If the item's modified ticks is
             // different, we should proceed with saving. Otherwise - we stop here.
             if (clipboardItem.IsModified)
             {
                 // load from disk
-                PersistableClipboardItem savedPersistableClipboardItem = LoadPersistableClipboardItemFromDisk(clipboardItem);
+                PersistableClipboardItem savedClipboardItem = LoadPersistableClipboardItemFromDisk(clipboardItem);
                 
                 // check to see if it has really been modified
-                if (persistableClipboardItem.TimestampInfo.ModifiedDateUtcTicks == savedPersistableClipboardItem.TimestampInfo.ModifiedDateUtcTicks)
+                if (clipboardItem.TimestampInfo.ModifiedDateUtcTicks == savedClipboardItem.TimestampInfo.ModifiedDateUtcTicks)
                 {
                     return;
                 }
@@ -55,8 +52,12 @@ namespace Clipbox.ExtendedClipboard
                 // possibility of someone modifying the object somewhere accidentally
                 // or with bad intentions in mind and then we save it here. CDOs should
                 // not be modifiable.
-                RestoreClipboardDataObjects(clipboardItem, persistableClipboardItem);
+                RestoreClipboardDataObjects(clipboardItem, savedClipboardItem);
             }
+
+            // generate persistable clipboard item
+            PersistableClipboardItem persistableClipboardItem = GeneratePersistableClipboardItem(clipboardItem);
+            
 
             // shrink the original item if necessary
             foreach (PersistableClipboardDataObject persistableCdo in persistableClipboardItem.PersistableClipboardDataObjects)
