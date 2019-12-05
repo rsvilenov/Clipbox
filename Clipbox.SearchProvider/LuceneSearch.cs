@@ -245,6 +245,18 @@ namespace Clipbox.SearchProvider
             return dirInfo;
         }
 
+        /// <summary>
+        /// If there are a lot of indexed items and we are using wildcard/regex search terms,
+        /// then Lucene materializes the terms by creating a separate term for each possible
+        /// match, thus the possibility of exceding the default max search term limit of 1024.
+        /// So we need to catch the exception and increase the limit as long as we reach our
+        /// own search limit, defined in <see cref="LuceneSearch.LUCENE_MAX_CLAUSES_COUNT"/>.
+        /// This is a workaround, but there does not seem to exist a better solution for the moment.
+        /// </summary>
+        /// <param name="searcher"></param>
+        /// <param name="query"></param>
+        /// <param name="maxResultCount"></param>
+        /// <returns></returns>
         private IEnumerable<ScoreDoc> RunLiceneQuery(IndexSearcher searcher, Query query, int maxResultCount)
         {
             IEnumerable<ScoreDoc> scoreDocs = null;
