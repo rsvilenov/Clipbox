@@ -479,8 +479,10 @@
                 ItemEnableDisableSyncRequested="MainListView_ItemEnableDisableSyncRequested"
                 ItemPinUnpinRequested="MainListView_ItemPinUnpinRequested"
                 ItemsSource="{Binding Source={StaticResource ListViewSource}}"
+                LoadMoreItemsRequested="MainListView_LoadMoreItemsRequested"
                 NumOfNotYetVisibleRowsToPreload="{Binding Path=NumOfNotYetVisibleRowsToPreload, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}}"
                 SelectionChangeCompleted="MainListView_SelectionChangeCompleted"
+                TotalItemsCountToLoad="{Binding TotalItemsCountToLoad, Mode=OneWay, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type views:MainViewClipboardContents}}}"
                 ViewItemLoadingCancelRequested="MainListView_ViewItemLoadingCancelRequested"
                 ViewItemLoadingRequested="MainListView_ViewItemLoadingRequested"
                 ViewItemUnloadingRequested="MainListView_ViewItemUnloadingRequested" />

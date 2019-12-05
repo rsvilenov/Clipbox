@@ -23,9 +23,10 @@ namespace Clipbox.Views.ClipboardListView
     /// </summary>
     public partial class FullClipboardListView : ClipboardListViewBase, IDisposable
     {
+        public const int MAX_ITEM_TO_LOAD_AT_ONCE = 50;
+
         private const int LAYOUT_TIMER_TIMEOUT_MS = 100;
         private const int SCROLLBAR_TIMER_TIMEOUT_MS = 50;
-        private const int MAX_ITEM_TO_LOAD_AT_ONCE = 50;
 
         public event EventHandler<ClipboardItemManipulationEventArgs> ViewItemLoadingRequested;
 
@@ -42,6 +43,8 @@ namespace Clipbox.Views.ClipboardListView
         public event EventHandler<EventArgs> ClipboardItemContentControl_MouseDoubleClickDetection_DoubleClickDetected;
 
         public event EventHandler<EventArgs> ClipboardItemContentControl_MouseDoubleClickDetection_SingleClickDetected;
+
+        public event EventHandler<EventArgs> LoadMoreItemsRequested;
 
         public int DoubleClickDetectionWaitIntervalMs;
         
@@ -511,6 +514,11 @@ namespace Clipbox.Views.ClipboardListView
         private void PART_VerticalScrollBar_Loaded(object sender, RoutedEventArgs e)
         {
             _scrollBar = (VerticalScrollBarEx)sender;
+        }
+
+        private void LoadMoreControl_Click(object sender, RoutedEventArgs e)
+        {
+            LoadMoreItemsRequested?.Invoke(this, new EventArgs());
         }
 
         public void Dispose()

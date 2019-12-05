@@ -178,20 +178,6 @@
                             <ControlTemplate>
                                 <StackPanel Loaded="StackPanel_Loaded" Orientation="Vertical">
                                     <StackPanel Background="Transparent" Orientation="Horizontal">
-                                        <StackPanel.Style>
-                                            <Style TargetType="StackPanel">
-                                                <Setter Property="IsManipulationEnabled" Value="False" />
-                                                <Setter Property="Visibility" Value="Visible" />
-                                                <Style.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter Property="IsManipulationEnabled" Value="True" />
-                                                    </Trigger>
-                                                    <DataTrigger Binding="{Binding ElementName=LoadMoreControl, Path=Visibility}" Value="Visible">
-                                                        <Setter Property="Visibility" Value="Collapsed" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </StackPanel.Style>
                                         <TextBlock
                                             VerticalAlignment="Bottom"
                                             FontSize="22"
@@ -204,8 +190,7 @@
                                             MaxWidth="20"
                                             Margin="20,0,5,0"
                                             Style="{DynamicResource BtnTrash}"
-                                            ToolTip="Delete all items from this group"
-                                            Visibility="{Binding Path=IsManipulationEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=StackPanel}, Converter={StaticResource BooleanToVisibilityHiddenConverter}}">
+                                            ToolTip="Delete all items from this group">
                                             <i:Interaction.Behaviors>
                                                 <infBeh:FrameworkElementDpiScalingBehavior />
                                             </i:Interaction.Behaviors>
@@ -222,6 +207,7 @@
                                         HorizontalAlignment="Center"
                                         Background="Transparent"
                                         BorderThickness="1"
+                                        Click="LoadMoreControl_Click"
                                         FontSize="16"
                                         FontWeight="Bold"
                                         Foreground="White">
@@ -258,6 +244,23 @@
                                                             </MultiBinding>
                                                         </DataTrigger.Binding>
                                                         <Setter Property="Visibility" Value="Visible" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Value="True">
+                                                        <DataTrigger.Binding>
+                                                            <MultiBinding Converter="{StaticResource MultiValueEqualityConverter}">
+                                                                <Binding
+                                                                    Mode="OneWay"
+                                                                    Path="TotalItemsCountToLoad"
+                                                                    RelativeSource="{RelativeSource Mode=FindAncestor,
+                                                                                                    AncestorType=ListView}" />
+                                                                <Binding
+                                                                    Mode="OneWay"
+                                                                    Path="Items.Count"
+                                                                    RelativeSource="{RelativeSource Mode=FindAncestor,
+                                                                                                    AncestorType=ListView}" />
+                                                            </MultiBinding>
+                                                        </DataTrigger.Binding>
+                                                        <Setter Property="Visibility" Value="Collapsed" />
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>

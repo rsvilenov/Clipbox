@@ -10,6 +10,7 @@ using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.ViewModels;
 using Clipbox.ViewModels.BindableObjects;
+using Clipbox.Views.ClipboardListView;
 using Clipbox.Views.ClipboardViewItemTile;
 using Clipbox.Views.Dialog.EventArgsClasses;
 using Clipbox.Views.Enums.ClipboardViewItemTile;
@@ -70,7 +71,17 @@ namespace Clipbox.Views
         public static readonly DependencyProperty NumOfNotYetVisibleRowsToPreloadProperty =
             DependencyProperty.Register(nameof(NumOfNotYetVisibleRowsToPreload), typeof(int), typeof(MainViewClipboardContents), new PropertyMetadata(0));
 
+        public int TotalItemsCountToLoad
+        {
+            get { return (int)GetValue(TotalItemsCountToLoadProperty); }
+            set { SetValue(TotalItemsCountToLoadProperty, value); }
+        }
 
+        public static readonly DependencyProperty TotalItemsCountToLoadProperty =
+            DependencyProperty.Register(nameof(TotalItemsCountToLoad), typeof(int), typeof(MainViewClipboardContents), new PropertyMetadata(0));
+
+
+        private readonly List<ISearchTerm> _searchTerms;
 
         private CancellableTaskManager _cancellableTaskManager;
 
@@ -116,6 +127,8 @@ namespace Clipbox.Views
             }
 
             NumOfNotYetVisibleRowsToPreload = numOfNotYetVisibleRowsToPreload;
+
+            _searchTerms = new List<ISearchTerm>();
         }
 
         private void MainViewClipboardContents_Loaded(object sender, RoutedEventArgs e)
@@ -130,11 +143,11 @@ namespace Clipbox.Views
         {
             if ((bool)e.NewValue)
             {
-                LoadContents(null);
+                LoadContents(0, FullClipboardListView.MAX_ITEM_TO_LOAD_AT_ONCE);
             }
         }
 
-        private void LoadContents(IEnumerable<ISearchTerm> searchTerms, int startIndex = -1, int count = -1)
+        private void LoadContents(int startIndex = -1, int count = -1)
         {
             if (!(SynchronizationContext.Current is DispatcherSynchronizationContext))
             {
@@ -147,17 +160,20 @@ namespace Clipbox.Views
             
             LoadingPopupGoverner.OpenPopup(Window.GetWindow(this));
 
+            int allMatchingClipboardItemIdCount = 0;
             Task.Run(() =>
             {
                 IEnumerable<string> allMatchingClipboardItemIds = null;
                 PerformDisposeSafeOperation
                 (
-                    () => allMatchingClipboardItemIds = _viewModel.GetClipboardItemIds(searchTerms) // maybe pass filters to this method later
+                    () => allMatchingClipboardItemIds = _viewModel.GetClipboardItemIds(_searchTerms) // maybe pass filters to this method later
                 );
+
+                allMatchingClipboardItemIdCount = allMatchingClipboardItemIds.Count();
 
                 clipboardItemIds = allMatchingClipboardItemIds
                 .Skip(startIndex == -1 ? 0 : startIndex)
-                .Take(count == -1 ? allMatchingClipboardItemIds.Count() : count);
+                .Take(count == -1 ? allMatchingClipboardItemIdCount : count);
                 
                 base.PerformHousekeeping(clipboardItemIds, out removedClipboardItemIds);
 
@@ -178,6 +194,8 @@ namespace Clipbox.Views
                         // not fire and the loading circle will not disappear
                         if (!itemsToLoad.Any())
                         {
+                            TotalItemsCountToLoad = allMatchingClipboardItemIdCount - removedClipboardItemIds.Count();
+
                             MainListViewContainer.Visibility = Visibility.Visible;
                             // we should also show the top and side bars, so that the
                             // user knows that what is shown on the screen is actually
@@ -677,21 +695,22 @@ namespace Clipbox.Views
             {
                 MainListViewContainer.Visibility = Visibility.Hidden;
 
-                List<ISearchTerm> searchTerms = new List<ISearchTerm>();
+                _searchTerms.Clear();
 
                 if (!string.IsNullOrWhiteSpace(searchTextBox.SearchText))
                 {
-                    searchTerms.Add
+                    _searchTerms.Add
                     (
                         new TextSearchTerm(new List<string> { searchTextBox.SearchText })
                     );
                 }
 
-                searchTerms.AddRange(filterBand.SearchTerms);
+                _searchTerms.AddRange(filterBand.SearchTerms);
                 
                 
                 _viewModel.ClipboardViewItemWrappers.Clear();
-                LoadContents(searchTerms);
+
+                LoadContents(0, FullClipboardListView.MAX_ITEM_TO_LOAD_AT_ONCE);
             }));
         }
 
@@ -726,6 +745,13 @@ namespace Clipbox.Views
         {
             advancedSearchPopup.IsOpen = true;
             this.IsEnabled = false;
+        }
+
+        private void MainListView_LoadMoreItemsRequested(object sender, EventArgs e)
+        {
+            MainListViewContainer.Visibility = Visibility.Hidden;
+
+            LoadContents(MainListView.Items.Count, FullClipboardListView.MAX_ITEM_TO_LOAD_AT_ONCE);
         }
     }
 }
