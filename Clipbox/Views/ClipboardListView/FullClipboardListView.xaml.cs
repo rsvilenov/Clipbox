@@ -25,7 +25,8 @@ namespace Clipbox.Views.ClipboardListView
     {
         private const int LAYOUT_TIMER_TIMEOUT_MS = 100;
         private const int SCROLLBAR_TIMER_TIMEOUT_MS = 50;
-        
+        private const int MAX_ITEM_TO_LOAD_AT_ONCE = 50;
+
         public event EventHandler<ClipboardItemManipulationEventArgs> ViewItemLoadingRequested;
 
         public event EventHandler<ClipboardItemManipulationEventArgs> ViewItemUnloadingRequested;
@@ -120,7 +121,31 @@ namespace Clipbox.Views.ClipboardListView
         
         public static readonly DependencyProperty IsInnerGroupingEnabledProperty =
             DependencyProperty.Register(nameof(IsInnerGroupingEnabled), typeof(bool), typeof(FullClipboardListView), new PropertyMetadata(false));
-        
+
+
+
+
+        private string LastGroupName
+        {
+            get { return (string)GetValue(LastGroupNameProperty); }
+            set { SetValue(LastGroupNameProperty, value); }
+        }
+
+        private static readonly DependencyProperty LastGroupNameProperty =
+            DependencyProperty.Register(nameof(LastGroupName), typeof(string), typeof(FullClipboardListView), new PropertyMetadata(null));
+
+
+
+        public int TotalItemsCountToLoad
+        {
+            get { return (int)GetValue(TotalItemsCountToLoadProperty); }
+            set { SetValue(TotalItemsCountToLoadProperty, value); }
+        }
+
+        public static readonly DependencyProperty TotalItemsCountToLoadProperty =
+            DependencyProperty.Register(nameof(TotalItemsCountToLoad), typeof(int), typeof(FullClipboardListView), new PropertyMetadata(0));
+
+
 
         private Rect _listViewVisibleArea;
 
@@ -397,6 +422,9 @@ namespace Clipbox.Views.ClipboardListView
             }
 
             LoadUnloadFullViewOfVisibleItems();
+
+            LastGroupName = groups.LastOrDefault()?.Name as string;
+
         }
 
         private void LoadUnloadFullViewOfVisibleItems()

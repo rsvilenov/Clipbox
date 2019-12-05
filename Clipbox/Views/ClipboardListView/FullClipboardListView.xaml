@@ -44,6 +44,7 @@
         <infConv:MathAddConverter x:Key="MathAddConverter" />
         <infConv:BooleanToVisibilityMultiConverter x:Key="BooleanToVisibilityMultiConverter" />
         <infConv:ComparisonConverter x:Key="ComparisonConverter" />
+        <infConv:MultiValueEqualityConverter x:Key="MultiValueEqualityConverter" />
         <infConv:IsEqualOrGreaterThanConverter x:Key="IsEqualOrGreaterThanConverter" />
         <infConv:NullOrEmptyCollectionToBoolConverter x:Key="NullOrEmptyCollectionToBoolConverter" />
         <conv:ContentClassListContainsConverter x:Key="ContentClassListContainsConverter" />
@@ -180,10 +181,14 @@
                                         <StackPanel.Style>
                                             <Style TargetType="StackPanel">
                                                 <Setter Property="IsManipulationEnabled" Value="False" />
+                                                <Setter Property="Visibility" Value="Visible" />
                                                 <Style.Triggers>
                                                     <Trigger Property="IsMouseOver" Value="True">
                                                         <Setter Property="IsManipulationEnabled" Value="True" />
                                                     </Trigger>
+                                                    <DataTrigger Binding="{Binding ElementName=LoadMoreControl, Path=Visibility}" Value="Visible">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                    </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </StackPanel.Style>
@@ -209,6 +214,55 @@
 
                                     <!--  Add some space to the top and the bottom of each group  -->
                                     <ItemsPresenter Margin="0,10,0,50" />
+
+
+                                    <Button
+                                        x:Name="LoadMoreControl"
+                                        Margin="0,10,0,10"
+                                        HorizontalAlignment="Center"
+                                        Background="Transparent"
+                                        BorderThickness="1"
+                                        FontSize="16"
+                                        FontWeight="Bold"
+                                        Foreground="White">
+                                        <Button.Style>
+                                            <Style TargetType="Button">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                <Setter Property="BorderBrush" Value="Gray" />
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="Button">
+                                                            <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                                                                <Border.Background>
+                                                                    <SolidColorBrush Opacity="0.6" Color="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Background.Color}" />
+                                                                </Border.Background>
+                                                                <TextBlock Margin="35,5,35,5" Text="Load more" />
+                                                            </Border>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                                <Style.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                                        <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+                                                    </Trigger>
+                                                    <DataTrigger Value="True">
+                                                        <DataTrigger.Binding>
+                                                            <MultiBinding Converter="{StaticResource MultiValueEqualityConverter}">
+                                                                <Binding
+                                                                    Mode="OneWay"
+                                                                    Path="LastGroupName"
+                                                                    RelativeSource="{RelativeSource Mode=FindAncestor,
+                                                                                                    AncestorType=ListView}" />
+                                                                <Binding Mode="OneWay" Path="Name" />
+                                                            </MultiBinding>
+                                                        </DataTrigger.Binding>
+                                                        <Setter Property="Visibility" Value="Visible" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
                                 </StackPanel>
                             </ControlTemplate>
                         </Setter.Value>
