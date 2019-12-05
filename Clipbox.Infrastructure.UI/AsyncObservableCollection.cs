@@ -134,10 +134,22 @@ namespace Clipbox.Infrastructure.UI
 
         public void AddRange(IList<T> itemList)
         {
+            InsertRange(base.Items.Count, itemList);
+        }
+
+        public void InsertRange(int index, IList<T> itemList)
+        {
+            if (index < 0 && index > base.Items.Count)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index));
+            }
+
             if (itemList == null)
             {
                 throw new ArgumentNullException(nameof(itemList));
             }
+
+            int insertIndex = index;
 
             lock(_bulkOperationsLockHandle)
             {
@@ -145,14 +157,18 @@ namespace Clipbox.Infrastructure.UI
 
                 foreach (T item in itemList)
                 {
-                    Add(item);
+                    Insert(insertIndex++, item);
                 }
 
                 _areChangeNotificationEventsSuspended = false;
 
                 OnPropertyChanged(new PropertyChangedEventArgs(COUNT_STRING));
                 OnPropertyChanged(new PropertyChangedEventArgs(INDEXER_NAME));
-                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, itemList));
+                // If we use NotifyCollectionChangedAction.Add and pass the collection with added items to the
+                // constructor of NotifyCollectionChangedEventArgs, the ListView does not get updated...
+                // I assume that this is because the default ObservableCollection<T> always passes just a single
+                // item as an argument for the event args, and the ListView may just not expect more items there.
+                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
             }
         }
 
@@ -177,7 +193,7 @@ namespace Clipbox.Infrastructure.UI
 
                 OnPropertyChanged(new PropertyChangedEventArgs(COUNT_STRING));
                 OnPropertyChanged(new PropertyChangedEventArgs(INDEXER_NAME));
-                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, itemList));
+                OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
             }
         }
     }

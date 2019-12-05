@@ -87,8 +87,8 @@ namespace Clipbox.ViewModels
             wrapper.IsViewItemLoaded = false;
         }
 
-        public void LoadAndWrapItems(MonitorDimensions monitorDimensions, 
-            IEnumerable<string> clipboardItemIds, 
+        public void LoadAndWrapItems(MonitorDimensions monitorDimensions,
+            IEnumerable<string> clipboardItemIds,
             bool addAtBeginning = false,
             bool orderByDateDesc = true)
         {
@@ -106,8 +106,9 @@ namespace Clipbox.ViewModels
                     .ToList();
             }
 
+            List<ClipboardViewItemWrapper> wrappers = new List<ClipboardViewItemWrapper>();
             foreach (IClipboardItem clipboardItem in clipboardItems)
-            { 
+            {
                 var wrapper = new ClipboardViewItemWrapper(clipboardItem);
 
                 if (TryGetPreviewDimensions(monitorDimensions, wrapper, out ClipboardViewItemDimensionInfo cvItemDimInfo))
@@ -115,14 +116,16 @@ namespace Clipbox.ViewModels
                     wrapper.DimensionInfo = cvItemDimInfo;
                 }
 
-                if (addAtBeginning)
-                {
-                    ClipboardViewItemWrappers.Insert(0, wrapper);
-                }
-                else
-                {
-                    ClipboardViewItemWrappers.Add(wrapper);
-                }
+                wrappers.Add(wrapper);
+            }
+            
+            if (addAtBeginning)
+            {
+                ClipboardViewItemWrappers.InsertRange(0, wrappers);
+            }
+            else
+            {
+                ClipboardViewItemWrappers.AddRange(wrappers);
             }
         }
         

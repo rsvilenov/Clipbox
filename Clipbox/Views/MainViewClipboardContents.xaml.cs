@@ -134,7 +134,7 @@ namespace Clipbox.Views
             }
         }
 
-        private void LoadContents(IEnumerable<ISearchTerm> searchTerms)
+        private void LoadContents(IEnumerable<ISearchTerm> searchTerms, int startIndex = -1, int count = -1)
         {
             if (!(SynchronizationContext.Current is DispatcherSynchronizationContext))
             {
@@ -149,11 +149,16 @@ namespace Clipbox.Views
 
             Task.Run(() =>
             {
+                IEnumerable<string> allMatchingClipboardItemIds = null;
                 PerformDisposeSafeOperation
                 (
-                    () => clipboardItemIds = _viewModel.GetClipboardItemIds(searchTerms) // maybe pass filters to this method later
+                    () => allMatchingClipboardItemIds = _viewModel.GetClipboardItemIds(searchTerms) // maybe pass filters to this method later
                 );
 
+                clipboardItemIds = allMatchingClipboardItemIds
+                .Skip(startIndex == -1 ? 0 : startIndex)
+                .Take(count == -1 ? allMatchingClipboardItemIds.Count() : count);
+                
                 base.PerformHousekeeping(clipboardItemIds, out removedClipboardItemIds);
 
             }).ContinueWith((t) =>

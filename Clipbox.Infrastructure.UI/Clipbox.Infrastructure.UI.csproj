@@ -65,6 +65,7 @@
     <Compile Include="Converters\MathAddConverter.cs" />
     <Compile Include="Converters\MathConverterBase.cs" />
     <Compile Include="Converters\MathMultiplyConverter.cs" />
+    <Compile Include="Converters\MultiValueEqualityConverter.cs" />
     <Compile Include="Converters\NullOrEmptyCollectionToBoolConverter.cs" />
     <Compile Include="Converters\OrMultiValueConverter.cs" />
     <Compile Include="DataObjects\MonitorDimensions.cs" />
