@@ -81,6 +81,8 @@ namespace Clipbox.Views
             DependencyProperty.Register(nameof(TotalItemsCountToLoad), typeof(int), typeof(MainViewClipboardContents), new PropertyMetadata(0));
 
 
+        private readonly int _maxNumOfItemsToLoadAtOnce;
+
         private readonly List<ISearchTerm> _searchTerms;
 
         private CancellableTaskManager _cancellableTaskManager;
@@ -121,12 +123,19 @@ namespace Clipbox.Views
             
             int numOfNotYetVisibleRowsToPreload = settingsService.GetSetting<int>(SettingsKeys.NumOfNotYetVisibleRowsToPreload);
              
-            if (NumOfNotYetVisibleRowsToPreload < 0)
+            if (numOfNotYetVisibleRowsToPreload < 0)
             {
                 throw new InvalidOperationException($"Setting {nameof(SettingsKeys.NumOfNotYetVisibleRowsToPreload)} should be equal to 0 or greater than 0.");
             }
 
             NumOfNotYetVisibleRowsToPreload = numOfNotYetVisibleRowsToPreload;
+
+            _maxNumOfItemsToLoadAtOnce = settingsService.GetSetting<int>(SettingsKeys.MaxNumOfItemToLoadAtOnce);
+
+            if (_maxNumOfItemsToLoadAtOnce < 0)
+            {
+                throw new InvalidOperationException($"Setting {nameof(SettingsKeys.MaxNumOfItemToLoadAtOnce)} should be equal to 0 or greater than 0.");
+            }
 
             _searchTerms = new List<ISearchTerm>();
         }
@@ -143,7 +152,7 @@ namespace Clipbox.Views
         {
             if ((bool)e.NewValue)
             {
-                LoadContents(0, FullClipboardListView.MAX_ITEM_TO_LOAD_AT_ONCE);
+                LoadContents(0, _maxNumOfItemsToLoadAtOnce);
             }
         }
 
@@ -194,8 +203,6 @@ namespace Clipbox.Views
                         // not fire and the loading circle will not disappear
                         if (!itemsToLoad.Any())
                         {
-                            TotalItemsCountToLoad = allMatchingClipboardItemIdCount - removedClipboardItemIds.Count();
-
                             MainListViewContainer.Visibility = Visibility.Visible;
                             // we should also show the top and side bars, so that the
                             // user knows that what is shown on the screen is actually
@@ -205,6 +212,8 @@ namespace Clipbox.Views
                         }
                         else
                         {
+                            TotalItemsCountToLoad = allMatchingClipboardItemIdCount - removedClipboardItemIds.Count();
+
                             PerformDisposeSafeOperation
                             (
                                 () => _viewModel.LoadAllItems(this.MonitorDimensions, itemsToLoad)
@@ -710,7 +719,7 @@ namespace Clipbox.Views
                 
                 _viewModel.ClipboardViewItemWrappers.Clear();
 
-                LoadContents(0, FullClipboardListView.MAX_ITEM_TO_LOAD_AT_ONCE);
+                LoadContents(0, _maxNumOfItemsToLoadAtOnce);
             }));
         }
 
@@ -751,7 +760,7 @@ namespace Clipbox.Views
         {
             MainListViewContainer.Visibility = Visibility.Hidden;
 
-            LoadContents(MainListView.Items.Count, FullClipboardListView.MAX_ITEM_TO_LOAD_AT_ONCE);
+            LoadContents(MainListView.Items.Count, _maxNumOfItemsToLoadAtOnce);
         }
     }
 }

@@ -250,5 +250,17 @@ namespace Clipbox {
                 this["NumOfNotYetVisibleRowsToPreload"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("50")]
+        public int MaxNumOfItemToLoadAtOnce {
+            get {
+                return ((int)(this["MaxNumOfItemToLoadAtOnce"]));
+            }
+            set {
+                this["MaxNumOfItemToLoadAtOnce"] = value;
+            }
+        }
     }
 }

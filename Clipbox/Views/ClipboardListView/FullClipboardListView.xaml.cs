@@ -23,8 +23,6 @@ namespace Clipbox.Views.ClipboardListView
     /// </summary>
     public partial class FullClipboardListView : ClipboardListViewBase, IDisposable
     {
-        public const int MAX_ITEM_TO_LOAD_AT_ONCE = 50;
-
         private const int LAYOUT_TIMER_TIMEOUT_MS = 100;
         private const int SCROLLBAR_TIMER_TIMEOUT_MS = 50;
 
@@ -147,8 +145,7 @@ namespace Clipbox.Views.ClipboardListView
 
         public static readonly DependencyProperty TotalItemsCountToLoadProperty =
             DependencyProperty.Register(nameof(TotalItemsCountToLoad), typeof(int), typeof(FullClipboardListView), new PropertyMetadata(0));
-
-
+        
 
         private Rect _listViewVisibleArea;
 

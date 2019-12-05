@@ -37,5 +37,7 @@
         public const string AutoDetermineMaxSimultaneousPreviewTasks = nameof(AutoDetermineMaxSimultaneousPreviewTasks);
 
         public const string NumOfNotYetVisibleRowsToPreload = nameof(NumOfNotYetVisibleRowsToPreload);
+
+        public const string MaxNumOfItemToLoadAtOnce = nameof(MaxNumOfItemToLoadAtOnce);
     }
 }
