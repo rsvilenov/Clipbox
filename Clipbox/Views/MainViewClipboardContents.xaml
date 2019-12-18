@@ -314,15 +314,7 @@
                                     PlacementTarget="{Binding ElementName=trashBtn}"
                                     ReturnFocusTo="{Binding ElementName=MainListView}" />
 
-                                <localDialog:DialogPopup
-                                    x:Name="deleteSingleItemConfirmationPopup"
-                                    MaxWidth="350"
-                                    DefaultButton="No"
-                                    DialogText="Are you sure you want to delete this item?"
-                                    DialogueType="YesNo"
-                                    IsOpen="False"
-                                    Placement="Bottom"
-                                    ReturnFocusTo="{Binding ElementName=MainListView}" />
+
                             </StackPanel>
 
                         </Grid>
@@ -397,7 +389,6 @@
 
         </Grid>
 
-
         <!--
             This listview should scroll its contents by physical units instead of logical ones,
             thus ScrollViewer.CanContentScroll="False". Otherwise, when grouping is used,
@@ -408,6 +399,7 @@
             x:Name="MainListViewContainer"
             Grid.Row="1"
             Grid.Column="1"
+            Panel.ZIndex="100"
             Visibility="Hidden">
             <Grid.Style>
                 <Style TargetType="{x:Type Grid}">
@@ -457,11 +449,41 @@
                 </Label.Style>
             </Label>
 
+            <Border
+                Grid.Row="1"
+                Grid.Column="1"
+                Panel.ZIndex="101">
+                <views:FullClipboardListViewContainer
+                    x:Name="MainListView"
+                    ClipboardItemContentControl_MouseDoubleClickDetectionStarted="MainListView_ClipboardItemContentControl_MouseDoubleClickDetectionStarted"
+                    ClipboardItemContentControl_MouseDoubleClickDetection_DoubleClickDetected="MainListView_ClipboardItemContentControl_MouseDoubleClickDetection_DoubleClickDetected"
+                    ClipboardItemContentControl_MouseDoubleClickDetection_SingleClickDetected="MainListView_ClipboardItemContentControl_MouseDoubleClickDetection_SingleClickDetected"
+                    ClipboardItemsPanel_KeyUp="MainListView_ClipboardItemsPanel_KeyUp"
+                    ClipboardViewItemMaxHeight="{Binding Path=ClipboardViewItemMaxHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}}"
+                    GroupingComplete="MainListView_GroupingComplete"
+                    IsCloudSyncAvailable="{Binding IsCloudSyncAvailable, Mode=OneWay}"
+                    IsFadeInOfItemsEnabled="{Binding AreFadeAnimationsEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type views:MainViewClipboardContents}}}"
+                    IsInnerGroupingEnabled="True"
+                    ItemDeletionRequested="MainListView_ItemDeletionRequested"
+                    ItemEnableDisableSyncRequested="MainListView_ItemEnableDisableSyncRequested"
+                    ItemPinUnpinRequested="MainListView_ItemPinUnpinRequested"
+                    ItemsSource="{Binding ClipboardViewItemWrappers, Mode=OneWay}"
+                    LoadMoreItemsRequested="MainListView_LoadMoreItemsRequested"
+                    NumOfNotYetVisibleRowsToPreload="{Binding Path=NumOfNotYetVisibleRowsToPreload, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}}"
+                    SelectionChangeCompleted="MainListView_SelectionChangeCompleted"
+                    TotalItemsCountToLoad="{Binding TotalItemsCountToLoad, Mode=OneWay, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type views:MainViewClipboardContents}}}"
+                    ViewItemLoadingCancelRequested="MainListView_ViewItemLoadingCancelRequested"
+                    ViewItemLoadingRequested="MainListView_ViewItemLoadingRequested"
+                    ViewItemUnloadingRequested="MainListView_ViewItemUnloadingRequested" />
+            </Border>
+
             <!--  main list view  -->
+            <!--
             <lv:FullClipboardListView
                 x:Name="MainListView"
+                Height="100"
                 Margin="10"
-                VerticalAlignment="Stretch"
+                VerticalAlignment="Bottom"
                 VerticalContentAlignment="Top"
                 Background="Transparent"
                 BorderThickness="0"
@@ -485,7 +507,7 @@
                 TotalItemsCountToLoad="{Binding TotalItemsCountToLoad, Mode=OneWay, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type views:MainViewClipboardContents}}}"
                 ViewItemLoadingCancelRequested="MainListView_ViewItemLoadingCancelRequested"
                 ViewItemLoadingRequested="MainListView_ViewItemLoadingRequested"
-                ViewItemUnloadingRequested="MainListView_ViewItemUnloadingRequested" />
+                ViewItemUnloadingRequested="MainListView_ViewItemUnloadingRequested" />-->
         </Grid>
     </Grid>
 </views:ClipboardViewControlBase>

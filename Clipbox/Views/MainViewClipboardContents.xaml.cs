@@ -1,4 +1,5 @@
-﻿using Clipbox.Core.Search;
+﻿using Clipbox.Core.ClipboardContent.Interfaces;
+using Clipbox.Core.Search;
 using Clipbox.Core.Search.SearchTerms;
 using Clipbox.Infrastructure.Extensibility.Containers;
 using Clipbox.Infrastructure.Threading;
@@ -367,55 +368,31 @@ namespace Clipbox.Views
                 throw new InvalidOperationException("The selected items are not combinable. The possibility of calling this method with such items should have been ruled out.");
             }
 
-            List<ClipboardViewItemWrapper> wrappers = new List<ClipboardViewItemWrapper>();
-            var selectedSubItemIds = MainListView.GetSelectedMultiItemsIds();
-            if (selectedSubItemIds.Any())
-            {
-                wrappers.AddRange(MainListView.Items
-                    .Cast<ClipboardViewItemWrapper>()
-                    .Where(w => w.Id == selectedSubItemIds.Last().Key));
-            }
+            List<ClipboardViewItemWrapper> wrappers = MainListView.GetSelectedMainItemsIncludingMultiItems();
 
-            if (MainListView.SelectedItems.Count > 0)
-            {
-                wrappers.AddRange(MainListView.SelectedItems
-                        .Cast<ClipboardViewItemWrapper>());
-            }
-            
             //TODO: notify the user and close the window
             foreach (ClipboardViewItemWrapper wrapper in wrappers)
             {
-                if (!(MainListView.ItemContainerGenerator.ContainerFromItem(wrapper) is ListViewItem selectedListViewItem))
-                {
-                    throw new InvalidOperationException($"The list view does not contain an item with id {wrapper.Id}.");
-                }
-
-                var clipboardViewItemTile = Traversing.GetVisualChildOfType<ItemPresenterBase>(selectedListViewItem);
-                if (!(clipboardViewItemTile is IAnimatableItem animatableItem))
-                {
-                    throw new InvalidOperationException($"The listviewitem for {wrapper.Id} does not implement {nameof(IAnimatableItem)}");
-                }
-
-                animatableItem.RunNotificationAnimation(AnimationPurpose.Success);
+                MainListView.RunAnimationForItem(wrapper, AnimationPurpose.Success);
             }
 
             int delayMs = TileAnimationHelper.COLOR_ANIMATION_DURATION_MS + 400;
             // allow the user to see the animation before closing the window/
             Task.Delay(delayMs) // the duration of the color animation in the listview (FullClipboardListView) plus some extra time
                 .ContinueWith((t) =>
-            {
-                Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
                 {
-                    // raise the event...
-                    SetItemsToClipboardRequested?.Invoke(this,
-                                        new SetToClipboardEventArgs(MainListView.GetSelectedItemIds(), MainListView.GetSelectedMultiItemsIds(), keepGeneratedItemsCb.IsChecked == true));
+                    Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
+                    {
+                        // raise the event...
+                        SetItemsToClipboardRequested?.Invoke(this,
+                                            new SetToClipboardEventArgs(MainListView.GetSelectedItemIds(), MainListView.GetSelectedMultiItemsIds(), keepGeneratedItemsCb.IsChecked == true));
 
 
-                    CloseMainWindowRequested?.Invoke(this, new EventArgs());
-                }));
-            },
+                        CloseMainWindowRequested?.Invoke(this, new EventArgs());
+                    }));
+                },
             TaskScheduler.FromCurrentSynchronizationContext());
-            
+
         }
 
         private void MainListView_ClipboardItemContentControl_MouseDoubleClickDetection_DoubleClickDetected(object sender, EventArgs e)
@@ -448,10 +425,20 @@ namespace Clipbox.Views
                     if ((MainListView.AreAnyItemsSelected || MainListView.AreAnyItemsSelected)
                         && MainListView.AreSelectedItemsCombinable)
                     {
-                        base.LoadUIExtensions(MainListView);
+                        base.LoadUIExtensions(GetSelectedClipboardItemsAndMultiitems());
                     }
                 }
             ));
+        }
+
+        
+
+        private List<IClipboardItem> GetSelectedClipboardItemsAndMultiitems()
+        {
+            return MainListView
+                .GetSelectedMainItemsIncludingMultiItems()
+                .Select(w => w.ClipboardItem)
+                .ToList();
         }
 
         private void MainListView_ClipboardItemContentControl_MouseDoubleClickDetectionStarted(object sender, EventArgs e)
@@ -522,12 +509,7 @@ namespace Clipbox.Views
             {
                 throw new ArgumentException($"{nameof(_viewModel.ClipboardViewItemWrappers)} does not contain an item with id {e.ClipboardItemId}.");
             }
-
-            if (!(MainListView.ItemContainerGenerator.ContainerFromItem(wrapper) is ListViewItem selectedListViewItem))
-            {
-                throw new ArgumentException($"The list view does not contain an item with id {e.ClipboardItemId}.");
-            }
-
+            
             // unselet all selected items, including the one that we are going to delete
             MainListView.UnselectAll();
             MainListView.UnselectMultiItemSubItems();
@@ -535,22 +517,45 @@ namespace Clipbox.Views
             // disable the entire control
             this.IsEnabled = false;
 
-            // store the original border brush of the item
-            Brush oldBorderBrush = selectedListViewItem.BorderBrush;
+            MainListView.SetItemToAlert(wrapper);
+            //< localDialog:DialogPopup
+            //                         x:Name = "deleteSingleItemConfirmationPopup"
+            //                        MaxWidth = "350"
+            //                        DefaultButton = "No"
+            //                        DialogText = "Are you sure you want to delete this item?"
+            //                        DialogueType = "YesNo"
+            //                        IsOpen = "False"
+            //                        Placement = "Bottom"
+            //                        ReturnFocusTo = "{Binding ElementName=MainListView}" />
 
-            // color the border with the alert brush
-            selectedListViewItem.BorderBrush = TryFindResource(ThemeBrush.AlertBrush1.ToString()) as Brush
-                ?? Brushes.Red;
 
-            // set the popup location to that of the selected listview item
-            deleteSingleItemConfirmationPopup.PlacementTarget = selectedListViewItem;
-                
-            // try to place the popup at the bottom of the item
-            deleteSingleItemConfirmationPopup.Placement = PlacementMode.Bottom;
+            // invoke this in the main list view contianer
 
-            // open the popup
-            deleteSingleItemConfirmationPopup.IsOpen = true;
+            Dialog.DialogPopup deleteSingleItemConfirmationPopup = null;
+            MainListView.InnerThreadDispatcher.BeginInvoke(DispatcherPriority.Send,
+                new Action(() =>
+                {
+                    ListViewItem selectedListViewItem = MainListView.InnerListView.GetListViewItem(wrapper);
 
+                    deleteSingleItemConfirmationPopup = new Dialog.DialogPopup
+                    {
+                        MaxWidth = 350,
+                        DefaultButton = Dialog.Enums.DialogButtons.No,
+                        DialogText = "Are you sure you want to delete this item?",
+                        DialogueType = Dialog.Enums.DialogTypes.YesNo,
+                        ReturnFocusTo = MainListView,
+
+                        // try to place the popup at the bottom of the item
+                        Placement = PlacementMode.Bottom,
+
+                        // set the popup location to that of the selected listview item
+                        PlacementTarget = selectedListViewItem,
+
+                        IsOpen = true
+                    };
+                }));
+            
+            
             // we are going to wait for the answer of the popup
             AutoResetEvent dialogMre = new AutoResetEvent(false);
 
@@ -567,8 +572,8 @@ namespace Clipbox.Views
                 {
                     // if the user clicks No, the listview item will remain in the
                     // view, so we need to make it look as before - with its previous border brush.
-                    Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, 
-                        new Action(() => selectedListViewItem.BorderBrush = oldBorderBrush));
+                    MainListView.InnerThreadDispatcher.BeginInvoke(DispatcherPriority.ContextIdle, 
+                        new Action(() => MainListView.InnerListView.ResetItemFromAlert(wrapper)));
                 }
             };
 
@@ -630,7 +635,7 @@ namespace Clipbox.Views
         {
             base.ClearLoadedUIExtensions();
 
-            if (MainListView.SelectedItems.Count > 0)
+            if (MainListView.AreAnyItemsSelected)
             {
                 _uiExtentionGenerationSlidingTimer.Slide();
             }
@@ -645,7 +650,7 @@ namespace Clipbox.Views
                 {
                     if (IsLoadingOfUIExtensionsEnabled)
                     {
-                        base.LoadUIExtensions(MainListView);
+                        base.LoadUIExtensions(GetSelectedClipboardItemsAndMultiitems());
                     }
                     else
                     {
@@ -760,7 +765,11 @@ namespace Clipbox.Views
         {
             MainListViewContainer.Visibility = Visibility.Hidden;
 
-            LoadContents(MainListView.Items.Count, _maxNumOfItemsToLoadAtOnce);
+            int loadedCount = _viewModel?.ClipboardViewItemWrappers?.Count ?? 0;
+            if (loadedCount != 0)
+            {
+                LoadContents(loadedCount, _maxNumOfItemsToLoadAtOnce);
+            }
         }
     }
 }

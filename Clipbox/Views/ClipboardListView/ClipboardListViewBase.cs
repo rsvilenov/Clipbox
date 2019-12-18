@@ -3,6 +3,7 @@ using Clipbox.Infrastructure.UI.Utils;
 using Clipbox.Services.EventArgsClasses;
 using Clipbox.ViewModels.BindableObjects;
 using Clipbox.Views.ClipboardViewItemTile;
+using Clipbox.Views.Enums.ClipboardViewItemTile;
 using Clipbox.Views.EventArgsClasses;
 using Clipbox.Win32;
 using System;
@@ -498,6 +499,42 @@ namespace Clipbox.Views.ClipboardListView
             GC.Collect();
 #endif
 
+        }
+
+        public void RunAnimationForItem(ClipboardViewItemWrapper wrapper, AnimationPurpose purpose)
+        {
+            if (!(this.ItemContainerGenerator.ContainerFromItem(wrapper) is ListViewItem selectedListViewItem))
+            {
+                throw new InvalidOperationException($"The list view does not contain an item with id {wrapper.Id}.");
+            }
+
+            var clipboardViewItemTile = Traversing.GetVisualChildOfType<ItemPresenterBase>(selectedListViewItem);
+            if (!(clipboardViewItemTile is IAnimatableItem animatableItem))
+            {
+                throw new InvalidOperationException($"The listviewitem for {wrapper.Id} does not implement {nameof(IAnimatableItem)}");
+            }
+
+            animatableItem.RunNotificationAnimation(purpose);
+        }
+        
+        public List<ClipboardViewItemWrapper> GetSelectedMainItemsIncludingMultiItems()
+        {
+            List<ClipboardViewItemWrapper> wrappers = new List<ClipboardViewItemWrapper>();
+            var selectedSubItemIds = this.GetSelectedMultiItemsIds();
+            if (selectedSubItemIds.Any())
+            {
+                wrappers.AddRange(this.Items
+                    .Cast<ClipboardViewItemWrapper>()
+                    .Where(w => w.Id == selectedSubItemIds.Last().Key));
+            }
+
+            if (this.SelectedItems.Count > 0)
+            {
+                wrappers.AddRange(this.SelectedItems
+                        .Cast<ClipboardViewItemWrapper>());
+            }
+
+            return wrappers;
         }
 
         protected virtual void OnSelectedItemsCombinabilityChanged(SelectedItemsCombinabilityArgs args)

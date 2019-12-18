@@ -1,4 +1,5 @@
-﻿using Clipbox.Infrastructure.Extensibility.Containers;
+﻿using Clipbox.Core.ClipboardContent.Interfaces;
+using Clipbox.Infrastructure.Extensibility.Containers;
 using Clipbox.Infrastructure.UI.DataObjects;
 using Clipbox.Infrastructure.UI.Utils;
 using Clipbox.Services.EventArgsClasses;
@@ -65,24 +66,13 @@ namespace Clipbox.Views
             ClipboardViewItemWrapper wrapper = MainListView.Items
                     .Cast<ClipboardViewItemWrapper>()
                     .SingleOrDefault(w => w.Id == e.LastSelectedItemId);
-            
+
             if (wrapper == null)
             {
                 throw new InvalidOperationException($"Either no items are selected or the selected items are not of type {nameof(ClipboardViewItemWrapper)}");
             }
 
-            if (!(MainListView.ItemContainerGenerator.ContainerFromItem(wrapper) is ListViewItem selectedListViewItem))
-            {
-                throw new InvalidOperationException($"The list view does not contain an item with id {wrapper.Id}.");
-            }
-
-            var clipboardViewItemTile = Traversing.GetVisualChildOfType<ItemPresenterBase>(selectedListViewItem);
-            if (!(clipboardViewItemTile is IAnimatableItem animatableItem))
-            {
-                throw new InvalidOperationException($"The listviewitem for {wrapper.Id} does not implement {nameof(IAnimatableItem)}");
-            }
-
-            animatableItem.RunNotificationAnimation(AnimationPurpose.Error);
+            MainListView.RunAnimationForItem(wrapper, AnimationPurpose.Error);
 
             int errorTextDurationMs = TileAnimationHelper.COLOR_ANIMATION_DURATION_MS + 700;
             ShowErrorTextTemporarily("Incompatible items.", errorTextDurationMs);
@@ -258,7 +248,21 @@ namespace Clipbox.Views
         private void MainListView_SelectionChangeCompleted(object sender, SelectionEventArgs e)
         {
             base.ClearLoadedUIExtensions();
-            base.LoadUIExtensions(MainListView);
+
+            List<IClipboardItem> selectedClipboardItems = MainListView
+                .SelectedItems
+                .Cast<ClipboardViewItemWrapper>()
+                .Select(w => w.ClipboardItem)
+                .ToList();
+
+            IEnumerable<ClipboardViewItemWrapper> multiItemItemWrappers = MainListView
+                .Items
+                .Cast<ClipboardViewItemWrapper>()
+                .Where(item => MainListView.GetSelectedMultiItemsIds().Keys.Contains(item.Id));
+
+            selectedClipboardItems.AddRange(multiItemItemWrappers.Select(w => w.ClipboardItem));
+
+            base.LoadUIExtensions(selectedClipboardItems);
         }
 
         protected override void Dispose(bool disposing)

@@ -196,6 +196,7 @@
     <Compile Include="Views\FilterBand.xaml.cs">
       <DependentUpon>FilterBand.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\FullClipboardListViewContainer.cs" />
     <Compile Include="Views\Interfaces\IMainWindow.cs" />
     <Compile Include="Views\Interfaces\ITrayContextMenu.cs" />
     <Compile Include="Views\LoadingIndicatorPopup.xaml.cs">

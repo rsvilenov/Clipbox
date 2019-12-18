@@ -1,4 +1,5 @@
 ﻿using Clipbox.Infrastructure.UI;
+using Clipbox.Infrastructure.UI.Theme.Enums;
 using Clipbox.Infrastructure.UI.Utils;
 using Clipbox.ViewModels.BindableObjects;
 using Clipbox.Views.EventArgsClasses;
@@ -496,6 +497,47 @@ namespace Clipbox.Views.ClipboardListView
                     }
                 }
             }
+        }
+
+        public ListViewItem GetListViewItem(ClipboardViewItemWrapper wrapper)
+        {
+            if (!(this.ItemContainerGenerator.ContainerFromItem(wrapper) is ListViewItem listViewItem))
+            {
+                throw new ArgumentException($"The list view does not contain an item with id {wrapper.Id}.");
+            }
+
+            return listViewItem;
+        }
+
+
+        Brush _originalNonAlertBorderBrush;
+        public void SetItemToAlert(ClipboardViewItemWrapper wrapper)
+        {
+            ListViewItem listViewItem = GetListViewItem(wrapper);
+
+            // store the original border brush of the item
+            Brush oldBorderBrush = listViewItem.BorderBrush;
+
+            // color the border with the alert brush
+            listViewItem.BorderBrush = TryFindResource(ThemeBrush.AlertBrush1.ToString()) as Brush
+                ?? Brushes.Red;
+        }
+
+        public void ResetItemFromAlert(ClipboardViewItemWrapper wrapper)
+        {
+            if (_originalNonAlertBorderBrush == null)
+            {
+                throw new InvalidOperationException("No items have been set to alert yet.");
+            }
+
+            ListViewItem listViewItem = GetListViewItem(wrapper);
+
+            if (listViewItem.BorderBrush == _originalNonAlertBorderBrush)
+            {
+                throw new InvalidOperationException($"The item {wrapper.Id} is not in an alert state.");
+            }
+
+            listViewItem.BorderBrush = _originalNonAlertBorderBrush;
         }
 
         private void PART_ScrollContentPresenter_SizeChanged(object sender, SizeChangedEventArgs e)

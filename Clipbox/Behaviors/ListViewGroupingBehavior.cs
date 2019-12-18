@@ -29,6 +29,12 @@ namespace Clipbox.Behaviors
         
         protected override void OnAttached()
         {
+            AssociatedObject.Loaded += AssociatedObject_Loaded;
+        }
+
+        private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
+        {
+            AssociatedObject.Loaded -= AssociatedObject_Loaded;
             AssociatedObject.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, new Action(() => {
                 if (IsEnabled)
                 {

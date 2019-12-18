@@ -105,10 +105,9 @@ namespace Clipbox.Views
         }
         
         
-        protected void LoadUIExtensions(ClipboardListViewBase mainListView)
+        protected void LoadUIExtensions(IEnumerable<IClipboardItem> selectedClipboardItems)
         {
-            if (!mainListView.GetSelectedItemIds().Any()
-                && !mainListView.GetSelectedMultiItemsIds().Any())
+            if (!selectedClipboardItems.Any())
             {
                 return;
             }
@@ -129,19 +128,6 @@ namespace Clipbox.Views
                 {
                     return;
                 }
-
-                List<IClipboardItem> selectedClipboardItems = mainListView
-                .SelectedItems
-                .Cast<ClipboardViewItemWrapper>()
-                .Select(w => w.ClipboardItem)
-                .ToList();
-
-                IEnumerable<ClipboardViewItemWrapper> multiItemItemWrappers = mainListView
-                    .Items
-                    .Cast<ClipboardViewItemWrapper>()
-                    .Where(item => mainListView.GetSelectedMultiItemsIds().Keys.Contains(item.Id));
-
-                selectedClipboardItems.AddRange(multiItemItemWrappers.Select(w => w.ClipboardItem));
 
                 var allExtentions = GetExtentions(selectedClipboardItems);
                 foreach (var extention in allExtentions)
