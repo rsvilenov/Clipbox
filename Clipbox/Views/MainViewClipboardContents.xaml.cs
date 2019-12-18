@@ -203,6 +203,9 @@ namespace Clipbox.Views
                         // not fire and the loading circle will not disappear
                         if (!itemsToLoad.Any())
                         {
+                            // close the loading popup
+                            LoadingPopupGoverner.ClosePopup();
+                            
                             MainListViewContainer.Visibility = Visibility.Visible;
                             // we should also show the top and side bars, so that the
                             // user knows that what is shown on the screen is actually
