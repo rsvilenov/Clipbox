@@ -29,7 +29,7 @@
     mc:Ignorable="d">
 
     <i:Interaction.Behaviors>
-        <localBeh:ListViewGroupingBehavior GroupByPropertyName="DateCreatedFriendly" IsEnabled="{Binding IsInnerGroupingEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type lv:FullClipboardListView}}}" />
+        <localBeh:ListViewGroupingBehavior GroupByPropertyName="DateCreated" IsEnabled="{Binding IsInnerGroupingEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type lv:FullClipboardListView}}}" />
         <localBeh:ListViewOnFocusSelectFirstItemBehavior />
     </i:Interaction.Behaviors>
     <ListView.Resources>
@@ -183,7 +183,7 @@
                                             FontSize="22"
                                             FontWeight="Bold"
                                             Foreground="{TemplateBinding Foreground}"
-                                            Text="{Binding Name}" />
+                                            Text="{Binding Items[0].DateCreatedFriendly}" />
 
                                         <Button
                                             x:Name="deleteGroupBtn"
