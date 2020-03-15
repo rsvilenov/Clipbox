@@ -34,10 +34,17 @@ namespace Clipbox.ExtendedClipboard.ClipboardContent
             }
         }
 
+        /// <summary>
+        /// Creates a new ClipboardItem.
+        /// The Id property is in the following format: timestamp#guid
+        /// The timestamp is in UTC ticks.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="clipboardDataObjects"></param>
         internal ClipboardItem(
             IClipboardItemSource source,
             IEnumerable<IClipboardDataObject> clipboardDataObjects)
-            : this(Guid.NewGuid().ToString(), source, clipboardDataObjects)
+            : this($"{DateTime.UtcNow.Ticks.ToString()}#{Guid.NewGuid().ToString()}", source, clipboardDataObjects)
         { }
 
         internal ClipboardItem(

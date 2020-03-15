@@ -24,14 +24,6 @@ namespace Clipbox.SearchProvider
         private const int LUCENE_SEARCH_MAX_RESULT_COUNT = 10000;
         private const int LUCENE_MAX_CLAUSES_COUNT = 50000;
 
-        private readonly string _indexEntryIdFieldName;
-
-        public LuceneSearch()
-        {
-            var indexEntryObj = new IndexEntry(null, Enumerable.Empty<IIndexUnit>());
-            _indexEntryIdFieldName = nameof(indexEntryObj.Id);
-        }
-
         public void DeleteIndexEntries(IEnumerable<string> indexEntryIds)
         {
             if (!indexEntryIds.Any())
@@ -47,7 +39,7 @@ namespace Clipbox.SearchProvider
                 {
                     foreach (string unitId in indexEntryIds)
                     {
-                        var searchQuery = new TermQuery(new Term(_indexEntryIdFieldName, unitId));
+                        var searchQuery = new TermQuery(new Term(nameof(IndexEntry.Id), unitId));
                         indexWriter.DeleteDocuments(searchQuery);
                     }
                 }
@@ -75,7 +67,7 @@ namespace Clipbox.SearchProvider
 
                 foreach (var scoreDoc in scoreDocs)
                 {
-                    searchUnitIds.Add(indexReader.Document(scoreDoc.Doc).GetField(_indexEntryIdFieldName).StringValue);
+                    searchUnitIds.Add(indexReader.Document(scoreDoc.Doc).GetField(nameof(IndexEntry.Id)).StringValue);
                 }
             }
 
@@ -213,13 +205,13 @@ namespace Clipbox.SearchProvider
                     foreach (IndexEntry entry in indexEntries)
                     {
                         // remove older index entry
-                        var searchQuery = new TermQuery(new Term(_indexEntryIdFieldName, entry.Id));
+                        var searchQuery = new TermQuery(new Term(nameof(IndexEntry.Id), entry.Id));
                         indexWriter.DeleteDocuments(searchQuery);
 
                         // create a Lucene document
                         Document document = new Document();
 
-                        document.Add(new Field(_indexEntryIdFieldName, entry.Id, Field.Store.YES, Field.Index.NOT_ANALYZED));
+                        document.Add(new Field(nameof(IndexEntry.Id), entry.Id, Field.Store.YES, Field.Index.NOT_ANALYZED));
 
                         foreach (IIndexUnit unit in entry.IndexUnits)
                         {

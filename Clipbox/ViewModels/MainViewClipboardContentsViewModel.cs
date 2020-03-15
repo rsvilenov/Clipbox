@@ -102,7 +102,11 @@ namespace Clipbox.ViewModels
         {
             if (searchTerms != null && searchTerms.Any())
             {
-                return _searchService.FindClipboardItemIds(searchTerms);
+                return _searchService
+                    .FindClipboardItemIds(searchTerms)
+                    // since the id begins with a timestamp of the item's creation,
+                    // we sort the ids so that the newest items come on top
+                    .OrderByDescending(id => id);
             }
             else
             {
