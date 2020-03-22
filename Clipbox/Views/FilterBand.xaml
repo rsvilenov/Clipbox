@@ -57,6 +57,14 @@
                     </Style>
 
                     <Style
+                        x:Key="dateSelectionToggleButton"
+                        BasedOn="{StaticResource tglButton}"
+                        TargetType="{x:Type ToggleButton}">
+                        <Setter Property="Content" Value="{DynamicResource DateSelectionIcon}" />
+                        <Setter Property="ToolTip" Value="Filter by date" />
+                    </Style>
+
+                    <Style
                         x:Key="myMachineToggleButton"
                         BasedOn="{StaticResource tglButton}"
                         TargetType="{x:Type ToggleButton}">
@@ -165,6 +173,7 @@
                 </Expander>
 
                 <ToggleButton Margin="5,10" Style="{StaticResource sourceWindowToggleButton}" />
+                <ToggleButton Margin="5,10" Style="{StaticResource dateSelectionToggleButton}" />
 
                 <Button Margin="5,10" Click="Button_Click" />
 
