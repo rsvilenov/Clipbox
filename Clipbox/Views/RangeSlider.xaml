@@ -46,7 +46,7 @@
             Height="1"
             Margin="5,0,5,0"
             VerticalAlignment="Center"
-            BorderBrush="Black"
+            BorderBrush="White"
             BorderThickness="0,1,0,0" />
 
         <Slider

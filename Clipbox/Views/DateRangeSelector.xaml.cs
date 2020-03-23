@@ -23,7 +23,7 @@ namespace Clipbox.Views
         public DateRangeSelector()
         {
             InitializeComponent();
-            this.mainGrid.DataContext = this;
+            this.mainBorder.DataContext = this;
         }
 
 
