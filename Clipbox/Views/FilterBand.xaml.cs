@@ -19,7 +19,7 @@ namespace Clipbox.Views
     /// </summary>
     public partial class FilterBand : UserControl
     {
-        public event EventHandler AdvancedSearchOpenRequested;
+        public event EventHandler DateRangeSelectorOpenRequested;
 
         public FilterBand()
         {
@@ -221,9 +221,9 @@ namespace Clipbox.Views
                 }));
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void ToggleDateRangeSelectionButton_Checked(object sender, RoutedEventArgs e)
         {
-            AdvancedSearchOpenRequested?.Invoke(this, new EventArgs());
+            DateRangeSelectorOpenRequested?.Invoke(this, new EventArgs());
         }
     }
 }

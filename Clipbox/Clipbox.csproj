@@ -115,6 +115,9 @@
     <Compile Include="Views\ClipboardViewItemTile\TileAnimationHelper.cs" />
     <Compile Include="Views\ClipboardViewItemTile\Enums\AnimationPurpose.cs" />
     <Compile Include="Views\ClipboardViewItemTile\IAnimatableItem.cs" />
+    <Compile Include="Views\DateRangeSelector.xaml.cs">
+      <DependentUpon>DateRangeSelector.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\EventArgsClasses\ClipboardItemManipulationEventArgs.cs" />
     <Compile Include="Services\EventArgsClasses\CombinabilityEventArgs.cs" />
     <Compile Include="Services\EventArgsClasses\HousekeepingEventArgs.cs" />
@@ -212,6 +215,9 @@
     <Compile Include="Views\ClipboardListView\VerticalScrollBarEx.xaml.cs">
       <DependentUpon>VerticalScrollBarEx.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\RangeSlider.xaml.cs">
+      <DependentUpon>RangeSlider.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
@@ -285,6 +291,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\DateRangeSelector.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Dialog\DialogPopup.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -318,6 +328,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Views\QuickViewClipboardContents.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\RangeSlider.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

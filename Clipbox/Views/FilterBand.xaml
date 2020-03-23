@@ -57,7 +57,7 @@
                     </Style>
 
                     <Style
-                        x:Key="dateSelectionToggleButton"
+                        x:Key="dateRangeSelectionToggleButton"
                         BasedOn="{StaticResource tglButton}"
                         TargetType="{x:Type ToggleButton}">
                         <Setter Property="Content" Value="{DynamicResource DateSelectionIcon}" />
@@ -173,9 +173,10 @@
                 </Expander>
 
                 <ToggleButton Margin="5,10" Style="{StaticResource sourceWindowToggleButton}" />
-                <ToggleButton Margin="5,10" Style="{StaticResource dateSelectionToggleButton}" />
-
-                <Button Margin="5,10" Click="Button_Click" />
+                <ToggleButton
+                    Margin="5,10"
+                    Checked="ToggleDateRangeSelectionButton_Checked"
+                    Style="{StaticResource dateRangeSelectionToggleButton}" />
 
             </StackPanel>
         </ScrollViewer>

@@ -294,12 +294,12 @@
                                     Style="{DynamicResource BtnTrash}" />
 
                                 <Popup
-                                    x:Name="advancedSearchPopup"
+                                    x:Name="dateRangeSelectionPopup"
                                     MinWidth="350"
                                     MinHeight="200"
                                     Placement="Center"
                                     PlacementTarget="{Binding ElementName=MainListView}">
-                                    <views:AdvancedFilters />
+                                    <views:DateRangeSelector />
                                 </Popup>
 
                                 <localDialog:DialogPopup
@@ -384,7 +384,7 @@
             <views:FilterBand
                 x:Name="filterBand"
                 Grid.Row="0"
-                AdvancedSearchOpenRequested="FilterBand_AdvancedSearchOpenRequested"
+                DateRangeSelectorOpenRequested="FilterBand_DateRangeSelectorOpenRequested"
                 SearchTermsChanged="FilterBand_SearchTermsChanged" />
 
             <Button

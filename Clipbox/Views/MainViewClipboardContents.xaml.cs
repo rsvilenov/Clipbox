@@ -752,18 +752,19 @@ namespace Clipbox.Views
                 }
             }
         }
-
-        private void FilterBand_AdvancedSearchOpenRequested(object sender, EventArgs e)
-        {
-            advancedSearchPopup.IsOpen = true;
-            this.IsEnabled = false;
-        }
+        
 
         private void MainListView_LoadMoreItemsRequested(object sender, EventArgs e)
         {
             MainListViewContainer.Visibility = Visibility.Hidden;
 
             LoadContents(MainListView.Items.Count, _maxNumOfItemsToLoadAtOnce);
+        }
+
+        private void FilterBand_DateRangeSelectorOpenRequested(object sender, EventArgs e)
+        {
+            dateRangeSelectionPopup.IsOpen = true;
+            this.IsEnabled = false;
         }
     }
 }
