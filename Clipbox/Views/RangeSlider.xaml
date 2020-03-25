@@ -24,6 +24,47 @@
             </Setter>
         </Style>
 
+        <ControlTemplate x:Key="thumbTemplate" TargetType="Thumb">
+            <Ellipse
+                Name="thumbEllipse"
+                Width="18"
+                Height="18"
+                SnapsToDevicePixels="True"
+                Stroke="White"
+                StrokeThickness="2">
+                <Ellipse.Style>
+                    <Style TargetType="{x:Type Ellipse}">
+                        <Setter Property="Fill" Value="{DynamicResource TaskbarColorBrush}" />
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect
+                                            BlurRadius="20"
+                                            ShadowDepth="0"
+                                            Color="{Binding ElementName=thumbEllipse, Path=Stroke.Color}" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+
+                        </Style.Triggers>
+                    </Style>
+                </Ellipse.Style>
+            </Ellipse>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsDragging" Value="True">
+                    <Setter TargetName="thumbEllipse" Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect
+                                BlurRadius="20"
+                                ShadowDepth="0"
+                                Color="{Binding ElementName=thumbEllipse, Path=Stroke.Color}" />
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
         <ControlTemplate x:Key="rightSlider" TargetType="{x:Type Slider}">
             <Border
                 BorderBrush="{TemplateBinding BorderBrush}"
@@ -39,22 +80,8 @@
                     <Rectangle x:Name="PART_SelectionRange" />
 
                     <Track x:Name="PART_Track" Grid.Row="1">
-
                         <Track.Thumb>
-                            <Thumb x:Name="Thumb">
-                                <Thumb.Template>
-                                    <ControlTemplate TargetType="Thumb">
-                                        <Ellipse
-                                            Width="18"
-                                            Height="18"
-                                            Fill="White"
-                                            SnapsToDevicePixels="True"
-                                            Stroke="Black"
-                                            StrokeThickness="1" />
-                                    </ControlTemplate>
-                                </Thumb.Template>
-                            </Thumb>
-
+                            <Thumb x:Name="Thumb" Template="{StaticResource thumbTemplate}" />
                         </Track.Thumb>
                         <Track.IncreaseRepeatButton>
                             <RepeatButton Command="Slider.IncreaseLarge" Style="{StaticResource repeatButton}" />
@@ -83,22 +110,8 @@
                             <RepeatButton Command="Slider.DecreaseLarge" Style="{StaticResource repeatButton}" />
                         </Track.DecreaseRepeatButton>
                         <Track.Thumb>
-                            <Thumb x:Name="Thumb">
-                                <Thumb.Template>
-                                    <ControlTemplate TargetType="Thumb">
-                                        <Ellipse
-                                            Width="18"
-                                            Height="18"
-                                            Fill="White"
-                                            SnapsToDevicePixels="True"
-                                            Stroke="Black"
-                                            StrokeThickness="1" />
-                                    </ControlTemplate>
-                                </Thumb.Template>
-                            </Thumb>
-
+                            <Thumb x:Name="Thumb" Template="{StaticResource thumbTemplate}" />
                         </Track.Thumb>
-
                     </Track>
                 </Grid>
             </Border>
@@ -116,17 +129,21 @@
         <Slider
             x:Name="LowerSlider"
             Margin="0,0,18,0"
+            IsSnapToTickEnabled="True"
             Maximum="{Binding ElementName=root, Path=Maximum}"
             Minimum="{Binding ElementName=root, Path=Minimum}"
             Template="{StaticResource leftSlider}"
+            Ticks="{Binding ElementName=root, Path=Ticks}"
             Value="{Binding ElementName=root, Path=LowerValue, Mode=TwoWay}" />
 
         <Slider
             x:Name="UpperSlider"
             Margin="18,0,0,0"
+            IsSnapToTickEnabled="True"
             Maximum="{Binding ElementName=root, Path=Maximum}"
             Minimum="{Binding ElementName=root, Path=Minimum}"
             Template="{StaticResource rightSlider}"
+            Ticks="{Binding ElementName=root, Path=Ticks}"
             Value="{Binding ElementName=root, Path=UpperValue, Mode=TwoWay}" />
     </Grid>
 </UserControl>

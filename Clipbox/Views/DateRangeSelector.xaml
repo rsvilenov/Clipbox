@@ -22,8 +22,13 @@
                 <ColumnDefinition />
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
-            
-            <views:RangeSlider Grid.Row="1" Grid.ColumnSpan="2" />
+
+            <views:RangeSlider
+                Grid.Row="1"
+                Grid.ColumnSpan="2"
+                Minimum="1"
+                Maximum="7"
+                Ticks="1,2,4,6,7" />
 
 
             <Button

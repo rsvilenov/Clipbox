@@ -45,6 +45,19 @@ namespace Clipbox.Views
             LowerSlider.Value = Math.Min(UpperSlider.Value, LowerSlider.Value);
         }
 
+
+
+        public DoubleCollection Ticks
+        {
+            get { return (DoubleCollection)GetValue(TicksProperty); }
+            set { SetValue(TicksProperty, value); }
+        }
+
+        public static readonly DependencyProperty TicksProperty =
+            DependencyProperty.Register(nameof(Ticks), typeof(DoubleCollection), typeof(RangeSlider), new PropertyMetadata(default(DoubleCollection)));
+
+
+
         public double Minimum
         {
             get { return (double)GetValue(MinimumProperty); }
