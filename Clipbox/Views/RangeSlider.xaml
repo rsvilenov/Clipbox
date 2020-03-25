@@ -5,7 +5,26 @@
     x:Name="root">
 
     <UserControl.Resources>
-        <ControlTemplate x:Key="simpleSlider" TargetType="{x:Type Slider}">
+
+        <Style x:Key="repeatButton" TargetType="RepeatButton">
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RepeatButton">
+                        <!--  draw a rectangle with a thin line crossing it. The line takes the accent color.  -->
+                        <Border
+                            Height="5"
+                            Background="{DynamicResource AccentBrush}"
+                            BorderBrush="{DynamicResource TaskbarColorBrush}"
+                            BorderThickness="2"
+                            SnapsToDevicePixels="True" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <ControlTemplate x:Key="rightSlider" TargetType="{x:Type Slider}">
             <Border
                 BorderBrush="{TemplateBinding BorderBrush}"
                 BorderThickness="{TemplateBinding BorderThickness}"
@@ -20,6 +39,7 @@
                     <Rectangle x:Name="PART_SelectionRange" />
 
                     <Track x:Name="PART_Track" Grid.Row="1">
+
                         <Track.Thumb>
                             <Thumb x:Name="Thumb">
                                 <Thumb.Template>
@@ -34,7 +54,51 @@
                                     </ControlTemplate>
                                 </Thumb.Template>
                             </Thumb>
+
                         </Track.Thumb>
+                        <Track.IncreaseRepeatButton>
+                            <RepeatButton Command="Slider.IncreaseLarge" Style="{StaticResource repeatButton}" />
+                        </Track.IncreaseRepeatButton>
+                    </Track>
+                </Grid>
+            </Border>
+        </ControlTemplate>
+
+        <ControlTemplate x:Key="leftSlider" TargetType="{x:Type Slider}">
+            <Border
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}"
+                SnapsToDevicePixels="true">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Rectangle x:Name="PART_SelectionRange" />
+
+                    <Track x:Name="PART_Track" Grid.Row="1">
+                        <Track.DecreaseRepeatButton>
+                            <RepeatButton Command="Slider.DecreaseLarge" Style="{StaticResource repeatButton}" />
+                        </Track.DecreaseRepeatButton>
+                        <Track.Thumb>
+                            <Thumb x:Name="Thumb">
+                                <Thumb.Template>
+                                    <ControlTemplate TargetType="Thumb">
+                                        <Ellipse
+                                            Width="18"
+                                            Height="18"
+                                            Fill="White"
+                                            SnapsToDevicePixels="True"
+                                            Stroke="Black"
+                                            StrokeThickness="1" />
+                                    </ControlTemplate>
+                                </Thumb.Template>
+                            </Thumb>
+
+                        </Track.Thumb>
+
                     </Track>
                 </Grid>
             </Border>
@@ -43,18 +107,18 @@
     </UserControl.Resources>
     <Grid VerticalAlignment="Top">
         <Border
-            Height="1"
+            Height="3"
             Margin="5,0,5,0"
             VerticalAlignment="Center"
             BorderBrush="White"
-            BorderThickness="0,1,0,0" />
+            BorderThickness="0,3,0,0" />
 
         <Slider
             x:Name="LowerSlider"
             Margin="0,0,18,0"
             Maximum="{Binding ElementName=root, Path=Maximum}"
             Minimum="{Binding ElementName=root, Path=Minimum}"
-            Template="{StaticResource simpleSlider}"
+            Template="{StaticResource leftSlider}"
             Value="{Binding ElementName=root, Path=LowerValue, Mode=TwoWay}" />
 
         <Slider
@@ -62,7 +126,7 @@
             Margin="18,0,0,0"
             Maximum="{Binding ElementName=root, Path=Maximum}"
             Minimum="{Binding ElementName=root, Path=Minimum}"
-            Template="{StaticResource simpleSlider}"
+            Template="{StaticResource rightSlider}"
             Value="{Binding ElementName=root, Path=UpperValue, Mode=TwoWay}" />
     </Grid>
 </UserControl>
