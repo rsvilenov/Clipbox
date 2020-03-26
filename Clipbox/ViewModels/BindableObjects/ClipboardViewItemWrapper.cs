@@ -1,5 +1,6 @@
 ﻿using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.Infrastructure.UI;
+using Clipbox.Technical.ExtensionMethods;
 using Clipbox.ViewModels.Enums;
 using System;
 using System.Linq;
@@ -35,7 +36,9 @@ namespace Clipbox.ViewModels.BindableObjects
             private set
             {
                 SetField(ref _dateCreated, value);
-                DateCreatedFriendly = GetFriendlyDateString(value);
+                // I am not using the converter (DateTimeToHumanReadableStringConverter) but store
+                // the value here, so that it won't be converted each time the bindings are evaluated.
+                DateCreatedFriendly = value.ToWindowsStyleHumanReadableString();
             }
         }
 
@@ -112,19 +115,5 @@ namespace Clipbox.ViewModels.BindableObjects
         /// We will not bind this item.
         /// </summary>
         public IClipboardItem ClipboardItem { get; private set; }
-        
-        private string GetFriendlyDateString(DateTime date)
-        {
-            // TODO: Translate 'Today' and 'Yesterday'.
-            return
-                date.Date == DateTime.Today ?
-                "Today" :
-                date.Date == DateTime.Today.AddDays(-1) ?
-                "Yesterday" :
-                date.Year == DateTime.Now.Year ?
-                    date.ToString("dd MMMM") :
-                    date.ToString("dd MMMM yyyy");
-        }
-
     }
 }
