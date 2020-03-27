@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
@@ -88,8 +89,13 @@ namespace Clipbox.Views
         }
 
         public static readonly DependencyProperty SelectedMinDateTimeMsProperty =
-            DependencyProperty.Register(nameof(SelectedMinDateTimeMs), typeof(double), typeof(DateRangeSelector), new PropertyMetadata(0d));
-        
+            DependencyProperty.Register(nameof(SelectedMinDateTimeMs), typeof(double), typeof(DateRangeSelector), new PropertyMetadata(0d, SelectedMinDateTimeMs_PropertyChanged));
+
+        private static void SelectedMinDateTimeMs_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var self = (DateRangeSelector)d;
+            self.AreMinAndMaxSelectedDatesDistinct = (double)e.NewValue != self.SelectedMaxDateTimeMs;
+        }
 
         public double SelectedMaxDateTimeMs
         {
@@ -98,7 +104,22 @@ namespace Clipbox.Views
         }
         
         public static readonly DependencyProperty SelectedMaxDateTimeMsProperty =
-            DependencyProperty.Register(nameof(SelectedMaxDateTimeMs), typeof(double), typeof(DateRangeSelector), new PropertyMetadata(0d));
+            DependencyProperty.Register(nameof(SelectedMaxDateTimeMs), typeof(double), typeof(DateRangeSelector), new PropertyMetadata(0d, SelectedMaxDateTimeMs_PropertyChanged));
+
+        private static void SelectedMaxDateTimeMs_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var self = (DateRangeSelector)d;
+            self.AreMinAndMaxSelectedDatesDistinct = (double)e.NewValue != self.SelectedMinDateTimeMs;
+        }
+
+        private bool AreMinAndMaxSelectedDatesDistinct
+        {
+            get { return (bool)GetValue(AreMinAndMaxSelectedDatesDistinctProperty); }
+            set { SetValue(AreMinAndMaxSelectedDatesDistinctProperty, value); }
+        }
+        
+        private static readonly DependencyProperty AreMinAndMaxSelectedDatesDistinctProperty =
+            DependencyProperty.Register(nameof(AreMinAndMaxSelectedDatesDistinct), typeof(bool), typeof(DateRangeSelector), new PropertyMetadata(false));
         
     }
 }

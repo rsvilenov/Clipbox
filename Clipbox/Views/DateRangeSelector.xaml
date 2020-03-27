@@ -4,12 +4,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:conv="clr-namespace:Clipbox.Technical.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:infConv="clr-namespace:Clipbox.Infrastructure.UI.Converters;assembly=Clipbox.Infrastructure.UI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:views="clr-namespace:Clipbox.Views"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
     <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <conv:MillisecondsToHumanReadableDateStringConverter x:Key="MillisecondsToHumanReadableDateStringConverter" />
     </UserControl.Resources>
     <Border
@@ -27,20 +29,47 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
-            <TextBlock
+            <Grid
                 Grid.Row="0"
                 Grid.ColumnSpan="2"
                 Margin="15">
-                <Run>From</Run>
-                <Run Text="{Binding SelectedMinDateTimeMs, Converter={StaticResource MillisecondsToHumanReadableDateStringConverter}}" />
-                <Run>To</Run>
-                <Run Text="{Binding SelectedMaxDateTimeMs, Converter={StaticResource MillisecondsToHumanReadableDateStringConverter}}" />
-            </TextBlock>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <ContentControl
+                    Grid.Column="0"
+                    Width="32"
+                    Height="32"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Template="{DynamicResource DateSelectionIcon}" />
+                <StackPanel
+                    Grid.Column="1"
+                    Margin="15,0,0,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal">
+                    <TextBlock FontSize="14" Foreground="White">
+                        <Run Text="Show items from " />
+                        <Run FontWeight="Bold" Text="{Binding SelectedMinDateTimeMs, Converter={StaticResource MillisecondsToHumanReadableDateStringConverter}}" />
+                    </TextBlock>
+                    <TextBlock
+                        FontSize="14"
+                        Foreground="White"
+                        Visibility="{Binding AreMinAndMaxSelectedDatesDistinct, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Run Text=" to " />
+                        <Run FontWeight="Bold" Text="{Binding SelectedMaxDateTimeMs, Converter={StaticResource MillisecondsToHumanReadableDateStringConverter}}" />
+                    </TextBlock>
+                </StackPanel>
+
+            </Grid>
 
             <views:RangeSlider
                 x:Name="rangeSlider"
                 Grid.Row="1"
                 Grid.ColumnSpan="2"
+                Margin="15,25,15,0"
                 LowerValue="{Binding SelectedMinDateTimeMs, Mode=OneWayToSource}"
                 Maximum="{Binding MaxDateTimeMs}"
                 Minimum="{Binding MinDateTimeMs}"
