@@ -299,7 +299,7 @@
                                     MinHeight="200"
                                     Placement="Center"
                                     PlacementTarget="{Binding ElementName=MainListView}">
-                                    <views:DateRangeSelector />
+                                    <views:DateRangeSelector x:Name="dateRangeSelector" />
                                 </Popup>
 
                                 <localDialog:DialogPopup

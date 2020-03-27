@@ -16,6 +16,7 @@ using Clipbox.Views.Dialog.EventArgsClasses;
 using Clipbox.Views.Enums.ClipboardViewItemTile;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -156,6 +157,8 @@ namespace Clipbox.Views
             }
         }
 
+        private IEnumerable<string> _allClipboardItemIdsForAllPages = null;
+
         private void LoadContents(int startIndex = -1, int count = -1)
         {
             if (!(SynchronizationContext.Current is DispatcherSynchronizationContext))
@@ -179,6 +182,7 @@ namespace Clipbox.Views
                 );
 
                 allMatchingClipboardItemIdCount = allMatchingClipboardItemIds.Count();
+                _allClipboardItemIdsForAllPages = new List<string>(allMatchingClipboardItemIds);
 
                 clipboardItemIds = allMatchingClipboardItemIds
                 .Skip(startIndex == -1 ? 0 : startIndex)
@@ -765,6 +769,18 @@ namespace Clipbox.Views
         {
             dateRangeSelectionPopup.IsOpen = true;
             this.IsEnabled = false;
+            
+                
+                var uniqueDaysMsCollection = _allClipboardItemIdsForAllPages
+                .Where(str => str.Contains('#')) // '#' is the separator between the ticks and the id
+                .Select(str => str.Substring(0, str.IndexOf('#')))
+                .Where(str => str.All(c => char.IsNumber(c)))
+                .Distinct()
+                .Select(ticks => new DateTime(long.Parse(ticks)).Date)
+                .Select(date => (double)(date - new DateTime(1970, 1, 1)).TotalMilliseconds)
+                .Distinct();
+
+            dateRangeSelector.DateTimeMsCollection = new ObservableCollection<double>(uniqueDaysMsCollection);
         }
     }
 }

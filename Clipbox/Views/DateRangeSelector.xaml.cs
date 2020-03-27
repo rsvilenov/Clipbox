@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Clipbox.Views
 {
@@ -26,18 +18,48 @@ namespace Clipbox.Views
             this.mainBorder.DataContext = this;
         }
 
-
-
-        public List<double> DateTimeMsList
+        public ObservableCollection<double> DateTimeMsCollection
         {
-            get { return (List<double>)GetValue(DateTimeMsListProperty); }
-            set { SetValue(DateTimeMsListProperty, value); }
+            get { return (ObservableCollection<double>)GetValue(DateTimeMsCollectionProperty); }
+            set { SetValue(DateTimeMsCollectionProperty, value); }
         }
         
-        public static readonly DependencyProperty DateTimeMsListProperty =
-            DependencyProperty.Register(nameof(DateTimeMsList), typeof(List<double>), typeof(DateRangeSelector), new PropertyMetadata(default(List<double>)));
+        public static readonly DependencyProperty DateTimeMsCollectionProperty =
+            DependencyProperty.Register(nameof(DateTimeMsCollection), typeof(ObservableCollection<double>), typeof(DateRangeSelector), new PropertyMetadata(null, DateTimeMsCollection_PropertyChanged));
 
+        private static void DateTimeMsCollection_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var self = (DateRangeSelector)d;
 
+            var colChangedHandler = new NotifyCollectionChangedEventHandler(
+            (o, args) =>
+            {
+                self.UpdateMinMaxTime();
+            });
+
+            if (e.OldValue != null)
+            {
+                var collection = (INotifyCollectionChanged)e.OldValue;
+                collection.CollectionChanged -= colChangedHandler;
+            }
+
+            if (e.NewValue != null)
+            {
+                var collection = (ObservableCollection<double>)e.NewValue;
+                collection.CollectionChanged += colChangedHandler;
+            }
+            
+            ((DateRangeSelector)d).UpdateMinMaxTime();
+        }
+        
+        private void UpdateMinMaxTime()
+        {
+            MinDateTimeMs = DateTimeMsCollection?.Any() == true ? DateTimeMsCollection.Min() : 0;
+            MaxDateTimeMs = DateTimeMsCollection?.Any() == true ? DateTimeMsCollection.Max() : 0;
+
+            // SliderTicks is DoubleCollection and does not play well with observable collections when a binding is used
+            rangeSlider.SliderTicks = new DoubleCollection(DateTimeMsCollection);
+        }
 
         private double MaxDateTimeMs
         {
@@ -49,7 +71,6 @@ namespace Clipbox.Views
             DependencyProperty.Register(nameof(MaxDateTimeMs), typeof(double), typeof(DateRangeSelector), new PropertyMetadata(0d));
 
         
-
         private double MinDateTimeMs
         {
             get { return (double)GetValue(MinDateTimeMsProperty); }
@@ -58,8 +79,6 @@ namespace Clipbox.Views
         
         private static readonly DependencyProperty MinDateTimeMsProperty =
             DependencyProperty.Register(nameof(MinDateTimeMs), typeof(double), typeof(DateRangeSelector), new PropertyMetadata(0d));
-
-
         
         
         public double SelectedMinDateTimeMs
@@ -70,8 +89,7 @@ namespace Clipbox.Views
 
         public static readonly DependencyProperty SelectedMinDateTimeMsProperty =
             DependencyProperty.Register(nameof(SelectedMinDateTimeMs), typeof(double), typeof(DateRangeSelector), new PropertyMetadata(0d));
-
-
+        
 
         public double SelectedMaxDateTimeMs
         {
@@ -81,9 +99,6 @@ namespace Clipbox.Views
         
         public static readonly DependencyProperty SelectedMaxDateTimeMsProperty =
             DependencyProperty.Register(nameof(SelectedMaxDateTimeMs), typeof(double), typeof(DateRangeSelector), new PropertyMetadata(0d));
-
-
-
-
+        
     }
 }

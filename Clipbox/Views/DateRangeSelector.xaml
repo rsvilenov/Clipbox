@@ -2,12 +2,16 @@
     x:Class="Clipbox.Views.DateRangeSelector"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:conv="clr-namespace:Clipbox.Technical.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:views="clr-namespace:Clipbox.Views"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
+    <UserControl.Resources>
+        <conv:MillisecondsToHumanReadableDateStringConverter x:Key="MillisecondsToHumanReadableDateStringConverter" />
+    </UserControl.Resources>
     <Border
         x:Name="mainBorder"
         BorderBrush="{DynamicResource AccentBrush}"
@@ -23,13 +27,24 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
 
+            <TextBlock
+                Grid.Row="0"
+                Grid.ColumnSpan="2"
+                Margin="15">
+                <Run>From</Run>
+                <Run Text="{Binding SelectedMinDateTimeMs, Converter={StaticResource MillisecondsToHumanReadableDateStringConverter}}" />
+                <Run>To</Run>
+                <Run Text="{Binding SelectedMaxDateTimeMs, Converter={StaticResource MillisecondsToHumanReadableDateStringConverter}}" />
+            </TextBlock>
+
             <views:RangeSlider
+                x:Name="rangeSlider"
                 Grid.Row="1"
                 Grid.ColumnSpan="2"
-                Minimum="1"
-                Maximum="7"
-                Ticks="1,2,4,6,7" />
-
+                LowerValue="{Binding SelectedMinDateTimeMs, Mode=OneWayToSource}"
+                Maximum="{Binding MaxDateTimeMs}"
+                Minimum="{Binding MinDateTimeMs}"
+                UpperValue="{Binding SelectedMaxDateTimeMs, Mode=OneWayToSource}" />
 
             <Button
                 x:Name="btnYes"

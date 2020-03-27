@@ -1,17 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Clipbox.Views
 {
@@ -25,6 +15,8 @@ namespace Clipbox.Views
         public RangeSlider()
         {
             InitializeComponent();
+
+            this.mainGrid.DataContext = this;
 
             this.Loaded += Slider_Loaded;
         }
@@ -47,14 +39,14 @@ namespace Clipbox.Views
 
 
 
-        public DoubleCollection Ticks
+        public DoubleCollection SliderTicks
         {
-            get { return (DoubleCollection)GetValue(TicksProperty); }
-            set { SetValue(TicksProperty, value); }
+            get { return (DoubleCollection)GetValue(SliderTicksProperty); }
+            set { SetValue(SliderTicksProperty, value); }
         }
 
-        public static readonly DependencyProperty TicksProperty =
-            DependencyProperty.Register(nameof(Ticks), typeof(DoubleCollection), typeof(RangeSlider), new PropertyMetadata(default(DoubleCollection)));
+        public static readonly DependencyProperty SliderTicksProperty =
+            DependencyProperty.Register(nameof(SliderTicks), typeof(DoubleCollection), typeof(RangeSlider), new PropertyMetadata(default(DoubleCollection)));
 
 
 
