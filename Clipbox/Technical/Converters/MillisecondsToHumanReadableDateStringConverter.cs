@@ -18,9 +18,12 @@ namespace Clipbox.Technical.Converters
 
             double milliseconds = (double)value;
 
-            DateTime dt = (new DateTime(1970, 1, 1)).AddMilliseconds(milliseconds);
+            DateTime utcDt = (new DateTime(1970, 1, 1))
+                .AddMilliseconds(milliseconds);
 
-            return dt.ToWindowsStyleHumanReadableString();
+            return utcDt
+                .ToLocalTime()
+                .ToWindowsStyleHumanReadableString();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

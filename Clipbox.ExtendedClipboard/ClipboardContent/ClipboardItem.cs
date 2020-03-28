@@ -23,10 +23,7 @@ namespace Clipbox.ExtendedClipboard.ClipboardContent
 
             if (timestampInfo == null)
             {
-                TimestampInfo = new TimestampInfo(DateTime.Now.Ticks,
-                    DateTime.UtcNow.Ticks,
-                    DateTime.Now.Ticks,
-                    DateTime.UtcNow.Ticks);
+                throw new ArgumentNullException(nameof(timestampInfo));
             }
             else
             {
@@ -44,17 +41,21 @@ namespace Clipbox.ExtendedClipboard.ClipboardContent
         internal ClipboardItem(
             IClipboardItemSource source,
             IEnumerable<IClipboardDataObject> clipboardDataObjects)
-            : this($"{DateTime.UtcNow.Ticks.ToString()}#{Guid.NewGuid().ToString()}", source, clipboardDataObjects)
-        { }
+        {
+            long utcTicks = DateTime.UtcNow.Ticks;
 
-        internal ClipboardItem(
-            string id,
-            IClipboardItemSource source,
-            IEnumerable<IClipboardDataObject> clipboardDataObjects)
-            : this(id, source, clipboardDataObjects, null)
-        { }
+            Id = $"{utcTicks}#{Guid.NewGuid().ToString()}";
 
+            ClipboardDataObjects = clipboardDataObjects?.ToList();
+            Source = source;
 
+            TimestampInfo = new TimestampInfo(new DateTime(utcTicks).ToLocalTime().Ticks,
+                    utcTicks,
+                    DateTime.Now.Ticks,
+                    DateTime.UtcNow.Ticks);
+        }
+
+        
         /// <summary>
         /// We want to preserve the order of the items and make it known to the users of the code...
         /// IEnumerable<T> is not sufficiant to ensure the consumers that the order will be the same.
