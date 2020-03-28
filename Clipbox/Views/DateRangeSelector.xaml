@@ -43,6 +43,7 @@
                     Height="32"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
+                    Foreground="LightGray"
                     Template="{DynamicResource DateSelectionIcon}" />
                 <StackPanel
                     Grid.Column="1"
@@ -83,6 +84,7 @@
                 Width="70"
                 Height="30"
                 Margin="5"
+                Click="BtnOk_Click"
                 Content="OK"
                 Foreground="White"
                 Style="{DynamicResource BtnOk}" />
@@ -94,6 +96,7 @@
                 Width="70"
                 Height="30"
                 Margin="5"
+                Click="BtnCancel_Click"
                 Content="Cancel"
                 Foreground="White"
                 Style="{DynamicResource BtnCancel}" />

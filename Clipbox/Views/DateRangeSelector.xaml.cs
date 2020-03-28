@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Clipbox.Views.EventArgsClasses;
+using System;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
@@ -13,6 +14,8 @@ namespace Clipbox.Views
     /// </summary>
     public partial class DateRangeSelector : UserControl
     {
+        public event EventHandler<DateRangeEventArgs> DateRangeSelected;
+
         public DateRangeSelector()
         {
             InitializeComponent();
@@ -120,6 +123,16 @@ namespace Clipbox.Views
         
         private static readonly DependencyProperty AreMinAndMaxSelectedDatesDistinctProperty =
             DependencyProperty.Register(nameof(AreMinAndMaxSelectedDatesDistinct), typeof(bool), typeof(DateRangeSelector), new PropertyMetadata(false));
-        
+
+
+        private void BtnOk_Click(object sender, RoutedEventArgs e)
+        {
+            DateRangeSelected?.Invoke(this, new DateRangeEventArgs(SelectedMinDateTimeMs, SelectedMaxDateTimeMs));
+        }
+
+        private void BtnCancel_Click(object sender, RoutedEventArgs e)
+        {
+            DateRangeSelected?.Invoke(this, new DateRangeEventArgs(SelectedMinDateTimeMs, SelectedMaxDateTimeMs));
+        }
     }
 }

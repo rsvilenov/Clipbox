@@ -3,9 +3,11 @@ using Clipbox.Core.Search;
 using Clipbox.Core.Search.SearchTerms;
 using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.Utils;
+using Clipbox.Views.EventArgsClasses;
 using Clipbox.Win32;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -19,8 +21,6 @@ namespace Clipbox.Views
     /// </summary>
     public partial class FilterBand : UserControl
     {
-        public event EventHandler DateRangeSelectorOpenRequested;
-
         public FilterBand()
         {
             InitializeComponent();
@@ -42,7 +42,16 @@ namespace Clipbox.Views
 
         public static readonly DependencyProperty SourceMachineUniqueIdsProperty =
             DependencyProperty.Register(nameof(SourceMachineUniqueIds), typeof(AsyncObservableCollection<string>), typeof(FilterBand), new PropertyMetadata(new AsyncObservableCollection<string>()));
+
+
+
+
+        public List<double> UniqueDatesOfItemsMs { get; private set; }
         
+        public void SetUniqueDatesOfItemsMs(IEnumerable<double> datesMs)
+        {
+            UniqueDatesOfItemsMs = new List<double>(datesMs);
+        }
 
         private void RebuildSearchTermCollection()
         {
@@ -223,7 +232,34 @@ namespace Clipbox.Views
 
         private void ToggleDateRangeSelectionButton_Checked(object sender, RoutedEventArgs e)
         {
-            DateRangeSelectorOpenRequested?.Invoke(this, new EventArgs());
+            Popup popup = new Popup
+            {
+                PlacementTarget = Window.GetWindow(this),
+                Placement = PlacementMode.Center,
+                MinWidth = 450,
+                MinHeight = 200
+            };
+
+
+            var dateRangeSelector = new DateRangeSelector
+            {
+                DateTimeMsCollection = new ObservableCollection<double>(UniqueDatesOfItemsMs)
+            };
+
+            popup.Child = dateRangeSelector;
+
+            EventHandler<DateRangeEventArgs> dateRangeSelectedEventHandler = null;
+
+            dateRangeSelectedEventHandler = new EventHandler<DateRangeEventArgs>
+                ((s, args) => 
+            {
+                popup.IsOpen = false;
+                dateRangeSelector.DateRangeSelected -= dateRangeSelectedEventHandler;
+            });
+
+            dateRangeSelector.DateRangeSelected += dateRangeSelectedEventHandler;
+            
+            popup.IsOpen = true;
         }
     }
 }

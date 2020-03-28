@@ -37,7 +37,7 @@ namespace Clipbox.Views
     public partial class MainViewClipboardContents : ClipboardViewControlBase, IDisposable
     {
         private MainViewClipboardContentsViewModel _viewModel;
-        
+
         public event EventHandler<SetToClipboardEventArgs> SetItemsToClipboardRequested;
 
         public event EventHandler CloseMainWindowRequested;
@@ -52,13 +52,13 @@ namespace Clipbox.Views
 
         public static readonly DependencyProperty AreFadeAnimationsEnabledProperty =
             DependencyProperty.Register(nameof(AreFadeAnimationsEnabled), typeof(bool), typeof(MainViewClipboardContents), new PropertyMetadata(false));
-        
+
         public bool IsShowingOfPostSelectionToolboxEnabled
         {
             get { return (bool)GetValue(IsLoadingOfPostSelectionToolboxEnabledProperty); }
             set { SetValue(IsLoadingOfPostSelectionToolboxEnabledProperty, value); }
         }
-        
+
         public static readonly DependencyProperty IsLoadingOfPostSelectionToolboxEnabledProperty =
             DependencyProperty.Register(nameof(IsShowingOfPostSelectionToolboxEnabled), typeof(bool), typeof(MainViewClipboardContents), new PropertyMetadata(false));
 
@@ -97,10 +97,10 @@ namespace Clipbox.Views
         /// </summary>
         private volatile bool _isDisposing;
 
-        public MainViewClipboardContents(MainViewClipboardContentsViewModel vm, 
-            UIExtentionContainer container, 
+        public MainViewClipboardContents(MainViewClipboardContentsViewModel vm,
+            UIExtentionContainer container,
             ISettingsService settingsService)
-            : base (container, settingsService)
+            : base(container, settingsService)
         {
             InitializeComponent();
             _viewModel = vm;
@@ -121,9 +121,9 @@ namespace Clipbox.Views
             // this setting should not change while this view is open, so no SettingChanged subscription is needed.
             AreFadeAnimationsEnabled = settingsService.GetSetting<bool>(SettingsKeys.AreFadeAnimationsEnabled);
 
-            
+
             int numOfNotYetVisibleRowsToPreload = settingsService.GetSetting<int>(SettingsKeys.NumOfNotYetVisibleRowsToPreload);
-             
+
             if (numOfNotYetVisibleRowsToPreload < 0)
             {
                 throw new InvalidOperationException($"Setting {nameof(SettingsKeys.NumOfNotYetVisibleRowsToPreload)} should be equal to 0 or greater than 0.");
@@ -157,8 +157,6 @@ namespace Clipbox.Views
             }
         }
 
-        private IEnumerable<string> _allClipboardItemIdsForAllPages = null;
-
         private void LoadContents(int startIndex = -1, int count = -1)
         {
             if (!(SynchronizationContext.Current is DispatcherSynchronizationContext))
@@ -169,7 +167,7 @@ namespace Clipbox.Views
             _viewModel.ClipboardViewItemWrappers.EnableSyncForCurrentUIThread();
             IEnumerable<string> clipboardItemIds = null;
             IReadOnlyCollection<string> removedClipboardItemIds = null;
-            
+
             LoadingPopupGoverner.OpenPopup(Window.GetWindow(this));
 
             int allMatchingClipboardItemIdCount = 0;
@@ -178,16 +176,24 @@ namespace Clipbox.Views
                 IEnumerable<string> allMatchingClipboardItemIds = null;
                 PerformDisposeSafeOperation
                 (
-                    () => allMatchingClipboardItemIds = _viewModel.GetClipboardItemIds(_searchTerms) // maybe pass filters to this method later
+                    () =>
+                    {
+                        allMatchingClipboardItemIds = _viewModel.GetClipboardItemIds(_searchTerms); // maybe pass filters to this method later
+
+                        // if it is the first time we load the contents, pass the unique dates to the filter band
+                        if (filterBand.UniqueDatesOfItemsMs?.Any() != true && _searchTerms?.Any() != true)
+                        {
+                            filterBand.SetUniqueDatesOfItemsMs(GetUniqueDatesForItems(allMatchingClipboardItemIds));
+                        }
+                    }
                 );
 
                 allMatchingClipboardItemIdCount = allMatchingClipboardItemIds.Count();
-                _allClipboardItemIdsForAllPages = new List<string>(allMatchingClipboardItemIds);
 
                 clipboardItemIds = allMatchingClipboardItemIds
                 .Skip(startIndex == -1 ? 0 : startIndex)
                 .Take(count == -1 ? allMatchingClipboardItemIdCount : count);
-                
+
                 base.PerformHousekeeping(clipboardItemIds, out removedClipboardItemIds);
 
             }).ContinueWith((t) =>
@@ -209,7 +215,7 @@ namespace Clipbox.Views
                         {
                             // close the loading popup
                             LoadingPopupGoverner.ClosePopup();
-                            
+
                             MainListViewContainer.Visibility = Visibility.Visible;
                             // we should also show the top and side bars, so that the
                             // user knows that what is shown on the screen is actually
@@ -239,6 +245,19 @@ namespace Clipbox.Views
             TaskScheduler.FromCurrentSynchronizationContext());
         }
 
+        private IEnumerable<double> GetUniqueDatesForItems(IEnumerable<string> allMatchingClipboardItemIds)
+        {
+            var uniqueDaysMsCollection = allMatchingClipboardItemIds
+                                        .Where(str => str.Contains('#')) // '#' is the separator between the ticks (utc) and the id
+                                        .Select(str => str.Substring(0, str.IndexOf('#')))
+                                        .Where(str => str.All(c => char.IsNumber(c)))
+                                        .Distinct()
+                                        .Select(ticks => new DateTime(long.Parse(ticks)).Date) // get the utc date
+                                        .Select(date => (double)(date - new DateTime(1970, 1, 1)).TotalMilliseconds)
+                                        .Distinct();
+            return uniqueDaysMsCollection;
+        }
+
         public void ScheduleLoadingOfViewItem(string clipboardItemId)
         {
             // run the slow-running operations in a separate task
@@ -256,7 +275,7 @@ namespace Clipbox.Views
                         // by the time this task executes, the item may has been filtered out by the search or the filters...
                         return;
                     }
-                    
+
                     viewItem = _viewModel.GetViewItem(clipboardItemId, base.MonitorDimensions);
                     _viewModel.TryGetPreviewDimensions(base.MonitorDimensions, wrapper, out cvItemDimInfo);
                 });
@@ -282,19 +301,19 @@ namespace Clipbox.Views
             // if the task has not already started, do not start it.
             _cancellableTaskManager.CancelStartingOfScheduledTask(taskId: clipboardItemId);
         }
-        
+
 
         protected override void Dispose(bool disposing)
         {
             _isDisposing = true;
-            
+
             _uiExtentionGenerationSlidingTimer.Dispose();
 
             if (MainListView != null)
             {
                 MainListView.Dispose();
             }
-            
+
             _viewModel.Dispose();
             _viewModel = null;
 
@@ -310,7 +329,7 @@ namespace Clipbox.Views
         {
             return uiExtentionContainer;
         }
-        
+
         private void SetToClipboardButton_Click(object sender, RoutedEventArgs e)
         {
             if (MainListView.AreSelectedItemsCombinable)
@@ -324,7 +343,7 @@ namespace Clipbox.Views
             deleteConfirmationPopup.IsOpen = true;
             this.IsEnabled = false;
         }
-        
+
         private void DeleteConfirmationPopup_DialogAnswered(object sender, Dialog.EventArgsClasses.DialogAnswerEventArgs e)
         {
             try
@@ -366,7 +385,7 @@ namespace Clipbox.Views
             }
         }
 
-        
+
         private void SetSelectedItemsToClipboard()
         {
             if (!MainListView.AreSelectedItemsCombinable)
@@ -388,7 +407,7 @@ namespace Clipbox.Views
                 wrappers.AddRange(MainListView.SelectedItems
                         .Cast<ClipboardViewItemWrapper>());
             }
-            
+
             //TODO: notify the user and close the window
             foreach (ClipboardViewItemWrapper wrapper in wrappers)
             {
@@ -422,7 +441,7 @@ namespace Clipbox.Views
                 }));
             },
             TaskScheduler.FromCurrentSynchronizationContext());
-            
+
         }
 
         private void MainListView_ClipboardItemContentControl_MouseDoubleClickDetection_DoubleClickDetected(object sender, EventArgs e)
@@ -515,7 +534,7 @@ namespace Clipbox.Views
         }
 
 
-        
+
         /// <summary>
         /// This method contains some really questionable code, but these days I am out of shape.
         /// </summary>
@@ -538,7 +557,7 @@ namespace Clipbox.Views
             // unselet all selected items, including the one that we are going to delete
             MainListView.UnselectAll();
             MainListView.UnselectMultiItemSubItems();
-            
+
             // disable the entire control
             this.IsEnabled = false;
 
@@ -551,7 +570,7 @@ namespace Clipbox.Views
 
             // set the popup location to that of the selected listview item
             deleteSingleItemConfirmationPopup.PlacementTarget = selectedListViewItem;
-                
+
             // try to place the popup at the bottom of the item
             deleteSingleItemConfirmationPopup.Placement = PlacementMode.Bottom;
 
@@ -574,18 +593,18 @@ namespace Clipbox.Views
                 {
                     // if the user clicks No, the listview item will remain in the
                     // view, so we need to make it look as before - with its previous border brush.
-                    Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, 
+                    Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle,
                         new Action(() => selectedListViewItem.BorderBrush = oldBorderBrush));
                 }
             };
 
             deleteSingleItemConfirmationPopup.DialogAnswered += answerHandler;
-            
+
             // declare an event handler that will set the reset event upon closing the view,
             // so that we can still execute the cleanup code if the user closes the view
             // while the popup is still open.
             DependencyPropertyChangedEventHandler visHandler = (s, args) => dialogMre.Set();
-            
+
             this.IsVisibleChanged += visHandler;
 
             // wait for the reset event in another task, so we do not block the ui thread 
@@ -699,7 +718,7 @@ namespace Clipbox.Views
         {
             UpdateListViewWithSearchTerms();
         }
-        
+
         private void FilterBand_SearchTermsChanged(object sender, EventArgs e)
         {
             UpdateListViewWithSearchTerms();
@@ -722,8 +741,8 @@ namespace Clipbox.Views
                 }
 
                 _searchTerms.AddRange(filterBand.SearchTerms);
-                
-                
+
+
                 _viewModel.ClipboardViewItemWrappers.Clear();
 
                 LoadContents(0, _maxNumOfItemsToLoadAtOnce);
@@ -756,31 +775,13 @@ namespace Clipbox.Views
                 }
             }
         }
-        
+
 
         private void MainListView_LoadMoreItemsRequested(object sender, EventArgs e)
         {
             MainListViewContainer.Visibility = Visibility.Hidden;
 
             LoadContents(MainListView.Items.Count, _maxNumOfItemsToLoadAtOnce);
-        }
-
-        private void FilterBand_DateRangeSelectorOpenRequested(object sender, EventArgs e)
-        {
-            dateRangeSelectionPopup.IsOpen = true;
-            this.IsEnabled = false;
-            
-                
-                var uniqueDaysMsCollection = _allClipboardItemIdsForAllPages
-                .Where(str => str.Contains('#')) // '#' is the separator between the ticks and the id
-                .Select(str => str.Substring(0, str.IndexOf('#')))
-                .Where(str => str.All(c => char.IsNumber(c)))
-                .Distinct()
-                .Select(ticks => new DateTime(long.Parse(ticks)).Date)
-                .Select(date => (double)(date - new DateTime(1970, 1, 1)).TotalMilliseconds)
-                .Distinct();
-
-            dateRangeSelector.DateTimeMsCollection = new ObservableCollection<double>(uniqueDaysMsCollection);
         }
     }
 }
