@@ -21,7 +21,7 @@
         <Grid Margin="15" Background="{DynamicResource TaskbarColorBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition />
-                <RowDefinition />
+                <RowDefinition Height="1.3*" />
                 <RowDefinition />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
@@ -70,32 +70,33 @@
                 Grid.Row="1"
                 Grid.ColumnSpan="2"
                 Margin="15,25,15,0"
+                VerticalAlignment="Top"
                 LowerValue="{Binding SelectedMinDateTimeMs, Mode=OneWayToSource}"
                 Maximum="{Binding MaxDateTimeMs}"
                 Minimum="{Binding MinDateTimeMs}"
                 UpperValue="{Binding SelectedMaxDateTimeMs, Mode=OneWayToSource}" />
 
             <Button
-                x:Name="btnYes"
+                x:Name="btnOk"
                 Grid.Row="2"
                 Grid.Column="0"
                 Width="70"
                 Height="30"
                 Margin="5"
-                Content="Yes"
+                Content="OK"
                 Foreground="White"
-                Style="{DynamicResource BtnYes}" />
+                Style="{DynamicResource BtnOk}" />
 
             <Button
-                x:Name="btnNo"
+                x:Name="btnCancel"
                 Grid.Row="2"
                 Grid.Column="1"
                 Width="70"
                 Height="30"
                 Margin="5"
-                Content="No"
+                Content="Cancel"
                 Foreground="White"
-                Style="{DynamicResource BtnNo}" />
+                Style="{DynamicResource BtnCancel}" />
         </Grid>
     </Border>
 </UserControl>
