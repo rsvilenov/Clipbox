@@ -132,7 +132,8 @@ namespace Clipbox.Views
 
         private void BtnCancel_Click(object sender, RoutedEventArgs e)
         {
-            DateRangeSelected?.Invoke(this, new DateRangeEventArgs(SelectedMinDateTimeMs, SelectedMaxDateTimeMs));
+            // on cancel, return -1 for both ends of the range
+            DateRangeSelected?.Invoke(this, new DateRangeEventArgs(-1, -1));
         }
     }
 }

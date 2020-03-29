@@ -45,11 +45,28 @@ namespace Clipbox.Views
 
 
 
+        private double StartDateMs
+        {
+            get { return (double)GetValue(StartDateMsProperty); }
+            set { SetValue(StartDateMsProperty, value); }
+        }
 
+        private static readonly DependencyProperty StartDateMsProperty =
+            DependencyProperty.Register(nameof(StartDateMs), typeof(double), typeof(FilterBand), new PropertyMetadata(-1d));
+
+        
+        private double EndDateMs
+        {
+            get { return (double)GetValue(EndDateMsProperty); }
+            set { SetValue(EndDateMsProperty, value); }
+        }
+
+        private static readonly DependencyProperty EndDateMsProperty =
+            DependencyProperty.Register(nameof(EndDateMs), typeof(double), typeof(FilterBand), new PropertyMetadata(-1d));
+
+        
         public List<double> UniqueDatesOfItemsMs { get; private set; }
-
-        private Tuple<double, double> _selectedDateRangeMsUtc;
-
+        
         public void SetUniqueDatesOfItemsMs(IEnumerable<double> datesMs)
         {
             UniqueDatesOfItemsMs = new List<double>(datesMs);
@@ -57,7 +74,7 @@ namespace Clipbox.Views
 
         private void RebuildSearchTermCollection()
         {
-            if (!(TypeExpander.IsExpanded || CloudExpander.IsExpanded) && !DateRangeToggled && _selectedDateRangeMsUtc == null)
+            if (!(TypeExpander.IsExpanded || CloudExpander.IsExpanded) && !DateRangeToggled)
             {
                 return;
             }
@@ -130,14 +147,14 @@ namespace Clipbox.Views
 
             if (DateRangeToggled)
             {
-                if (_selectedDateRangeMsUtc != null)
+                if (StartDateMs > -1 && EndDateMs > -1)
                 {
                     long minUtcTicks = (new DateTime(1970, 1, 1))
-                    .AddMilliseconds(_selectedDateRangeMsUtc.Item1)
+                    .AddMilliseconds(StartDateMs)
                     .Ticks;
 
                     long maxUtcTicks = (new DateTime(1970, 1, 1))
-                        .AddMilliseconds(_selectedDateRangeMsUtc.Item2)
+                        .AddMilliseconds(EndDateMs)
                         .AddDays(1)
                         .Ticks;
 
@@ -154,7 +171,8 @@ namespace Clipbox.Views
             }
             else
             {
-                _selectedDateRangeMsUtc = null;
+                StartDateMs = -1;
+                EndDateMs = -1;
             }
 
             SearchTermsChanged?.Invoke(this, new EventArgs());
@@ -293,8 +311,8 @@ namespace Clipbox.Views
             var dateRangeSelector = new DateRangeSelector
             {
                 DateTimeMsCollection = new ObservableCollection<double>(UniqueDatesOfItemsMs),
-                SelectedMinDateTimeMs = _selectedDateRangeMsUtc?.Item1 ?? UniqueDatesOfItemsMs?.Min() ?? 0,
-                SelectedMaxDateTimeMs = _selectedDateRangeMsUtc?.Item2 ?? UniqueDatesOfItemsMs?.Max() ?? 0
+                SelectedMinDateTimeMs = UniqueDatesOfItemsMs?.Min() ?? 0,
+                SelectedMaxDateTimeMs = UniqueDatesOfItemsMs?.Max() ?? 0
             };
 
             popup.Child = dateRangeSelector;
@@ -302,15 +320,23 @@ namespace Clipbox.Views
             EventHandler<DateRangeEventArgs> dateRangeSelectedEventHandler = null;
 
             dateRangeSelectedEventHandler = new EventHandler<DateRangeEventArgs>
-                ((s, args) => 
+                ((_, dialogArgs) => 
             {
                 popup.IsOpen = false;
                 dateRangeSelector.DateRangeSelected -= dateRangeSelectedEventHandler;
-                
 
-                _selectedDateRangeMsUtc = new Tuple<double, double>(dateRangeSelector.SelectedMinDateTimeMs, dateRangeSelector.SelectedMaxDateTimeMs);
-
-                RebuildSearchTermCollection();
+                if (dialogArgs.StartMs > -1 && dialogArgs.EndMs > -1)
+                {
+                    StartDateMs = dialogArgs.StartMs;
+                    EndDateMs = dialogArgs.EndMs;
+                    RebuildSearchTermCollection();
+                }
+                else
+                {
+                    StartDateMs = -1;
+                    EndDateMs = -1;
+                    DateRangeToggled = false;
+                }
             });
 
             dateRangeSelector.DateRangeSelected += dateRangeSelectedEventHandler;
