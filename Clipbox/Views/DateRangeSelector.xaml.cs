@@ -33,7 +33,7 @@ namespace Clipbox.Views
             Task.Run(() =>
             {
                 var dateTimeMsCollection = new ObservableCollection<double>(GetUniqueDatesForItems());
-                System.Threading.Thread.Sleep(5000);
+
                 Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background,
                     new Action(() =>
                     {
