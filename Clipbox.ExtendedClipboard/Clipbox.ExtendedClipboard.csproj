@@ -55,6 +55,7 @@
     <Compile Include="EventArgs\ItemFetchingEventArgs.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Interfaces\IClipboardEventProvider.cs" />
+    <Compile Include="Interfaces\IClipboardItemsDataProvider.cs" />
     <Compile Include="Interfaces\IClipboardManager.cs" />
     <Compile Include="OleInfrastructure\OleDataTransferService.cs" />
     <Compile Include="OleInfrastructure\OleDispatcher.cs" />

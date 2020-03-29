@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace Clipbox.ExtendedClipboard.Interfaces
 {
-    public interface IClipboardManager : IDisposable
+    public interface IClipboardManager : IClipboardItemsDataProvider, IDisposable
     {
         // TODO: interface segregation principle...
 

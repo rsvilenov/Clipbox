@@ -41,9 +41,7 @@ namespace Clipbox.Views
         public event EventHandler<SetToClipboardEventArgs> SetItemsToClipboardRequested;
 
         public event EventHandler CloseMainWindowRequested;
-
-
-
+        
         public bool AreFadeAnimationsEnabled
         {
             get { return (bool)GetValue(AreFadeAnimationsEnabledProperty); }
@@ -176,16 +174,7 @@ namespace Clipbox.Views
                 IEnumerable<string> allMatchingClipboardItemIds = null;
                 PerformDisposeSafeOperation
                 (
-                    () =>
-                    {
-                        allMatchingClipboardItemIds = _viewModel.GetClipboardItemIds(_searchTerms); // maybe pass filters to this method later
-
-                        // if it is the first time we load the contents, pass the unique dates to the filter band
-                        if (filterBand.UniqueDatesOfItemsMs?.Any() != true && _searchTerms?.Any() != true)
-                        {
-                            filterBand.SetUniqueDatesOfItemsMs(GetUniqueDatesForItems(allMatchingClipboardItemIds));
-                        }
-                    }
+                    () => allMatchingClipboardItemIds = _viewModel.GetClipboardItemIds(_searchTerms) // maybe pass filters to this method later
                 );
 
                 allMatchingClipboardItemIdCount = allMatchingClipboardItemIds.Count();
@@ -245,18 +234,7 @@ namespace Clipbox.Views
             TaskScheduler.FromCurrentSynchronizationContext());
         }
 
-        private IEnumerable<double> GetUniqueDatesForItems(IEnumerable<string> allMatchingClipboardItemIds)
-        {
-            var uniqueDaysMsCollection = allMatchingClipboardItemIds
-                                        .Where(str => str.Contains('#')) // '#' is the separator between the ticks (utc) and the id
-                                        .Select(str => str.Substring(0, str.IndexOf('#')))
-                                        .Where(str => str.All(c => char.IsNumber(c)))
-                                        .Distinct()
-                                        .Select(ticks => new DateTime(long.Parse(ticks)).Date) // get the utc date
-                                        .Select(date => (double)(date - new DateTime(1970, 1, 1)).TotalMilliseconds)
-                                        .Distinct();
-            return uniqueDaysMsCollection;
-        }
+        
 
         public void ScheduleLoadingOfViewItem(string clipboardItemId)
         {

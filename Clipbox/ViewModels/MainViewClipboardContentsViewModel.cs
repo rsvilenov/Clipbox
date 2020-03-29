@@ -32,6 +32,8 @@ namespace Clipbox.ViewModels
             _cloudSyncService.ItemSynced += _cloudSyncService_ItemSynced;
 
             IsCloudSyncAvailable = CheckIsCloudServiceAvailable();
+
+            ClipboardItemsDataProvider = clipboardManager;
         }
         
         private void _cloudSyncService_ItemSynced(object sender, Services.EventArgsClasses.SyncEventArgs e)
@@ -96,6 +98,13 @@ namespace Clipbox.ViewModels
             {
                 wrapper.SyncStatus = CloudSyncStatus.Syncing;
             }
+        }
+
+        private IClipboardItemsDataProvider _clipboardItemsDataProvider;
+        public IClipboardItemsDataProvider ClipboardItemsDataProvider
+        {
+            get { return _clipboardItemsDataProvider; }
+            set { SetField(ref _clipboardItemsDataProvider, value); }
         }
 
         public IEnumerable<string> GetClipboardItemIds(IEnumerable<ISearchTerm> searchTerms)

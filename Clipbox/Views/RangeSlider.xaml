@@ -35,12 +35,15 @@
                 Width="18"
                 Height="18"
                 SnapsToDevicePixels="True"
-                Stroke="White"
                 StrokeThickness="2">
                 <Ellipse.Style>
                     <Style TargetType="{x:Type Ellipse}">
                         <Setter Property="Fill" Value="{DynamicResource TaskbarColorBrush}" />
+                        <Setter Property="Stroke" Value="White" />
                         <Style.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Stroke" Value="Gray" />
+                            </Trigger>
                             <Trigger Property="IsMouseOver" Value="True">
                                 <Setter Property="Effect">
                                     <Setter.Value>
@@ -129,8 +132,18 @@
             Height="3"
             Margin="5,0,5,0"
             VerticalAlignment="Center"
-            BorderBrush="White"
-            BorderThickness="0,3,0,0" />
+            BorderThickness="0,3,0,0">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="BorderBrush" Value="White" />
+                    <Style.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="BorderBrush" Value="LightGray" />
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+        </Border>
 
         <Slider
             x:Name="LowerSlider"

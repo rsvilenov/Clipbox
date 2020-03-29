@@ -375,6 +375,7 @@
             <views:FilterBand
                 x:Name="filterBand"
                 Grid.Row="0"
+                ClipboardItemsDataProvider="{Binding ClipboardItemsDataProvider}"
                 SearchTermsChanged="FilterBand_SearchTermsChanged" />
 
             <Button

@@ -1,6 +1,7 @@
 ﻿using Clipbox.Core.ClipboardContent.Enums;
 using Clipbox.Core.Search;
 using Clipbox.Core.Search.SearchTerms;
+using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.Utils;
 using Clipbox.Views.EventArgsClasses;
@@ -33,6 +34,17 @@ namespace Clipbox.Views
         {
             ((FilterBand)d).RebuildSearchTermCollection();
         }
+
+        
+        public IClipboardItemsDataProvider ClipboardItemsDataProvider
+        {
+            get { return (IClipboardItemsDataProvider)GetValue(ClipboardItemsDataProviderProperty); }
+            set { SetValue(ClipboardItemsDataProviderProperty, value); }
+        }
+
+        public static readonly DependencyProperty ClipboardItemsDataProviderProperty =
+            DependencyProperty.Register(nameof(ClipboardItemsDataProvider), typeof(IClipboardItemsDataProvider), typeof(FilterBand), new PropertyMetadata(null));
+        
 
         public AsyncObservableCollection<string> SourceMachineUniqueIds
         {
@@ -310,9 +322,7 @@ namespace Clipbox.Views
 
             var dateRangeSelector = new DateRangeSelector
             {
-                DateTimeMsCollection = new ObservableCollection<double>(UniqueDatesOfItemsMs),
-                SelectedMinDateTimeMs = UniqueDatesOfItemsMs?.Min() ?? 0,
-                SelectedMaxDateTimeMs = UniqueDatesOfItemsMs?.Max() ?? 0
+                ClipboardItemsDataProvider = this.ClipboardItemsDataProvider
             };
 
             popup.Child = dateRangeSelector;
@@ -343,5 +353,7 @@ namespace Clipbox.Views
             
             popup.IsOpen = true;
         }
+
+        
     }
 }

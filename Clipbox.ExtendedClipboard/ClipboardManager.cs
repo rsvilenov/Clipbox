@@ -732,6 +732,24 @@ namespace Clipbox.ExtendedClipboard
             }
         }
 
+        public IReadOnlyList<long> GetAllCreationTimestampTicksUtc()
+        {
+            return _clipboardItems
+                .Select(ci => ci.TimestampInfo.EntryDateUtcTicks)
+                .ToList()
+                .AsReadOnly();
+        }
+
+        public IReadOnlyDictionary<string, byte[]> GetAllSourceAppsAndIcons()
+        {
+            return _clipboardItems.Select(ci => ci.Source.SourceWindowInfo)
+                .GroupBy(swi => swi.ApplicationPath)
+                .Select(g => g.First())
+                .ToDictionary(k => k.ApplicationPath, v => (byte[])v.Icon.Clone()); 
+            // this is a newly created dictionary and modifying it does not affect the original values,
+            // so there is no point in converting it to a ReadOnlyDictionary.
+        }
+
         #endregion
     }
 }

@@ -1,8 +1,11 @@
-﻿using Clipbox.Views.EventArgsClasses;
+﻿using Clipbox.ExtendedClipboard.Interfaces;
+using Clipbox.Views.EventArgsClasses;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -20,15 +23,59 @@ namespace Clipbox.Views
         {
             InitializeComponent();
             this.mainBorder.DataContext = this;
+            Loaded += DateRangeSelector_Loaded;
         }
 
-        public ObservableCollection<double> DateTimeMsCollection
+        private void DateRangeSelector_Loaded(object sender, RoutedEventArgs e)
+        {
+            IsLoading = true;
+
+            Task.Run(() =>
+            {
+                var dateTimeMsCollection = new ObservableCollection<double>(GetUniqueDatesForItems());
+                System.Threading.Thread.Sleep(5000);
+                Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background,
+                    new Action(() =>
+                    {
+                        DateTimeMsCollection = dateTimeMsCollection;
+                        SelectedMinDateTimeMs = DateTimeMsCollection?.Min() ?? 0;
+                        SelectedMaxDateTimeMs = DateTimeMsCollection?.Max() ?? 0;
+                        IsLoading = false;
+                    }));
+            });
+        }
+
+        private IEnumerable<double> GetUniqueDatesForItems()
+        {
+            var uniqueDaysMsCollection = ClipboardItemsDataProvider
+                .GetAllCreationTimestampTicksUtc()
+                .Distinct()
+                .Select(ticks => new DateTime(ticks).Date) // get the utc date
+                .Select(date => (double)(date - new DateTime(1970, 1, 1)).TotalMilliseconds)
+                .Distinct();
+            
+            return uniqueDaysMsCollection;
+        }
+        
+        private bool IsLoading
+        {
+            get { return (bool)GetValue(IsLoadingProperty); }
+            set { SetValue(IsLoadingProperty, value); }
+        }
+
+        private static readonly DependencyProperty IsLoadingProperty =
+            DependencyProperty.Register(nameof(IsLoading), typeof(bool), typeof(DateRangeSelector), new PropertyMetadata(false));
+
+        
+        public IClipboardItemsDataProvider ClipboardItemsDataProvider { get; set; }
+        
+        private ObservableCollection<double> DateTimeMsCollection
         {
             get { return (ObservableCollection<double>)GetValue(DateTimeMsCollectionProperty); }
             set { SetValue(DateTimeMsCollectionProperty, value); }
         }
         
-        public static readonly DependencyProperty DateTimeMsCollectionProperty =
+        private static readonly DependencyProperty DateTimeMsCollectionProperty =
             DependencyProperty.Register(nameof(DateTimeMsCollection), typeof(ObservableCollection<double>), typeof(DateRangeSelector), new PropertyMetadata(null, DateTimeMsCollection_PropertyChanged));
 
         private static void DateTimeMsCollection_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
