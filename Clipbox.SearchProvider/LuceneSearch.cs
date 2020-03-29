@@ -161,6 +161,16 @@ namespace Clipbox.SearchProvider
                     //{
                     //    subQuery.Add(ConstructSpanNearQuery(category, part, appendTrailingWildcard: true), Occur.SHOULD);
                     //}
+                    else if (searchTerm is MinCreationDateSearchTerm minCreationDateSt)
+                    {
+                        var lowerRange = new TermRangeQuery(category, minCreationDateSt.Values.Single().ToString(), null, true, true);
+                        subQuery.Add(lowerRange, Occur.MUST);
+                    }
+                    else if (searchTerm is MaxCreationDateSearchTerm maxCreationDateSt)
+                    {
+                        var upperRange = new TermRangeQuery(category, null, maxCreationDateSt.Values.Single().ToString(), true, true);
+                        subQuery.Add(upperRange, Occur.MUST);
+                    }
                     else
                     {
                         subQuery.Add(ConstructSpanNearQuery(category, part, appendTrailingWildcard: false), Occur.SHOULD);

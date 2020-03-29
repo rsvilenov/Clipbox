@@ -72,10 +72,10 @@
                 Grid.ColumnSpan="2"
                 Margin="15,25,15,0"
                 VerticalAlignment="Top"
-                LowerValue="{Binding SelectedMinDateTimeMs, Mode=OneWayToSource}"
+                LowerValue="{Binding SelectedMinDateTimeMs, Mode=TwoWay}"
                 Maximum="{Binding MaxDateTimeMs}"
                 Minimum="{Binding MinDateTimeMs}"
-                UpperValue="{Binding SelectedMaxDateTimeMs, Mode=OneWayToSource}" />
+                UpperValue="{Binding SelectedMaxDateTimeMs, Mode=TwoWay}" />
 
             <Button
                 x:Name="btnOk"

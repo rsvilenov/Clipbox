@@ -33,7 +33,7 @@ namespace Clipbox.Views
         {
             ((FilterBand)d).RebuildSearchTermCollection();
         }
-        
+
         public AsyncObservableCollection<string> SourceMachineUniqueIds
         {
             get { return (AsyncObservableCollection<string>)GetValue(SourceMachineUniqueIdsProperty); }
@@ -47,7 +47,9 @@ namespace Clipbox.Views
 
 
         public List<double> UniqueDatesOfItemsMs { get; private set; }
-        
+
+        private Tuple<double, double> _selectedDateRangeMsUtc;
+
         public void SetUniqueDatesOfItemsMs(IEnumerable<double> datesMs)
         {
             UniqueDatesOfItemsMs = new List<double>(datesMs);
@@ -55,7 +57,7 @@ namespace Clipbox.Views
 
         private void RebuildSearchTermCollection()
         {
-            if (!(TypeExpander.IsExpanded || CloudExpander.IsExpanded))
+            if (!(TypeExpander.IsExpanded || CloudExpander.IsExpanded) && !DateRangeToggled && _selectedDateRangeMsUtc == null)
             {
                 return;
             }
@@ -82,10 +84,10 @@ namespace Clipbox.Views
                 {
                     contentClasses.Add(ClipboardContentClass.GeneralContent);
                 }
-                
+
                 SearchTerms.Add(new ClipboardContentTypeSearchTerm(contentClasses));
             }
-            
+
             if (LocalMachineSourceSelected || CloudSourceSelected)
             {
                 bool areBothSelected = LocalMachineSourceSelected && CloudSourceSelected;
@@ -112,7 +114,7 @@ namespace Clipbox.Views
                             Core.Search.Enums.TermOccurrence.NON_OBLIGATORY :
                             Core.Search.Enums.TermOccurrence.NON_PRESENT
                     };
-                    
+
                     SearchTerms.Add(smUidTerm);
                 }
 
@@ -125,10 +127,39 @@ namespace Clipbox.Views
                     SearchTerms.Add(new ClipboardContentTypeSearchTerm(allContentClasses));
                 }
             }
-            
+
+            if (DateRangeToggled)
+            {
+                if (_selectedDateRangeMsUtc != null)
+                {
+                    long minUtcTicks = (new DateTime(1970, 1, 1))
+                    .AddMilliseconds(_selectedDateRangeMsUtc.Item1)
+                    .Ticks;
+
+                    long maxUtcTicks = (new DateTime(1970, 1, 1))
+                        .AddMilliseconds(_selectedDateRangeMsUtc.Item2)
+                        .AddDays(1)
+                        .Ticks;
+
+                    SearchTerms.Add(new MinCreationDateSearchTerm(new List<long>
+                    {
+                        minUtcTicks
+                    }));
+
+                    SearchTerms.Add(new MaxCreationDateSearchTerm(new List<long>
+                    {
+                        maxUtcTicks
+                    }));
+                }
+            }
+            else
+            {
+                _selectedDateRangeMsUtc = null;
+            }
+
             SearchTermsChanged?.Invoke(this, new EventArgs());
         }
-        
+
         public AsyncObservableCollection<ISearchTerm> SearchTerms
         {
             get { return (AsyncObservableCollection<ISearchTerm>)GetValue(SearchTermsProperty); }
@@ -137,7 +168,7 @@ namespace Clipbox.Views
 
         public static readonly DependencyProperty SearchTermsProperty =
             DependencyProperty.Register(nameof(SearchTerms), typeof(AsyncObservableCollection<ISearchTerm>), typeof(FilterBand), new PropertyMetadata(new AsyncObservableCollection<ISearchTerm>()));
-        
+
         private bool TextTypeSelected
         {
             get { return (bool)GetValue(TextTypeSelectedProperty); }
@@ -145,7 +176,7 @@ namespace Clipbox.Views
         }
 
         private static readonly DependencyProperty TextTypeSelectedProperty =
-            DependencyProperty.Register(nameof(TextTypeSelected), typeof(bool), typeof(FilterBand), 
+            DependencyProperty.Register(nameof(TextTypeSelected), typeof(bool), typeof(FilterBand),
                 new PropertyMetadata(false, (d, p) => RebuildSearchTermCollection(d)));
 
         private bool FileTypeSelected
@@ -198,6 +229,24 @@ namespace Clipbox.Views
             DependencyProperty.Register(nameof(CloudSourceSelected), typeof(bool), typeof(FilterBand),
                 new PropertyMetadata(false, (d, p) => RebuildSearchTermCollection(d)));
 
+        private bool DateRangeToggled
+        {
+            get { return (bool)GetValue(DateRangeToggledProperty); }
+            set { SetValue(DateRangeToggledProperty, value); }
+        }
+
+        private static readonly DependencyProperty DateRangeToggledProperty =
+            DependencyProperty.Register(nameof(DateRangeToggled), typeof(bool), typeof(FilterBand),
+                new PropertyMetadata(false, (d, p) =>
+                {
+                    if (!(bool)p.NewValue)
+                    {
+                        // here we invoke the rebuilding only upon unchecking;
+                        // upon checking the rebuilding is invoked by the Checked event handler of the toggle button.
+                        RebuildSearchTermCollection(d);
+                    }
+                }));
+
         private void TypeExpander_Collapsed(object sender, RoutedEventArgs e)
         {
             UncheckChildToggleButtons((Expander)sender);
@@ -243,7 +292,9 @@ namespace Clipbox.Views
 
             var dateRangeSelector = new DateRangeSelector
             {
-                DateTimeMsCollection = new ObservableCollection<double>(UniqueDatesOfItemsMs)
+                DateTimeMsCollection = new ObservableCollection<double>(UniqueDatesOfItemsMs),
+                SelectedMinDateTimeMs = _selectedDateRangeMsUtc?.Item1 ?? UniqueDatesOfItemsMs?.Min() ?? 0,
+                SelectedMaxDateTimeMs = _selectedDateRangeMsUtc?.Item2 ?? UniqueDatesOfItemsMs?.Max() ?? 0
             };
 
             popup.Child = dateRangeSelector;
@@ -255,6 +306,11 @@ namespace Clipbox.Views
             {
                 popup.IsOpen = false;
                 dateRangeSelector.DateRangeSelected -= dateRangeSelectedEventHandler;
+                
+
+                _selectedDateRangeMsUtc = new Tuple<double, double>(dateRangeSelector.SelectedMinDateTimeMs, dateRangeSelector.SelectedMaxDateTimeMs);
+
+                RebuildSearchTermCollection();
             });
 
             dateRangeSelector.DateRangeSelected += dateRangeSelectedEventHandler;

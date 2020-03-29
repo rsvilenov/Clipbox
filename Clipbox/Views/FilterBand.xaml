@@ -176,6 +176,7 @@
                 <ToggleButton
                     Margin="5,10"
                     Checked="ToggleDateRangeSelectionButton_Checked"
+                    IsChecked="{Binding DateRangeToggled}"
                     Style="{StaticResource dateRangeSelectionToggleButton}" />
 
             </StackPanel>

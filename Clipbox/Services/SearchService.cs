@@ -247,6 +247,12 @@ namespace Clipbox.Services
                 indexUnits.Add(tagUnit);
             }
 
+            CreationDateIndexUnit crUnit = new CreationDateIndexUnit(clipboardItem);
+            if (crUnit.Validate())
+            {
+                indexUnits.Add(crUnit);
+            }
+
 
             indexEntry = new IndexEntry(clipboardItem.Id, indexUnits);
             return true;

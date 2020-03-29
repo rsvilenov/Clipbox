@@ -12,6 +12,7 @@
         /// Text and Description
         /// </summary>
         Text,
-        Tag
+        Tag,
+        CreationDate
     }
 }
