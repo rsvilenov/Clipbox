@@ -189,7 +189,11 @@
 
                 </Expander>
 
-                <ToggleButton Margin="5,10" Style="{StaticResource sourceWindowToggleButton}" />
+                <ToggleButton
+                    Margin="5,10"
+                    Checked="ToggleSourceWindowButton_Checked"
+                    IsChecked="{Binding AppSelectorToggled}"
+                    Style="{StaticResource sourceWindowToggleButton}" />
                 <ToggleButton
                     Margin="5,10"
                     Checked="ToggleDateRangeSelectionButton_Checked"

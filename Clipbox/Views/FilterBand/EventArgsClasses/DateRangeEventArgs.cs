@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Clipbox.Views.EventArgsClasses
+namespace Clipbox.Views.FilterBand.EventArgsClasses
 {
     public class DateRangeEventArgs : EventArgs
     {

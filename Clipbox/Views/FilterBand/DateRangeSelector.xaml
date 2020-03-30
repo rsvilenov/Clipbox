@@ -1,4 +1,4 @@
-﻿<UserControl
+﻿<filterBand:FilterDialogBase
     x:Class="Clipbox.Views.FilterBand.DateRangeSelector"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -115,7 +115,7 @@
                 Width="70"
                 Height="30"
                 Margin="5"
-                Click="BtnOk_Click"
+                Command="{Binding OkClicked}"
                 Content="OK"
                 Foreground="White"
                 IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBooleanConverter}}"
@@ -128,10 +128,10 @@
                 Width="70"
                 Height="30"
                 Margin="5"
-                Click="BtnCancel_Click"
+                Command="{Binding CancelClicked}"
                 Content="Cancel"
                 Foreground="White"
                 Style="{DynamicResource BtnCancel}" />
         </Grid>
     </Border>
-</UserControl>
+</filterBand:FilterDialogBase>

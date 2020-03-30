@@ -5,6 +5,7 @@ using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.Utils;
 using Clipbox.Views.EventArgsClasses;
+using Clipbox.Views.FilterBand.EventArgsClasses;
 using Clipbox.Win32;
 using System;
 using System.Collections.Generic;
@@ -277,6 +278,24 @@ namespace Clipbox.Views.FilterBand
                     }
                 }));
 
+        private bool AppSelectorToggled
+        {
+            get { return (bool)GetValue(AppSelectorToggledProperty); }
+            set { SetValue(AppSelectorToggledProperty, value); }
+        }
+
+        private static readonly DependencyProperty AppSelectorToggledProperty =
+            DependencyProperty.Register(nameof(AppSelectorToggled), typeof(bool), typeof(FilterBand),
+                new PropertyMetadata(false, (d, p) =>
+                {
+                    if (!(bool)p.NewValue)
+                    {
+                        // here we invoke the rebuilding only upon unchecking;
+                        // upon checking the rebuilding is invoked by the Checked event handler of the toggle button.
+                        RebuildSearchTermCollection(d);
+                    }
+                }));
+
         private void TypeExpander_Collapsed(object sender, RoutedEventArgs e)
         {
             UncheckChildToggleButtons((Expander)sender);
@@ -320,10 +339,7 @@ namespace Clipbox.Views.FilterBand
             };
 
 
-            var dateRangeSelector = new DateRangeSelector
-            {
-                ClipboardItemsDataProvider = this.ClipboardItemsDataProvider
-            };
+            var dateRangeSelector = new DateRangeSelector(this.ClipboardItemsDataProvider);
 
             popup.Child = dateRangeSelector;
 
@@ -354,6 +370,38 @@ namespace Clipbox.Views.FilterBand
             popup.IsOpen = true;
         }
 
-        
+        private void ToggleSourceWindowButton_Checked(object sender, RoutedEventArgs e)
+        {
+            Popup popup = new Popup
+            {
+                PlacementTarget = Window.GetWindow(this),
+                Placement = PlacementMode.Center,
+                MinWidth = 450,
+                MinHeight = 200
+            };
+
+
+            var applicationSelector = new ApplicationSelector(this.ClipboardItemsDataProvider);
+
+            popup.Child = applicationSelector;
+
+            EventHandler<ApplicationInfoEventArgs> appInfoSelectedEventHandler = null;
+
+            appInfoSelectedEventHandler = new EventHandler<ApplicationInfoEventArgs>
+                ((_, dialogArgs) =>
+                {
+                    popup.IsOpen = false;
+                    applicationSelector.AppInfoSelected -= appInfoSelectedEventHandler;
+
+                    if (dialogArgs.CaptionSearchString == null && dialogArgs.SelectedApplicationExeName == null)
+                    {
+                        AppSelectorToggled = false;
+                    }
+                });
+
+            applicationSelector.AppInfoSelected += appInfoSelectedEventHandler;
+
+            popup.IsOpen = true;
+        }
     }
 }

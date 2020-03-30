@@ -117,6 +117,9 @@
     <Compile Include="Views\ClipboardViewItemTile\TileAnimationHelper.cs" />
     <Compile Include="Views\ClipboardViewItemTile\Enums\AnimationPurpose.cs" />
     <Compile Include="Views\ClipboardViewItemTile\IAnimatableItem.cs" />
+    <Compile Include="Views\FilterBand\ApplicationSelector.xaml.cs">
+      <DependentUpon>ApplicationSelector.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\FilterBand\DateRangeSelector.xaml.cs">
       <DependentUpon>DateRangeSelector.xaml</DependentUpon>
     </Compile>
@@ -193,7 +196,8 @@
     <Compile Include="Views\Dialog\Enums\DialogButtons.cs" />
     <Compile Include="Views\Dialog\Enums\DialogTypes.cs" />
     <Compile Include="Views\Dialog\EventArgsClasses\DialogAnswerEventArgs.cs" />
-    <Compile Include="Views\EventArgsClasses\DateRangeEventArgs.cs" />
+    <Compile Include="Views\FilterBand\EventArgsClasses\ApplicationInfoEventArgs.cs" />
+    <Compile Include="Views\FilterBand\EventArgsClasses\DateRangeEventArgs.cs" />
     <Compile Include="Views\EventArgsClasses\SearchRequestEventArgs.cs" />
     <Compile Include="Views\EventArgsClasses\UncombinableItemsEventArgs.cs" />
     <Compile Include="Views\ExpandableSearchBox.xaml.cs">
@@ -202,6 +206,7 @@
     <Compile Include="Views\FilterBand\FilterBand.xaml.cs">
       <DependentUpon>FilterBand.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\FilterBand\FilterDialogBase.cs" />
     <Compile Include="Views\Interfaces\IMainWindow.cs" />
     <Compile Include="Views\Interfaces\ITrayContextMenu.cs" />
     <Compile Include="Views\LoadingIndicatorPopup.xaml.cs">
@@ -291,6 +296,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ClipboardViewItemTile\SingleItemLoading.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\FilterBand\ApplicationSelector.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

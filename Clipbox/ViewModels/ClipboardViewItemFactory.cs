@@ -58,7 +58,7 @@ namespace Clipbox.ViewModels
 
             if (clipboardItem.Source.SourceWindowInfo.Icon != null)
             {
-                viewItem.SourceWindowIcon = BitmapSourceFromBitmapByteArray(clipboardItem.Source.SourceWindowInfo.Icon);
+                viewItem.SourceWindowIcon = Infrastructure.UI.Utils.Imaging.BitmapSourceFromBitmapByteArray(clipboardItem.Source.SourceWindowInfo.Icon);
             }
             else
             {
@@ -92,23 +92,11 @@ namespace Clipbox.ViewModels
                 Text = pito.Text,
                 Description = pito.Description,
                 PreviewGenerationStatus = pito.PreviewGenereationStatus,
-                Image = pito.BitmapData != null ? BitmapSourceFromBitmapByteArray(pito.BitmapData) : null
+                Image = pito.BitmapData != null ? Infrastructure.UI.Utils.Imaging.BitmapSourceFromBitmapByteArray(pito.BitmapData) : null
             };
 
             return cpi;
         }
-
-        private static BitmapSource BitmapSourceFromBitmapByteArray(byte[] bitmapByteArray)
-        {
-            Bitmap bmp;
-            using (var ms = new MemoryStream(bitmapByteArray))
-            using (bmp = new Bitmap(ms))
-            {
-                BitmapSource bms = bmp.ToBitmapSource();
-                bms.Freeze();
-                return bms;
-            }
-        }
-
+        
     }
 }

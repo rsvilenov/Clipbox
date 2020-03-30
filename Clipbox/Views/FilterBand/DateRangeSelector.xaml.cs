@@ -1,5 +1,6 @@
 ﻿using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Views.EventArgsClasses;
+using Clipbox.Views.FilterBand.EventArgsClasses;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -15,60 +16,24 @@ namespace Clipbox.Views.FilterBand
     /// <summary>
     /// Interaction logic for DateRangeSelector.xaml
     /// </summary>
-    public partial class DateRangeSelector : UserControl
+    public partial class DateRangeSelector : FilterDialogBase
     {
         public event EventHandler<DateRangeEventArgs> DateRangeSelected;
 
         public DateRangeSelector()
         {
             InitializeComponent();
+        }
+
+        public DateRangeSelector(IClipboardItemsDataProvider clipboardItemsDataProvider)
+            : base(clipboardItemsDataProvider)
+        {
+            InitializeComponent();
             this.mainBorder.DataContext = this;
-            Loaded += DateRangeSelector_Loaded;
-        }
-
-        private void DateRangeSelector_Loaded(object sender, RoutedEventArgs e)
-        {
-            IsLoading = true;
-
-            Task.Run(() =>
-            {
-                var dateTimeMsCollection = new ObservableCollection<double>(GetUniqueDatesForItems());
-
-                Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background,
-                    new Action(() =>
-                    {
-                        DateTimeMsCollection = dateTimeMsCollection;
-                        SelectedMinDateTimeMs = DateTimeMsCollection?.Min() ?? 0;
-                        SelectedMaxDateTimeMs = DateTimeMsCollection?.Max() ?? 0;
-                        IsLoading = false;
-                    }));
-            });
-        }
-
-        private IEnumerable<double> GetUniqueDatesForItems()
-        {
-            var uniqueDaysMsCollection = ClipboardItemsDataProvider
-                .GetAllCreationTimestampTicksUtc()
-                .Distinct()
-                .Select(ticks => new DateTime(ticks).Date) // get the utc date
-                .Select(date => (double)(date - new DateTime(1970, 1, 1)).TotalMilliseconds)
-                .Distinct();
-            
-            return uniqueDaysMsCollection;
         }
         
-        private bool IsLoading
-        {
-            get { return (bool)GetValue(IsLoadingProperty); }
-            set { SetValue(IsLoadingProperty, value); }
-        }
+        private List<double> _dateTimeMsCollection;
 
-        private static readonly DependencyProperty IsLoadingProperty =
-            DependencyProperty.Register(nameof(IsLoading), typeof(bool), typeof(DateRangeSelector), new PropertyMetadata(false));
-
-        
-        public IClipboardItemsDataProvider ClipboardItemsDataProvider { get; set; }
-        
         private ObservableCollection<double> DateTimeMsCollection
         {
             get { return (ObservableCollection<double>)GetValue(DateTimeMsCollectionProperty); }
@@ -171,16 +136,34 @@ namespace Clipbox.Views.FilterBand
         private static readonly DependencyProperty AreMinAndMaxSelectedDatesDistinctProperty =
             DependencyProperty.Register(nameof(AreMinAndMaxSelectedDatesDistinct), typeof(bool), typeof(DateRangeSelector), new PropertyMetadata(false));
 
-
-        private void BtnOk_Click(object sender, RoutedEventArgs e)
+        
+        protected override void OnOkButton()
         {
             DateRangeSelected?.Invoke(this, new DateRangeEventArgs(SelectedMinDateTimeMs, SelectedMaxDateTimeMs));
         }
 
-        private void BtnCancel_Click(object sender, RoutedEventArgs e)
+        protected override void OnCancelButton()
         {
             // on cancel, return -1 for both ends of the range
             DateRangeSelected?.Invoke(this, new DateRangeEventArgs(-1, -1));
+        }
+
+        protected override void LoadData()
+        {
+            _dateTimeMsCollection = ClipboardItemsDataProvider
+                .GetAllCreationTimestampTicksUtc()
+                .Distinct()
+                .Select(ticks => new DateTime(ticks).Date) // get the utc date
+                .Select(date => (double)(date - new DateTime(1970, 1, 1)).TotalMilliseconds)
+                .Distinct()
+                .ToList();
+        }
+
+        protected override void OnLoadDataComplete()
+        {
+            DateTimeMsCollection = new ObservableCollection<double>(_dateTimeMsCollection);
+            SelectedMinDateTimeMs = DateTimeMsCollection?.Min() ?? 0;
+            SelectedMaxDateTimeMs = DateTimeMsCollection?.Max() ?? 0;
         }
     }
 }
