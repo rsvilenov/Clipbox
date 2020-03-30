@@ -15,7 +15,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Threading;
 
-namespace Clipbox.Views
+namespace Clipbox.Views.FilterBand
 {
     /// <summary>
     /// Interaction logic for FilterBand.xaml

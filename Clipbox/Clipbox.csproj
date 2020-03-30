@@ -117,7 +117,7 @@
     <Compile Include="Views\ClipboardViewItemTile\TileAnimationHelper.cs" />
     <Compile Include="Views\ClipboardViewItemTile\Enums\AnimationPurpose.cs" />
     <Compile Include="Views\ClipboardViewItemTile\IAnimatableItem.cs" />
-    <Compile Include="Views\DateRangeSelector.xaml.cs">
+    <Compile Include="Views\FilterBand\DateRangeSelector.xaml.cs">
       <DependentUpon>DateRangeSelector.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\EventArgsClasses\ClipboardItemManipulationEventArgs.cs" />
@@ -199,7 +199,7 @@
     <Compile Include="Views\ExpandableSearchBox.xaml.cs">
       <DependentUpon>ExpandableSearchBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\FilterBand.xaml.cs">
+    <Compile Include="Views\FilterBand\FilterBand.xaml.cs">
       <DependentUpon>FilterBand.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Interfaces\IMainWindow.cs" />
@@ -218,7 +218,7 @@
     <Compile Include="Views\ClipboardListView\VerticalScrollBarEx.xaml.cs">
       <DependentUpon>VerticalScrollBarEx.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\RangeSlider.xaml.cs">
+    <Compile Include="Views\FilterBand\RangeSlider.xaml.cs">
       <DependentUpon>RangeSlider.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SettingsWindow.xaml.cs">
@@ -294,7 +294,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\DateRangeSelector.xaml">
+    <Page Include="Views\FilterBand\DateRangeSelector.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -306,7 +306,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\FilterBand.xaml">
+    <Page Include="Views\FilterBand\FilterBand.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -334,7 +334,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\RangeSlider.xaml">
+    <Page Include="Views\FilterBand\RangeSlider.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:conv="clr-namespace:Clipbox.Technical.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:filterBand="clr-namespace:Clipbox.Views.FilterBand"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:infBeh="clr-namespace:Clipbox.Infrastructure.UI.Behaviors;assembly=Clipbox.Infrastructure.UI"
     xmlns:infConv="clr-namespace:Clipbox.Infrastructure.UI.Converters;assembly=Clipbox.Infrastructure.UI"
@@ -372,7 +373,7 @@
                 <infBeh:FrameworkElementDpiScalingBehavior />
             </i:Interaction.Behaviors>
 
-            <views:FilterBand
+            <filterBand:FilterBand
                 x:Name="filterBand"
                 Grid.Row="0"
                 ClipboardItemsDataProvider="{Binding ClipboardItemsDataProvider}"

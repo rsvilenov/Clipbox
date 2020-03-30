@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace Clipbox.Views
+namespace Clipbox.Views.FilterBand
 {
     /// <summary>
     /// Interaction logic for RangeSlider.xaml
