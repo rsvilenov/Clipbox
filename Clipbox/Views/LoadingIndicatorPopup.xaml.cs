@@ -1,6 +1,7 @@
 ﻿using Clipbox.Win32;
 using Clipbox.Win32.Native;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media.Animation;
@@ -44,7 +45,15 @@ namespace Clipbox.Views
         public void FadeOut()
         {
             DoubleAnimation anim = new DoubleAnimation(0, (Duration)TimeSpan.FromMilliseconds(FADE_OUT_ANIMATION_DURATION_MS));
-            anim.Completed += (s, _) => this.Close();
+
+            // Handling the Completed event doesn't work reliably, 
+            // since for some reason the animation does not always start.
+            // TODO: figure out why
+            // anim.Completed += (s, _) => this.Close();
+
+            Task.Delay(FADE_OUT_ANIMATION_DURATION_MS)
+                .ContinueWith((t) => Dispatcher.Invoke(() => this.Close()));
+
             LoadingIndicator.BeginAnimation(UIElement.OpacityProperty, anim);
         }
     }
