@@ -245,32 +245,39 @@ namespace Clipbox.Views
                 ClipboardViewItemDimensionInfo cvItemDimInfo = null;
                 ClipboardViewItem viewItem = null;
 
+                bool hasLoadingOfWrapperSucceded = true;
                 PerformDisposeSafeOperation(() =>
                 {
                     wrapper = _viewModel.GetViewItemWrapper(clipboardItemId);
                     if (wrapper == null)
                     {
                         // by the time this task executes, the item may has been filtered out by the search or the filters...
-                        return;
+                        hasLoadingOfWrapperSucceded = false;
                     }
-
-                    viewItem = _viewModel.GetViewItem(clipboardItemId, base.MonitorDimensions);
-                    _viewModel.TryGetPreviewDimensions(base.MonitorDimensions, wrapper, out cvItemDimInfo);
-                });
-                // this optimization (updating the bindable properties in the dispatcher thread with background priority)
-                // solves the problem with the items showing up painfully slowly...
-                // recommended by Mark Green in this thread:
-                // https://stackoverflow.com/questions/19510723/why-ui-is-freezing-during-wpf-datagrid-binding
-                Application.Current.Dispatcher.Invoke(new Action(() =>
-                {
-                    PerformDisposeSafeOperation(() =>
+                    else
                     {
-                        wrapper.ViewItem = viewItem;
-                        wrapper.DimensionInfo = cvItemDimInfo;
-                        wrapper.IsViewItemLoaded = true;
-                    });
+                        viewItem = _viewModel.GetViewItem(clipboardItemId, base.MonitorDimensions);
+                        _viewModel.TryGetPreviewDimensions(base.MonitorDimensions, wrapper, out cvItemDimInfo);
+                    }
+                });
 
-                }), DispatcherPriority.Background);
+                if (hasLoadingOfWrapperSucceded)
+                {
+                    // this optimization (updating the bindable properties in the dispatcher thread with background priority)
+                    // solves the problem with the items showing up painfully slowly...
+                    // recommended by Mark Green in this thread:
+                    // https://stackoverflow.com/questions/19510723/why-ui-is-freezing-during-wpf-datagrid-binding
+                    Application.Current.Dispatcher.Invoke(new Action(() =>
+                    {
+                        PerformDisposeSafeOperation(() =>
+                        {
+                            wrapper.ViewItem = viewItem;
+                            wrapper.DimensionInfo = cvItemDimInfo;
+                            wrapper.IsViewItemLoaded = true;
+                        });
+
+                    }), DispatcherPriority.Background);
+                }
             }));
         }
 
