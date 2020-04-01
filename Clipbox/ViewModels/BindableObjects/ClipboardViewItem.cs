@@ -16,14 +16,14 @@ namespace Clipbox.ViewModels.BindableObjects
             set { SetField(ref _sourceWindowIcon, value); }
         }
 
-        private string _sourceWindowCaption;
+        private string _sourceWindowDescription;
 
-        public string SourceWindowCaption
+        public string SourceWindowDescription
         {
-            get { return _sourceWindowCaption; }
-            set { SetField(ref _sourceWindowCaption, value); }
+            get { return _sourceWindowDescription; }
+            set { SetField(ref _sourceWindowDescription, value); }
         }
-
+        
         private string _sourceWindowMachineName;
 
         public string SourceWindowMachineName

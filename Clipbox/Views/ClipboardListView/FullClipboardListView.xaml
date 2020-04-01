@@ -483,7 +483,7 @@
                                                                     HorizontalAlignment="Center"
                                                                     VerticalAlignment="Center"
                                                                     Source="{Binding Path=ViewItem.SourceWindowIcon}"
-                                                                    ToolTip="{Binding Path=ViewItem.SourceWindowCaption}">
+                                                                    ToolTip="{Binding Path=ViewItem.SourceWindowDescription}">
                                                                     <i:Interaction.Behaviors>
                                                                         <infBeh:FrameworkElementDpiScalingBehavior />
                                                                     </i:Interaction.Behaviors>

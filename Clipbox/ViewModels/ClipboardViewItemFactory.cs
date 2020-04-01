@@ -69,7 +69,11 @@ namespace Clipbox.ViewModels
             viewItem.SourceWindowMachineName = clipboardItem.Source.MachineName;
             viewItem.SourceMachineType = clipboardItem.Source.MachineType;
             viewItem.SourceWindowUserName = clipboardItem.Source.UserName;
-            viewItem.SourceWindowCaption = clipboardItem.Source.SourceWindowInfo.Caption;
+
+            viewItem.SourceWindowDescription = string.IsNullOrWhiteSpace(clipboardItem.Source.SourceWindowInfo.Caption)
+                ? clipboardItem.Source.SourceWindowInfo.ApplicationInfo.ProductName
+                : clipboardItem.Source.SourceWindowInfo.Caption;
+
             viewItem.DateCreated = new DateTime(clipboardItem.TimestampInfo.EntryDateTicks);
             viewItem.DateModified = new DateTime(clipboardItem.TimestampInfo.ModifiedDateTicks);
             viewItem.ClipboardItemId = clipboardItem.Id;
