@@ -1,6 +1,7 @@
 ﻿using Clipbox.Win32;
 using Clipbox.Win32.Native;
 using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Interop;
@@ -50,11 +51,11 @@ namespace Clipbox.Views
             // since for some reason the animation does not always start.
             // TODO: figure out why
             // anim.Completed += (s, _) => this.Close();
-
+            
+            LoadingIndicator.BeginAnimation(UIElement.OpacityProperty, anim);
+            
             Task.Delay(FADE_OUT_ANIMATION_DURATION_MS)
                 .ContinueWith((t) => Dispatcher.Invoke(() => this.Close()));
-
-            LoadingIndicator.BeginAnimation(UIElement.OpacityProperty, anim);
         }
     }
 }

@@ -1,12 +1,13 @@
 ﻿using Clipbox.Infrastructure.UI.Utils;
 using Clipbox.Win32.Native;
 using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Interop;
 
 namespace Clipbox.Views
 {
-    public static class LoadingPopupGoverner
+    public static class LoadingPopupGovernor
     {
         public static FrameworkElement Parent { get; private set; }
         
@@ -45,7 +46,7 @@ namespace Clipbox.Views
                 {
                     return;
                 }
-
+                
                 SetParent(parent);
 
                 Point locationFromScreen = Parent.PointToScreen(new Point(0, 0));
@@ -89,11 +90,6 @@ namespace Clipbox.Views
 
         public static void ClosePopup(bool fadeOut = true)
         {
-            if (Parent == null || _popup == null || _ownThreadDispatcher == null || _closeStarted)
-            {
-                return;
-            }
-
             lock (_lockHandle)
             {
                 if (Parent == null || _popup == null || _ownThreadDispatcher == null || _closeStarted)
