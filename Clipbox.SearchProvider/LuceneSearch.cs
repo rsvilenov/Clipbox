@@ -56,6 +56,11 @@ namespace Clipbox.SearchProvider
             List<string> searchUnitIds = new List<string>();
 
             DirectoryInfo dirInfo = GetIndexDirectoryInfo();
+            if (!dirInfo.GetFiles().Any())
+            {
+                // if the folder is empty, then there is no indexed content yet.
+                return searchUnitIds;
+            }
 
             using (var indexDir = FSDirectory.Open(dirInfo))
             using (var indexReader = IndexReader.Open(indexDir, true))

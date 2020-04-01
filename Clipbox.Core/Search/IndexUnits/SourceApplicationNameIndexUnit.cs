@@ -15,8 +15,10 @@ namespace Clipbox.Core.Search.IndexUnits
 
         protected override IEnumerable<string> GetTermValuesFromClipboardItem(IClipboardItem clipboardItem)
         {
-            string appName = string.Empty;
-            string appPath = clipboardItem.Source.SourceWindowInfo.ApplicationPath;
+            string appName = clipboardItem.Source.SourceWindowInfo.ApplicationInfo.ProductName;
+
+            string appFileName = string.Empty;
+            string appPath = clipboardItem.Source.SourceWindowInfo.ApplicationInfo.ApplicationPath;
             if (string.IsNullOrWhiteSpace(appPath)
                 && appPath.All(c => !Path.GetInvalidPathChars().Contains(c)))
             {
@@ -25,7 +27,8 @@ namespace Clipbox.Core.Search.IndexUnits
 
             return new string[]
             {
-                appName
+                appName,
+                appFileName
             };
         }
     }

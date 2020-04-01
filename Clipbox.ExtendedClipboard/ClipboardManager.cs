@@ -13,6 +13,7 @@ using Clipbox.Infrastructure.Persistence;
 using Clipbox.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
@@ -412,12 +413,25 @@ namespace Clipbox.ExtendedClipboard
 
             using (WindowUtils.WindowInfo wInfo = WindowUtils.GetForemostWindowInfo())
             {
-                windowInfo.ApplicationPath = wInfo.ApplicationPath;
+                windowInfo.ApplicationInfo = GetApplicationInfo(wInfo.ApplicationPath);
                 windowInfo.Caption = wInfo.Caption;
                 windowInfo.Icon = wInfo.Icon?.ToByteArray();
             }
 
             return windowInfo;
+        }
+
+        private SourceApplicationInfo GetApplicationInfo(string path)
+        {
+            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(path);
+            return new SourceApplicationInfo
+            {
+                ApplicationPath = path,
+                CompanyName = fileVersionInfo.CompanyName,
+                FileDescription = fileVersionInfo.FileDescription,
+                ProductName = fileVersionInfo.ProductName,
+                ProductVersion = fileVersionInfo.ProductVersion
+            };
         }
 
         /// <summary>
@@ -426,9 +440,11 @@ namespace Clipbox.ExtendedClipboard
         /// <returns></returns>
         private SourceWindowInfo GetOwnWindowInfo()
         {
+            string applicationPath = Assembly.GetEntryAssembly().Location;
+            
             return new SourceWindowInfo
             {
-                ApplicationPath = Assembly.GetEntryAssembly().Location,
+                ApplicationInfo = GetApplicationInfo(applicationPath),
                 Caption = ProductConstants.PRODUCT_NAME,
                 Icon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location)
                     ?.ToBitmap()
@@ -740,12 +756,12 @@ namespace Clipbox.ExtendedClipboard
                 .AsReadOnly();
         }
 
-        public IReadOnlyDictionary<string, byte[]> GetAllSourceAppsAndIcons()
+        public IReadOnlyDictionary<IApplicationInfo, byte[]> GetAllSourceAppsAndIcons()
         {
             return _clipboardItems.Select(ci => ci.Source.SourceWindowInfo)
-                .GroupBy(swi => swi.ApplicationPath)
+                .GroupBy(swi => swi.ApplicationInfo.ApplicationPath)
                 .Select(g => g.First())
-                .ToDictionary(k => k.ApplicationPath, v => (byte[])v.Icon.Clone()); 
+                .ToDictionary(k => k.ApplicationInfo, v => (byte[])v.Icon.Clone()); 
             // this is a newly created dictionary and modifying it does not affect the original values,
             // so there is no point in converting it to a ReadOnlyDictionary.
         }

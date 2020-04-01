@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Clipbox.Core.Extensibility.Contracts;
+using System.Collections.Generic;
 
 namespace Clipbox.ExtendedClipboard.Interfaces
 {
@@ -6,6 +7,6 @@ namespace Clipbox.ExtendedClipboard.Interfaces
     {
         IReadOnlyList<long> GetAllCreationTimestampTicksUtc();
 
-        IReadOnlyDictionary<string, byte[]> GetAllSourceAppsAndIcons();
+        IReadOnlyDictionary<IApplicationInfo, byte[]> GetAllSourceAppsAndIcons();
     }
 }

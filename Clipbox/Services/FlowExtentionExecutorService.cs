@@ -62,6 +62,16 @@ namespace Clipbox.Services
             using (WindowUtils.WindowInfo wInfo = WindowUtils.GetForemostWindowInfo())
             {
                 destWindowInfo.ApplicationPath = wInfo.ApplicationPath;
+
+                FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(wInfo.ApplicationPath);
+                destWindowInfo.ApplicationInfo = new DestinationApplicationInfo
+                {
+                    ApplicationPath = wInfo.ApplicationPath,
+                    CompanyName = fileVersionInfo.CompanyName,
+                    FileDescription = fileVersionInfo.FileDescription,
+                    ProductName = fileVersionInfo.ProductName,
+                    ProductVersion = fileVersionInfo.ProductVersion
+                };
                 destWindowInfo.Caption = wInfo.Caption;
                 destWindowInfo.Icon = wInfo.Icon?.ToByteArray(); // destWindowInfo.Icon will be disposed by WindowInfo.Dispose()
             }
@@ -311,6 +321,21 @@ namespace Clipbox.Services
             public string Caption { get; internal set; }
 
             public byte[] Icon { get; internal set; }
+
+            public IApplicationInfo ApplicationInfo { get; internal set; }
+        }
+
+        private class DestinationApplicationInfo : IApplicationInfo
+        {
+            public string ApplicationPath { get; internal set; }
+
+            public string ProductName { get; internal set; }
+
+            public string ProductVersion { get; internal set; }
+
+            public string FileDescription { get; internal set; }
+
+            public string CompanyName { get; internal set; }
         }
     }
 }

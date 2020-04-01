@@ -58,6 +58,7 @@
     <Compile Include="Extensibility\Contracts\ExtentionTypes\IPreviewGenerator.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\ISearchSupport.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\PersistenceTypes\PersistenceSupportExtension.cs" />
+    <Compile Include="Extensibility\Contracts\IApplicationInfo.cs" />
     <Compile Include="Extensibility\Contracts\IIntermediateFormat.cs" />
     <Compile Include="Extensibility\Contracts\IIntermediateFormatMetadata.cs" />
     <Compile Include="Extensibility\Contracts\IntermediateFormatBase.cs" />

@@ -49,6 +49,7 @@
     <Compile Include="ClipboardContent\PersistableClipboardItem.cs" />
     <Compile Include="ClipboardContent\SerializableClipboardItem.cs" />
     <Compile Include="ClipboardContent\SerializableIntermediateFormatMetadata.cs" />
+    <Compile Include="ClipboardContent\SourceApplicationInfo.cs" />
     <Compile Include="ClipboardContent\TimestampInfo.cs" />
     <Compile Include="ClipboardContent\TransferableClipboardDataObject.cs" />
     <Compile Include="ClipboardContent\TransferableClipboardItem.cs" />

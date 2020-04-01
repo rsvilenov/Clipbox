@@ -43,13 +43,13 @@ namespace Clipbox.Views.FilterBand
         {
             _appInfoCollection = ClipboardItemsDataProvider
                 .GetAllSourceAppsAndIcons()
-                .Where(i => !string.IsNullOrWhiteSpace(i.Key) && i.Value != null)
+                .Where(i => !string.IsNullOrWhiteSpace(i.Key.ApplicationPath) && i.Value != null)
                 .GroupBy(i => i.Key)
                 .Select(g => g.First())
                 .Select(i => new SourceApplicationInfo
                 {
                     Icon = Infrastructure.UI.Utils.Imaging.BitmapSourceFromBitmapByteArray(i.Value),
-                    ExecutableName = System.IO.Path.GetFileNameWithoutExtension(i.Key)
+                    ExecutableName = System.IO.Path.GetFileNameWithoutExtension(i.Key.ApplicationPath)
                 })
                 .ToList();
         }

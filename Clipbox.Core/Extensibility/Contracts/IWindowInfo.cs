@@ -6,6 +6,6 @@
 
         byte[] Icon { get; }
 
-        string ApplicationPath { get; }
+        IApplicationInfo ApplicationInfo { get; }
     }
 }

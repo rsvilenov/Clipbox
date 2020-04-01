@@ -12,7 +12,7 @@ namespace Clipbox.Extentions.BuiltIn.General
 
         public override void OnShowQuickViewWindowRequested(IWindowInfo targetWindowInfo, ref bool cancelShow)
         {
-            if (targetWindowInfo.ApplicationPath != null && Path.GetFileName(targetWindowInfo.ApplicationPath).Equals(REMOTE_DESKTOP_EXE_NAME))
+            if (targetWindowInfo.ApplicationInfo.ApplicationPath != null && Path.GetFileName(targetWindowInfo.ApplicationInfo.ApplicationPath).Equals(REMOTE_DESKTOP_EXE_NAME))
             {
                 cancelShow = true;
             }
@@ -20,7 +20,7 @@ namespace Clipbox.Extentions.BuiltIn.General
 
         public override void OnCopyRequested(IWindowInfo sourceWindowInfo, ref bool cancelStoreToItemList)
         {
-            if (sourceWindowInfo.ApplicationPath != null && Path.GetFileName(sourceWindowInfo.ApplicationPath).Equals(REMOTE_DESKTOP_EXE_NAME))
+            if (sourceWindowInfo.ApplicationInfo.ApplicationPath != null && Path.GetFileName(sourceWindowInfo.ApplicationInfo.ApplicationPath).Equals(REMOTE_DESKTOP_EXE_NAME))
             {
                 cancelStoreToItemList = true;
             }
