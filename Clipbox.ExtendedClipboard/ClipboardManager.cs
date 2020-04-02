@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
@@ -423,15 +424,26 @@ namespace Clipbox.ExtendedClipboard
 
         private SourceApplicationInfo GetApplicationInfo(string path)
         {
-            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(path);
-            return new SourceApplicationInfo
+            try
             {
-                ApplicationPath = path,
-                CompanyName = fileVersionInfo.CompanyName,
-                FileDescription = fileVersionInfo.FileDescription,
-                ProductName = fileVersionInfo.ProductName,
-                ProductVersion = fileVersionInfo.ProductVersion
-            };
+                FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(path);
+                return new SourceApplicationInfo
+                {
+                    ApplicationPath = path,
+                    CompanyName = fileVersionInfo.CompanyName,
+                    FileDescription = fileVersionInfo.FileDescription,
+                    ProductName = fileVersionInfo.ProductName,
+                    ProductVersion = fileVersionInfo.ProductVersion
+                };
+            }
+            // this exception can happen even if the file exists, for example when we don't have permission to access it.
+            catch (FileNotFoundException)
+            {
+                return new SourceApplicationInfo
+                {
+                    ApplicationPath = path
+                };
+            }
         }
 
         /// <summary>

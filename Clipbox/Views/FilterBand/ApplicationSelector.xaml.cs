@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media.Imaging;
 
 namespace Clipbox.Views.FilterBand
@@ -14,6 +15,9 @@ namespace Clipbox.Views.FilterBand
     /// </summary>
     public partial class ApplicationSelector : FilterDialogBase
     {
+        public ICommand AddApplication { get; set; }
+        public ICommand RemoveApplication { get; set; }
+
         public ApplicationSelector()
         {
             InitializeComponent();
@@ -23,7 +27,23 @@ namespace Clipbox.Views.FilterBand
             : base(clipboardItemsDataProvider)
         {
             InitializeComponent();
+
+            AddApplication = new DelegateCommand<SourceApplicationInfo>(AddApplicationHandler);
+            RemoveApplication = new DelegateCommand<SourceApplicationInfo>(RemoveApplicationHandler);
+            SelectedApps = new AsyncObservableCollection<SourceApplicationInfo>();
             this.mainBorder.DataContext = this;
+        }
+
+        private void RemoveApplicationHandler(SourceApplicationInfo obj)
+        {
+            SelectedApps.Remove(obj);
+            AppInfoCollection.Add(obj);
+        }
+
+        private void AddApplicationHandler(SourceApplicationInfo obj)
+        {
+            SelectedApps.Add(obj);
+            AppInfoCollection.Remove(obj);
         }
 
         private List<SourceApplicationInfo> _appInfoCollection;
@@ -38,7 +58,17 @@ namespace Clipbox.Views.FilterBand
 
         public static readonly DependencyProperty AppInfoCollectionProperty =
             DependencyProperty.Register(nameof(AppInfoCollection), typeof(AsyncObservableCollection<SourceApplicationInfo>), typeof(ApplicationSelector), new PropertyMetadata(null));
-        
+
+        public AsyncObservableCollection<SourceApplicationInfo> SelectedApps
+        {
+            get { return (AsyncObservableCollection<SourceApplicationInfo>)GetValue(SelectedAppsProperty); }
+            set { SetValue(SelectedAppsProperty, value); }
+        }
+
+        public static readonly DependencyProperty SelectedAppsProperty =
+            DependencyProperty.Register(nameof(SelectedApps), typeof(AsyncObservableCollection<SourceApplicationInfo>), typeof(ApplicationSelector), new PropertyMetadata(null));
+
+
         protected override void LoadData()
         {
             _appInfoCollection = ClipboardItemsDataProvider
@@ -49,7 +79,9 @@ namespace Clipbox.Views.FilterBand
                 .Select(i => new SourceApplicationInfo
                 {
                     Icon = Infrastructure.UI.Utils.Imaging.BitmapSourceFromBitmapByteArray(i.Value),
-                    ExecutableName = System.IO.Path.GetFileNameWithoutExtension(i.Key.ApplicationPath)
+                    ExecutableName = System.IO.Path.GetFileNameWithoutExtension(i.Key.ApplicationPath),
+                    ProductName = string.IsNullOrWhiteSpace(i.Key.ProductName) ?
+                        System.IO.Path.GetFileNameWithoutExtension(i.Key.ApplicationPath) : i.Key.ProductName 
                 })
                 .ToList();
         }
@@ -76,6 +108,13 @@ namespace Clipbox.Views.FilterBand
             {
                 get { return _executableName; }
                 set { SetField(ref _executableName, value); }
+            }
+
+            private string _productName;
+            public string ProductName
+            {
+                get { return _productName; }
+                set { SetField(ref _productName, value); }
             }
 
             private BitmapSource _icon;

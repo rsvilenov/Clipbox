@@ -377,7 +377,10 @@ namespace Clipbox.Views.FilterBand
                 PlacementTarget = Window.GetWindow(this),
                 Placement = PlacementMode.Center,
                 MinWidth = 450,
-                MinHeight = 200
+                MinHeight = 200,
+                MaxWidth = 600,
+                MaxHeight = 580
+
             };
 
 

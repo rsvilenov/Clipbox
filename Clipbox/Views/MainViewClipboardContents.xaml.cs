@@ -166,7 +166,7 @@ namespace Clipbox.Views
             IEnumerable<string> clipboardItemIds = null;
             IReadOnlyCollection<string> removedClipboardItemIds = null;
 
-            LoadingPopupGoverner.OpenPopup(Window.GetWindow(this));
+            LoadingPopupGovernor.OpenPopup(Window.GetWindow(this));
 
             int allMatchingClipboardItemIdCount = 0;
             Task.Run(() =>
@@ -203,7 +203,7 @@ namespace Clipbox.Views
                         if (!itemsToLoad.Any())
                         {
                             // close the loading popup
-                            LoadingPopupGoverner.ClosePopup();
+                            LoadingPopupGovernor.ClosePopup();
 
                             MainListViewContainer.Visibility = Visibility.Visible;
                             // we should also show the top and side bars, so that the
@@ -670,7 +670,7 @@ namespace Clipbox.Views
 
         private void MainListView_GroupingComplete(object sender, EventArgs e)
         {
-            LoadingPopupGoverner.ClosePopup();
+            LoadingPopupGovernor.ClosePopup();
 
             // if we do not set the visibility in background, 
             // the fade animations controlled by the triggers do not work

@@ -1,5 +1,6 @@
 ﻿using Clipbox.Core.ClipboardContent.Enums;
 using Clipbox.Core.ClipboardContent.Interfaces;
+using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.ExtentionMethods;
 using Clipbox.Services.DataObjects;
@@ -69,10 +70,7 @@ namespace Clipbox.ViewModels
             viewItem.SourceWindowMachineName = clipboardItem.Source.MachineName;
             viewItem.SourceMachineType = clipboardItem.Source.MachineType;
             viewItem.SourceWindowUserName = clipboardItem.Source.UserName;
-
-            viewItem.SourceWindowDescription = string.IsNullOrWhiteSpace(clipboardItem.Source.SourceWindowInfo.Caption)
-                ? clipboardItem.Source.SourceWindowInfo.ApplicationInfo.ProductName
-                : clipboardItem.Source.SourceWindowInfo.Caption;
+            viewItem.SourceWindowDescription = GetSourceApplicationDescription(clipboardItem.Source.SourceWindowInfo);
 
             viewItem.DateCreated = new DateTime(clipboardItem.TimestampInfo.EntryDateTicks);
             viewItem.DateModified = new DateTime(clipboardItem.TimestampInfo.ModifiedDateTicks);
@@ -82,6 +80,26 @@ namespace Clipbox.ViewModels
             viewItem.IsPinned = clipboardItem.IsPinned;
 
             return viewItem;
+        }
+
+        private static string GetSourceApplicationDescription(IWindowInfo sourceWindowInfo)
+        {
+            if (!string.IsNullOrWhiteSpace(sourceWindowInfo.Caption))
+            {
+                return sourceWindowInfo.Caption;
+            }
+            else if (!string.IsNullOrWhiteSpace(sourceWindowInfo.ApplicationInfo.FileDescription))
+            {
+                return sourceWindowInfo.ApplicationInfo.FileDescription;
+            }
+            else if (string.IsNullOrWhiteSpace(sourceWindowInfo.ApplicationInfo.ProductName))
+            {
+                return sourceWindowInfo.ApplicationInfo.ProductName;
+            }
+            else
+            {
+                return System.IO.Path.GetFileNameWithoutExtension(sourceWindowInfo.ApplicationInfo.ApplicationPath);
+            }
         }
 
         public static ClipboardPreviewItem GetClipboardPreviewItem(PreviewItemTransferObject pito)
