@@ -1,9 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
+<!-- Format example: Field1|Field2|Field3 etc. Where | means "take next if previous is null, empty or white space. -->
+<!-- Match pattern example: {Field1} ({Field2} - {Field3} etc... All field names in {} are replaced by the corresponding values.-->
 <formats>
   <!-- the general case -->
   <application>
-    <windowInfoFormat>{Caption}</windowInfoFormat>
-    <applicationInfoFormat>{FileDescription}</applicationInfoFormat>
+    <windowInfoFormat>{Caption|FileDescription|ProductName}</windowInfoFormat>
+    <applicationInfoFormat>{FileDescription|ProductName}</applicationInfoFormat>
   </application>
   <!-- windows explorer shows only the folder name in the caption, which may be confisung,
   especially if the user expects the app descriptions in the clipboard items to match

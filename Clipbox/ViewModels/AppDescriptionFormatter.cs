@@ -22,13 +22,29 @@ namespace Clipbox.ViewModels
 
         public static string Format(IWindowInfo windowInfo)
         {
-            AppDescriptionFormatInfo matchedInfo = _appDescriptionFormatInfos.FirstOrDefault(adfi => adfi.Match(windowInfo.ApplicationInfo));
+            AppDescriptionFormatInfo matchedInfo = _appDescriptionFormatInfos
+                .FirstOrDefault(adfi => adfi.Match(windowInfo.ApplicationInfo)) ??
+                _appDescriptionFormatInfos.FirstOrDefault(adfi => adfi.IsDefault);
+
+            if (matchedInfo == null)
+            {
+                throw new InvalidOperationException($"No item in {nameof(_appDescriptionFormatInfos)} matched {windowInfo.ApplicationInfo.ApplicationPath}");
+            }
+
             return GetFormattedDescription(matchedInfo.WindowInfoFormat, windowInfo.ApplicationInfo, windowInfo);
         }
 
         public static string Format(IApplicationInfo appInfo)
         {
-            AppDescriptionFormatInfo matchedInfo = _appDescriptionFormatInfos.FirstOrDefault(adfi => adfi.Match(appInfo));
+            AppDescriptionFormatInfo matchedInfo = _appDescriptionFormatInfos
+                .FirstOrDefault(adfi => adfi.Match(appInfo)) ??
+                _appDescriptionFormatInfos.FirstOrDefault(adfi => adfi.IsDefault);
+
+            if (matchedInfo == null)
+            {
+                throw new InvalidOperationException($"No item in {nameof(_appDescriptionFormatInfos)} matched {appInfo.ApplicationPath}");
+            }
+
             return GetFormattedDescription(matchedInfo.ApplicationInfoFormat, appInfo, null);
         }
 
@@ -73,20 +89,17 @@ namespace Clipbox.ViewModels
             {
                 // this is ugly, but faster than regex 
 
-                if (IsDefault)
-                    return true;
-
-                if (!string.IsNullOrEmpty(FileDescriptionMatchPattern) && string.IsNullOrEmpty(appInfo.FileDescription))
+                if (!string.IsNullOrEmpty(FileDescriptionMatchPattern) && !string.IsNullOrEmpty(appInfo.FileDescription))
                 {
                     return FileDescriptionMatchPattern.Equals(appInfo.FileDescription, StringComparison.OrdinalIgnoreCase) ||
                         (FileDescriptionMatchPattern[0] == '*' && FileDescriptionMatchPattern[FileDescriptionMatchPattern.Length - 1] == '*'
                         && appInfo.FileDescription.IndexOf(FileDescriptionMatchPattern, StringComparison.OrdinalIgnoreCase) > -1) ||
-                        
+
                         (FileDescriptionMatchPattern[0] == '*' && FileDescriptionMatchPattern.EndsWith(appInfo.FileDescription, StringComparison.OrdinalIgnoreCase)) ||
-                        
+
                         (FileDescriptionMatchPattern[FileDescriptionMatchPattern.Length - 1] == '*' && FileDescriptionMatchPattern.StartsWith(appInfo.FileDescription, StringComparison.OrdinalIgnoreCase));
                 }
-                else if (!string.IsNullOrEmpty(ApplicationPathMatchPattern) && string.IsNullOrEmpty(appInfo.ApplicationPath))
+                else if (!string.IsNullOrEmpty(ApplicationPathMatchPattern) && !string.IsNullOrEmpty(appInfo.ApplicationPath))
                 {
                     return ApplicationPathMatchPattern.Equals(appInfo.ApplicationPath, StringComparison.OrdinalIgnoreCase) ||
                         (ApplicationPathMatchPattern[0] == '*' && ApplicationPathMatchPattern[ApplicationPathMatchPattern.Length - 1] == '*'
@@ -96,7 +109,7 @@ namespace Clipbox.ViewModels
 
                         (ApplicationPathMatchPattern[ApplicationPathMatchPattern.Length - 1] == '*' && ApplicationPathMatchPattern.StartsWith(appInfo.ApplicationPath, StringComparison.OrdinalIgnoreCase));
                 }
-                else if (!string.IsNullOrEmpty(ProductNameMatchPattern) && string.IsNullOrEmpty(appInfo.ProductName))
+                else if (!string.IsNullOrEmpty(ProductNameMatchPattern) && !string.IsNullOrEmpty(appInfo.ProductName))
                 {
                     return ProductNameMatchPattern.Equals(appInfo.ProductName, StringComparison.OrdinalIgnoreCase) ||
                         (ProductNameMatchPattern[0] == '*' && ProductNameMatchPattern[ProductNameMatchPattern.Length - 1] == '*'
@@ -106,7 +119,7 @@ namespace Clipbox.ViewModels
 
                         (ProductNameMatchPattern[ProductNameMatchPattern.Length - 1] == '*' && ProductNameMatchPattern.StartsWith(appInfo.ProductName, StringComparison.OrdinalIgnoreCase));
                 }
-                else if (!string.IsNullOrEmpty(ProductVersionMatchPattern) && string.IsNullOrEmpty(appInfo.ProductVersion))
+                else if (!string.IsNullOrEmpty(ProductVersionMatchPattern) && !string.IsNullOrEmpty(appInfo.ProductVersion))
                 {
                     return ProductVersionMatchPattern.Equals(appInfo.ProductVersion, StringComparison.OrdinalIgnoreCase) ||
                         (ProductVersionMatchPattern[0] == '*' && ProductVersionMatchPattern[ProductVersionMatchPattern.Length - 1] == '*'
@@ -116,7 +129,7 @@ namespace Clipbox.ViewModels
 
                         (ProductVersionMatchPattern[ProductVersionMatchPattern.Length - 1] == '*' && ProductVersionMatchPattern.StartsWith(appInfo.ProductVersion, StringComparison.OrdinalIgnoreCase));
                 }
-                else if (!string.IsNullOrEmpty(CompanyNameMatchPattern) && string.IsNullOrEmpty(appInfo.CompanyName))
+                else if (!string.IsNullOrEmpty(CompanyNameMatchPattern) && !string.IsNullOrEmpty(appInfo.CompanyName))
                 {
                     return CompanyNameMatchPattern.Equals(appInfo.CompanyName, StringComparison.OrdinalIgnoreCase) ||
                         (CompanyNameMatchPattern[0] == '*' && CompanyNameMatchPattern[CompanyNameMatchPattern.Length - 1] == '*'
@@ -134,10 +147,10 @@ namespace Clipbox.ViewModels
         // this should be fast enough
         private static string GetFormattedDescription(string format, IApplicationInfo appInfo, IWindowInfo windowInfo = null)
         {
-            const int MAX_KEY_NAME_LEN = 15;
+            const int KEY_NAME_LEN_SUM = 150; // the total length of all possible property names (IApplicationInfo.* and IWindowInfo.Caption)
 
             bool bracketOpen = false;
-            char[] propName = new char[MAX_KEY_NAME_LEN];
+            char[] propNames = new char[KEY_NAME_LEN_SUM];
             int propNameIndex = 0;
             StringBuilder sb = new StringBuilder();
 
@@ -152,33 +165,66 @@ namespace Clipbox.ViewModels
                     if (c == '}')
                     {
                         bracketOpen = false;
-                        switch(new string(propName, 0, propNameIndex))
+                        foreach (string propName in new string(propNames, 0, propNameIndex).Split('|'))
                         {
-                            case nameof(appInfo.ProductName):
-                                sb.Append(appInfo.ProductName);
+                            bool isContentForPropNameFilled = false;
+                            switch (propName)
+                            {
+                                case nameof(appInfo.ProductName):
+                                    if (!string.IsNullOrWhiteSpace(appInfo.ProductName))
+                                    {
+                                        sb.Append(appInfo.ProductName);
+                                        isContentForPropNameFilled = true;
+                                    }
+                                    break;
+                                case nameof(appInfo.ProductVersion):
+                                    if (!string.IsNullOrWhiteSpace(appInfo.ProductVersion))
+                                    {
+                                        sb.Append(appInfo.ProductVersion);
+                                        isContentForPropNameFilled = true;
+                                    }
+                                    break;
+                                case nameof(appInfo.CompanyName):
+                                    if (!string.IsNullOrWhiteSpace(appInfo.CompanyName))
+                                    {
+                                        sb.Append(appInfo.CompanyName);
+                                        isContentForPropNameFilled = true;
+                                    }
+                                    break;
+                                case nameof(appInfo.ApplicationPath):
+                                    if (!string.IsNullOrWhiteSpace(appInfo.ApplicationPath))
+                                    {
+                                        sb.Append(appInfo.ApplicationPath);
+                                        isContentForPropNameFilled = true;
+                                    }
+                                    break;
+                                case nameof(appInfo.FileDescription):
+                                    if (!string.IsNullOrWhiteSpace(appInfo.FileDescription))
+                                    {
+                                        sb.Append(appInfo.FileDescription);
+                                        isContentForPropNameFilled = true;
+                                    }
+                                    break;
+                                case nameof(windowInfo.Caption):
+                                    if (!string.IsNullOrWhiteSpace(windowInfo.Caption))
+                                    {
+                                        sb.Append(windowInfo?.Caption ?? throw new FormatException($"{nameof(windowInfo.Caption)} is used in the format, but no {nameof(IWindowInfo)} was passed."));
+                                        isContentForPropNameFilled = true;
+                                    }
+                                    break;
+                            }
+
+                            if (isContentForPropNameFilled)
+                            {
                                 break;
-                            case nameof(appInfo.ProductVersion):
-                                sb.Append(appInfo.ProductVersion);
-                                break;
-                            case nameof(appInfo.CompanyName):
-                                sb.Append(appInfo.CompanyName);
-                                break;
-                            case nameof(appInfo.ApplicationPath):
-                                sb.Append(appInfo.ApplicationPath);
-                                break;
-                            case nameof(appInfo.FileDescription):
-                                sb.Append(appInfo.FileDescription);
-                                break;
-                            case nameof(windowInfo.Caption):
-                                sb.Append(windowInfo?.Caption ?? throw new FormatException($"{nameof(windowInfo.Caption)} is used in the format, but no {nameof(IWindowInfo)} was passed."));
-                                break;
+                            }
                         }
                         propNameIndex = 0;
-                        Array.Clear(propName, 0, MAX_KEY_NAME_LEN);
+                        Array.Clear(propNames, 0, KEY_NAME_LEN_SUM);
                     }
                     else
                     {
-                        propName[propNameIndex++] = c;
+                        propNames[propNameIndex++] = c;
                     }
                 }
                 else
