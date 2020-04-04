@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<formats>
+  <!-- the general case -->
+  <application>
+    <windowInfoFormat>{Caption}</windowInfoFormat>
+    <applicationInfoFormat>{FileDescription}</applicationInfoFormat>
+  </application>
+  <!-- windows explorer shows only the folder name in the caption, which may be confisung,
+  especially if the user expects the app descriptions in the clipboard items to match
+  those in the app filter dialog. -->
+  <application FileDescriptionMatchPattern="Windows Explorer">
+    <windowInfoFormat>{Caption} ({FileDescription})</windowInfoFormat>
+    <applicationInfoFormat>{FileDescription}</applicationInfoFormat>
+  </application>
+</formats>

@@ -70,7 +70,7 @@ namespace Clipbox.ViewModels
             viewItem.SourceWindowMachineName = clipboardItem.Source.MachineName;
             viewItem.SourceMachineType = clipboardItem.Source.MachineType;
             viewItem.SourceWindowUserName = clipboardItem.Source.UserName;
-            viewItem.SourceWindowDescription = GetSourceApplicationDescription(clipboardItem.Source.SourceWindowInfo);
+            viewItem.SourceWindowDescription = AppDescriptionFormatter.Format(clipboardItem.Source.SourceWindowInfo);
 
             viewItem.DateCreated = new DateTime(clipboardItem.TimestampInfo.EntryDateTicks);
             viewItem.DateModified = new DateTime(clipboardItem.TimestampInfo.ModifiedDateTicks);

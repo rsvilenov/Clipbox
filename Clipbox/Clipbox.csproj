@@ -102,6 +102,7 @@
     <Compile Include="Services\SearchService.cs" />
     <Compile Include="Technical\Converters\MillisecondsToHumanReadableDateStringConverter.cs" />
     <Compile Include="Technical\ExtensionMethods\DateTimeExtensions.cs" />
+    <Compile Include="ViewModels\AppDescriptionFormatter.cs" />
     <Compile Include="ViewModels\Enums\CloudSyncStatus.cs" />
     <Compile Include="Views\AdvancedFilters.xaml.cs">
       <DependentUpon>AdvancedFilters.xaml</DependentUpon>
@@ -468,7 +469,11 @@
   <ItemGroup>
     <Resource Include="Views\Styles\ReadMe.txt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\Formats\ApplicationDescriptionFormats.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
