@@ -87,60 +87,97 @@ namespace Clipbox.ViewModels
             
             public bool Match(IApplicationInfo appInfo)
             {
-                // this is ugly, but faster than regex 
+                // ugly, but faster than regex 
 
-                if (!string.IsNullOrEmpty(FileDescriptionMatchPattern) && !string.IsNullOrEmpty(appInfo.FileDescription))
+                bool isMatch = false;
+
+                if (!string.IsNullOrEmpty(FileDescriptionMatchPattern))
                 {
-                    return FileDescriptionMatchPattern.Equals(appInfo.FileDescription, StringComparison.OrdinalIgnoreCase) ||
-                        (FileDescriptionMatchPattern[0] == '*' && FileDescriptionMatchPattern[FileDescriptionMatchPattern.Length - 1] == '*'
-                        && appInfo.FileDescription.IndexOf(FileDescriptionMatchPattern, StringComparison.OrdinalIgnoreCase) > -1) ||
+                    if (string.IsNullOrEmpty(appInfo.FileDescription))
+                    {
+                        isMatch = false;
+                    }
+                    else
+                    {
+                        isMatch = FileDescriptionMatchPattern.Equals(appInfo.FileDescription, StringComparison.OrdinalIgnoreCase) ||
+                            (FileDescriptionMatchPattern[0] == '*' && FileDescriptionMatchPattern[FileDescriptionMatchPattern.Length - 1] == '*'
+                            && appInfo.FileDescription.IndexOf(FileDescriptionMatchPattern, StringComparison.OrdinalIgnoreCase) > -1) ||
 
-                        (FileDescriptionMatchPattern[0] == '*' && FileDescriptionMatchPattern.EndsWith(appInfo.FileDescription, StringComparison.OrdinalIgnoreCase)) ||
+                            (FileDescriptionMatchPattern[0] == '*' && FileDescriptionMatchPattern.EndsWith(appInfo.FileDescription, StringComparison.OrdinalIgnoreCase)) ||
 
-                        (FileDescriptionMatchPattern[FileDescriptionMatchPattern.Length - 1] == '*' && FileDescriptionMatchPattern.StartsWith(appInfo.FileDescription, StringComparison.OrdinalIgnoreCase));
+                            (FileDescriptionMatchPattern[FileDescriptionMatchPattern.Length - 1] == '*' && FileDescriptionMatchPattern.StartsWith(appInfo.FileDescription, StringComparison.OrdinalIgnoreCase));
+                    }
                 }
-                else if (!string.IsNullOrEmpty(ApplicationPathMatchPattern) && !string.IsNullOrEmpty(appInfo.ApplicationPath))
+                else if (!string.IsNullOrEmpty(ApplicationPathMatchPattern))
                 {
-                    return ApplicationPathMatchPattern.Equals(appInfo.ApplicationPath, StringComparison.OrdinalIgnoreCase) ||
+                    if (string.IsNullOrEmpty(appInfo.ApplicationPath))
+                    {
+                        isMatch = false;
+                    }
+                    else
+                    {
+                        isMatch = ApplicationPathMatchPattern.Equals(appInfo.ApplicationPath, StringComparison.OrdinalIgnoreCase) ||
                         (ApplicationPathMatchPattern[0] == '*' && ApplicationPathMatchPattern[ApplicationPathMatchPattern.Length - 1] == '*'
                         && appInfo.ApplicationPath.IndexOf(ApplicationPathMatchPattern, StringComparison.OrdinalIgnoreCase) > -1) ||
 
                         (ApplicationPathMatchPattern[0] == '*' && ApplicationPathMatchPattern.EndsWith(appInfo.ApplicationPath, StringComparison.OrdinalIgnoreCase)) ||
 
                         (ApplicationPathMatchPattern[ApplicationPathMatchPattern.Length - 1] == '*' && ApplicationPathMatchPattern.StartsWith(appInfo.ApplicationPath, StringComparison.OrdinalIgnoreCase));
+                    }
                 }
-                else if (!string.IsNullOrEmpty(ProductNameMatchPattern) && !string.IsNullOrEmpty(appInfo.ProductName))
+                else if (!string.IsNullOrEmpty(ProductNameMatchPattern))
                 {
-                    return ProductNameMatchPattern.Equals(appInfo.ProductName, StringComparison.OrdinalIgnoreCase) ||
+                    if (string.IsNullOrEmpty(appInfo.ProductName))
+                    {
+                        isMatch = false;
+                    }
+                    else
+                    {
+                        isMatch = ProductNameMatchPattern.Equals(appInfo.ProductName, StringComparison.OrdinalIgnoreCase) ||
                         (ProductNameMatchPattern[0] == '*' && ProductNameMatchPattern[ProductNameMatchPattern.Length - 1] == '*'
                         && appInfo.ProductName.IndexOf(ProductNameMatchPattern, StringComparison.OrdinalIgnoreCase) > -1) ||
 
                         (ProductNameMatchPattern[0] == '*' && ProductNameMatchPattern.EndsWith(appInfo.ProductName, StringComparison.OrdinalIgnoreCase)) ||
 
                         (ProductNameMatchPattern[ProductNameMatchPattern.Length - 1] == '*' && ProductNameMatchPattern.StartsWith(appInfo.ProductName, StringComparison.OrdinalIgnoreCase));
+                    }
                 }
-                else if (!string.IsNullOrEmpty(ProductVersionMatchPattern) && !string.IsNullOrEmpty(appInfo.ProductVersion))
+                else if (!string.IsNullOrEmpty(ProductVersionMatchPattern))
                 {
-                    return ProductVersionMatchPattern.Equals(appInfo.ProductVersion, StringComparison.OrdinalIgnoreCase) ||
+                    if (string.IsNullOrEmpty(appInfo.ProductVersion))
+                    {
+                        isMatch = false;
+                    }
+                    else
+                    {
+                        isMatch = ProductVersionMatchPattern.Equals(appInfo.ProductVersion, StringComparison.OrdinalIgnoreCase) ||
                         (ProductVersionMatchPattern[0] == '*' && ProductVersionMatchPattern[ProductVersionMatchPattern.Length - 1] == '*'
                         && appInfo.ProductVersion.IndexOf(ProductVersionMatchPattern, StringComparison.OrdinalIgnoreCase) > -1) ||
 
                         (ProductVersionMatchPattern[0] == '*' && ProductVersionMatchPattern.EndsWith(appInfo.ProductVersion, StringComparison.OrdinalIgnoreCase)) ||
 
                         (ProductVersionMatchPattern[ProductVersionMatchPattern.Length - 1] == '*' && ProductVersionMatchPattern.StartsWith(appInfo.ProductVersion, StringComparison.OrdinalIgnoreCase));
+                    }
                 }
-                else if (!string.IsNullOrEmpty(CompanyNameMatchPattern) && !string.IsNullOrEmpty(appInfo.CompanyName))
+                else if (!string.IsNullOrEmpty(CompanyNameMatchPattern))
                 {
-                    return CompanyNameMatchPattern.Equals(appInfo.CompanyName, StringComparison.OrdinalIgnoreCase) ||
+                    if (string.IsNullOrEmpty(appInfo.CompanyName))
+                    {
+                        isMatch = false;
+                    }
+                    else
+                    {
+                        isMatch = CompanyNameMatchPattern.Equals(appInfo.CompanyName, StringComparison.OrdinalIgnoreCase) ||
                         (CompanyNameMatchPattern[0] == '*' && CompanyNameMatchPattern[CompanyNameMatchPattern.Length - 1] == '*'
                         && appInfo.CompanyName.IndexOf(CompanyNameMatchPattern, StringComparison.OrdinalIgnoreCase) > -1) ||
 
                         (CompanyNameMatchPattern[0] == '*' && CompanyNameMatchPattern.EndsWith(appInfo.CompanyName, StringComparison.OrdinalIgnoreCase)) ||
 
                         (CompanyNameMatchPattern[CompanyNameMatchPattern.Length - 1] == '*' && CompanyNameMatchPattern.StartsWith(appInfo.CompanyName, StringComparison.OrdinalIgnoreCase));
+                    }
                 }
 
-                return false;
+                return isMatch;
             }
         }
 
