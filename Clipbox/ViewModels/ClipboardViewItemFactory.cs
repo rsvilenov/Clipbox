@@ -81,27 +81,7 @@ namespace Clipbox.ViewModels
 
             return viewItem;
         }
-
-        private static string GetSourceApplicationDescription(IWindowInfo sourceWindowInfo)
-        {
-            if (!string.IsNullOrWhiteSpace(sourceWindowInfo.Caption))
-            {
-                return sourceWindowInfo.Caption;
-            }
-            else if (!string.IsNullOrWhiteSpace(sourceWindowInfo.ApplicationInfo.FileDescription))
-            {
-                return sourceWindowInfo.ApplicationInfo.FileDescription;
-            }
-            else if (string.IsNullOrWhiteSpace(sourceWindowInfo.ApplicationInfo.ProductName))
-            {
-                return sourceWindowInfo.ApplicationInfo.ProductName;
-            }
-            else
-            {
-                return System.IO.Path.GetFileNameWithoutExtension(sourceWindowInfo.ApplicationInfo.ApplicationPath);
-            }
-        }
-
+        
         public static ClipboardPreviewItem GetClipboardPreviewItem(PreviewItemTransferObject pito)
         {
             if (pito == null)
