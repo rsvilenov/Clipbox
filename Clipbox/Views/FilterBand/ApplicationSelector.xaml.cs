@@ -1,10 +1,15 @@
-﻿using Clipbox.ExtendedClipboard.Interfaces;
+﻿using Clipbox.Core.Extensibility.Contracts;
+using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.UI;
+using Clipbox.Infrastructure.UI.ExtentionMethods;
 using Clipbox.ViewModels;
 using Clipbox.Views.FilterBand.EventArgsClasses;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
@@ -70,6 +75,30 @@ namespace Clipbox.Views.FilterBand
             DependencyProperty.Register(nameof(SelectedApps), typeof(AsyncObservableCollection<SourceApplicationInfo>), typeof(ApplicationSelector), new PropertyMetadata(null));
 
 
+        private BitmapSource _explorerIcon;
+
+        private BitmapSource GetApplicationIcon(IApplicationInfo appInfo, byte[] iconByteArray)
+        {
+            string explorerPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "explorer.exe");
+            if (Path.Equals(appInfo.ApplicationPath, explorerPath))
+            {
+                if (_explorerIcon == null)
+                {
+                    using (Icon appIcon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location))
+                    using (Bitmap appIconBmp = appIcon.ToBitmap())
+                    {
+                        _explorerIcon = appIconBmp.ToBitmapSource();
+                    }
+                }
+
+                return _explorerIcon;
+            }
+            else
+            {
+                return Infrastructure.UI.Utils.Imaging.BitmapSourceFromBitmapByteArray(iconByteArray);
+            }
+        }
+
         protected override void LoadData()
         {
             _appInfoCollection = ClipboardItemsDataProvider
@@ -79,7 +108,7 @@ namespace Clipbox.Views.FilterBand
                 .Select(g => g.First())
                 .Select(i => new SourceApplicationInfo
                 {
-                    Icon = Infrastructure.UI.Utils.Imaging.BitmapSourceFromBitmapByteArray(i.Value),
+                    Icon = GetApplicationIcon(i.Key, i.Value),
                     ExecutableName = System.IO.Path.GetFileNameWithoutExtension(i.Key.ApplicationPath),
                     ProductName = AppDescriptionFormatter.Format(i.Key)
                 })
