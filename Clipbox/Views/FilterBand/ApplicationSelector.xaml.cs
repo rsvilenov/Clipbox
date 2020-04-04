@@ -1,5 +1,6 @@
 ﻿using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.UI;
+using Clipbox.ViewModels;
 using Clipbox.Views.FilterBand.EventArgsClasses;
 using System;
 using System.Collections.Generic;
@@ -80,8 +81,7 @@ namespace Clipbox.Views.FilterBand
                 {
                     Icon = Infrastructure.UI.Utils.Imaging.BitmapSourceFromBitmapByteArray(i.Value),
                     ExecutableName = System.IO.Path.GetFileNameWithoutExtension(i.Key.ApplicationPath),
-                    ProductName = string.IsNullOrWhiteSpace(i.Key.ProductName) ?
-                        System.IO.Path.GetFileNameWithoutExtension(i.Key.ApplicationPath) : i.Key.ProductName 
+                    ProductName = AppDescriptionFormatter.Format(i.Key)
                 })
                 .ToList();
         }

@@ -22,6 +22,11 @@ namespace Clipbox.ViewModels
 
         public static string Format(IWindowInfo windowInfo)
         {
+            if (windowInfo == null)
+            {
+                throw new ArgumentNullException(nameof(windowInfo));
+            }
+
             AppDescriptionFormatInfo matchedInfo = _appDescriptionFormatInfos
                 .FirstOrDefault(adfi => adfi.Match(windowInfo.ApplicationInfo)) ??
                 _appDescriptionFormatInfos.FirstOrDefault(adfi => adfi.IsDefault);
@@ -36,6 +41,11 @@ namespace Clipbox.ViewModels
 
         public static string Format(IApplicationInfo appInfo)
         {
+            if (appInfo == null)
+            {
+                throw new ArgumentNullException(nameof(appInfo));
+            }
+
             AppDescriptionFormatInfo matchedInfo = _appDescriptionFormatInfos
                 .FirstOrDefault(adfi => adfi.Match(appInfo)) ??
                 _appDescriptionFormatInfos.FirstOrDefault(adfi => adfi.IsDefault);
