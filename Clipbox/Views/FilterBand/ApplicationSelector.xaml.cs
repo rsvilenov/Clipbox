@@ -10,9 +10,11 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 
 namespace Clipbox.Views.FilterBand
 {
@@ -154,5 +156,26 @@ namespace Clipbox.Views.FilterBand
             }
         }
 
+        private void SearchTextBox_SearchRequested(object sender, RoutedEventArgs e)
+        {
+            AppInfoCollection.Clear();
+            IsLoading = true;
+            string searchText = searchTextBox.Text;
+            List<SourceApplicationInfo> selectedApps = SelectedApps.ToList();
+
+            Task.Run(() =>
+            {
+                IList<SourceApplicationInfo> filteredAppList = _appInfoCollection
+                .Where(sai => sai.ExecutableName.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) > -1
+                    || sai.ProductName.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) > -1)
+                .Where(sai => !selectedApps.Contains(sai))
+                .ToList();
+
+                Dispatcher
+                .BeginInvoke(DispatcherPriority.Background, new Action(() => AppInfoCollection.AddRange(filteredAppList)))
+                .Task.ContinueWith((t) => Dispatcher.Invoke(() => IsLoading = false));
+            });
+            
+        }
     }
 }
