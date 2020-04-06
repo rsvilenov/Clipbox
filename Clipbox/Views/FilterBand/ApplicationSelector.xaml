@@ -129,11 +129,15 @@
         x:Name="mainBorder"
         BorderBrush="{DynamicResource AccentBrush}"
         BorderThickness="1">
-        <Grid Margin="15" Background="{DynamicResource TaskbarColorBrush}">
+        <Grid
+            Width="600"
+            Height="500"
+            Margin="15"
+            Background="{DynamicResource TaskbarColorBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="1.3*" />
+                <RowDefinition Height="1.6*" />
+                <RowDefinition Height="3*" />
                 <RowDefinition />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
@@ -149,6 +153,7 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
+
                 <ContentControl
                     Grid.Column="0"
                     Width="32"
@@ -199,147 +204,164 @@
                 </StackPanel>
 
             </Grid>
-            <ListView
+            <GroupBox
                 Grid.Row="1"
                 Grid.ColumnSpan="2"
-                MinHeight="50"
-                Background="{DynamicResource TaskbarColorBrush}"
-                BorderThickness="0"
-                ItemsSource="{Binding SelectedApps}"
-                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                ScrollViewer.VerticalScrollBarVisibility="Auto">
-                <ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapPanel />
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="{x:Type ListViewItem}">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="{x:Type ListViewItem}">
-                                    <ContentPresenter
-                                        Margin="5,0,0,5"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Stretch"
-                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ListView.ItemContainerStyle>
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <Border
-                            BorderBrush="{DynamicResource AccentBrush}"
-                            BorderThickness="1"
-                            CornerRadius="1">
-                            <Grid Margin="5,3,3,5" Background="Transparent">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="40" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="40" />
-                                </Grid.ColumnDefinitions>
-                                <Image
-                                    Grid.Column="0"
-                                    MaxHeight="20"
-                                    Margin="5,0,0,0"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Source="{Binding Path=Icon}"
-                                    ToolTip="{Binding Path=ProductName}" />
-                                <TextBlock
-                                    Grid.Column="1"
-                                    VerticalAlignment="Center"
-                                    Foreground="White"
-                                    Text="{Binding ProductName}" />
-                                <Button
-                                    Grid.Column="2"
-                                    MaxWidth="15"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Center"
-                                    Command="{Binding DataContext.RemoveApplication, ElementName=mainBorder}"
-                                    CommandParameter="{Binding}"
-                                    Style="{DynamicResource BtnRemove}"
-                                    ToolTip="Remove the application from the filter" />
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-
-            <ListView
+                Padding="15"
+                VerticalAlignment="Stretch"
+                BorderBrush="DarkGray"
+                BorderThickness="0.3"
+                Foreground="White"
+                Header="{Binding Path=SelectedApps.Count}"
+                HeaderStringFormat="Selected: {0}">
+                <ListView
+                    VerticalAlignment="Stretch"
+                    Background="{DynamicResource TaskbarColorBrush}"
+                    BorderThickness="0"
+                    ItemsSource="{Binding SelectedApps}"
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                    ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel />
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListViewItem}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                        <ContentPresenter
+                                            Margin="5,0,0,5"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Stretch"
+                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Border
+                                BorderBrush="DarkGray"
+                                BorderThickness="1"
+                                CornerRadius="1">
+                                <Grid Margin="5,3,3,5" Background="Transparent">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="40" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="40" />
+                                    </Grid.ColumnDefinitions>
+                                    <Image
+                                        Grid.Column="0"
+                                        MaxHeight="20"
+                                        Margin="5,0,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Source="{Binding Path=Icon}"
+                                        ToolTip="{Binding Path=ProductName}" />
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        VerticalAlignment="Center"
+                                        Foreground="White"
+                                        Text="{Binding ProductName}" />
+                                    <Button
+                                        Grid.Column="2"
+                                        MaxWidth="15"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        Command="{Binding DataContext.RemoveApplication, ElementName=mainBorder}"
+                                        CommandParameter="{Binding}"
+                                        Style="{DynamicResource BtnRemove}"
+                                        ToolTip="Remove the application from the filter" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </GroupBox>
+            <GroupBox
                 Grid.Row="2"
                 Grid.ColumnSpan="2"
-                Height="150"
-                HorizontalAlignment="Stretch"
+                Margin="0,15,0,0"
+                Padding="15"
                 VerticalAlignment="Stretch"
-                Background="{DynamicResource TaskbarColorBrush}"
-                BorderThickness="0"
-                IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBooleanConverter}}"
-                ItemsSource="{Binding AppInfoCollection}"
-                ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                ScrollViewer.VerticalScrollBarVisibility="Auto">
+                BorderBrush="DarkGray"
+                BorderThickness="0.3"
+                Foreground="White"
+                Header="Available applications">
+                <ListView
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Background="{DynamicResource TaskbarColorBrush}"
+                    BorderThickness="0"
+                    IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBooleanConverter}}"
+                    ItemsSource="{Binding AppInfoCollection}"
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                    ScrollViewer.VerticalScrollBarVisibility="Auto">
 
-                <ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <StackPanel Orientation="Vertical" />
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="{x:Type ListViewItem}">
-                        <Setter Property="Template">
-                            <Setter.Value>
-                                <ControlTemplate TargetType="{x:Type ListViewItem}">
-                                    <ContentPresenter
-                                        Margin="5,0,0,5"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Stretch"
-                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                </ControlTemplate>
-                            </Setter.Value>
-                        </Setter>
-                    </Style>
-                </ListView.ItemContainerStyle>
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <Border
-                            BorderBrush="{DynamicResource AccentBrush}"
-                            BorderThickness="1"
-                            CornerRadius="1">
-                            <Grid Margin="5,3,3,5" Background="Transparent">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="40" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="40" />
-                                </Grid.ColumnDefinitions>
-                                <Image
-                                    Grid.Column="0"
-                                    MaxHeight="20"
-                                    Margin="5,0,0,0"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    Source="{Binding Path=Icon}"
-                                    ToolTip="{Binding Path=ProductName}" />
-                                <TextBlock
-                                    Grid.Column="1"
-                                    VerticalAlignment="Center"
-                                    Foreground="White"
-                                    Text="{Binding ProductName}" />
-                                <Button
-                                    Grid.Column="2"
-                                    MaxWidth="15"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Center"
-                                    Command="{Binding DataContext.AddApplication, ElementName=mainBorder}"
-                                    CommandParameter="{Binding}"
-                                    Style="{DynamicResource BtnAdd}"
-                                    ToolTip="Add the application to the filter" />
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Vertical" />
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListViewItem}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                        <ContentPresenter
+                                            Margin="5,0,0,5"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Stretch"
+                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Border
+                                BorderBrush="DarkGray"
+                                BorderThickness="1"
+                                CornerRadius="1">
+                                <Grid Margin="5,3,3,5" Background="Transparent">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="40" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="40" />
+                                    </Grid.ColumnDefinitions>
+                                    <Image
+                                        Grid.Column="0"
+                                        MaxHeight="20"
+                                        Margin="5,0,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Source="{Binding Path=Icon}"
+                                        ToolTip="{Binding Path=ProductName}" />
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        VerticalAlignment="Center"
+                                        Foreground="White"
+                                        Text="{Binding ProductName}" />
+                                    <Button
+                                        Grid.Column="2"
+                                        MaxWidth="15"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        Command="{Binding DataContext.AddApplication, ElementName=mainBorder}"
+                                        CommandParameter="{Binding}"
+                                        Style="{DynamicResource BtnAdd}"
+                                        ToolTip="Add the application to the filter" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </GroupBox>
+
             <Button
                 x:Name="btnOk"
                 Grid.Row="3"
