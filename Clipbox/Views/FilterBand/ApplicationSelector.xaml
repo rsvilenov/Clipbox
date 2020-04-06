@@ -132,14 +132,14 @@
         BorderThickness="1">
         <Grid
             Width="600"
-            Height="500"
+            Height="550"
             Margin="15"
             Background="{DynamicResource TaskbarColorBrush}">
             <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition Height="1.6*" />
-                <RowDefinition Height="3*" />
-                <RowDefinition />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="5*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition />
@@ -199,12 +199,14 @@
                     VerticalAlignment="Center"
                     Orientation="Horizontal">
                     <TextBlock
-                        FontSize="14"
-                        Foreground="White"
-                        Text="Filter by source application/window" />
+                        FontSize="18"
+                        Foreground="{DynamicResource ControlForegroundBrush}"
+                        Text="Filter by source application and/or window title" />
                 </StackPanel>
 
             </Grid>
+
+
             <GroupBox
                 Grid.Row="1"
                 Grid.ColumnSpan="2"
@@ -212,96 +214,106 @@
                 VerticalAlignment="Stretch"
                 BorderBrush="DarkGray"
                 BorderThickness="0.3"
-                Foreground="White"
-                Header="{Binding Path=SelectedApps.Count}"
-                HeaderStringFormat="Selected: {0}">
-                <ListView
-                    VerticalAlignment="Stretch"
-                    Background="{DynamicResource TaskbarColorBrush}"
-                    BorderThickness="0"
-                    ItemsSource="{Binding SelectedApps}"
-                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                    ScrollViewer.VerticalScrollBarVisibility="Auto">
-                    <ListView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel />
-                        </ItemsPanelTemplate>
-                    </ListView.ItemsPanel>
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="{x:Type ListViewItem}">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type ListViewItem}">
-                                        <ContentPresenter
-                                            Margin="5,0,0,5"
-                                            HorizontalAlignment="Stretch"
-                                            VerticalAlignment="Stretch"
-                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </ListView.ItemContainerStyle>
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Border
-                                BorderBrush="DarkGray"
-                                BorderThickness="1"
-                                CornerRadius="1">
-                                <Grid Margin="5,3,3,5" Background="Transparent">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="40" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="40" />
-                                    </Grid.ColumnDefinitions>
-                                    <Image
-                                        Grid.Column="0"
-                                        MaxHeight="20"
-                                        Margin="5,0,0,0"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Center"
-                                        Source="{Binding Path=Icon}"
-                                        ToolTip="{Binding Path=ProductName}" />
-                                    <TextBlock
-                                        Grid.Column="1"
-                                        VerticalAlignment="Center"
-                                        Foreground="White"
-                                        Text="{Binding ProductName}" />
-                                    <Button
-                                        Grid.Column="2"
-                                        MaxWidth="15"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        Command="{Binding DataContext.RemoveApplication, ElementName=mainBorder}"
-                                        CommandParameter="{Binding}"
-                                        Style="{DynamicResource BtnRemove}"
-                                        ToolTip="Remove the application from the filter" />
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </GroupBox>
-            <GroupBox
-                Grid.Row="2"
-                Grid.ColumnSpan="2"
-                Margin="0,15,0,0"
-                Padding="15"
-                VerticalAlignment="Stretch"
-                BorderBrush="DarkGray"
-                BorderThickness="0.3"
-                Foreground="White"
-                Header="Available applications">
+                Foreground="{DynamicResource ControlForegroundBrush}"
+                Header="Filter by application">
                 <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="40" />
+                        <RowDefinition />
+                        <RowDefinition Height="60" />
                         <RowDefinition />
                     </Grid.RowDefinitions>
+                    <ListView
+                        Grid.Row="0"
+                        VerticalAlignment="Stretch"
+                        Background="{DynamicResource ControlBackgroundBrush}"
+                        BorderBrush="{DynamicResource ControlBorderBrush}"
+                        BorderThickness="1"
+                        ItemsSource="{Binding SelectedApps}"
+                        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                        ScrollViewer.VerticalScrollBarVisibility="Auto">
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Margin="10" />
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="{x:Type ListViewItem}">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                            <ContentPresenter
+                                                Margin="5,0,0,5"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Stretch"
+                                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Border
+                                    BorderBrush="DarkGray"
+                                    BorderThickness="1"
+                                    CornerRadius="1">
+                                    <Grid Margin="5,3,3,5" Background="Transparent">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="40" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="40" />
+                                        </Grid.ColumnDefinitions>
+                                        <Image
+                                            Grid.Column="0"
+                                            MaxHeight="20"
+                                            Margin="5,0,0,0"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center"
+                                            Source="{Binding Path=Icon}"
+                                            ToolTip="{Binding Path=ProductName}" />
+                                        <TextBlock
+                                            Grid.Column="1"
+                                            VerticalAlignment="Center"
+                                            Foreground="White"
+                                            Text="{Binding ProductName}" />
+                                        <Button
+                                            Grid.Column="2"
+                                            MaxWidth="15"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            Command="{Binding DataContext.RemoveApplication, ElementName=mainBorder}"
+                                            CommandParameter="{Binding}"
+                                            Style="{DynamicResource BtnRemove}"
+                                            ToolTip="Deselect" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                    <TextBlock
+                        Grid.Row="0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="16"
+                        FontWeight="Bold"
+                        Foreground="{DynamicResource ControlForegroundBrush}"
+                        Text="Select apps from the list below">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Path=SelectedApps.Count}" Value="0">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
                     <customControls:SearchTextBox
                         x:Name="searchTextBox"
-                        Grid.Row="0"
+                        Grid.Row="1"
                         Height="30"
-                        Margin="5,0,0,0"
+                        Margin="0,20,0,0"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Center"
                         HorizontalContentAlignment="Left"
@@ -310,11 +322,12 @@
                         SearchRequested="SearchTextBox_SearchRequested" />
                     <ListView
                         x:Name="availableAppsListView"
-                        Grid.Row="1"
+                        Grid.Row="2"
                         HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
-                        Background="{DynamicResource TaskbarColorBrush}"
-                        BorderThickness="0"
+                        Background="{DynamicResource ControlBackgroundBrush}"
+                        BorderBrush="{DynamicResource ControlBorderBrush}"
+                        BorderThickness="1"
                         IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBooleanConverter}}"
                         ItemsSource="{Binding AppInfoCollection}"
                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
@@ -322,7 +335,7 @@
 
                         <ListView.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <StackPanel Orientation="Vertical" />
+                                <StackPanel Margin="10" Orientation="Vertical" />
                             </ItemsPanelTemplate>
                         </ListView.ItemsPanel>
                         <ListView.ItemContainerStyle>
@@ -373,7 +386,7 @@
                                             Command="{Binding DataContext.AddApplication, ElementName=mainBorder}"
                                             CommandParameter="{Binding}"
                                             Style="{DynamicResource BtnAdd}"
-                                            ToolTip="Add the application to the filter" />
+                                            ToolTip="Select" />
                                     </Grid>
                                 </Border>
                             </DataTemplate>
@@ -383,13 +396,35 @@
 
             </GroupBox>
 
+            <GroupBox
+                Grid.Row="2"
+                Grid.ColumnSpan="2"
+                Margin="0,15,0,0"
+                Padding="7"
+                VerticalAlignment="Stretch"
+                BorderBrush="DarkGray"
+                BorderThickness="0.3"
+                Foreground="{DynamicResource ControlForegroundBrush}"
+                Header="Filter by window title (or part of it)">
+                <TextBox
+                    Height="30"
+                    HorizontalAlignment="Stretch"
+                    VerticalContentAlignment="Center"
+                    Background="{DynamicResource ControlBackgroundBrush}"
+                    BorderBrush="{DynamicResource ControlBorderBrush}"
+                    FontSize="14"
+                    Foreground="{DynamicResource ControlForegroundBrush}" />
+            </GroupBox>
+
+
             <Button
                 x:Name="btnOk"
                 Grid.Row="3"
                 Grid.Column="0"
                 Width="70"
                 Height="30"
-                Margin="5"
+                Margin="10"
+                VerticalAlignment="Center"
                 Command="{Binding OkClicked}"
                 Content="OK"
                 Foreground="White"
@@ -402,7 +437,8 @@
                 Grid.Column="1"
                 Width="70"
                 Height="30"
-                Margin="5"
+                Margin="10"
+                VerticalAlignment="Center"
                 Command="{Binding CancelClicked}"
                 Content="Cancel"
                 Foreground="White"
