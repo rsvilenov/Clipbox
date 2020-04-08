@@ -59,6 +59,17 @@ namespace Clipbox.Views.FilterBand
 
 
 
+        public bool ShouldParentBeEnabled
+        {
+            get { return (bool)GetValue(ShouldParentBeEnabledProperty); }
+            set { SetValue(ShouldParentBeEnabledProperty, value); }
+        }
+        
+        public static readonly DependencyProperty ShouldParentBeEnabledProperty =
+            DependencyProperty.Register(nameof(ShouldParentBeEnabled), typeof(bool), typeof(FilterBand), new PropertyMetadata(true));
+
+
+
 
         private AsyncObservableCollection<SourceApplicationInfo> SelectedApplications
         {
@@ -402,6 +413,7 @@ namespace Clipbox.Views.FilterBand
                 ((_, dialogArgs) =>
                 {
                     popup.IsOpen = false;
+                    ShouldParentBeEnabled = true;
                     dateRangeSelector.DateRangeSelected -= dateRangeSelectedEventHandler;
 
                     if (dialogArgs.StartMs > -1 && dialogArgs.EndMs > -1)
@@ -425,6 +437,7 @@ namespace Clipbox.Views.FilterBand
             dateRangeSelector.DateRangeSelected += dateRangeSelectedEventHandler;
 
             popup.IsOpen = true;
+            ShouldParentBeEnabled = false;
         }
 
         private void ToggleApplicationSelectionButton_PreviewMouseDown(object sender, MouseButtonEventArgs e)
@@ -457,6 +470,7 @@ namespace Clipbox.Views.FilterBand
                 ((_, dialogArgs) =>
                 {
                     popup.IsOpen = false;
+                    ShouldParentBeEnabled = true;
                     applicationSelector.AppInfoSelected -= appInfoSelectedEventHandler;
 
                     if (string.IsNullOrWhiteSpace(dialogArgs.CaptionSearchString) && (dialogArgs.SelectedApplications == null || !dialogArgs.SelectedApplications.Any()))
@@ -477,6 +491,7 @@ namespace Clipbox.Views.FilterBand
             applicationSelector.AppInfoSelected += appInfoSelectedEventHandler;
 
             popup.IsOpen = true;
+            ShouldParentBeEnabled = false;
         }
     }
 }
