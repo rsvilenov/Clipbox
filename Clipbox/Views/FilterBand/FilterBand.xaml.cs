@@ -92,6 +92,18 @@ namespace Clipbox.Views.FilterBand
             DependencyProperty.Register(nameof(WindowCaptionSearchString), typeof(string), typeof(FilterBand), new PropertyMetadata(null));
 
 
+
+        public string SelectedAppsString
+        {
+            get { return (string)GetValue(SelectedAppsStringProperty); }
+            set { SetValue(SelectedAppsStringProperty, value); }
+        }
+
+        public static readonly DependencyProperty SelectedAppsStringProperty =
+            DependencyProperty.Register(nameof(SelectedAppsString), typeof(string), typeof(FilterBand), new PropertyMetadata(string.Empty));
+
+
+
         private double StartDateMs
         {
             get { return (double)GetValue(StartDateMsProperty); }
@@ -483,7 +495,7 @@ namespace Clipbox.Views.FilterBand
 
                         WindowCaptionSearchString = dialogArgs.CaptionSearchString;
                         SelectedApplications = new AsyncObservableCollection<SourceApplicationInfo>(dialogArgs.SelectedApplications);
-
+                        SelectedAppsString = string.Join("; ", dialogArgs.SelectedApplications.Select(ai => ai.FormattedProductName));
                         RebuildSearchTermCollection();
                     }
                 });

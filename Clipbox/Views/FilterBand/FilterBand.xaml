@@ -56,7 +56,35 @@
                         BasedOn="{StaticResource tglButton}"
                         TargetType="{x:Type ToggleButton}">
                         <Setter Property="Content" Value="{DynamicResource SourceWindowsIcon}" />
-                        <Setter Property="ToolTip" Value="Filter by source application" />
+                        <Setter Property="ToolTip" Value="Filter by source application/window" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding AppSelectorToggled}" Value="True">
+                                <Setter Property="ToolTip">
+                                    <Setter.Value>
+                                        <StackPanel MaxWidth="350" Orientation="Vertical">
+                                            <TextBlock TextWrapping="Wrap">
+                                                <!--  WARNING: do not put these runs on a new line each, as this will add a space between each run  -->
+                                                <Run Text="Showing items, coming from" /><Run Text="&#x0a;" /><Run FontWeight="Bold" Text="{Binding SelectedAppsString}" />
+                                            </TextBlock>
+                                            <TextBlock TextWrapping="Wrap">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding WindowCaptionSearchString}" Value="{x:Null}">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                                <!--  WARNING: do not put these runs on a new line each, as this will add a space between each run  -->
+                                                <Run Text="&#x0a;" /><Run Text="as well as any windows with a caption, containing" /><Run Text="&#x0a;" /><Run FontWeight="Bold" Text="{Binding WindowCaptionSearchString, StringFormat='*{0}*'}" />
+                                            </TextBlock>
+                                        </StackPanel>
+
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
                     </Style>
 
                     <Style
@@ -70,10 +98,8 @@
                                 <Setter Property="ToolTip">
                                     <Setter.Value>
                                         <TextBlock>
-                                            <Run Text="Showing items, created from " />
-                                            <Run Text="{Binding StartDateMs, Converter={StaticResource MillisecondsToHumanReadableDateStringConverter}}" />
-                                            <Run Text=" to " />
-                                            <Run Text="{Binding EndDateMs, Converter={StaticResource MillisecondsToHumanReadableDateStringConverter}}" />
+                                            <!--  WARNING: do not put these runs on a new line each, as this will add a space between each run  -->
+                                            <Run Text="Showing items, created from " /><Run FontWeight="Bold" Text="{Binding StartDateMs, Converter={StaticResource MillisecondsToHumanReadableDateStringConverter}}" /><Run Text=" to " /><Run FontWeight="Bold" Text="{Binding EndDateMs, Converter={StaticResource MillisecondsToHumanReadableDateStringConverter}}" />
                                         </TextBlock>
                                     </Setter.Value>
                                 </Setter>
