@@ -15,21 +15,21 @@ namespace Clipbox.Core.Search.IndexUnits
 
         protected override IEnumerable<string> GetTermValuesFromClipboardItem(IClipboardItem clipboardItem)
         {
-            string appName = clipboardItem.Source.SourceWindowInfo.ApplicationInfo.ProductName;
-
             string appFileName = string.Empty;
             string appPath = clipboardItem.Source.SourceWindowInfo.ApplicationInfo.ApplicationPath;
-            if (string.IsNullOrWhiteSpace(appPath)
+            if (!string.IsNullOrWhiteSpace(appPath)
                 && appPath.All(c => !Path.GetInvalidPathChars().Contains(c)))
             {
-                appName = Path.GetFileNameWithoutExtension(appPath);
+                appFileName = Path.GetFileName(appPath);
             }
 
             return new string[]
             {
-                appName,
+                clipboardItem.Source.SourceWindowInfo.ApplicationInfo.ProductName,
+                clipboardItem.Source.SourceWindowInfo.ApplicationInfo.FileDescription,
+                appPath,
                 appFileName
-            };
+            }.Where(s => !string.IsNullOrWhiteSpace(s));
         }
     }
 }

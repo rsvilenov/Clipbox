@@ -170,12 +170,12 @@
                                             HorizontalAlignment="Left"
                                             VerticalAlignment="Center"
                                             Source="{Binding Path=Icon}"
-                                            ToolTip="{Binding Path=ProductName}" />
+                                            ToolTip="{Binding Path=FormattedProductName}" />
                                         <TextBlock
                                             Grid.Column="1"
                                             VerticalAlignment="Center"
                                             Foreground="White"
-                                            Text="{Binding ProductName}" />
+                                            Text="{Binding FormattedProductName}" />
                                         <Button
                                             Grid.Column="2"
                                             MaxWidth="15"
@@ -272,12 +272,12 @@
                                             HorizontalAlignment="Left"
                                             VerticalAlignment="Center"
                                             Source="{Binding Path=Icon}"
-                                            ToolTip="{Binding Path=ProductName}" />
+                                            ToolTip="{Binding Path=FormattedProductName}" />
                                         <TextBlock
                                             Grid.Column="1"
                                             VerticalAlignment="Center"
                                             Foreground="White"
-                                            Text="{Binding ProductName}" />
+                                            Text="{Binding FormattedProductName}" />
                                         <Button
                                             Grid.Column="2"
                                             MaxWidth="15"
@@ -314,7 +314,8 @@
                     Background="{DynamicResource ControlBackgroundBrush}"
                     BorderBrush="{DynamicResource ControlBorderBrush}"
                     FontSize="14"
-                    Foreground="{DynamicResource ControlForegroundBrush}" />
+                    Foreground="{DynamicResource ControlForegroundBrush}"
+                    Text="{Binding WindowCaptionSearchString}" />
             </GroupBox>
 
 

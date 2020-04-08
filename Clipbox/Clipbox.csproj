@@ -208,6 +208,7 @@
       <DependentUpon>FilterBand.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\FilterBand\FilterDialogBase.cs" />
+    <Compile Include="Views\FilterBand\SourceApplicationInfo.cs" />
     <Compile Include="Views\Interfaces\IMainWindow.cs" />
     <Compile Include="Views\Interfaces\ITrayContextMenu.cs" />
     <Compile Include="Views\LoadingIndicatorPopup.xaml.cs">

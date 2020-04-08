@@ -14,6 +14,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Threading;
 
 namespace Clipbox.Views.FilterBand
@@ -58,6 +59,28 @@ namespace Clipbox.Views.FilterBand
 
 
 
+
+        private AsyncObservableCollection<SourceApplicationInfo> SelectedApplications
+        {
+            get { return (AsyncObservableCollection<SourceApplicationInfo>)GetValue(SelectedApplicationsProperty); }
+            set { SetValue(SelectedApplicationsProperty, value); }
+        }
+
+        private static readonly DependencyProperty SelectedApplicationsProperty =
+            DependencyProperty.Register(nameof(SelectedApplications), typeof(AsyncObservableCollection<SourceApplicationInfo>), typeof(FilterBand), new PropertyMetadata(null));
+
+
+
+        private string WindowCaptionSearchString
+        {
+            get { return (string)GetValue(WindowCaptionSearchStringProperty); }
+            set { SetValue(WindowCaptionSearchStringProperty, value); }
+        }
+
+        private static readonly DependencyProperty WindowCaptionSearchStringProperty =
+            DependencyProperty.Register(nameof(WindowCaptionSearchString), typeof(string), typeof(FilterBand), new PropertyMetadata(null));
+
+
         private double StartDateMs
         {
             get { return (double)GetValue(StartDateMsProperty); }
@@ -87,15 +110,9 @@ namespace Clipbox.Views.FilterBand
 
         private void RebuildSearchTermCollection()
         {
-            if (!(TypeExpander.IsExpanded || CloudExpander.IsExpanded) && !DateRangeToggled)
-            {
-                return;
-            }
-
             SearchTerms.Clear();
 
-            if (TextTypeSelected || ImageTypeSelected
-                || FileTypeSelected || GeneralTypeSelected)
+            if (TypeExpander.IsExpanded)
             {
                 List<ClipboardContentClass> contentClasses = new List<ClipboardContentClass>();
                 if (TextTypeSelected)
@@ -115,10 +132,13 @@ namespace Clipbox.Views.FilterBand
                     contentClasses.Add(ClipboardContentClass.GeneralContent);
                 }
 
-                SearchTerms.Add(new ClipboardContentTypeSearchTerm(contentClasses));
+                if (contentClasses.Any())
+                {
+                    SearchTerms.Add(new ClipboardContentTypeSearchTerm(contentClasses));
+                }
             }
 
-            if (LocalMachineSourceSelected || CloudSourceSelected)
+            if (CloudExpander.IsExpanded)
             {
                 bool areBothSelected = LocalMachineSourceSelected && CloudSourceSelected;
 
@@ -146,15 +166,6 @@ namespace Clipbox.Views.FilterBand
                     };
 
                     SearchTerms.Add(smUidTerm);
-                }
-
-                // hack: if we have added only non-obligatory search terms,
-                // the search will not be possible, so we should add
-                // some obligatory terms which will not affect the result.
-                if (SearchTerms.All(t => t.Occurrence == Core.Search.Enums.TermOccurrence.NON_OBLIGATORY))
-                {
-                    var allContentClasses = (ClipboardContentClass[])Enum.GetValues(typeof(ClipboardContentClass));
-                    SearchTerms.Add(new ClipboardContentTypeSearchTerm(allContentClasses));
                 }
             }
 
@@ -186,6 +197,33 @@ namespace Clipbox.Views.FilterBand
             {
                 StartDateMs = -1;
                 EndDateMs = -1;
+            }
+
+            if (AppSelectorToggled)
+            {
+                if (!string.IsNullOrWhiteSpace(WindowCaptionSearchString))
+                {
+                    SearchTerms.Add(new SourceWindowCaptionSearchTerm(new List<string>
+                    {
+                        WindowCaptionSearchString
+                    }));
+                }
+
+                if (SelectedApplications.Any())
+                {
+                    SearchTerms.Add(new SourceApplicationNameSearchTerm(
+                        SelectedApplications
+                        .Select(sa => sa.ExecutableName)));
+                }
+            }
+
+            // hack: if we have added only non-obligatory search terms,
+            // the search will not be possible, so we should add
+            // some obligatory terms which will not affect the result.
+            if (SearchTerms.All(t => t.Occurrence == Core.Search.Enums.TermOccurrence.NON_OBLIGATORY))
+            {
+                var allContentClasses = (ClipboardContentClass[])Enum.GetValues(typeof(ClipboardContentClass));
+                SearchTerms.Add(new ClipboardContentTypeSearchTerm(allContentClasses));
             }
 
             SearchTermsChanged?.Invoke(this, new EventArgs());
@@ -308,19 +346,13 @@ namespace Clipbox.Views.FilterBand
 
         private void UncheckChildToggleButtons(Expander sender)
         {
-            if (SearchTerms.Any())
-            {
-                SearchTerms.Clear();
-                SearchTermsChanged?.Invoke(this, new EventArgs());
-            }
-
             Dispatcher.BeginInvoke(DispatcherPriority.Background,
                 new Action(() =>
                 {
                     List<UIElement> toggleButtons = Traversing.GetVisualChildCollection(sender, (child) => child is ToggleButton);
                     foreach (UIElement child in toggleButtons)
                     {
-                        if (child is ToggleButton tglBtn)
+                        if (child is ToggleButton tglBtn && tglBtn.IsChecked == true)
                         {
                             tglBtn.IsChecked = false;
                         }
@@ -330,6 +362,27 @@ namespace Clipbox.Views.FilterBand
 
         private void ToggleDateRangeSelectionButton_Checked(object sender, RoutedEventArgs e)
         {
+            
+        }
+
+        private void ToggleSourceWindowButton_Checked(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private void ToggleDateRangeSelectionButton_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (DateRangeToggled)
+            {
+                return;
+            }
+            else
+            {
+                // do not allow the toggle button to become checked. 
+                // we will doggle it by setting DateRangeToggled to true when the user clicks OK.
+                e.Handled = true;
+            }
+
             Popup popup = new Popup
             {
                 PlacementTarget = Window.GetWindow(this),
@@ -346,32 +399,47 @@ namespace Clipbox.Views.FilterBand
             EventHandler<DateRangeEventArgs> dateRangeSelectedEventHandler = null;
 
             dateRangeSelectedEventHandler = new EventHandler<DateRangeEventArgs>
-                ((_, dialogArgs) => 
-            {
-                popup.IsOpen = false;
-                dateRangeSelector.DateRangeSelected -= dateRangeSelectedEventHandler;
+                ((_, dialogArgs) =>
+                {
+                    popup.IsOpen = false;
+                    dateRangeSelector.DateRangeSelected -= dateRangeSelectedEventHandler;
 
-                if (dialogArgs.StartMs > -1 && dialogArgs.EndMs > -1)
-                {
-                    StartDateMs = dialogArgs.StartMs;
-                    EndDateMs = dialogArgs.EndMs;
-                    RebuildSearchTermCollection();
-                }
-                else
-                {
-                    StartDateMs = -1;
-                    EndDateMs = -1;
-                    DateRangeToggled = false;
-                }
-            });
+                    if (dialogArgs.StartMs > -1 && dialogArgs.EndMs > -1)
+                    {
+                        DateRangeToggled = true;
+
+                        StartDateMs = dialogArgs.StartMs;
+                        EndDateMs = dialogArgs.EndMs;
+
+                        RebuildSearchTermCollection();
+                    }
+                    else
+                    {
+                        StartDateMs = -1;
+                        EndDateMs = -1;
+
+                        DateRangeToggled = false;
+                    }
+                });
 
             dateRangeSelector.DateRangeSelected += dateRangeSelectedEventHandler;
-            
+
             popup.IsOpen = true;
         }
 
-        private void ToggleSourceWindowButton_Checked(object sender, RoutedEventArgs e)
+        private void ToggleApplicationSelectionButton_PreviewMouseDown(object sender, MouseButtonEventArgs e)
         {
+            if (AppSelectorToggled)
+            {
+                return;
+            }
+            else
+            {
+                // do not allow the toggle button to become checked. 
+                // we will doggle it by setting AppSelectorToggled to true when the user clicks OK.
+                e.Handled = true;
+            }
+
             Popup popup = new Popup
             {
                 PlacementTarget = Window.GetWindow(this),
@@ -391,9 +459,18 @@ namespace Clipbox.Views.FilterBand
                     popup.IsOpen = false;
                     applicationSelector.AppInfoSelected -= appInfoSelectedEventHandler;
 
-                    if (dialogArgs.CaptionSearchString == null && dialogArgs.SelectedApplicationExeName == null)
+                    if (string.IsNullOrWhiteSpace(dialogArgs.CaptionSearchString) && (dialogArgs.SelectedApplications == null || !dialogArgs.SelectedApplications.Any()))
                     {
                         AppSelectorToggled = false;
+                    }
+                    else
+                    {
+                        AppSelectorToggled = true;
+
+                        WindowCaptionSearchString = dialogArgs.CaptionSearchString;
+                        SelectedApplications = new AsyncObservableCollection<SourceApplicationInfo>(dialogArgs.SelectedApplications);
+
+                        RebuildSearchTermCollection();
                     }
                 });
 

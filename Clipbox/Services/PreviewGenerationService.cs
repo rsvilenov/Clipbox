@@ -201,7 +201,12 @@ namespace Clipbox.Services
                 throw new ArgumentNullException(nameof(clipboardItem));
             }
 
-            if (clipboardItem?.ClipboardDataObjects.Any() == false)
+            if (clipboardItem.ClipboardDataObjects == null)
+            {
+                throw new ArgumentNullException($"{clipboardItem.Id} has {nameof(clipboardItem.ClipboardDataObjects)} which is null");
+            }
+
+            if (!clipboardItem.ClipboardDataObjects.Any())
             {
                 throw new ArgumentException($"{clipboardItem.Id} does not have any {nameof(clipboardItem.ClipboardDataObjects)}");
             }
@@ -209,7 +214,7 @@ namespace Clipbox.Services
             PreviewDataTransferObject pdto = null;
             
             // wait for the generation task if such is running
-            bool hasTaskBeenRunning = WaitForPreviewGenerationTaskResult(clipboardItem, monitorDimensions, out pdto);
+            bool hasTaskBeenRunning = WaitForPreviewGenerationTaskResult(clipboardItem.Id, monitorDimensions, out pdto);
 
             // if no task existed
             if (!hasTaskBeenRunning
@@ -219,7 +224,7 @@ namespace Clipbox.Services
                 // schedule a preview generation task if it is not sheduled already
                 TryEnqueuePreviewGenerationTask(clipboardItem.Id, monitorDimensions);
                 // and wait for its completion
-                bool hasTheNewTaskBeenStarted = WaitForPreviewGenerationTaskResult(clipboardItem, monitorDimensions, out pdto);
+                bool hasTheNewTaskBeenStarted = WaitForPreviewGenerationTaskResult(clipboardItem.Id, monitorDimensions, out pdto);
                 if (!hasTheNewTaskBeenStarted)
                 {
                     throw new InvalidOperationException($"It seems that the newly enqueued task for clipboard item with id {clipboardItem.Id} has not been started.");
@@ -245,7 +250,7 @@ namespace Clipbox.Services
                     PreviewGenereationStatus = PreviewGenerationStatus.Timeout
                 });
             }
-            else if (pdto.PreviewItems?.Any() == false)
+            else if (pdto.PreviewItems == null || !pdto.PreviewItems.Any())
             {
                 throw new InvalidOperationException($"Preview items generation failed for id {clipboardItem.Id}. No preview items were generated. " +
                     $"Clipboard formats: {string.Join("; ", clipboardItem.ClipboardDataObjects.Select(cdo => cdo.ClipboardFormatName))}");
@@ -258,21 +263,21 @@ namespace Clipbox.Services
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="clipboardItem"></param>
+        /// <param name="clipboardItemId"></param>
         /// <param name="monitorDimensions"></param>
         /// <param name="pdto"></param>
         /// <returns>True if there was a task, regardless of wheter it has completed or not; False if there were no task at all.</returns>
-        private bool WaitForPreviewGenerationTaskResult(IClipboardItem clipboardItem, MonitorDimensions monitorDimensions, out PreviewDataTransferObject pdto)
+        private bool WaitForPreviewGenerationTaskResult(string clipboardItemId, MonitorDimensions monitorDimensions, out PreviewDataTransferObject pdto)
         {
             pdto = null;
             
-            if (_threadExecutorsForClipboardItemIds.TryRemove(clipboardItem.Id, out ThreadExecutor threadExecutor))
+            if (_threadExecutorsForClipboardItemIds.TryRemove(clipboardItemId, out ThreadExecutor threadExecutor))
             {
                 try
                 {
-                    if (!_mreStartedForClipboardItemIds.TryRemove(clipboardItem.Id, out ManualResetEvent mre))
+                    if (!_mreStartedForClipboardItemIds.TryRemove(clipboardItemId, out ManualResetEvent mre))
                     {
-                        throw new InvalidOperationException($"No ManualResetEvent was registered for clipboard item with id {clipboardItem.Id}");
+                        throw new InvalidOperationException($"No ManualResetEvent was registered for clipboard item with id {clipboardItemId}");
                     }
 
                     try
@@ -291,7 +296,7 @@ namespace Clipbox.Services
                     if (stage == ExecutionStage.Completed)
                     {
                         // if the task is completed, then there should be saved preview data; get it
-                        if (!TryGetStoredPreviewDataTransferObject(clipboardItem.Id, monitorDimensions, out PreviewDataTransferObject savedPdto))
+                        if (!TryGetStoredPreviewDataTransferObject(clipboardItemId, monitorDimensions, out PreviewDataTransferObject savedPdto))
                         {
                             throw new InvalidOperationException("The preview generation task has finished, but there is no preview saved.");
                         }
@@ -303,7 +308,7 @@ namespace Clipbox.Services
                         try
                         {
                             Exception ex = threadExecutor.GetException();
-                            throw new PreviewGenerationException($"Preview generation failed for {clipboardItem.Id}", ex);
+                            throw new PreviewGenerationException($"Preview generation failed for {clipboardItemId}", ex);
                         }
                         catch (InvalidOperationException ioex)
                         {

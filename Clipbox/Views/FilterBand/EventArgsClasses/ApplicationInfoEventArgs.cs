@@ -1,16 +1,25 @@
-﻿using System;
+﻿using Clipbox.Core.Extensibility.Contracts;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace Clipbox.Views.FilterBand.EventArgsClasses
 {
     public class ApplicationInfoEventArgs : EventArgs
     {
-        public ApplicationInfoEventArgs(string selectedApplicationExeName, string captionSearchString)
-        {
-            SelectedApplicationExeName = selectedApplicationExeName;
+        public ApplicationInfoEventArgs(string captionSearchString, IEnumerable<SourceApplicationInfo> selectedApplications)
+        {   
+            if (selectedApplications == null)
+            {
+                throw new ArgumentNullException(nameof(selectedApplications));
+            }
+
+            SelectedApplications = selectedApplications.ToList().AsReadOnly();
             CaptionSearchString = captionSearchString;
         }
 
-        public string SelectedApplicationExeName { get; set; }
+        public IReadOnlyList<SourceApplicationInfo> SelectedApplications { get; set; }
         public string CaptionSearchString { get; set; }
     }
 }

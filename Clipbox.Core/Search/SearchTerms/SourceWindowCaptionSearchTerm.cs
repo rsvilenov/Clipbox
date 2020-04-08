@@ -5,8 +5,8 @@ namespace Clipbox.Core.Search.SearchTerms
 {
     public class SourceWindowCaptionSearchTerm : SearchTermBase<string>
     {
-        public SourceWindowCaptionSearchTerm(IEnumerable<string> sourceWindowName)
-            : base(sourceWindowName)
+        public SourceWindowCaptionSearchTerm(IEnumerable<string> sourceWindowCaptionPart)
+            : base(sourceWindowCaptionPart)
         { }
 
         public SourceWindowCaptionSearchTerm()

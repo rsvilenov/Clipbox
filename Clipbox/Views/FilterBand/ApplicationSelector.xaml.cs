@@ -77,6 +77,19 @@ namespace Clipbox.Views.FilterBand
             DependencyProperty.Register(nameof(SelectedApps), typeof(AsyncObservableCollection<SourceApplicationInfo>), typeof(ApplicationSelector), new PropertyMetadata(null));
 
 
+
+
+        private string WindowCaptionSearchString
+        {
+            get { return (string)GetValue(WindowCaptionSearchStringProperty); }
+            set { SetValue(WindowCaptionSearchStringProperty, value); }
+        }
+
+        private static readonly DependencyProperty WindowCaptionSearchStringProperty =
+            DependencyProperty.Register(nameof(WindowCaptionSearchString), typeof(string), typeof(ApplicationSelector), new PropertyMetadata(null));
+
+
+
         private BitmapSource _explorerIcon;
 
         private BitmapSource GetApplicationIcon(IApplicationInfo appInfo, byte[] iconByteArray)
@@ -111,8 +124,11 @@ namespace Clipbox.Views.FilterBand
                 .Select(i => new SourceApplicationInfo
                 {
                     Icon = GetApplicationIcon(i.Key, i.Value),
+                    ExecutablePath = i.Key.ApplicationPath,
                     ExecutableName = System.IO.Path.GetFileNameWithoutExtension(i.Key.ApplicationPath),
-                    ProductName = AppDescriptionFormatter.Format(i.Key)
+                    ProductName = i.Key.ProductName,
+                    FileDescription = i.Key.FileDescription,
+                    FormattedProductName = AppDescriptionFormatter.Format(i.Key)
                 })
                 .ToList();
         }
@@ -124,36 +140,12 @@ namespace Clipbox.Views.FilterBand
 
         protected override void OnOkButton()
         {
-            AppInfoSelected?.Invoke(this, new ApplicationInfoEventArgs("test", "test"));
+            AppInfoSelected?.Invoke(this, new ApplicationInfoEventArgs(WindowCaptionSearchString, SelectedApps));
         }
 
         protected override void OnCancelButton()
         {
-            AppInfoSelected?.Invoke(this, new ApplicationInfoEventArgs(null, null));
-        }
-
-        public class SourceApplicationInfo : BindableObject
-        {
-            private string _executableName;
-            public string ExecutableName
-            {
-                get { return _executableName; }
-                set { SetField(ref _executableName, value); }
-            }
-
-            private string _productName;
-            public string ProductName
-            {
-                get { return _productName; }
-                set { SetField(ref _productName, value); }
-            }
-
-            private BitmapSource _icon;
-            public BitmapSource Icon
-            {
-                get { return _icon; }
-                set { SetField(ref _icon, value); }
-            }
+            AppInfoSelected?.Invoke(this, new ApplicationInfoEventArgs(null, Enumerable.Empty<SourceApplicationInfo>()));
         }
 
         private void SearchTextBox_SearchRequested(object sender, RoutedEventArgs e)
@@ -167,7 +159,7 @@ namespace Clipbox.Views.FilterBand
             {
                 IList<SourceApplicationInfo> filteredAppList = _appInfoCollection
                 .Where(sai => sai.ExecutableName.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) > -1
-                    || sai.ProductName.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) > -1)
+                    || sai.FormattedProductName.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) > -1)
                 .Where(sai => !selectedApps.Contains(sai))
                 .ToList();
 

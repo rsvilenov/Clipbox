@@ -32,7 +32,7 @@
                         BasedOn="{StaticResource tglButton}"
                         TargetType="{x:Type ToggleButton}">
                         <Setter Property="Content" Value="{DynamicResource ClassFileIcon}" />
-                        <Setter Property="ToolTip" Value="Show text items" />
+                        <Setter Property="ToolTip" Value="Show files" />
                     </Style>
 
                     <Style
@@ -40,7 +40,7 @@
                         BasedOn="{StaticResource tglButton}"
                         TargetType="{x:Type ToggleButton}">
                         <Setter Property="Content" Value="{DynamicResource ClassImageIcon}" />
-                        <Setter Property="ToolTip" Value="Show text items" />
+                        <Setter Property="ToolTip" Value="Show images" />
                     </Style>
 
                     <Style
@@ -48,11 +48,11 @@
                         BasedOn="{StaticResource tglButton}"
                         TargetType="{x:Type ToggleButton}">
                         <Setter Property="Content" Value="{DynamicResource ClassGeneralContentIcon}" />
-                        <Setter Property="ToolTip" Value="Show text items" />
+                        <Setter Property="ToolTip" Value="Show other items" />
                     </Style>
 
                     <Style
-                        x:Key="sourceWindowToggleButton"
+                        x:Key="applicationSelectionToggleButton"
                         BasedOn="{StaticResource tglButton}"
                         TargetType="{x:Type ToggleButton}">
                         <Setter Property="Content" Value="{DynamicResource SourceWindowsIcon}" />
@@ -191,13 +191,13 @@
 
                 <ToggleButton
                     Margin="5,10"
-                    Checked="ToggleSourceWindowButton_Checked"
                     IsChecked="{Binding AppSelectorToggled}"
-                    Style="{StaticResource sourceWindowToggleButton}" />
+                    PreviewMouseDown="ToggleApplicationSelectionButton_PreviewMouseDown"
+                    Style="{StaticResource applicationSelectionToggleButton}" />
                 <ToggleButton
                     Margin="5,10"
-                    Checked="ToggleDateRangeSelectionButton_Checked"
                     IsChecked="{Binding DateRangeToggled}"
+                    PreviewMouseDown="ToggleDateRangeSelectionButton_PreviewMouseDown"
                     Style="{StaticResource dateRangeSelectionToggleButton}" />
 
             </StackPanel>
