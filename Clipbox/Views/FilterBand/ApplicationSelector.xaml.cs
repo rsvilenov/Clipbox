@@ -143,6 +143,11 @@ namespace Clipbox.Views.FilterBand
             AppInfoSelected?.Invoke(this, new ApplicationInfoEventArgs(WindowCaptionSearchString, SelectedApps));
         }
 
+        protected override bool ShouldOkButtonBeEnabled()
+        {
+            return SelectedApps.Any() || !string.IsNullOrWhiteSpace(WindowCaptionSearchString);
+        }
+
         protected override void OnCancelButton()
         {
             AppInfoSelected?.Invoke(this, new ApplicationInfoEventArgs(null, Enumerable.Empty<SourceApplicationInfo>()));

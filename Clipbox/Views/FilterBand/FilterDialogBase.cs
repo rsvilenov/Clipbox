@@ -28,8 +28,8 @@ namespace Clipbox.Views.FilterBand
 
             Loaded += FilterDialogBase_Loaded;
 
-            OkClicked = new DelegateCommand(() => OnOkButton());
-            CancelClicked = new DelegateCommand(() => OnCancelButton());
+            OkClicked = new DelegateCommand(OnOkButton, ShouldOkButtonBeEnabled);
+            CancelClicked = new DelegateCommand(OnCancelButton);
         }
 
         private void FilterDialogBase_Loaded(object sender, System.Windows.RoutedEventArgs e)
@@ -64,6 +64,11 @@ namespace Clipbox.Views.FilterBand
 
         
         protected IClipboardItemsDataProvider ClipboardItemsDataProvider { get; private set; }
+
+        protected virtual bool ShouldOkButtonBeEnabled()
+        {
+            return true;
+        }
 
         /// <summary>
         /// Raised when the OkClicked command is executed
