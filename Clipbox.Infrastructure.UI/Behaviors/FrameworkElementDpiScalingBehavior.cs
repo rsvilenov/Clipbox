@@ -18,6 +18,16 @@ namespace Clipbox.Infrastructure.UI.Behaviors
         private bool _isDpiEventWired;
         private bool _isUnloadedEventWired;
 
+        
+        public double MaxScaleFactor
+        {
+            get { return (double)GetValue(MaxScaleFactorProperty); }
+            set { SetValue(MaxScaleFactorProperty, value); }
+        }
+
+        public static readonly DependencyProperty MaxScaleFactorProperty =
+            DependencyProperty.Register(nameof(MaxScaleFactor), typeof(double), typeof(FrameworkElementDpiScalingBehavior), new PropertyMetadata(0D));
+        
         protected override void OnAttached()
         {
             AssociatedObject.Loaded += AssociatedObject_Loaded;
@@ -63,7 +73,10 @@ namespace Clipbox.Infrastructure.UI.Behaviors
         {
             if (_pmDpiwindow.ScaleMode == Windows.Enums.DpiScaleMode.Custom)
             {
-                Scaling.ScaleElement(_scaleFactor, AssociatedObject);
+                double scaleFactor = MaxScaleFactor > 0 && _scaleFactor > MaxScaleFactor ?
+                    MaxScaleFactor : _scaleFactor;
+
+                Scaling.ScaleElement(scaleFactor, AssociatedObject);
             }
         }
 

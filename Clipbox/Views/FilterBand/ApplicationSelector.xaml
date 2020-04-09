@@ -6,6 +6,8 @@
     xmlns:customControls="clr-namespace:Clipbox.Infrastructure.UI.CustomControls;assembly=Clipbox.Infrastructure.UI.CustomControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:filterBand="clr-namespace:Clipbox.Views.FilterBand"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:infBeh="clr-namespace:Clipbox.Infrastructure.UI.Behaviors;assembly=Clipbox.Infrastructure.UI"
     xmlns:infConv="clr-namespace:Clipbox.Infrastructure.UI.Converters;assembly=Clipbox.Infrastructure.UI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="450"
@@ -114,8 +116,14 @@
                 VerticalAlignment="Stretch"
                 BorderBrush="DarkGray"
                 BorderThickness="0.3"
-                Foreground="{DynamicResource ControlForegroundBrush}"
-                Header="Filter by application">
+                Foreground="{DynamicResource ControlForegroundBrush}">
+                <GroupBox.Header>
+                    <TextBlock Text="Filter by application">
+                        <i:Interaction.Behaviors>
+                            <infBeh:FrameworkElementDpiScalingBehavior MaxScaleFactor="1.5" />
+                        </i:Interaction.Behaviors>
+                    </TextBlock>
+                </GroupBox.Header>
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition />
@@ -175,7 +183,11 @@
                                             Grid.Column="1"
                                             VerticalAlignment="Center"
                                             Foreground="White"
-                                            Text="{Binding FormattedProductName}" />
+                                            Text="{Binding FormattedProductName}">
+                                            <i:Interaction.Behaviors>
+                                                <infBeh:FrameworkElementDpiScalingBehavior MaxScaleFactor="1.5" />
+                                            </i:Interaction.Behaviors>
+                                        </TextBlock>
                                         <Button
                                             Grid.Column="2"
                                             MaxWidth="15"
@@ -277,7 +289,11 @@
                                             Grid.Column="1"
                                             VerticalAlignment="Center"
                                             Foreground="White"
-                                            Text="{Binding FormattedProductName}" />
+                                            Text="{Binding FormattedProductName}">
+                                            <i:Interaction.Behaviors>
+                                                <infBeh:FrameworkElementDpiScalingBehavior MaxScaleFactor="1.5" />
+                                            </i:Interaction.Behaviors>
+                                        </TextBlock>
                                         <Button
                                             Grid.Column="2"
                                             MaxWidth="15"
@@ -304,8 +320,14 @@
                 VerticalAlignment="Stretch"
                 BorderBrush="DarkGray"
                 BorderThickness="0.3"
-                Foreground="{DynamicResource ControlForegroundBrush}"
-                Header="Filter by window title (or part of it)">
+                Foreground="{DynamicResource ControlForegroundBrush}">
+                <GroupBox.Header>
+                    <TextBlock Text="Filter by window title (or part of it)">
+                        <i:Interaction.Behaviors>
+                            <infBeh:FrameworkElementDpiScalingBehavior MaxScaleFactor="1.5" />
+                        </i:Interaction.Behaviors>
+                    </TextBlock>
+                </GroupBox.Header>
                 <customControls:SearchTextBox
                     Height="30"
                     Margin="8,0,8,0"

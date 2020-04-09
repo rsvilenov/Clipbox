@@ -5,6 +5,8 @@
     xmlns:conv="clr-namespace:Clipbox.Technical.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:filterBand="clr-namespace:Clipbox.Views.FilterBand"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:infBeh="clr-namespace:Clipbox.Infrastructure.UI.Behaviors;assembly=Clipbox.Infrastructure.UI"
     xmlns:infConv="clr-namespace:Clipbox.Infrastructure.UI.Converters;assembly=Clipbox.Infrastructure.UI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="450"
@@ -81,6 +83,9 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Orientation="Horizontal">
+                    <i:Interaction.Behaviors>
+                        <infBeh:FrameworkElementDpiScalingBehavior MaxScaleFactor="1.5" />
+                    </i:Interaction.Behaviors>
                     <TextBlock FontSize="14" Foreground="White">
                         <Run Text="Show items from " />
                         <Run FontWeight="Bold" Text="{Binding SelectedMinDateTimeMs, Converter={StaticResource MillisecondsToHumanReadableDateStringConverter}}" />

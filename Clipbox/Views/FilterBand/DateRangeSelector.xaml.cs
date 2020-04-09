@@ -165,5 +165,20 @@ namespace Clipbox.Views.FilterBand
             SelectedMinDateTimeMs = DateTimeMsCollection?.Min() ?? 0;
             SelectedMaxDateTimeMs = DateTimeMsCollection?.Max() ?? 0;
         }
+
+        protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
+        {
+            // When the popup gets wider due to changes of the text length inside,
+            // do not let it shrink back when the text becomes shorter;
+            // This prevents the impression that the window is flickering
+            // when the user changes the start and end dates and the text
+            // overflows the current width of the window.
+            if (this.ActualWidth > this.MinWidth)
+            {
+                this.MinWidth = this.ActualWidth;
+            }
+
+            base.OnRenderSizeChanged(sizeInfo);
+        }
     }
 }
