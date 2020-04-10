@@ -63,21 +63,57 @@
                                     <Setter.Value>
                                         <StackPanel MaxWidth="350" Orientation="Vertical">
                                             <TextBlock TextWrapping="Wrap">
-                                                <!--  WARNING: do not put these runs on a new line each, as this will add a space between each run  -->
-                                                <Run Text="Showing items, coming from" /><Run Text="&#x0a;" /><Run FontWeight="Bold" Text="{Binding SelectedAppsString}" />
+                                                <Run Text="Showing items, coming from" />
                                             </TextBlock>
                                             <TextBlock TextWrapping="Wrap">
                                                 <TextBlock.Style>
                                                     <Style TargetType="TextBlock">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
                                                         <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding WindowCaptionSearchString}" Value="{x:Null}">
+                                                            <DataTrigger Binding="{Binding SelectedAppsString}" Value="{x:Null}">
+                                                                <Setter Property="Visibility" Value="Visible" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding SelectedAppsString}" Value="">
+                                                                <Setter Property="Visibility" Value="Visible" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                                <Run FontWeight="Bold" Text="all applications" />
+                                            </TextBlock>
+                                            <TextBlock TextWrapping="Wrap">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Visibility" Value="Visible" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding SelectedAppsString}" Value="{x:Null}">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding SelectedAppsString}" Value="">
                                                                 <Setter Property="Visibility" Value="Collapsed" />
                                                             </DataTrigger>
                                                         </Style.Triggers>
                                                     </Style>
                                                 </TextBlock.Style>
                                                 <!--  WARNING: do not put these runs on a new line each, as this will add a space between each run  -->
-                                                <Run Text="&#x0a;" /><Run Text="as well as any windows with a caption, containing" /><Run Text="&#x0a;" /><Run FontWeight="Bold" Text="{Binding WindowCaptionSearchString, StringFormat='*{0}*'}" />
+                                                <Run FontWeight="Bold" Text="{Binding SelectedAppsString}" />
+                                            </TextBlock>
+                                            <TextBlock TextWrapping="Wrap">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Visibility" Value="Visible" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding WindowCaptionSearchString}" Value="{x:Null}">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding WindowCaptionSearchString}" Value="">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                                <!--  WARNING: do not put these runs on a new line each, as this will add a space between each run  -->
+                                                <Run Text="where the window's caption contains" /><Run Text="&#x0a;" /><Run FontWeight="Bold" Text="{Binding WindowCaptionSearchString, StringFormat='*{0}*'}" />
                                             </TextBlock>
                                         </StackPanel>
 

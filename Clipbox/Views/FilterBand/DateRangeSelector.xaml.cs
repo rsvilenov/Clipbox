@@ -1,14 +1,11 @@
 ﻿using Clipbox.ExtendedClipboard.Interfaces;
-using Clipbox.Views.EventArgsClasses;
 using Clipbox.Views.FilterBand.EventArgsClasses;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace Clipbox.Views.FilterBand

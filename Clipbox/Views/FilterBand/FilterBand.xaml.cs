@@ -4,12 +4,10 @@ using Clipbox.Core.Search.SearchTerms;
 using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.Utils;
-using Clipbox.Views.EventArgsClasses;
 using Clipbox.Views.FilterBand.EventArgsClasses;
 using Clipbox.Win32;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -93,13 +91,13 @@ namespace Clipbox.Views.FilterBand
 
 
 
-        public string SelectedAppsString
+        private string SelectedAppsString
         {
             get { return (string)GetValue(SelectedAppsStringProperty); }
             set { SetValue(SelectedAppsStringProperty, value); }
         }
 
-        public static readonly DependencyProperty SelectedAppsStringProperty =
+        private static readonly DependencyProperty SelectedAppsStringProperty =
             DependencyProperty.Register(nameof(SelectedAppsString), typeof(string), typeof(FilterBand), new PropertyMetadata(string.Empty));
 
 
