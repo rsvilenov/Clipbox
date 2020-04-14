@@ -65,10 +65,12 @@ namespace Clipbox.ViewModels
             {
                 // TODO: show a defalt icon here
             }
+            
+            viewItem.IsCloudItem = clipboardItem.Source.SourceMachineInfo.MachineUniqueId != MachineUtils.GetMachineGuid();
 
-            viewItem.IsCloudItem = clipboardItem.Source.MachineUniqueId != MachineUtils.GetMachineGuid();
-            viewItem.SourceWindowMachineName = clipboardItem.Source.MachineName;
-            viewItem.SourceMachineType = clipboardItem.Source.MachineType;
+            // TODO: maybe create a type for these properties, implementing IMachineInfo
+            viewItem.SourceWindowMachineName = clipboardItem.Source.SourceMachineInfo.MachineName;
+            viewItem.SourceMachineType = clipboardItem.Source.SourceMachineInfo.MachineType;
             viewItem.SourceWindowUserName = clipboardItem.Source.UserName;
             viewItem.SourceWindowDescription = AppDescriptionFormatter.Format(clipboardItem.Source.SourceWindowInfo);
 

@@ -360,10 +360,13 @@ namespace Clipbox.ExtendedClipboard
             var source = new ClipboardItemSource
             {
                 SourceWindowInfo = GetForemostWindowInfo(),
-                MachineName = Environment.MachineName,
-                MachineType = MachineType.PC,
-                MachineUniqueId = MachineUtils.GetMachineGuid(),
-                UserName = Environment.UserName
+                UserName = Environment.UserName,
+                SourceMachineInfo = new SourceMachineInfo
+                {
+                    MachineName = Environment.MachineName,
+                    MachineType = MachineType.PC,
+                    MachineUniqueId = MachineUtils.GetMachineGuid()
+                }
             };
 
             var itemFetchingEventArgs = new ItemFetchingEventArgs(source.SourceWindowInfo);
@@ -618,10 +621,13 @@ namespace Clipbox.ExtendedClipboard
             var source = new ClipboardItemSource
             {
                 SourceWindowInfo = GetOwnWindowInfo(),
-                MachineName = Environment.MachineName,
-                MachineType = MachineType.PC,
-                MachineUniqueId = MachineUtils.GetMachineGuid(),
-                UserName = Environment.UserName
+                UserName = Environment.UserName,
+                SourceMachineInfo = new SourceMachineInfo
+                {
+                    MachineName = Environment.MachineName,
+                    MachineType = MachineType.PC,
+                    MachineUniqueId = MachineUtils.GetMachineGuid()
+                }
             };
 
             var newClipboardDataObjects = new List<ClipboardDataObject>();

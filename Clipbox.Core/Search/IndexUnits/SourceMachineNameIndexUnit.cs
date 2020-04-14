@@ -15,7 +15,7 @@ namespace Clipbox.Core.Search.IndexUnits
         {
             return new string[]
             {
-                clipboardItem.Source.MachineName
+                clipboardItem.Source.SourceMachineInfo.MachineName
             };
         }
     }

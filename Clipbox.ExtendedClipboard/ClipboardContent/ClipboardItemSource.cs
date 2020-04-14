@@ -1,7 +1,6 @@
-﻿using Clipbox.Core.Extensibility.Contracts;
-using Clipbox.Core.ClipboardContent.Interfaces;
+﻿using Clipbox.Core.ClipboardContent.Interfaces;
+using Clipbox.Core.Extensibility.Contracts;
 using System;
-using Clipbox.Core.ClipboardContent.Enums;
 
 namespace Clipbox.ExtendedClipboard.ClipboardContent
 {
@@ -10,12 +9,9 @@ namespace Clipbox.ExtendedClipboard.ClipboardContent
     {
         public IWindowInfo SourceWindowInfo { get; internal set; }
 
-        public string MachineName { get; internal set; }
-
-        public string MachineUniqueId { get; internal set; }
+        public IMachineInfo SourceMachineInfo { get; internal set; }
 
         public string UserName { get; internal set; }
 
-        public MachineType MachineType { get; internal set; }
     }
 }

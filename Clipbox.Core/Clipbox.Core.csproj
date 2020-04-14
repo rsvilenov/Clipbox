@@ -61,6 +61,7 @@
     <Compile Include="Extensibility\Contracts\IApplicationInfo.cs" />
     <Compile Include="Extensibility\Contracts\IIntermediateFormat.cs" />
     <Compile Include="Extensibility\Contracts\IIntermediateFormatMetadata.cs" />
+    <Compile Include="Extensibility\Contracts\IMachineInfo.cs" />
     <Compile Include="Extensibility\Contracts\IntermediateFormatBase.cs" />
     <Compile Include="Search\Enums\SearchCategory.cs" />
     <Compile Include="Search\Enums\TermOccurrence.cs" />

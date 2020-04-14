@@ -14,7 +14,7 @@ namespace Clipbox.Core.Search.IndexUnits
 
         protected override IEnumerable<MachineType> GetTermValuesFromClipboardItem(IClipboardItem clipboardItem)
         {
-            return new MachineType[] { clipboardItem.Source.MachineType };
+            return new MachineType[] { clipboardItem.Source.SourceMachineInfo.MachineType };
         }
     }
 }
