@@ -1,7 +1,5 @@
-﻿using Clipbox.Core.Extensibility.Contracts;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace Clipbox.Views.FilterBand.EventArgsClasses

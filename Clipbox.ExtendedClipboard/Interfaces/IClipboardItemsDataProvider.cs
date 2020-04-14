@@ -8,5 +8,7 @@ namespace Clipbox.ExtendedClipboard.Interfaces
         IReadOnlyList<long> GetAllCreationTimestampTicksUtc();
 
         IReadOnlyDictionary<IApplicationInfo, byte[]> GetAllSourceAppsAndIcons();
+
+        IReadOnlyDictionary<IMachineInfo, string> GetAllSourceMachinesAndUsernames();
     }
 }

@@ -148,15 +148,27 @@
                         BasedOn="{StaticResource tglButton}"
                         TargetType="{x:Type ToggleButton}">
                         <Setter Property="Content" Value="{DynamicResource MyMachineItemsIcon}" />
-                        <Setter Property="ToolTip" Value="Show only items from current computer" />
+                        <Setter Property="ToolTip" Value="Show items from current computer" />
                     </Style>
 
                     <Style
-                        x:Key="allMachinesToggleButton"
+                        x:Key="remoteDeviceToggleButton"
                         BasedOn="{StaticResource tglButton}"
                         TargetType="{x:Type ToggleButton}">
                         <Setter Property="Content" Value="{DynamicResource AllMachinesItemsIcon}" />
-                        <Setter Property="ToolTip" Value="Show only items from all my computers" />
+                        <Setter Property="ToolTip" Value="Show items from remote devices" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding RemoteMachineSourceToggled}" Value="True">
+                                <Setter Property="ToolTip">
+                                    <Setter.Value>
+                                        <TextBlock TextWrapping="Wrap">
+                                            <!--  WARNING: do not put these runs on a new line each, as this will add a space between each run  -->
+                                            <Run Text="Showing items, coming from" /><Run Text="&#x0a;" /><Run FontWeight="Bold" Text="{Binding SelectedMachinesString}" />
+                                        </TextBlock>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
                     </Style>
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
@@ -227,11 +239,11 @@
                 </Expander>
 
                 <Expander
-                    x:Name="CloudExpander"
+                    x:Name="SourceMachineExpander"
                     Margin="0,10"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
-                    Collapsed="CloudExpander_Collapsed"
+                    Collapsed="SourceMachineExpander_Collapsed"
                     Foreground="{DynamicResource ControlForegroundBrush}"
                     Header="{DynamicResource SyncedItemsIcon}"
                     OverridesDefaultStyle="True"
@@ -241,12 +253,13 @@
                     <StackPanel Margin="0,5" Orientation="Vertical">
                         <ToggleButton
                             Margin="5,3"
-                            IsChecked="{Binding LocalMachineSourceSelected}"
+                            IsChecked="{Binding LocalMachineSourceToggled}"
                             Style="{StaticResource myMachineToggleButton}" />
                         <ToggleButton
                             Margin="5,3"
-                            IsChecked="{Binding CloudSourceSelected}"
-                            Style="{StaticResource allMachinesToggleButton}" />
+                            IsChecked="{Binding RemoteMachineSourceToggled}"
+                            PreviewMouseDown="ToggleRemoteDeviceSelectionButton_PreviewMouseDown"
+                            Style="{StaticResource remoteDeviceToggleButton}" />
                     </StackPanel>
 
                 </Expander>

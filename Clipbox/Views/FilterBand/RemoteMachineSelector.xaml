@@ -1,0 +1,380 @@
+﻿<filterBand:FilterDialogBase
+    x:Class="Clipbox.Views.FilterBand.RemoteMachineSelector"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:conv="clr-namespace:Clipbox.Technical.Converters"
+    xmlns:coreCcEnums="clr-namespace:Clipbox.Core.ClipboardContent.Enums;assembly=Clipbox.Core"
+    xmlns:customControls="clr-namespace:Clipbox.Infrastructure.UI.CustomControls;assembly=Clipbox.Infrastructure.UI.CustomControls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:filterBand="clr-namespace:Clipbox.Views.FilterBand"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:infBeh="clr-namespace:Clipbox.Infrastructure.UI.Behaviors;assembly=Clipbox.Infrastructure.UI"
+    xmlns:infConv="clr-namespace:Clipbox.Infrastructure.UI.Converters;assembly=Clipbox.Infrastructure.UI"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Clipbox.Infrastructure.UI;component/Resources/Styles/Style.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <infConv:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+            <conv:MillisecondsToHumanReadableDateStringConverter x:Key="MillisecondsToHumanReadableDateStringConverter" />
+            <Style BasedOn="{StaticResource MinimalisticScrollBarStyle}" TargetType="ScrollBar">
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="Margin" Value="0,5,2,5" />
+            </Style>
+
+
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Border
+        x:Name="mainBorder"
+        BorderBrush="{DynamicResource AccentBrush}"
+        BorderThickness="1">
+        <Grid
+            Width="450"
+            Height="400"
+            Margin="15"
+            Background="{DynamicResource TaskbarColorBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="5*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <Grid
+                Grid.Row="0"
+                Grid.ColumnSpan="2"
+                Margin="15">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <ContentControl
+                    Grid.Column="0"
+                    Width="32"
+                    Height="32"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Foreground="LightGray"
+                    Template="{DynamicResource AllMachinesItemsIcon}">
+                    <ContentControl.Style>
+                        <Style TargetType="ContentControl">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsLoading}" Value="False">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ContentControl.Style>
+                </ContentControl>
+                <ContentControl
+                    Grid.Column="0"
+                    Width="32"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Foreground="LightGray"
+                    Template="{DynamicResource LoadingSolidIcon}">
+                    <ContentControl.Style>
+                        <Style TargetType="ContentControl">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsLoading}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ContentControl.Style>
+                </ContentControl>
+                <StackPanel
+                    Grid.Column="1"
+                    Margin="15,0,0,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal">
+                    <TextBlock
+                        FontSize="18"
+                        Foreground="{DynamicResource ControlForegroundBrush}"
+                        Text="Filter by source device" />
+                </StackPanel>
+
+            </Grid>
+
+
+
+            <Grid Grid.Row="1" Grid.ColumnSpan="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="60" />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <ListView
+                    Grid.Row="0"
+                    VerticalAlignment="Stretch"
+                    Background="{DynamicResource ControlBackgroundBrush}"
+                    BorderBrush="{DynamicResource ControlBorderBrush}"
+                    BorderThickness="1"
+                    Foreground="{DynamicResource ControlForegroundBrush}"
+                    ItemsSource="{Binding SelectedMachines}"
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                    ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Margin="10" Orientation="Vertical" />
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Border
+                                BorderBrush="DarkGray"
+                                BorderThickness="1"
+                                CornerRadius="1">
+                                <Grid Margin="5,3,3,5" Background="Transparent">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="40" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="40" />
+                                    </Grid.ColumnDefinitions>
+                                    <ContentControl
+                                        Grid.Column="0"
+                                        MaxHeight="20"
+                                        Margin="5,0,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Background="Transparent">
+                                        <ContentControl.Style>
+                                            <Style TargetType="ContentControl">
+                                                <Setter Property="Template" Value="{DynamicResource PcSourceIcon}" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Path=MachineType}" Value="{x:Static coreCcEnums:MachineType.Mobile}">
+                                                        <Setter Property="Template" Value="{DynamicResource MobileSourceIcon}" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ContentControl.Style>
+                                        <i:Interaction.Behaviors>
+                                            <infBeh:FrameworkElementDpiScalingBehavior />
+                                        </i:Interaction.Behaviors>
+                                    </ContentControl>
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        VerticalAlignment="Center"
+                                        Foreground="White"
+                                        Text="{Binding MachineName}">
+                                        <i:Interaction.Behaviors>
+                                            <infBeh:FrameworkElementDpiScalingBehavior MaxScaleFactor="1.5" />
+                                        </i:Interaction.Behaviors>
+                                    </TextBlock>
+                                    <TextBlock
+                                        Grid.Column="2"
+                                        Margin="20,0,0,0"
+                                        VerticalAlignment="Center"
+                                        Foreground="White"
+                                        Text="{Binding UserName, StringFormat={}({0})}">
+                                        <i:Interaction.Behaviors>
+                                            <infBeh:FrameworkElementDpiScalingBehavior MaxScaleFactor="1.5" />
+                                        </i:Interaction.Behaviors>
+                                    </TextBlock>
+                                    <Button
+                                        Grid.Column="3"
+                                        MaxWidth="15"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        Command="{Binding DataContext.RemoveMachine, ElementName=mainBorder}"
+                                        CommandParameter="{Binding}"
+                                        Style="{DynamicResource BtnRemove}"
+                                        ToolTip="Select" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListViewItem}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                        <ContentPresenter
+                                            Margin="5,0,0,5"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Stretch"
+                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                </ListView>
+                <TextBlock
+                    Grid.Row="0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="16"
+                    FontWeight="Bold"
+                    Foreground="{DynamicResource ControlForegroundBrush}"
+                    Text="Select devices from the list below">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=SelectedMachines.Count}" Value="0">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+                <customControls:SearchTextBox
+                    x:Name="searchTextBox"
+                    Grid.Row="1"
+                    Height="30"
+                    Margin="0,20,0,0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    HorizontalContentAlignment="Left"
+                    VerticalContentAlignment="Center"
+                    OverlayText="Type here to search"
+                    SearchRequested="SearchTextBox_SearchRequested" />
+                <ListView
+                    x:Name="availableMachineListView"
+                    Grid.Row="2"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Background="{DynamicResource ControlBackgroundBrush}"
+                    BorderBrush="{DynamicResource ControlBorderBrush}"
+                    BorderThickness="1"
+                    IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBooleanConverter}}"
+                    ItemsSource="{Binding MachineInfoCollection}"
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                    ScrollViewer.VerticalScrollBarVisibility="Auto">
+
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Margin="10" Orientation="Vertical" />
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Border
+                                BorderBrush="DarkGray"
+                                BorderThickness="1"
+                                CornerRadius="1">
+                                <Grid Margin="5,3,3,5" Background="Transparent">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="40" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="40" />
+                                    </Grid.ColumnDefinitions>
+                                    <ContentControl
+                                        Grid.Column="0"
+                                        MaxHeight="20"
+                                        Margin="5,0,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        Background="Transparent">
+                                        <ContentControl.Style>
+                                            <Style TargetType="ContentControl">
+                                                <Setter Property="Template" Value="{DynamicResource PcSourceIcon}" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Path=MachineType}" Value="{x:Static coreCcEnums:MachineType.Mobile}">
+                                                        <Setter Property="Template" Value="{DynamicResource MobileSourceIcon}" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ContentControl.Style>
+                                        <i:Interaction.Behaviors>
+                                            <infBeh:FrameworkElementDpiScalingBehavior />
+                                        </i:Interaction.Behaviors>
+                                    </ContentControl>
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        VerticalAlignment="Center"
+                                        Foreground="White"
+                                        Text="{Binding MachineName}">
+                                        <i:Interaction.Behaviors>
+                                            <infBeh:FrameworkElementDpiScalingBehavior MaxScaleFactor="1.5" />
+                                        </i:Interaction.Behaviors>
+                                    </TextBlock>
+                                    <TextBlock
+                                        Grid.Column="2"
+                                        Margin="20,0,0,0"
+                                        VerticalAlignment="Center"
+                                        Foreground="White"
+                                        Text="{Binding UserName, StringFormat={}({0})}">
+                                        <i:Interaction.Behaviors>
+                                            <infBeh:FrameworkElementDpiScalingBehavior MaxScaleFactor="1.5" />
+                                        </i:Interaction.Behaviors>
+                                    </TextBlock>
+                                    <Button
+                                        Grid.Column="3"
+                                        MaxWidth="15"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        Command="{Binding DataContext.AddMachine, ElementName=mainBorder}"
+                                        CommandParameter="{Binding}"
+                                        Style="{DynamicResource BtnAdd}"
+                                        ToolTip="Select" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListViewItem}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                        <ContentPresenter
+                                            Margin="5,0,0,5"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Stretch"
+                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                </ListView>
+            </Grid>
+
+
+            <Button
+                x:Name="btnOk"
+                Grid.Row="3"
+                Grid.Column="0"
+                Width="70"
+                Height="30"
+                Margin="10"
+                VerticalAlignment="Center"
+                Command="{Binding OkClicked}"
+                Content="OK"
+                Foreground="White"
+                IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBooleanConverter}}"
+                Style="{DynamicResource BtnOk}" />
+
+            <Button
+                x:Name="btnCancel"
+                Grid.Row="3"
+                Grid.Column="1"
+                Width="70"
+                Height="30"
+                Margin="10"
+                VerticalAlignment="Center"
+                Command="{Binding CancelClicked}"
+                Content="Cancel"
+                Foreground="White"
+                Style="{DynamicResource BtnCancel}" />
+        </Grid>
+    </Border>
+</filterBand:FilterDialogBase>

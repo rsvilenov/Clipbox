@@ -204,11 +204,16 @@
     <Compile Include="Views\ExpandableSearchBox.xaml.cs">
       <DependentUpon>ExpandableSearchBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\FilterBand\EventArgsClasses\SourceMachineEventArgs.cs" />
     <Compile Include="Views\FilterBand\FilterBand.xaml.cs">
       <DependentUpon>FilterBand.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\FilterBand\FilterDialogBase.cs" />
+    <Compile Include="Views\FilterBand\RemoteMachineSelector.xaml.cs">
+      <DependentUpon>RemoteMachineSelector.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\FilterBand\SourceApplicationInfo.cs" />
+    <Compile Include="Views\FilterBand\SourceMachineInfo.cs" />
     <Compile Include="Views\Interfaces\IMainWindow.cs" />
     <Compile Include="Views\Interfaces\ITrayContextMenu.cs" />
     <Compile Include="Views\LoadingIndicatorPopup.xaml.cs">
@@ -318,6 +323,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\FilterBand\FilterBand.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\FilterBand\RemoteMachineSelector.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

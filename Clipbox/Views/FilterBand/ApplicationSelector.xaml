@@ -64,7 +64,7 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Foreground="LightGray"
-                    Template="{DynamicResource DateSelectionIcon}">
+                    Template="{DynamicResource SourceWindowsIcon}">
                     <ContentControl.Style>
                         <Style TargetType="ContentControl">
                             <Setter Property="Visibility" Value="Collapsed" />

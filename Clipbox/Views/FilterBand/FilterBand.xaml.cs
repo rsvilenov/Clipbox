@@ -81,18 +81,6 @@ namespace Clipbox.Views.FilterBand
             DependencyProperty.Register(nameof(SelectedApplications), typeof(AsyncObservableCollection<SourceApplicationInfo>), typeof(FilterBand), new PropertyMetadata(null));
 
 
-
-        private string WindowCaptionSearchString
-        {
-            get { return (string)GetValue(WindowCaptionSearchStringProperty); }
-            set { SetValue(WindowCaptionSearchStringProperty, value); }
-        }
-
-        private static readonly DependencyProperty WindowCaptionSearchStringProperty =
-            DependencyProperty.Register(nameof(WindowCaptionSearchString), typeof(string), typeof(FilterBand), new PropertyMetadata(null));
-
-
-
         private string SelectedAppsString
         {
             get { return (string)GetValue(SelectedAppsStringProperty); }
@@ -103,6 +91,33 @@ namespace Clipbox.Views.FilterBand
             DependencyProperty.Register(nameof(SelectedAppsString), typeof(string), typeof(FilterBand), new PropertyMetadata(string.Empty));
 
 
+        private string WindowCaptionSearchString
+        {
+            get { return (string)GetValue(WindowCaptionSearchStringProperty); }
+            set { SetValue(WindowCaptionSearchStringProperty, value); }
+        }
+
+        private static readonly DependencyProperty WindowCaptionSearchStringProperty =
+            DependencyProperty.Register(nameof(WindowCaptionSearchString), typeof(string), typeof(FilterBand), new PropertyMetadata(null));
+        
+        private AsyncObservableCollection<SourceMachineInfo> SelectedMachines
+        {
+            get { return (AsyncObservableCollection<SourceMachineInfo>)GetValue(SelectedMachinesProperty); }
+            set { SetValue(SelectedMachinesProperty, value); }
+        }
+
+        private static readonly DependencyProperty SelectedMachinesProperty =
+            DependencyProperty.Register(nameof(SelectedMachines), typeof(AsyncObservableCollection<SourceMachineInfo>), typeof(FilterBand), new PropertyMetadata(null));
+
+        private string SelectedMachinesString
+        {
+            get { return (string)GetValue(SelectedMachinesStringProperty); }
+            set { SetValue(SelectedMachinesStringProperty, value); }
+        }
+
+        private static readonly DependencyProperty SelectedMachinesStringProperty =
+            DependencyProperty.Register(nameof(SelectedMachinesString), typeof(string), typeof(FilterBand), new PropertyMetadata(string.Empty));
+        
 
         private double StartDateMs
         {
@@ -166,11 +181,11 @@ namespace Clipbox.Views.FilterBand
                 }
             }
 
-            if (CloudExpander.IsExpanded)
+            if (SourceMachineExpander.IsExpanded)
             {
-                bool areBothSelected = LocalMachineSourceSelected && CloudSourceSelected;
+                bool areBothSelected = LocalMachineSourceToggled && RemoteMachineSourceToggled;
 
-                if (LocalMachineSourceSelected)
+                if (LocalMachineSourceToggled)
                 {
                     SourceMachineUniqueIdSearchTerm smUidTerm = new SourceMachineUniqueIdSearchTerm
                         (new List<string> { MachineUtils.GetMachineGuid() })
@@ -183,10 +198,10 @@ namespace Clipbox.Views.FilterBand
                     SearchTerms.Add(smUidTerm);
                 }
 
-                if (CloudSourceSelected)
+                if (RemoteMachineSourceToggled)
                 {
                     SourceMachineUniqueIdSearchTerm smUidTerm = new SourceMachineUniqueIdSearchTerm
-                        (new List<string> { MachineUtils.GetMachineGuid() })
+                        (SelectedMachines.Select(sm => sm.MachineUniqueId))
                     {
                         Occurrence = areBothSelected ?
                             Core.Search.Enums.TermOccurrence.NON_OBLIGATORY :
@@ -306,24 +321,24 @@ namespace Clipbox.Views.FilterBand
             DependencyProperty.Register(nameof(GeneralTypeSelected), typeof(bool), typeof(FilterBand),
                 new PropertyMetadata(false, (d, p) => RebuildSearchTermCollection(d)));
 
-        private bool LocalMachineSourceSelected
+        private bool LocalMachineSourceToggled
         {
-            get { return (bool)GetValue(LocalMachineSourceSelectedProperty); }
-            set { SetValue(LocalMachineSourceSelectedProperty, value); }
+            get { return (bool)GetValue(LocalMachineSourceToggledProperty); }
+            set { SetValue(LocalMachineSourceToggledProperty, value); }
         }
 
-        private static readonly DependencyProperty LocalMachineSourceSelectedProperty =
-            DependencyProperty.Register(nameof(LocalMachineSourceSelected), typeof(bool), typeof(FilterBand),
+        private static readonly DependencyProperty LocalMachineSourceToggledProperty =
+            DependencyProperty.Register(nameof(LocalMachineSourceToggled), typeof(bool), typeof(FilterBand),
                 new PropertyMetadata(false, (d, p) => RebuildSearchTermCollection(d)));
 
-        private bool CloudSourceSelected
+        private bool RemoteMachineSourceToggled
         {
-            get { return (bool)GetValue(CloudSourceSelectedProperty); }
-            set { SetValue(CloudSourceSelectedProperty, value); }
+            get { return (bool)GetValue(RemoteMachineSourceToggledProperty); }
+            set { SetValue(RemoteMachineSourceToggledProperty, value); }
         }
 
-        private static readonly DependencyProperty CloudSourceSelectedProperty =
-            DependencyProperty.Register(nameof(CloudSourceSelected), typeof(bool), typeof(FilterBand),
+        private static readonly DependencyProperty RemoteMachineSourceToggledProperty =
+            DependencyProperty.Register(nameof(RemoteMachineSourceToggled), typeof(bool), typeof(FilterBand),
                 new PropertyMetadata(false, (d, p) => RebuildSearchTermCollection(d)));
 
         private bool DateRangeToggled
@@ -367,7 +382,7 @@ namespace Clipbox.Views.FilterBand
             UncheckChildToggleButtons((Expander)sender);
         }
 
-        private void CloudExpander_Collapsed(object sender, RoutedEventArgs e)
+        private void SourceMachineExpander_Collapsed(object sender, RoutedEventArgs e)
         {
             UncheckChildToggleButtons((Expander)sender);
         }
@@ -518,6 +533,59 @@ namespace Clipbox.Views.FilterBand
                 });
 
             applicationSelector.AppInfoSelected += appInfoSelectedEventHandler;
+
+            popup.IsOpen = true;
+            ShouldParentBeEnabled = false;
+        }
+
+        private void ToggleRemoteDeviceSelectionButton_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (RemoteMachineSourceToggled)
+            {
+                return;
+            }
+            else
+            {
+                // do not allow the toggle button to become checked. 
+                // we will doggle it by setting AppSelectorToggled to true when the user clicks OK.
+                e.Handled = true;
+            }
+
+            Popup popup = new Popup
+            {
+                PlacementTarget = Window.GetWindow(this),
+                Placement = PlacementMode.Center
+            };
+
+
+            var remoteMachineSelector = new RemoteMachineSelector(this.ClipboardItemsDataProvider);
+
+            popup.Child = remoteMachineSelector;
+
+            EventHandler<SourceMachineEventArgs> machineInfoSelectedEventHandler = null;
+
+            machineInfoSelectedEventHandler = new EventHandler<SourceMachineEventArgs>
+                ((_, dialogArgs) =>
+                {
+                    popup.IsOpen = false;
+                    ShouldParentBeEnabled = true;
+                    remoteMachineSelector.SourceMachinesSelected -= machineInfoSelectedEventHandler;
+
+                    if (dialogArgs.SourceMachines == null || !dialogArgs.SourceMachines.Any())
+                    {
+                        RemoteMachineSourceToggled = false;
+                    }
+                    else
+                    {
+                        RemoteMachineSourceToggled = true;
+                        
+                        SelectedMachines = new AsyncObservableCollection<SourceMachineInfo>(dialogArgs.SourceMachines);
+                        SelectedMachinesString = string.Join("; ", dialogArgs.SourceMachines.Select(sm => $"{sm.UserName}@{sm.MachineName}" ));
+                        RebuildSearchTermCollection();
+                    }
+                });
+
+            remoteMachineSelector.SourceMachinesSelected += machineInfoSelectedEventHandler;
 
             popup.IsOpen = true;
             ShouldParentBeEnabled = false;

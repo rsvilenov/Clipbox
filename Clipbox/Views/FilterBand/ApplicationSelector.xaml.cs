@@ -23,6 +23,8 @@ namespace Clipbox.Views.FilterBand
     /// </summary>
     public partial class ApplicationSelector : FilterDialogBase
     {
+        public event EventHandler<ApplicationInfoEventArgs> AppInfoSelected;
+
         public ICommand AddApplication { get; set; }
         public ICommand RemoveApplication { get; set; }
 
@@ -55,8 +57,6 @@ namespace Clipbox.Views.FilterBand
         }
 
         private List<SourceApplicationInfo> _appInfoCollection;
-        
-        public event EventHandler<ApplicationInfoEventArgs> AppInfoSelected;
         
         public AsyncObservableCollection<SourceApplicationInfo> AppInfoCollection
         {

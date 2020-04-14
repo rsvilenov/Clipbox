@@ -784,6 +784,14 @@ namespace Clipbox.ExtendedClipboard
             // so there is no point in converting it to a ReadOnlyDictionary.
         }
 
+        public IReadOnlyDictionary<IMachineInfo, string> GetAllSourceMachinesAndUsernames()
+        {
+            return _clipboardItems.Select(ci => ci.Source)
+                .GroupBy(smi => new { smi.SourceMachineInfo.MachineUniqueId, smi.UserName })
+                .Select(g => g.First())
+                .ToDictionary(k => k.SourceMachineInfo, v => v.UserName);
+        }
+
         #endregion
     }
 }
