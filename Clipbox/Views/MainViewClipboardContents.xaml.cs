@@ -155,7 +155,7 @@ namespace Clipbox.Views
             }
         }
 
-        private void LoadContents(int startIndex = -1, int count = -1)
+        private void LoadContents(int startIndex = -1, int count = -1, bool clearOldContents = false)
         {
             if (!(SynchronizationContext.Current is DispatcherSynchronizationContext))
             {
@@ -218,7 +218,15 @@ namespace Clipbox.Views
 
                             PerformDisposeSafeOperation
                             (
-                                () => _viewModel.LoadAllItems(this.MonitorDimensions, itemsToLoad)
+                                () =>
+                                {
+                                    if (clearOldContents)
+                                    {
+                                        _viewModel.ClipboardViewItemWrappers.Clear();
+                                    }
+
+                                    _viewModel.LoadAllItems(this.MonitorDimensions, itemsToLoad);
+                                }
                             );
                         }
 
@@ -727,10 +735,7 @@ namespace Clipbox.Views
 
                 _searchTerms.AddRange(filterBand.SearchTerms);
 
-
-                _viewModel.ClipboardViewItemWrappers.Clear();
-
-                LoadContents(0, _maxNumOfItemsToLoadAtOnce);
+                LoadContents(0, _maxNumOfItemsToLoadAtOnce, clearOldContents: true);
             }));
         }
 

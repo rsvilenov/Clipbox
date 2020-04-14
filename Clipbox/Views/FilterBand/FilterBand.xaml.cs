@@ -28,6 +28,8 @@ namespace Clipbox.Views.FilterBand
             this.mainGrid.DataContext = this;
         }
 
+        private bool _suppressRebuildSearchTermCollection;
+
         public event EventHandler SearchTermsChanged;
 
         private static void RebuildSearchTermCollection(DependencyObject d)
@@ -131,6 +133,11 @@ namespace Clipbox.Views.FilterBand
 
         private void RebuildSearchTermCollection()
         {
+            if (_suppressRebuildSearchTermCollection)
+            {
+                return;
+            }
+
             SearchTerms.Clear();
 
             if (TypeExpander.IsExpanded)
@@ -185,8 +192,17 @@ namespace Clipbox.Views.FilterBand
                             Core.Search.Enums.TermOccurrence.NON_OBLIGATORY :
                             Core.Search.Enums.TermOccurrence.NON_PRESENT
                     };
-
+                    
                     SearchTerms.Add(smUidTerm);
+                }
+
+                // hack: if we have added only non-obligatory search terms,
+                // the search will not be possible, so we should add
+                // some obligatory terms which will not affect the result.
+                if (SearchTerms.All(t => t.Occurrence == Core.Search.Enums.TermOccurrence.NON_OBLIGATORY))
+                {
+                    var allContentClasses = (ClipboardContentClass[])Enum.GetValues(typeof(ClipboardContentClass));
+                    SearchTerms.Add(new ClipboardContentTypeSearchTerm(allContentClasses));
                 }
             }
 
@@ -236,15 +252,6 @@ namespace Clipbox.Views.FilterBand
                         SelectedApplications
                         .Select(sa => sa.ExecutableName)));
                 }
-            }
-
-            // hack: if we have added only non-obligatory search terms,
-            // the search will not be possible, so we should add
-            // some obligatory terms which will not affect the result.
-            if (SearchTerms.All(t => t.Occurrence == Core.Search.Enums.TermOccurrence.NON_OBLIGATORY))
-            {
-                var allContentClasses = (ClipboardContentClass[])Enum.GetValues(typeof(ClipboardContentClass));
-                SearchTerms.Add(new ClipboardContentTypeSearchTerm(allContentClasses));
             }
 
             SearchTermsChanged?.Invoke(this, new EventArgs());
@@ -370,7 +377,13 @@ namespace Clipbox.Views.FilterBand
             Dispatcher.BeginInvoke(DispatcherPriority.Background,
                 new Action(() =>
                 {
+                    
                     List<UIElement> toggleButtons = Traversing.GetVisualChildCollection(sender, (child) => child is ToggleButton);
+
+                    // do not allow every unchecking to trigger rebuilding of the
+                    // search term collection and firing the SearchTermsChanged event
+                    _suppressRebuildSearchTermCollection = true;
+
                     foreach (UIElement child in toggleButtons)
                     {
                         if (child is ToggleButton tglBtn && tglBtn.IsChecked == true)
@@ -378,6 +391,12 @@ namespace Clipbox.Views.FilterBand
                             tglBtn.IsChecked = false;
                         }
                     }
+
+                    _suppressRebuildSearchTermCollection = false;
+
+                    // when all ui state modifications are complete,
+                    // rebuild the collection and fire SearchTermsChanged
+                    RebuildSearchTermCollection();
                 }));
         }
 
