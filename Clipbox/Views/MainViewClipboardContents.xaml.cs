@@ -202,6 +202,8 @@ namespace Clipbox.Views
                         // not fire and the loading circle will not disappear
                         if (!itemsToLoad.Any())
                         {
+                            _viewModel.ClipboardViewItemWrappers.Clear();
+
                             // close the loading popup
                             LoadingPopupGovernor.ClosePopup();
 
