@@ -1,6 +1,7 @@
 ﻿using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.UI;
 using Clipbox.Views.FilterBand.EventArgsClasses;
+using Clipbox.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -79,8 +80,13 @@ namespace Clipbox.Views.FilterBand
 
         protected override void LoadData()
         {
+            string localMachineUniqueId = MachineUtils.GetMachineGuid();
             _allMachines = ClipboardItemsDataProvider
                 .GetAllSourceMachinesAndUsernames()
+#if !DEBUG
+                // filter out the local username@machineUniqueId
+                .Where(dic => !(dic.Key.MachineUniqueId == localMachineUniqueId && dic.Value == Environment.UserName))
+#endif
                 .Select(dic => new SourceMachineInfo
             {
                     MachineName = dic.Key.MachineName,

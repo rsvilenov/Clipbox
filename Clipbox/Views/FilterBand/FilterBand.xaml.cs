@@ -183,41 +183,20 @@ namespace Clipbox.Views.FilterBand
 
             if (SourceMachineExpander.IsExpanded)
             {
-                bool areBothSelected = LocalMachineSourceToggled && RemoteMachineSourceToggled;
-
+                List<string> userNameMachineIdPairs = new List<string>();
                 if (LocalMachineSourceToggled)
                 {
-                    SourceMachineUniqueIdSearchTerm smUidTerm = new SourceMachineUniqueIdSearchTerm
-                        (new List<string> { MachineUtils.GetMachineGuid() })
-                    {
-                        Occurrence = areBothSelected ?
-                            Core.Search.Enums.TermOccurrence.NON_OBLIGATORY :
-                            Core.Search.Enums.TermOccurrence.OBLIGATORY
-                    };
-
-                    SearchTerms.Add(smUidTerm);
+                    userNameMachineIdPairs.Add($"{Environment.UserName}@{MachineUtils.GetMachineGuid()}");
                 }
 
                 if (RemoteMachineSourceToggled)
                 {
-                    SourceMachineUniqueIdSearchTerm smUidTerm = new SourceMachineUniqueIdSearchTerm
-                        (SelectedMachines.Select(sm => sm.MachineUniqueId))
-                    {
-                        Occurrence = areBothSelected ?
-                            Core.Search.Enums.TermOccurrence.NON_OBLIGATORY :
-                            Core.Search.Enums.TermOccurrence.NON_PRESENT
-                    };
-                    
-                    SearchTerms.Add(smUidTerm);
+                    userNameMachineIdPairs.AddRange(SelectedMachines.Select(sm => $"{sm.UserName}@{sm.MachineUniqueId}"));
                 }
 
-                // hack: if we have added only non-obligatory search terms,
-                // the search will not be possible, so we should add
-                // some obligatory terms which will not affect the result.
-                if (SearchTerms.All(t => t.Occurrence == Core.Search.Enums.TermOccurrence.NON_OBLIGATORY))
+                if (userNameMachineIdPairs.Any())
                 {
-                    var allContentClasses = (ClipboardContentClass[])Enum.GetValues(typeof(ClipboardContentClass));
-                    SearchTerms.Add(new ClipboardContentTypeSearchTerm(allContentClasses));
+                    SearchTerms.Add(new SourceMachineIdUserNamePairSearchTerm(userNameMachineIdPairs));
                 }
             }
 
@@ -339,7 +318,15 @@ namespace Clipbox.Views.FilterBand
 
         private static readonly DependencyProperty RemoteMachineSourceToggledProperty =
             DependencyProperty.Register(nameof(RemoteMachineSourceToggled), typeof(bool), typeof(FilterBand),
-                new PropertyMetadata(false, (d, p) => RebuildSearchTermCollection(d)));
+                new PropertyMetadata(false, (d, p) =>
+                {
+                    if (!(bool)p.NewValue)
+                    {
+                        // here we invoke the rebuilding only upon unchecking;
+                        // upon checking the rebuilding is invoked by the Checked event handler of the toggle button.
+                        RebuildSearchTermCollection(d);
+                    }
+                }));
 
         private bool DateRangeToggled
         {

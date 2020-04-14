@@ -71,6 +71,7 @@
     <Compile Include="Search\IndexUnits\ClipboardContentTypeIndexUnit.cs" />
     <Compile Include="Search\IndexUnits\CreationDateIndexUnit.cs" />
     <Compile Include="Search\IndexUnits\SourceApplicationNameIndexUnit.cs" />
+    <Compile Include="Search\IndexUnits\SourceMachineIdUserNamePairIndexUnit.cs" />
     <Compile Include="Search\IndexUnits\SourceMachineNameIndexUnit.cs" />
     <Compile Include="Search\IndexUnits\SourceMachineTypeIndexUnit.cs" />
     <Compile Include="Search\IndexUnits\SourceMachineUniqueIdIndexUnit.cs" />
@@ -124,6 +125,7 @@
     <Compile Include="Search\SearchTerms\MaxCreationDateSearchTerm.cs" />
     <Compile Include="Search\SearchTerms\MinCreationDateSearchTerm.cs" />
     <Compile Include="Search\SearchTerms\SourceApplicationNameSearchTerm.cs" />
+    <Compile Include="Search\SearchTerms\SourceMachineIdUserNamePairSearchTerm.cs" />
     <Compile Include="Search\SearchTerms\SourceMachineNameSearchTerm.cs" />
     <Compile Include="Search\SearchTerms\SourceMachineTypeSearchTerm.cs" />
     <Compile Include="Search\SearchTerms\SourceMachineUniqueIdSearchTerm.cs" />

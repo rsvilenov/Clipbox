@@ -8,6 +8,7 @@
         SourceMachineName,
         SourceMachineUniqueId,
         SourceMachineType,
+        SourceMachineIdUserNamePair,
         /// <summary>
         /// Text and Description
         /// </summary>
