@@ -14,7 +14,7 @@ namespace Clipbox.ViewModels
         
         public event EventHandler ToggleMainWindowOpenRequested;
 
-        public event EventHandler OpenSettingsWindowRequested;
+        public event EventHandler SettingsWindowOpenRequested;
 
         public ICommand ToggleCloudSyncEnabled { get; }
 
@@ -59,7 +59,7 @@ namespace Clipbox.ViewModels
             ToggleMainWindowOpen = new DelegateCommand(ToggleMainWindowOpenHandler);
 
             Quit = new DelegateCommand(QuitHandler);
-            OpenSettingsWindow = new DelegateCommand(() => OpenSettingsWindowRequested?.Invoke(this, new EventArgs()));
+            OpenSettingsWindow = new DelegateCommand(() => SettingsWindowOpenRequested?.Invoke(this, new EventArgs()));
         }
 
         private void QuitHandler()

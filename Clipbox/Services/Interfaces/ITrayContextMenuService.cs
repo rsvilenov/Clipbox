@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System;
+using System.Windows;
 
 namespace Clipbox.Services.Interfaces
 {
@@ -7,5 +8,7 @@ namespace Clipbox.Services.Interfaces
         void ShowContextMenuAtPoint(Point p);
 
         bool IsContextMenuOpen { get; }
+
+        event EventHandler SettingsWindowOpenRequested;
     }
 }

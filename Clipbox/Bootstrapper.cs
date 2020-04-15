@@ -61,6 +61,8 @@ namespace Clipbox
 
         SearchService _searchService;
 
+        SettingsWindowService _settingsWindowService;
+
         public void PerformStartupSequence()
         {
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
@@ -187,6 +189,8 @@ namespace Clipbox
 
             _trayService = new TrayIconService(_mainClipboardViewWindowService, _trayContextMenuService, _settingsService);
 
+            _settingsWindowService = new SettingsWindowService(_settingsService, _mainClipboardViewWindowService, _trayContextMenuService);
+
             if (!ThemeManager.IsLoaded)
             {
                 ThemeManager.LoadThemeFromSystemTheme();
@@ -302,6 +306,7 @@ namespace Clipbox
             TryDisposeObject(_quickViewClipboardContents);
             TryDisposeObject(_previewGenerationService);
             TryDisposeObject(_clipboardListenerService);
+            TryDisposeObject(_settingsWindowService);
             TryDisposeObject(_trayService);
             TryDisposeObject(_trayBandService);
             TryDisposeObject(_trayContextMenuService);

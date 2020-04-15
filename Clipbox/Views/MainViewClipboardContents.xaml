@@ -384,7 +384,8 @@
                 Grid.Row="1"
                 VerticalAlignment="Bottom"
                 VerticalContentAlignment="Center"
-                BorderBrush="Transparent">
+                BorderBrush="Transparent"
+                Click="SettingsButton_Click">
                 <ContentControl Margin="15" Template="{DynamicResource SettingsIcon}" />
             </Button>
 

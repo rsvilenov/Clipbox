@@ -24,12 +24,18 @@ namespace Clipbox.Services
 
         public bool IsContextMenuOpen { get; private set; }
 
+        public event EventHandler SettingsWindowOpenRequested;
+
         public TrayContextMenuService(ISettingsService settingsService)
         {
             _settingsService = settingsService;
 
+            _trayContextMenuViewModel = new TrayContextMenuViewModel(_settingsService);
+            _trayContextMenuViewModel.SettingsWindowOpenRequested += _trayContextMenuViewModel_SettingsWindowOpenRequested;
+
             _mouseHook = new MouseLLHook();
             _mouseHook.MouseAction += _mouseHook_MouseAction;
+
         }
 
         private void _mouseHook_MouseAction(MouseEventArgs obj)
@@ -39,22 +45,27 @@ namespace Clipbox.Services
             {
                 _trayContextMenu.Close();
                 _mouseHook.Stop();
+
                 _trayContextMenu.Opened -= _trayContextMenu_Opened;
                 _trayContextMenu = null;
-                _trayContextMenuViewModel = null;
+                
                 IsContextMenuOpen = false;
             }
         }
 
         public void ShowContextMenuAtPoint(Point p)
         {
-            _trayContextMenuViewModel = new TrayContextMenuViewModel(_settingsService);
-
             _trayContextMenu = new TrayContextMenu(_trayContextMenuViewModel);
             _trayContextMenu.Opened += _trayContextMenu_Opened;
+
             _trayContextMenu.OpenAtPoint(p);
         }
-        
+
+        private void _trayContextMenuViewModel_SettingsWindowOpenRequested(object sender, EventArgs e)
+        {
+            SettingsWindowOpenRequested?.Invoke(this, e);
+        }
+
         private void _trayContextMenu_Opened(object sender, EventArgs e)
         {
             _mouseHook.Start();

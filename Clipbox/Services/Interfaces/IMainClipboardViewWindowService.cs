@@ -12,5 +12,7 @@ namespace Clipbox.Services.Interfaces
         bool IsOpen { get; }
 
         event EventHandler<SetToClipboardEventArgs> SetItemsToClipboardRequested;
+
+        event EventHandler SettingsWindowOpenRequested;
     }
 }

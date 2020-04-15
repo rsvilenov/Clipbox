@@ -37,6 +37,8 @@ namespace Clipbox.Services
 
         public event EventHandler<SetToClipboardEventArgs> SetItemsToClipboardRequested;
 
+        public event EventHandler SettingsWindowOpenRequested;
+
         public bool IsOpen
         {
             get
@@ -83,6 +85,7 @@ namespace Clipbox.Services
                         _mainWindow.SetItemsToClipboardRequested -= _mainWindow_SetItemsToClipboardRequested;
                         _mainWindow.HousekeepingRequested -= _mainWindow_HousekeepingRequested;
                         _mainWindow.CloseRequested -= _mainWindow_CloseRequested;
+                        _mainWindow.SettingsWindowOpenRequested -= _mainWindow_SettingsWindowOpenRequested;
 
                         _mainWindow.Close();
                         //_mainWindow.Close();
@@ -129,6 +132,7 @@ namespace Clipbox.Services
                         _mainWindow.SetItemsToClipboardRequested += _mainWindow_SetItemsToClipboardRequested;
                         _mainWindow.HousekeepingRequested += _mainWindow_HousekeepingRequested;
                         _mainWindow.CloseRequested += _mainWindow_CloseRequested;
+                        _mainWindow.SettingsWindowOpenRequested += _mainWindow_SettingsWindowOpenRequested;  
 
                         mainWindow.ScaleMode = resizeToDpi ? DpiScaleMode.Custom : DpiScaleMode.None;
                         
@@ -136,6 +140,11 @@ namespace Clipbox.Services
                         _mainWindow.Show();
                     }
                 }));
+        }
+
+        private void _mainWindow_SettingsWindowOpenRequested(object sender, EventArgs e)
+        {
+            SettingsWindowOpenRequested?.Invoke(this, new EventArgs());
         }
 
         private void _mainWindow_CloseRequested(object sender, EventArgs e)

@@ -41,6 +41,8 @@ namespace Clipbox.Views
         public event EventHandler<SetToClipboardEventArgs> SetItemsToClipboardRequested;
 
         public event EventHandler CloseMainWindowRequested;
+
+        public event EventHandler SettingsWindowOpenRequested;
         
         public bool AreFadeAnimationsEnabled
         {
@@ -774,6 +776,11 @@ namespace Clipbox.Views
             MainListViewContainer.Visibility = Visibility.Hidden;
 
             LoadContents(MainListView.Items.Count, _maxNumOfItemsToLoadAtOnce);
+        }
+
+        private void SettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsWindowOpenRequested?.Invoke(this, new EventArgs());
         }
     }
 }

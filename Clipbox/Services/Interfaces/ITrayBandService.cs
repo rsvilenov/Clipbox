@@ -1,4 +1,6 @@
-﻿namespace Clipbox.Services.Interfaces
+﻿using System;
+
+namespace Clipbox.Services.Interfaces
 {
     public interface ITrayBandService
     {

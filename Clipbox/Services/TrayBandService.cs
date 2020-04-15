@@ -29,7 +29,7 @@ namespace Clipbox.Services
         private ITrayContextMenuService _trayContextMenuService;
 
         private IMainClipboardViewWindowService _mainClipboardViewWindowService;
-
+        
         public TrayBandService(IMainClipboardViewWindowService mainClipboardViewWindowService,
             ITrayContextMenuService trayContextMenuService,
             ISettingsService settingsService)

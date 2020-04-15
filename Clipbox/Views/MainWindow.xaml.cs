@@ -60,6 +60,8 @@ namespace Clipbox.Views
 
         public event EventHandler CloseRequested;
 
+        public event EventHandler SettingsWindowOpenRequested;
+
         public bool AreFadeAnimationsEnabled
         {
             get { return (bool)GetValue(AreFadeAnimationsEnabledProperty); }
@@ -134,7 +136,7 @@ namespace Clipbox.Views
             _mainViewClipboardContents.SetItemsToClipboardRequested += _mainViewClipboardContents_SetItemsToClipboardRequested;
             _mainViewClipboardContents.HousekeepingRequested += _mainViewClipboardContents_HousekeepingRequested;
             _mainViewClipboardContents.CloseMainWindowRequested += _mainViewClipboardContents_CloseMainWindowRequested;
-
+            _mainViewClipboardContents.SettingsWindowOpenRequested += _mainViewClipboardContents_SettingsWindowOpenRequested;
 
             _backgroundRenderMode = (MainClipboardViewBackgroundRenderMode)_settingsService.GetSetting<int>(SettingsKeys.MainClipboardViewBackgroundRenderMode);
 
@@ -170,6 +172,11 @@ namespace Clipbox.Views
             KeyUp += MainWindow_KeyUp;
 
             AreFadeAnimationsEnabled = _settingsService.GetSetting<bool>(SettingsKeys.AreFadeAnimationsEnabled);
+        }
+
+        private void _mainViewClipboardContents_SettingsWindowOpenRequested(object sender, EventArgs e)
+        {
+            SettingsWindowOpenRequested?.Invoke(this, new EventArgs());
         }
 
         private void MainWindow_KeyUp(object sender, KeyEventArgs e)

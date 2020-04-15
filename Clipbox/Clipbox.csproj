@@ -99,7 +99,9 @@
     <Compile Include="Services\EventArgsClasses\SyncEventArgs.cs" />
     <Compile Include="Services\Exceptions\PreviewGenerationException.cs" />
     <Compile Include="Services\Interfaces\ISearchService.cs" />
+    <Compile Include="Services\Interfaces\ISettingsWindowService.cs" />
     <Compile Include="Services\SearchService.cs" />
+    <Compile Include="Services\SettingsWindowService.cs" />
     <Compile Include="Technical\Converters\MillisecondsToHumanReadableDateStringConverter.cs" />
     <Compile Include="Technical\ExtensionMethods\DateTimeExtensions.cs" />
     <Compile Include="ViewModels\AppDescriptionFormatter.cs" />

@@ -24,5 +24,7 @@ namespace Clipbox.Views.Interfaces
         event EventHandler<HousekeepingEventArgs> HousekeepingRequested;
 
         event EventHandler CloseRequested;
+
+        event EventHandler SettingsWindowOpenRequested;
     }
 }

@@ -240,7 +240,7 @@
                                                                 Margin="0,0,5,0"
                                                                 Command="{Binding Path=ActionButtonsDataContext.RemoveClipboardEntry, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
                                                                 CommandParameter="{Binding}"
-                                                                Style="{DynamicResource BtnClose}"
+                                                                Style="{DynamicResource BtnXRemove}"
                                                                 ToolTip="Remove the item from view"
                                                                 Visibility="{Binding Path=IsManipulationEnabled, RelativeSource={RelativeSource AncestorType={x:Type Border}}, Converter={StaticResource BooleanToVisibilityConverter}}">
                                                                 <i:Interaction.Behaviors>
