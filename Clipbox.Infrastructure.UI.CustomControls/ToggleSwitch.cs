@@ -11,21 +11,59 @@ using System.Windows.Shapes;
 
 namespace Clipbox.Infrastructure.UI.CustomControls
 {
-    [TemplatePart(Name = "PART_Container", Type = typeof(Grid))]
-    [TemplatePart(Name = "PART_Thumb", Type = typeof(Ellipse))]
+    [TemplatePart(Name = "PART_Container", Type = typeof(FrameworkElement))]
+    [TemplatePart(Name = "PART_Thumb", Type = typeof(FrameworkElement))]
+    [TemplatePart(Name = "PART_ThumbMoveArea", Type = typeof(FrameworkElement))]
     public class ToggleSwitch : Control
     {
+        private const int _thumbLeftRightMargin = 10;
+
+        private bool _isDragging;
+        private Point _clickPosition;
+        private FrameworkElement _thumbMoveArea;
+        private FrameworkElement _thumb;
 
         public override void OnApplyTemplate()
         {
-            Grid grid = this.Template.FindName("PART_Container", this) as Grid;
-            grid.MouseLeftButtonUp += Grid_MouseLeftButtonUp;
+            FrameworkElement container = this.Template.FindName("PART_ButtonContainer", this) as FrameworkElement;
+            container.MouseLeftButtonUp += Grid_MouseLeftButtonUp;
+            container.MouseLeftButtonDown += Grid_MouseLeftButtonDown;
+            container.MouseMove += Grid_MouseMove;
 
+            _thumb = this.Template.FindName("PART_Thumb", this) as FrameworkElement;
+            
+            _thumbMoveArea = this.Template.FindName("PART_ThumbMoveArea", this) as FrameworkElement;
         }
 
+        private void Grid_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            _isDragging = true;
+            _clickPosition = e.GetPosition(_thumbMoveArea);
+            _thumb.CaptureMouse();
+        }
+
+        private void Grid_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (_isDragging && _thumb != null)
+            {
+                Point mousePos = e.GetPosition(_thumbMoveArea);
+
+                double minX = _thumbLeftRightMargin;
+                double maxX = ((double)_thumbMoveArea.ActualWidth - _thumb.ActualWidth - _thumbLeftRightMargin);
+
+                if (mousePos.X > minX && mousePos.X < maxX)
+                {
+                    _thumb.SetValue(Canvas.LeftProperty, mousePos.X);
+                }
+            }
+        }
+        
         private void Grid_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            IsChecked = !IsChecked;
+            //IsChecked = !IsChecked;
+
+            _isDragging = false;
+            _thumb.ReleaseMouseCapture();
         }
 
         public bool IsChecked
