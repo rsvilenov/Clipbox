@@ -1,8 +1,6 @@
 ﻿using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.Infrastructure.UI.DataObjects;
 using Clipbox.Services.DataObjects;
-using Clipbox.Services.EventArgsClasses;
-using System;
 
 namespace Clipbox.Services.Interfaces
 {
