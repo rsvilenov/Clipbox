@@ -24,9 +24,11 @@
                                 <ColumnDefinition />
                             </Grid.ColumnDefinitions>
                             <Viewbox Grid.Column="0">
-                                <Canvas Width="90" Height="42">
+                                <Canvas
+                                    x:Name="PART_ThumbMoveArea"
+                                    Width="90"
+                                    Height="42">
                                     <Rectangle
-                                        x:Name="PART_ThumbMoveArea"
                                         Width="90"
                                         Height="41"
                                         HorizontalAlignment="Left"
