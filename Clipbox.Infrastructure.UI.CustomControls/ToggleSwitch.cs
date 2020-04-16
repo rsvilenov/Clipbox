@@ -11,19 +11,19 @@ using System.Windows.Shapes;
 
 namespace Clipbox.Infrastructure.UI.CustomControls
 {
-    [TemplatePart(Name = "PART_ThumbContainer", Type = typeof(Border))]
+    [TemplatePart(Name = "PART_Container", Type = typeof(Grid))]
     [TemplatePart(Name = "PART_Thumb", Type = typeof(Ellipse))]
     public class ToggleSwitch : Control
     {
 
         public override void OnApplyTemplate()
         {
-            Border border = this.Template.FindName("PART_ThumbContainer", this) as Border;
-            border.MouseLeftButtonUp += Border_MouseLeftButtonUp;
+            Grid grid = this.Template.FindName("PART_Container", this) as Grid;
+            grid.MouseLeftButtonUp += Grid_MouseLeftButtonUp;
 
         }
 
-        private void Border_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void Grid_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             IsChecked = !IsChecked;
         }
