@@ -4,9 +4,13 @@
     xmlns:local="clr-namespace:Clipbox.Infrastructure.UI.CustomControls">
 
     <Style TargetType="{x:Type local:ToggleSwitch}">
-        <Setter Property="Background" Value="{DynamicResource ControlBackgroundBrush}" />
-        <Setter Property="Foreground" Value="{DynamicResource ControlForegroundBrush}" />
-        <Setter Property="BorderBrush" Value="{DynamicResource ControlBorderBrush}" />
+        <Setter Property="Background" Value="SkyBlue" />
+        <Setter Property="Foreground" Value="White" />
+        <Setter Property="OffBackground" Value="Black" />
+        <Setter Property="OffForeground" Value="Gray" />
+        <Setter Property="TogglingBackground" Value="DarkGray" />
+        <Setter Property="TogglingForeground" Value="White" />
+        <Setter Property="BorderBrush" Value="White" />
         <Setter Property="BorderThickness" Value="5" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="Width" Value="90" />
@@ -46,6 +50,10 @@
                                                         <Setter Property="Stroke" Value="{Binding OffForeground, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                                         <Setter Property="Fill" Value="{Binding OffBackground, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                                     </DataTrigger>
+                                                    <DataTrigger Binding="{Binding IsToggling, RelativeSource={RelativeSource Mode=TemplatedParent}}" Value="True">
+                                                        <Setter Property="Stroke" Value="{Binding TogglingBackground, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                                        <Setter Property="Fill" Value="{Binding TogglingBackground, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                                    </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>
                                         </Rectangle.Style>
@@ -64,6 +72,9 @@
                                                 <Style.Triggers>
                                                     <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource Mode=TemplatedParent}}" Value="False">
                                                         <Setter Property="Fill" Value="{Binding OffForeground, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding IsToggling, RelativeSource={RelativeSource Mode=TemplatedParent}}" Value="True">
+                                                        <Setter Property="Fill" Value="{Binding TogglingForeground, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                                     </DataTrigger>
                                                 </Style.Triggers>
                                             </Style>

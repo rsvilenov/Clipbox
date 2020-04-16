@@ -63,6 +63,7 @@ namespace Clipbox.Infrastructure.UI.CustomControls
             _isDragging = true;
             _clickPosition = e.GetPosition(_thumbMoveArea);
             _thumb.CaptureMouse();
+            IsToggling = true;
         }
 
         private void Grid_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
@@ -127,6 +128,8 @@ namespace Clipbox.Infrastructure.UI.CustomControls
                     IsChecked = true;
                 }
             }
+            
+            IsToggling = false;
         }
 
         private double GetThumbFinalOffXPosInCanvas()
@@ -238,6 +241,34 @@ namespace Clipbox.Infrastructure.UI.CustomControls
         public static readonly DependencyProperty OffBackgroundProperty =
             DependencyProperty.Register(nameof(OffBackground), typeof(Brush), typeof(ToggleSwitch), new PropertyMetadata(Brushes.Black));
 
+        public Brush TogglingBackground
+        {
+            get { return (Brush)GetValue(TogglingBackgroundProperty); }
+            set { SetValue(TogglingBackgroundProperty, value); }
+        }
+
+        public static readonly DependencyProperty TogglingBackgroundProperty =
+            DependencyProperty.Register(nameof(TogglingBackground), typeof(Brush), typeof(ToggleSwitch), new PropertyMetadata(Brushes.DarkGray));
+
+        public Brush TogglingForeground
+        {
+            get { return (Brush)GetValue(TogglingForegroundProperty); }
+            set { SetValue(TogglingForegroundProperty, value); }
+        }
+
+        public static readonly DependencyProperty TogglingForegroundProperty =
+            DependencyProperty.Register(nameof(TogglingForeground), typeof(Brush), typeof(ToggleSwitch), new PropertyMetadata(Brushes.Wheat));
+
+
+
+        public bool IsToggling
+        {
+            get { return (bool)GetValue(IsTogglingProperty); }
+            set { SetValue(IsTogglingProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsTogglingProperty =
+            DependencyProperty.Register(nameof(IsToggling), typeof(bool), typeof(ToggleSwitch), new PropertyMetadata(false));
 
 
     }
