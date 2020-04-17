@@ -10,7 +10,7 @@
         <Setter Property="BorderThickness" Value="4" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="Width" Value="90" />
-        <Setter Property="Height" Value="35" />
+        <Setter Property="Height" Value="40" />
         <Setter Property="FontSize" Value="16" />
 
         <Setter Property="Template">
@@ -27,12 +27,12 @@
                                 <Canvas
                                     x:Name="PART_ThumbMoveArea"
                                     Width="90"
-                                    Height="42">
+                                    Height="40">
                                     <Rectangle
-                                        Width="90"
-                                        Height="41"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Top"
+                                        Canvas.Left="0"
+                                        Canvas.Top="0"
+                                        Width="{Binding ActualWidth, ElementName=PART_ThumbMoveArea}"
+                                        Height="{Binding ActualHeight, ElementName=PART_ThumbMoveArea}"
                                         Fill="{Binding Background, RelativeSource={RelativeSource Mode=TemplatedParent}}"
                                         RadiusX="18"
                                         RadiusY="18"
@@ -78,10 +78,6 @@
                 <Setter Property="Foreground" Value="White" />
                 <Setter Property="BorderBrush" Value="{Binding Path=Background, RelativeSource={RelativeSource Self}}" />
             </Trigger>
-            <Trigger Property="IsToggling" Value="True">
-                <Setter Property="Background" Value="#999999" />
-                <Setter Property="Foreground" Value="White" />
-            </Trigger>
             <MultiTrigger>
                 <MultiTrigger.Conditions>
                     <Condition Property="IsMouseOver" Value="True" />
@@ -101,6 +97,10 @@
                     <Setter Property="Background" Value="#00a4af" />
                 </MultiTrigger.Setters>
             </MultiTrigger>
+            <Trigger Property="IsToggling" Value="True">
+                <Setter Property="Background" Value="#999999" />
+                <Setter Property="Foreground" Value="White" />
+            </Trigger>
         </Style.Triggers>
 
     </Style>

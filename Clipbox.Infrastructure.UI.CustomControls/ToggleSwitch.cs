@@ -218,48 +218,7 @@ namespace Clipbox.Infrastructure.UI.CustomControls
 
         public static readonly DependencyProperty OffTextProperty =
             DependencyProperty.Register(nameof(OffText), typeof(string), typeof(ToggleSwitch), new PropertyMetadata(string.Empty));
-
-
-
-        public Brush OffForeground
-        {
-            get { return (Brush)GetValue(OffForegroundProperty); }
-            set { SetValue(OffForegroundProperty, value); }
-        }
-
-        public static readonly DependencyProperty OffForegroundProperty =
-            DependencyProperty.Register(nameof(OffForeground), typeof(Brush), typeof(ToggleSwitch), new PropertyMetadata(Brushes.LightGray));
-
-
-
-        public Brush OffBackground
-        {
-            get { return (Brush)GetValue(OffBackgroundProperty); }
-            set { SetValue(OffBackgroundProperty, value); }
-        }
         
-        public static readonly DependencyProperty OffBackgroundProperty =
-            DependencyProperty.Register(nameof(OffBackground), typeof(Brush), typeof(ToggleSwitch), new PropertyMetadata(Brushes.Black));
-
-        public Brush TogglingBackground
-        {
-            get { return (Brush)GetValue(TogglingBackgroundProperty); }
-            set { SetValue(TogglingBackgroundProperty, value); }
-        }
-
-        public static readonly DependencyProperty TogglingBackgroundProperty =
-            DependencyProperty.Register(nameof(TogglingBackground), typeof(Brush), typeof(ToggleSwitch), new PropertyMetadata(Brushes.DarkGray));
-
-        public Brush TogglingForeground
-        {
-            get { return (Brush)GetValue(TogglingForegroundProperty); }
-            set { SetValue(TogglingForegroundProperty, value); }
-        }
-
-        public static readonly DependencyProperty TogglingForegroundProperty =
-            DependencyProperty.Register(nameof(TogglingForeground), typeof(Brush), typeof(ToggleSwitch), new PropertyMetadata(Brushes.Wheat));
-
-
 
         public bool IsToggling
         {
