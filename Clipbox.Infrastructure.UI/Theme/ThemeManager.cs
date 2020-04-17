@@ -125,11 +125,11 @@ namespace Clipbox.Infrastructure.UI.Theme
             Color controlForegroundColor = Colors.Gray;
             if (_systemTheme.ColorPrevalanceEnabled)
             {
-                controlForegroundColor = (Color)ColorConverter.ConvertFromString("#FFFFFF");
+                controlForegroundColor = (Color)ColorConverter.ConvertFromString("#dcdcdc");
             }
             else
             {
-                controlForegroundColor = (Color)ColorConverter.ConvertFromString("#FFFFFF");
+                controlForegroundColor = (Color)ColorConverter.ConvertFromString("#dcdcdc");
             }
             newTheme.Add(ThemeColor.ControlForegroundColor.ToString(), controlForegroundColor);
             newTheme.Add(ThemeBrush.ControlForegroundBrush.ToString(), CreateBrush(controlForegroundColor));

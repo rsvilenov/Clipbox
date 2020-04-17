@@ -18,7 +18,12 @@ namespace Clipbox.Infrastructure.UI.CustomControls
         private Point _clickPosition;
         private Canvas _thumbMoveArea;
         private FrameworkElement _thumb;
-        
+
+        static ToggleSwitch()
+        {
+            DefaultStyleKeyProperty.OverrideMetadata(typeof(ToggleSwitch), new FrameworkPropertyMetadata(typeof(ToggleSwitch)));
+        }
+
         public override void OnApplyTemplate()
         {
             Loaded += ToggleSwitch_Loaded;

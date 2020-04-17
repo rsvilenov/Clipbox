@@ -28,6 +28,42 @@
                 <ResourceDictionary Source="pack://application:,,,/Clipbox.Infrastructure.UI.CustomControls;component/Themes/Generic.xaml" />
 
             </ResourceDictionary.MergedDictionaries>
+
+            <Style TargetType="{x:Type customControls:ToggleSwitch}">
+                <Setter Property="Background" Value="{DynamicResource TaskbarColorBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource ControlForegroundBrush}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource ControlForegroundBrush}" />
+                <Style.Triggers>
+                    <Trigger Property="IsChecked" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource AccentBrush}" />
+                        <Setter Property="Foreground" Value="{DynamicResource ControlHighlightForegroundBrush}" />
+                        <Setter Property="BorderBrush" Value="{Binding Path=Background, RelativeSource={RelativeSource Self}}" />
+                    </Trigger>
+                    <MultiTrigger>
+                        <MultiTrigger.Conditions>
+                            <Condition Property="IsMouseOver" Value="True" />
+                            <Condition Property="IsChecked" Value="False" />
+                        </MultiTrigger.Conditions>
+                        <MultiTrigger.Setters>
+                            <Setter Property="BorderBrush" Value="{DynamicResource ControlHighlightForegroundBrush}" />
+                            <Setter Property="Foreground" Value="{DynamicResource ControlHighlightForegroundBrush}" />
+                        </MultiTrigger.Setters>
+                    </MultiTrigger>
+                    <MultiTrigger>
+                        <MultiTrigger.Conditions>
+                            <Condition Property="IsMouseOver" Value="True" />
+                            <Condition Property="IsChecked" Value="True" />
+                        </MultiTrigger.Conditions>
+                        <MultiTrigger.Setters>
+                            <Setter Property="Background" Value="{DynamicResource AccentLight1Brush}" />
+                        </MultiTrigger.Setters>
+                    </MultiTrigger>
+                    <Trigger Property="IsToggling" Value="True">
+                        <Setter Property="Background" Value="#999999" />
+                        <Setter Property="Foreground" Value="{DynamicResource ControlHighlightForegroundBrush}" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
         </ResourceDictionary>
     </Window.Resources>
     <Window.Title>
