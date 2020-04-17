@@ -73,10 +73,6 @@
             Text="test" />
         <customControls:ToggleSwitch
             Grid.Row="1"
-            Background="{DynamicResource AccentBrush}"
-            Foreground="White"
-            OffBackground="Black"
-            OffForeground="Gray"
             OffText="Off"
             OnText="On" />
     </Grid>

@@ -4,14 +4,10 @@
     xmlns:local="clr-namespace:Clipbox.Infrastructure.UI.CustomControls">
 
     <Style TargetType="{x:Type local:ToggleSwitch}">
-        <Setter Property="Background" Value="SkyBlue" />
-        <Setter Property="Foreground" Value="White" />
-        <Setter Property="OffBackground" Value="Black" />
-        <Setter Property="OffForeground" Value="Gray" />
-        <Setter Property="TogglingBackground" Value="DarkGray" />
-        <Setter Property="TogglingForeground" Value="White" />
-        <Setter Property="BorderBrush" Value="White" />
-        <Setter Property="BorderThickness" Value="5" />
+        <Setter Property="Background" Value="Black" />
+        <Setter Property="Foreground" Value="#cccccc" />
+        <Setter Property="BorderBrush" Value="#cccccc" />
+        <Setter Property="BorderThickness" Value="4" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="Width" Value="90" />
         <Setter Property="Height" Value="35" />
@@ -37,27 +33,12 @@
                                         Height="41"
                                         HorizontalAlignment="Left"
                                         VerticalAlignment="Top"
+                                        Fill="{Binding Background, RelativeSource={RelativeSource Mode=TemplatedParent}}"
                                         RadiusX="18"
                                         RadiusY="18"
                                         SnapsToDevicePixels="True"
-                                        StrokeThickness="4">
-                                        <Rectangle.Style>
-                                            <Style TargetType="Rectangle">
-                                                <Setter Property="Stroke" Value="{Binding Background, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
-                                                <Setter Property="Fill" Value="{Binding Background, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource Mode=TemplatedParent}}" Value="False">
-                                                        <Setter Property="Stroke" Value="{Binding OffForeground, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
-                                                        <Setter Property="Fill" Value="{Binding OffBackground, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding IsToggling, RelativeSource={RelativeSource Mode=TemplatedParent}}" Value="True">
-                                                        <Setter Property="Stroke" Value="{Binding TogglingBackground, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
-                                                        <Setter Property="Fill" Value="{Binding TogglingBackground, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Rectangle.Style>
-                                    </Rectangle>
+                                        Stroke="{Binding BorderBrush, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                        StrokeThickness="{Binding BorderThickness.Left, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                     <Ellipse
                                         x:Name="PART_Thumb"
                                         Width="20"
@@ -65,21 +46,8 @@
                                         Margin="0,10,0,0"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
-                                        Stretch="Uniform">
-                                        <Ellipse.Style>
-                                            <Style TargetType="Ellipse">
-                                                <Setter Property="Fill" Value="{Binding Foreground, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource Mode=TemplatedParent}}" Value="False">
-                                                        <Setter Property="Fill" Value="{Binding OffForeground, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding IsToggling, RelativeSource={RelativeSource Mode=TemplatedParent}}" Value="True">
-                                                        <Setter Property="Fill" Value="{Binding TogglingForeground, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Ellipse.Style>
-                                    </Ellipse>
+                                        Fill="{Binding Foreground, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                        Stretch="Uniform" />
                                 </Canvas>
                             </Viewbox>
                             <TextBlock
@@ -103,6 +71,38 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+
+        <Style.Triggers>
+            <Trigger Property="IsChecked" Value="True">
+                <Setter Property="Background" Value="#00b7c3" />
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="BorderBrush" Value="{Binding Path=Background, RelativeSource={RelativeSource Self}}" />
+            </Trigger>
+            <Trigger Property="IsToggling" Value="True">
+                <Setter Property="Background" Value="#999999" />
+                <Setter Property="Foreground" Value="White" />
+            </Trigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="True" />
+                    <Condition Property="IsChecked" Value="False" />
+                </MultiTrigger.Conditions>
+                <MultiTrigger.Setters>
+                    <Setter Property="BorderBrush" Value="#cccccc" />
+                    <Setter Property="Foreground" Value="#cccccc" />
+                </MultiTrigger.Setters>
+            </MultiTrigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsMouseOver" Value="True" />
+                    <Condition Property="IsChecked" Value="True" />
+                </MultiTrigger.Conditions>
+                <MultiTrigger.Setters>
+                    <Setter Property="Background" Value="#00a4af" />
+                </MultiTrigger.Setters>
+            </MultiTrigger>
+        </Style.Triggers>
+
     </Style>
 
 
