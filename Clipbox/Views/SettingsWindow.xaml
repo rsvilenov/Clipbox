@@ -18,8 +18,11 @@
     Background="{DynamicResource TaskbarColorBrush}"
     BorderBrush="{DynamicResource AccentBrush}"
     BorderThickness="1"
+    FontSize="16"
+    Foreground="White"
     Icon="pack://application:,,,/Clipbox.Infrastructure.UI;component/Resources/Images/Clip-WF.ico"
     ResizeMode="CanResizeWithGrip"
+    SizeToContent="Width"
     WindowStartupLocation="CenterScreen"
     WindowStyle="None"
     mc:Ignorable="d">
@@ -76,7 +79,7 @@
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="0" ResizeBorderThickness="5" />
     </WindowChrome.WindowChrome>
-    <Grid x:Name="mainGrid">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
             <RowDefinition />
@@ -104,14 +107,34 @@
                 <infBeh:FrameworkElementDpiScalingBehavior />
             </i:Interaction.Behaviors>
         </Button>
-        <TextBlock
+        <Grid
+            x:Name="mainGrid"
             Grid.Row="1"
-            Foreground="Wheat"
-            Text="test" />
-        <customControls:ToggleSwitch
-            Grid.Row="1"
-            IsChecked="{Binding IsSettingChanged, Mode=OneWayToSource}"
-            OffText="{loc:Localize TGL_BTN_LBL_Off}"
-            OnText="{loc:Localize TGL_BTN_LBL_On}" />
+            Margin="15">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <StackPanel Grid.Row="1" Orientation="Vertical">
+                <TextBlock HorizontalAlignment="Left" Text="Pin the tray icon to the taskbar" />
+                <StackPanel Margin="0,15,0,0" Orientation="Horizontal">
+                    <customControls:ToggleSwitch
+                        HorizontalAlignment="Left"
+                        IsChecked="{Binding IsSettingChanged, Mode=OneWayToSource}"
+                        OffText="{loc:Localize TGL_BTN_LBL_Off}"
+                        OnText="{loc:Localize TGL_BTN_LBL_On}" />
+                    <Image
+                        MinWidth="100"
+                        MinHeight="25"
+                        Margin="5,0,0,0"
+                        Source="/Resources/Images/Settings/DeskBand.png" />
+                </StackPanel>
+
+            </StackPanel>
+
+        </Grid>
+
+
     </Grid>
 </localWindows:AcryllicWindow>
