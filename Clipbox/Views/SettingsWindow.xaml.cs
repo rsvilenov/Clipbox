@@ -1,10 +1,14 @@
-﻿using Clipbox.Infrastructure.UI.Windows;
+﻿using Clipbox.Infrastructure.UI.Localization;
+using Clipbox.Infrastructure.UI.Windows;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.Win32;
 using System;
+using System.Globalization;
+using System.Threading;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Markup;
 using static Clipbox.Win32.MonitorUtils;
 
 namespace Clipbox.Views

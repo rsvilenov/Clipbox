@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:infBeh="clr-namespace:Clipbox.Infrastructure.UI.Behaviors;assembly=Clipbox.Infrastructure.UI"
+    xmlns:loc="clr-namespace:Clipbox.Infrastructure.UI.Localization;assembly=Clipbox.Infrastructure.UI.Localization"
     xmlns:local="clr-namespace:Clipbox.Views"
     xmlns:localWindows="clr-namespace:Clipbox.Infrastructure.UI.Windows;assembly=Clipbox.Infrastructure.UI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -109,7 +110,7 @@
             Text="test" />
         <customControls:ToggleSwitch
             Grid.Row="1"
-            OffText="Off"
-            OnText="On" />
+            OffText="{loc:Localize TGL_BTN_LBL_Off}"
+            OnText="{loc:Localize TGL_BTN_LBL_On}" />
     </Grid>
 </localWindows:AcryllicWindow>
