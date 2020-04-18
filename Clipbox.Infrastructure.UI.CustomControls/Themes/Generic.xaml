@@ -9,7 +9,7 @@
         <Setter Property="BorderBrush" Value="#cccccc" />
         <Setter Property="BorderThickness" Value="4" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
-        <Setter Property="Width" Value="90" />
+        <Setter Property="Width" Value="150" />
         <Setter Property="Height" Value="20" />
         <Setter Property="FontSize" Value="16" />
 
@@ -18,12 +18,8 @@
                 <ControlTemplate TargetType="{x:Type local:ToggleSwitch}">
 
                     <ContentControl>
-                        <Grid x:Name="PART_ButtonContainer">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <Viewbox Grid.Column="0">
+                        <StackPanel x:Name="PART_ButtonContainer" Orientation="Horizontal">
+                            <Viewbox>
                                 <Canvas
                                     x:Name="PART_ThumbMoveArea"
                                     Width="90"
@@ -51,10 +47,10 @@
                                 </Canvas>
                             </Viewbox>
                             <TextBlock
-                                Grid.Column="1"
                                 Margin="10,0,0,0"
                                 VerticalAlignment="Center"
-                                Foreground="{TemplateBinding Foreground}">
+                                Foreground="{TemplateBinding Foreground}"
+                                TextWrapping="Wrap">
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="Text" Value="{Binding OffText, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
@@ -66,7 +62,7 @@
                                     </Style>
                                 </TextBlock.Style>
                             </TextBlock>
-                        </Grid>
+                        </StackPanel>
                     </ContentControl>
                 </ControlTemplate>
             </Setter.Value>
