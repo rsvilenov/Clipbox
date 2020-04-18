@@ -262,5 +262,17 @@ namespace Clipbox {
                 this["MaxNumOfItemToLoadAtOnce"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("en-US")]
+        public string LicalizationCulture {
+            get {
+                return ((string)(this["LicalizationCulture"]));
+            }
+            set {
+                this["LicalizationCulture"] = value;
+            }
+        }
     }
 }

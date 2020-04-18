@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Clipbox.Core.Localization;
+using System;
 using System.ComponentModel;
 using System.Globalization;
 using System.Resources;
@@ -7,7 +8,7 @@ using System.Windows.Threading;
 
 namespace Clipbox.Infrastructure.UI.Localization
 {
-    public class TranslationSource : INotifyPropertyChanged
+    public class TranslationSource : ITranslationSource, INotifyPropertyChanged
     {
         private static readonly Lazy<TranslationSource> _lazyInstance =
             new Lazy<TranslationSource>(() => new TranslationSource());

@@ -29,6 +29,30 @@ namespace Clipbox.Views
             SourceInitialized += SettingsWindow_SourceInitialized;
         }
 
+
+
+        public bool IsSettingChanged
+        {
+            get { return (bool)GetValue(IsSettingChangedProperty); }
+            set { SetValue(IsSettingChangedProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsSettingChangedProperty =
+            DependencyProperty.Register(nameof(IsSettingChanged), typeof(bool), typeof(SettingsWindow), new PropertyMetadata(false, IsSettingChecked_PropertyChanged));
+
+        private static void IsSettingChecked_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            SettingsWindow wnd = (SettingsWindow)d;
+            if ((bool)e.NewValue)
+            {
+                wnd._settingsService.SetSetting(SettingsKeys.LicalizationCulture, "bg-BG");
+            }
+            else
+            {
+                wnd._settingsService.SetSetting(SettingsKeys.LicalizationCulture, "en-US");
+            }
+        }
+
         private void SettingsWindow_SourceInitialized(object sender, EventArgs e)
         {
             DisplayMonitor dm = MonitorUtils.GetByWindowHandle(this.Handle);
@@ -47,6 +71,9 @@ namespace Clipbox.Views
 
             this.MaxHeight = currentDisplayHeight - 10;
             this.MaxWidth = currentDisplayWidth - 10;
+
+            var culture = new CultureInfo("bg-BG");
+            TranslationSource.Instance.CurrentCulture = culture;
         }
 
         private ISettingsService _settingsService;

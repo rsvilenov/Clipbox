@@ -6,6 +6,7 @@ using Clipbox.ExtendedClipboard;
 using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.IPC;
 using Clipbox.Infrastructure.Persistence;
+using Clipbox.Infrastructure.UI.Localization;
 using Clipbox.Infrastructure.UI.Theme;
 using Clipbox.SearchProvider;
 using Clipbox.Services;
@@ -62,6 +63,8 @@ namespace Clipbox
         SearchService _searchService;
 
         SettingsWindowService _settingsWindowService;
+
+        LocalizationService _localizationService;
 
         public void PerformStartupSequence()
         {
@@ -190,6 +193,8 @@ namespace Clipbox
             _trayService = new TrayIconService(_mainClipboardViewWindowService, _trayContextMenuService, _settingsService);
 
             _settingsWindowService = new SettingsWindowService(_settingsService, _mainClipboardViewWindowService, _trayContextMenuService);
+
+            _localizationService = new LocalizationService(TranslationSource.Instance, _settingsService);
 
             if (!ThemeManager.IsLoaded)
             {

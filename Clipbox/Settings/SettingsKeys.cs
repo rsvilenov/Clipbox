@@ -39,5 +39,7 @@
         public const string NumOfNotYetVisibleRowsToPreload = nameof(NumOfNotYetVisibleRowsToPreload);
 
         public const string MaxNumOfItemToLoadAtOnce = nameof(MaxNumOfItemToLoadAtOnce);
+
+        public const string LicalizationCulture = nameof(LicalizationCulture);
     }
 }
