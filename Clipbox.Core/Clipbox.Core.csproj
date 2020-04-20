@@ -48,10 +48,13 @@
     <Compile Include="ClipboardContent\Interfaces\IHaveTransferabilityInfo.cs" />
     <Compile Include="ClipboardContent\Interfaces\IIHaveIntermediateFormat.cs" />
     <Compile Include="ClipboardContent\Interfaces\ITimestampInfo.cs" />
+    <Compile Include="Configuration\Enums\SettingValueType.cs" />
+    <Compile Include="Configuration\SettingObject.cs" />
     <Compile Include="DisposableObject.cs" />
     <Compile Include="ClipboardContent\Enums\ClipboardContentClass.cs" />
     <Compile Include="Extensibility\Attributes\IntermediateFormatSupportAttribute.cs" />
     <Compile Include="Extensibility\Attributes\PreviewPriorityAttribute.cs" />
+    <Compile Include="Extensibility\Contracts\ExtentionTypes\GeneralTypes\ConfigurableExtension.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\GeneralTypes\SearchSupportExtension.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\PreviewGenerationTypes\ICancellablePreviewGenerator.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\IPersistenceSupport.cs" />
@@ -59,10 +62,13 @@
     <Compile Include="Extensibility\Contracts\ExtentionTypes\ISearchSupport.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\PersistenceTypes\PersistenceSupportExtension.cs" />
     <Compile Include="Extensibility\Contracts\IApplicationInfo.cs" />
+    <Compile Include="Extensibility\Contracts\IConfigurableObject.cs" />
+    <Compile Include="Extensibility\Contracts\IConfigurationChangeRequestor.cs" />
     <Compile Include="Extensibility\Contracts\IIntermediateFormat.cs" />
     <Compile Include="Extensibility\Contracts\IIntermediateFormatMetadata.cs" />
     <Compile Include="Extensibility\Contracts\IMachineInfo.cs" />
     <Compile Include="Extensibility\Contracts\IntermediateFormatBase.cs" />
+    <Compile Include="Extensibility\EventArgsClasses\RequestSettingChangeEventArgs.cs" />
     <Compile Include="Localization\ITranslationSource.cs" />
     <Compile Include="Search\Enums\SearchCategory.cs" />
     <Compile Include="Search\Enums\TermOccurrence.cs" />
@@ -120,7 +126,7 @@
     <Compile Include="Extensibility\Contracts\PreviewData\ImagePreviewData.cs" />
     <Compile Include="Extensibility\Contracts\PreviewData\RichTextPreviewData.cs" />
     <Compile Include="Extensibility\Contracts\PreviewData\TextPreviewData.cs" />
-    <Compile Include="Extensibility\Exceptions\ClipioExtentionException.cs" />
+    <Compile Include="Extensibility\Exceptions\ClipboxExtentionException.cs" />
     <Compile Include="ProductConstants.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Search\SearchTerms\MaxCreationDateSearchTerm.cs" />

@@ -22,7 +22,7 @@ namespace Clipbox.CloudServices
     /// WARNING: This class is not thread safe.
     /// </summary>
     [Description("Google Drive storage")]
-    public class GoogleDriveService : ICloudService, IAuthenticatable
+    public class GoogleDriveCloudSupportProvider : ICloudSupportProvider, IAuthenticatable
     {
         public bool IsAuthenticated { get; private set; }
 
@@ -36,7 +36,7 @@ namespace Clipbox.CloudServices
 
         private List<DriveObjectInfo> _driveObjectCache;
 
-        public GoogleDriveService()
+        public GoogleDriveCloudSupportProvider()
         {
             _driveObjectCache = new List<DriveObjectInfo>();
         }

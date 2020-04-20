@@ -35,7 +35,7 @@ namespace Clipbox.Services
 
         public event EventHandler<SyncEventArgs> ItemSynced;
 
-        private ICloudService _cloudService;
+        private ICloudSupportProvider _cloudService;
 
         private IClipboardManager _clipboardManager;
 
@@ -48,7 +48,7 @@ namespace Clipbox.Services
         private string _appGuid;
 
         public CloudSynchronizationService(IClipboardManager clipboardManager, 
-            ICloudService cloudService, 
+            ICloudSupportProvider cloudService, 
             string appGuid)
         {
             _clipboardManager = clipboardManager;

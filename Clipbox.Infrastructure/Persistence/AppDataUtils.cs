@@ -18,12 +18,7 @@ namespace Clipbox.Infrastructure.Persistence
             string dir = GetAppDataDir(throwIfNotExists: false);
             string fullPath = Path.Combine(dir, relativeFilePath);
             string fullDirName = Path.GetDirectoryName(fullPath);
-
-            if (fullDirName != dir && !Directory.Exists(fullDirName))
-            {
-                Directory.CreateDirectory(fullDirName);
-            }
-
+            
             DoFileOperation(() =>
             {
                 using (StreamWriter sw = new StreamWriter(fullPath, append))
@@ -58,9 +53,15 @@ namespace Clipbox.Infrastructure.Persistence
         public static void WriteToApplicationData(string relativeFilePath, byte[] data, bool useLock = true)
         {
             EnsurePathIsRelative(relativeFilePath);
-
+            
             string dir = GetAppDataDir(throwIfNotExists: false);
             string fullPath = Path.Combine(dir, relativeFilePath);
+            string fullDirName = Path.GetDirectoryName(fullPath);
+
+            if (fullDirName != dir && !Directory.Exists(fullDirName))
+            {
+                Directory.CreateDirectory(fullDirName);
+            }
 
             DoFileOperation(() =>
             {
@@ -103,18 +104,50 @@ namespace Clipbox.Infrastructure.Persistence
             return File.Exists(fullFilePath);
         }
 
+        public static bool CheckSubDirExists(string relativeSubDirPath)
+        {
+            string fullFilePath = Path.Combine(GetAppDataDir(throwIfNotExists: true), relativeSubDirPath);
+            return Directory.Exists(relativeSubDirPath);
+        }
+
         public static void DeleteFile(string relativeFilePath)
         {
             string fullFilePath = Path.Combine(GetAppDataDir(throwIfNotExists: true), relativeFilePath);
+            
+            // TODO: make sure the code below plays well with FileLocker, used for file access operations
             File.Delete(fullFilePath);
+
+            // There is no exception handling here, 
+            // because "If the file to be deleted does not exist, no exception is thrown." (MSDN)
+            File.Delete($"{fullFilePath}.lock");
         }
 
-        public static IEnumerable<string> ListFiles(string subDir = "")
+        public static void DeleteDirectory(string relativeDirPath)
+        {
+            string fullDirectoryPath = Path.Combine(GetAppDataDir(throwIfNotExists: true), relativeDirPath);
+
+            if (Directory.GetFiles(fullDirectoryPath).Any() 
+                || Directory.GetDirectories(fullDirectoryPath).Any())
+            {
+                throw new InvalidOperationException($"Directory {fullDirectoryPath} is not empty.");
+            }
+
+            Directory.Delete(fullDirectoryPath);
+        }
+
+        public static IEnumerable<string> ListFiles(string subDir = null)
         {
             string appDataDir = GetAppDataDir(throwIfNotExists: true);
-            string fullPath = subDir == "" ? appDataDir : Path.Combine(appDataDir, subDir);
+            string fullPath = string.IsNullOrEmpty(subDir) ? appDataDir : Path.Combine(appDataDir, subDir);
             return Directory.EnumerateFiles(fullPath)
                 .Select(p => Path.GetFileName(p));
+        }
+
+        public static IEnumerable<string> ListSubDirectories()
+        {
+            string appDataDir = GetAppDataDir(throwIfNotExists: true);
+            return Directory.EnumerateDirectories(appDataDir)
+                .Select(p => new DirectoryInfo(Path.GetDirectoryName(p)).Name);
         }
 
         public static string GetAppDataDir(bool throwIfNotExists)

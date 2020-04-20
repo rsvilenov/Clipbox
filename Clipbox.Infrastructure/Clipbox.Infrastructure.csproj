@@ -62,7 +62,8 @@
     <Compile Include="Extensibility\Containers\Interfaces\IExtentionInfoProvider.cs" />
     <Compile Include="Extensibility\Containers\Interfaces\INotifyExtentionResolved.cs" />
     <Compile Include="Extensibility\Discovery\AssemblyWalker.cs" />
-    <Compile Include="Extensibility\Invocation\ExtentionInvoker.cs" />
+    <Compile Include="Extensibility\EventArgsClasses\ExtensionTypeEventArgs.cs" />
+    <Compile Include="Extensibility\Invocation\ExtensionInvoker.cs" />
     <Compile Include="ExtentionMethods\BitmapExtentions.cs" />
     <Compile Include="ExtentionMethods\ImageExtentions.cs" />
     <Compile Include="ExtentionMethods\MetafileExtentions.cs" />
@@ -84,8 +85,11 @@
     <Compile Include="Persistence\FileLocker.cs" />
     <Compile Include="Persistence\GlobalNamedMutex.cs" />
     <Compile Include="Persistence\IAuthenticatable.cs" />
-    <Compile Include="Persistence\ICloudService.cs" />
+    <Compile Include="Persistence\ICloudSupportProvider.cs" />
     <Compile Include="Persistence\ICloudSynchronizable.cs" />
+    <Compile Include="Persistence\IConfigurationProvider.cs" />
+    <Compile Include="Persistence\IPersistenceProvider.cs" />
+    <Compile Include="Persistence\AppDataPersistenceProvider.cs" />
     <Compile Include="Persistence\RegistryUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Search\ISearchProvider.cs" />

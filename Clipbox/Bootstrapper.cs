@@ -66,6 +66,8 @@ namespace Clipbox
 
         LocalizationService _localizationService;
 
+        IPersistenceProvider _persistenceProvider;
+
         public void PerformStartupSequence()
         {
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
@@ -101,6 +103,8 @@ namespace Clipbox
                 MarshalExt.ThrowOnWin32Error();
             }
 
+            _persistenceProvider = new AppDataPersistenceProvider();
+
             string appGuid = CreateOrGetAppGuid();
             
             // Initialize the clipboard listener
@@ -112,11 +116,11 @@ namespace Clipbox
             _extentionLoader.StatelessExtentionResolved += (s, e) =>
             {
                 // this may slow us down
-                AppDataUtils.WriteToApplicationData("lastLoadedExtention.log", $"{e.ExtentionType.FullName} [{e.ExtentionType.Assembly.FullName}]");
+                _persistenceProvider.Write("lastLoadedExtention.log", $"{e.ExtentionType.FullName} [{e.ExtentionType.Assembly.FullName}]");
             };
 
             // Initialize the clipboard manager
-            _clipboardManager = new ClipboardManager(_clipboardListenerService, _extentionLoader.FormatsContainer, _extentionLoader.PersistenceSupportExtensionContainer);
+            _clipboardManager = new ClipboardManager(_clipboardListenerService, _extentionLoader.FormatsContainer, _extentionLoader.PersistenceSupportExtensionContainer, _persistenceProvider);
 
             // Initialize the settings service
             _settingsService = new SettingsService();
@@ -149,7 +153,7 @@ namespace Clipbox
             // overrides MaxSimultaneousPreviewTasks
             _settingsService.SetSetting(SettingsKeys.AutoDetermineMaxSimultaneousPreviewTasks, false);
 
-            _previewGenerationService = new PreviewGenerationService(_clipboardManager, _extentionLoader.PreviewGeneratorsContainer, _settingsService);
+            _previewGenerationService = new PreviewGenerationService(_clipboardManager, _extentionLoader.PreviewGeneratorsContainer, _settingsService, _persistenceProvider);
             
             // Initialize the view model - the quick view should show as fast as possible, so we will create it beforehand
             var viewModel = new QuickViewkClipboardContentsViewModel(_clipboardManager, _previewGenerationService, _settingsService);
@@ -166,7 +170,7 @@ namespace Clipbox
             // Initialize the keyboard service
             _keyboardService = new LowLevelKeyboardService();
 
-            _cloudSyncService = new CloudSynchronizationService(_clipboardManager, new GoogleDriveService(), appGuid);
+            _cloudSyncService = new CloudSynchronizationService(_clipboardManager, new GoogleDriveCloudSupportProvider(), appGuid);
             _cloudSyncService.IsEnabled = _settingsService.GetSetting<bool>(SettingsKeys.IsCloudSyncEnabled);
 
             _trayContextMenuService = new TrayContextMenuService(_settingsService);
@@ -217,6 +221,10 @@ namespace Clipbox
         {
             if (e.SettingKey == SettingsKeys.IsClipboardTrackingEnabled)
             {
+                // create this file in AppData so that the deskband can find it. 
+                // IMPORTANT: Do not use IPersistenceProvider here, because its implementation may change,
+                // and we want to store the filename precisely in %APPDATA%\Clipbox, so that the
+                // deskband Shell extension, which is written in c++, can read it.
                 string disabledFileName = Path.Combine(AppDataUtils.GetAppDataDir(false), "disabled");
                 if ((bool)e.SettingValue)
                 {
@@ -240,20 +248,18 @@ namespace Clipbox
 
         private string CreateOrGetAppGuid()
         {
-            const string APP_GUID_FILENAME = "appGuid";
-
-            string appDataDir = AppDataUtils.GetAppDataDir(throwIfNotExists: false); // create the directory if it does not exists...
-            string fullPath = Path.Combine(appDataDir, APP_GUID_FILENAME);
+            const string APP_GUID_PERSISTENCE_KEY = "appGuid";
+            
             string appGuid = null;
 
-            if (File.Exists(fullPath))
+            if (_persistenceProvider.CheckIfKeyExists(APP_GUID_PERSISTENCE_KEY))
             {
-                appGuid = AppDataUtils.ReadTextFromApplicationData(APP_GUID_FILENAME);
+                appGuid = _persistenceProvider.ReadText(APP_GUID_PERSISTENCE_KEY);
             }
             else
             {
                 appGuid = Guid.NewGuid().ToString();
-                AppDataUtils.WriteToApplicationData(APP_GUID_FILENAME, appGuid);
+                _persistenceProvider.Write(APP_GUID_PERSISTENCE_KEY, appGuid);
             }
 
             return appGuid;
@@ -359,8 +365,8 @@ namespace Clipbox
             
             try
             {
-                AppDataUtils.WriteToApplicationData("lastException.log", failureInfo.ToString());
-                AppDataUtils.WriteToApplicationData("lastException.xml", failureInfo.ToXml());
+                _persistenceProvider.Write("lastException.log", failureInfo.ToString());
+                _persistenceProvider.Write("lastException.xml", failureInfo.ToXml());
             }
             catch { }
             

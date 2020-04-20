@@ -19,7 +19,10 @@ namespace ClipboxGuard
     {
         private static readonly Guid _deskbandGuid = new Guid("3C6D5961-E6C7-44F6-A522-A20DE33D2DAC");
         
-        private const string lastExceptionLogFile = "lastException.log";
+        /// <summary>
+        /// This is the key with which the last exception text data is stored by the implementation of IPersistenceProvider
+        /// </summary>
+        private const string LAST_EXCEPTION_PERSISTENCE_KEY = "lastException.log";
 
         private NamedPipesServer _namedPipeServer;
 
@@ -28,9 +31,12 @@ namespace ClipboxGuard
         private bool _stopping;
 
         private bool _isStartedFromService = false;
+
+        IPersistenceProvider _persistenceProvider;
         
         private void Application_Startup(object sender, StartupEventArgs e)
         {
+            _persistenceProvider = new AppDataPersistenceProvider();
 
             string[] startupArgs = Environment.GetCommandLineArgs();
             _mySessionId = SessionUtils.GetCurrentSessionId();
@@ -115,7 +121,7 @@ namespace ClipboxGuard
 
         private void ShowErrorWindow()
         {
-            string lastException = AppDataUtils.ReadTextFromApplicationData(lastExceptionLogFile);
+            string lastException = _persistenceProvider.ReadText(LAST_EXCEPTION_PERSISTENCE_KEY);
 
             Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, (Action)(() =>
             {
@@ -147,7 +153,7 @@ namespace ClipboxGuard
 
         private void ErrorWinow_Closed(object sender, EventArgs e)
         {
-            AppDataUtils.WriteToApplicationData(lastExceptionLogFile, null, append: false);
+            _persistenceProvider.Write(LAST_EXCEPTION_PERSISTENCE_KEY, new byte[0]);
 
             var errorWindow = (ErrorWindow)sender;
             if (_isStartedFromService)

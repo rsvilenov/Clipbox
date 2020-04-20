@@ -1,38 +1,32 @@
 ﻿using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Exceptions;
-using Clipbox.Infrastructure.Persistence;
+using Clipbox.Infrastructure.Extensibility.EventArgsClasses;
 using System;
 using System.Runtime.ExceptionServices;
 using System.Security;
 
 namespace Clipbox.Infrastructure.Extensibility.Invocation
 {
-    public class ExtentionInvoker<T> : IDisposable 
+    public class ExtensionInvoker<T> : IDisposable 
         where T : IClipboxExtention
     {
         private bool _isDisposed;
 
-        private T _extentionInstance;
+        private T _extensionInstance;
 
-        private Type _extentionType;
+        public event EventHandler<ExtensionTypeEventArgs> ExtensionInvoked;
 
-        public Type ExtentionType
+        public Type ExtensionType { get; }
+
+        public ExtensionInvoker(T extensionInstance)
         {
-            get
-            {
-                return _extentionType;
-            }
-        }
-
-        public ExtentionInvoker(T extentionInstance)
-        {
-            if (extentionInstance == null)
+            if (extensionInstance == null)
             {
                 throw new ArgumentNullException();
             }
 
-            _extentionInstance = extentionInstance;
-            _extentionType = extentionInstance.GetType();
+            _extensionInstance = extensionInstance;
+            ExtensionType = extensionInstance.GetType();
         }
 
         /// <summary>
@@ -61,57 +55,55 @@ namespace Clipbox.Infrastructure.Extensibility.Invocation
                 throw new ObjectDisposedException("The extention has already been disposed of.");
             }
 
-            if (_extentionInstance.Equals(default(T)))
+            if (_extensionInstance.Equals(default(T)))
             {
                 throw new InvalidOperationException("It looks like the extention has already failed.");
             }
 
-            // this may slow us down
-            AppDataUtils.WriteToApplicationData("lastInvokedExtention.log", $"{_extentionType.FullName} [{_extentionType.Assembly.FullName}]");
-
+            ExtensionInvoked?.Invoke(this, new ExtensionTypeEventArgs(ExtensionType));
+            
             try
             {
-                action(_extentionInstance);
+                action(_extensionInstance);
             }
             catch (Exception ex)
             {
-                AppDataUtils.WriteToApplicationData("lastFailedExtention.log", $"{_extentionType.FullName} [{_extentionType.Assembly.FullName}]");
                 Exception exceptionOnDispose = null;
-                if (_extentionInstance is IDisposable)
+                if (_extensionInstance is IDisposable)
                 {
-                    try { (_extentionInstance as IDisposable).Dispose(); }
+                    try { (_extensionInstance as IDisposable).Dispose(); }
                     catch (Exception dex) { exceptionOnDispose = dex; }
                 }
 
                 // be intollerat to failure. Each failure results in the extention to be invalidated.
-                _extentionInstance = default(T);
+                _extensionInstance = default(T);
 
-                string exceptionMessage = $"{_extentionType.FullName} [{_extentionType.Assembly.FullName}] failed.";
+                string exceptionMessage = $"{ExtensionType.FullName} [{ExtensionType.Assembly.FullName}] failed.";
                 if (exceptionOnDispose != null)
                 {
-                    throw new ClipboxExtentionException(exceptionMessage, _extentionType, new AggregateException(ex, exceptionOnDispose));
+                    throw new ClipboxExtentionException(exceptionMessage, ExtensionType, new AggregateException(ex, exceptionOnDispose));
                 }
                 else
                 {
-                    throw new ClipboxExtentionException(exceptionMessage, _extentionType, ex);
+                    throw new ClipboxExtentionException(exceptionMessage, ExtensionType, ex);
                 }
             }
         }
 
         public void Dispose()
         {
-            if (_extentionInstance is IDisposable)
+            if (_extensionInstance is IDisposable)
             {
-                try { (_extentionInstance as IDisposable).Dispose(); }
+                try { (_extensionInstance as IDisposable).Dispose(); }
                 catch (Exception dex)
                 {
-                    string exceptionMessage = $"{_extentionType.FullName} [{_extentionType.Assembly.FullName}] failed to dispose.";
+                    string exceptionMessage = $"{ExtensionType.FullName} [{ExtensionType.Assembly.FullName}] failed to dispose.";
                     // I know the guidelines but I would rather let this exception crash the process
                     // than swallow it.
-                    throw new ClipboxExtentionException(exceptionMessage, _extentionType, dex);
+                    throw new ClipboxExtentionException(exceptionMessage, ExtensionType, dex);
                 }
 
-                _extentionInstance = default(T);
+                _extensionInstance = default(T);
                 _isDisposed = true;
             }
         }

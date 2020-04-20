@@ -31,11 +31,21 @@ namespace Clipbox.Services
 {
     public class PreviewGenerationService : IPreviewGenerationService, IDisposable
     {
-        private const string APP_DATA_SUBDIR = "PreviewDataCache";
+        /// <summary>
+        /// The category under which the cache objects will be persisted.
+        /// </summary>
+        private const string PERSISTENCE_STORE_CATEGORY = "PreviewDataCache";
+
+        /// <summary>
+        /// The key under which the preview dimension dictionary will be persisted.
+        /// </summary>
+        private const string PREVIEW_DIMENSION_DIC_STORE_KEY = "previewDimensionsDictionary";
 
         private readonly IClipboardManager _clipboardManager;
         private readonly IPreviewGeneratorExtentionContainer _clipboardFormatPreviewExtContainer;
         private readonly ISettingsService _settingsService;
+
+        private readonly IPersistenceProvider _persistenceProvider;
 
         private readonly ConcurrentDictionary<string, PreviewDimensionInfo> _previewDimensionsDictionary;
 
@@ -56,11 +66,13 @@ namespace Clipbox.Services
         public PreviewGenerationService(
             IClipboardManager clipboardManager,
             IPreviewGeneratorExtentionContainer clipboardFormatPreviewExtContainer, 
-            ISettingsService settingsService)
+            ISettingsService settingsService,
+            IPersistenceProvider persistenceProvider)
         {
             _clipboardManager = clipboardManager;
             _clipboardFormatPreviewExtContainer = clipboardFormatPreviewExtContainer;
             _settingsService = settingsService;
+            _persistenceProvider = persistenceProvider;
 
             _previewDimensionsDictionary = LoadStoredOrInitializePreviewDimensionsInfo();
 
@@ -499,22 +511,20 @@ namespace Clipbox.Services
 
         public void DeleteStoredPreviewDataTransferObject(string clipboardItemId)
         {
-            foreach (string relativeFileName in AppDataUtils.ListFiles(APP_DATA_SUBDIR))
+            foreach (string persistenceKey in _persistenceProvider.ListKeys(PERSISTENCE_STORE_CATEGORY))
             {
-                if (relativeFileName.StartsWith(clipboardItemId))
+                if (persistenceKey.StartsWith(clipboardItemId))
                 {
-                    AppDataUtils.DeleteFile(Path.Combine(APP_DATA_SUBDIR, relativeFileName));
+                    _persistenceProvider.Delete(persistenceKey, PERSISTENCE_STORE_CATEGORY);
                 }
             }
         }
 
         private void StoreSerializedPreviewDataTransferObjectToDisk(string clipboardItemId, byte[] serializedPdto, int itemRequestedWidth, int itemRequestedHeight)
         {
-            EnsureAppDataSubDirExists();
+            string persistenceKey = $"{clipboardItemId}_{itemRequestedWidth}_{itemRequestedHeight}.pdto";
 
-            string fileName = $"{clipboardItemId}_{itemRequestedWidth}_{itemRequestedHeight}.pdto";
-
-            AppDataUtils.WriteToApplicationData(Path.Combine(APP_DATA_SUBDIR, fileName), serializedPdto);
+            _persistenceProvider.Write(persistenceKey, serializedPdto, PERSISTENCE_STORE_CATEGORY);
         }
 
         private bool TryGetStoredPreviewDataTransferObject(string clipboardItemId, MonitorDimensions monitorDimensions, out PreviewDataTransferObject pdto)
@@ -526,13 +536,13 @@ namespace Clipbox.Services
                 int itemRequestedHeight = CalculateItemRequestedHeight(monitorDimensions, out bool hasHeightBeenDpiScaled);
                 int itemRequestedWidth = itemRequestedHeight;
 
-                string relativeFilePath = Path.Combine(APP_DATA_SUBDIR, $"{clipboardItemId}_{itemRequestedWidth}_{itemRequestedHeight}.pdto");
-                if (!AppDataUtils.CheckFileExists(relativeFilePath))
+                string persistenceKey = $"{clipboardItemId}_{itemRequestedWidth}_{itemRequestedHeight}.pdto";
+                if (!_persistenceProvider.CheckIfKeyExists(persistenceKey, PERSISTENCE_STORE_CATEGORY))
                 {
                     return false;
                 }
 
-                pdtoByteArray = AppDataUtils.ReadBytesFromApplicationData(relativeFilePath);
+                pdtoByteArray = _persistenceProvider.ReadBytes(persistenceKey, PERSISTENCE_STORE_CATEGORY);
                 _byteArrayCache.AddOrUpdate(clipboardItemId, pdtoByteArray);
             }
 
@@ -566,28 +576,25 @@ namespace Clipbox.Services
                 formatter.Serialize(ms, _previewDimensionsDictionary);
                 serializedData = ms.ToArray();
             }
-
-            EnsureAppDataSubDirExists();
             
-            AppDataUtils.WriteToApplicationData(Path.Combine(APP_DATA_SUBDIR, "previewDimensionsDictionary"), serializedData);
+            _persistenceProvider.Write(PREVIEW_DIMENSION_DIC_STORE_KEY, serializedData, PERSISTENCE_STORE_CATEGORY);
         }
 
         private bool TryLoadStorePreviewDimensionsDictionary(out ConcurrentDictionary<string, PreviewDimensionInfo> dictionary)
         {
             dictionary = null;
 
-            string relativeFilePath = Path.Combine(APP_DATA_SUBDIR, "previewDimensionsDictionary");
-            if (!AppDataUtils.CheckFileExists(relativeFilePath))
+            if (!_persistenceProvider.CheckIfKeyExists(PREVIEW_DIMENSION_DIC_STORE_KEY, PERSISTENCE_STORE_CATEGORY))
             {
                 return false;
             }
 
-            byte[] fileData = AppDataUtils.ReadBytesFromApplicationData(relativeFilePath);
+            byte[] dictionaryBytes = _persistenceProvider.ReadBytes(PREVIEW_DIMENSION_DIC_STORE_KEY, PERSISTENCE_STORE_CATEGORY);
 
             // deserialize
             try
             {
-                using (var ms = new MemoryStream(fileData))
+                using (var ms = new MemoryStream(dictionaryBytes))
                 {
                     var formatter = new BinaryFormatter();
                     dictionary = (ConcurrentDictionary<string, PreviewDimensionInfo>)formatter.Deserialize(ms);
@@ -601,17 +608,7 @@ namespace Clipbox.Services
 
             return true;
         }
-
-        private static void EnsureAppDataSubDirExists()
-        {
-            string dirPath = Path.Combine(AppDataUtils.GetAppDataDir(throwIfNotExists: false), APP_DATA_SUBDIR);
-
-            if (!Directory.Exists(dirPath))
-            {
-                Directory.CreateDirectory(dirPath);
-            }
-        }
-
+        
         private ConcurrentDictionary<string, PreviewDimensionInfo> LoadStoredOrInitializePreviewDimensionsInfo()
         {
             if (!TryLoadStorePreviewDimensionsDictionary(out ConcurrentDictionary<string, PreviewDimensionInfo> dictionary))

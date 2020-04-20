@@ -61,7 +61,7 @@ namespace Clipbox.Win32
         }
 
         /// <summary>
-        /// 64 bit version maybe loses significant 64-bit specific information
+        /// 64 bit version may lose significant 64-bit specific information
         /// </summary>
         private static IntPtr GetClassLongPtr(IntPtr hWnd, int nIndex)
         {

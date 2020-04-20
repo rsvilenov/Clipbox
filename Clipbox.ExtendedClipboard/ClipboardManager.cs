@@ -56,6 +56,8 @@ namespace Clipbox.ExtendedClipboard
 
         private IClipboardEventProvider _clipboardEventProvider;
 
+        private IPersistenceProvider _persistenceProvider;
+
         // TODO: this should be mock-able
         private SystemClipboard _systemClipboard;
 
@@ -77,17 +79,19 @@ namespace Clipbox.ExtendedClipboard
         /// <param name="hWnd">Main program window's handle</param>
         public ClipboardManager(IClipboardEventProvider clipboardEventProvider,
             IClipboardFormatExtentionContainer formatExtentionContainer,
-            IPersistenceSupportExtensionContainer persistenceExtentionContainer)
+            IPersistenceSupportExtensionContainer persistenceExtentionContainer,
+            IPersistenceProvider persistenceProvider)
         {
             _formatExtentionContainer = formatExtentionContainer;
             _persistenceExtentionContainer = persistenceExtentionContainer;
             _clipboardEventProvider = clipboardEventProvider;
+            _persistenceProvider = persistenceProvider;
 
             _clipboardItems = new List<ClipboardItem>();
             _deletedSyncedClipboardItemIds = new List<string>();
 
             _systemClipboard = new SystemClipboard();
-            _persistenceHelper = new PersistenceHelper(_persistenceExtentionContainer);
+            _persistenceHelper = new PersistenceHelper(_persistenceExtentionContainer, _persistenceProvider);
 
             LoadFromDisk();
 

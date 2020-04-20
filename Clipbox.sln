@@ -56,6 +56,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clipbox.SearchProvider.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clipbox.Infrastructure.UI.Localization", "Clipbox.Localization\Clipbox.Infrastructure.UI.Localization.csproj", "{C19E1A93-8A1F-4A5E-82EC-848F8C535AA7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clipbox.Infrastructure.Configuration", "Clipbox.Infrastructure.Configuration\Clipbox.Infrastructure.Configuration.csproj", "{2BEEE363-9A18-41DB-8E25-A4F7DBCFABD5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -329,6 +331,18 @@ Global
 		{C19E1A93-8A1F-4A5E-82EC-848F8C535AA7}.Release|x64.Build.0 = Release|Any CPU
 		{C19E1A93-8A1F-4A5E-82EC-848F8C535AA7}.Release|x86.ActiveCfg = Release|Any CPU
 		{C19E1A93-8A1F-4A5E-82EC-848F8C535AA7}.Release|x86.Build.0 = Release|Any CPU
+		{2BEEE363-9A18-41DB-8E25-A4F7DBCFABD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2BEEE363-9A18-41DB-8E25-A4F7DBCFABD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2BEEE363-9A18-41DB-8E25-A4F7DBCFABD5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2BEEE363-9A18-41DB-8E25-A4F7DBCFABD5}.Debug|x64.Build.0 = Debug|Any CPU
+		{2BEEE363-9A18-41DB-8E25-A4F7DBCFABD5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2BEEE363-9A18-41DB-8E25-A4F7DBCFABD5}.Debug|x86.Build.0 = Debug|Any CPU
+		{2BEEE363-9A18-41DB-8E25-A4F7DBCFABD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2BEEE363-9A18-41DB-8E25-A4F7DBCFABD5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2BEEE363-9A18-41DB-8E25-A4F7DBCFABD5}.Release|x64.ActiveCfg = Release|Any CPU
+		{2BEEE363-9A18-41DB-8E25-A4F7DBCFABD5}.Release|x64.Build.0 = Release|Any CPU
+		{2BEEE363-9A18-41DB-8E25-A4F7DBCFABD5}.Release|x86.ActiveCfg = Release|Any CPU
+		{2BEEE363-9A18-41DB-8E25-A4F7DBCFABD5}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

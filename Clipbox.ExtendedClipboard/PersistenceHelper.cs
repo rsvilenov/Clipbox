@@ -17,13 +17,18 @@ namespace Clipbox.ExtendedClipboard
     {
         private const long MAX_CDO_SIZE = 1024 * 1024; // 1 MiB
 
-        private const string APPDATA_CACHE_SUBDIR = "ClipboardDataCache";
+        /// <summary>
+        /// The category under which the implementation of IPersistenceProvider will store our data.
+        /// </summary>
+        private const string CACHE_PERSISTENCE_CATEGORY = "ClipboardDataCache";
 
         private IPersistenceSupportExtensionContainer _persistenceExtentionContainer;
+        private IPersistenceProvider _persistenceProvider;
 
-        public PersistenceHelper(IPersistenceSupportExtensionContainer persistenceSupportExtentionContainer)
+        public PersistenceHelper(IPersistenceSupportExtensionContainer persistenceSupportExtentionContainer, IPersistenceProvider persistenceProvider)
         {
             _persistenceExtentionContainer = persistenceSupportExtentionContainer;
+            _persistenceProvider = persistenceProvider;
         }
         
         public void StoreAndShrinkClipboardItem(ClipboardItem clipboardItem)
@@ -40,7 +45,7 @@ namespace Clipbox.ExtendedClipboard
             if (clipboardItem.IsModified)
             {
                 // load from disk
-                PersistableClipboardItem savedClipboardItem = LoadPersistableClipboardItemFromDisk(clipboardItem);
+                PersistableClipboardItem savedClipboardItem = LoadPersistableClipboardItemFromStorage(clipboardItem);
                 
                 // check to see if it has really been modified
                 if (clipboardItem.TimestampInfo.ModifiedDateUtcTicks == savedClipboardItem.TimestampInfo.ModifiedDateUtcTicks)
@@ -74,17 +79,13 @@ namespace Clipbox.ExtendedClipboard
                 }
             }
 
-            EnsureAppDataCacheSubdirExists();
-            // save the persistable item to disk
-            AppDataUtils.WriteToApplicationData(Path.Combine(APPDATA_CACHE_SUBDIR, clipboardItem.Id),
-                SerializeObject(persistableClipboardItem));
-
+            // store the persistable item
+            _persistenceProvider.Write(clipboardItem.Id, SerializeObject(persistableClipboardItem), CACHE_PERSISTENCE_CATEGORY);
         }
 
         public void RestoreShrinkedClipboardItem(ClipboardItem clipboardItem)
         {
-            EnsureAppDataCacheSubdirExists();
-            PersistableClipboardItem persistableClipboardItem = LoadPersistableClipboardItemFromDisk(clipboardItem);
+            PersistableClipboardItem persistableClipboardItem = LoadPersistableClipboardItemFromStorage(clipboardItem);
             RestoreClipboardDataObjects(clipboardItem, persistableClipboardItem);
         }
 
@@ -104,42 +105,38 @@ namespace Clipbox.ExtendedClipboard
             }
         }
 
-        private PersistableClipboardItem LoadPersistableClipboardItemFromDisk(ClipboardItem clipboardItem)
+        private PersistableClipboardItem LoadPersistableClipboardItemFromStorage(ClipboardItem clipboardItem)
         {
-            string itemFilePath = Path.Combine(APPDATA_CACHE_SUBDIR, clipboardItem.Id);
-            if (!AppDataUtils.CheckFileExists(itemFilePath))
+            string itemFilePath = Path.Combine(CACHE_PERSISTENCE_CATEGORY, clipboardItem.Id);
+            if (!_persistenceProvider.CheckIfKeyExists(clipboardItem.Id, CACHE_PERSISTENCE_CATEGORY))
             {
                 throw new ArgumentException($"No stored data can be found for clipboard item id {clipboardItem.Id}");
             }
 
-            // load from disk
-            byte[] clipboardItemBytes = AppDataUtils.ReadBytesFromApplicationData(itemFilePath);
+            // load from storage
+            byte[] clipboardItemBytes = _persistenceProvider.ReadBytes(clipboardItem.Id, CACHE_PERSISTENCE_CATEGORY);
             PersistableClipboardItem persistableClipboardItem = DeserializeObject<PersistableClipboardItem>(clipboardItemBytes);
             return persistableClipboardItem;
         }
 
         public IEnumerable<ClipboardItem> ReadStoredClipboardItems(bool unshrink = false)
         {
-            EnsureAppDataCacheSubdirExists();
-
-            string cachePath = Path.Combine(AppDataUtils.GetAppDataDir(true), APPDATA_CACHE_SUBDIR);
-            foreach (string fileName in Directory.GetFiles(cachePath))
+            foreach (string persistenceKey in _persistenceProvider.ListKeys(CACHE_PERSISTENCE_CATEGORY))
             {
-                string clipboardItemId = Path.GetFileNameWithoutExtension(fileName);
                 var clipboardDataObjects = new List<ClipboardDataObject>();
 
                 PersistableClipboardItem persistableClipboardItem = null;
 
                 try
                 {
-                    // load from disk
-                    byte[] clipboardItemBytes = AppDataUtils.ReadBytesFromApplicationData(Path.Combine(APPDATA_CACHE_SUBDIR, clipboardItemId));
+                    // load from storage
+                    byte[] clipboardItemBytes = _persistenceProvider.ReadBytes(persistenceKey, CACHE_PERSISTENCE_CATEGORY);
                     persistableClipboardItem = DeserializeObject<PersistableClipboardItem>(clipboardItemBytes);
                 }
                 catch
                 {
                     // ignore the files that could not be read/deserialized
-                    try { DeleteClipboardItemFromStorage(clipboardItemId); }
+                    try { _persistenceProvider.Delete(persistenceKey, CACHE_PERSISTENCE_CATEGORY); }
                     catch { }
 
                     continue;
@@ -168,7 +165,10 @@ namespace Clipbox.ExtendedClipboard
                 
                 TimestampInfo tsInfo = new TimestampInfo(persistableClipboardItem.TimestampInfo);
 
-                yield return new ClipboardItem(clipboardItemId, persistableClipboardItem.Source, clipboardDataObjects, tsInfo)
+                yield return new ClipboardItem(id: persistenceKey,
+                    source: persistableClipboardItem.Source,
+                    clipboardDataObjects: clipboardDataObjects,
+                    timestampInfo: tsInfo)
                 {
                     IsPinned = persistableClipboardItem.IsPinned,
                     CanTransfer = persistableClipboardItem.CanTransfer,
@@ -179,15 +179,7 @@ namespace Clipbox.ExtendedClipboard
 
         public void DeleteClipboardItemFromStorage(string clipboardItemId)
         {
-            string filePath = Path.Combine
-                (
-                    AppDataUtils.GetAppDataDir(true),
-                    Path.Combine(APPDATA_CACHE_SUBDIR, clipboardItemId)
-                );
-
-            // TODO: make sure this plays well with FileLocker, used by AppDataUtils file access operations
-            File.Delete(filePath);
-            File.Delete($"{filePath}.lock");
+            _persistenceProvider.Delete(key: clipboardItemId, category: CACHE_PERSISTENCE_CATEGORY);
         }
 
         /// <summary>
@@ -408,15 +400,6 @@ namespace Clipbox.ExtendedClipboard
                     ByteArray = dataBytes
                 };
 
-            }
-        }
-
-        private void EnsureAppDataCacheSubdirExists()
-        {
-            string cachePath = Path.Combine(AppDataUtils.GetAppDataDir(throwIfNotExists: false), APPDATA_CACHE_SUBDIR);
-            if (!Directory.Exists(cachePath))
-            {
-                Directory.CreateDirectory(cachePath);
             }
         }
     }

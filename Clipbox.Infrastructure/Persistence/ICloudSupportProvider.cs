@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Clipbox.Infrastructure.Persistence
 {
-    public interface ICloudService
+    public interface ICloudSupportProvider
     {
         void CreateFolder(string remoteFolderName);
 
