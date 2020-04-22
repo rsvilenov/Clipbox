@@ -1,4 +1,4 @@
-﻿namespace Clipbox.Core.Configuration
+﻿namespace Clipbox.Infrastructure.Configuration
 {
     public interface IConfigurationProvider
     {

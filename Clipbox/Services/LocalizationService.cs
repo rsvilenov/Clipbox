@@ -1,19 +1,21 @@
-﻿using Clipbox.Core.Localization;
+﻿using Clipbox.Infrastructure.UI.Localization;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using System;
 using System.Globalization;
+using System.Threading;
+using System.Windows.Threading;
 
 namespace Clipbox.Services
 {
     public class LocalizationService : ILocalizationService, IDisposable
     {
-        private readonly ITranslationSource _translationSource;
+        private readonly ILocalizationProvider _translationProvider;
         private readonly ISettingsService _settingsService;
 
-        public LocalizationService(ITranslationSource translationSource, ISettingsService settingsService)
+        public LocalizationService(ILocalizationProvider translationProvider, ISettingsService settingsService)
         {
-            _translationSource = translationSource;
+            _translationProvider = translationProvider;
             _settingsService = settingsService;
 
             _settingsService.SettingChanged += _settingsService_SettingChanged;
@@ -23,8 +25,23 @@ namespace Clipbox.Services
         {
             if (e.SettingKey == SettingsKeys.LicalizationCulture)
             {
-                _translationSource.CurrentCulture = new CultureInfo((string)e.SettingValue);
+                var newCulture = new CultureInfo((string)e.SettingValue);
+                _translationProvider.CurrentCulture = newCulture;
+                UpdateCurrentUICulture(newCulture);
             }
+        }
+
+        private void UpdateCurrentUICulture(CultureInfo culture)
+        {
+            Dispatcher dispatcher = Dispatcher.FromThread(Thread.CurrentThread);
+            if (dispatcher == null)
+            {
+                throw new InvalidOperationException("Please call this setter from the UI thread.");
+            }
+
+
+            Thread.CurrentThread.CurrentCulture = culture;
+            Thread.CurrentThread.CurrentUICulture = culture;
         }
 
         public void Dispose()

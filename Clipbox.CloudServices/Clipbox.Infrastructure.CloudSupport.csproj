@@ -7,8 +7,8 @@
     <ProjectGuid>{1B3D8AE2-4822-4970-A4C1-AB73CC33257E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Clipbox.CloudServices</RootNamespace>
-    <AssemblyName>Clipbox.CloudServices</AssemblyName>
+    <RootNamespace>Clipbox.Infrastructure.CloudSupport</RootNamespace>
+    <AssemblyName>Clipbox.Infrastructure.CloudSupport</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -62,13 +62,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GoogleDriveCloudSupportProvider.cs" />
+    <Compile Include="CloudSupportProviders\GoogleDriveCloudSupportProvider.cs" />
+    <Compile Include="IAuthenticatable.cs" />
+    <Compile Include="ICloudSupportProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Clipbox.Core\Clipbox.Core.csproj">
       <Project>{F4BD7048-4D9F-4036-98AA-DA8232EF2AFB}</Project>
       <Name>Clipbox.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Clipbox.Infrastructure.Persistence\Clipbox.Infrastructure.Persistence.csproj">
+      <Project>{95FFF54A-021C-4A0E-94A8-6AF68AE696A0}</Project>
+      <Name>Clipbox.Infrastructure.Persistence</Name>
     </ProjectReference>
     <ProjectReference Include="..\Clipbox.Infrastructure\Clipbox.Infrastructure.csproj">
       <Project>{EDD4D662-1F39-415C-9B66-718457922626}</Project>

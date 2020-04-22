@@ -8,8 +8,8 @@
     <ProjectGuid>{684FF525-481D-4191-991B-1CDE26FDFFC7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Clipbox.SearchProvider.Tests</RootNamespace>
-    <AssemblyName>Clipbox.SearchProvider.Tests</AssemblyName>
+    <RootNamespace>Clipbox.Infrastructure.Search.Tests</RootNamespace>
+    <AssemblyName>Clipbox.Infrastructure.Search.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -62,9 +62,9 @@
       <Project>{EDD4D662-1F39-415C-9B66-718457922626}</Project>
       <Name>Clipbox.Infrastructure</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Clipbox.SearchProvider\Clipbox.SearchProvider.csproj">
+    <ProjectReference Include="..\Clipbox.SearchProvider\Clipbox.Infrastructure.Search.csproj">
       <Project>{a4cbb114-319b-4895-873c-bdbb6ea2b37d}</Project>
-      <Name>Clipbox.SearchProvider</Name>
+      <Name>Clipbox.Infrastructure.Search</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -7,8 +7,8 @@
     <ProjectGuid>{A4CBB114-319B-4895-873C-BDBB6EA2B37D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Clipbox.SearchProvider</RootNamespace>
-    <AssemblyName>Clipbox.SearchProvider</AssemblyName>
+    <RootNamespace>Clipbox.Infrastructure.Search</RootNamespace>
+    <AssemblyName>Clipbox.Infrastructure.Search</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
@@ -77,13 +77,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="LuceneSearch.cs" />
+    <Compile Include="ISearchProvider.cs" />
+    <Compile Include="SearchProviders\LuceneSearch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Clipbox.Core\Clipbox.Core.csproj">
       <Project>{f4bd7048-4d9f-4036-98aa-da8232ef2afb}</Project>
       <Name>Clipbox.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Clipbox.Infrastructure.Persistence\Clipbox.Infrastructure.Persistence.csproj">
+      <Project>{95FFF54A-021C-4A0E-94A8-6AF68AE696A0}</Project>
+      <Name>Clipbox.Infrastructure.Persistence</Name>
     </ProjectReference>
     <ProjectReference Include="..\Clipbox.Infrastructure\Clipbox.Infrastructure.csproj">
       <Project>{edd4d662-1f39-415c-9b66-718457922626}</Project>

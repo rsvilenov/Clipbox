@@ -52,7 +52,7 @@ namespace Clipbox.ExtendedClipboard.Interfaces
 
         void RemoveClipbpardDataObjects(string clipboardItemId, int[] clipboardDataObjectIndices, bool beSilend = false);
 
-        IReadOnlyList<ClipboardSyncObject> GetItemsForCloudSynchronization();
+        IReadOnlyList<IClipboardSyncObject> GetItemsForCloudSynchronization();
 
         bool TryAddItemFromCloud(byte[] itemData);
 

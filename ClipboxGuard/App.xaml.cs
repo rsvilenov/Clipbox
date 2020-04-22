@@ -2,6 +2,7 @@
 using Clipbox.Core.Enums;
 using Clipbox.Infrastructure.IPC;
 using Clipbox.Infrastructure.Persistence;
+using Clipbox.Infrastructure.Persistence.PersistenceProviders;
 using Clipbox.Win32;
 using System;
 using System.Diagnostics;

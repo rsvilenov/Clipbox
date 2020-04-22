@@ -1,56 +1,45 @@
-﻿using Clipbox.Core.Localization;
-using System;
+﻿using System;
 using System.ComponentModel;
-using System.Globalization;
-using System.Resources;
-using System.Threading;
-using System.Windows.Threading;
 
 namespace Clipbox.Infrastructure.UI.Localization
 {
-    public class TranslationSource : ITranslationSource, INotifyPropertyChanged
+    public class TranslationSource : INotifyPropertyChanged
     {
-        private static readonly Lazy<TranslationSource> _lazyInstance =
-            new Lazy<TranslationSource>(() => new TranslationSource());
-        
+        private static TranslationSource _instance;
         public static TranslationSource Instance
         {
-            get { return _lazyInstance.Value; }
-        }
-        private readonly ResourceManager _resourceManager;
-        private CultureInfo _currentCulture = null;
+            get
+            {
+                if (_instance == null)
+                {
+                    throw new InvalidOperationException($"Please call {nameof(InitTranslationSource)} first.");
+                }
 
-        private TranslationSource()
+                return _instance;
+            }
+        }
+
+        public static void InitTranslationSource(ILocalizationProvider localizationProvider)
         {
-            _resourceManager = Resources.Strings.ResourceManager;
+            _instance = new TranslationSource(localizationProvider);
+        }
+
+        private readonly ILocalizationProvider _localizationProvider;
+
+        private TranslationSource(ILocalizationProvider localizationProvider)
+        {
+            _localizationProvider = localizationProvider;
+            _localizationProvider.LocalizationCultureChanged += LocalizatioProvider_LocalizationCultureChanged;
+        }
+
+        private void LocalizatioProvider_LocalizationCultureChanged(object sender, EventArgsClasses.CultureChangedEventArgs e)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
         }
         
         public string this[string key]
         {
-            get { return _resourceManager.GetString(key, _currentCulture); }
-        }
-
-        public CultureInfo CurrentCulture
-        {
-            get { return _currentCulture; }
-            set
-            {
-                if (_currentCulture != value)
-                {
-                    Dispatcher dispatcher = Dispatcher.FromThread(Thread.CurrentThread);
-                    if (dispatcher == null)
-                    {
-                        throw new InvalidOperationException("Please call this setter from the UI thread.");
-                    }
-
-                    _currentCulture = value;
-                    
-                    Thread.CurrentThread.CurrentCulture = _currentCulture;
-                    Thread.CurrentThread.CurrentUICulture = _currentCulture;
-
-                    PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(string.Empty));
-                }
-            }
+            get { return _localizationProvider.GetTranslation(key); }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Clipbox.Infrastructure.Persistence
+namespace Clipbox.Infrastructure.CloudSupport
 {
     /// <summary>
     /// This interface is for cloud service auth APIs, which are async only.

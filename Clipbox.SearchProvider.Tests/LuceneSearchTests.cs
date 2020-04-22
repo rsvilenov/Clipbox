@@ -1,13 +1,13 @@
 ﻿using Clipbox.Core.Search;
 using Clipbox.Core.Search.IndexUnits;
 using Clipbox.Core.Search.SearchTerms;
-using Clipbox.Infrastructure.Search;
+using Clipbox.Infrastructure.Search.SearchProviders;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Clipbox.SearchProvider.Tests
+namespace Clipbox.Infrastructure.Search.Tests
 {
     [TestFixture]
     public class LuceneSearchTests

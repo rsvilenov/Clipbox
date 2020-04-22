@@ -1,5 +1,6 @@
 ﻿using Clipbox.Core;
 using Clipbox.Infrastructure.Persistence;
+using Clipbox.Infrastructure.Persistence.FilesystemAccess;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Drive.v3;
 using Google.Apis.Services;
@@ -15,7 +16,7 @@ using System.Security.Authentication;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Clipbox.CloudServices
+namespace Clipbox.Infrastructure.CloudSupport.CloudSupportProviders
 {
     /// <summary>
     /// Google Drive support.

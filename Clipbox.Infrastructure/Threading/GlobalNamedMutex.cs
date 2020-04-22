@@ -3,7 +3,7 @@ using System.Security.AccessControl;
 using System.Security.Principal;
 using System.Threading;
 
-namespace Clipbox.Infrastructure.Persistence
+namespace Clipbox.Infrastructure.Threading
 {
     public class GlobalNamedMutex : IDisposable
     {

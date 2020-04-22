@@ -1,6 +1,4 @@
-﻿using Clipbox.Core.Configuration;
-
-namespace Clipbox.Infrastructure.Configuration
+﻿namespace Clipbox.Infrastructure.Configuration
 {
     public class SettingsProvider : IConfigurationProvider
     {

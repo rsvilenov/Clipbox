@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClipboardContent\ClipboardItemSource.cs" />
+    <Compile Include="ClipboardContent\ClipboardSyncObject.cs" />
     <Compile Include="ClipboardContent\PersistableClipboardDataObject.cs" />
     <Compile Include="ClipboardContent\ClipboardDataObject.cs" />
     <Compile Include="ClipboardContent\PersistableClipboardItem.cs" />
@@ -75,6 +76,10 @@
     <ProjectReference Include="..\Clipbox.Core\Clipbox.Core.csproj">
       <Project>{f4bd7048-4d9f-4036-98aa-da8232ef2afb}</Project>
       <Name>Clipbox.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Clipbox.Infrastructure.Persistence\Clipbox.Infrastructure.Persistence.csproj">
+      <Project>{95fff54a-021c-4a0e-94a8-6af68ae696a0}</Project>
+      <Name>Clipbox.Infrastructure.Persistence</Name>
     </ProjectReference>
     <ProjectReference Include="..\Clipbox.Infrastructure\Clipbox.Infrastructure.csproj">
       <Project>{edd4d662-1f39-415c-9b66-718457922626}</Project>

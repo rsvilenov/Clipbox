@@ -2,6 +2,7 @@
 using Clipbox.Core.Search.Enums;
 using Clipbox.Core.Search.SearchTerms;
 using Clipbox.Infrastructure.Persistence;
+using Clipbox.Infrastructure.Persistence.FilesystemAccess;
 using Clipbox.Infrastructure.Search;
 using Contrib.Regex;
 using Lucene.Net.Analysis.Standard;
@@ -17,7 +18,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Clipbox.SearchProvider
+namespace Clipbox.Infrastructure.Search.SearchProviders
 {
     public class LuceneSearch : ISearchProvider
     {

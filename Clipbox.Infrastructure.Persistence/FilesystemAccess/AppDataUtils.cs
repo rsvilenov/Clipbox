@@ -1,11 +1,12 @@
 ﻿using Clipbox.Core;
 using Clipbox.Infrastructure.Encryption;
+using Clipbox.Infrastructure.Threading;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Clipbox.Infrastructure.Persistence
+namespace Clipbox.Infrastructure.Persistence.FilesystemAccess
 {
     public static class AppDataUtils
     {

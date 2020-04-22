@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 
-namespace Clipbox.Infrastructure.Persistence
+namespace Clipbox.Infrastructure.CloudSupport
 {
     public interface ICloudSupportProvider
     {

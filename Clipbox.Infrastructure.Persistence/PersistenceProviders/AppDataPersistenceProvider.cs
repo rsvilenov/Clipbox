@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using Clipbox.Infrastructure.Persistence.FilesystemAccess;
+using System.Collections.Generic;
 using System.IO;
 
-namespace Clipbox.Infrastructure.Persistence
+namespace Clipbox.Infrastructure.Persistence.PersistenceProviders
 {
     public class AppDataPersistenceProvider : IPersistenceProvider
     {

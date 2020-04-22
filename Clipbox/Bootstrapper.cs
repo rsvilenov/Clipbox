@@ -1,14 +1,17 @@
-﻿using Clipbox.CloudServices;
-using Clipbox.Core;
+﻿using Clipbox.Core;
 using Clipbox.Core.Enums;
 using Clipbox.Core.Extensibility.Exceptions;
 using Clipbox.ExtendedClipboard;
 using Clipbox.ExtendedClipboard.Interfaces;
+using Clipbox.Infrastructure.CloudSupport.CloudSupportProviders;
 using Clipbox.Infrastructure.IPC;
 using Clipbox.Infrastructure.Persistence;
+using Clipbox.Infrastructure.Persistence.FilesystemAccess;
+using Clipbox.Infrastructure.Persistence.PersistenceProviders;
+using Clipbox.Infrastructure.Search.SearchProviders;
 using Clipbox.Infrastructure.UI.Localization;
+using Clipbox.Infrastructure.UI.Localization.LozalizationProviders;
 using Clipbox.Infrastructure.UI.Theme;
-using Clipbox.SearchProvider;
 using Clipbox.Services;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
@@ -198,7 +201,13 @@ namespace Clipbox
 
             _settingsWindowService = new SettingsWindowService(_settingsService, _mainClipboardViewWindowService, _trayContextMenuService);
 
-            _localizationService = new LocalizationService(TranslationSource.Instance, _settingsService);
+            ILocalizationProvider localizationProvider = new ResxLozalizationProvider();
+            // Set the translation provider to the TranslationSource
+            TranslationSource.InitTranslationSource(localizationProvider);
+            // than pass it to the localization service. It must be the same instance,
+            // so that changing the culture from within the service will affect the culture
+            // of the TranslationSource.
+            _localizationService = new LocalizationService(localizationProvider, _settingsService);
 
             if (!ThemeManager.IsLoaded)
             {

@@ -71,9 +71,8 @@ namespace Clipbox.Views
 
             this.MaxHeight = currentDisplayHeight - 10;
             this.MaxWidth = currentDisplayWidth - 10;
-
-            var culture = new CultureInfo("bg-BG");
-            TranslationSource.Instance.CurrentCulture = culture;
+            
+            _settingsService.SetSetting<string>(SettingsKeys.LicalizationCulture, "bg-BG");
         }
 
         private ISettingsService _settingsService;

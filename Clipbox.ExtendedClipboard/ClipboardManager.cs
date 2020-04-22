@@ -5,6 +5,7 @@ using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using Clipbox.Core.Extensibility.Exceptions;
 using Clipbox.ExtendedClipboard.ClipboardContent;
+using Clipbox.Infrastructure.Persistence;
 using Clipbox.ExtendedClipboard.EventArgs;
 using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
@@ -565,7 +566,7 @@ namespace Clipbox.ExtendedClipboard
             return success;
         }
 
-        public IReadOnlyList<ClipboardSyncObject> GetItemsForCloudSynchronization()
+        public IReadOnlyList<IClipboardSyncObject> GetItemsForCloudSynchronization()
         {
             // TODO: locking - delete and modify operations
             List<ClipboardSyncObject> syncObjects = new List<ClipboardSyncObject>();
@@ -584,8 +585,8 @@ namespace Clipbox.ExtendedClipboard
                         {
                             Id = clipboardItem.Id,
                             Action = clipboardItem.IsModified ?
-                                ClipboardSyncObject.SyncAction.Update :
-                                ClipboardSyncObject.SyncAction.Create,
+                                SyncAction.Update :
+                                SyncAction.Create,
                             ModifiedDateUtcTicks = clipboardItem.TimestampInfo.ModifiedDateUtcTicks,
                             Data = transferableItem
                         });
@@ -595,7 +596,7 @@ namespace Clipbox.ExtendedClipboard
                 syncObjects.AddRange(_deletedSyncedClipboardItemIds.Select(id => new ClipboardSyncObject
                 {
                     Id = id,
-                    Action = ClipboardSyncObject.SyncAction.Delete
+                    Action = SyncAction.Delete
                 }));
             }
 

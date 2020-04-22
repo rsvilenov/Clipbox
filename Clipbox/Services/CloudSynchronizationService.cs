@@ -1,6 +1,8 @@
 ﻿using Clipbox.Core;
+using Clipbox.Core.ClipboardContent.Enums;
+using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.ExtendedClipboard.Interfaces;
-using Clipbox.Infrastructure.Persistence;
+using Clipbox.Infrastructure.CloudSupport;
 using Clipbox.Infrastructure.UI.Utils;
 using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Interfaces;
@@ -127,19 +129,19 @@ namespace Clipbox.Services
 
             List<string> existingCloudItems = _cloudService.ListFiles(_cloudFolderName, $"_cso_").ToList();
 
-            IReadOnlyList<ClipboardSyncObject> itemsForCloudSync = _clipboardManager.GetItemsForCloudSynchronization();
+            IReadOnlyList<IClipboardSyncObject> itemsForCloudSync = _clipboardManager.GetItemsForCloudSynchronization();
 
-            foreach (ClipboardSyncObject syncObject in itemsForCloudSync)
+            foreach (IClipboardSyncObject syncObject in itemsForCloudSync)
             {
                 switch (syncObject.Action)
                 {
-                    case ClipboardSyncObject.SyncAction.Update:
+                    case SyncAction.Update:
                         UpdateRemoteSyncObject(syncObject, existingCloudItems);
                         break;
-                    case ClipboardSyncObject.SyncAction.Create:
+                    case SyncAction.Create:
                         CreateRemoteSyncObject(syncObject, existingCloudItems);
                         break;
-                    case ClipboardSyncObject.SyncAction.Delete:
+                    case SyncAction.Delete:
                         DeleteRemoteSyncObject(syncObject, deletionRequests, allAppIds, existingCloudItems);
                         break;
                 }
@@ -193,7 +195,7 @@ namespace Clipbox.Services
             }
         }
 
-        private void DeleteRemoteSyncObject(ClipboardSyncObject syncObject, IEnumerable<string> deletionRequests, IEnumerable<string> allAppIds, List<string> existingItems)
+        private void DeleteRemoteSyncObject(IClipboardSyncObject syncObject, IEnumerable<string> deletionRequests, IEnumerable<string> allAppIds, List<string> existingItems)
         {
             string cloudFileName = $"{syncObject.Id}.zip";
             string deleteRequestFileName = $"_dr_{syncObject.Id}_{DateTime.UtcNow.ToString("yyyyMMddHHmmss")}.txt";
@@ -248,7 +250,7 @@ namespace Clipbox.Services
             }
         }
 
-        private void CreateRemoteSyncObject(ClipboardSyncObject syncObject, List<string> existingItems)
+        private void CreateRemoteSyncObject(IClipboardSyncObject syncObject, List<string> existingItems)
         {
             string cloudFileName = $"_cso_{syncObject.Id}_{syncObject.ModifiedDateUtcTicks}.zip";
 
@@ -263,7 +265,7 @@ namespace Clipbox.Services
             }
         }
 
-        private void UpdateRemoteSyncObject(ClipboardSyncObject syncObject, List<string> existingItems)
+        private void UpdateRemoteSyncObject(IClipboardSyncObject syncObject, List<string> existingItems)
         {
             DeleteExistingCloudVersionsOfTheObject(syncObject, existingItems);
 
@@ -277,7 +279,7 @@ namespace Clipbox.Services
             existingItems.Add(cloudFileName);
         }
 
-        private void DeleteExistingCloudVersionsOfTheObject(ClipboardSyncObject syncObject, List<string> existingItems)
+        private void DeleteExistingCloudVersionsOfTheObject(IClipboardSyncObject syncObject, List<string> existingItems)
         {
             //string newestItem = existingItems.OrderBy(s => long.Parse(s.Split(new char[] { '_', '.' })[3])).Last();
             //foreach (string oldItem in existingItems.Where(it => it != newestItem))

@@ -419,9 +419,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Clipbox.CloudServices\Clipbox.CloudServices.csproj">
+    <ProjectReference Include="..\Clipbox.CloudServices\Clipbox.Infrastructure.CloudSupport.csproj">
       <Project>{1B3D8AE2-4822-4970-A4C1-AB73CC33257E}</Project>
-      <Name>Clipbox.CloudServices</Name>
+      <Name>Clipbox.Infrastructure.CloudSupport</Name>
     </ProjectReference>
     <ProjectReference Include="..\Clipbox.Core\Clipbox.Core.csproj">
       <Project>{f4bd7048-4d9f-4036-98aa-da8232ef2afb}</Project>
@@ -430,6 +430,14 @@
     <ProjectReference Include="..\Clipbox.ExtendedClipboard\Clipbox.ExtendedClipboard.csproj">
       <Project>{63cda68b-898f-4e68-b436-96dc794ccd62}</Project>
       <Name>Clipbox.ExtendedClipboard</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Clipbox.Infrastructure.Configuration\Clipbox.Infrastructure.Configuration.csproj">
+      <Project>{2beee363-9a18-41db-8e25-a4f7dbcfabd5}</Project>
+      <Name>Clipbox.Infrastructure.Configuration</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Clipbox.Infrastructure.Persistence\Clipbox.Infrastructure.Persistence.csproj">
+      <Project>{95fff54a-021c-4a0e-94a8-6af68ae696a0}</Project>
+      <Name>Clipbox.Infrastructure.Persistence</Name>
     </ProjectReference>
     <ProjectReference Include="..\Clipbox.Infrastructure.UI.CustomControls\Clipbox.Infrastructure.UI.CustomControls.csproj">
       <Project>{da4c4595-1ae1-48ec-b9fa-a74508b1dc0a}</Project>
@@ -447,9 +455,9 @@
       <Project>{c19e1a93-8a1f-4a5e-82ec-848f8c535aa7}</Project>
       <Name>Clipbox.Infrastructure.UI.Localization</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Clipbox.SearchProvider\Clipbox.SearchProvider.csproj">
+    <ProjectReference Include="..\Clipbox.SearchProvider\Clipbox.Infrastructure.Search.csproj">
       <Project>{A4CBB114-319B-4895-873C-BDBB6EA2B37D}</Project>
-      <Name>Clipbox.SearchProvider</Name>
+      <Name>Clipbox.Infrastructure.Search</Name>
     </ProjectReference>
     <ProjectReference Include="..\Clipbox.Win32\Clipbox.Win32.csproj">
       <Project>{14442748-d4f5-4a60-a9da-7e0b86d48b73}</Project>

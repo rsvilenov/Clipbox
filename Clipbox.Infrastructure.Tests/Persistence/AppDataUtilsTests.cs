@@ -1,4 +1,4 @@
-﻿using Clipbox.Infrastructure.Persistence;
+﻿using Clipbox.Infrastructure.Persistence.FilesystemAccess;
 using Clipbox.Infrastructure.Testing;
 using NUnit.Framework;
 using System;

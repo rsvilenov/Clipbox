@@ -2,7 +2,7 @@
 using Microsoft.Win32;
 using System.IO;
 
-namespace Clipbox.Infrastructure.Persistence
+namespace Clipbox.Infrastructure.RegistryAccess
 {
     public static class RegistryUtils
     {

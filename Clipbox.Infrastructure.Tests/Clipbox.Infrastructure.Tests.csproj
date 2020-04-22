@@ -57,6 +57,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Clipbox.Infrastructure.Persistence\Clipbox.Infrastructure.Persistence.csproj">
+      <Project>{95FFF54A-021C-4A0E-94A8-6AF68AE696A0}</Project>
+      <Name>Clipbox.Infrastructure.Persistence</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Clipbox.Infrastructure\Clipbox.Infrastructure.csproj">
       <Project>{EDD4D662-1F39-415C-9B66-718457922626}</Project>
       <Name>Clipbox.Infrastructure</Name>
