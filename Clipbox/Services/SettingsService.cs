@@ -1,4 +1,5 @@
-﻿using Clipbox.Services.EventArgsClasses;
+﻿using Clipbox.Core.Configuration;
+using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -16,44 +17,44 @@ namespace Clipbox.Services
             ApplicationSettings.Default.Upgrade();
         }
 
-        public T GetSetting<T>(string key)
+        public T GetSetting<T>(SettingKey<T> key)
         {
-            if (ApplicationSettings.Default[key] == null)
+            if (ApplicationSettings.Default[key.Name] == null)
             {
-                throw new KeyNotFoundException($"{key} should be defined in ApplicationSettings in order to be used by this class.");
+                throw new KeyNotFoundException($"{key.Name} should be defined in ApplicationSettings in order to be used by this class.");
             }
 
-            var setting = ApplicationSettings.Default[key];
+            var setting = ApplicationSettings.Default[key.Name];
 
             if (setting.GetType() != typeof(T))
             {
-                throw new InvalidCastException($"Setting {key} is not of type {typeof(T)}");
+                throw new InvalidCastException($"Setting {key.Name} is not of type {typeof(T)}");
             }
 
             return (T)setting;
         }
 
-        public void SetSetting<T>(string key, T value)
+        public void SetSetting<TSettingKey, TValue>(SettingKey<TSettingKey> key, TValue value) where TValue : TSettingKey
         {
-            if (ApplicationSettings.Default[key] == null)
+            if (ApplicationSettings.Default[key.Name] == null)
             {
-                throw new KeyNotFoundException($"{key} should be defined in ApplicationSettings in order to be used by this class.");
+                throw new KeyNotFoundException($"{key.Name} should be defined in ApplicationSettings in order to be used by this class.");
             }
 
-            bool isUserSetting = ApplicationSettings.Default.Properties[key].Attributes.ContainsKey(typeof(System.Configuration.UserScopedSettingAttribute));
+            bool isUserSetting = ApplicationSettings.Default.Properties[key.Name].Attributes.ContainsKey(typeof(System.Configuration.UserScopedSettingAttribute));
             if (!isUserSetting)
             {
-                throw new InvalidOperationException($"{key} 's scope must be 'user'. Settings with scope 'application' can not be saved.");
+                throw new InvalidOperationException($"{key.Name} 's scope must be 'user'. Settings with scope 'application' can not be saved.");
             }
 
-            ApplicationSettings.Default[key] = value;
+            ApplicationSettings.Default[key.Name] = value;
 
             SettingChanged?.Invoke(this,
                 new SettingsEventArgs
                 {
-                    SettingKey = key,
+                    SettingKeyName = key.Name,
                     SettingValue = value,
-                    SettingValueType = typeof(T)
+                    SettingValueType = typeof(TValue)
                 });
 
             ApplicationSettings.Default.Save();

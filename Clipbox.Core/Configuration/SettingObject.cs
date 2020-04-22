@@ -3,16 +3,17 @@ using System;
 
 namespace Clipbox.Core.Configuration
 {
+    [Serializable]
     public class SettingObject
     {
-        public SettingObject(string key, object value, SettingValueType type)
+        public SettingObject(string keyName, object value, SettingValueType type)
         {
-            Key = key;
+            KeyName = keyName;
             Value = value;
             ValueType = type;
         }
 
-        public string Key { get; }
+        public string KeyName { get; }
 
         public SettingValueType ValueType { get; }
 
@@ -33,7 +34,7 @@ namespace Clipbox.Core.Configuration
             }
         }
 
-        public SettingValueType GetSettingValueTypee(Type type)
+        public SettingValueType GetSettingValueType(Type type)
         {
             if (type == typeof(int))
                 return SettingValueType.String;

@@ -222,13 +222,13 @@ namespace Clipbox
             if (ThemeManager.IsAcryllicTransparencyEnabled && _settingsService.GetSetting<int>(SettingsKeys.MainClipboardViewBackgroundRenderMode) == (int)MainClipboardViewBackgroundRenderMode.Acryllic)
             {
                 // TODO: set the previous value (store this value in another settings key)
-                _settingsService.SetSetting(SettingsKeys.MainClipboardViewBackgroundRenderMode, default(MainClipboardViewBackgroundRenderMode));
+                _settingsService.SetSetting(SettingsKeys.MainClipboardViewBackgroundRenderMode, (int)default(MainClipboardViewBackgroundRenderMode));
             }
         }
 
         private void _settingsService_SettingChanged(object sender, Services.EventArgsClasses.SettingsEventArgs e)
         {
-            if (e.SettingKey == SettingsKeys.IsClipboardTrackingEnabled)
+            if (e.SettingKeyName == SettingsKeys.IsClipboardTrackingEnabled.Name)
             {
                 // create this file in AppData so that the deskband can find it. 
                 // IMPORTANT: Do not use IPersistenceProvider here, because its implementation may change,
@@ -246,7 +246,7 @@ namespace Clipbox
                     File.Create(disabledFileName).Dispose();
                 }
             }
-            else if (e.SettingKey == SettingsKeys.IsCloudSyncEnabled)
+            else if (e.SettingKeyName == SettingsKeys.IsCloudSyncEnabled.Name)
             {
                 if (_cloudSyncService != null)
                 {

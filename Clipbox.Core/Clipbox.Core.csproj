@@ -53,6 +53,7 @@
     <Compile Include="ClipboardContent\Interfaces\IIHaveIntermediateFormat.cs" />
     <Compile Include="ClipboardContent\Interfaces\ITimestampInfo.cs" />
     <Compile Include="Configuration\Enums\SettingValueType.cs" />
+    <Compile Include="Configuration\SettingKey.cs" />
     <Compile Include="Configuration\SettingObject.cs" />
     <Compile Include="DisposableObject.cs" />
     <Compile Include="ClipboardContent\Enums\ClipboardContentClass.cs" />

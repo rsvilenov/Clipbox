@@ -16,7 +16,7 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes.GeneralTypes
         /// the request made by RequestSettingChange has been fulfilled.
         /// </summary>
         /// <param name="setting"></param>
-        protected virtual void OnSettingUpdated(string settingKey) { }
+        protected virtual void OnSettingUpdated(string settingKeyName) { }
         
         private List<SettingObject> _settings = new List<SettingObject>();
 
@@ -24,13 +24,13 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes.GeneralTypes
         /// Gets a setting value by key.
         /// </summary>
         /// <typeparam name="T">The type of the setting value</typeparam>
-        /// <param name="settingKey">The key of the setting</param>
+        /// <param name="settingKeyName">The key of the setting</param>
         /// <returns>The value of the setting</returns>
-        protected T GetSetting<T>(string settingKey)
+        protected T GetSetting<T>(string settingKeyName)
         {
-            EnsureParameterTypeMatchesSettingType<T>(settingKey);
+            EnsureParameterTypeMatchesSettingType<T>(settingKeyName);
 
-            return (T)_settings.First(s => s.Key == settingKey).Value;
+            return (T)_settings.First(s => s.KeyName == settingKeyName).Value;
         }
 
         /// <summary>
@@ -38,19 +38,19 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes.GeneralTypes
         /// <see cref="ConfigurableExtension.OnSettingUpdated(SettingObject)"/> gets called, so that
         /// the requestor knows that the change has been applied.
         /// </summary>
-        protected void RaiseRequestSettingChange<T>(string settingKey, T value)
+        protected void RaiseRequestSettingChange<T>(string settingKeyName, T value)
         {
-            EnsureParameterTypeMatchesSettingType<T>(settingKey);
+            EnsureParameterTypeMatchesSettingType<T>(settingKeyName);
 
-            _requestSettingChange?.Invoke(this, new RequestSettingChangeEventArgs(settingKey, value));
+            _requestSettingChange?.Invoke(this, new RequestSettingChangeEventArgs(settingKeyName, value));
         }
 
-        private void EnsureParameterTypeMatchesSettingType<T>(string settingKey)
+        private void EnsureParameterTypeMatchesSettingType<T>(string settingKeyName)
         {
-            if (_settings.Any(s => s.Key == settingKey
+            if (_settings.Any(s => s.KeyName == settingKeyName
                         && s.GetClrType(s.ValueType) != typeof(T)))
             {
-                throw new ArgumentException($"The setting with key {nameof(settingKey)} has a different type than that passed as a generic parameter.");
+                throw new ArgumentException($"The setting with key {nameof(settingKeyName)} has a different type than that passed as a generic parameter.");
             }
         }
 
@@ -66,7 +66,7 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes.GeneralTypes
 
         void IConfigurableObject.UpdateSetting(SettingObject setting)
         {
-            var oldObject = _settings.First(s => s.Key == setting.Key);
+            var oldObject = _settings.First(s => s.KeyName == setting.KeyName);
             _settings.Remove(oldObject);
             _settings.Add(setting);
         }

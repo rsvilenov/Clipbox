@@ -45,11 +45,11 @@ namespace Clipbox.Views
             SettingsWindow wnd = (SettingsWindow)d;
             if ((bool)e.NewValue)
             {
-                wnd._settingsService.SetSetting(SettingsKeys.LicalizationCulture, "bg-BG");
+                wnd._settingsService.SetSetting(SettingsKeys.LocalizationCulture, "bg-BG");
             }
             else
             {
-                wnd._settingsService.SetSetting(SettingsKeys.LicalizationCulture, "en-US");
+                wnd._settingsService.SetSetting(SettingsKeys.LocalizationCulture, "en-US");
             }
         }
 
@@ -72,7 +72,7 @@ namespace Clipbox.Views
             this.MaxHeight = currentDisplayHeight - 10;
             this.MaxWidth = currentDisplayWidth - 10;
             
-            _settingsService.SetSetting<string>(SettingsKeys.LicalizationCulture, "bg-BG");
+            _settingsService.SetSetting(SettingsKeys.LocalizationCulture, "bg-BG");
         }
 
         private ISettingsService _settingsService;

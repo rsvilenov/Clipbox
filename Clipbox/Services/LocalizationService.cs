@@ -4,6 +4,7 @@ using Clipbox.Settings;
 using System;
 using System.Globalization;
 using System.Threading;
+using System.Windows;
 using System.Windows.Threading;
 
 namespace Clipbox.Services
@@ -23,7 +24,7 @@ namespace Clipbox.Services
 
         private void _settingsService_SettingChanged(object sender, EventArgsClasses.SettingsEventArgs e)
         {
-            if (e.SettingKey == SettingsKeys.LicalizationCulture)
+            if (e.SettingKeyName == SettingsKeys.LocalizationCulture.Name)
             {
                 var newCulture = new CultureInfo((string)e.SettingValue);
                 _translationProvider.CurrentCulture = newCulture;
@@ -33,15 +34,11 @@ namespace Clipbox.Services
 
         private void UpdateCurrentUICulture(CultureInfo culture)
         {
-            Dispatcher dispatcher = Dispatcher.FromThread(Thread.CurrentThread);
-            if (dispatcher == null)
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                throw new InvalidOperationException("Please call this setter from the UI thread.");
-            }
-
-
-            Thread.CurrentThread.CurrentCulture = culture;
-            Thread.CurrentThread.CurrentUICulture = culture;
+                Thread.CurrentThread.CurrentCulture = culture;
+                Thread.CurrentThread.CurrentUICulture = culture;
+            });
         }
 
         public void Dispose()

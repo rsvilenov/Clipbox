@@ -266,12 +266,12 @@ namespace Clipbox {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("en-US")]
-        public string LicalizationCulture {
+        public string LocalizationCulture {
             get {
-                return ((string)(this["LicalizationCulture"]));
+                return ((string)(this["LocalizationCulture"]));
             }
             set {
-                this["LicalizationCulture"] = value;
+                this["LocalizationCulture"] = value;
             }
         }
     }

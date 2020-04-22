@@ -1,45 +1,47 @@
-﻿namespace Clipbox.Settings
+﻿using Clipbox.Core.Configuration;
+
+namespace Clipbox.Settings
 {
     public static class SettingsKeys
     {
-        public const string PreviewItemHeightRatio = nameof(PreviewItemHeightRatio);
+        public static SettingKey<double> PreviewItemHeightRatio = new SettingKey<double>(nameof(PreviewItemHeightRatio), 0.2);
 
-        public const string MaxPreviewItemsInGroupItem = nameof(MaxPreviewItemsInGroupItem);
+        public static SettingKey<int> MaxPreviewItemsInGroupItem = new SettingKey<int>(nameof(MaxPreviewItemsInGroupItem), 2);
 
-        public const string ResizeAccordingToMonitorOrSystemDpi = nameof(ResizeAccordingToMonitorOrSystemDpi);
+        public static SettingKey<bool> ResizeAccordingToMonitorOrSystemDpi = new SettingKey<bool>(nameof(ResizeAccordingToMonitorOrSystemDpi), true);
 
-        public const string DimNonFocusedItems = nameof(DimNonFocusedItems);
+        public static SettingKey<bool> DimNonFocusedItems = new SettingKey<bool>(nameof(DimNonFocusedItems), false);
 
-        public const string IsClipboardTrackingEnabled = nameof(IsClipboardTrackingEnabled);
+        public static SettingKey<bool> IsClipboardTrackingEnabled = new SettingKey<bool>(nameof(IsClipboardTrackingEnabled), true);
 
-        public const string IsDeskBandEnabled = nameof(IsDeskBandEnabled);
+        public static SettingKey<bool> IsDeskBandEnabled = new SettingKey<bool>(nameof(IsDeskBandEnabled), true);
 
-        public const string IsCloudSyncEnabled = nameof(IsCloudSyncEnabled);
+        public static SettingKey<bool> IsCloudSyncEnabled = new SettingKey<bool>(nameof(IsCloudSyncEnabled), false);
 
-        public const string MainClipboardViewBackgroundRenderMode = nameof(MainClipboardViewBackgroundRenderMode);
+        public static SettingKey<int> MainClipboardViewBackgroundRenderMode = new SettingKey<int>(nameof(MainClipboardViewBackgroundRenderMode), (int)Enums.MainClipboardViewBackgroundRenderMode.ImageBrush);
 
-        public const string IsTrayIconEnabled = nameof(IsTrayIconEnabled);
+        public static SettingKey<bool> IsTrayIconEnabled = new SettingKey<bool>(nameof(IsTrayIconEnabled), true);
 
-        public const string IsBackgroundPreviewGenerationEnabled = nameof(IsBackgroundPreviewGenerationEnabled);
+        public static SettingKey<bool> IsBackgroundPreviewGenerationEnabled = new SettingKey<bool>(nameof(IsBackgroundPreviewGenerationEnabled), true);
 
-        public const string AreFadeAnimationsEnabled = nameof(AreFadeAnimationsEnabled);
+        public static SettingKey<bool> AreFadeAnimationsEnabled = new SettingKey<bool>(nameof(AreFadeAnimationsEnabled), true);
 
-        public const string IsAutomaticCloudSyncOfPinnedItemsEnabled = nameof(IsAutomaticCloudSyncOfPinnedItemsEnabled);
+        public static SettingKey<bool> IsAutomaticCloudSyncOfPinnedItemsEnabled = new SettingKey<bool>(nameof(IsAutomaticCloudSyncOfPinnedItemsEnabled), true);
 
-        public const string MaxNonPinnedItemsInQuickView = nameof(MaxNonPinnedItemsInQuickView);
+        public static SettingKey<int> MaxNonPinnedItemsInQuickView = new SettingKey<int>(nameof(MaxNonPinnedItemsInQuickView), 5);
 
-        public const string PreviewGenerationTimeout = nameof(PreviewGenerationTimeout);
+        public static SettingKey<int> PreviewGenerationTimeout = new SettingKey<int>(nameof(PreviewGenerationTimeout), 6000);
 
-        public const string PreviewCacheMaxSize = nameof(PreviewCacheMaxSize);
+        public static SettingKey<int> PreviewCacheMaxSize = new SettingKey<int>(nameof(PreviewCacheMaxSize), 10485760);
 
-        public const string MaxSimultaneousPreviewTasks = nameof(MaxSimultaneousPreviewTasks);
+        public static SettingKey<int> MaxSimultaneousPreviewTasks = new SettingKey<int>(nameof(MaxSimultaneousPreviewTasks), 5);
 
-        public const string AutoDetermineMaxSimultaneousPreviewTasks = nameof(AutoDetermineMaxSimultaneousPreviewTasks);
+        public static SettingKey<bool> AutoDetermineMaxSimultaneousPreviewTasks = new SettingKey<bool>(nameof(AutoDetermineMaxSimultaneousPreviewTasks), true);
 
-        public const string NumOfNotYetVisibleRowsToPreload = nameof(NumOfNotYetVisibleRowsToPreload);
+        public static SettingKey<int> NumOfNotYetVisibleRowsToPreload = new SettingKey<int>(nameof(NumOfNotYetVisibleRowsToPreload), 3);
 
-        public const string MaxNumOfItemToLoadAtOnce = nameof(MaxNumOfItemToLoadAtOnce);
+        public static SettingKey<int> MaxNumOfItemToLoadAtOnce = new SettingKey<int>(nameof(MaxNumOfItemToLoadAtOnce), 50);
 
-        public const string LicalizationCulture = nameof(LicalizationCulture);
+        public static SettingKey<string> LocalizationCulture = new SettingKey<string>(nameof(LocalizationCulture), "en-US");
     }
 }

@@ -62,7 +62,7 @@
     <Setting Name="MaxNumOfItemToLoadAtOnce" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">50</Value>
     </Setting>
-    <Setting Name="LicalizationCulture" Type="System.String" Scope="User">
+    <Setting Name="LocalizationCulture" Type="System.String" Scope="User">
       <Value Profile="(Default)">en-US</Value>
     </Setting>
   </Settings>
