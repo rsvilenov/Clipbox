@@ -1,6 +1,4 @@
 ﻿using Clipbox.Core.Configuration;
-using Clipbox.Core.Extensibility.Attributes;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -17,9 +15,6 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes.GeneralTypes
         /// </summary>
         /// <param name="setting"></param>
         protected virtual void OnSettingUpdated(string settingKeyName) { }
-
-        private List<SettingObject> _settings = new List<SettingObject>();
-
         
         /// <summary>
         /// Gets a setting value by key.
@@ -48,5 +43,7 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes.GeneralTypes
             _settings.Add(setting);
         }
         #endregion
+        
+        private List<SettingObject> _settings = new List<SettingObject>();
     }
 }

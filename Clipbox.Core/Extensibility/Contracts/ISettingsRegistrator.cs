@@ -5,6 +5,6 @@ namespace Clipbox.Core.Extensibility.Contracts
 {
     public interface ISettingsRegistrator
     {
-        IEnumerable<ITargettedSettingKey> GetSettingKeys();
+        IEnumerable<ISettingKey> GetSettingKeys();
     }
 }

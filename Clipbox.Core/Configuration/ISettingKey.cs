@@ -21,5 +21,10 @@ namespace Clipbox.Core.Configuration
         /// The default value of the setting.
         /// </summary>
         object DefaultValue { get; }
+
+        /// <summary>
+        /// The type of the component which will use this setting (optional).
+        /// </summary>
+        Type TargetComponentType { get; }
     }
 }

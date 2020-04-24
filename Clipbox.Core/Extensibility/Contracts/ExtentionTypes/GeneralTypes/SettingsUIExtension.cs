@@ -15,7 +15,7 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes.GeneralTypes
 
         private readonly IReadOnlyCollection<Type> _registeredConsumingExtensions;
 
-        private readonly IEnumerable<ITargettedSettingKey> _registeredSettingKeys;
+        private readonly IEnumerable<ISettingKey> _registeredSettingKeys;
 
         public SettingsUIExtension()
         {
@@ -48,7 +48,7 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes.GeneralTypes
 
         #region ISettingsRegistrator
 
-        IEnumerable<ITargettedSettingKey> ISettingsRegistrator.GetSettingKeys()
+        IEnumerable<ISettingKey> ISettingsRegistrator.GetSettingKeys()
         {
             return _registeredSettingKeys;
         }
@@ -76,20 +76,20 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes.GeneralTypes
 
         protected class SettingKeyCollectionBuilder
         {
-            private readonly List<ITargettedSettingKey> _settingKeys;
+            private readonly List<ISettingKey> _settingKeys;
 
             public SettingKeyCollectionBuilder()
             {
-                _settingKeys = new List<ITargettedSettingKey>();
+                _settingKeys = new List<ISettingKey>();
             }
 
             public SettingKeyCollectionBuilder Add<TValueType, TTargetExtensionType>(string keyName, TValueType defaultValue)
             {
-                _settingKeys.Add(new TargettedSettingKey<TValueType, TTargetExtensionType>(keyName, defaultValue));
+                _settingKeys.Add(new SettingKey<TValueType, TTargetExtensionType>(keyName, defaultValue));
                 return this;
             }
 
-            public IReadOnlyCollection<ITargettedSettingKey> GetSettingKeys()
+            public IReadOnlyCollection<ISettingKey> GetSettingKeys()
             {
                 return _settingKeys.AsReadOnly();
             }

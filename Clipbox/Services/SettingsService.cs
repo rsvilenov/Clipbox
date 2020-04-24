@@ -4,6 +4,7 @@ using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Clipbox.Services
 {
@@ -13,9 +14,12 @@ namespace Clipbox.Services
 
         private readonly IConfigurationProvider _configurationProvider;
 
+        private readonly List<ISettingKey> _targettedSettingKeys;
+
         public SettingsService(IConfigurationProvider configurationProvider)
         {
             _configurationProvider = configurationProvider;
+            _targettedSettingKeys = new List<ISettingKey>();
         }
 
         public T GetSetting<T>(SettingKey<T> key)
@@ -69,11 +73,22 @@ namespace Clipbox.Services
             {
                 _configurationProvider.RegisterSetting(key);
             }
+
+            if (key.TargetComponentType != null &&
+                !_targettedSettingKeys.Contains(key))
+            {
+                _targettedSettingKeys.Add(key);
+            }
         }
 
         public bool IsSettingRegistered(ISettingKey key)
         {
             return _configurationProvider.IsSettingRegistered(key);
+        }
+
+        public IEnumerable<ISettingKey> GetSettingKeys<TTargetType>()
+        {
+            return _targettedSettingKeys.Where(tsk => tsk.TargetComponentType == typeof(TTargetType));
         }
         
     }

@@ -19,6 +19,13 @@ namespace Clipbox.Services.Interfaces
 
         void RegisterSettings(IEnumerable<ISettingKey> keys);
 
+        /// <summary>
+        /// Get setting keys with a specified target component
+        /// </summary>
+        /// <typeparam name="TTargetType"></typeparam>
+        /// <returns></returns>
+        IEnumerable<ISettingKey> GetSettingKeys<TTargetType>();
+
         event EventHandler<SettingsEventArgs> SettingChanged;
     }
 }
