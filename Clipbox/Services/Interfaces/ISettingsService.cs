@@ -9,9 +9,15 @@ namespace Clipbox.Services.Interfaces
     {
         T GetSetting<T>(SettingKey<T> key);
 
-        IReadOnlyDictionary<string, Type> GetAvailableSettings();
-
+        object GetSetting(ISettingKey key);
+        
         void SetSetting<TSettingKey, TValue>(SettingKey<TSettingKey> key, TValue value) where TValue : TSettingKey;
+
+        bool IsSettingRegistered(ISettingKey key);
+
+        void RegisterSetting(ISettingKey key);
+
+        void RegisterSettings(IEnumerable<ISettingKey> keys);
 
         event EventHandler<SettingsEventArgs> SettingChanged;
     }

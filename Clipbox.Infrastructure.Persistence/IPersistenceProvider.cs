@@ -10,6 +10,7 @@ namespace Clipbox.Infrastructure.Persistence
         byte[] ReadBytes(string key, string category = null);
         string ReadText(string key, string category = null);
         void DeleteCategory(string category);
+        void CreateCategory(string category);
         void Delete(string key, string category = null);
         bool CheckIfKeyExists(string key, string category = null);
         bool CheckIfCategoryExists(string category);

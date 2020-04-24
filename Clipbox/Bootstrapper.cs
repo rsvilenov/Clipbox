@@ -4,6 +4,7 @@ using Clipbox.Core.Extensibility.Exceptions;
 using Clipbox.ExtendedClipboard;
 using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.CloudSupport.CloudSupportProviders;
+using Clipbox.Infrastructure.Configuration;
 using Clipbox.Infrastructure.IPC;
 using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.Persistence.FilesystemAccess;
@@ -126,7 +127,9 @@ namespace Clipbox
             _clipboardManager = new ClipboardManager(_clipboardListenerService, _extentionLoader.FormatsContainer, _extentionLoader.PersistenceSupportExtensionContainer, _persistenceProvider);
 
             // Initialize the settings service
-            _settingsService = new SettingsService();
+            IConfigurationProvider configurationProvider = new AppDataConfigurationProvider(_persistenceProvider);
+            _settingsService = new SettingsService(configurationProvider);
+            _settingsService.RegisterSettings(SettingsKeys.GetAllSettings());
             _settingsService.SettingChanged += _settingsService_SettingChanged;
 
             //_settingsService.SetSetting("Setting1", "set");
@@ -228,14 +231,14 @@ namespace Clipbox
 
         private void _settingsService_SettingChanged(object sender, Services.EventArgsClasses.SettingsEventArgs e)
         {
-            if (e.SettingKeyName == SettingsKeys.IsClipboardTrackingEnabled.Name)
+            if (e.Key == SettingsKeys.IsClipboardTrackingEnabled)
             {
                 // create this file in AppData so that the deskband can find it. 
                 // IMPORTANT: Do not use IPersistenceProvider here, because its implementation may change,
                 // and we want to store the filename precisely in %APPDATA%\Clipbox, so that the
                 // deskband Shell extension, which is written in c++, can read it.
                 string disabledFileName = Path.Combine(AppDataUtils.GetAppDataDir(false), "disabled");
-                if ((bool)e.SettingValue)
+                if ((bool)e.Value)
                 {
                     File.Delete(disabledFileName);
                 }
@@ -246,11 +249,11 @@ namespace Clipbox
                     File.Create(disabledFileName).Dispose();
                 }
             }
-            else if (e.SettingKeyName == SettingsKeys.IsCloudSyncEnabled.Name)
+            else if (e.Key == SettingsKeys.IsCloudSyncEnabled)
             {
                 if (_cloudSyncService != null)
                 {
-                    _cloudSyncService.IsEnabled = (bool)e.SettingValue;
+                    _cloudSyncService.IsEnabled = (bool)e.Value;
                 }
             }
         }

@@ -53,14 +53,18 @@
     <Compile Include="ClipboardContent\Interfaces\IIHaveIntermediateFormat.cs" />
     <Compile Include="ClipboardContent\Interfaces\ITimestampInfo.cs" />
     <Compile Include="Configuration\Enums\SettingValueType.cs" />
+    <Compile Include="Configuration\ISettingKey.cs" />
+    <Compile Include="Configuration\ITargettedSettingKey.cs" />
     <Compile Include="Configuration\SettingKey.cs" />
     <Compile Include="Configuration\SettingObject.cs" />
+    <Compile Include="Configuration\TargettedSettingKey.cs" />
     <Compile Include="DisposableObject.cs" />
     <Compile Include="ClipboardContent\Enums\ClipboardContentClass.cs" />
     <Compile Include="Extensibility\Attributes\IntermediateFormatSupportAttribute.cs" />
     <Compile Include="Extensibility\Attributes\PreviewPriorityAttribute.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\GeneralTypes\ConfigurableExtension.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\GeneralTypes\SearchSupportExtension.cs" />
+    <Compile Include="Extensibility\Contracts\ExtentionTypes\GeneralTypes\SettingsUIExtension.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\PreviewGenerationTypes\ICancellablePreviewGenerator.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\IPersistenceSupport.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\IPreviewGenerator.cs" />
@@ -73,6 +77,7 @@
     <Compile Include="Extensibility\Contracts\IIntermediateFormatMetadata.cs" />
     <Compile Include="Extensibility\Contracts\IMachineInfo.cs" />
     <Compile Include="Extensibility\Contracts\IntermediateFormatBase.cs" />
+    <Compile Include="Extensibility\Contracts\ISettingsRegistrator.cs" />
     <Compile Include="Extensibility\EventArgsClasses\RequestSettingChangeEventArgs.cs" />
     <Compile Include="Search\Enums\SearchCategory.cs" />
     <Compile Include="Search\Enums\TermOccurrence.cs" />

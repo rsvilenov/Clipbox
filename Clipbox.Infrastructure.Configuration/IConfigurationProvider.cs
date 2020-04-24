@@ -1,16 +1,15 @@
 ﻿using Clipbox.Core.Configuration;
-using System.Collections.Generic;
 
 namespace Clipbox.Infrastructure.Configuration
 {
     public interface IConfigurationProvider
     {
-        void RegisterSetting<T>(SettingKey<T> settingKey);
+        void RegisterSetting(ISettingKey settingKey);
 
-        void SetSetting<T>(SettingKey<T> settingKey, T value);
+        bool IsSettingRegistered(ISettingKey settingKey);
 
-        T GetSetting<T>(SettingKey<T> settingKey);
+        void SetSetting(ISettingKey settingKey, object value);
 
-        IReadOnlyCollection<string> GetAllSettingKeyNames();
+        object GetSetting(ISettingKey settingKey);
     }
 }

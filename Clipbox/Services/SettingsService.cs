@@ -1,10 +1,9 @@
 ﻿using Clipbox.Core.Configuration;
+using Clipbox.Infrastructure.Configuration;
 using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Configuration;
 
 namespace Clipbox.Services
 {
@@ -12,64 +11,70 @@ namespace Clipbox.Services
     {
         public event EventHandler<SettingsEventArgs> SettingChanged;
 
-        public SettingsService()
+        private readonly IConfigurationProvider _configurationProvider;
+
+        public SettingsService(IConfigurationProvider configurationProvider)
         {
-            ApplicationSettings.Default.Upgrade();
+            _configurationProvider = configurationProvider;
         }
 
         public T GetSetting<T>(SettingKey<T> key)
         {
-            if (ApplicationSettings.Default[key.Name] == null)
+            return (T)GetSetting((ISettingKey)key);
+        }
+
+        public object GetSetting(ISettingKey key)
+        {
+            if (!IsSettingRegistered(key))
             {
-                throw new KeyNotFoundException($"{key.Name} should be defined in ApplicationSettings in order to be used by this class.");
+                throw new KeyNotFoundException($"{key.Name} should be registered first.");
             }
 
-            var setting = ApplicationSettings.Default[key.Name];
-
-            if (setting.GetType() != typeof(T))
-            {
-                throw new InvalidCastException($"Setting {key.Name} is not of type {typeof(T)}");
-            }
-
-            return (T)setting;
+            return _configurationProvider.GetSetting(key);
         }
 
         public void SetSetting<TSettingKey, TValue>(SettingKey<TSettingKey> key, TValue value) where TValue : TSettingKey
         {
-            if (ApplicationSettings.Default[key.Name] == null)
-            {
-                throw new KeyNotFoundException($"{key.Name} should be defined in ApplicationSettings in order to be used by this class.");
-            }
-
-            bool isUserSetting = ApplicationSettings.Default.Properties[key.Name].Attributes.ContainsKey(typeof(System.Configuration.UserScopedSettingAttribute));
-            if (!isUserSetting)
-            {
-                throw new InvalidOperationException($"{key.Name} 's scope must be 'user'. Settings with scope 'application' can not be saved.");
-            }
-
-            ApplicationSettings.Default[key.Name] = value;
-
-            SettingChanged?.Invoke(this,
-                new SettingsEventArgs
-                {
-                    SettingKeyName = key.Name,
-                    SettingValue = value,
-                    SettingValueType = typeof(TValue)
-                });
-
-            ApplicationSettings.Default.Save();
+            SetSetting((ISettingKey)key, value);
         }
 
-        public IReadOnlyDictionary<string, Type> GetAvailableSettings()
+        public void SetSetting(ISettingKey key, object value)
         {
-            Dictionary<string, Type> availableSettings = new Dictionary<string, Type>();
-
-            foreach (SettingsProperty prop in ApplicationSettings.Default.Properties)
+            if (value.GetType() != key.TypeOfValue)
             {
-                availableSettings.Add(prop.Name, prop.PropertyType);
+                throw new ArgumentException($"{nameof(value)} should be of type '{key.TypeOfValue.Name}'");
             }
 
-            return new ReadOnlyDictionary<string, Type>(availableSettings);
+            if (!IsSettingRegistered(key))
+            {
+                throw new KeyNotFoundException($"{key.Name} should be registered first.");
+            }
+
+            _configurationProvider.SetSetting(key, value);
+
+            SettingChanged?.Invoke(this, new SettingsEventArgs(key, value));
         }
+
+        public void RegisterSettings(IEnumerable<ISettingKey> keys)
+        {
+            foreach (ISettingKey key in keys)
+            {
+                RegisterSetting(key);
+            }
+        }
+
+        public void RegisterSetting(ISettingKey key)
+        {
+            if (!IsSettingRegistered(key))
+            {
+                _configurationProvider.RegisterSetting(key);
+            }
+        }
+
+        public bool IsSettingRegistered(ISettingKey key)
+        {
+            return _configurationProvider.IsSettingRegistered(key);
+        }
+        
     }
 }

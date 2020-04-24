@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enums\TextConcatenateSeparators.cs" />
+    <Compile Include="ExtensionSettingNames.cs" />
     <Compile Include="FlowExtentions\ConcatenateMultipleTextSelections.cs" />
     <Compile Include="FlowExtentions\RemoveFormattingFlowExtention.cs" />
     <Compile Include="FlowParameters.cs" />
@@ -73,6 +74,7 @@
     <Compile Include="PreviewGenerators\UnicodeTextPreviewGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SearchSupport\UnicodeTextSearchSupport.cs" />
+    <Compile Include="SettingsUIExtensions\TextPreviewGeneratorsSettingsUIExtension.cs" />
     <Compile Include="StringExtensions.cs" />
     <Compile Include="SearchSupport\HtmlSearchSupport.cs" />
     <Compile Include="SearchSupport\RtfSearchSupport.cs" />

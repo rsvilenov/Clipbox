@@ -1,4 +1,7 @@
 ﻿using Clipbox.Core.Configuration;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace Clipbox.Settings
 {
@@ -43,5 +46,13 @@ namespace Clipbox.Settings
         public static SettingKey<int> MaxNumOfItemToLoadAtOnce = new SettingKey<int>(nameof(MaxNumOfItemToLoadAtOnce), 50);
 
         public static SettingKey<string> LocalizationCulture = new SettingKey<string>(nameof(LocalizationCulture), "en-US");
+        
+        internal static IEnumerable<ISettingKey> GetAllSettings()
+        {
+            return typeof(SettingsKeys)
+               .GetFields(BindingFlags.Public | BindingFlags.Static)
+               .Where(f => f.FieldType.GetInterface(nameof(ISettingKey)) != null)
+               .Select(f => (ISettingKey)f.GetValue(null));
+        }
     }
 }

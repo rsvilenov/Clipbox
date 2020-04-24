@@ -19,7 +19,7 @@ namespace Clipbox.Core.Configuration
 
         public object Value { get; }
           
-        public Type GetClrType(SettingValueType type)
+        public static Type GetClrType(SettingValueType type)
         {
             switch (type)
             {
@@ -34,7 +34,7 @@ namespace Clipbox.Core.Configuration
             }
         }
 
-        public SettingValueType GetSettingValueType(Type type)
+        public static SettingValueType GetSettingValueType(Type type)
         {
             if (type == typeof(int))
                 return SettingValueType.String;

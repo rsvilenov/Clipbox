@@ -169,6 +169,12 @@ namespace Clipbox.Infrastructure.Persistence.FilesystemAccess
             return appSubdir;
         }
 
+        public static void CreateSubDir(string subDir)
+        {
+            string subDirFullPath = Path.Combine(GetAppDataDir(throwIfNotExists: true), subDir);
+            Directory.CreateDirectory(subDirFullPath);
+        }
+
         private static void DoFileOperation(Action operation, string filePath, bool useLock)
         {
             if (useLock)

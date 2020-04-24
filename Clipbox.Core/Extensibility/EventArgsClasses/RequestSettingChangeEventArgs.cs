@@ -1,16 +1,17 @@
-﻿using System;
+﻿using Clipbox.Core.Configuration;
+using System;
 
 namespace Clipbox.Core.Extensibility.EventArgsClasses
 {
     public class RequestSettingChangeEventArgs : EventArgs
     {
-        public RequestSettingChangeEventArgs(string settingKey, object value)
+        public RequestSettingChangeEventArgs(string settingName, object value)
         {
-            SettingKey = SettingKey;
+            SettingName = settingName;
             Value = value;
         }
 
-        public string SettingKey { get; }
+        public string SettingName { get; }
 
         public object Value { get; }
     }

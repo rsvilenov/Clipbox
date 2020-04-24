@@ -1,13 +1,18 @@
-﻿using System;
+﻿using Clipbox.Core.Configuration;
+using System;
 
 namespace Clipbox.Services.EventArgsClasses
 {
     public class SettingsEventArgs : EventArgs
     {
-        public string SettingKeyName { get; set; }
+        public SettingsEventArgs(ISettingKey key, object value)
+        {
+            Key = key;
+            Value = value;
+        }
 
-        public object SettingValue { get; set; }
+        public ISettingKey Key { get; }
 
-        public Type SettingValueType { get; set; }
+        public object Value { get; }
     }
 }

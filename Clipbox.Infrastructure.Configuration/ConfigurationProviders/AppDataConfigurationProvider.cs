@@ -20,24 +20,35 @@ namespace Clipbox.Infrastructure.Configuration
         public AppDataConfigurationProvider(IPersistenceProvider persistenceProvider)
         {
             _persistenceProvider = persistenceProvider;
+
+            if (!_persistenceProvider.CheckIfCategoryExists(SETTINGS_PERSISTENCE_CATEGORY))
+            {
+                _persistenceProvider.CreateCategory(SETTINGS_PERSISTENCE_CATEGORY);
+            }
+
             _settings = FetchAllSettings();
         }
-
         
-        public T GetSetting<T>(SettingKey<T> settingKey)
+        public void RegisterSetting(ISettingKey settingKey)
         {
             lock (_lockHandle)
             {
                 if (_settings.ContainsKey(settingKey.Name))
                 {
-                    throw new KeyNotFoundException($"There is no setting with key name {settingKey.Name}");
+                    throw new InvalidOperationException($"Setting '{settingKey.Name}' is already registered.");
                 }
 
-                return (T)_settings[settingKey.Name].Value;
+                _settings.Add(settingKey.Name,  
+                    new SettingObject(settingKey.Name, settingKey.DefaultValue, SettingObject.GetSettingValueType(settingKey.TypeOfValue)));
             }
         }
 
-        public void SetSetting<T>(SettingKey<T> settingKey, T value)
+        public bool IsSettingRegistered(ISettingKey settingKey)
+        {
+            return _settings.ContainsKey(settingKey.Name);
+        }
+
+        public void SetSetting(ISettingKey settingKey, object value)
         {
             lock (_lockHandle)
             {
@@ -51,24 +62,16 @@ namespace Clipbox.Infrastructure.Configuration
             }
         }
 
-        public void RegisterSetting<T>(SettingKey<T> settingKey)
+        public object GetSetting(ISettingKey settingKey)
         {
             lock (_lockHandle)
             {
                 if (_settings.ContainsKey(settingKey.Name))
                 {
-                    throw new InvalidOperationException($"Setting '{settingKey.Name}' is already registered.");
+                    throw new KeyNotFoundException($"There is no setting with key name {settingKey.Name}");
                 }
 
-                _settings[settingKey.Name] = new SettingObject(settingKey.Name, default(T), _settings[settingKey.Name].ValueType);
-            }
-        }
-
-        public IReadOnlyCollection<string> GetAllSettingKeyNames()
-        {
-            lock (_lockHandle)
-            {
-                return _settings.Keys;
+                return _settings[settingKey.Name].Value;
             }
         }
 

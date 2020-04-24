@@ -24,9 +24,9 @@ namespace Clipbox.Services
 
         private void _settingsService_SettingChanged(object sender, EventArgsClasses.SettingsEventArgs e)
         {
-            if (e.SettingKeyName == SettingsKeys.LocalizationCulture.Name)
+            if (e.Key == SettingsKeys.LocalizationCulture)
             {
-                var newCulture = new CultureInfo((string)e.SettingValue);
+                var newCulture = new CultureInfo((string)e.Value);
                 _translationProvider.CurrentCulture = newCulture;
                 UpdateCurrentUICulture(newCulture);
             }
