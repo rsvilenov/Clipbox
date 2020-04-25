@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace Clipbox.Core.Configuration
 {
@@ -7,6 +8,7 @@ namespace Clipbox.Core.Configuration
     /// </summary>
     /// <typeparam name="TSettingValueType">The type of the setting value</typeparam>
     /// <typeparam name="TTargetComponentType">The type of the component, which will use the setting</typeparam>
+    [DebuggerDisplay("{Name} (default: {DefaultValue}) [target: {TargetComponentType.Name}]")]
     public class SettingKey<TSettingValueType, TTargetComponentType> : SettingKey<TSettingValueType>
     {
         public SettingKey(string name, TSettingValueType defaultValue)
@@ -20,6 +22,7 @@ namespace Clipbox.Core.Configuration
     /// A key object for accessing a setting
     /// </summary>
     /// <typeparam name="T">The type of the setting value</typeparam>
+    [DebuggerDisplay("{Name} (default: {DefaultValue})")]
     public class SettingKey<T> : ISettingKey
     {
         /// <summary>
@@ -43,11 +46,11 @@ namespace Clipbox.Core.Configuration
         /// </summary>
         public T DefaultValue { get; }
 
-        private Type _argetComponentType;
+        private Type _targetComponentType;
         /// <summary>
         /// The type of the component which will use this setting (optional).
         /// </summary>
-        Type ISettingKey.TargetComponentType { get { return _argetComponentType; } }
+        Type ISettingKey.TargetComponentType { get { return _targetComponentType; } }
 
         /// <summary>
         /// <see cref="ISettingKey.GetTypeOfValue"/>
@@ -68,7 +71,7 @@ namespace Clipbox.Core.Configuration
 
         protected void SetTargetComponentType(Type type)
         {
-            _argetComponentType = type;
+            _targetComponentType = type;
         }
 
         public override bool Equals(object obj)
@@ -84,9 +87,9 @@ namespace Clipbox.Core.Configuration
                 hash = hash * 23 + Name.GetHashCode();
                 hash = hash * 23 + typeof(T).GetHashCode();
 
-                if (_argetComponentType != null)
+                if (_targetComponentType != null)
                 {
-                    hash = hash * 23 + _argetComponentType.GetHashCode();
+                    hash = hash * 23 + _targetComponentType.GetHashCode();
                 }
 
                 return hash;

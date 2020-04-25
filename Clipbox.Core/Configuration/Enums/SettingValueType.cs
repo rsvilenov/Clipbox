@@ -4,6 +4,7 @@
     {
         String,
         Int,
-        Double
+        Double,
+        Boolean
     }
 }

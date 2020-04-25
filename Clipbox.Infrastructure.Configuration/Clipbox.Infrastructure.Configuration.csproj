@@ -42,7 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IConfigurationProvider.cs" />
-    <Compile Include="ConfigurationProviders\AppDataConfigurationProvider.cs" />
+    <Compile Include="ConfigurationProviders\PersistableConfigurationProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

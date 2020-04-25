@@ -29,6 +29,11 @@ namespace Clipbox.ExtendedClipboard
         {
             _persistenceExtentionContainer = persistenceSupportExtentionContainer;
             _persistenceProvider = persistenceProvider;
+
+            if (!_persistenceProvider.CheckIfCategoryExists(CACHE_PERSISTENCE_CATEGORY))
+            {
+                _persistenceProvider.CreateCategory(CACHE_PERSISTENCE_CATEGORY);
+            }
         }
         
         public void StoreAndShrinkClipboardItem(ClipboardItem clipboardItem)

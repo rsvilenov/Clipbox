@@ -1,6 +1,5 @@
 ﻿using Clipbox.Core.Configuration;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes.GeneralTypes
 {
@@ -24,26 +23,42 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes.GeneralTypes
         /// <returns>The value of the setting</returns>
         protected T GetSetting<T>(string settingName)
         {
-            return (T)_settings.First(s => s.KeyName == settingName).Value;
+            lock (_lockObject)
+            {
+                if (!_settings.ContainsKey(settingName))
+                {
+                    throw new KeyNotFoundException($"No setting with name {nameof(settingName)} is available.");
+                }
+
+                return (T)_settings[settingName].Value;
+            }
         }
         
         // the following methods and event are to be used by the callers of the
         // extensions and should not be accessible from within the extensions.
 
         #region IConfigurableObject 
-        void IConfigurableObject.LoadSettings(IEnumerable<SettingObject> settings)
+        void IConfigurableObject.AddSetting(string settingKeyName, SettingObject setting)
         {
-            _settings.AddRange(settings);
+            lock (_lockObject)
+            {
+                _settings.Add(settingKeyName, setting);
+            }
         }
 
-        void IConfigurableObject.UpdateSetting(SettingObject setting)
+        void IConfigurableObject.UpdateSetting(string settingKeyName, SettingObject setting)
         {
-            var oldObject = _settings.First(s => s.KeyName == setting.KeyName);
-            _settings.Remove(oldObject);
-            _settings.Add(setting);
+            lock (_lockObject)
+            {
+                _settings[setting.KeyId] = setting;
+            }
+
+            OnSettingUpdated(settingKeyName);
         }
         #endregion
         
-        private List<SettingObject> _settings = new List<SettingObject>();
+        private Dictionary<string, SettingObject> _settings = new Dictionary<string, SettingObject>();
+
+        private readonly object _lockObject = new object();
     }
 }

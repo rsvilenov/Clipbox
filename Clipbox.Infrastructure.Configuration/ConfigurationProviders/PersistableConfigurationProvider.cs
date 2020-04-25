@@ -1,4 +1,5 @@
 ﻿using Clipbox.Core.Configuration;
+using Clipbox.Infrastructure.Encryption;
 using Clipbox.Infrastructure.Persistence;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Clipbox.Infrastructure.Configuration
 {
-    public class AppDataConfigurationProvider : IConfigurationProvider
+    public class PersistableConfigurationProvider : IConfigurationProvider
     {
         private const string SETTINGS_PERSISTENCE_CATEGORY = "Settings";
 
@@ -17,7 +18,7 @@ namespace Clipbox.Infrastructure.Configuration
 
         private readonly object _lockHandle = new object();
         
-        public AppDataConfigurationProvider(IPersistenceProvider persistenceProvider)
+        public PersistableConfigurationProvider(IPersistenceProvider persistenceProvider)
         {
             _persistenceProvider = persistenceProvider;
 
@@ -33,32 +34,34 @@ namespace Clipbox.Infrastructure.Configuration
         {
             lock (_lockHandle)
             {
-                if (_settings.ContainsKey(settingKey.Name))
+                string keyId = GetKeyStableHash(settingKey);
+                if (_settings.ContainsKey(keyId))
                 {
                     throw new InvalidOperationException($"Setting '{settingKey.Name}' is already registered.");
                 }
 
-                _settings.Add(settingKey.Name,  
-                    new SettingObject(settingKey.Name, settingKey.DefaultValue, SettingObject.GetSettingValueType(settingKey.TypeOfValue)));
+                _settings.Add(keyId,  
+                    new SettingObject(keyId, settingKey.DefaultValue, SettingObject.GetSettingValueType(settingKey.TypeOfValue)));
             }
         }
 
         public bool IsSettingRegistered(ISettingKey settingKey)
         {
-            return _settings.ContainsKey(settingKey.Name);
+            return _settings.ContainsKey(GetKeyStableHash(settingKey));
         }
 
         public void SetSetting(ISettingKey settingKey, object value)
         {
             lock (_lockHandle)
             {
-                if (_settings.ContainsKey(settingKey.Name))
+                string keyId = GetKeyStableHash(settingKey);
+                if (!_settings.ContainsKey(keyId))
                 {
-                    throw new KeyNotFoundException($"There is no setting with key name {settingKey.Name}");
+                    throw new KeyNotFoundException($"There is no setting for the key passed.");
                 }
 
-                _settings[settingKey.Name] = new SettingObject(settingKey.Name, value, _settings[settingKey.Name].ValueType);
-                StoreSetting(_settings[settingKey.Name]);
+                _settings[keyId] = new SettingObject(keyId, value, _settings[keyId].ValueType);
+                StoreSetting(_settings[keyId]);
             }
         }
 
@@ -66,12 +69,13 @@ namespace Clipbox.Infrastructure.Configuration
         {
             lock (_lockHandle)
             {
-                if (_settings.ContainsKey(settingKey.Name))
+                string keyId = GetKeyStableHash(settingKey);
+                if (!_settings.ContainsKey(keyId))
                 {
-                    throw new KeyNotFoundException($"There is no setting with key name {settingKey.Name}");
+                    throw new KeyNotFoundException($"There is no setting for the key passed.");
                 }
 
-                return _settings[settingKey.Name].Value;
+                return _settings[keyId].Value;
             }
         }
 
@@ -82,7 +86,7 @@ namespace Clipbox.Infrastructure.Configuration
             foreach (string storedSetting in _persistenceProvider.ListKeys(SETTINGS_PERSISTENCE_CATEGORY))
             {
                 SettingObject settingObject = DeserializeSettingObject(_persistenceProvider.ReadBytes(storedSetting, SETTINGS_PERSISTENCE_CATEGORY));
-                settings.Add(settingObject.KeyName, settingObject);
+                settings.Add(settingObject.KeyId, settingObject);
             }
 
             return settings;
@@ -90,7 +94,15 @@ namespace Clipbox.Infrastructure.Configuration
 
         private void StoreSetting(SettingObject settingObject)
         {
-            _persistenceProvider.Write(settingObject.KeyName, SerializeObject(settingObject), SETTINGS_PERSISTENCE_CATEGORY);
+            _persistenceProvider.Write(settingObject.KeyId, SerializeObject(settingObject), SETTINGS_PERSISTENCE_CATEGORY);
+        }
+
+        /// <summary>
+        /// Generate a unique and stable key string from the ISettingKey
+        /// </summary>
+        private string GetKeyStableHash(ISettingKey key)
+        {
+            return MD5Hash.Create(string.Concat(key.Name, key.TargetComponentType?.FullName ?? string.Empty));
         }
 
         private byte[] SerializeObject(SettingObject settingObject)

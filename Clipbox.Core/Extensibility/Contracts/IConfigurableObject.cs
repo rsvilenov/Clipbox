@@ -1,12 +1,11 @@
 ﻿using Clipbox.Core.Configuration;
-using System.Collections.Generic;
 
 namespace Clipbox.Core.Extensibility.Contracts
 {
     public interface IConfigurableObject
     {
-        void LoadSettings(IEnumerable<SettingObject> settings);
+        void AddSetting(string settingKeyName, SettingObject setting);
 
-        void UpdateSetting(SettingObject setting);
+        void UpdateSetting(string settingKeyName, SettingObject setting);
     }
 }

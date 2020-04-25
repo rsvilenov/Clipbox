@@ -127,7 +127,7 @@ namespace Clipbox
             _clipboardManager = new ClipboardManager(_clipboardListenerService, _extentionLoader.FormatsContainer, _extentionLoader.PersistenceSupportExtensionContainer, _persistenceProvider);
 
             // Initialize the settings service
-            IConfigurationProvider configurationProvider = new AppDataConfigurationProvider(_persistenceProvider);
+            IConfigurationProvider configurationProvider = new PersistableConfigurationProvider(_persistenceProvider);
             _settingsService = new SettingsService(configurationProvider);
             _settingsService.RegisterSettings(SettingsKeys.GetAllSettings());
             _settingsService.SettingChanged += _settingsService_SettingChanged;

@@ -12,9 +12,6 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes.GeneralTypes
     public abstract class SettingsUIExtension : ConfigurableExtension,
         IConfigurationChangeRequestor, ISettingsRegistrator
     {
-
-        private readonly IReadOnlyCollection<Type> _registeredConsumingExtensions;
-
         private readonly IEnumerable<ISettingKey> _registeredSettingKeys;
 
         public SettingsUIExtension()
