@@ -22,12 +22,12 @@ namespace Clipbox.ExtendedClipboard
         /// </summary>
         private const string CACHE_PERSISTENCE_CATEGORY = "ClipboardDataCache";
 
-        private IPersistenceSupportExtensionContainer _persistenceExtentionContainer;
+        private IPersistenceSupportExtensionContainer _persistenceExtensionContainer;
         private IPersistenceProvider _persistenceProvider;
 
-        public PersistenceHelper(IPersistenceSupportExtensionContainer persistenceSupportExtentionContainer, IPersistenceProvider persistenceProvider)
+        public PersistenceHelper(IPersistenceSupportExtensionContainer persistenceSupportExtensionContainer, IPersistenceProvider persistenceProvider)
         {
-            _persistenceExtentionContainer = persistenceSupportExtentionContainer;
+            _persistenceExtensionContainer = persistenceSupportExtensionContainer;
             _persistenceProvider = persistenceProvider;
 
             if (!_persistenceProvider.CheckIfCategoryExists(CACHE_PERSISTENCE_CATEGORY))
@@ -234,16 +234,16 @@ namespace Clipbox.ExtendedClipboard
         {
             clipboardDataObject = null;
 
-            var persistenceExtention = _persistenceExtentionContainer.ResolvePersistenceSupport(persistableCdo.IntermediateFormatMetadata.FormatGuid);
-            if (persistenceExtention == null)
+            var persistenceExtension = _persistenceExtensionContainer.ResolvePersistenceSupport(persistableCdo.IntermediateFormatMetadata.FormatGuid);
+            if (persistenceExtension == null)
             {
-                throw new InvalidOperationException($"No suitable persistence support extention found for {persistableCdo.IntermediateFormatMetadata.FormatGuid}, therefore deserialization is not possible.");
+                throw new InvalidOperationException($"No suitable persistence support extension found for {persistableCdo.IntermediateFormatMetadata.FormatGuid}, therefore deserialization is not possible.");
             }
 
             IIntermediateFormat intermediateFormatObj = null;
 
-            try { intermediateFormatObj = persistenceExtention.ByteArrayToIntermediateFormat(persistableCdo.ByteArray); }
-            catch (Exception ex) { throw new ClipboxExtentionException(nameof(persistenceExtention.ByteArrayToIntermediateFormat), persistenceExtention.GetType(), ex); }
+            try { intermediateFormatObj = persistenceExtension.ByteArrayToIntermediateFormat(persistableCdo.ByteArray); }
+            catch (Exception ex) { throw new ClipboxExtensionException(nameof(persistenceExtension.ByteArrayToIntermediateFormat), persistenceExtension.GetType(), ex); }
 
             bool deserializationSuccess = intermediateFormatObj != null;
 
@@ -372,7 +372,7 @@ namespace Clipbox.ExtendedClipboard
             }
 
             return item.ClipboardDataObjects.OfType<ClipboardDataObject>().Any(cdo => 
-            _persistenceExtentionContainer.CheckIsIntermediateFormatSupported(cdo.IntermediateFormatMetadata.FormatGuid));
+            _persistenceExtensionContainer.CheckIsIntermediateFormatSupported(cdo.IntermediateFormatMetadata.FormatGuid));
             
         }
 
@@ -382,16 +382,16 @@ namespace Clipbox.ExtendedClipboard
         {
             foreach (ClipboardDataObject cdo in clipboardDataObjects)
             {
-                var persistenceExtention = _persistenceExtentionContainer.ResolvePersistenceSupport(cdo.IntermediateFormatMetadata.FormatGuid);
-                if (persistenceExtention == null)
+                var persistenceExtension = _persistenceExtensionContainer.ResolvePersistenceSupport(cdo.IntermediateFormatMetadata.FormatGuid);
+                if (persistenceExtension == null)
                 {
                     continue;
                 }
 
                 byte[] dataBytes = null;
 
-                try { dataBytes = persistenceExtention.IntermediateFormatToByteArray(cdo.IntermediateFormatObject); }
-                catch (Exception ex) { throw new ClipboxExtentionException(nameof(persistenceExtention.IntermediateFormatToByteArray), persistenceExtention.GetType(), ex); }
+                try { dataBytes = persistenceExtension.IntermediateFormatToByteArray(cdo.IntermediateFormatObject); }
+                catch (Exception ex) { throw new ClipboxExtensionException(nameof(persistenceExtension.IntermediateFormatToByteArray), persistenceExtension.GetType(), ex); }
 
                 if (dataBytes == null)
                 {

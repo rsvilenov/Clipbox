@@ -31,7 +31,7 @@ namespace Clipbox.Services
 
         private readonly ICloudSynchronizationService _cloudSyncService;
 
-        private readonly UIExtentionContainer _uiExtContainer;
+        private readonly UIExtensionContainer _uiExtContainer;
         
         private IMainWindow _mainWindow;
 
@@ -56,7 +56,7 @@ namespace Clipbox.Services
 
         public MainClipboardViewWindowService(IClipboardManager clipboardManager,
             IPreviewGenerationService previewGenerationService, 
-            UIExtentionContainer uiExtContainer, 
+            UIExtensionContainer uiExtContainer, 
             ISettingsService settingsService,
             ISearchService searchService,
             ICloudSynchronizationService cloudSyncService)

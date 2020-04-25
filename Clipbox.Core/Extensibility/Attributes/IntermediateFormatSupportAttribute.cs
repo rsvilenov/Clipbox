@@ -27,9 +27,9 @@ namespace Clipbox.Core.Extensibility.Attributes
 
         public static string GetIntermediateFormatGuidFor(Type extensionType)
         {
-            if (!extensionType.GetInterfaces().Contains(typeof(IClipboxExtention)))
+            if (!extensionType.GetInterfaces().Contains(typeof(IClipboxExtension)))
             {
-                throw new InvalidCastException($"{extensionType.Name} does not implement {nameof(IClipboxExtention)}");
+                throw new InvalidCastException($"{extensionType.Name} does not implement {nameof(IClipboxExtension)}");
             }
 
             var attributes = (IntermediateFormatSupportAttribute[])extensionType.GetCustomAttributes(typeof(IntermediateFormatSupportAttribute), true);

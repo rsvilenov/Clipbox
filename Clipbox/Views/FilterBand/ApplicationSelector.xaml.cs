@@ -1,7 +1,7 @@
 ﻿using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.UI;
-using Clipbox.Infrastructure.UI.ExtentionMethods;
+using Clipbox.Infrastructure.UI.ExtensionMethods;
 using Clipbox.ViewModels;
 using Clipbox.Views.FilterBand.EventArgsClasses;
 using System;

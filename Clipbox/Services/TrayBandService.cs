@@ -42,7 +42,7 @@ namespace Clipbox.Services
             _trayContextMenuHelper = new TrayContextMenuHelper(_trayContextMenuService);
 
             int mySessionId = SessionUtils.GetCurrentSessionId();
-            _namedPipeServer = new NamedPipesServer($"{ProductConstants.SHELL_EXTENTION_NAMED_PIPE_PREFIX}.{mySessionId}");
+            _namedPipeServer = new NamedPipesServer($"{ProductConstants.SHELL_EXTENSION_NAMED_PIPE_PREFIX}.{mySessionId}");
             _namedPipeServer.GotMessage += _namedPipeServer_GotMessage;
             _namedPipeServer.ErrorOccurred += _namedPipeServer_ErrorOccurred;
 
@@ -129,7 +129,7 @@ namespace Clipbox.Services
 
         /// <summary>
         /// Sometimes I get two WM_RBUTTONUP in a row, resulting from a single mouse click.
-        /// It is much easier to handle this situation here, than in the DeskBand extention.
+        /// It is much easier to handle this situation here, than in the DeskBand extension.
         /// </summary>
         private class TrayContextMenuHelper : IDisposable
         {

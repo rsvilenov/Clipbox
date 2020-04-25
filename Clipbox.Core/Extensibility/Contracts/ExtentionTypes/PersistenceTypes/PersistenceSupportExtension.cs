@@ -1,6 +1,6 @@
 ﻿using Clipbox.Core.ClipboardContent.Enums;
 
-namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes.PersistenceTypes
+namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.PersistenceTypes
 {
     public abstract class PersistenceSupportExtension<T> : IPersistenceSupport
         where T : IIntermediateFormat
@@ -8,7 +8,7 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes.PersistenceTypes
 
         /// <summary>
         /// Converts the byte array to a clipboard object, which can be taken by the relevant
-        /// clipboard format extention and converted to a pointer, which can be passed to the clipboard.
+        /// clipboard format extension and converted to a pointer, which can be passed to the clipboard.
         /// </summary>
         /// <param name="byteArray"></param>
         /// <returns></returns>
@@ -24,7 +24,7 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes.PersistenceTypes
         /// The data may change during the process 
         /// (e.g. when getting a gdi+ handle from .NET's Metafile, the object gets invalidated).
         /// </summary>
-        /// <param name="data">The data, as processed by the relevant clipboard format extention</param>
+        /// <param name="data">The data, as processed by the relevant clipboard format extension</param>
         /// <returns>Byte array of the data</returns>
         public IIntermediateFormat ByteArrayToIntermediateFormat(byte[] byteArray)
         {

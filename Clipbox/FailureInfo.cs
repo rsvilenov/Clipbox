@@ -38,15 +38,15 @@ namespace Clipbox
 
         public float AvailableSystemMemoryMB { get; set; }
 
-        public List<string> LoadedExtentions { get; set; }
+        public List<string> LoadedExtensions { get; set; }
 
-        public string FailedExtentionType { get; set; }
+        public string FailedExtensionType { get; set; }
 
-        public double FailedExtentionVersion { get; set; }
+        public double FailedExtensionVersion { get; set; }
 
-        public string FailedExtentionAuthor { get; set; }
+        public string FailedExtensionAuthor { get; set; }
 
-        public string FailedExtentionDescription { get; set; }
+        public string FailedExtensionDescription { get; set; }
 
         public long UtcTicks { get; set; }
 
@@ -87,18 +87,18 @@ namespace Clipbox
         }
         
 
-        public void LoadFailedExtentionInfo(Type extType)
+        public void LoadFailedExtensionInfo(Type extType)
         {
-            FailedExtentionType = extType.ToString();
+            FailedExtensionType = extType.ToString();
 
-            IExtentionInfo extInfo = null;
+            IExtensionInfo extInfo = null;
 
-            if (ClipboxExtentionAttribute.IsDefinedFor(extType))
+            if (ClipboxExtensionAttributeAttribute.IsDefinedFor(extType))
             {
-                extInfo = ClipboxExtentionAttribute.GetExtentionInfo(extType);
-                FailedExtentionVersion = extInfo.Version;
-                FailedExtentionAuthor = extInfo.Author;
-                FailedExtentionDescription = extInfo.Description;
+                extInfo = ClipboxExtensionAttributeAttribute.GetExtensionInfo(extType);
+                FailedExtensionVersion = extInfo.Version;
+                FailedExtensionAuthor = extInfo.Author;
+                FailedExtensionDescription = extInfo.Description;
             }
         }
 
@@ -114,13 +114,13 @@ namespace Clipbox
 
             sb.AppendLine($"OS Version: {OsVersion}; Is 64 Bit Os: { Is64BitOs}; Working Set: {WorkingSet}; Available Memory (MB): {AvailableSystemMemoryMB}; CpuCount: {CpuCount}");
 
-            if (FailedExtentionType != null)
+            if (FailedExtensionType != null)
             {
-                sb.AppendLine($"Failed extention type: {FailedExtentionType}; FailedExtentionVersion: {FailedExtentionVersion}; FailedExtentionAuthor: {FailedExtentionAuthor}; FailedExtentionDescription: {FailedExtentionDescription}");
+                sb.AppendLine($"Failed extension type: {FailedExtensionType}; FailedExtensionVersion: {FailedExtensionVersion}; FailedExtensionAuthor: {FailedExtensionAuthor}; FailedExtensionDescription: {FailedExtensionDescription}");
             }
 
-            sb.AppendLine($"Loaded extentions:");
-            sb.AppendLine(string.Join(Environment.NewLine, LoadedExtentions ?? Enumerable.Empty<string>()));
+            sb.AppendLine($"Loaded extensions:");
+            sb.AppendLine(string.Join(Environment.NewLine, LoadedExtensions ?? Enumerable.Empty<string>()));
 
             return sb.ToString();
         }

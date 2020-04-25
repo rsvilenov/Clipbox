@@ -1,0 +1,149 @@
+﻿<UserControl
+    x:Class="Clipbox.Extensions.BuiltIn.HdropFormat.UIExtensions.PreferredDropEffect"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Clipbox.Extensions.BuiltIn.HdropFormat.UIExtensions"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <ControlTemplate x:Key="CutIcon">
+            <Viewbox>
+                <Grid
+                    Width="128"
+                    Height="128"
+                    Visibility="Visible">
+                    <Path
+                        Width="88"
+                        Height="88"
+                        Margin="0,0,0,0"
+                        Data="M13.466411,18.553102C11.751281,18.518865 9.7275603,20.021576 9.1837714,22.016247 8.7827656,23.417263 8.7827656,24.418312 9.3837864,25.619314 9.5838005,26.219297 10.183783,27.020332 11.184771,27.220346 12.18582,27.420299 12.985817,27.420299 13.986805,26.820318 14.787839,26.219297 15.587836,25.219286 15.988842,24.018284 16.38887,22.617266 16.38887,21.616278 15.787851,20.415275 15.387822,19.815231 14.987854,19.014257 13.986805,18.614229 13.817963,18.576635 13.643838,18.556646 13.466411,18.553102z M5.2867792,7.675198C4.6665738,7.6826624 4.0542762,7.7810921 3.3787124,8.0060739 2.5787156,8.406103 1.777681,9.0071239 1.5776663,10.007135 1.377713,11.008123 1.5776664,11.809157 1.777681,12.40914 2.5787156,13.41019 3.3787124,14.210187 4.7797296,14.611192 7.3817489,15.411189 9.5838005,14.210187 9.9837687,12.609155 10.584789,11.408152 9.9837687,10.608155 9.7838147,10.007135 8.9827807,9.0071239 8.1827834,8.2060889 6.7817666,7.8061208 6.2563279,7.7186145 5.7691619,7.669392 5.2867792,7.675198z M25.194941,0L18.589886,11.608167 18.790877,12.209125 32.000012,12.609155 28.79801,14.411178 17.989903,15.411189 15.587836,16.612192 17.188868,19.815231C17.789889,21.015259 17.789889,22.617266 17.389858,24.218298 16.38887,27.420299 13.386823,29.422338 10.784803,28.621364 7.9827692,28.02132 6.5817521,24.818281 7.5817635,21.616278 7.9827692,19.815231 9.1837714,18.413238 10.584789,17.813194L13.586837,16.212223 12.385835,14.010172 9.3837864,15.611204C7.9827692,16.212223 6.3807609,16.412178 4.579715,16.012209 1.377713,15.01116 -0.62432409,12.40914 0.17664956,9.6071061 0.97670745,6.8050717 4.3797004,5.4040545 7.5817635,6.2041124 9.1837714,6.6050571 10.584789,7.8061208 11.384786,9.207138L12.785802,11.809157 14.987854,10.608155 21.992939,1.6010319z"
+                        Fill="#FFFFFFFF"
+                        RenderTransformOrigin="0.5,0.5"
+                        Stretch="Uniform">
+                        <Path.RenderTransform>
+                            <TransformGroup>
+                                <TransformGroup.Children>
+                                    <RotateTransform Angle="0" />
+                                    <ScaleTransform ScaleX="1" ScaleY="1" />
+                                </TransformGroup.Children>
+                            </TransformGroup>
+                        </Path.RenderTransform>
+                    </Path>
+                </Grid>
+            </Viewbox>
+        </ControlTemplate>
+
+        <ControlTemplate x:Key="CopyIcon">
+            <Viewbox>
+                <Grid
+                    Width="128"
+                    Height="128"
+                    Visibility="Visible">
+                    <Path
+                        Width="82"
+                        Height="82"
+                        Margin="0,0,0,0"
+                        Data="M15.844,11.559021L15.844,15.695984C15.844,15.695984,15.764998,18.413025,12.761999,18.177002L9.253997,18.194031 9.253997,29.643982C9.253997,29.908997,9.4619972,30.117004,9.7219984,30.117004L22.904995,30.117004C23.163998,30.117004,23.371998,29.90802,23.371998,29.643982L23.374996,29.643982 23.374996,12.026978C23.374996,11.768982,23.166996,11.559021,22.906994,11.559021z M10.267996,2.28302L10.267996,7.3029785C10.267996,7.3029785,10.176001,10.598999,6.5360023,10.315002L2.2779993,10.333008 2.2779993,24.223022C2.2779995,24.536987,2.5360028,24.79303,2.8560022,24.79303L7.368003,24.79303 7.368003,17.700012 13.235998,11.47998 13.251997,11.47998 14.971998,9.6740112 19.405996,9.6740112 19.405996,2.8499756C19.405996,2.5369873,19.151999,2.28302,18.835997,2.28302z M9.2209999,0L18.837996,0C20.415999,0,21.695997,1.2789917,21.695997,2.8530273L21.695997,9.677002 22.902996,9.677002 22.905995,9.6749878C24.202999,9.6749878,25.258999,10.728027,25.258999,12.028015L25.258999,29.643982C25.258999,30.945984,24.202999,32,22.905995,32L9.7229978,32C8.4230033,32,7.3690025,30.944031,7.3690025,29.643982L7.3690025,27.078003 2.8570017,27.078003C1.2770001,27.078003,-1.3611906E-07,25.798035,1.4210855E-14,24.221985L1.4210855E-14,9.7319946 7.1129981,2.1940308 7.140998,2.1940308z"
+                        Fill="#FFFFFFFF"
+                        RenderTransformOrigin="0.5,0.5"
+                        Stretch="Uniform">
+                        <Path.RenderTransform>
+                            <TransformGroup>
+                                <TransformGroup.Children>
+                                    <RotateTransform Angle="0" />
+                                    <ScaleTransform ScaleX="1" ScaleY="1" />
+                                </TransformGroup.Children>
+                            </TransformGroup>
+                        </Path.RenderTransform>
+                    </Path>
+                </Grid>
+            </Viewbox>
+        </ControlTemplate>
+
+        <Style x:Key="ToggleBtnCut" TargetType="{x:Type ToggleButton}">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                        <Border
+                            Name="btnBorder"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}">
+                            <ContentControl
+                                Name="content"
+                                Foreground="{TemplateBinding Foreground}"
+                                Template="{DynamicResource CutIcon}" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource AccentDark1Brush}" />
+                </Trigger>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource AccentDark2Brush}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="ToggleBtnCopy" TargetType="{x:Type ToggleButton}">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Foreground" Value="White" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                        <Border
+                            Name="btnBorder"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}">
+                            <ContentControl
+                                Name="content"
+                                Foreground="{TemplateBinding Foreground}"
+                                Template="{DynamicResource CopyIcon}" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource AccentDark1Brush}" />
+                </Trigger>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource AccentDark2Brush}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+    </UserControl.Resources>
+    <Grid Margin="10,0,0,5" HorizontalAlignment="Left">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition />
+        </Grid.ColumnDefinitions>
+        <ToggleButton
+            Name="TgCopy"
+            Grid.Column="0"
+            Width="30"
+            Height="30"
+            Checked="TgCopy_Checked"
+            Style="{DynamicResource ToggleBtnCopy}"
+            ToolTip="Copy" />
+        <ToggleButton
+            Name="TgCut"
+            Grid.Column="1"
+            Width="30"
+            Height="30"
+            Checked="TgCut_Checked"
+            Style="{DynamicResource ToggleBtnCut}"
+            ToolTip="Cut" />
+    </Grid>
+</UserControl>

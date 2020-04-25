@@ -1,6 +1,6 @@
 ﻿using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.Core.Extensibility.Contracts;
-using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
+using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Core.Extensibility.Exceptions;
 using Clipbox.Infrastructure.Extensibility.Containers;
 using Clipbox.Infrastructure.UI.DataObjects;
@@ -26,19 +26,19 @@ namespace Clipbox.Views
         
         public event EventHandler<HousekeepingEventArgs> HousekeepingRequested;
 
-        private UIExtentionContainer _container;
+        private UIExtensionContainer _container;
 
         private ISettingsService _settingsService;
 
-        private readonly List<UIExtention> _loadedExtentions;
+        private readonly List<UIExtension> _loadedExtensions;
         
         private double _currentDisplayDpiCalibratedHeight;
 
-        private Dictionary<string, string> _localExtentionSettings;
+        private Dictionary<string, string> _localExtensionSettings;
 
         protected MonitorDimensions MonitorDimensions { get; private set; }
         
-        private Panel _uiExtentionContainer;
+        private Panel _uiExtensionContainer;
 
         private object _extensionLoadingLockHandle = new object();
         
@@ -80,12 +80,12 @@ namespace Clipbox.Views
             }
         }
 
-        public ClipboardViewControlBase(UIExtentionContainer container, ISettingsService settingsService)
+        public ClipboardViewControlBase(UIExtensionContainer container, ISettingsService settingsService)
         {
             _container = container;
             _settingsService = settingsService;
-            _loadedExtentions = new List<UIExtention>();
-            _localExtentionSettings = new Dictionary<string, string>();
+            _loadedExtensions = new List<UIExtension>();
+            _localExtensionSettings = new Dictionary<string, string>();
             
             Loaded += ClipboardViewControlBase_Loaded;
         }
@@ -97,10 +97,10 @@ namespace Clipbox.Views
                 return;
             }
 
-            _uiExtentionContainer = GetUIExtentionContainer();
-            if (_uiExtentionContainer == null)
+            _uiExtensionContainer = GetUIExtensionContainer();
+            if (_uiExtensionContainer == null)
             {
-                throw new NullReferenceException($"{nameof(GetUIExtentionContainer)} returned null.");
+                throw new NullReferenceException($"{nameof(GetUIExtensionContainer)} returned null.");
             }
         }
         
@@ -114,7 +114,7 @@ namespace Clipbox.Views
             }
 
             // if ui extensions are or are being loaded, return
-            if (_uiExtentionContainer.Children.Count > 0)
+            if (_uiExtensionContainer.Children.Count > 0)
             {
                 return;
             }
@@ -143,61 +143,61 @@ namespace Clipbox.Views
 
                 selectedClipboardItems.AddRange(multiItemItemWrappers.Select(w => w.ClipboardItem));
 
-                var allExtentions = GetExtentions(selectedClipboardItems);
-                foreach (var extention in allExtentions)
+                var allExtensions = GetExtensions(selectedClipboardItems);
+                foreach (var extension in allExtensions)
                 {
-                    UIElement extentionUIElement = null;
-                    extention.OnExtentionViewGenerating(selectedClipboardItems, ref extentionUIElement, new Size(_uiExtentionContainer.MaxWidth, _uiExtentionContainer.MaxHeight));
-                    _uiExtentionContainer.Children.Add(extentionUIElement);
+                    UIElement extensionUIElement = null;
+                    extension.OnExtensionViewGenerating(selectedClipboardItems, ref extensionUIElement, new Size(_uiExtensionContainer.MaxWidth, _uiExtensionContainer.MaxHeight));
+                    _uiExtensionContainer.Children.Add(extensionUIElement);
                 }
 
-                AreAnyUIExtensionsLoaded = allExtentions.Any();
+                AreAnyUIExtensionsLoaded = allExtensions.Any();
             }
         }
 
-        protected IEnumerable<UIExtention> GetExtentions(IEnumerable<IClipboardItem> clipboardItems)
+        protected IEnumerable<UIExtension> GetExtensions(IEnumerable<IClipboardItem> clipboardItems)
         {
-            _loadedExtentions.Clear();
+            _loadedExtensions.Clear();
             
-            IEnumerable<UIExtention> extentionsToShow = _container.ResolveAll().Where(ext => CheckShouldLoadExtention(ext, clipboardItems));
-            foreach (UIExtention extention in extentionsToShow)
+            IEnumerable<UIExtension> extensionsToShow = _container.ResolveAll().Where(ext => CheckShouldLoadExtension(ext, clipboardItems));
+            foreach (UIExtension extension in extensionsToShow)
             {
-                _loadedExtentions.Add(extention);
-                Dictionary<string, string> settingsForExtention = GetSettingsForExtention(extention);
+                _loadedExtensions.Add(extension);
+                Dictionary<string, string> settingsForExtension = GetSettingsForExtension(extension);
 
-                extention.LoadSettings(settingsForExtention);
+                extension.LoadSettings(settingsForExtension);
             }
 
-            return extentionsToShow;
+            return extensionsToShow;
         }
 
-        private Dictionary<string, string> GetSettingsForExtention(UIExtention extention)
+        private Dictionary<string, string> GetSettingsForExtension(UIExtension extension)
         {
-            return _localExtentionSettings
-                .Where(s => s.Key.StartsWith($"{extention.GetType().Name}:"))
+            return _localExtensionSettings
+                .Where(s => s.Key.StartsWith($"{extension.GetType().Name}:"))
                 .ToDictionary(
-                    // remove the prefix with the name of the extention
-                    s => s.Key.Replace(extention.GetType().Name + ":", string.Empty),
-                    s => _localExtentionSettings[s.Key]);
+                    // remove the prefix with the name of the extension
+                    s => s.Key.Replace(extension.GetType().Name + ":", string.Empty),
+                    s => _localExtensionSettings[s.Key]);
         }
 
-        private bool CheckShouldLoadExtention(UIExtention extention, IEnumerable<IClipboardItem> clipboardItems)
+        private bool CheckShouldLoadExtension(UIExtension extension, IEnumerable<IClipboardItem> clipboardItems)
         {
-            try { return extention.OnShouldShow(clipboardItems); }
+            try { return extension.OnShouldShow(clipboardItems); }
             catch (Exception ex)
             {
-                throw new ClipboxExtentionException(nameof(extention.OnShouldShow), extention.GetType(), ex);
+                throw new ClipboxExtensionException(nameof(extension.OnShouldShow), extension.GetType(), ex);
             }
         }
 
         public IReadOnlyList<IFlowParameter> GetFlowParameters()
         {
-            var parameters = _loadedExtentions.SelectMany(ext => ext.GetAllParameters());
+            var parameters = _loadedExtensions.SelectMany(ext => ext.GetAllParameters());
             var distinctParametersByKey = parameters.GroupBy(p => p.Key).Select(gr => gr.First());
 
             if (parameters.Count() != distinctParametersByKey.Count())
             {
-                throw new InvalidOperationException("There are two UIExtention parameters with the same key");
+                throw new InvalidOperationException("There are two UIExtension parameters with the same key");
             }
             
             return parameters.ToList().AsReadOnly();
@@ -205,12 +205,12 @@ namespace Clipbox.Views
 
         public void ClearParameters()
         {
-            _loadedExtentions.ForEach(ext => ext.ClearParameters());
+            _loadedExtensions.ForEach(ext => ext.ClearParameters());
         }
 
         public void SaveChangedSettings()
         {
-            foreach (UIExtention ext in _loadedExtentions)
+            foreach (UIExtension ext in _loadedExtensions)
             {
                 IReadOnlyDictionary<string, string> settings = ext.GetSettings();
                 foreach (string key in settings.Keys)
@@ -222,14 +222,14 @@ namespace Clipbox.Views
                     //{
                     //    _settingsService.SetSetting(ext.GetType().Name + ":" + key, settings[key]);
                     //}
-                    string keyWithExtentionType = ext.GetType().Name + ":" + key;
-                    if (_localExtentionSettings.ContainsKey(keyWithExtentionType))
+                    string keyWithExtensionType = ext.GetType().Name + ":" + key;
+                    if (_localExtensionSettings.ContainsKey(keyWithExtensionType))
                     {
-                        _localExtentionSettings[keyWithExtentionType] = settings[key];
+                        _localExtensionSettings[keyWithExtensionType] = settings[key];
                     }
                     else
                     {
-                        _localExtentionSettings.Add(keyWithExtentionType, settings[key]);
+                        _localExtensionSettings.Add(keyWithExtensionType, settings[key]);
                     }
                 }
             }
@@ -286,7 +286,7 @@ namespace Clipbox.Views
 
         protected void ClearLoadedUIExtensions()
         {
-            _uiExtentionContainer.Children.Clear();
+            _uiExtensionContainer.Children.Clear();
             AreAnyUIExtensionsLoaded = false;
         }
 
@@ -297,7 +297,7 @@ namespace Clipbox.Views
             removedClipboardItemIds = args.RemovedClipboardItemIds.ToList().AsReadOnly();
         }
         
-        protected abstract Panel GetUIExtentionContainer();
+        protected abstract Panel GetUIExtensionContainer();
 
         #region IDisposable Support
         private bool _disposedValue = false; // To detect redundant calls

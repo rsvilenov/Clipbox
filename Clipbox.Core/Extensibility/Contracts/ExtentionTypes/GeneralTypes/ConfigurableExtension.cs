@@ -1,12 +1,12 @@
 ﻿using Clipbox.Core.Configuration;
 using System.Collections.Generic;
 
-namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes.GeneralTypes
+namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
 {
     /// <summary>
     /// Provides configuration capability for the extensions 
     /// </summary>
-    public abstract class ConfigurableExtension : IConfigurableObject, IClipboxExtention
+    public abstract class ConfigurableExtension : IConfigurableObject, IClipboxExtension
     {
         /// <summary>
         /// The extensions override this method in order to know when

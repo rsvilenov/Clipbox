@@ -1,4 +1,4 @@
-﻿using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
+﻿using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using System;
 
 namespace Clipbox.Core.Extensibility.Attributes
@@ -7,11 +7,11 @@ namespace Clipbox.Core.Extensibility.Attributes
     [AttributeUsage(AttributeTargets.Class)]
     public class FlowDependencyAttribute : Attribute
     {
-        public ParametrizedExtention DependencyExtention { get; }
+        public ParametrizedExtension DependencyExtension { get; }
 
-        public FlowDependencyAttribute(ParametrizedExtention depencencyExtention)
+        public FlowDependencyAttribute(ParametrizedExtension depencencyExtension)
         {
-            DependencyExtention = depencencyExtention;
+            DependencyExtension = depencencyExtension;
         }
     }
 }

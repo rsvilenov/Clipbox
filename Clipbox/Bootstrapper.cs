@@ -44,7 +44,7 @@ namespace Clipbox
 
         QuickClipboardViewWindowService _previewWindowService;
 
-        FlowExtentionExecutorService _flowExtentionExecutorService;
+        FlowExtensionExecutorService _flowExtensionExecutorService;
         
         TrayIconService _trayService;
 
@@ -58,7 +58,7 @@ namespace Clipbox
         
         TrayBandService _trayBandService;
 
-        ExtentionLoader _extentionLoader;
+        ExtensionLoader _extensionLoader;
 
         QuickViewClipboardContents _quickViewClipboardContents;
 
@@ -114,17 +114,17 @@ namespace Clipbox
             // Initialize the clipboard listener
             _clipboardListenerService = new ClipboardListenerService();
 
-            // Load extention containers
-            _extentionLoader = new ExtentionLoader();
-            _extentionLoader.LoadContainers();
-            _extentionLoader.StatelessExtentionResolved += (s, e) =>
+            // Load extension containers
+            _extensionLoader = new ExtensionLoader();
+            _extensionLoader.LoadContainers();
+            _extensionLoader.StatelessExtensionResolved += (s, e) =>
             {
                 // this may slow us down
-                _persistenceProvider.Write("lastLoadedExtention.log", $"{e.ExtentionType.FullName} [{e.ExtentionType.Assembly.FullName}]");
+                _persistenceProvider.Write("lastLoadedExtension.log", $"{e.ExtensionType.FullName} [{e.ExtensionType.Assembly.FullName}]");
             };
 
             // Initialize the clipboard manager
-            _clipboardManager = new ClipboardManager(_clipboardListenerService, _extentionLoader.FormatsContainer, _extentionLoader.PersistenceSupportExtensionContainer, _persistenceProvider);
+            _clipboardManager = new ClipboardManager(_clipboardListenerService, _extensionLoader.FormatsContainer, _extensionLoader.PersistenceSupportExtensionContainer, _persistenceProvider);
 
             // Initialize the settings service
             IConfigurationProvider configurationProvider = new PersistableConfigurationProvider(_persistenceProvider);
@@ -159,19 +159,19 @@ namespace Clipbox
             // overrides MaxSimultaneousPreviewTasks
             _settingsService.SetSetting(SettingsKeys.AutoDetermineMaxSimultaneousPreviewTasks, false);
 
-            _previewGenerationService = new PreviewGenerationService(_clipboardManager, _extentionLoader.PreviewGeneratorsContainer, _settingsService, _persistenceProvider);
+            _previewGenerationService = new PreviewGenerationService(_clipboardManager, _extensionLoader.PreviewGeneratorsContainer, _settingsService, _persistenceProvider);
             
             // Initialize the view model - the quick view should show as fast as possible, so we will create it beforehand
             var viewModel = new QuickViewkClipboardContentsViewModel(_clipboardManager, _previewGenerationService, _settingsService);
 
             // Prepare the preview window
-            _quickViewClipboardContents = new QuickViewClipboardContents(viewModel, _extentionLoader.UIExtentionContainer, _settingsService);
+            _quickViewClipboardContents = new QuickViewClipboardContents(viewModel, _extensionLoader.UIExtensionContainer, _settingsService);
 
             // Initialize the quick preview window service
             _previewWindowService = new QuickClipboardViewWindowService(_quickViewClipboardContents, _settingsService);
 
-            // Initialize the FlowExtention executor service
-            _flowExtentionExecutorService = new FlowExtentionExecutorService(_extentionLoader.FlowExtentionContainer);
+            // Initialize the FlowExtension executor service
+            _flowExtensionExecutorService = new FlowExtensionExecutorService(_extensionLoader.FlowExtensionContainer);
 
             // Initialize the keyboard service
             _keyboardService = new LowLevelKeyboardService();
@@ -181,19 +181,19 @@ namespace Clipbox
 
             _trayContextMenuService = new TrayContextMenuService(_settingsService);
             
-            _searchService = new SearchService(_extentionLoader.SearchSupportExtensionContainer, _clipboardManager, new LuceneSearch());
+            _searchService = new SearchService(_extensionLoader.SearchSupportExtensionContainer, _clipboardManager, new LuceneSearch());
             
             // this view can show a little bit slower so we will not keep its instance alive the whole time - we will create it upon request within the service
             _mainClipboardViewWindowService = new MainClipboardViewWindowService(_clipboardManager, 
                 _previewGenerationService, 
-                _extentionLoader.UIExtentionContainer, 
+                _extensionLoader.UIExtensionContainer, 
                 _settingsService,
                 _searchService,
                 _cloudSyncService);
 
 
             // Initialize the flow controller
-            _flowController = new FlowController(_clipboardManager, _keyboardService, _flowExtentionExecutorService, _previewWindowService, _mainClipboardViewWindowService);
+            _flowController = new FlowController(_clipboardManager, _keyboardService, _flowExtensionExecutorService, _previewWindowService, _mainClipboardViewWindowService);
 
             //_mainWindow = new MainWindow(_settingsService);
             //Application.Current.MainWindow = _mainWindow;
@@ -324,7 +324,7 @@ namespace Clipbox
             TryDisposeObject(_flowController);
             TryDisposeObject(_cloudSyncService);
             TryDisposeObject(_clipboardManager);
-            TryDisposeObject(_flowExtentionExecutorService);
+            TryDisposeObject(_flowExtensionExecutorService);
             TryDisposeObject(_previewWindowService);
             TryDisposeObject(_quickViewClipboardContents);
             TryDisposeObject(_previewGenerationService);
@@ -353,23 +353,23 @@ namespace Clipbox
                 failureInfo.LoadExceptionObject(exceptionObject);
             }
 
-            if (_extentionLoader != null && _extentionLoader.LoadedTypes != null)
+            if (_extensionLoader != null && _extensionLoader.LoadedTypes != null)
             {
-                failureInfo.LoadedExtentions = _extentionLoader.LoadedTypes.
+                failureInfo.LoadedExtensions = _extensionLoader.LoadedTypes.
                     Select(t => t.FullName).
                     ToList();
             }
             
             try
             {
-                if (exceptionObject is ClipboxExtentionException)
+                if (exceptionObject is ClipboxExtensionException)
                 {
-                    var extentionException = (ClipboxExtentionException)exceptionObject;
+                    var extensionException = (ClipboxExtensionException)exceptionObject;
 
-                    Type failedExtentionType = extentionException.ExtentionType;
-                    if (failedExtentionType != null)
+                    Type failedExtensionType = extensionException.ExtensionType;
+                    if (failedExtensionType != null)
                     {
-                        failureInfo.LoadFailedExtentionInfo(failedExtentionType);
+                        failureInfo.LoadFailedExtensionInfo(failedExtensionType);
                     }
                 }
             }

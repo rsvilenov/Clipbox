@@ -1,4 +1,4 @@
-﻿using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
+﻿using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 
 namespace Clipbox.Infrastructure.Extensibility.Containers.Interfaces
 {

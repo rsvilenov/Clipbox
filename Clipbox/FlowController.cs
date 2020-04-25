@@ -22,7 +22,7 @@ namespace Clipbox
         private readonly ILowLevelKeyboardService _keyboardService;
         private readonly IQuickClipboardViewWindowService _quickViewWindowService;
         private readonly IMainClipboardViewWindowService _mainViewWindowService;
-        private readonly IFlowExtentionExecutorService _flowExtentionExecutorService;
+        private readonly IFlowExtensionExecutorService _flowExtensionExecutorService;
 
         private readonly System.Timers.Timer _longCtrlVTimer;
 
@@ -35,13 +35,13 @@ namespace Clipbox
 
         public FlowController(IClipboardManager clipboardManager, 
             ILowLevelKeyboardService keyboardService,
-            IFlowExtentionExecutorService flowExtentionExecutorService, 
+            IFlowExtensionExecutorService flowExtensionExecutorService, 
             IQuickClipboardViewWindowService quickViewWindowService,
             IMainClipboardViewWindowService mainViewWindowService)
         {
             _clipboardManager = clipboardManager;
             _keyboardService = keyboardService;
-            _flowExtentionExecutorService = flowExtentionExecutorService;
+            _flowExtensionExecutorService = flowExtensionExecutorService;
             _quickViewWindowService = quickViewWindowService;
             _mainViewWindowService = mainViewWindowService;
             
@@ -53,7 +53,7 @@ namespace Clipbox
             _mainViewWindowService.HousekeepingRequested += _clipboardViewWindowService_HousekeepingRequested;
 
             _parametersFromQuickViewWindowService = Enumerable.Empty<IFlowParameter>();
-            _houseKeepingTasks = _flowExtentionExecutorService.RunRegisterHousekeepingTaskMethods();
+            _houseKeepingTasks = _flowExtensionExecutorService.RunRegisterHousekeepingTaskMethods();
 
             _clipboardManager.ItemFetching += _clipboardManager_ItemFetching;
 
@@ -99,14 +99,14 @@ namespace Clipbox
             if (allSelectedItems.Count() > 1)
             {
                 // the items are combinable if we can modify them together
-                e.AreItemsCombinable = _flowExtentionExecutorService.RunOnQueryModifyMethods(allSelectedItems);
+                e.AreItemsCombinable = _flowExtensionExecutorService.RunOnQueryModifyMethods(allSelectedItems);
             }
         }
 
         private void _clipboardManager_ItemFetching(object sender, ExtendedClipboard.EventArgs.ItemFetchingEventArgs e)
         {
             bool cancel = false;
-            _flowExtentionExecutorService.RunOnCopyRequestedMethods(e.SourceWindowInfo, ref cancel);
+            _flowExtensionExecutorService.RunOnCopyRequestedMethods(e.SourceWindowInfo, ref cancel);
             e.Cancel = cancel;
         }
 
@@ -131,7 +131,7 @@ namespace Clipbox
                 {
                     IClipboardItem item = _clipboardManager.GetClipboardItem(clipboardItemId, restoreShrinked: hkTask.RequiresRestoredState);
 
-                    IHouseKeepingResult result = _flowExtentionExecutorService.RunOnHousekeepingPerformedMethods(hkTask, item);
+                    IHouseKeepingResult result = _flowExtensionExecutorService.RunOnHousekeepingPerformedMethods(hkTask, item);
                     if (result != null)
                     {
                         if (result.ShouldRemoveItem)
@@ -219,7 +219,7 @@ namespace Clipbox
         {
             bool cancel = false;
             _hasQuickViewWindowShowingBeenRequested = true;
-            _flowExtentionExecutorService.OnShowQuickViewWindowRequestedMethods(ref cancel);
+            _flowExtensionExecutorService.OnShowQuickViewWindowRequestedMethods(ref cancel);
             if (!cancel)
             {
                 _quickViewWindowService.ShowQuickClipboardViewWindow();
@@ -293,7 +293,7 @@ namespace Clipbox
 
             bool cancelPasteRequested = false;
 
-            _flowExtentionExecutorService.RunOnBeforeManagedPasteMethods(currentItem, ref cancelPasteRequested);
+            _flowExtensionExecutorService.RunOnBeforeManagedPasteMethods(currentItem, ref cancelPasteRequested);
 
             if (cancelPasteRequested)
             {
@@ -311,7 +311,7 @@ namespace Clipbox
 
             bool removeItemFromClipboardItemsRequested = false;
 
-            _flowExtentionExecutorService.RunOnManagedPasteCompletedMethods(currentItem, ref removeItemFromClipboardItemsRequested);
+            _flowExtensionExecutorService.RunOnManagedPasteCompletedMethods(currentItem, ref removeItemFromClipboardItemsRequested);
 
             if (removeItemFromClipboardItemsRequested || currentItem.IsTemporary)
             {
@@ -329,7 +329,7 @@ namespace Clipbox
         {
             IClipboardItem currentItem = null;
 
-           _flowExtentionExecutorService.ClearParameters();
+           _flowExtensionExecutorService.ClearParameters();
 
             IEnumerable<IClipboardItem> selectedItems = selectedItemIds.Select(id => _clipboardManager.GetClipboardItem(id, restoreShrinked: true));
 
@@ -346,21 +346,21 @@ namespace Clipbox
                 }
 
                 var multiItemsParameter = new FlowParameter<Dictionary<string, int[]>>("MultiItemSelection", multiItemSelectionParamDictionary);
-                _flowExtentionExecutorService.LoadParameters(new List<IFlowParameter> { multiItemsParameter });
+                _flowExtensionExecutorService.LoadParameters(new List<IFlowParameter> { multiItemsParameter });
             }
 
-            _flowExtentionExecutorService.LoadParameters(flowParameters);
+            _flowExtensionExecutorService.LoadParameters(flowParameters);
             
-            bool canModify = _flowExtentionExecutorService.RunOnQueryModifyMethods(selectedItems);
+            bool canModify = _flowExtensionExecutorService.RunOnQueryModifyMethods(selectedItems);
             if (!canModify && selectedMultiItemIds.Any())
             {
-                throw new InvalidOperationException("Multi-selection items were found for which there are no flow extentions.");
+                throw new InvalidOperationException("Multi-selection items were found for which there are no flow extensions.");
             }
 
             // can we modify or combine the items?
             if (canModify)
             {
-                IGeneratedClipboardItem generatedClipboardObject = _flowExtentionExecutorService.ModifyItems(selectedItems);
+                IGeneratedClipboardItem generatedClipboardObject = _flowExtensionExecutorService.ModifyItems(selectedItems);
                 if (generatedClipboardObject != null && generatedClipboardObject.ClipboardDataObjects != null && generatedClipboardObject.ClipboardDataObjects.Any())
                 {
                     currentItem = _clipboardManager.AppendFromGenerated(generatedClipboardObject, 
@@ -394,7 +394,7 @@ namespace Clipbox
             //    return;
             //}
 
-            //_flowExtentionExecutorService.RunOnOnCopyCompletedMethods(currentItem);
+            //_flowExtensionExecutorService.RunOnOnCopyCompletedMethods(currentItem);
         }
 
         public void Dispose()

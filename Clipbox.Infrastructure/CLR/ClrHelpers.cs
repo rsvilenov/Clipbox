@@ -7,7 +7,7 @@ namespace Clipbox.Infrastructure.CLR
     {
         /// <summary>
         /// Tries to get the size in memory of a managed object. This is, mildly put, experimental, so 
-        /// it is not implemented as an extention method of 'object' in an attempt to limit its usage.
+        /// it is not implemented as an extension method of 'object' in an attempt to limit its usage.
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>

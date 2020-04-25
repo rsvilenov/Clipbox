@@ -42,7 +42,7 @@ namespace Clipbox.Views
 
         private bool _isDisposing;
 
-        public QuickViewClipboardContents(QuickViewkClipboardContentsViewModel vm, UIExtentionContainer container, ISettingsService settingsService)
+        public QuickViewClipboardContents(QuickViewkClipboardContentsViewModel vm, UIExtensionContainer container, ISettingsService settingsService)
             : base (container, settingsService)
         {   
             InitializeComponent();
@@ -189,7 +189,7 @@ namespace Clipbox.Views
 
         private void ShowErrorTextTemporarily(string text, int visibleMilliseconds)
         {
-            uiExtentionContainer.Visibility = Visibility.Collapsed;
+            uiExtensionContainer.Visibility = Visibility.Collapsed;
             ErrorTextBlock.Visibility = Visibility.Visible;
             ErrorTextBlock.Text = text;
             Task.Delay(visibleMilliseconds).ContinueWith(t =>
@@ -198,7 +198,7 @@ namespace Clipbox.Views
                 {
                     ErrorTextBlock.Text = string.Empty;
                     ErrorTextBlock.Visibility = Visibility.Collapsed;
-                    uiExtentionContainer.Visibility = Visibility.Visible;
+                    uiExtensionContainer.Visibility = Visibility.Visible;
                 }));
             });
         }
@@ -224,9 +224,9 @@ namespace Clipbox.Views
             this.MaxHeight = controlMaxHeight;
         }
         
-        protected override Panel GetUIExtentionContainer()
+        protected override Panel GetUIExtensionContainer()
         {
-            return uiExtentionContainer;
+            return uiExtensionContainer;
         }
 
         private void MainListView_ItemPinUnpinRequested(object sender, EventArgsClasses.ClipboardItemManipulationEventArgs e)

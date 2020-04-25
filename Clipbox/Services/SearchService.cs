@@ -1,6 +1,6 @@
 ﻿using Clipbox.Core.ClipboardContent.Interfaces;
-using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
-using Clipbox.Core.Extensibility.Contracts.ExtentionTypes.GeneralTypes;
+using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
+using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
 using Clipbox.Core.Search;
 using Clipbox.Core.Search.IndexUnits;
 using Clipbox.Core.Search.SearchTerms;

@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 
-namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes.GeneralTypes
+namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
 {
     /// <summary>
     /// Settings view extension

@@ -88,7 +88,7 @@ namespace Clipbox.Views
 
         private CancellableTaskManager _cancellableTaskManager;
 
-        private SlidingTimer _uiExtentionGenerationSlidingTimer;
+        private SlidingTimer _uiExtensionGenerationSlidingTimer;
 
         /// <summary>
         /// This field provides not a nice solution to the problem of
@@ -98,7 +98,7 @@ namespace Clipbox.Views
         private volatile bool _isDisposing;
 
         public MainViewClipboardContents(MainViewClipboardContentsViewModel vm,
-            UIExtentionContainer container,
+            UIExtensionContainer container,
             ISettingsService settingsService)
             : base(container, settingsService)
         {
@@ -108,11 +108,11 @@ namespace Clipbox.Views
 
             _cancellableTaskManager = new CancellableTaskManager();
 
-            _uiExtentionGenerationSlidingTimer = new SlidingTimer
+            _uiExtensionGenerationSlidingTimer = new SlidingTimer
             {
                 IntervalMs = LoadingOfUIExtensionsDelayMs
             };
-            _uiExtentionGenerationSlidingTimer.Elapsed += _uiExtentionGenerationSlidingTimer_Elapsed;
+            _uiExtensionGenerationSlidingTimer.Elapsed += _uiExtensionGenerationSlidingTimer_Elapsed;
 
 
             Loaded += MainViewClipboardContents_Loaded;
@@ -304,7 +304,7 @@ namespace Clipbox.Views
         {
             _isDisposing = true;
 
-            _uiExtentionGenerationSlidingTimer.Dispose();
+            _uiExtensionGenerationSlidingTimer.Dispose();
 
             if (MainListView != null)
             {
@@ -322,9 +322,9 @@ namespace Clipbox.Views
             Debug.WriteLine("MainViewClipboardContents unloaded");
         }
 
-        protected override Panel GetUIExtentionContainer()
+        protected override Panel GetUIExtensionContainer()
         {
-            return uiExtentionContainer;
+            return uiExtensionContainer;
         }
 
         private void SetToClipboardButton_Click(object sender, RoutedEventArgs e)
@@ -655,11 +655,11 @@ namespace Clipbox.Views
 
             if (MainListView.SelectedItems.Count > 0)
             {
-                _uiExtentionGenerationSlidingTimer.Slide();
+                _uiExtensionGenerationSlidingTimer.Slide();
             }
         }
 
-        private void _uiExtentionGenerationSlidingTimer_Elapsed(object sender, EventArgs e)
+        private void _uiExtensionGenerationSlidingTimer_Elapsed(object sender, EventArgs e)
         {
             Dispatcher.BeginInvoke(DispatcherPriority.Background,
             (Action)(() =>

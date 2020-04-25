@@ -11,11 +11,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clipbox.Win32", "Clipbox.Wi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clipbox.Infrastructure", "Clipbox.Infrastructure\Clipbox.Infrastructure.csproj", "{EDD4D662-1F39-415C-9B66-718457922626}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extentions", "Extentions", "{DABF30A7-C0FE-42DA-8CB0-BD53DADD1B18}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", "{DABF30A7-C0FE-42DA-8CB0-BD53DADD1B18}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BuiltIn", "BuiltIn", "{60FB9C89-D51B-43AC-8982-47D6169EDDAE}"
 	ProjectSection(SolutionItems) = preProject
-		Extentions\Builtin\ReadMe.txt = Extentions\Builtin\ReadMe.txt
+		Extensions\Builtin\ReadMe.txt = Extensions\Builtin\ReadMe.txt
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "External", "External", "{A7DAA277-7E23-4F0D-BD92-A0332486B239}"
@@ -36,13 +36,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ClipboxDeskband", "ClipboxD
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clipbox.Core", "Clipbox.Core\Clipbox.Core.csproj", "{F4BD7048-4D9F-4036-98AA-DA8232EF2AFB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "General", "Extentions\Builtin\General\General.csproj", "{03127EBF-36CB-48D2-82A9-750A8C9293C3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "General", "Extensions\Builtin\General\General.csproj", "{03127EBF-36CB-48D2-82A9-750A8C9293C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HdropFormat", "Extentions\Builtin\HdropFormat\HdropFormat.csproj", "{A11EB84C-D7DB-4003-AA5C-CA90B9EF559F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HdropFormat", "Extensions\Builtin\HdropFormat\HdropFormat.csproj", "{A11EB84C-D7DB-4003-AA5C-CA90B9EF559F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageFormats", "Extentions\Builtin\ImageFormats\ImageFormats.csproj", "{A6B4EAF1-FE41-4D59-911C-1FFA13674110}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ImageFormats", "Extensions\Builtin\ImageFormats\ImageFormats.csproj", "{A6B4EAF1-FE41-4D59-911C-1FFA13674110}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextFormats", "Extentions\Builtin\TextFormats\TextFormats.csproj", "{B3DA11C1-ADC5-4F08-969E-1179F7A24533}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextFormats", "Extensions\Builtin\TextFormats\TextFormats.csproj", "{B3DA11C1-ADC5-4F08-969E-1179F7A24533}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClipboxGuard", "ClipboxGuard\ClipboxGuard.csproj", "{B54C386C-EB27-4893-92DD-76FEB1206E0B}"
 EndProject

@@ -51,7 +51,7 @@ namespace Clipbox.Infrastructure.UI
                 if (_isTimerActive)
                 {
                     // TODO: ConcurrentBag does not guarantee the order of the items,
-                    // so what does Last() extention method has in this context?
+                    // so what does Last() extension method has in this context?
                     // Will it really return the latest item, or I will have to
                     // order the collection first?
                     //if (_slideCache.Any(c => c.Add(_interval) > DateTime.Now))

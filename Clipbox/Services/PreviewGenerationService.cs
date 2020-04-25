@@ -1,7 +1,7 @@
 ﻿using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.Core.Extensibility.Contracts;
-using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
-using Clipbox.Core.Extensibility.Contracts.ExtentionTypes.PreviewGenerationTypes;
+using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
+using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.PreviewGenerationTypes;
 using Clipbox.Core.Extensibility.Exceptions;
 using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.Cache;
@@ -42,7 +42,7 @@ namespace Clipbox.Services
         private const string PREVIEW_DIMENSION_DIC_STORE_KEY = "previewDimensionsDictionary";
 
         private readonly IClipboardManager _clipboardManager;
-        private readonly IPreviewGeneratorExtentionContainer _clipboardFormatPreviewExtContainer;
+        private readonly IPreviewGeneratorExtensionContainer _clipboardFormatPreviewExtContainer;
         private readonly ISettingsService _settingsService;
 
         private readonly IPersistenceProvider _persistenceProvider;
@@ -65,7 +65,7 @@ namespace Clipbox.Services
         
         public PreviewGenerationService(
             IClipboardManager clipboardManager,
-            IPreviewGeneratorExtentionContainer clipboardFormatPreviewExtContainer, 
+            IPreviewGeneratorExtensionContainer clipboardFormatPreviewExtContainer, 
             ISettingsService settingsService,
             IPersistenceProvider persistenceProvider)
         {
@@ -442,7 +442,7 @@ namespace Clipbox.Services
             IPreviewData previewData = null;
 
             try { previewData = singlePreviewGenerator.GetPreview(intermediateFormatObject, itemRequestedWidth, itemRequestedHeight); } // TODO: find a way to determine the preview dimentions
-            catch (Exception ex) { throw new ClipboxExtentionException(nameof(singlePreviewGenerator.GetPreview), singlePreviewGenerator.GetType(), ex); }
+            catch (Exception ex) { throw new ClipboxExtensionException(nameof(singlePreviewGenerator.GetPreview), singlePreviewGenerator.GetType(), ex); }
 
             PreviewItemTransferObject pito = PreviewItemTransferObject.FromPreviewData(previewData);
 
@@ -469,11 +469,11 @@ namespace Clipbox.Services
             };
 
             try { previewGenerator.SetData(intermediateFormatObject); }
-            catch (Exception ex) { throw new ClipboxExtentionException(nameof(previewGenerator.SetData), previewGenerator.GetType(), ex); }
+            catch (Exception ex) { throw new ClipboxExtensionException(nameof(previewGenerator.SetData), previewGenerator.GetType(), ex); }
 
             int itemsCount = 0;
             try { itemsCount = previewGenerator.GetItemsTotalCount(); }
-            catch (Exception ex) { throw new ClipboxExtentionException(nameof(previewGenerator.SetData), previewGenerator.GetType(), ex); }
+            catch (Exception ex) { throw new ClipboxExtensionException(nameof(previewGenerator.SetData), previewGenerator.GetType(), ex); }
 
             if (itemsCount == 0)
             {
@@ -482,7 +482,7 @@ namespace Clipbox.Services
 
             IEnumerable<IPreviewData> previewDataCollection = null;
             try { previewDataCollection = previewGenerator.GetPreview(itemRequestedWidth, itemRequestedHeight, maxPreviewItemsInGroupItem); }
-            catch (Exception ex) { throw new ClipboxExtentionException(nameof(previewGenerator.GetPreview), previewGenerator.GetType(), ex); }
+            catch (Exception ex) { throw new ClipboxExtensionException(nameof(previewGenerator.GetPreview), previewGenerator.GetType(), ex); }
 
             if (itemsCount == 0)
             {

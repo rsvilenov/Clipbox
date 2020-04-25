@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 
-namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes.PreviewGenerationTypes
+namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.PreviewGenerationTypes
 {
     /// <summary>
     /// Preview generation may sometimes take too long, so we can use this interface to

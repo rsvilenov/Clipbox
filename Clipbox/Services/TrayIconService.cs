@@ -1,5 +1,5 @@
 ﻿using Clipbox.Core;
-using Clipbox.Infrastructure.ExtentionMethods;
+using Clipbox.Infrastructure.ExtensionMethods;
 using Clipbox.Services.Enums;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;

@@ -1,6 +1,6 @@
-﻿namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes
+﻿namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes
 {
-    public interface ISearchSupport : IClipboxExtention
+    public interface ISearchSupport : IClipboxExtension
     {
         string GetSearchTextData(IIntermediateFormat intermediateFormat);
     }

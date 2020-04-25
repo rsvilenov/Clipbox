@@ -70,8 +70,8 @@
     <Compile Include="Converters\OrMultiValueConverter.cs" />
     <Compile Include="DataObjects\MonitorDimensions.cs" />
     <Compile Include="DelegateCommand.cs" />
-    <Compile Include="ExtentionMethods\BitmapSourceExtentions.cs" />
-    <Compile Include="ExtentionMethods\MetafileExtentions.cs" />
+    <Compile Include="ExtensionMethods\BitmapSourceExtensions.cs" />
+    <Compile Include="ExtensionMethods\MetafileExtensions.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Resources\ResourceUtils.cs" />
     <Compile Include="SlidingTimer.cs" />

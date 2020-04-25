@@ -1,4 +1,4 @@
-﻿using Clipbox.Infrastructure.UI.ExtentionMethods;
+﻿using Clipbox.Infrastructure.UI.ExtensionMethods;
 using System.Drawing;
 using System.IO;
 using System.Windows.Media.Imaging;

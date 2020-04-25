@@ -2,14 +2,14 @@
 using Clipbox.Core.ClipboardContent.Enums;
 using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.Core.Extensibility.Contracts;
-using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
+using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Core.Extensibility.Exceptions;
 using Clipbox.ExtendedClipboard.ClipboardContent;
 using Clipbox.Infrastructure.Persistence;
 using Clipbox.ExtendedClipboard.EventArgs;
 using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
-using Clipbox.Infrastructure.ExtentionMethods;
+using Clipbox.Infrastructure.ExtensionMethods;
 using Clipbox.Infrastructure.Persistence;
 using Clipbox.Win32;
 using System;
@@ -51,9 +51,9 @@ namespace Clipbox.ExtendedClipboard
 
         private string _currentItemId;
 
-        private IClipboardFormatExtentionContainer _formatExtentionContainer;
+        private IClipboardFormatExtensionContainer _formatExtensionContainer;
 
-        private IPersistenceSupportExtensionContainer _persistenceExtentionContainer;
+        private IPersistenceSupportExtensionContainer _persistenceExtensionContainer;
 
         private IClipboardEventProvider _clipboardEventProvider;
 
@@ -79,12 +79,12 @@ namespace Clipbox.ExtendedClipboard
         /// </summary>
         /// <param name="hWnd">Main program window's handle</param>
         public ClipboardManager(IClipboardEventProvider clipboardEventProvider,
-            IClipboardFormatExtentionContainer formatExtentionContainer,
-            IPersistenceSupportExtensionContainer persistenceExtentionContainer,
+            IClipboardFormatExtensionContainer formatExtensionContainer,
+            IPersistenceSupportExtensionContainer persistenceExtensionContainer,
             IPersistenceProvider persistenceProvider)
         {
-            _formatExtentionContainer = formatExtentionContainer;
-            _persistenceExtentionContainer = persistenceExtentionContainer;
+            _formatExtensionContainer = formatExtensionContainer;
+            _persistenceExtensionContainer = persistenceExtensionContainer;
             _clipboardEventProvider = clipboardEventProvider;
             _persistenceProvider = persistenceProvider;
 
@@ -92,7 +92,7 @@ namespace Clipbox.ExtendedClipboard
             _deletedSyncedClipboardItemIds = new List<string>();
 
             _systemClipboard = new SystemClipboard();
-            _persistenceHelper = new PersistenceHelper(_persistenceExtentionContainer, _persistenceProvider);
+            _persistenceHelper = new PersistenceHelper(_persistenceExtensionContainer, _persistenceProvider);
 
             LoadFromDisk();
 
@@ -239,8 +239,8 @@ namespace Clipbox.ExtendedClipboard
             for (int i = 0; i < item.ClipboardDataObjects.Count; i++)
             {
                 ClipboardDataObject cdo = item.ClipboardDataObjects[i] as ClipboardDataObject;
-                var formatExtention = _formatExtentionContainer.ResolveClipboardFormatSupport(cdo.ClipboardFormatName);
-                if (formatExtention == null)
+                var formatExtension = _formatExtensionContainer.ResolveClipboardFormatSupport(cdo.ClipboardFormatName);
+                if (formatExtension == null)
                 {
                     // unsupported clipboard format
                     continue;
@@ -248,16 +248,16 @@ namespace Clipbox.ExtendedClipboard
 
                 try
                 {
-                    if (!(formatExtention is IClipboardFormatSupport formatSupportExtention))
+                    if (!(formatExtension is IClipboardFormatSupport formatSupportExtension))
                     {
-                        throw new InvalidCastException($"{formatExtention.GetType().Name} does not implement {nameof(IClipboardFormatSupport)}. This indicates a bug in the extension resolving code.");
+                        throw new InvalidCastException($"{formatExtension.GetType().Name} does not implement {nameof(IClipboardFormatSupport)}. This indicates a bug in the extension resolving code.");
                     }
 
                     // get a pointer to the clipboard item (HGLOBAL, HBITMAP, etc..)
                     IntPtr clipboardDataPtr = IntPtr.Zero;
 
-                    try { clipboardDataPtr = formatSupportExtention.IntermediateFormatToPtr(cdo.IntermediateFormatObject); }
-                    catch (Exception ex) { throw new ClipboxExtentionException(nameof(formatSupportExtention.IntermediateFormatToPtr), formatSupportExtention.GetType(), ex); }
+                    try { clipboardDataPtr = formatSupportExtension.IntermediateFormatToPtr(cdo.IntermediateFormatObject); }
+                    catch (Exception ex) { throw new ClipboxExtensionException(nameof(formatSupportExtension.IntermediateFormatToPtr), formatSupportExtension.GetType(), ex); }
                     
                     if (clipboardDataPtr == IntPtr.Zero)
                     {
@@ -284,7 +284,7 @@ namespace Clipbox.ExtendedClipboard
                         try
                         {
                             // OnClipboardFailure, unless overridden, calls GlobalFree() [kernel32]
-                            formatSupportExtention.OnClipboardFailure(clipboardDataPtr);
+                            formatSupportExtension.OnClipboardFailure(clipboardDataPtr);
                         }
                         catch { }
 
@@ -293,7 +293,7 @@ namespace Clipbox.ExtendedClipboard
                 }
                 finally
                 {
-                    formatExtention.Dispose();
+                    formatExtension.Dispose();
                 }
             }
 
@@ -483,16 +483,16 @@ namespace Clipbox.ExtendedClipboard
 
                 foreach (KeyValuePair<uint, string> format in _systemClipboard.GetAvailableFormats())
                 {
-                    var formatExtention = _formatExtentionContainer.ResolveClipboardFormatSupport(format.Value);
-                    if (formatExtention == null)
+                    var formatExtension = _formatExtensionContainer.ResolveClipboardFormatSupport(format.Value);
+                    if (formatExtension == null)
                     {
                         // unsupported clipboard format
                         continue;
                     }
 
-                    if (!(formatExtention is IClipboardFormatSupport formatSupportExtention))
+                    if (!(formatExtension is IClipboardFormatSupport formatSupportExtension))
                     {
-                        throw new InvalidCastException($"{formatExtention.GetType().Name} does not implement {nameof(IClipboardFormatSupport)}. This indicates a bug in the extension resolving code.");
+                        throw new InvalidCastException($"{formatExtension.GetType().Name} does not implement {nameof(IClipboardFormatSupport)}. This indicates a bug in the extension resolving code.");
                     }
 
 
@@ -508,9 +508,9 @@ namespace Clipbox.ExtendedClipboard
                     {
                         try
                         {
-                            intermediateFormatObj = formatSupportExtention.PtrToIntermediateFormat(clipboardDataPtr);
+                            intermediateFormatObj = formatSupportExtension.PtrToIntermediateFormat(clipboardDataPtr);
                         }
-                        catch (Exception ex) { throw new ClipboxExtentionException(nameof(formatSupportExtention.PtrToIntermediateFormat), formatSupportExtention.GetType(), ex); }
+                        catch (Exception ex) { throw new ClipboxExtensionException(nameof(formatSupportExtension.PtrToIntermediateFormat), formatSupportExtension.GetType(), ex); }
 
                     })
                     .Wait(FORMAT_SUPPORT_EXTENSION_TIMEOUT);
@@ -640,8 +640,8 @@ namespace Clipbox.ExtendedClipboard
             foreach (IGeneratedClipboardDataObject generatedCdo in concatenated.ClipboardDataObjects)
             {
                 // validate that we have a registered extension for the specified clipboard format
-                var formatExtention = _formatExtentionContainer.ResolveClipboardFormatSupport(generatedCdo.ClipboardFormatName);
-                if (formatExtention == null)
+                var formatExtension = _formatExtensionContainer.ResolveClipboardFormatSupport(generatedCdo.ClipboardFormatName);
+                if (formatExtension == null)
                 {
                     throw new InvalidOperationException($"Unsupported clipboard format: {generatedCdo.ClipboardFormatName}");
                 }

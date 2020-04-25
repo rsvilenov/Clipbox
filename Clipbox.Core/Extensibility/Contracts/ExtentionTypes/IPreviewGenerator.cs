@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes
+namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes
 {
-    public interface IPreviewGenerator : IClipboxExtention
+    public interface IPreviewGenerator : IClipboxExtension
     {
         Type PreviewDataType { get; }
     }

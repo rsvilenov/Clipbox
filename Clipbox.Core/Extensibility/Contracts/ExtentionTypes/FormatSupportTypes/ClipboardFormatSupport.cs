@@ -1,7 +1,7 @@
 ﻿using Clipbox.Win32.Native;
 using System;
 
-namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes
+namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes
 {
     public abstract class ClipboardFormatSupport<T> : DisposableObject,
         IClipboardFormatSupport

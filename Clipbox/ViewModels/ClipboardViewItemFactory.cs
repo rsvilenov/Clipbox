@@ -2,7 +2,7 @@
 using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Infrastructure.UI;
-using Clipbox.Infrastructure.UI.ExtentionMethods;
+using Clipbox.Infrastructure.UI.ExtensionMethods;
 using Clipbox.Services.DataObjects;
 using Clipbox.ViewModels.BindableObjects;
 using Clipbox.Win32;

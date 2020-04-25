@@ -8,7 +8,7 @@ using System.Security;
 namespace Clipbox.Infrastructure.Extensibility.Invocation
 {
     public class ExtensionInvoker<T> : IDisposable 
-        where T : IClipboxExtention
+        where T : IClipboxExtension
     {
         private bool _isDisposed;
 
@@ -30,20 +30,20 @@ namespace Clipbox.Infrastructure.Extensibility.Invocation
         }
 
         /// <summary>
-        /// Invokes the extention. The exact type of the instance in the action delegate
+        /// Invokes the extension. The exact type of the instance in the action delegate
         /// can be specified as a generic parameter.
         /// </summary>
-        /// <typeparam name="TExtention"></typeparam>
+        /// <typeparam name="TExtension"></typeparam>
         /// <param name="action"></param>
-        public void Invoke<TExtention>(Action<TExtention> action)
-            where TExtention : IClipboxExtention
+        public void Invoke<TExtension>(Action<TExtension> action)
+            where TExtension : IClipboxExtension
         {
             Invoke(action);
         }
 
         /// <summary>
-        /// Invokes the extention. The type of the instance in the action delegate
-        /// is the general type of the extentions in the container.
+        /// Invokes the extension. The type of the instance in the action delegate
+        /// is the general type of the extensions in the container.
         /// </summary>
         /// <param name="action"></param>
         [SecurityCritical]
@@ -52,12 +52,12 @@ namespace Clipbox.Infrastructure.Extensibility.Invocation
         {
             if (_isDisposed)
             {
-                throw new ObjectDisposedException("The extention has already been disposed of.");
+                throw new ObjectDisposedException("The extension has already been disposed of.");
             }
 
             if (_extensionInstance.Equals(default(T)))
             {
-                throw new InvalidOperationException("It looks like the extention has already failed.");
+                throw new InvalidOperationException("It looks like the extension has already failed.");
             }
 
             ExtensionInvoked?.Invoke(this, new ExtensionTypeEventArgs(ExtensionType));
@@ -75,17 +75,17 @@ namespace Clipbox.Infrastructure.Extensibility.Invocation
                     catch (Exception dex) { exceptionOnDispose = dex; }
                 }
 
-                // be intollerat to failure. Each failure results in the extention to be invalidated.
+                // be intollerat to failure. Each failure results in the extension to be invalidated.
                 _extensionInstance = default(T);
 
                 string exceptionMessage = $"{ExtensionType.FullName} [{ExtensionType.Assembly.FullName}] failed.";
                 if (exceptionOnDispose != null)
                 {
-                    throw new ClipboxExtentionException(exceptionMessage, ExtensionType, new AggregateException(ex, exceptionOnDispose));
+                    throw new ClipboxExtensionException(exceptionMessage, ExtensionType, new AggregateException(ex, exceptionOnDispose));
                 }
                 else
                 {
-                    throw new ClipboxExtentionException(exceptionMessage, ExtensionType, ex);
+                    throw new ClipboxExtensionException(exceptionMessage, ExtensionType, ex);
                 }
             }
         }
@@ -100,7 +100,7 @@ namespace Clipbox.Infrastructure.Extensibility.Invocation
                     string exceptionMessage = $"{ExtensionType.FullName} [{ExtensionType.Assembly.FullName}] failed to dispose.";
                     // I know the guidelines but I would rather let this exception crash the process
                     // than swallow it.
-                    throw new ClipboxExtentionException(exceptionMessage, ExtensionType, dex);
+                    throw new ClipboxExtensionException(exceptionMessage, ExtensionType, dex);
                 }
 
                 _extensionInstance = default(T);

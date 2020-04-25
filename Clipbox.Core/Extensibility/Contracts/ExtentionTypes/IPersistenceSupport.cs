@@ -1,6 +1,6 @@
-﻿namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes
+﻿namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes
 {
-    public interface IPersistenceSupport : IClipboxExtention
+    public interface IPersistenceSupport : IClipboxExtension
     {
         byte[] IntermediateFormatToByteArray(IIntermediateFormat intermediateFormat);
 

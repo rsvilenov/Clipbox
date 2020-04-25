@@ -2,7 +2,7 @@
 using System;
 using System.Runtime.InteropServices.ComTypes;
 
-namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes
+namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes
 {
     /// <summary>
     /// TODO: make these OLE types inherit from a common type along with IClipboardFormaSupport types

@@ -1,6 +1,6 @@
 ﻿using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.PreviewData;
-using Clipbox.Infrastructure.ExtentionMethods;
+using Clipbox.Infrastructure.ExtensionMethods;
 using Clipbox.Services.Enums;
 using System;
 using System.Drawing;

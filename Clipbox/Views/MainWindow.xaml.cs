@@ -3,7 +3,7 @@ using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.Extensibility.Containers;
 using Clipbox.Infrastructure.UI.DataObjects;
-using Clipbox.Infrastructure.UI.ExtentionMethods;
+using Clipbox.Infrastructure.UI.ExtensionMethods;
 using Clipbox.Infrastructure.UI.Resources;
 using Clipbox.Infrastructure.UI.Theme;
 using Clipbox.Infrastructure.UI.Windows;
@@ -40,7 +40,7 @@ namespace Clipbox.Views
         private readonly ISearchService _searchService;
         private readonly MonitorUtils.DisplayMonitor _monitor;
         private readonly IClipboardManager _clipboardManager;
-        private readonly UIExtentionContainer _uiExtContainer;
+        private readonly UIExtensionContainer _uiExtContainer;
         private readonly IPreviewGenerationService _previewGenerationService;
         private readonly ICloudSynchronizationService _cloudSyncService;
 
@@ -86,7 +86,7 @@ namespace Clipbox.Views
 
         public MainWindow(IClipboardManager clipboardManager,
             IPreviewGenerationService previewGenerationService,
-            UIExtentionContainer uiExtContainer,
+            UIExtensionContainer uiExtContainer,
             ISettingsService settingsService, 
             MonitorUtils.DisplayMonitor monitor,
             ISearchService searchService,

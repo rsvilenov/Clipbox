@@ -1,9 +1,9 @@
 ﻿using System;
 
-namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes
+namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes
 {
     public interface IClipboardFormatSupport : 
-        IClipboxExtention, IDisposable
+        IClipboxExtension, IDisposable
     {
         /// <summary>
         /// Gets the data from the pointer, obtained by GetClipboardData.

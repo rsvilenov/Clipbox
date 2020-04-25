@@ -1,4 +1,4 @@
-﻿namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes.GeneralTypes
+﻿namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
 {
     public abstract class SearchSupportExtension<TIntermediateFormat> : ISearchSupport
         where TIntermediateFormat : IIntermediateFormat

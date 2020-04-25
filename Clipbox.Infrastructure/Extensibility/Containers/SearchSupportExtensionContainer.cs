@@ -1,5 +1,5 @@
 ﻿using Clipbox.Core.Extensibility.Attributes;
-using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
+using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
 using Clipbox.Infrastructure.Factories;
 using System;
@@ -8,29 +8,29 @@ using System.Collections.Concurrent;
 namespace Clipbox.Infrastructure.Extensibility.Containers
 {
     public class SearchSupportExtensionContainer :
-        BaseExtentionContainer<ISearchSupport, WeakFactory>,
+        BaseExtensionContainer<ISearchSupport, WeakFactory>,
         ISearchSupportExtensionContainer,
-        INotifyExtentionResolved,
-        IExtentionInfoProvider
+        INotifyExtensionResolved,
+        IExtensionInfoProvider
     {
-        private ConcurrentDictionary<string, Type> _intermediateFormatGuidExtentionMapping =
+        private ConcurrentDictionary<string, Type> _intermediateFormatGuidExtensionMapping =
             new ConcurrentDictionary<string, Type>();
 
-        public event EventHandler<ExtentionEventArgs> ExtentionResolved;
+        public event EventHandler<ExtensionEventArgs> ExtensionResolved;
 
         public ISearchSupport ResolveSearchSupport(string intermediateFormatGuid)
         {
-            if (_intermediateFormatGuidExtentionMapping.ContainsKey(intermediateFormatGuid))
+            if (_intermediateFormatGuidExtensionMapping.ContainsKey(intermediateFormatGuid))
             {
-                var extentionInstance = Resolve(_intermediateFormatGuidExtentionMapping[intermediateFormatGuid]);
-                ExtentionResolved?.Invoke(this, new ExtentionEventArgs { ExtentionType = extentionInstance.GetType() });
-                return extentionInstance;
+                var extensionInstance = Resolve(_intermediateFormatGuidExtensionMapping[intermediateFormatGuid]);
+                ExtensionResolved?.Invoke(this, new ExtensionEventArgs { ExtensionType = extensionInstance.GetType() });
+                return extensionInstance;
             }
 
             return null;
         }
 
-        public override void RegisterExtention(Type type)
+        public override void RegisterExtension(Type type)
         {
             if (!IntermediateFormatSupportAttribute.IsDefinedFor(type))
             {
@@ -39,15 +39,15 @@ namespace Clipbox.Infrastructure.Extensibility.Containers
 
             string intermediateFormatGuid = IntermediateFormatSupportAttribute.GetIntermediateFormatGuidFor(type);
 
-            if (_intermediateFormatGuidExtentionMapping.ContainsKey(intermediateFormatGuid))
+            if (_intermediateFormatGuidExtensionMapping.ContainsKey(intermediateFormatGuid))
             {
-                throw new InvalidOperationException($"There is already an {nameof(ISearchSupport)} extention, registered for intermediate format guid {intermediateFormatGuid}");
+                throw new InvalidOperationException($"There is already an {nameof(ISearchSupport)} extension, registered for intermediate format guid {intermediateFormatGuid}");
             }
 
-            _intermediateFormatGuidExtentionMapping.TryAdd(intermediateFormatGuid, type);
+            _intermediateFormatGuidExtensionMapping.TryAdd(intermediateFormatGuid, type);
 
 
-            base.RegisterExtention(type);
+            base.RegisterExtension(type);
         }
     }
 }

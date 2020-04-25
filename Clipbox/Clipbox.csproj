@@ -137,14 +137,14 @@
     <Compile Include="Services\Interfaces\IClipboardListenerService.cs" />
     <Compile Include="Services\Interfaces\IClipboardViewWindowServiceBase.cs" />
     <Compile Include="Services\Interfaces\ICloudSynchronizationService.cs" />
-    <Compile Include="Services\Interfaces\IFlowExtentionExecutorService.cs" />
+    <Compile Include="Services\Interfaces\IFlowExtensionExecutorService.cs" />
     <Compile Include="Services\Interfaces\ILowLevelKeyboardService.cs" />
     <Compile Include="Services\Interfaces\IPreviewGenerationService.cs" />
     <Compile Include="Services\Interfaces\IQuickClipboardViewWindowService.cs" />
     <Compile Include="Services\Interfaces\ISettingsService.cs" />
     <Compile Include="Services\Interfaces\ITrayContextMenuService.cs" />
     <Compile Include="Services\Interfaces\ITrayIconService.cs" />
-    <Compile Include="Services\FlowExtentionExecutorService.cs" />
+    <Compile Include="Services\FlowExtensionExecutorService.cs" />
     <Compile Include="Services\Interfaces\ITrayBandService.cs" />
     <Compile Include="Services\Interfaces\IMainClipboardViewWindowService.cs" />
     <Compile Include="Services\LowLevelKeyboardService.cs" />
@@ -240,7 +240,7 @@
     <Compile Include="Views\SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ExtentionLoader.cs" />
+    <Compile Include="ExtensionLoader.cs" />
     <Compile Include="FlowController.cs" />
     <Compile Include="Technical\Converters\ObjectTypeStringConverter.cs" />
     <Compile Include="ViewModels\BindableObjects\ClipboardPreviewItem.cs" />

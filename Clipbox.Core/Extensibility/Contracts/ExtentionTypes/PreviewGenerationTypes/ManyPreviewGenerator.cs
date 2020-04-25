@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes
+namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes
 {
     public abstract class ManyPreviewGenerator<TIntermediateFormat, TPreviewData> : DisposableObject, IManyPreviewGenerator
         where TIntermediateFormat : IIntermediateFormat

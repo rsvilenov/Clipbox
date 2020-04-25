@@ -6,11 +6,11 @@ by setting SetLastError=true to EnumClipboardFormats in User32.cs
 5. Add delete button at the bottom right, add pin toggle button to top right, add content type icon next to the source app icon (enclose both in a rectangle with border in
 order to distinguish them visually from the buttons)
 6. Find the taskbars of all screens and adjust the position of the windows accordingly
-7. When selecting multiple items, create a temporary clipboard item and place it directly in the clipboard (do not add it to the collection with the other items). Do this in a flow extention.
+7. When selecting multiple items, create a temporary clipboard item and place it directly in the clipboard (do not add it to the collection with the other items). Do this in a flow extension.
 8. Add "Remote Desktop is not supported yet" popping up when the user long-presses ctrl+v inside a RDP window
 9. Check if the Metafile ptr is HGLOBAL by using GlobalLock. If that function returns a different pointer, pass it to the constructor of Metafile instead of the original pointer.
 This may solve the issue with copying metafiles over RDP. Update: no, it doesn't.
-10. Implement MetafilePict serialization in its format support extention.
+10. Implement MetafilePict serialization in its format support extension.
 11. Create a windows service for starting the app with elevated permissions
 and move all the functionality of Guard.exe there. There should also be
 a portable version, which does not install a service but starts a
@@ -22,7 +22,7 @@ use Desktop icon for the source app icon (only if there is no screenshot manager
 clipboard manager in the chain
 15. Load the existing system clipboard item at startup
 16. Ability to create generated clipboard item with multiple formats (e.g. for preferred drop action).
-17. Ability to pass parameters between the UIExtentions and the FlowExtentions
+17. Ability to pass parameters between the UIextensions and the Flowextensions
 18. BUG - when just one clipboard entry exists and we ctrl+longV and then select the entry, upon closing the window
 the ctrl key remains down.
 

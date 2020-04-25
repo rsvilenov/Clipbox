@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Clipbox.Core.Extensibility.Contracts.ExtentionTypes
+namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes
 {
     public abstract class SinglePreviewGenerator<TIntermediateFormat, TPreviewData> : ISinglePreviewGenerator
         where TIntermediateFormat : IIntermediateFormat
