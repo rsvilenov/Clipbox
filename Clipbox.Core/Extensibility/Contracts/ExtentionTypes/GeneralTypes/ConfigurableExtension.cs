@@ -23,6 +23,8 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
 
         /// <summary>
         /// Gets a setting value by key.
+        /// This method makes change requests only for settings,
+        /// which are registered for the current extension type.
         /// </summary>
         /// <typeparam name="TValueType">The type of the setting value</typeparam>
         /// <param name="settingName">The name of the setting</param>
@@ -31,17 +33,16 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
         {
             lock (_lockObject)
             {
-                if (!_settings.Any(s => s.Key.Name == settingName))
+                if (!(_settings.Any(s => s.Key.Name == settingName 
+                    && s.Key.TargetComponentType == GetType())))
                 {
-                    throw new ArgumentException($"Setting with name '{nameof(settingName)}' is not registered for this extention type.");
+                    throw new ArgumentException($"Setting with name '{settingName}' is not registered for this extention type.");
                 }
 
-                if (_settings.Count(s => s.Key.Name == settingName) > 1)
-                {
-                    throw new ArgumentException($"More than one setting with name '{nameof(settingName)}' is registered for this extention type. Please specify the target type.");
-                }
-
-                return (TValueType)_settings.Single(s => s.Key.Name == settingName).Value;
+                return (TValueType)_settings
+                    .Single(s => s.Key.Name == settingName
+                        && s.Key.TargetComponentType == GetType())
+                    .Value;
             }
         }
 
@@ -57,12 +58,15 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
             lock (_lockObject)
             {
                 if (!(_settings.Any(s => s.Key.Name == settingName
-                && s.Key.TargetComponentType == typeof(TExtensionType))))
+                    && s.Key.TargetComponentType == typeof(TExtensionType))))
                 {
-                    throw new ArgumentException($"Setting with name '{nameof(settingName)}' is not registered for extention type {typeof(TExtensionType).Name}.");
+                    throw new ArgumentException($"Setting with name '{settingName}' is not registered for extention type {typeof(TExtensionType).Name}.");
                 }
 
-                return (TValueType)_settings.Single(s => s.Key.Name == settingName).Value;
+                return (TValueType)_settings
+                    .Single(s => s.Key.Name == settingName
+                        && s.Key.TargetComponentType == typeof(TExtensionType))
+                    .Value;
             }
         }
 
@@ -76,11 +80,11 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
             if (!(_settings.Any(s => s.Key.Name == settingName 
                 && s.Key.TargetComponentType == typeof(TExtensionType))))
             {
-                throw new ArgumentException($"Setting with name '{nameof(settingName)}' is not registered for extention type {typeof(TExtensionType).Name}.");
+                throw new ArgumentException($"Setting with name '{settingName}' is not registered for extention type {typeof(TExtensionType).Name}.");
             }
 
             ISettingKey key = _settings.Single(s => s.Key.Name == settingName
-                && s.Key.TargetComponentType == typeof(TValueType))
+                && s.Key.TargetComponentType == typeof(TExtensionType))
                 .Key;
 
             _requestSettingChange?.Invoke(this, new RequestSettingChangeEventArgs(key, value));
@@ -90,20 +94,23 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
         /// Raises a request to change a setting. When the setting is changed,
         /// <see cref="ConfigurableExtension.OnSettingUpdated(string settingKeyName, Type targetType)"/> gets called, so that
         /// the requestor knows that the change has been applied.
+        /// This method makes change requests only for settings,
+        /// which are registered for the current extension type.
         /// </summary>
         protected void RequestSettingChange<TValueType>(string settingName, TValueType value)
         {
-            if (!_settings.Any(s => s.Key.Name == settingName))
+            if (!_settings.Any(s => s.Key.Name == settingName 
+                && s.Key.TargetComponentType == GetType()))
             {
-                throw new ArgumentException($"Setting with name '{nameof(settingName)}' is not registered for this extention type.");
+                throw new ArgumentException($"Setting with name '{settingName}' is not registered for this extention type.");
             }
+            
 
-            if (_settings.Count(s => s.Key.Name == settingName) > 1)
-            {
-                throw new ArgumentException($"More than one setting with name '{nameof(settingName)}' is registered for this extention type. Please specify the target type.");
-            }
+            ISettingKey key = _settings
+                .Single(s => s.Key.Name == settingName
+                    && s.Key.TargetComponentType == GetType())
+                .Key;
 
-            ISettingKey key = _settings.Single(s => s.Key.Name == settingName).Key;
             _requestSettingChange?.Invoke(this, new RequestSettingChangeEventArgs(key, value));
         }
 

@@ -1,10 +1,16 @@
-﻿using Clipbox.Infrastructure.UI.Localization;
+﻿using Clipbox.Core.Configuration;
+using Clipbox.Core.Extensibility.Contracts;
+using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
+using Clipbox.Infrastructure.Extensibility.Containers;
+using Clipbox.Infrastructure.UI.Localization;
 using Clipbox.Infrastructure.UI.Windows;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.Win32;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
@@ -18,18 +24,53 @@ namespace Clipbox.Views
     /// </summary>
     public partial class SettingsWindow : AcryllicWindow
     {
-        public SettingsWindow(ISettingsService settingsService)
+        public SettingsWindow(ISettingsService settingsService, SettingsUIExtensionContainer extContainer)
         {
             _settingsService = settingsService;
-            
+            _extContainer = extContainer;
+
             InitializeComponent();
 
             this.mainGrid.DataContext = this;
 
             SourceInitialized += SettingsWindow_SourceInitialized;
+            Loaded += SettingsWindow_Loaded;
+            Closing += SettingsWindow_Closing;
         }
 
+        private void SettingsWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            foreach (IConfigurationRecipient ext in _settingUIExtensions)
+            {
+                ext.RequestSettingChange -= ConfigurationRecipient_RequestSettingChange;
+            }
+        }
 
+        private List<IConfigurationRecipient> _settingUIExtensions = new List<IConfigurationRecipient>();
+        private void SettingsWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            IEnumerable<SettingsUIExtension> extensions = _extContainer.ResolveAll();
+            foreach (var ext in extensions)
+            {
+                IEnumerable<ISettingKey> allRegisteredKeys = ((ISettingsRegistrator)ext).GetSettingKeys();
+                foreach (ISettingKey key in allRegisteredKeys)
+                {
+                    var configurationRecipient = (IConfigurationRecipient)ext;
+                    configurationRecipient.PutSetting(key, _settingsService.GetSetting(key));
+                    _settingUIExtensions.Add(configurationRecipient);
+                    configurationRecipient.RequestSettingChange += ConfigurationRecipient_RequestSettingChange;
+                }
+
+                UIElement extUI = ext.GetSettingsViewPart();
+                pluginContainer.Children.Add(extUI);
+            }
+        }
+
+        private void ConfigurationRecipient_RequestSettingChange(object sender, Core.Extensibility.EventArgsClasses.RequestSettingChangeEventArgs e)
+        {
+            ((IConfigurationRecipient)sender).PutSetting(e.SettingKey, e.Value);
+            _settingsService.SetSetting(e.SettingKey, e.Value);
+        }
 
         public bool IsSettingChanged
         {
@@ -76,6 +117,8 @@ namespace Clipbox.Views
         }
 
         private ISettingsService _settingsService;
+
+        private SettingsUIExtensionContainer _extContainer;
 
         private void CloseButton_Click(object sender, RoutedEventArgs e)
         {

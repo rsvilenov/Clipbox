@@ -211,7 +211,7 @@ namespace Clipbox
 
             _trayService = new TrayIconService(_mainClipboardViewWindowService, _trayContextMenuService, _settingsService);
 
-            _settingsWindowService = new SettingsWindowService(_settingsService, _mainClipboardViewWindowService, _trayContextMenuService);
+            _settingsWindowService = new SettingsWindowService(_settingsService, _mainClipboardViewWindowService, _trayContextMenuService, _extensionLoader.SettingsUIExtensionContainer);
 
             ILocalizationProvider localizationProvider = new ResxLozalizationProvider();
             // Set the translation provider to the TranslationSource

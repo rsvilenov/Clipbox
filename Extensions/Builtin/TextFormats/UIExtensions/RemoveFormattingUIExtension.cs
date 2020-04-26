@@ -42,7 +42,10 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.UIExtensions
         private void _extensionUI_RemoveFormattingChanged(object sender, RemoveFormatting.RemoveFormattingEventArgs e)
         {
             ToggleRemoveFormatting(e.Toggled);
-            RequestSettingChange(ExtensionSettingNames.RemoveFormatting, e.Toggled);
+            if (GetSetting<bool>(ExtensionSettingNames.SaveRemoveFormattingState))
+            {
+                RequestSettingChange(ExtensionSettingNames.RemoveFormatting, e.Toggled);
+            }
         }
     }
 }

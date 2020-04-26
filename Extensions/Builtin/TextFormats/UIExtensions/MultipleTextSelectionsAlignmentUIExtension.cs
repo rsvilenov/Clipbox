@@ -37,7 +37,10 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.UIExtensions
         private void _extensionUI_SeparatorChanged(object sender, MultipleTextSelectionsAlignment.SeparatorEventArgs e)
         {
             SetConcatenationSeparator(e.Separator);
-            RequestSettingChange<int>(ExtensionSettingNames.DefaultSeparator, (int)e.Separator);
+            if (GetSetting<bool>(ExtensionSettingNames.SaveSelectedSeparatorAsDefault))
+            {
+                RequestSettingChange<int>(ExtensionSettingNames.DefaultSeparator, (int)e.Separator);
+            }
         }
 
         public void SetConcatenationSeparator(TextConcatenateSeparators separator)

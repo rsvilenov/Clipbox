@@ -11,6 +11,8 @@
 
         // extensions for pasted text formatting
         public static string DefaultSeparator = nameof(DefaultSeparator);
+        public static string SaveSelectedSeparatorAsDefault = nameof(SaveSelectedSeparatorAsDefault);
         public static string RemoveFormatting = nameof(RemoveFormatting);
+        public static string SaveRemoveFormattingState = nameof(SaveRemoveFormattingState);
     }
 }

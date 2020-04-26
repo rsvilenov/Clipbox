@@ -1,4 +1,5 @@
-﻿using Clipbox.Services.Interfaces;
+﻿using Clipbox.Infrastructure.Extensibility.Containers;
+using Clipbox.Services.Interfaces;
 using Clipbox.Views;
 using System;
 using System.Collections.Generic;
@@ -12,18 +13,22 @@ namespace Clipbox.Services
     {
         private readonly ISettingsService _settingsService;
         private readonly ITrayContextMenuService _trayContextMenuService;
+        private readonly SettingsUIExtensionContainer _extContainer;
 
         IMainClipboardViewWindowService _mainClipboardViewWindowService;
         private SettingsWindow _settingsWindow;
 
         public SettingsWindowService(ISettingsService settingsService,
             IMainClipboardViewWindowService mainClipboardViewWindowService,
-            ITrayContextMenuService trayContextMenuService)
+            ITrayContextMenuService trayContextMenuService,
+            SettingsUIExtensionContainer extContainer)
         {
             _settingsService = settingsService;
             _trayContextMenuService = trayContextMenuService;
 
             _mainClipboardViewWindowService = mainClipboardViewWindowService;
+
+            _extContainer = extContainer;
 
             _mainClipboardViewWindowService.SettingsWindowOpenRequested += _mainClipboardViewWindowService_SettingsWindowOpenRequested;
             _trayContextMenuService.SettingsWindowOpenRequested += _trayContextMenuService_SettingsWindowOpenRequested;
@@ -41,7 +46,7 @@ namespace Clipbox.Services
 
         private void OpenSettingsWindow()
         {
-            _settingsWindow = new SettingsWindow(_settingsService);
+            _settingsWindow = new SettingsWindow(_settingsService, _extContainer);
             _settingsWindow.Show();
         }
 
