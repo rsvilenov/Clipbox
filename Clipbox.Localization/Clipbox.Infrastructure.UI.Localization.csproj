@@ -31,6 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -45,16 +46,19 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EventArgsClasses\CultureChangedEventArgs.cs" />
+    <Compile Include="IAssemblyAwareLocalizationProvider.cs" />
     <Compile Include="ILocalizationProvider.cs" />
     <Compile Include="LocalizeExtension.cs" />
-    <Compile Include="LozalizationProviders\ResxLozalizationProvider.cs" />
+    <Compile Include="LozalizationProviders\ResxLocalizationProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Enums\ResourceLookupMode.cs" />
     <Compile Include="Resources\Strings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
-    <Compile Include="TranslationSource.cs" />
+    <Compile Include="LozalizationProviders\AsmAwareResxLocalizationProvider.cs" />
+    <Compile Include="TranslationSourcePool.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Strings.bg-BG.resx" />

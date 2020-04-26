@@ -85,8 +85,10 @@
                     <customControls:ToggleSwitch
                         HorizontalAlignment="Left"
                         IsChecked="{Binding IsSettingChanged, Mode=OneWayToSource}"
-                        OffText="{loc:Localize TGL_BTN_LBL_Off}"
-                        OnText="{loc:Localize TGL_BTN_LBL_On}" />
+                        OffText="{loc:Localize TGL_BTN_LBL_Off,
+                                               ResourceLookupMode=Everywhere}"
+                        OnText="{loc:Localize TGL_BTN_LBL_On,
+                                              ResourceLookupMode=Everywhere}" />
                     <Image
                         MinWidth="100"
                         MinHeight="25"

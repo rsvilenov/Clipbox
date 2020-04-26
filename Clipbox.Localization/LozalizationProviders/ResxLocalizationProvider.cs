@@ -7,11 +7,11 @@ using System.Windows.Threading;
 
 namespace Clipbox.Infrastructure.UI.Localization.LozalizationProviders
 {
-    public class ResxLozalizationProvider : ILocalizationProvider
+    public class ResxLocalizationProvider : ILocalizationProvider
     {
         private readonly ResourceManager _resourceManager;
 
-        public ResxLozalizationProvider()
+        public ResxLocalizationProvider()
         {
             _resourceManager = Resources.Strings.ResourceManager;
         }

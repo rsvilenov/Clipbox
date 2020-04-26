@@ -213,9 +213,9 @@ namespace Clipbox
 
             _settingsWindowService = new SettingsWindowService(_settingsService, _mainClipboardViewWindowService, _trayContextMenuService, _extensionLoader.SettingsUIExtensionContainer);
 
-            ILocalizationProvider localizationProvider = new ResxLozalizationProvider();
-            // Set the translation provider to the TranslationSource
-            TranslationSource.InitTranslationSource(localizationProvider);
+            ILocalizationProvider localizationProvider = AsmAwareResxLocalizationProvider.Instance;
+            // Set the translation provider to the TranslationSourcePool
+            TranslationSourcePool.InitTranslationSourcePool(localizationProvider);
             // than pass it to the localization service. It must be the same instance,
             // so that changing the culture from within the service will affect the culture
             // of the TranslationSource.

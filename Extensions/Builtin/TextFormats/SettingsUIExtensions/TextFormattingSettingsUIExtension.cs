@@ -1,11 +1,8 @@
 ﻿using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
 using Clipbox.Extensions.BuiltIn.TextFormats.Enums;
-using Clipbox.Extensions.BuiltIn.TextFormats.FlowExtensions;
 using Clipbox.Extensions.BuiltIn.TextFormats.UIExtensions;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
 {
