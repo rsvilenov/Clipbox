@@ -151,6 +151,7 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
         {
             add
             {
+                _requestSettingChange -= value;
                 _requestSettingChange += value;
             }
 
