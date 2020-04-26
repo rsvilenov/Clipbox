@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
+using System;
 
 namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes
 {
-    public abstract class SinglePreviewGenerator<TIntermediateFormat, TPreviewData> : ISinglePreviewGenerator
+    public abstract class SinglePreviewGenerator<TIntermediateFormat, TPreviewData> : 
+        ConfigurableExtension, ISinglePreviewGenerator
         where TIntermediateFormat : IIntermediateFormat
         where TPreviewData : IPreviewData
     {

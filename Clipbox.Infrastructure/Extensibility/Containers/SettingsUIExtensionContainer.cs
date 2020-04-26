@@ -1,12 +1,19 @@
-﻿using System;
+﻿using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
+using Clipbox.Infrastructure.Factories;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Clipbox.Infrastructure.Extensibility.Containers
 {
-    public class SettingsUIExtensionContainer
+    public class SettingsUIExtensionContainer :
+        BaseExtensionContainer<SettingsUIExtension, WeakFactory>
     {
+        public IEnumerable<SettingsUIExtension> ResolveAll()
+        {
+            foreach (Type t in base.RegisteredTypes)
+            {
+                yield return base.Resolve(t);
+            }
+        }
     }
 }

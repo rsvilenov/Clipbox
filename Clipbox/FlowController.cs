@@ -232,7 +232,6 @@ namespace Clipbox
             _quickViewWindowService.HideQuickClipboardViewWindow();
             _hasQuickViewWindowShowingBeenRequested = false;
             _parametersFromQuickViewWindowService = _quickViewWindowService.GetFlowParameters();
-            _quickViewWindowService.SaveChangedSettings();
         }
 
         private void FocusNextItemInQuickViewWindow()

@@ -1,6 +1,8 @@
 ﻿using Clipbox.Core.ClipboardContent.Interfaces;
+using Clipbox.Core.Configuration;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
+using Clipbox.Core.Extensibility.EventArgsClasses;
 using Clipbox.Core.Extensibility.Exceptions;
 using Clipbox.Infrastructure.Extensibility.Containers;
 using Clipbox.Infrastructure.UI.DataObjects;
@@ -31,16 +33,16 @@ namespace Clipbox.Views
         private ISettingsService _settingsService;
 
         private readonly List<UIExtension> _loadedExtensions;
-        
+
+        private readonly object _loadedExtensionsLockHandle = new object();
+
         private double _currentDisplayDpiCalibratedHeight;
-
-        private Dictionary<string, string> _localExtensionSettings;
-
+        
         protected MonitorDimensions MonitorDimensions { get; private set; }
         
         private Panel _uiExtensionContainer;
 
-        private object _extensionLoadingLockHandle = new object();
+        private readonly object _extensionLoadingLockHandle = new object();
         
         public double ClipboardViewItemMaxHeight
         {
@@ -85,7 +87,6 @@ namespace Clipbox.Views
             _container = container;
             _settingsService = settingsService;
             _loadedExtensions = new List<UIExtension>();
-            _localExtensionSettings = new Dictionary<string, string>();
             
             Loaded += ClipboardViewControlBase_Loaded;
         }
@@ -143,42 +144,83 @@ namespace Clipbox.Views
 
                 selectedClipboardItems.AddRange(multiItemItemWrappers.Select(w => w.ClipboardItem));
 
-                var allExtensions = GetExtensions(selectedClipboardItems);
-                foreach (var extension in allExtensions)
+                if (_loadedExtensions.Any())
+                {
+                    ShutDownExtensions(_loadedExtensions);
+                }
+
+                if (_loadedExtensions.Any())
+                {
+                    throw new InvalidOperationException("There should not be loaded extensions at this stage.");
+                }
+
+                var extensions = GetExtensions(selectedClipboardItems);
+
+                SetUpExtensions(extensions);
+
+                foreach (var extension in _loadedExtensions)
                 {
                     UIElement extensionUIElement = null;
                     extension.OnExtensionViewGenerating(selectedClipboardItems, ref extensionUIElement, new Size(_uiExtensionContainer.MaxWidth, _uiExtensionContainer.MaxHeight));
                     _uiExtensionContainer.Children.Add(extensionUIElement);
                 }
 
-                AreAnyUIExtensionsLoaded = allExtensions.Any();
+                AreAnyUIExtensionsLoaded = _loadedExtensions.Any();
             }
         }
-
-        protected IEnumerable<UIExtension> GetExtensions(IEnumerable<IClipboardItem> clipboardItems)
+        
+        private IEnumerable<UIExtension> GetExtensions(IEnumerable<IClipboardItem> clipboardItems)
         {
-            _loadedExtensions.Clear();
-            
-            IEnumerable<UIExtension> extensionsToShow = _container.ResolveAll().Where(ext => CheckShouldLoadExtension(ext, clipboardItems));
-            foreach (UIExtension extension in extensionsToShow)
+            return _container
+                .ResolveAll()
+                .Where(ext => CheckShouldLoadExtension(ext, clipboardItems));
+        }
+
+        private void SetUpExtensions(IEnumerable<UIExtension> extensions)
+        {
+            foreach (UIExtension extension in extensions
+                .ToList() /* avoid 'collection was modified' if we pass _loadedExtensions as a parameter */)
             {
-                _loadedExtensions.Add(extension);
-                Dictionary<string, string> settingsForExtension = GetSettingsForExtension(extension);
+                if (extension is IConfigurationRecipient confRecipient)
+                {
+                    foreach (ISettingKey settingKey in _settingsService.GetSettingKeys(extension.GetType()))
+                    {
+                        confRecipient.PutSetting(settingKey, _settingsService.GetSetting(settingKey));
+                    }
 
-                extension.LoadSettings(settingsForExtension);
+                    confRecipient.RequestSettingChange += ConfRequestor_RequestSettingChange;
+                }
+
+                lock (_loadedExtensionsLockHandle)
+                {
+                    _loadedExtensions.Add(extension);
+                }
             }
-
-            return extensionsToShow;
         }
 
-        private Dictionary<string, string> GetSettingsForExtension(UIExtension extension)
+        private void ShutDownExtensions(IEnumerable<UIExtension> extensions)
         {
-            return _localExtensionSettings
-                .Where(s => s.Key.StartsWith($"{extension.GetType().Name}:"))
-                .ToDictionary(
-                    // remove the prefix with the name of the extension
-                    s => s.Key.Replace(extension.GetType().Name + ":", string.Empty),
-                    s => _localExtensionSettings[s.Key]);
+            foreach (UIExtension extension in extensions.ToList())
+            {
+                if (extension is IConfigurationRecipient confRecipient)
+                {
+                    confRecipient.RequestSettingChange -= ConfRequestor_RequestSettingChange;
+                }
+
+                lock (_loadedExtensionsLockHandle)
+                {
+                    _loadedExtensions.Remove(extension);
+                }
+            }
+        }
+
+        private void ConfRequestor_RequestSettingChange(object sender, RequestSettingChangeEventArgs e)
+        {
+            // save the setting
+            _settingsService.SetSetting(e.SettingKey, e.Value);
+            // update the setting in the extension
+            IConfigurationRecipient ext = (IConfigurationRecipient)sender;
+            ext.PutSetting(e.SettingKey, e.Value);
         }
 
         private bool CheckShouldLoadExtension(UIExtension extension, IEnumerable<IClipboardItem> clipboardItems)
@@ -207,34 +249,7 @@ namespace Clipbox.Views
         {
             _loadedExtensions.ForEach(ext => ext.ClearParameters());
         }
-
-        public void SaveChangedSettings()
-        {
-            foreach (UIExtension ext in _loadedExtensions)
-            {
-                IReadOnlyDictionary<string, string> settings = ext.GetSettings();
-                foreach (string key in settings.Keys)
-                {
-                    /// TODO: this will not work, because the SettingsService requires the keys to 
-                    /// be registered in the application configuration file first.
-                    //string originalSetting = _settingsService.GetSetting<string>(key);
-                    //if (originalSetting != settings[key])
-                    //{
-                    //    _settingsService.SetSetting(ext.GetType().Name + ":" + key, settings[key]);
-                    //}
-                    string keyWithExtensionType = ext.GetType().Name + ":" + key;
-                    if (_localExtensionSettings.ContainsKey(keyWithExtensionType))
-                    {
-                        _localExtensionSettings[keyWithExtensionType] = settings[key];
-                    }
-                    else
-                    {
-                        _localExtensionSettings.Add(keyWithExtensionType, settings[key]);
-                    }
-                }
-            }
-        }
-
+        
         public virtual void ResumeDefaultState()
         { }
 
@@ -309,7 +324,12 @@ namespace Clipbox.Views
         public void Dispose()
         {
             Dispose(true);
-            
+
+            if (_loadedExtensions.Any())
+            {
+                ShutDownExtensions(_loadedExtensions);
+            }
+
             // let us be safe in case the subclass forgets to call Dispose(bool)
             if (!_disposedValue)
             {

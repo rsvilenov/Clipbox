@@ -11,8 +11,8 @@ namespace Clipbox.Services.Interfaces
 
         object GetSetting(ISettingKey key);
         
-        void SetSetting<TSettingKey, TValue>(SettingKey<TSettingKey> key, TValue value) where TValue : TSettingKey;
-
+        void SetSetting(ISettingKey key, object value);
+        
         bool IsSettingRegistered(ISettingKey key);
 
         void RegisterSetting(ISettingKey key);
@@ -25,6 +25,8 @@ namespace Clipbox.Services.Interfaces
         /// <typeparam name="TTargetType"></typeparam>
         /// <returns></returns>
         IEnumerable<ISettingKey> GetSettingKeys<TTargetType>();
+
+        IEnumerable<ISettingKey> GetSettingKeys(Type targetType);
 
         event EventHandler<SettingsEventArgs> SettingChanged;
     }

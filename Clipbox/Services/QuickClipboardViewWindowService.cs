@@ -11,7 +11,6 @@ using Clipbox.Win32;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Threading;
@@ -251,11 +250,6 @@ namespace Clipbox.Services
         public override IReadOnlyList<IFlowParameter> GetFlowParameters()
         {
             return _previewControl.GetFlowParameters();
-        }
-
-        public void SaveChangedSettings()
-        {
-            _previewControl.SaveChangedSettings();
         }
         
         public void LoadClipboardItem(string clipboardItemId)

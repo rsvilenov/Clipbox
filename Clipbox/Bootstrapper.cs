@@ -1,5 +1,7 @@
 ﻿using Clipbox.Core;
 using Clipbox.Core.Enums;
+using Clipbox.Core.Extensibility.Contracts;
+using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
 using Clipbox.Core.Extensibility.Exceptions;
 using Clipbox.ExtendedClipboard;
 using Clipbox.ExtendedClipboard.Interfaces;
@@ -21,6 +23,7 @@ using Clipbox.ViewModels;
 using Clipbox.Views;
 using Clipbox.Win32;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -131,6 +134,12 @@ namespace Clipbox
             _settingsService = new SettingsService(configurationProvider);
             _settingsService.RegisterSettings(SettingsKeys.GetAllSettings());
             _settingsService.SettingChanged += _settingsService_SettingChanged;
+
+            IEnumerable<SettingsUIExtension> settingsExtensions = _extensionLoader.SettingsUIExtensionContainer.ResolveAll();
+            foreach(ISettingsRegistrator ext in settingsExtensions)
+            {
+                _settingsService.RegisterSettings(ext.GetSettingKeys());
+            }
 
             //_settingsService.SetSetting("Setting1", "set");
 

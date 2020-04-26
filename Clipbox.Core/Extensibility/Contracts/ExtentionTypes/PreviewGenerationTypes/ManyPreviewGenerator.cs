@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes
 {
-    public abstract class ManyPreviewGenerator<TIntermediateFormat, TPreviewData> : DisposableObject, IManyPreviewGenerator
+    public abstract class ManyPreviewGenerator<TIntermediateFormat, TPreviewData> :
+        ConfigurableExtension, IManyPreviewGenerator
         where TIntermediateFormat : IIntermediateFormat
         where TPreviewData : IPreviewData
     {

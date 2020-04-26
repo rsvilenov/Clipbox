@@ -5,13 +5,13 @@ namespace Clipbox.Core.Extensibility.EventArgsClasses
 {
     public class RequestSettingChangeEventArgs : EventArgs
     {
-        public RequestSettingChangeEventArgs(string settingName, object value)
+        public RequestSettingChangeEventArgs(ISettingKey settingKey, object value)
         {
-            SettingName = settingName;
+            SettingKey = settingKey;
             Value = value;
         }
 
-        public string SettingName { get; }
+        public ISettingKey SettingKey { get; }
 
         public object Value { get; }
     }

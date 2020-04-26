@@ -1,14 +1,12 @@
 ﻿using Clipbox.Core.ClipboardContent.Interfaces;
+using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Windows;
 
 namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes
 {
     public abstract class UIExtension : ParametrizedExtension
     {
-        private readonly Dictionary<string, string> _settings = new Dictionary<string, string>();
-
         /// <summary>
         /// Determines whether the extension should be shown
         /// </summary>
@@ -30,36 +28,5 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes
         /// </summary>
         public virtual void OnExtensionViewDestroyed()
         { }
-        
-        protected string GetSetting(string key)
-        {
-            return _settings.ContainsKey(key) ? _settings[key] : null;
-        }
-
-        protected void SetSetting(string key, string value)
-        {
-            if (_settings.ContainsKey(key))
-            {
-                _settings[key] = value;
-            }
-            else
-            {
-                _settings.Add(key, value);
-            }
-        }
-
-        public void LoadSettings(IReadOnlyDictionary<string, string> settings)
-        {
-            _settings.Clear();
-            foreach(var setting in settings)
-            {
-                _settings.Add(setting.Key, setting.Value);
-            }
-        }
-        
-        public IReadOnlyDictionary<string, string> GetSettings()
-        {
-            return new ReadOnlyDictionary<string, string>(_settings);
-        }
     }
 }

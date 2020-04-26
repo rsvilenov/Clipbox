@@ -37,11 +37,6 @@ namespace Clipbox.Services
             return _configurationProvider.GetSetting(key);
         }
 
-        public void SetSetting<TSettingKey, TValue>(SettingKey<TSettingKey> key, TValue value) where TValue : TSettingKey
-        {
-            SetSetting((ISettingKey)key, value);
-        }
-
         public void SetSetting(ISettingKey key, object value)
         {
             if (value.GetType() != key.TypeOfValue)
@@ -88,8 +83,12 @@ namespace Clipbox.Services
 
         public IEnumerable<ISettingKey> GetSettingKeys<TTargetType>()
         {
-            return _targettedSettingKeys.Where(tsk => tsk.TargetComponentType == typeof(TTargetType));
+            return GetSettingKeys(typeof(TTargetType));
         }
-        
+
+        public IEnumerable<ISettingKey> GetSettingKeys(Type targetType)
+        {
+            return _targettedSettingKeys.Where(tsk => tsk.TargetComponentType == targetType);
+        }
     }
 }

@@ -30,8 +30,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.UIExtensions
         {
             _extensionUI = new RemoveFormatting();
             _extensionUI.RemoveFormattingChanged += _extensionUI_RemoveFormattingChanged;
-            string toggledStr = GetSetting(REMOVE_FORMATING_SETTING_KEY);
-            bool toggled = toggledStr == null ? false : bool.Parse(toggledStr);
+            bool toggled = GetSetting<bool>(ExtensionSettingNames.RemoveFormatting);
 
             _extensionUI.ToggleRemoveFormatting(toggled);
 
@@ -43,7 +42,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.UIExtensions
         private void _extensionUI_RemoveFormattingChanged(object sender, RemoveFormatting.RemoveFormattingEventArgs e)
         {
             ToggleRemoveFormatting(e.Toggled);
-            SetSetting(REMOVE_FORMATING_SETTING_KEY, e.Toggled.ToString());
+            RequestSettingChange(ExtensionSettingNames.RemoveFormatting, e.Toggled);
         }
     }
 }

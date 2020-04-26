@@ -1,63 +1,160 @@
 ﻿using Clipbox.Core.Configuration;
+using Clipbox.Core.Extensibility.EventArgsClasses;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
 {
     /// <summary>
     /// Provides configuration capability for the extensions 
     /// </summary>
-    public abstract class ConfigurableExtension : IConfigurableObject, IClipboxExtension
+    public abstract class ConfigurableExtension : 
+        IConfigurationRecipient, IClipboxExtension, IConfigurationChangeRequestor
     {
         /// <summary>
         /// The extensions override this method in order to know when
-        /// the request made by RequestSettingChange has been fulfilled.
+        /// the request made by calling of the method <see cref="RequestSettingChange"/> 
+        /// has been fulfilled.
         /// </summary>
-        /// <param name="setting"></param>
-        protected virtual void OnSettingUpdated(string settingKeyName) { }
-        
+        /// <param name="settingName">The name of the setting.</param>
+        /// <param name="targetType">The extension type, for which the value is registered.</param>
+        protected virtual void OnSettingUpdated(string settingName, Type targetType) { }
+
         /// <summary>
         /// Gets a setting value by key.
         /// </summary>
-        /// <typeparam name="T">The type of the setting value</typeparam>
-        /// <param name="settingKeyName">The key of the setting</param>
+        /// <typeparam name="TValueType">The type of the setting value</typeparam>
+        /// <param name="settingName">The name of the setting</param>
         /// <returns>The value of the setting</returns>
-        protected T GetSetting<T>(string settingName)
+        protected TValueType GetSetting<TValueType>(string settingName)
         {
             lock (_lockObject)
             {
-                if (!_settings.ContainsKey(settingName))
+                if (!_settings.Any(s => s.Key.Name == settingName))
                 {
-                    throw new KeyNotFoundException($"No setting with name {nameof(settingName)} is available.");
+                    throw new ArgumentException($"Setting with name '{nameof(settingName)}' is not registered for this extention type.");
                 }
 
-                return (T)_settings[settingName].Value;
+                if (_settings.Count(s => s.Key.Name == settingName) > 1)
+                {
+                    throw new ArgumentException($"More than one setting with name '{nameof(settingName)}' is registered for this extention type. Please specify the target type.");
+                }
+
+                return (TValueType)_settings.Single(s => s.Key.Name == settingName).Value;
             }
         }
-        
+
+        /// <summary>
+        /// Gets the value of a setting.
+        /// </summary>
+        /// <typeparam name="TValueType">The type of the setting value.</typeparam>
+        /// <typeparam name="TExtensionType">The extension type, for which the value is registered.</typeparam>
+        /// <param name="settingName">The name of the setting</param>
+        /// <returns>The value of the setting.</returns>
+        protected TValueType GetSetting<TValueType, TExtensionType>(string settingName)
+        {
+            lock (_lockObject)
+            {
+                if (!(_settings.Any(s => s.Key.Name == settingName
+                && s.Key.TargetComponentType == typeof(TExtensionType))))
+                {
+                    throw new ArgumentException($"Setting with name '{nameof(settingName)}' is not registered for extention type {typeof(TExtensionType).Name}.");
+                }
+
+                return (TValueType)_settings.Single(s => s.Key.Name == settingName).Value;
+            }
+        }
+
+        /// <summary>
+        /// Raises a request to change a setting. When the setting is changed,
+        /// <see cref="ConfigurableExtension.OnSettingUpdated(string settingKeyName, Type targetType)"/> gets called, so that
+        /// the requestor knows that the change has been applied.
+        /// </summary>
+        protected void RequestSettingChange<TValueType, TExtensionType>(string settingName, TValueType value)
+        {
+            if (!(_settings.Any(s => s.Key.Name == settingName 
+                && s.Key.TargetComponentType == typeof(TExtensionType))))
+            {
+                throw new ArgumentException($"Setting with name '{nameof(settingName)}' is not registered for extention type {typeof(TExtensionType).Name}.");
+            }
+
+            ISettingKey key = _settings.Single(s => s.Key.Name == settingName
+                && s.Key.TargetComponentType == typeof(TValueType))
+                .Key;
+
+            _requestSettingChange?.Invoke(this, new RequestSettingChangeEventArgs(key, value));
+        }
+
+        /// <summary>
+        /// Raises a request to change a setting. When the setting is changed,
+        /// <see cref="ConfigurableExtension.OnSettingUpdated(string settingKeyName, Type targetType)"/> gets called, so that
+        /// the requestor knows that the change has been applied.
+        /// </summary>
+        protected void RequestSettingChange<TValueType>(string settingName, TValueType value)
+        {
+            if (!_settings.Any(s => s.Key.Name == settingName))
+            {
+                throw new ArgumentException($"Setting with name '{nameof(settingName)}' is not registered for this extention type.");
+            }
+
+            if (_settings.Count(s => s.Key.Name == settingName) > 1)
+            {
+                throw new ArgumentException($"More than one setting with name '{nameof(settingName)}' is registered for this extention type. Please specify the target type.");
+            }
+
+            ISettingKey key = _settings.Single(s => s.Key.Name == settingName).Key;
+            _requestSettingChange?.Invoke(this, new RequestSettingChangeEventArgs(key, value));
+        }
+
         // the following methods and event are to be used by the callers of the
         // extensions and should not be accessible from within the extensions.
 
-        #region IConfigurableObject 
-        void IConfigurableObject.AddSetting(string settingKeyName, SettingObject setting)
+        #region IConfigurationRecipient
+        /// <summary>
+        /// <see cref="IConfigurationRecipient.PutSetting(ISettingKey, object)"/>
+        /// </summary>
+        void IConfigurationRecipient.PutSetting(ISettingKey settingKey, object settingValue)
         {
             lock (_lockObject)
             {
-                _settings.Add(settingKeyName, setting);
+                if (_settings.ContainsKey(settingKey))
+                {
+                    object oldValue = _settings[settingKey];
+
+                    _settings[settingKey] = settingValue;
+
+                    if (oldValue != settingValue)
+                    {
+                        OnSettingUpdated(settingKey.Name, settingKey.TargetComponentType);
+                    }
+                }
+                else
+                {
+                    _settings.Add(settingKey, settingValue);
+                }
             }
         }
 
-        void IConfigurableObject.UpdateSetting(string settingKeyName, SettingObject setting)
+        private event EventHandler<RequestSettingChangeEventArgs> _requestSettingChange;
+        /// <summary>
+        /// <see cref="IConfigurationRecipient.RequestSettingChange"/>
+        /// </summary>
+        event EventHandler<RequestSettingChangeEventArgs> IConfigurationRecipient.RequestSettingChange
         {
-            lock (_lockObject)
+            add
             {
-                _settings[setting.KeyId] = setting;
+                _requestSettingChange += value;
             }
 
-            OnSettingUpdated(settingKeyName);
+            remove
+            {
+                _requestSettingChange -= value;
+            }
         }
         #endregion
-        
-        private Dictionary<string, SettingObject> _settings = new Dictionary<string, SettingObject>();
+
+        private Dictionary<ISettingKey, object> _settings = new Dictionary<ISettingKey, object>();
 
         private readonly object _lockObject = new object();
     }

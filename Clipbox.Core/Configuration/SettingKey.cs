@@ -8,7 +8,7 @@ namespace Clipbox.Core.Configuration
     /// </summary>
     /// <typeparam name="TSettingValueType">The type of the setting value</typeparam>
     /// <typeparam name="TTargetComponentType">The type of the component, which will use the setting</typeparam>
-    [DebuggerDisplay("{Name} (default: {DefaultValue}) [target: {TargetComponentType.Name}]")]
+    [DebuggerDisplay("{Name} (default: {DefaultValue}) [target: {TargetComponentTypeName}]")]
     public class SettingKey<TSettingValueType, TTargetComponentType> : SettingKey<TSettingValueType>
     {
         public SettingKey(string name, TSettingValueType defaultValue)
@@ -16,6 +16,11 @@ namespace Clipbox.Core.Configuration
         {
             SetTargetComponentType(typeof(TTargetComponentType));
         }
+
+        /// <summary>
+        /// This exists only to facilitate DebuggerDisplay in showing the target type.
+        /// </summary>
+        private string TargetComponentTypeName => typeof(TTargetComponentType).Name;
     }
 
     /// <summary>

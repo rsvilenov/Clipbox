@@ -9,8 +9,6 @@ namespace Clipbox.Services.Interfaces
         void HideQuickClipboardViewWindow();
 
         void FocusNextItem();
-        
-        void SaveChangedSettings();
 
         bool IsWindowVisible { get; }
 

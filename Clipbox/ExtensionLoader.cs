@@ -22,6 +22,8 @@ namespace Clipbox
 
         public UIExtensionContainer UIExtensionContainer { get; private set; }
 
+        public SettingsUIExtensionContainer SettingsUIExtensionContainer { get; private set; }
+
         public PersistenceSupportExtensionContainer PersistenceSupportExtensionContainer { get; private set; }
 
         public List<Type> LoadedTypes { get; private set; }
@@ -46,6 +48,7 @@ namespace Clipbox
             // these two are stateful and we can only guess when they are used
             FlowExtensionContainer = new FlowExtensionContainer();
             UIExtensionContainer = new UIExtensionContainer();
+            SettingsUIExtensionContainer = new SettingsUIExtensionContainer();
             
             // do not search for extensions in these assemblies
             string[] ClipboxBaseAssemblies =
@@ -119,6 +122,14 @@ namespace Clipbox
                 foreach (var ext in uiExtensions)
                 {
                     UIExtensionContainer.RegisterExtension(ext);
+                    LoadedTypes.Add(ext);
+                }
+
+                // find all extensions of type SettingsUIExtension
+                var settingsUiExtensions = walker.FindExtensions<SettingsUIExtension>();
+                foreach (var ext in settingsUiExtensions)
+                {
+                    SettingsUIExtensionContainer.RegisterExtension(ext);
                     LoadedTypes.Add(ext);
                 }
             }

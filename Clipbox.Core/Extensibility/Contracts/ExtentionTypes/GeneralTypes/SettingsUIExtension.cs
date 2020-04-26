@@ -1,6 +1,4 @@
 ﻿using Clipbox.Core.Configuration;
-using Clipbox.Core.Extensibility.EventArgsClasses;
-using System;
 using System.Collections.Generic;
 using System.Windows;
 
@@ -9,8 +7,7 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
     /// <summary>
     /// Settings view extension
     /// </summary>
-    public abstract class SettingsUIExtension : ConfigurableExtension,
-        IConfigurationChangeRequestor, ISettingsRegistrator
+    public abstract class SettingsUIExtension : ConfigurableExtension, ISettingsRegistrator
     {
         private readonly IEnumerable<ISettingKey> _registeredSettingKeys;
 
@@ -32,17 +29,7 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
         /// that will be used by the consuming extensions.
         /// </summary>
         protected abstract void RegisterSettingKeys(SettingKeyCollectionBuilder settingKeyColBuilder);
-
-        /// <summary>
-        /// Raises a request to change a setting. When the setting is changed,
-        /// <see cref="ConfigurableExtension.OnSettingUpdated(SettingObject)"/> gets called, so that
-        /// the requestor knows that the change has been applied.
-        /// </summary>
-        protected void RaiseRequestSettingChange<T>(string settingName, T value)
-        {
-            _requestSettingChange?.Invoke(this, new RequestSettingChangeEventArgs(settingName, value));
-        }
-
+        
         #region ISettingsRegistrator
 
         IEnumerable<ISettingKey> ISettingsRegistrator.GetSettingKeys()
@@ -52,25 +39,7 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
 
         #endregion
 
-        #region IConfigurationChangeRequestor
-        private event EventHandler<RequestSettingChangeEventArgs> _requestSettingChange;
-        /// <summary>
-        /// Raises a request to change a setting. 
-        /// </summary>
-        event EventHandler<RequestSettingChangeEventArgs> IConfigurationChangeRequestor.RequestSettingChange
-        {
-            add
-            {
-                _requestSettingChange += value;
-            }
-
-            remove
-            {
-                _requestSettingChange -= value;
-            }
-        }
-        #endregion
-
+        
         protected class SettingKeyCollectionBuilder
         {
             private readonly List<ISettingKey> _settingKeys;
@@ -81,6 +50,7 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
             }
 
             public SettingKeyCollectionBuilder Add<TValueType, TTargetExtensionType>(string keyName, TValueType defaultValue)
+                where TTargetExtensionType : ConfigurableExtension
             {
                 _settingKeys.Add(new SettingKey<TValueType, TTargetExtensionType>(keyName, defaultValue));
                 return this;

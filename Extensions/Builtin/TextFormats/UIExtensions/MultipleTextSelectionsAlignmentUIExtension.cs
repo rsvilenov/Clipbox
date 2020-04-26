@@ -2,7 +2,6 @@
 using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Extensions.BuiltIn.TextFormats.Enums;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -27,17 +26,8 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.UIExtensions
         {
             _extensionUI = new MultipleTextSelectionsAlignment();
 
-            string separatorTypeStr = GetSetting(DEFAULT_SEPARATOR_SETTING_KEY);
-            TextConcatenateSeparators separatorType;
-            if (separatorTypeStr != null)
-            {
-                separatorType = (TextConcatenateSeparators)Enum.Parse(typeof(TextConcatenateSeparators), separatorTypeStr);
-            }
-            else
-            {
-                separatorType = TextConcatenateSeparators.None;
-            }
-
+            TextConcatenateSeparators separatorType = (TextConcatenateSeparators)GetSetting<int>(ExtensionSettingNames.DefaultSeparator);
+            
             _extensionUI.SetSeparatorType(separatorType);
             additionalViewElement = _extensionUI;
 
@@ -47,7 +37,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.UIExtensions
         private void _extensionUI_SeparatorChanged(object sender, MultipleTextSelectionsAlignment.SeparatorEventArgs e)
         {
             SetConcatenationSeparator(e.Separator);
-            SetSetting(DEFAULT_SEPARATOR_SETTING_KEY, e.Separator.ToString());
+            RequestSettingChange<int>(ExtensionSettingNames.DefaultSeparator, (int)e.Separator);
         }
 
         public void SetConcatenationSeparator(TextConcatenateSeparators separator)

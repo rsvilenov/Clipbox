@@ -69,7 +69,7 @@
     <Compile Include="Extensibility\Contracts\ExtentionTypes\ISearchSupport.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\PersistenceTypes\PersistenceSupportExtension.cs" />
     <Compile Include="Extensibility\Contracts\IApplicationInfo.cs" />
-    <Compile Include="Extensibility\Contracts\IConfigurableObject.cs" />
+    <Compile Include="Extensibility\Contracts\IConfigurationRecipient.cs" />
     <Compile Include="Extensibility\Contracts\IConfigurationChangeRequestor.cs" />
     <Compile Include="Extensibility\Contracts\IIntermediateFormat.cs" />
     <Compile Include="Extensibility\Contracts\IIntermediateFormatMetadata.cs" />
