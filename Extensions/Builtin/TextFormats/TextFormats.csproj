@@ -73,6 +73,11 @@
     <Compile Include="PreviewGenerators\Common\RtbTextProcessor.cs" />
     <Compile Include="PreviewGenerators\UnicodeTextPreviewGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resources\Translations\Translations.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Translations.resx</DependentUpon>
+    </Compile>
     <Compile Include="SearchSupport\UnicodeTextSearchSupport.cs" />
     <Compile Include="SettingsUIExtensions\TextFormattingSettings.xaml.cs">
       <DependentUpon>TextFormattingSettings.xaml</DependentUpon>
@@ -109,6 +114,10 @@
       <Project>{EDD4D662-1F39-415C-9B66-718457922626}</Project>
       <Name>Clipbox.Infrastructure</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Clipbox.Localization\Clipbox.Infrastructure.UI.Localization.csproj">
+      <Project>{c19e1a93-8a1f-4a5e-82ec-848f8c535aa7}</Project>
+      <Name>Clipbox.Infrastructure.UI.Localization</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Clipbox.Win32\Clipbox.Win32.csproj">
       <Project>{14442748-D4F5-4A60-A9DA-7E0B86D48B73}</Project>
       <Name>Clipbox.Win32</Name>
@@ -131,6 +140,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Translations\Translations.bg-BG.resx" />
+    <EmbeddedResource Include="Resources\Translations\Translations.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Translations.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

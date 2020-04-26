@@ -133,7 +133,7 @@ namespace Clipbox.Infrastructure.UI.Localization.LozalizationProviders
         {
             foreach (ResourceManager resMan in managers)
             {
-                if (resMan.GetString(key, CultureInfo.CurrentCulture) is string val)
+                if (resMan.GetString(key, this.CurrentCulture) is string val)
                 {
                     return val;
                 }

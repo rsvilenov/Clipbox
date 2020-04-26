@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:Clipbox.Infrastructure.UI.CustomControls;assembly=Clipbox.Infrastructure.UI.CustomControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:loc="clr-namespace:Clipbox.Infrastructure.UI.Localization;assembly=Clipbox.Infrastructure.UI.Localization"
     xmlns:local="clr-namespace:Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Width="Auto"
@@ -26,7 +27,8 @@
         <TextBlock
             Grid.Row="0"
             VerticalAlignment="Center"
-            Text="Save the last chosen separator" />
+            Text="{loc:Localize LBL_SAVE_LAST_SEPARATOR,
+                                ResourceLookupMode=CurrentAssembly}" />
 
         <customControls:ToggleSwitch
             Grid.Row="1"

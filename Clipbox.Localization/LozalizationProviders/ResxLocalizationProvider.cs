@@ -2,8 +2,6 @@
 using System;
 using System.Globalization;
 using System.Resources;
-using System.Threading;
-using System.Windows.Threading;
 
 namespace Clipbox.Infrastructure.UI.Localization.LozalizationProviders
 {
@@ -11,9 +9,9 @@ namespace Clipbox.Infrastructure.UI.Localization.LozalizationProviders
     {
         private readonly ResourceManager _resourceManager;
 
-        public ResxLocalizationProvider()
+        public ResxLocalizationProvider(ResourceManager resManager)
         {
-            _resourceManager = Resources.Strings.ResourceManager;
+            _resourceManager = resManager;
         }
 
         public string GetTranslation(string key)

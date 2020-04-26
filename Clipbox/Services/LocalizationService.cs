@@ -27,8 +27,8 @@ namespace Clipbox.Services
             if (e.Key == SettingsKeys.LocalizationCulture)
             {
                 var newCulture = new CultureInfo((string)e.Value);
-                _translationProvider.CurrentCulture = newCulture;
                 UpdateCurrentUICulture(newCulture);
+                _translationProvider.CurrentCulture = newCulture;
             }
         }
 

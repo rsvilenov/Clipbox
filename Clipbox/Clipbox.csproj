@@ -87,6 +87,11 @@
     <Compile Include="FailureInfo.cs" />
     <Compile Include="GlobalConstants.cs" />
     <Compile Include="GlobalSuppressions.cs" />
+    <Compile Include="Resources\Translations\Translations.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Translations.resx</DependentUpon>
+    </Compile>
     <Compile Include="Services\ClipboardViewWindowServiceBase.cs" />
     <Compile Include="Services\CloudSynchronizationService.cs" />
     <Compile Include="Services\DataObjects\CalibratedPreviewDimentionInfo.cs" />
@@ -400,6 +405,11 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Translations\Translations.bg-BG.resx" />
+    <EmbeddedResource Include="Resources\Translations\Translations.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Translations.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="app.manifest">
       <SubType>Designer</SubType>

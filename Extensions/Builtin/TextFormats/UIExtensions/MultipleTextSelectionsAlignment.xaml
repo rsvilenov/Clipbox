@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:loc="clr-namespace:Clipbox.Infrastructure.UI.Localization;assembly=Clipbox.Infrastructure.UI.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="100"
     d:DesignWidth="400"
@@ -173,20 +174,20 @@
             Margin="2,0"
             Checked="ToggleButtonNoSeparator_Checked"
             Style="{StaticResource NoSeparatorToggleBtnStyle}"
-            ToolTip="Paste items one next to the other" />
+            ToolTip="{loc:Localize TTP_PASTE_NO_SEPARATOR}" />
         <ToggleButton
             Name="TgSpace"
             Grid.Column="1"
             Margin="2,0"
             Checked="ToggleButtonSpace_Checked"
             Style="{StaticResource SpaceSeparatorToggleBtnStyle}"
-            ToolTip="Paste with a space between items" />
+            ToolTip="{loc:Localize TTP_PASTE_SPACE_SEPARATOR}" />
         <ToggleButton
             Name="TgNewLine"
             Grid.Column="2"
             Margin="2,0"
             Checked="ToggleButtonNewLine_Checked"
             Style="{StaticResource NewLineSeparatorToggleBtnStyle}"
-            ToolTip="Paste each item on a new line" />
+            ToolTip="{loc:Localize TTP_PASTE_NEWLINE_SEPARATOR}" />
     </Grid>
 </UserControl>
