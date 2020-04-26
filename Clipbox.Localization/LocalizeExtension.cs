@@ -13,5 +13,12 @@ namespace Clipbox.Infrastructure.UI.Localization
             this.Mode = BindingMode.OneWay;
             this.Source = TranslationSource.Instance;
         }
+        
+        //public override object ProvideValue(IServiceProvider serviceProvider)
+        //{
+        //    var rootObjectProvider = serviceProvider.GetService(typeof(IRootObjectProvider)) as IRootObjectProvider;
+        //    var root = rootObjectProvider.RootObject;
+        //    // do whatever you need to do here
+        //}
     }
 }

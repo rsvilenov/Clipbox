@@ -10,7 +10,7 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
     /// Provides configuration capability for the extensions 
     /// </summary>
     public abstract class ConfigurableExtension : 
-        IConfigurationRecipient, IClipboxExtension, IConfigurationChangeRequestor
+        IConfigurationRecipient, IClipboxExtension
     {
         /// <summary>
         /// The extensions override this method in order to know when
@@ -18,8 +18,7 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
         /// has been fulfilled.
         /// </summary>
         /// <param name="settingName">The name of the setting.</param>
-        /// <param name="targetType">The extension type, for which the value is registered.</param>
-        protected virtual void OnSettingUpdated(string settingName, Type targetType) { }
+        protected virtual void OnSettingUpdated(string settingName) { }
 
         /// <summary>
         /// Gets a setting value by key.
@@ -45,54 +44,10 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
                     .Value;
             }
         }
-
-        /// <summary>
-        /// Gets the value of a setting.
-        /// </summary>
-        /// <typeparam name="TValueType">The type of the setting value.</typeparam>
-        /// <typeparam name="TExtensionType">The extension type, for which the value is registered.</typeparam>
-        /// <param name="settingName">The name of the setting</param>
-        /// <returns>The value of the setting.</returns>
-        protected TValueType GetSetting<TValueType, TExtensionType>(string settingName)
-        {
-            lock (_lockObject)
-            {
-                if (!(_settings.Any(s => s.Key.Name == settingName
-                    && s.Key.TargetComponentType == typeof(TExtensionType))))
-                {
-                    throw new ArgumentException($"Setting with name '{settingName}' is not registered for extention type {typeof(TExtensionType).Name}.");
-                }
-
-                return (TValueType)_settings
-                    .Single(s => s.Key.Name == settingName
-                        && s.Key.TargetComponentType == typeof(TExtensionType))
-                    .Value;
-            }
-        }
-
+        
         /// <summary>
         /// Raises a request to change a setting. When the setting is changed,
-        /// <see cref="ConfigurableExtension.OnSettingUpdated(string settingKeyName, Type targetType)"/> gets called, so that
-        /// the requestor knows that the change has been applied.
-        /// </summary>
-        protected void RequestSettingChange<TValueType, TExtensionType>(string settingName, TValueType value)
-        {
-            if (!(_settings.Any(s => s.Key.Name == settingName 
-                && s.Key.TargetComponentType == typeof(TExtensionType))))
-            {
-                throw new ArgumentException($"Setting with name '{settingName}' is not registered for extention type {typeof(TExtensionType).Name}.");
-            }
-
-            ISettingKey key = _settings.Single(s => s.Key.Name == settingName
-                && s.Key.TargetComponentType == typeof(TExtensionType))
-                .Key;
-
-            _requestSettingChange?.Invoke(this, new RequestSettingChangeEventArgs(key, value));
-        }
-
-        /// <summary>
-        /// Raises a request to change a setting. When the setting is changed,
-        /// <see cref="ConfigurableExtension.OnSettingUpdated(string settingKeyName, Type targetType)"/> gets called, so that
+        /// <see cref="ConfigurableExtension.OnSettingUpdated(string settingKeyName)"/> gets called, so that
         /// the requestor knows that the change has been applied.
         /// This method makes change requests only for settings,
         /// which are registered for the current extension type.
@@ -133,7 +88,7 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
 
                     if (oldValue != settingValue)
                     {
-                        OnSettingUpdated(settingKey.Name, settingKey.TargetComponentType);
+                        OnSettingUpdated(settingKey.Name);
                     }
                 }
                 else

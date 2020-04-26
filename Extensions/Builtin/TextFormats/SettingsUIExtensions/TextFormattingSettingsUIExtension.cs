@@ -17,7 +17,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
         {
             _extensionUI = new TextFormattingSettings
             {
-                IsSaveSeparatorToggled = GetSetting<bool>(ExtensionSettingNames.SaveSelectedSeparatorAsDefault)
+                IsSaveSeparatorToggled = GetSetting<bool, MultipleTextSelectionsAlignmentUIExtension>(ExtensionSettingNames.SaveSelectedSeparatorAsDefault)
             };
 
             _extensionUI.SettingChanged += _extensionUI_SettingChanged;
@@ -28,7 +28,6 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
         private void _extensionUI_SettingChanged(object sender, System.EventArgs e)
         {
             RequestSettingChange<bool, MultipleTextSelectionsAlignmentUIExtension>(ExtensionSettingNames.SaveSelectedSeparatorAsDefault, _extensionUI.IsSaveSeparatorToggled);
-            RequestSettingChange<bool, TextFormattingSettingsUIExtension>(ExtensionSettingNames.SaveSelectedSeparatorAsDefault, _extensionUI.IsSaveSeparatorToggled);
         }
 
         protected override void RegisterSettingKeys(SettingKeyCollectionBuilder settingKeyColBuilder)
@@ -37,9 +36,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
                 .Add<int, MultipleTextSelectionsAlignmentUIExtension>(ExtensionSettingNames.DefaultSeparator, (int)TextConcatenateSeparators.None)
                 .Add<bool, RemoveFormattingUIExtension>(ExtensionSettingNames.RemoveFormatting, false)
                 .Add<bool, MultipleTextSelectionsAlignmentUIExtension>(ExtensionSettingNames.SaveSelectedSeparatorAsDefault, false)
-                .Add<bool, RemoveFormattingUIExtension>(ExtensionSettingNames.SaveRemoveFormattingState, false)
-                .Add<bool, TextFormattingSettingsUIExtension>(ExtensionSettingNames.SaveSelectedSeparatorAsDefault, false)
-                .Add<bool, TextFormattingSettingsUIExtension>(ExtensionSettingNames.SaveRemoveFormattingState, false);
+                .Add<bool, RemoveFormattingUIExtension>(ExtensionSettingNames.SaveRemoveFormattingState, false);
         }
     }
 }
