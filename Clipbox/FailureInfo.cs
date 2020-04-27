@@ -93,9 +93,9 @@ namespace Clipbox
 
             IExtensionInfo extInfo = null;
 
-            if (ClipboxExtensionAttributeAttribute.IsDefinedFor(extType))
+            if (ClipboxExtensionAttribute.IsDefinedFor(extType))
             {
-                extInfo = ClipboxExtensionAttributeAttribute.GetExtensionInfo(extType);
+                extInfo = ClipboxExtensionAttribute.GetExtensionInfo(extType);
                 FailedExtensionVersion = extInfo.Version;
                 FailedExtensionAuthor = extInfo.Author;
                 FailedExtensionDescription = extInfo.Description;

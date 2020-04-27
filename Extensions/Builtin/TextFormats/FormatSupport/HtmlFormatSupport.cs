@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.FormatSupport
 {
-    [ClipboxExtensionAttribute(Author = "Clipbox", Description = "Html format", Version = 0.1)]
+    [ClipboxExtension(Author = "Clipbox", Description = "Html format", Version = 0.1)]
     [ClipboardFormat("CF_HTML")]
     public class HtmlFormatSupport : ClipboardFormatSupport<TextIntermediateFormat>
     {

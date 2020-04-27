@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.FormatSupport
 {
-    [ClipboxExtensionAttribute(Author = "Clipbox", Description = "ANSI text formats", Version = 0.1)]
+    [ClipboxExtension(Author = "Clipbox", Description = "ANSI text formats", Version = 0.1)]
     // the original Rtf is ANSI, and it seems that everything
     // that is sent to the clipboard as Rtf is ANSI
     [ClipboardFormat("Rich Text Format")]

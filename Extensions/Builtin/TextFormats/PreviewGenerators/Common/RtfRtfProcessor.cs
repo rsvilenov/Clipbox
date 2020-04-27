@@ -20,14 +20,20 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
 
         private readonly string _replacementCharsRtfColorStr;
 
-        public RtfProcessor(Color replacementCharsColor, int replacementCharsFontSizeHalfPoints)
+        private readonly bool _showReplacementChars;
+
+        public RtfProcessor(Color replacementCharsColor, int replacementCharsFontSizeHalfPoints, bool showFormattingChars = true)
         {
-            _replacementChars = GetSpacingReplacementChars();
+            _replacementChars = showFormattingChars ?
+                    GetVisibleSpacingReplacementChars() :
+                    GetBlankSpacingReplacementChars();
 
             // create an rtf color stirng
             _replacementCharsRtfColorStr = $"\\red{replacementCharsColor.R}\\green{replacementCharsColor.G}\\blue{replacementCharsColor.B}";
 
             _replacementCharFontSize = replacementCharsFontSizeHalfPoints;
+
+            _showReplacementChars = showFormattingChars;
         }
 
 
@@ -83,13 +89,23 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
             return _resultRtf;
         }
 
-        private Dictionary<SpacingChars, string> GetSpacingReplacementChars()
+        private Dictionary<SpacingChars, string> GetVisibleSpacingReplacementChars()
         {
             return new Dictionary<SpacingChars, string>
             {
                 { SpacingChars.LineBreak, char.ConvertFromUtf32(0x21B5) },
                 { SpacingChars.Tab, char.ConvertFromUtf32(0x2B7E) },
                 { SpacingChars.Space, char.ConvertFromUtf32(0x02FD) }
+            };
+        }
+
+        private Dictionary<SpacingChars, string> GetBlankSpacingReplacementChars()
+        {
+            return new Dictionary<SpacingChars, string>
+            {
+                { SpacingChars.LineBreak, " " },
+                { SpacingChars.Tab, " " },
+                { SpacingChars.Space, " " }
             };
         }
 
@@ -100,24 +116,27 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
                 throw new InvalidOperationException("Spacing char color has not been set.");
             }
 
+            string occurancePaattern = _showReplacementChars ? "{2,}" : "+";
+
             string regex = "";
             switch (spacingChar)
             {
                 case SpacingChars.LineBreak:
-                    regex = @"((\\par|\\line)[\r|\n|\s]+){2,}";
+                    regex = @"((\\par|\\line)[\r|\n|\s]+)" + occurancePaattern;
                     break;
                 case SpacingChars.Tab:
-                    regex = @"(\\tab\s*){2,}";
+                    regex = @"(\\tab\s*)" + occurancePaattern;
                     break;
                 case SpacingChars.Space:
                     regex = @"(\s){5,}";
                     break;
             }
+            
+            string replacedMatchEnding = _showReplacementChars ? "+" : "";
 
             _resultRtf = Regex.Replace((_resultRtf ?? _originalRtf), regex,
-            m => $@"{{\cf{replacementCharColorRtfNumber}\fs{_replacementCharFontSize} {Escape(_replacementChars[spacingChar])}+}}",
+            m => $@"{{\cf{replacementCharColorRtfNumber}\fs{_replacementCharFontSize} {Escape(_replacementChars[spacingChar])}{replacedMatchEnding}}}",
             RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Multiline);
-
         }
 
         public void SetSpacingCharFontSize(int fontSizeInHalfPoints)

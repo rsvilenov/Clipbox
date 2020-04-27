@@ -33,7 +33,7 @@ namespace Clipbox.Infrastructure.Extensibility.Discovery
             var extensionTypes = assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IClipboxExtension)));
             foreach (var type in extensionTypes)
             {
-                var extensionAttributes = (ClipboxExtensionAttributeAttribute[])type.GetCustomAttributes(typeof(ClipboxExtensionAttributeAttribute), true);
+                var extensionAttributes = (ClipboxExtensionAttribute[])type.GetCustomAttributes(typeof(ClipboxExtensionAttribute), true);
                 if (!extensionAttributes.Any())
                 {
                     throw new NotSupportedException($"Type {type.FullName} which implements IClipboxExtension should also have ClipboxExtension attribute.");

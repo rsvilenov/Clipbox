@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Clipbox.Extensions.BuiltIn.HdropFormat.FlowExtensions
 {
-    [ClipboxExtensionAttribute]
+    [ClipboxExtension]
     public class ProcessModifyHdropTargets : FlowExtension
     {
         public override bool OnQueryModify(IEnumerable<IClipboardItem> items)

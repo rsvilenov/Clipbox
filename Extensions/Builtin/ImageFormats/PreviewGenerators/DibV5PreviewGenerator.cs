@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 
 namespace Clipbox.Extensions.BuiltIn.ImageFormats.FormatSupport
 {
-    [ClipboxExtensionAttribute(Author = "Clipbox", Description = "", Version = 0.1)]
+    [ClipboxExtension(Author = "Clipbox", Description = "", Version = 0.1)]
     [IntermediateFormatSupport("{CFCA3819-C2EF-4F94-B9B7-49D402CA0652}")]
     public class DibV5PreviewGenerator : SinglePreviewGenerator<DibV5IntermediateFormat, ImagePreviewData>
     {

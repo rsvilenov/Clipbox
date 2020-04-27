@@ -2,9 +2,7 @@
 using Clipbox.Infrastructure.ExtensionMethods;
 using Clipbox.Infrastructure.UI.ExtensionMethods;
 using System;
-using System.Diagnostics;
 using System.Drawing;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -25,24 +23,59 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
             Rtf
         }
 
+        public class PreviewGenerationOptions
+        {
+            public bool ShowFormattingCharacters { get; set; } = true;
 
-        public static ImagePreviewData GeneratePreview(string textData, TextFormat format, int desiredPreviewWidth, int maxPreviewHeight, double dpi, bool areDimensionsScaledToDpi)
+            public bool InclideAnnotation { get; set; } = true;
+
+            public bool PreserveRtfFormatting { get; set; } = true;
+
+            public System.Windows.Media.Color? Background { get; set; } =  null;
+
+            public System.Windows.Media.Color? Foreground { get; set; } = null;
+
+            public double FontSize { get; set; } = 14;
+
+            public void Validate(TextFormat format)
+            {
+                if (format == TextFormat.Rtf
+                    && PreserveRtfFormatting
+                    && Foreground.HasValue)
+                {
+                    throw new InvalidOperationException($"When a preview for an rtf with preserved formatting is requested, the foreground cannot be changed.");
+                }
+            }
+        }
+        
+        public static ImagePreviewData GeneratePreview(string textData,
+            TextFormat format,
+            int desiredPreviewWidth,
+            int maxPreviewHeight,
+            double dpi,
+            bool areDimensionsScaledToDpi,
+            PreviewGenerationOptions options)
         {
             RichTextBox rtb = new RichTextBox
             {
-                Background = System.Windows.Media.Brushes.Gainsboro,
+                Background = new SolidColorBrush(options.Background ?? System.Windows.Media.Colors.Gainsboro),
             };
+
+            if (options.Foreground.HasValue)
+            {
+                rtb.Foreground = new SolidColorBrush(options.Foreground.Value);
+            }
 
             rtb.SelectAll();
 
             try
             {
-                RtfProcessor rp = new RtfProcessor(Colors.Brown, 18 * 2);
+                RtfProcessor rp = new RtfProcessor(Colors.Brown, 18 * 2, options.ShowFormattingCharacters);
                 if (format == TextFormat.Text)
                 {
                     if (!rp.TryLoadFromText(textData, 14 * 2))
                     {
-                        rtb.FontSize = 14;
+                        rtb.FontSize = options.FontSize;
                         string rtfFromRtb = GetRtfUsingRichTextBox(textData, rtb);
                         rp.LoadFromRtf(rtfFromRtb);
                     }
@@ -66,6 +99,11 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
             }
 
             string text = rtb.Selection.Text;
+            if (!options.PreserveRtfFormatting)
+            {
+                LoadTextDataIntoRichTextBox(text, TextFormat.Text, rtb);
+            }
+
             int textLength = text.Length;
             int wordCount = text.Split(new char[] { ' ' },
                 StringSplitOptions.RemoveEmptyEntries).Length;
@@ -130,23 +168,27 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
                 }
             }
 
-            var resManager = Resources.Translations.Translations.ResourceManager;
-            string annotation;
-            if (wordCount > 5 && wordCount < 15)
+
+            string annotation = string.Empty;
+            if (options.InclideAnnotation)
             {
-                annotation = $"{wordCount} {resManager.GetString("STR_WORDS", Thread.CurrentThread.CurrentUICulture)}";
-            }
-            else if (wordCount > 15)
-            {
-                annotation = $"{lineCount} {resManager.GetString("STR_LINES", Thread.CurrentThread.CurrentUICulture)}";
-            }
-            else if (textLength > 1 || textLength == 0)
-            {
-                annotation = $"{textLength} {resManager.GetString("STR_CHARACTERS", Thread.CurrentThread.CurrentUICulture)}";
-            }
-            else
-            {
-                annotation = $"{textLength} {resManager.GetString("STR_CHARACTER", Thread.CurrentThread.CurrentUICulture)}";
+                var resManager = Resources.Translations.Translations.ResourceManager;
+                if (wordCount > 5 && wordCount < 15)
+                {
+                    annotation = $"{wordCount} {resManager.GetString("STR_WORDS", Thread.CurrentThread.CurrentUICulture)}";
+                }
+                else if (wordCount > 15)
+                {
+                    annotation = $"{lineCount} {resManager.GetString("STR_LINES", Thread.CurrentThread.CurrentUICulture)}";
+                }
+                else if (textLength > 1 || textLength == 0)
+                {
+                    annotation = $"{textLength} {resManager.GetString("STR_CHARACTERS", Thread.CurrentThread.CurrentUICulture)}";
+                }
+                else
+                {
+                    annotation = $"{textLength} {resManager.GetString("STR_CHARACTER", Thread.CurrentThread.CurrentUICulture)}";
+                }
             }
 
             return new ImagePreviewData

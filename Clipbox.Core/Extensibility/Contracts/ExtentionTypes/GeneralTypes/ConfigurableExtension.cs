@@ -10,7 +10,7 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
     /// Provides configuration capability for the extensions 
     /// </summary>
     public abstract class ConfigurableExtension : 
-        IConfigurationRecipient, IClipboxExtension
+        IConfigurationRecipient, IClipboxExtension, ISettingChangeRequestor
     {
         /// <summary>
         /// The extensions override this method in order to know when
@@ -100,9 +100,9 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
 
         private event EventHandler<RequestSettingChangeEventArgs> _requestSettingChange;
         /// <summary>
-        /// <see cref="IConfigurationRecipient.RequestSettingChange"/>
+        /// <see cref="ISettingChangeRequestor.RequestSettingChange"/>
         /// </summary>
-        event EventHandler<RequestSettingChangeEventArgs> IConfigurationRecipient.RequestSettingChange
+        event EventHandler<RequestSettingChangeEventArgs> ISettingChangeRequestor.RequestSettingChange
         {
             add
             {

@@ -187,8 +187,11 @@ namespace Clipbox.Views
                     {
                         confRecipient.PutSetting(settingKey, _settingsService.GetSetting(settingKey));
                     }
+                }
 
-                    confRecipient.RequestSettingChange += ConfRequestor_RequestSettingChange;
+                if (extension is ISettingChangeRequestor settingChangeRequestor)
+                {
+                    settingChangeRequestor.RequestSettingChange += ConfRequestor_RequestSettingChange;
                 }
 
                 lock (_loadedExtensionsLockHandle)
@@ -202,9 +205,9 @@ namespace Clipbox.Views
         {
             foreach (UIExtension extension in extensions.ToList())
             {
-                if (extension is IConfigurationRecipient confRecipient)
+                if (extension is ISettingChangeRequestor settingChangeRequestor)
                 {
-                    confRecipient.RequestSettingChange -= ConfRequestor_RequestSettingChange;
+                    settingChangeRequestor.RequestSettingChange -= ConfRequestor_RequestSettingChange;
                 }
 
                 lock (_loadedExtensionsLockHandle)

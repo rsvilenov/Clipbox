@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 namespace Clipbox.Extensions.BuiltIn.ImageFormats.FormatSupport
 {
 
-    [ClipboxExtensionAttribute(Author = "Clipbox", Description = "", Version = 0.1)]
+    [ClipboxExtension(Author = "Clipbox", Description = "", Version = 0.1)]
     [ClipboardFormat("CF_METAFILEPICT")]
     public class MetafilePictFormatSupport : ClipboardFormatSupport<MetafilePictIntermediateFormat>
     {

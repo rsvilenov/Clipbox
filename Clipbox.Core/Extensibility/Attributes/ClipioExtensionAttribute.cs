@@ -5,7 +5,7 @@ using System.Linq;
 namespace Clipbox.Core.Extensibility.Attributes
 {
     [AttributeUsage(AttributeTargets.Class)]
-    public class ClipboxExtensionAttributeAttribute : Attribute
+    public class ClipboxExtensionAttribute : Attribute
     {
         public string Description { get; set; }
 
@@ -15,19 +15,19 @@ namespace Clipbox.Core.Extensibility.Attributes
 
         public static bool IsDefinedFor(Type type)
         {
-            var formatAttributes = (ClipboxExtensionAttributeAttribute[])type.GetCustomAttributes(typeof(ClipboxExtensionAttributeAttribute), true);
+            var formatAttributes = (ClipboxExtensionAttribute[])type.GetCustomAttributes(typeof(ClipboxExtensionAttribute), true);
             return formatAttributes.Any();
         }
 
         public static IExtensionInfo GetExtensionInfo(Type type)
         {
-            var extensionAttribute = (ClipboxExtensionAttributeAttribute)type.
-                GetCustomAttributes(typeof(ClipboxExtensionAttributeAttribute), true).
+            var extensionAttribute = (ClipboxExtensionAttribute)type.
+                GetCustomAttributes(typeof(ClipboxExtensionAttribute), true).
                 FirstOrDefault();
 
             if (extensionAttribute == null)
             {
-                throw new InvalidOperationException($"Attribute {nameof(ClipboxExtensionAttributeAttribute)} has not been defined for type {type.Name}");
+                throw new InvalidOperationException($"Attribute {nameof(ClipboxExtensionAttribute)} has not been defined for type {type.Name}");
             }
 
             return new ExtensionInfo

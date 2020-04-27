@@ -6,7 +6,7 @@ using System.Windows;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
 {
-    [ClipboxExtensionAttribute]
+    [ClipboxExtension]
     public class TextFormattingSettingsUIExtension : SettingsUIExtension
     {
         private TextFormattingSettings _extensionUI;

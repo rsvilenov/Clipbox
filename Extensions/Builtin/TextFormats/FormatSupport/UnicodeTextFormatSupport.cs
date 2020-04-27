@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.FormatSupport
 {
-    [ClipboxExtensionAttribute(Author = "Clipbox", Description = "Unicode text formats", Version = 0.1)]
+    [ClipboxExtension(Author = "Clipbox", Description = "Unicode text formats", Version = 0.1)]
     [ClipboardFormat("CF_UNICODETEXT")]
     public class UnicodeTextFormatSupport : ClipboardFormatSupport<UnicodeTextIntermediateFormat>
     {

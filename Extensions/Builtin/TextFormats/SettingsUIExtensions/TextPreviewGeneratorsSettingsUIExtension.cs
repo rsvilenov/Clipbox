@@ -7,7 +7,7 @@ using System.Windows.Media;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
 {
-    [ClipboxExtensionAttribute]
+    [ClipboxExtension]
     public class TextPreviewGeneratorsSettingsUIExtension : SettingsUIExtension
     {
         public override UIElement GetSettingsViewPart()
@@ -23,19 +23,29 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
         protected override void RegisterSettingKeys(SettingKeyCollectionBuilder settingKeyColBuilder)
         {
             settingKeyColBuilder
-                .Add<double, TextPreviewGenerator>(ExtensionSettingNames.FontSize, 14d)
-                .Add<bool, TextPreviewGenerator>(ExtensionSettingNames.SizeToDpi, false)
-                .Add<double, TextPreviewGenerator>(ExtensionSettingNames.Background, 14d)
-                .Add<double, TextPreviewGenerator>(ExtensionSettingNames.Foreground, 14d)
-                .Add<double, UnicodeTextPreviewGenerator>(ExtensionSettingNames.FontSize, 14d)
-                .Add<bool, UnicodeTextPreviewGenerator>(ExtensionSettingNames.SizeToDpi, false)
-                .Add<double, UnicodeTextPreviewGenerator>(ExtensionSettingNames.Background, 14d)
-                .Add<double, UnicodeTextPreviewGenerator>(ExtensionSettingNames.Foreground, 14d)
+                .Add<string, RtfPreviewGenerator>(ExtensionSettingNames.Background, null)
+                .Add<string, RtfPreviewGenerator>(ExtensionSettingNames.Foreground, null)
                 .Add<double, RtfPreviewGenerator>(ExtensionSettingNames.FontSize, 14d)
-                .Add<bool, RtfPreviewGenerator>(ExtensionSettingNames.SizeToDpi, false)
-                .Add<bool, RtfPreviewGenerator>(ExtensionSettingNames.PreserveFontProperties, true)
-                .Add<double, RtfPreviewGenerator>(ExtensionSettingNames.Background, 14d)
-                .Add<double, RtfPreviewGenerator>(ExtensionSettingNames.Foreground, 14d);
+                .Add<bool, RtfPreviewGenerator>(ExtensionSettingNames.PreserveOriginalFontProperties, false)
+                .Add<bool, RtfPreviewGenerator>(ExtensionSettingNames.ScaleFontSizeToDpi, false)
+                .Add<bool, RtfPreviewGenerator>(ExtensionSettingNames.IncludeAnnotation, false)
+                .Add<bool, RtfPreviewGenerator>(ExtensionSettingNames.ShowFormattingCharacters, false)
+
+                .Add<string, TextPreviewGenerator>(ExtensionSettingNames.Background, null)
+                .Add<string, TextPreviewGenerator>(ExtensionSettingNames.Foreground, null)
+                .Add<double, TextPreviewGenerator>(ExtensionSettingNames.FontSize, 14d)
+                .Add<bool, TextPreviewGenerator>(ExtensionSettingNames.PreserveOriginalFontProperties, false)
+                .Add<bool, TextPreviewGenerator>(ExtensionSettingNames.ScaleFontSizeToDpi, false)
+                .Add<bool, TextPreviewGenerator>(ExtensionSettingNames.IncludeAnnotation, false)
+                .Add<bool, TextPreviewGenerator>(ExtensionSettingNames.ShowFormattingCharacters, false)
+
+                .Add<string, UnicodeTextPreviewGenerator>(ExtensionSettingNames.Background, null)
+                .Add<string, UnicodeTextPreviewGenerator>(ExtensionSettingNames.Foreground, null)
+                .Add<double, UnicodeTextPreviewGenerator>(ExtensionSettingNames.FontSize, 14d)
+                .Add<bool, UnicodeTextPreviewGenerator>(ExtensionSettingNames.PreserveOriginalFontProperties, false)
+                .Add<bool, UnicodeTextPreviewGenerator>(ExtensionSettingNames.ScaleFontSizeToDpi, false)
+                .Add<bool, UnicodeTextPreviewGenerator>(ExtensionSettingNames.IncludeAnnotation, false)
+                .Add<bool, UnicodeTextPreviewGenerator>(ExtensionSettingNames.ShowFormattingCharacters, false);
 
         }
     }

@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace Clipbox.Extensions.BuiltIn.HdropFormat.FlowExtensions
 {
-    [ClipboxExtensionAttribute]
+    [ClipboxExtension]
     public class RemoveDeadFilePaths : FlowExtension
     {
         public override IHouseKeepingTask RegisterHousekeepingTask()

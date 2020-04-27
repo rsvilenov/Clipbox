@@ -9,7 +9,7 @@ using System.Drawing.Imaging;
 
 namespace Clipbox.Extensions.BuiltIn.ImageFormats.PreviewGenerators
 {
-    [ClipboxExtensionAttribute(Author = "Clipbox", Description = "", Version = 0.1)]
+    [ClipboxExtension(Author = "Clipbox", Description = "", Version = 0.1)]
     [IntermediateFormatSupport("{69BD2743-DADE-4B24-B3A1-5B6D73BDAE32}")]
     public class MetafilePreviewGenerator : SinglePreviewGenerator<MetafileIntermediateFormat, ImagePreviewData>
     {

@@ -15,7 +15,7 @@ using System.Windows.Media.Imaging;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators
 {
-    [ClipboxExtensionAttribute(Author = "Clipbox", Description = "", Version = 0.1)]
+    [ClipboxExtension(Author = "Clipbox", Description = "", Version = 0.1)]
     [IntermediateFormatSupport("{5E4E9C1F-A324-42A4-AE9E-AA64DD871CC8}")]
     public class HtmlPreviewGenerator : SinglePreviewGenerator<HtmlIntermediateFormat, HtmlPreviewData>
     {

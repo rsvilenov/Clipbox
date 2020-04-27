@@ -8,7 +8,7 @@ using Clipbox.Extensions.BuiltIn.HdropFormat.IntermediateFormats;
 
 namespace Clipbox.Extensions.BuiltIn.HdropFormat.FlowExtensions
 {
-    [ClipboxExtensionAttribute]
+    [ClipboxExtension]
     public class CutFlowExtension : FlowExtension
     {
         public override void OnManagedPasteCompleted(IClipboardItem clipboardItem, IWindowInfo targetWindowInfo, ref bool removeItem)

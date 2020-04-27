@@ -14,7 +14,7 @@ using System.Windows.Documents;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.FlowExtensions
 {
-    [ClipboxExtensionAttribute]
+    [ClipboxExtension]
     public class RemoveFormattingFlowExtension : FlowExtension
     {
         public override bool OnQueryModify(IEnumerable<IClipboardItem> items)

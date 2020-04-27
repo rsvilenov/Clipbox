@@ -33,8 +33,15 @@ namespace Clipbox.Services
             {
                 throw new KeyNotFoundException($"{key.Name} should be registered first.");
             }
+            
+            object value = _configurationProvider.GetSetting(key);
+            
+            if (value == GetDefaultValue(key.TypeOfValue))
+            {
+                value = key.DefaultValue;
+            }
 
-            return _configurationProvider.GetSetting(key);
+            return value;
         }
 
         public void SetSetting(ISettingKey key, object value)
@@ -89,6 +96,16 @@ namespace Clipbox.Services
         public IEnumerable<ISettingKey> GetSettingKeys(Type targetType)
         {
             return _targettedSettingKeys.Where(sk => sk.TargetComponentType == targetType);
+        }
+
+        private object GetDefaultValue(Type type)
+        {
+            if (type.IsValueType)
+            {
+                return Activator.CreateInstance(type);
+            }
+
+            return null;
         }
     }
 }

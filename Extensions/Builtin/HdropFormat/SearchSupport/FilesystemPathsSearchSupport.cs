@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Clipbox.Extensions.BuiltIn.HdropFormat.SearchSupport
 {
-    [ClipboxExtensionAttribute(Author = "Clipbox", Description = "", Version = 0.1)]
+    [ClipboxExtension(Author = "Clipbox", Description = "", Version = 0.1)]
     [IntermediateFormatSupport("{3D2C252F-7838-49C2-9D5D-C6B4C92320D3}")]
     public class FilesystemPathsSearchSupport : SearchSupportExtension<FilesystemPathsIntermediateFormat>
     {

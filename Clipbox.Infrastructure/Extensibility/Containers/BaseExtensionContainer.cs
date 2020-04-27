@@ -50,9 +50,9 @@ namespace Clipbox.Infrastructure.Extensibility.Containers
                 throw new InvalidCastException($"{type.Name} does not implement {typeof(TExtensionBaseType).FullName}");
             }
 
-            if (ClipboxExtensionAttributeAttribute.IsDefinedFor(type))
+            if (ClipboxExtensionAttribute.IsDefinedFor(type))
             {
-                IExtensionInfo extensionInfo = ClipboxExtensionAttributeAttribute.GetExtensionInfo(type);
+                IExtensionInfo extensionInfo = ClipboxExtensionAttribute.GetExtensionInfo(type);
                 _registeredExtensions.TryAdd(type, extensionInfo);
             }
         }

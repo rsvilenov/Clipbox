@@ -8,7 +8,7 @@ using Clipbox.Extensions.BuiltIn.TextFormats.IntermediateFormats;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.UIExtensions
 {
-    [ClipboxExtensionAttribute]
+    [ClipboxExtension]
     public class RemoveFormattingUIExtension : UIExtension
     {
         private const string REMOVE_FORMATING_SETTING_KEY = nameof(REMOVE_FORMATING_SETTING_KEY);

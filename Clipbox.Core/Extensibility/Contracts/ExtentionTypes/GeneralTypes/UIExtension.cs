@@ -1,5 +1,4 @@
 ﻿using Clipbox.Core.ClipboardContent.Interfaces;
-using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
 using System.Collections.Generic;
 using System.Windows;
 

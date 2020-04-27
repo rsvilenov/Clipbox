@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.FormatSupport
 {
-    [ClipboxExtensionAttribute(Author = "Clipbox", Description = "ANSI text formats", Version = 0.1)]
+    [ClipboxExtension(Author = "Clipbox", Description = "ANSI text formats", Version = 0.1)]
     [ClipboardFormat("Text")]
     public class AnsiTextFormatSupport : ClipboardFormatSupport<TextIntermediateFormat>
     {

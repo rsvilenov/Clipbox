@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.PersistenceSupport
 {
-    [ClipboxExtensionAttribute(Author = "Clipbox", Description = "", Version = 0.1)]
+    [ClipboxExtension(Author = "Clipbox", Description = "", Version = 0.1)]
     [IntermediateFormatSupport("{D8F8C369-7F81-4138-9718-4F34EB1BD669}")]
     public class RichTextPersistenceSupport : PersistenceSupportExtension<RichTextIntermediateFormat>
     {

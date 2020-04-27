@@ -16,7 +16,7 @@ using Clipbox.Extensions.BuiltIn.TextFormats.IntermediateFormats;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.FlowExtensions
 {
-    [ClipboxExtensionAttribute]
+    [ClipboxExtension]
     public class ConcatTextSelectionsFlowExtension : FlowExtension
     {
         public override bool OnQueryModify(IEnumerable<IClipboardItem> items)

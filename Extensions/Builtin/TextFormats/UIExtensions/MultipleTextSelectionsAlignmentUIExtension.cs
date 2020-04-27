@@ -8,7 +8,7 @@ using System.Windows;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.UIExtensions
 {
-    [ClipboxExtensionAttribute]
+    [ClipboxExtension]
     public class MultipleTextSelectionsAlignmentUIExtension : UIExtension
     {
 

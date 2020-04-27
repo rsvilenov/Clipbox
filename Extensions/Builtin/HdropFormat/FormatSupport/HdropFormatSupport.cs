@@ -12,7 +12,7 @@ using System.Text;
 
 namespace Clipbox.Extensions.BuiltIn.HdropFormat.FormatSupport
 {
-    [ClipboxExtensionAttribute(Author = "Clipbox", Description = "File collection from explorer", Version = 0.1)]
+    [ClipboxExtension(Author = "Clipbox", Description = "File collection from explorer", Version = 0.1)]
     [ClipboardFormat("CF_HDROP")]
     public class HdropFormatSupport : ClipboardFormatSupport<FilesystemPathsIntermediateFormat>
     {

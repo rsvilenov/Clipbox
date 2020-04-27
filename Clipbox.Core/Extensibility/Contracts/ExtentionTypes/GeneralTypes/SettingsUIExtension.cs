@@ -10,7 +10,7 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
     /// <summary>
     /// Settings view extension
     /// </summary>
-    public abstract class SettingsUIExtension : IClipboxExtension, ISettingsRegistrator, IConfigurationRecipient
+    public abstract class SettingsUIExtension : IClipboxExtension, ISettingsRegistrator, IConfigurationRecipient, ISettingChangeRequestor
     {   
         public SettingsUIExtension()
         {
@@ -122,9 +122,9 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
 
         private event EventHandler<RequestSettingChangeEventArgs> _requestSettingChange;
         /// <summary>
-        /// <see cref="IConfigurationRecipient.RequestSettingChange"/>
+        /// <see cref="ISettingChangeRequestor.RequestSettingChange"/>
         /// </summary>
-        event EventHandler<RequestSettingChangeEventArgs> IConfigurationRecipient.RequestSettingChange
+        event EventHandler<RequestSettingChangeEventArgs> ISettingChangeRequestor.RequestSettingChange
         {
             add
             {

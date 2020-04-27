@@ -5,7 +5,7 @@ using Clipbox.Core.ClipboardContent.Interfaces;
 
 namespace Clipbox.Extensions.BuiltIn.HdropFormat.FlowExtensions
 {
-    [ClipboxExtensionAttribute]
+    [ClipboxExtension]
     public class RenameExistingFilesFlowExtension : FlowExtension
     {
         public override void OnManagedPasteRequested(IClipboardItem clipboardItems, IWindowInfo targetWindowInfo, ref bool cancelPaste)

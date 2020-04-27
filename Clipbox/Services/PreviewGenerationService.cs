@@ -156,7 +156,7 @@ namespace Clipbox.Services
             foreach (ISettingKey key in settingKeys)
             {
                 settingsStr.Append(key.Name);
-                settingsStr.Append(_settingsService.GetSetting(key).ToString());
+                settingsStr.Append(_settingsService.GetSetting(key)?.ToString() ?? string.Empty);
             }
 
             return MD5Hash.Create(settingsStr.ToString());
@@ -474,6 +474,15 @@ namespace Clipbox.Services
             {
                 IPreviewGenerator previewGenerator = formatGuidPreviewGeneratorPair.Value.Value;
                 previewGeneratorUsed = previewGenerator.GetType();
+
+                // load the settings
+                if (previewGenerator is IConfigurationRecipient confRecipient)
+                {
+                    foreach (ISettingKey settingKey in _settingsService.GetSettingKeys(previewGeneratorUsed))
+                    {
+                        confRecipient.PutSetting(settingKey, _settingsService.GetSetting(settingKey));
+                    }
+                }
 
                 IClipboardDataObject cdoForPreview = clipboardItem.ClipboardDataObjects.Single(cdo => cdo.IntermediateFormatMetadata.FormatGuid == formatGuidPreviewGeneratorPair.Value.Key);
                 IIntermediateFormat intermediateFormatObjectForPreview = cdoForPreview.IntermediateFormatObject;

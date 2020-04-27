@@ -5,7 +5,7 @@ using System.IO;
 
 namespace Clipbox.Extensions.BuiltIn.General
 {
-    [ClipboxExtensionAttribute]
+    [ClipboxExtension]
     public class DisableRemoteDesktopOperations : FlowExtension
     {
         private const string REMOTE_DESKTOP_EXE_NAME = "mstsc.exe";

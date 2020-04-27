@@ -40,9 +40,10 @@ namespace Clipbox.Views
 
         private void SettingsWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            foreach (IConfigurationRecipient ext in _settingUIExtensions)
+            foreach (ISettingChangeRequestor ext in _settingUIExtensions
+                .Where(ext => ext is ISettingChangeRequestor))
             {
-                ext.RequestSettingChange -= ConfigurationRecipient_RequestSettingChange;
+                ext.RequestSettingChange -= SettingChangeRequestor_RequestSettingChange;
             }
         }
 
@@ -58,7 +59,8 @@ namespace Clipbox.Views
                     var configurationRecipient = (IConfigurationRecipient)ext;
                     configurationRecipient.PutSetting(key, _settingsService.GetSetting(key));
                     _settingUIExtensions.Add(configurationRecipient);
-                    configurationRecipient.RequestSettingChange += ConfigurationRecipient_RequestSettingChange;
+                    var settingChangeRequestor = (ISettingChangeRequestor)ext;
+                    settingChangeRequestor.RequestSettingChange += SettingChangeRequestor_RequestSettingChange;
                 }
 
                 UIElement extUI = ext.GetSettingsViewPart();
@@ -66,7 +68,7 @@ namespace Clipbox.Views
             }
         }
 
-        private void ConfigurationRecipient_RequestSettingChange(object sender, Core.Extensibility.EventArgsClasses.RequestSettingChangeEventArgs e)
+        private void SettingChangeRequestor_RequestSettingChange(object sender, Core.Extensibility.EventArgsClasses.RequestSettingChangeEventArgs e)
         {
             ((IConfigurationRecipient)sender).PutSetting(e.SettingKey, e.Value);
             _settingsService.SetSetting(e.SettingKey, e.Value);

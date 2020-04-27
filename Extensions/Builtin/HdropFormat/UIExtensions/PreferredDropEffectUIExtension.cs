@@ -8,7 +8,7 @@ using System.Windows;
 
 namespace Clipbox.Extensions.BuiltIn.HdropFormat.UIExtensions
 {
-    [ClipboxExtensionAttribute]
+    [ClipboxExtension]
     public class PreferredDropEffectUIExtension : UIExtension
     {
         PreferredDropEffect _extensionUI;

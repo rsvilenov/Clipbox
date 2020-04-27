@@ -10,7 +10,7 @@ using Clipbox.Extensions.BuiltIn.HdropFormat.Enums;
 
 namespace Clipbox.Extensions.BuiltIn.HdropFormat.FormatSupport
 {
-    [ClipboxExtensionAttribute(Author = "Clipbox", Description = "Paste explorer action: Cut, copy or copy shortcut", Version = 0.1)]
+    [ClipboxExtension(Author = "Clipbox", Description = "Paste explorer action: Cut, copy or copy shortcut", Version = 0.1)]
     [ClipboardFormat("Preferred DropEffect")]
     public class PreferredDropEffectFormatSupport : ClipboardFormatSupport<PreferredDropEffectIntermediateFormat>
     {
