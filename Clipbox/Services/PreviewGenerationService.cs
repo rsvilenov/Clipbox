@@ -61,6 +61,8 @@ namespace Clipbox.Services
         private readonly ConcurrentDictionary<string, ManualResetEvent> _mreStartedForClipboardItemIds;
         private readonly ConcurrentDictionary<string, ThreadExecutor> _threadExecutorsForClipboardItemIds;
 
+        private readonly ConcurrentDictionary<Type, string> _extensionSettingChecksums;
+
         private readonly ByteArrayCache _byteArrayCache;
 
         private readonly int _previewGenerationTimeoutMs;
@@ -79,6 +81,14 @@ namespace Clipbox.Services
             _persistenceProvider = persistenceProvider;
 
             _previewDimensionsDictionary = LoadStoredOrInitializePreviewDimensionsInfo();
+
+            // a checksum used to determine whether a preview item can be fetched
+            // from the preview item cache, or it shoud be generated anew
+            _extensionSettingChecksums = new ConcurrentDictionary<Type, string>();
+            // cache the checksums of the initial settings of the extensions
+            CacheExtensionSettingChecksums();
+            // listen for setting changes and update the chekcksum dictionary on a change
+            _settingsService.SettingChanged += _settingsService_SettingChanged;
 
             _bgGenerationDispatcher = new SimpleDispatcher();
             _storeToDiskDispatcher = new SimpleDispatcher();
@@ -108,24 +118,48 @@ namespace Clipbox.Services
             _clipboardManager.ItemRemoved += _clipboardManager_ItemRemoved;
         }
 
-        private string GetSettingsHash(PreviewGenerationException extension)
+        private void CacheExtensionSettingChecksums()
         {
-            string hash = string.Empty;
+            IEnumerable<Type> previewExtensionTypes = _clipboardFormatPreviewExtContainer
+                .GetRegisteredTypes();
 
-            if (extension is ISettingsRegistrator settingRegExt)
+            foreach (Type extType in previewExtensionTypes)
+            { 
+                    _extensionSettingChecksums.TryAdd(extType, 
+                        GetExtensionSettingsChecksum(extType, 
+                            _settingsService.GetSettingKeys(extType)));
+            }
+        }
+
+        private void _settingsService_SettingChanged(object sender, EventArgsClasses.SettingsEventArgs e)
+        {
+            Type extType = e.Key.TargetComponentType;
+
+            if (extType != null
+                && _extensionSettingChecksums.ContainsKey(extType))
             {
-                StringBuilder settingsStr = new StringBuilder();
+                IEnumerable<ISettingKey> newSettings = _settingsService
+                    .GetSettingKeys(extType);
 
-                foreach (ISettingKey key in settingRegExt.GetSettingKeys())
-                {
-                    settingsStr.Append(key.Name);
-                    settingsStr.Append(_settingsService.GetSetting(key).ToString());
-                }
+                string checkSum = GetExtensionSettingsChecksum(extType, newSettings);
+                _extensionSettingChecksums.AddOrUpdate(extType, checkSum, (key, oldChecksum) => checkSum);
+            }
+        }
 
-                hash = MD5Hash.Create(settingsStr.ToString());
+        private string GetExtensionSettingsChecksum(Type extensionType, IEnumerable<ISettingKey> settingKeys)
+        {
+            string cultureSetting = _settingsService.GetSetting<string>(SettingsKeys.LocalizationCulture);
+
+            StringBuilder settingsStr = new StringBuilder(extensionType.FullName);
+            settingsStr.Append(cultureSetting);
+
+            foreach (ISettingKey key in settingKeys)
+            {
+                settingsStr.Append(key.Name);
+                settingsStr.Append(_settingsService.GetSetting(key).ToString());
             }
 
-            return hash;
+            return MD5Hash.Create(settingsStr.ToString());
         }
 
         private void _clipboardManager_ItemRemoved(object sender, ExtendedClipboard.EventArgs.ClipboardManagerEventArgs e)
@@ -232,9 +266,19 @@ namespace Clipbox.Services
             int itemRequestedWidth = itemRequestedHeight;
 
             IClipboardItem clipboardItem = _clipboardManager.GetClipboardItem(clipboardItemId, restoreShrinked: true);
-            PreviewDataTransferObject pdto = GeneratePreviewDataTransferObject(clipboardItem, itemRequestedHeight, itemRequestedWidth, monitorDimensions.MonitorDPI, cancellationToken);
+            PreviewDataTransferObject pdto = GeneratePreviewDataTransferObject(clipboardItem, 
+                itemRequestedHeight, 
+                itemRequestedWidth, 
+                monitorDimensions.MonitorDPI, 
+                cancellationToken,
+                out Type previewGeneratorUsed);
 
-            CacheGeneratedData(monitorDimensions, itemRequestedHeight, itemRequestedWidth, pdto, hasHeightBeenDpiScaled);
+            CacheGeneratedData(monitorDimensions, 
+                itemRequestedHeight, 
+                itemRequestedWidth, 
+                pdto, 
+                hasHeightBeenDpiScaled,
+                previewGeneratorUsed ?? GetType());
         }
         
         public PreviewDataTransferObject GetPreviewDataTransferObject(IClipboardItem clipboardItem, MonitorDimensions monitorDimensions)
@@ -376,7 +420,7 @@ namespace Clipbox.Services
             }
         }
 
-        private void CacheGeneratedData(MonitorDimensions monitorDimensions, int itemRequestedHeight, int itemRequestedWidth, PreviewDataTransferObject pdto, bool havePreviewDimensionsBeenDpiScaled)
+        private void CacheGeneratedData(MonitorDimensions monitorDimensions, int itemRequestedHeight, int itemRequestedWidth, PreviewDataTransferObject pdto, bool havePreviewDimensionsBeenDpiScaled, Type previewGeneratorType)
         {
             PreviewDimensionInfo pdInfo = GetPreviewDimensionsInfo(pdto, monitorDimensions);
             pdInfo.ArePreviewDimensionsDpiScaled = havePreviewDimensionsBeenDpiScaled;
@@ -394,12 +438,16 @@ namespace Clipbox.Services
             _storeToDiskDispatcher.BeginInvoke(() =>
             {
                 StorePreviewDimensionsDictionaryТoDisk();
-                StoreSerializedPreviewDataTransferObjectToDisk(clipboardItemId, serializedData, itemRequestedWidth, itemRequestedHeight);
+                StoreSerializedPreviewDataTransferObjectToDisk(clipboardItemId, 
+                    serializedData, 
+                    itemRequestedWidth, 
+                    itemRequestedHeight,
+                    previewGeneratorType);
             });
         }
         
 
-        private PreviewDataTransferObject GeneratePreviewDataTransferObject(IClipboardItem clipboardItem, int itemRequestedHeight, int itemRequestedWidth, double dpi, CancellationToken cancellationToken)
+        private PreviewDataTransferObject GeneratePreviewDataTransferObject(IClipboardItem clipboardItem, int itemRequestedHeight, int itemRequestedWidth, double dpi, CancellationToken cancellationToken, out Type previewGeneratorUsed)
         {
             if (clipboardItem.IsShrinked)
             {
@@ -419,9 +467,13 @@ namespace Clipbox.Services
 
             PreviewDataTransferObject pdto;
 
+            previewGeneratorUsed = null;
+
             if (formatGuidPreviewGeneratorPair != null)
             {
                 IPreviewGenerator previewGenerator = formatGuidPreviewGeneratorPair.Value.Value;
+                previewGeneratorUsed = previewGenerator.GetType();
+
                 IClipboardDataObject cdoForPreview = clipboardItem.ClipboardDataObjects.Single(cdo => cdo.IntermediateFormatMetadata.FormatGuid == formatGuidPreviewGeneratorPair.Value.Key);
                 IIntermediateFormat intermediateFormatObjectForPreview = cdoForPreview.IntermediateFormatObject;
                 
@@ -553,9 +605,11 @@ namespace Clipbox.Services
             }
         }
 
-        private void StoreSerializedPreviewDataTransferObjectToDisk(string clipboardItemId, byte[] serializedPdto, int itemRequestedWidth, int itemRequestedHeight)
+        private void StoreSerializedPreviewDataTransferObjectToDisk(string clipboardItemId, byte[] serializedPdto, int itemRequestedWidth, int itemRequestedHeight, Type previewGeneratorType)
         {
-            string persistenceKey = $"{clipboardItemId}_{itemRequestedWidth}_{itemRequestedHeight}.pdto";
+            string extensionSettingsChecksum = _extensionSettingChecksums[previewGeneratorType];
+
+            string persistenceKey = $"{clipboardItemId}_{itemRequestedWidth}_{itemRequestedHeight}_{extensionSettingsChecksum}.pdto";
 
             _persistenceProvider.Write(persistenceKey, serializedPdto, PERSISTENCE_STORE_CATEGORY);
         }
@@ -569,8 +623,22 @@ namespace Clipbox.Services
                 int itemRequestedHeight = CalculateItemRequestedHeight(monitorDimensions, out bool hasHeightBeenDpiScaled);
                 int itemRequestedWidth = itemRequestedHeight;
 
-                string persistenceKey = $"{clipboardItemId}_{itemRequestedWidth}_{itemRequestedHeight}.pdto";
-                if (!_persistenceProvider.CheckIfKeyExists(persistenceKey, PERSISTENCE_STORE_CATEGORY))
+                string persistenceKey = null;
+                // try to find a matching key for any of the present setting checksums
+                foreach (string checkSum in _extensionSettingChecksums.Values)
+                {
+                    string key = $"{clipboardItemId}_{itemRequestedWidth}_{itemRequestedHeight}_{checkSum}.pdto";
+                    if (_persistenceProvider
+                        .CheckIfKeyExists(key, PERSISTENCE_STORE_CATEGORY))
+                    {
+                        persistenceKey = key;
+                        break;
+                    }
+                }
+                
+                // if no key is found, this means that the settings of the item's
+                // preview generator has changed since, therefore - generate a new preview item.
+                if (persistenceKey == null)
                 {
                     return false;
                 }

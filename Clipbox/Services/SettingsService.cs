@@ -88,7 +88,7 @@ namespace Clipbox.Services
 
         public IEnumerable<ISettingKey> GetSettingKeys(Type targetType)
         {
-            return _targettedSettingKeys.Where(tsk => tsk.TargetComponentType == targetType);
+            return _targettedSettingKeys.Where(sk => sk.TargetComponentType == targetType);
         }
     }
 }

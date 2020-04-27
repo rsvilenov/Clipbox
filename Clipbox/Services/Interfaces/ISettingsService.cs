@@ -27,7 +27,7 @@ namespace Clipbox.Services.Interfaces
         IEnumerable<ISettingKey> GetSettingKeys<TTargetType>();
 
         IEnumerable<ISettingKey> GetSettingKeys(Type targetType);
-
+        
         event EventHandler<SettingsEventArgs> SettingChanged;
     }
 }

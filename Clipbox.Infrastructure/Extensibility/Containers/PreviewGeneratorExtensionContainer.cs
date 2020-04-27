@@ -5,6 +5,7 @@ using Clipbox.Infrastructure.Factories;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Clipbox.Infrastructure.Extensibility.Containers
 {
@@ -84,6 +85,13 @@ namespace Clipbox.Infrastructure.Extensibility.Containers
             _intermediateFormatGuidExtensionMapping.TryAdd(intermediateFormatGuid, new TypeAndPriority(type, previewPriority));
 
             base.RegisterExtension(type);
+        }
+
+        public IEnumerable<Type> GetRegisteredTypes()
+        {
+            return _intermediateFormatGuidExtensionMapping
+                .Values
+                .Select(v => v.Type);
         }
 
         private class TypeAndPriority

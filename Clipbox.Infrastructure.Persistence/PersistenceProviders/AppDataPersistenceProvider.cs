@@ -84,7 +84,7 @@ namespace Clipbox.Infrastructure.Persistence.PersistenceProviders
 
             return AppDataUtils.ListFiles(category);
         }
-        
+
         public byte[] ReadBytes(string key, string category = null)
         {
             ValidateKey(key);

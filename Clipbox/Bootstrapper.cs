@@ -213,6 +213,9 @@ namespace Clipbox
 
             _settingsWindowService = new SettingsWindowService(_settingsService, _mainClipboardViewWindowService, _trayContextMenuService, _extensionLoader.SettingsUIExtensionContainer);
 
+            // try to save processing time, but beware of the memory usage
+            AsmAwareResxLocalizationProvider.Instance.KeepLiveResourceManagers = true;
+            // the singleton instance will be our localization provider
             ILocalizationProvider localizationProvider = AsmAwareResxLocalizationProvider.Instance;
             // Set the translation provider to the TranslationSourcePool
             TranslationSourcePool.InitTranslationSourcePool(localizationProvider);
