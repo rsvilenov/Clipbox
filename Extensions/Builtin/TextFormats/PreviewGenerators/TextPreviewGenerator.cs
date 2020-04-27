@@ -1,4 +1,5 @@
 ﻿using Clipbox.Core.Extensibility.Attributes;
+using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Core.Extensibility.Contracts.PreviewData;
 using Clipbox.Extensions.BuiltIn.TextFormats.IntermediateFormats;
@@ -13,7 +14,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators
     [IntermediateFormatSupport("{89BCFB06-B1FC-4C0D-BFE6-9643BED5A172}")]
     public class TextPreviewGenerator : SinglePreviewGenerator<TextIntermediateFormat, ImagePreviewData>
     {
-        protected override ImagePreviewData GetPreview(TextIntermediateFormat intermediateFormat, int previewWidth, int previewHeight)
+        protected override ImagePreviewData GetPreview(TextIntermediateFormat intermediateFormat, PreviewParams previewParams)
         {
             ImagePreviewData preview = null;
 
@@ -24,7 +25,12 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators
                 _dispatcher.Invoke(DispatcherPriority.Background,
                     new Action(() =>
                     {
-                        preview = TextFormatsPreviewCreator.GeneratePreview(text, TextFormatsPreviewCreator.TextFormat.Text, previewWidth, previewHeight);
+                        preview = TextFormatsPreviewCreator.GeneratePreview(text, 
+                            TextFormatsPreviewCreator.TextFormat.Text, 
+                            desiredPreviewWidth: previewParams.PreviewWidth,
+                            maxPreviewHeight: previewParams.PreviewHeight,
+                            dpi: previewParams.DisplayDpi,
+                            areDimensionsScaledToDpi: previewParams.AreDimensionsScaledToDpi);
                     }));
             }
 

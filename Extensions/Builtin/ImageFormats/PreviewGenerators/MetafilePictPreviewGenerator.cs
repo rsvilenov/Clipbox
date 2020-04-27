@@ -1,4 +1,5 @@
 ﻿using Clipbox.Core.Extensibility.Attributes;
+using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Core.Extensibility.Contracts.PreviewData;
 using Clipbox.Extensions.BuiltIn.ImageFormats.IntermediateFormats;
@@ -15,7 +16,7 @@ namespace Clipbox.Extensions.BuiltIn.ImageFormats.PreviewGenerators
     [IntermediateFormatSupport("{D77A8959-A11B-457E-892F-1D34BC925E87}")]
     public class MetafilePictPreviewGenerator : SinglePreviewGenerator<MetafilePictIntermediateFormat, ImagePreviewData>
     {
-        protected override ImagePreviewData GetPreview(MetafilePictIntermediateFormat intermediateFormat, int previewWidth, int previewHeight)
+        protected override ImagePreviewData GetPreview(MetafilePictIntermediateFormat intermediateFormat, PreviewParams previewParams)
         {
             // TODO: support different mapping modes
             if (intermediateFormat.MappingMode != NativeEnums.DeviceContextMapMode.HiMetric)
@@ -40,7 +41,7 @@ namespace Clipbox.Extensions.BuiltIn.ImageFormats.PreviewGenerators
                 // an empty bitmap with the rigth width and height
                 using (Image bmp = new Bitmap(img, width, height))
                 {
-                    previewData.Preview = (Image)bmp.GetScaled(previewHeight * 2, previewHeight);
+                    previewData.Preview = (Image)bmp.GetScaled(previewParams.PreviewHeight * 2, previewParams.PreviewHeight);
                     previewData.Annotation = $"{width} x {height}";
                 }
             }

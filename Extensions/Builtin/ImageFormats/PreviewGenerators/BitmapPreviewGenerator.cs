@@ -1,4 +1,5 @@
 ﻿using Clipbox.Core.Extensibility.Attributes;
+using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Core.Extensibility.Contracts.PreviewData;
 using Clipbox.Extensions.BuiltIn.ImageFormats.IntermediateFormats;
@@ -11,15 +12,15 @@ namespace Clipbox.Extensions.BuiltIn.ImageFormats.FormatSupport
     [IntermediateFormatSupport("{4422E0FD-3DD7-4B10-B167-DB63BB97D6E1}")]
     public class ImagePreviewGenerator : SinglePreviewGenerator<BitmapIntermediateFormat, ImagePreviewData>
     {
-        protected override ImagePreviewData GetPreview(BitmapIntermediateFormat intermediateFormat, int previewWidth, int previewHeight)
+        protected override ImagePreviewData GetPreview(BitmapIntermediateFormat intermediateFormat, PreviewParams previewParams)
         {
             var previewData = new ImagePreviewData();
 
             using (Bitmap bmp = intermediateFormat.GetCopyOfBitmap())
             {
-                if (bmp.Height > previewHeight || bmp.Width > previewWidth)
+                if (bmp.Height > previewParams.PreviewHeight || bmp.Width > previewParams.PreviewWidth)
                 {
-                    previewData.Preview = bmp.GetScaled(previewHeight * 2, previewHeight); //img.GetThumbnailImage(previewWidth, previewHeight, () => false, IntPtr.Zero);
+                    previewData.Preview = bmp.GetScaled(previewParams.PreviewHeight * 2, previewParams.PreviewHeight); //img.GetThumbnailImage(previewWidth, previewHeight, () => false, IntPtr.Zero);
                 }
                 else
                 {

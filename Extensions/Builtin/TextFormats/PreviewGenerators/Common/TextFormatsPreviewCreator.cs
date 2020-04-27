@@ -26,7 +26,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
         }
 
 
-        public static ImagePreviewData GeneratePreview(string textData, TextFormat format, int desiredPreviewWidth, int maxPreviewHeight)
+        public static ImagePreviewData GeneratePreview(string textData, TextFormat format, int desiredPreviewWidth, int maxPreviewHeight, double dpi, bool areDimensionsScaledToDpi)
         {
             RichTextBox rtb = new RichTextBox
             {

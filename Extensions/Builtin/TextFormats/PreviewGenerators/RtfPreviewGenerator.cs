@@ -1,4 +1,5 @@
 ﻿using Clipbox.Core.Extensibility.Attributes;
+using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Core.Extensibility.Contracts.PreviewData;
 using Clipbox.Extensions.BuiltIn.TextFormats.IntermediateFormats;
@@ -17,7 +18,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators
     [PreviewPriority(100)]
     public class RtfPreviewGenerator : SinglePreviewGenerator<RichTextIntermediateFormat, ImagePreviewData>
     {
-        protected override ImagePreviewData GetPreview(RichTextIntermediateFormat intermediateFormat, int previewWidth, int previewHeight)
+        protected override ImagePreviewData GetPreview(RichTextIntermediateFormat intermediateFormat, PreviewParams previewParams)
         {
             ImagePreviewData preview = null;
 
@@ -28,7 +29,12 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators
                 _dispatcher.Invoke(DispatcherPriority.Background,
                     new Action(() =>
                     {
-                        preview = TextFormatsPreviewCreator.GeneratePreview(rtf, TextFormatsPreviewCreator.TextFormat.Rtf, previewWidth, previewHeight);
+                        preview = TextFormatsPreviewCreator.GeneratePreview(rtf, 
+                            TextFormatsPreviewCreator.TextFormat.Rtf, 
+                            desiredPreviewWidth: previewParams.PreviewWidth, 
+                            maxPreviewHeight: previewParams.PreviewHeight, 
+                            dpi: previewParams.DisplayDpi, 
+                            areDimensionsScaledToDpi: previewParams.AreDimensionsScaledToDpi);
                     }));
             }
 

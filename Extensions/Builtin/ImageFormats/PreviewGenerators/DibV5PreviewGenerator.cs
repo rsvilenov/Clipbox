@@ -1,4 +1,5 @@
 ﻿using Clipbox.Core.Extensibility.Attributes;
+using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Core.Extensibility.Contracts.PreviewData;
 using Clipbox.Extensions.BuiltIn.ImageFormats.IntermediateFormats;
@@ -14,7 +15,7 @@ namespace Clipbox.Extensions.BuiltIn.ImageFormats.FormatSupport
     [IntermediateFormatSupport("{CFCA3819-C2EF-4F94-B9B7-49D402CA0652}")]
     public class DibV5PreviewGenerator : SinglePreviewGenerator<DibV5IntermediateFormat, ImagePreviewData>
     {
-        protected override ImagePreviewData GetPreview(DibV5IntermediateFormat intermediateFormat, int previewWidth, int previewHeight)
+        protected override ImagePreviewData GetPreview(DibV5IntermediateFormat intermediateFormat, PreviewParams previewParams)
         {
             byte[] byteArray = intermediateFormat.GetDibV5Bytes();
             int size = byteArray.Length;
@@ -61,7 +62,7 @@ namespace Clipbox.Extensions.BuiltIn.ImageFormats.FormatSupport
                     //Bitmap bitmap = new Bitmap(bmi.bV5Width, bmi.bV5Height, -stride, pixelFormat, scan0);
                     return new ImagePreviewData
                     {
-                        Preview = bitmap.GetScaled(previewHeight * 2, previewHeight),
+                        Preview = bitmap.GetScaled(previewParams.PreviewHeight * 2, previewParams.PreviewHeight),
                         Annotation = $"{bitmap.Width} x {bitmap.Height}"
                     };
                 }

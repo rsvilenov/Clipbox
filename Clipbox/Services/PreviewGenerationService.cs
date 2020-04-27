@@ -1,10 +1,12 @@
 ﻿using Clipbox.Core.ClipboardContent.Interfaces;
+using Clipbox.Core.Configuration;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.PreviewGenerationTypes;
 using Clipbox.Core.Extensibility.Exceptions;
 using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.Cache;
+using Clipbox.Infrastructure.Encryption;
 using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
 using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.Threading;
@@ -26,6 +28,7 @@ using System.Linq;
 using System.Runtime.ExceptionServices;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text;
 using System.Threading;
 
 namespace Clipbox.Services
@@ -103,6 +106,26 @@ namespace Clipbox.Services
             _clipboardManager.ItemAdded += _clipboardManager_ItemAdded;
             _clipboardManager.ItemChanged += _clipboardManager_ItemChanged;
             _clipboardManager.ItemRemoved += _clipboardManager_ItemRemoved;
+        }
+
+        private string GetSettingsHash(PreviewGenerationException extension)
+        {
+            string hash = string.Empty;
+
+            if (extension is ISettingsRegistrator settingRegExt)
+            {
+                StringBuilder settingsStr = new StringBuilder();
+
+                foreach (ISettingKey key in settingRegExt.GetSettingKeys())
+                {
+                    settingsStr.Append(key.Name);
+                    settingsStr.Append(_settingsService.GetSetting(key).ToString());
+                }
+
+                hash = MD5Hash.Create(settingsStr.ToString());
+            }
+
+            return hash;
         }
 
         private void _clipboardManager_ItemRemoved(object sender, ExtendedClipboard.EventArgs.ClipboardManagerEventArgs e)
@@ -209,7 +232,7 @@ namespace Clipbox.Services
             int itemRequestedWidth = itemRequestedHeight;
 
             IClipboardItem clipboardItem = _clipboardManager.GetClipboardItem(clipboardItemId, restoreShrinked: true);
-            PreviewDataTransferObject pdto = GeneratePreviewDataTransferObject(clipboardItem, itemRequestedHeight, itemRequestedWidth, cancellationToken);
+            PreviewDataTransferObject pdto = GeneratePreviewDataTransferObject(clipboardItem, itemRequestedHeight, itemRequestedWidth, monitorDimensions.MonitorDPI, cancellationToken);
 
             CacheGeneratedData(monitorDimensions, itemRequestedHeight, itemRequestedWidth, pdto, hasHeightBeenDpiScaled);
         }
@@ -376,7 +399,7 @@ namespace Clipbox.Services
         }
         
 
-        private PreviewDataTransferObject GeneratePreviewDataTransferObject(IClipboardItem clipboardItem, int itemRequestedHeight, int itemRequestedWidth, CancellationToken cancellationToken)
+        private PreviewDataTransferObject GeneratePreviewDataTransferObject(IClipboardItem clipboardItem, int itemRequestedHeight, int itemRequestedWidth, double dpi, CancellationToken cancellationToken)
         {
             if (clipboardItem.IsShrinked)
             {
@@ -409,12 +432,12 @@ namespace Clipbox.Services
 
                 if (previewGenerator is ISinglePreviewGenerator singlePreviewGenerator)
                 {
-                    pdto = GeneratePdtoForSingleItem(itemRequestedHeight, itemRequestedWidth, singlePreviewGenerator, intermediateFormatObjectForPreview);
+                    pdto = GeneratePdtoForSingleItem(itemRequestedHeight, itemRequestedWidth, dpi, singlePreviewGenerator, intermediateFormatObjectForPreview);
                 }
                 else if (previewGenerator is IManyPreviewGenerator manyPreviewGenerator)
                 {
                     int maxPreviewItemsInGroupItem = _settingsService.GetSetting<int>(SettingsKeys.MaxPreviewItemsInGroupItem);
-                    pdto = GeneratePdtoForMultiItem(itemRequestedHeight, itemRequestedWidth, manyPreviewGenerator, intermediateFormatObjectForPreview, maxPreviewItemsInGroupItem);
+                    pdto = GeneratePdtoForMultiItem(itemRequestedHeight, itemRequestedWidth, dpi, manyPreviewGenerator, intermediateFormatObjectForPreview, maxPreviewItemsInGroupItem);
                 }
                 else
                 {
@@ -442,6 +465,7 @@ namespace Clipbox.Services
         [HandleProcessCorruptedStateExceptions]
         public PreviewDataTransferObject GeneratePdtoForSingleItem(int itemRequestedHeight,
             int itemRequestedWidth,
+            double dpi,
             ISinglePreviewGenerator previewGenerator,
             IIntermediateFormat intermediateFormatObject)
         {
@@ -449,7 +473,7 @@ namespace Clipbox.Services
 
             IPreviewData previewData = null;
 
-            try { previewData = singlePreviewGenerator.GetPreview(intermediateFormatObject, itemRequestedWidth, itemRequestedHeight); } // TODO: find a way to determine the preview dimentions
+            try { previewData = singlePreviewGenerator.GetPreview(intermediateFormatObject, new PreviewParams(itemRequestedWidth, itemRequestedHeight, dpi, true)); } // TODO: find a way to determine the preview dimentions
             catch (Exception ex) { throw new ClipboxExtensionException(nameof(singlePreviewGenerator.GetPreview), singlePreviewGenerator.GetType(), ex); }
 
             PreviewItemTransferObject pito = PreviewItemTransferObject.FromPreviewData(previewData);
@@ -466,6 +490,7 @@ namespace Clipbox.Services
         [HandleProcessCorruptedStateExceptions]
         public PreviewDataTransferObject GeneratePdtoForMultiItem(int itemRequestedHeight,
             int itemRequestedWidth,
+            double dpi,
             IManyPreviewGenerator previewGenerator,
             IIntermediateFormat intermediateFormatObject,
             int maxPreviewItemsInGroupItem)
@@ -489,7 +514,7 @@ namespace Clipbox.Services
             }
 
             IEnumerable<IPreviewData> previewDataCollection = null;
-            try { previewDataCollection = previewGenerator.GetPreview(itemRequestedWidth, itemRequestedHeight, maxPreviewItemsInGroupItem); }
+            try { previewDataCollection = previewGenerator.GetPreview(new PreviewParams(itemRequestedWidth, itemRequestedHeight, dpi, true), maxPreviewItemsInGroupItem); }
             catch (Exception ex) { throw new ClipboxExtensionException(nameof(previewGenerator.GetPreview), previewGenerator.GetType(), ex); }
 
             if (itemsCount == 0)

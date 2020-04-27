@@ -1,4 +1,5 @@
 ﻿using Clipbox.Core.Extensibility.Attributes;
+using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Core.Extensibility.Contracts.PreviewData;
 using Clipbox.Extensions.BuiltIn.HdropFormat.IntermediateFormats;
@@ -51,7 +52,7 @@ namespace Clipbox.Extensions.BuiltIn.HdropFormat.PreviewGenerators
             return thumbnail;
         }
 
-        protected override IEnumerable<FilePreviewData> GetPreview(FilesystemPathsIntermediateFormat intermediateFormatObj, int previewWidth, int previewHeight, int maxNumberOfPreviewsToGenerate)
+        protected override IEnumerable<FilePreviewData> GetPreview(FilesystemPathsIntermediateFormat intermediateFormatObj, PreviewParams previewParams, int maxNumberOfPreviewsToGenerate)
         {
             List<FilePreviewData> previewList = new List<FilePreviewData>();
 
@@ -66,23 +67,23 @@ namespace Clipbox.Extensions.BuiltIn.HdropFormat.PreviewGenerators
 
                 Image preview = null;
 
-                Bitmap thumbnail = GetFileThumbnail(previewWidth, previewHeight, path);
+                Bitmap thumbnail = GetFileThumbnail(previewParams.PreviewWidth, previewParams.PreviewHeight, path);
 
                 if (thumbnail != null)
                 {
-                    if (thumbnail.Width == previewWidth && thumbnail.Height == previewHeight)
+                    if (thumbnail.Width == previewParams.PreviewWidth && thumbnail.Height == previewParams.PreviewHeight)
                     {
                         preview = thumbnail;
                     }
-                    else if (thumbnail.Width > previewWidth && thumbnail.Height > previewHeight)
+                    else if (thumbnail.Width > previewParams.PreviewWidth && thumbnail.Height > previewParams.PreviewHeight)
                     {
                         using (thumbnail)
-                            preview = thumbnail.GetScaled(previewWidth, previewHeight);
+                            preview = thumbnail.GetScaled(previewParams.PreviewWidth, previewParams.PreviewHeight);
                     }
                     else
                     {
                         using (thumbnail)
-                            preview = thumbnail.GetCenteredOverTransparentCanvas(previewWidth, previewHeight);
+                            preview = thumbnail.GetCenteredOverTransparentCanvas(previewParams.PreviewWidth, previewParams.PreviewHeight);
                     }
                 }
 

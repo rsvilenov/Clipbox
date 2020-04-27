@@ -1,4 +1,5 @@
 ﻿using Clipbox.Core.Extensibility.Attributes;
+using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Core.Extensibility.Contracts.PreviewData;
 using Clipbox.Extensions.BuiltIn.TextFormats.IntermediateFormats;
@@ -18,7 +19,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators
     [IntermediateFormatSupport("{5E4E9C1F-A324-42A4-AE9E-AA64DD871CC8}")]
     public class HtmlPreviewGenerator : SinglePreviewGenerator<HtmlIntermediateFormat, HtmlPreviewData>
     {
-        protected override HtmlPreviewData GetPreview(HtmlIntermediateFormat intermediateFormat, int previewWidth, int previewHeight)
+        protected override HtmlPreviewData GetPreview(HtmlIntermediateFormat intermediateFormat, PreviewParams previewParams)
         {
             Bitmap previewBmp = null;
             string html = intermediateFormat.Html;
@@ -44,7 +45,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators
                             webBrowser.UpdateLayout();
 
                             // render the whole webbrowser control
-                            RenderTargetBitmap rtBmp = new RenderTargetBitmap(previewWidth, previewHeight, 96, 96, PixelFormats.Pbgra32);
+                            RenderTargetBitmap rtBmp = new RenderTargetBitmap(previewParams.PreviewWidth, previewParams.PreviewHeight, 96, 96, PixelFormats.Pbgra32);
                             rtBmp.Render(webBrowser);
 
                             // RenderTargetBitmap is a bitmap source

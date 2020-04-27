@@ -27,13 +27,13 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes
         /// <param name="previewHeight"></param>
         /// <param name="maxNumberOfPreviewsToGenerate">0 means no limit</param>
         /// <returns></returns>
-        public IEnumerable<IPreviewData> GetPreview(int previewWidth, int previewHeight, int maxNumberOfPreviewsToGenerate)
+        public IEnumerable<IPreviewData> GetPreview(PreviewParams previewParams, int maxNumberOfPreviewsToGenerate)
         {
-            return GetPreview(_intermediateFormatObj, previewWidth, previewHeight, maxNumberOfPreviewsToGenerate)
+            return GetPreview(_intermediateFormatObj, previewParams, maxNumberOfPreviewsToGenerate)
                 .Cast<IPreviewData>();
         }
         
-        protected abstract IEnumerable<TPreviewData> GetPreview(TIntermediateFormat intermediateFormatObj, int previewWidth, int previewHeight, int maxNumberOfPreviewsToGenerate);
+        protected abstract IEnumerable<TPreviewData> GetPreview(TIntermediateFormat intermediateFormatObj, PreviewParams previewParams, int maxNumberOfPreviewsToGenerate);
 
         public void SetData(IIntermediateFormat intermediateFormatObj)
         {
@@ -59,6 +59,6 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes
 
         int GetItemsTotalCount();
 
-        IEnumerable<IPreviewData> GetPreview(int previewWidth, int previewHeight, int maxNumberOfPreviewsToGenerate);
+        IEnumerable<IPreviewData> GetPreview(PreviewParams previewParams, int maxNumberOfPreviewsToGenerate);
     }
 }

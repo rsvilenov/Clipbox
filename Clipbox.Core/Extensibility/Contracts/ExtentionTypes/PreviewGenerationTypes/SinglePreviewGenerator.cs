@@ -16,16 +16,16 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes
             }
         }
 
-        public IPreviewData GetPreview(IIntermediateFormat intermediateFormat, int previewWidth, int previewHeight)
+        public IPreviewData GetPreview(IIntermediateFormat intermediateFormat, PreviewParams previewParams)
         {
-            return GetPreview((TIntermediateFormat)intermediateFormat, previewWidth, previewHeight);
+            return GetPreview((TIntermediateFormat)intermediateFormat, previewParams);
         }
 
-        protected abstract TPreviewData GetPreview(TIntermediateFormat intermediateFormat, int previewWidth, int previewHeight);
+        protected abstract TPreviewData GetPreview(TIntermediateFormat intermediateFormat, PreviewParams previewParams);
     }
 
     public interface ISinglePreviewGenerator : IPreviewGenerator
     {
-        IPreviewData GetPreview(IIntermediateFormat intermediateFormat, int previewWidth, int previewHeight);
+        IPreviewData GetPreview(IIntermediateFormat intermediateFormat, PreviewParams previewParams);
     }
 }
