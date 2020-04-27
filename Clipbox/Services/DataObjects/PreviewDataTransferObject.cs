@@ -19,6 +19,8 @@ namespace Clipbox.Services.DataObjects
 
         public int NumberOfItemsWithoutPreview { get; set; }
 
+        public string GeneratorExtensionTypeName { get; set; }
+
         public List<PreviewItemTransferObject> PreviewItems { get; set; }
 
         public byte[] ToByteArray()

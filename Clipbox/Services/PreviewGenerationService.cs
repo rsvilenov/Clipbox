@@ -442,6 +442,7 @@ namespace Clipbox.Services
                     serializedData, 
                     itemRequestedWidth, 
                     itemRequestedHeight,
+                    monitorDimensions.MonitorDPI,
                     previewGeneratorType);
             });
         }
@@ -497,6 +498,7 @@ namespace Clipbox.Services
                 }
 
                 pdto.ClipboardItemId = clipboardItem.Id;
+                pdto.GeneratorExtensionTypeName = previewGenerator.GetType().AssemblyQualifiedName;
             }
             else
             {
@@ -605,11 +607,11 @@ namespace Clipbox.Services
             }
         }
 
-        private void StoreSerializedPreviewDataTransferObjectToDisk(string clipboardItemId, byte[] serializedPdto, int itemRequestedWidth, int itemRequestedHeight, Type previewGeneratorType)
+        private void StoreSerializedPreviewDataTransferObjectToDisk(string clipboardItemId, byte[] serializedPdto, int itemRequestedWidth, int itemRequestedHeight, double dpi, Type previewGeneratorType)
         {
             string extensionSettingsChecksum = _extensionSettingChecksums[previewGeneratorType];
 
-            string persistenceKey = $"{clipboardItemId}_{itemRequestedWidth}_{itemRequestedHeight}_{extensionSettingsChecksum}.pdto";
+            string persistenceKey = $"{clipboardItemId}_{itemRequestedWidth}_{itemRequestedHeight}_{dpi}_{extensionSettingsChecksum}.pdto";
 
             _persistenceProvider.Write(persistenceKey, serializedPdto, PERSISTENCE_STORE_CATEGORY);
         }
@@ -627,7 +629,7 @@ namespace Clipbox.Services
                 // try to find a matching key for any of the present setting checksums
                 foreach (string checkSum in _extensionSettingChecksums.Values)
                 {
-                    string key = $"{clipboardItemId}_{itemRequestedWidth}_{itemRequestedHeight}_{checkSum}.pdto";
+                    string key = $"{clipboardItemId}_{itemRequestedWidth}_{itemRequestedHeight}_{monitorDimensions.MonitorDPI}__{checkSum}.pdto";
                     if (_persistenceProvider
                         .CheckIfKeyExists(key, PERSISTENCE_STORE_CATEGORY))
                     {

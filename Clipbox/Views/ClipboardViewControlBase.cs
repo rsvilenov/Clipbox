@@ -282,10 +282,10 @@ namespace Clipbox.Views
             MonitorDimensions = dimensions;
             
             SetCurrentDisplayHeight(dimensions);
-            OnSetControlMaxSizeRequested(dimensions);
+            OnMonitorDimensionsAssigned(dimensions);
         }
 
-        protected virtual void OnSetControlMaxSizeRequested(MonitorDimensions monitorDimensions)
+        protected virtual void OnMonitorDimensionsAssigned(MonitorDimensions monitorDimensions)
         { }
         
         protected virtual void OnClipboardViewItemMaxHeightChanged()

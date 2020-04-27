@@ -65,12 +65,25 @@ namespace Clipbox.ViewModels
             SelectedClipboardViewItemWrappers = new List<ClipboardViewItemWrapper>();
             _newlyAddedItemsToLoadAndWrap = new Queue<string>();
 
+            SettingsService.SettingChanged += SettingsService_SettingChanged;
+
             _loadNewlyAddedItemsSlidingTimer = new SlidingTimer();
             _loadNewlyAddedItemsSlidingTimer.IntervalMs = NEWLY_ADDED_ITEMS_LOAD_DELAY_MS;
             _loadNewlyAddedItemsSlidingTimer.Elapsed += _loadNewlyAddedItemsSlidingTimer_Elapsed;
 
             ClipboardManager.ItemAdded += ClipboardManager_ItemAdded;
             ClipboardManager.ItemChanged += ClipboardManager_ItemChanged;
+        }
+
+        private void SettingsService_SettingChanged(object sender, Services.EventArgsClasses.SettingsEventArgs e)
+        {
+            Type extType = e.Key.TargetComponentType;
+
+            // reload the items, whose generator extensions have some settings changed
+            base.ClipboardViewItemWrappers
+                .Where(w => w.IsViewItemLoaded && w.ViewItem.GeneratorExtensionTypeName == extType.AssemblyQualifiedName)
+                .ToList()
+                .ForEach(w => LoadViewItem(w.Id, _lastUsedMonitorDimensions));
         }
 
         private void ClearAllClipboardEntriesHandler()
@@ -118,7 +131,7 @@ namespace Clipbox.ViewModels
         {
             if (_lastUsedMonitorDimensions == null)
             {
-                throw new InvalidCastException($"{nameof(_lastUsedMonitorDimensions)} is null. Call {nameof(LoadWrappedPinnedItems)} first.");
+                throw new InvalidCastException($"{nameof(_lastUsedMonitorDimensions)} is null. Call {nameof(SetDefaultMonitorDimensions)} first.");
             }
 
             ClipboardItemsLoadingStage = ClipboardItemsLoadingStage.Started;
@@ -175,8 +188,11 @@ namespace Clipbox.ViewModels
             base.LoadAndWrapItems(monitorDimensions, pinnedItems);
 
             ClipboardItemsLoadingStage = ClipboardItemsLoadingStage.WrappersLoaded;
+        }
 
-            _lastUsedMonitorDimensions = monitorDimensions;
+        public void SetDefaultMonitorDimensions(MonitorDimensions dimensions)
+        {
+            _lastUsedMonitorDimensions = dimensions;
         }
 
         public void LoadViewItems(MonitorDimensions monitorDimensions)

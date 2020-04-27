@@ -209,7 +209,7 @@ namespace Clipbox.Views
            
         }
         
-        protected override void OnSetControlMaxSizeRequested(MonitorDimensions monitorDimensions)
+        protected override void OnMonitorDimensionsAssigned(MonitorDimensions monitorDimensions)
         {
             double currentDisplayHeight = monitorDimensions.WorkAreaHeight;
             double currentDisplayWidth = monitorDimensions.WorkAreaWidth;
@@ -222,6 +222,8 @@ namespace Clipbox.Views
             // should not be resized in DpiScaleMode.Custom dpi mode.
             this.MaxWidth = controlMaxWidth;
             this.MaxHeight = controlMaxHeight;
+
+            _viewModel.SetDefaultMonitorDimensions(monitorDimensions);
         }
         
         protected override Panel GetUIExtensionContainer()

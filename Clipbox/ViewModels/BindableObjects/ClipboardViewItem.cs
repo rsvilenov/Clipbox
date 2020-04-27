@@ -101,6 +101,17 @@ namespace Clipbox.ViewModels.BindableObjects
             set { SetField(ref _clipboardItemId, value); }
         }
 
+        private string _generatorExtensionTypeName;
+        /// <summary>
+        /// The type name of the preview generator extension,
+        /// used to generate the preview.
+        /// </summary>
+        public string GeneratorExtensionTypeName
+        {
+            get { return _generatorExtensionTypeName; }
+            set { SetField(ref _generatorExtensionTypeName, value); }
+        }
+
         ~ClipboardViewItem()
         {
             Debug.WriteLine($"GCing viewitem for id {ClipboardItemId}");
