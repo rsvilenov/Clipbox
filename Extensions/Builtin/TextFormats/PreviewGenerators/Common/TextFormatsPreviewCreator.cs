@@ -4,9 +4,11 @@ using Clipbox.Infrastructure.UI.ExtensionMethods;
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
@@ -67,6 +69,8 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
             int textLength = text.Length;
             int wordCount = text.Split(new char[] { ' ' },
                 StringSplitOptions.RemoveEmptyEntries).Length;
+            int lineCount = text.Split(new char[] { '\r', '\n' },
+                StringSplitOptions.RemoveEmptyEntries).Length;
             double maxRtbWidth = desiredPreviewWidth * 3;
             double maxRtbHeight = desiredPreviewWidth * 3;
 
@@ -79,7 +83,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
             rtb.Arrange(new Rect(rtb.DesiredSize));
 
             rtb.UpdateLayout();
-
+            
             FormattedText ft = FlowDocumentToFormattedTextConverter.GetFormattedText(rtb.Document);
 
             double newRtbWidth = ft.WidthIncludingTrailingWhitespace;
@@ -125,10 +129,31 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
                     throw new InvalidOperationException("The width of the image should have been ensured to be >= desiredPreviewWidth by now.");
                 }
             }
+
+            var resManager = Resources.Translations.Translations.ResourceManager;
+            string annotation;
+            if (wordCount > 5 && wordCount < 15)
+            {
+                annotation = $"{wordCount} {resManager.GetString("STR_WORDS", Thread.CurrentThread.CurrentUICulture)}";
+            }
+            else if (wordCount > 15)
+            {
+                annotation = $"{lineCount} {resManager.GetString("STR_LINES", Thread.CurrentThread.CurrentUICulture)}";
+            }
+            else if (textLength > 1 || textLength == 0)
+            {
+                annotation = $"{textLength} {resManager.GetString("STR_CHARACTERS", Thread.CurrentThread.CurrentUICulture)}";
+            }
+            else
+            {
+                annotation = $"{textLength} {resManager.GetString("STR_CHARACTER", Thread.CurrentThread.CurrentUICulture)}";
+            }
+
             return new ImagePreviewData
             {
                 Preview = preview,
-                Annotation = $"{wordCount}/{textLength}"
+                //Annotation = $"{wordCount}/{textLength}"
+                Annotation = annotation
             };
         }
 

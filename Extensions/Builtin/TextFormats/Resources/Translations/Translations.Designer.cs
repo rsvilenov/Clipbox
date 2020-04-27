@@ -70,6 +70,42 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to character.
+        /// </summary>
+        internal static string STR_CHARACTER {
+            get {
+                return ResourceManager.GetString("STR_CHARACTER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to characters.
+        /// </summary>
+        internal static string STR_CHARACTERS {
+            get {
+                return ResourceManager.GetString("STR_CHARACTERS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to lines.
+        /// </summary>
+        internal static string STR_LINES {
+            get {
+                return ResourceManager.GetString("STR_LINES", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to words.
+        /// </summary>
+        internal static string STR_WORDS {
+            get {
+                return ResourceManager.GetString("STR_WORDS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Paste each item on a new line.
         /// </summary>
         internal static string TTP_PASTE_NEWLINE_SEPARATOR {

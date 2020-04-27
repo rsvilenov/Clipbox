@@ -204,7 +204,8 @@
                 <Control
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Stretch"
-                    Background="Transparent">
+                    Background="Transparent"
+                    Foreground="White">
                     <Control.Style>
 
                         <Style TargetType="{x:Type Control}">

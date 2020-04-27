@@ -34,11 +34,17 @@ namespace Clipbox.Services
 
         private void UpdateCurrentUICulture(CultureInfo culture)
         {
+            Thread.CurrentThread.CurrentCulture = culture;
+            Thread.CurrentThread.CurrentUICulture = culture;
+
             Application.Current.Dispatcher.Invoke(() =>
             {
                 Thread.CurrentThread.CurrentCulture = culture;
                 Thread.CurrentThread.CurrentUICulture = culture;
             });
+
+            CultureInfo.DefaultThreadCurrentCulture = culture;
+            CultureInfo.DefaultThreadCurrentUICulture = culture;
         }
 
         public void Dispose()

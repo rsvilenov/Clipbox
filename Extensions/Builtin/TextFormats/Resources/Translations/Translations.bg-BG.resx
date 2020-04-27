@@ -129,7 +129,19 @@
   <data name="LBL_SAVE_LAST_SEPARATOR" xml:space="preserve">
     <value>Пази последно избрания сепаратор</value>
   </data>
+  <data name="STR_CHARACTER" xml:space="preserve">
+    <value>символ</value>
+  </data>
+  <data name="STR_CHARACTERS" xml:space="preserve">
+    <value>символа</value>
+  </data>
+  <data name="STR_WORDS" xml:space="preserve">
+    <value>думи</value>
+  </data>
   <data name="TTP_PASTE_NO_FORMATTING" xml:space="preserve">
     <value>Премахни форматирането</value>
+  </data>
+  <data name="STR_LINES" xml:space="preserve">
+    <value>реда</value>
   </data>
 </root>

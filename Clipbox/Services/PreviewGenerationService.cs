@@ -20,6 +20,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.ExceptionServices;
@@ -186,6 +187,13 @@ namespace Clipbox.Services
 
         private void GeneratePreview(string clipboardItemId, CancellationToken cancellationToken, MonitorDimensions monitorDimensions = null)
         {
+            // set the culture explicitly, otherwise the thread we are running in
+            // will get created with the system culture, despite the value of DefaultThreadCurrentCulture.
+            // TODO: figure out why...
+            CultureInfo ci = new CultureInfo(_settingsService.GetSetting(SettingsKeys.LocalizationCulture));
+            Thread.CurrentThread.CurrentCulture = ci;
+            Thread.CurrentThread.CurrentUICulture = ci;
+
             if (monitorDimensions == null)
             {
                 MonitorUtils.DisplayMonitor currentMonitor = MonitorUtils.GetByForegroundWindow();
