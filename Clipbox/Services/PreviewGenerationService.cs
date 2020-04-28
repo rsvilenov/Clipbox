@@ -61,8 +61,7 @@ namespace Clipbox.Services
         private readonly ConcurrentDictionary<string, ManualResetEvent> _mreStartedForClipboardItemIds;
         private readonly ConcurrentDictionary<string, ThreadExecutor> _threadExecutorsForClipboardItemIds;
 
-        private readonly ConcurrentDictionary<string, string> _extensionSettingChecksums;
-        private readonly ConcurrentDictionary<string, string> _recentlyChangedExtensionSettingChecksums;
+        private readonly Dictionary<string, string> _extensionSettingChecksums;
         private readonly object _checkSumLockHandle = new object();
         private readonly ManualResetEvent _checkSumsCanChangeMre;
         private readonly ManualResetEvent _checkSumsChangeFinishedMre;
@@ -91,13 +90,10 @@ namespace Clipbox.Services
 
             // a checksum used to determine whether a preview item can be fetched
             // from the preview item cache, or it shoud be generated anew
-            _extensionSettingChecksums = new ConcurrentDictionary<string, string>();
-            // when a setting has changed, the setting checksum changes as well
-            // but we want to update it in the main dictionary only after the new
-            // preview with the new settings has been generated.
-            _recentlyChangedExtensionSettingChecksums = new ConcurrentDictionary<string, string>();
+            _extensionSettingChecksums = new Dictionary<string, string>();
             // cache the checksums of the initial settings of the extensions
             CacheExtensionSettingChecksums();
+
             _checkSumsCanChangeMre = new ManualResetEvent(true);
             _checkSumsChangeFinishedMre = new ManualResetEvent(true);
             // listen for setting changes and update the chekcksum dictionary on a change
@@ -138,7 +134,7 @@ namespace Clipbox.Services
 
             foreach (Type extType in previewExtensionTypes)
             { 
-                    _extensionSettingChecksums.TryAdd(extType.AssemblyQualifiedName, 
+                    _extensionSettingChecksums.Add(extType.AssemblyQualifiedName, 
                         GetExtensionSettingsChecksum(extType, 
                             _settingsService.GetSettingKeys(extType)));
             }
@@ -162,15 +158,13 @@ namespace Clipbox.Services
 
                 // wait fot the already running threads to finish
                 _checkSumsCanChangeMre.WaitOne();
-
-                // while ConcurrentDictionary is thread-safe in terms of not throwing exceptions,
-                // it does not solve the problem of for example one thread removing keys just before
-                // another tries to get the value... So, the cost of TryRemove is... locks, reset events...
-                // TODO: devise a better way for handling the checksums, which does not require such things.
+                
+                // prevent the possibility of two threads simultaneously raising the event for the same key...
+                // unlikely, but...
                 lock (_checkSumLockHandle)
                 {
-                    _recentlyChangedExtensionSettingChecksums.TryAdd(extType.AssemblyQualifiedName, checkSum);
-                    _extensionSettingChecksums.TryRemove(extType.AssemblyQualifiedName, out string _);
+                    _extensionSettingChecksums.Remove(extType.AssemblyQualifiedName);
+                    _extensionSettingChecksums.Add(extType.AssemblyQualifiedName, checkSum);
                 }
 
                 // allow the preview generation threads to start again
@@ -483,26 +477,20 @@ namespace Clipbox.Services
             // serialize
             byte[] serializedData = pdto.ToByteArray();
 
-            string extensionSettingsChecksum = null;
+
             // check whether there has been a setting change, which has triggered
             // this preview generation, and if this is the case,
             // update the setting checksum dictionary with the new settings checksum
-            lock (_checkSumLockHandle)
-            {
-                _recentlyChangedExtensionSettingChecksums.TryRemove(previewGeneratorType.AssemblyQualifiedName, out string newSettingChecksum);
-                if (newSettingChecksum != null)
-                {
-                    _extensionSettingChecksums.AddOrUpdate(previewGeneratorType.AssemblyQualifiedName, newSettingChecksum, (key, oldChecksum) => newSettingChecksum);
-                }
 
-                // construct unique persistence key for the data
-                if (!_extensionSettingChecksums.TryGetValue(previewGeneratorType.AssemblyQualifiedName, out extensionSettingsChecksum))
-                {
-                    // if we fail to get the setting checksum, then someone else has managed to mess up with our dictionaries
-                    throw new InvalidOperationException($"Thread synchronization error.");
-                }
+            // construct unique persistence key for the data
+            if (!_extensionSettingChecksums.ContainsKey(previewGeneratorType.AssemblyQualifiedName))
+            {
+                // if we fail to get the setting checksum, then someone else has managed to mess up with our dictionaries
+                throw new InvalidOperationException($"Thread synchronization error.");
             }
 
+            string extensionSettingsChecksum = _extensionSettingChecksums[previewGeneratorType.AssemblyQualifiedName];
+            
             string persistenceKey = $"{clipboardItemId}_{itemRequestedWidth}_{itemRequestedHeight}_{monitorDimensions.MonitorDPI}_{extensionSettingsChecksum}.pdto";
 
             // store in the byte array cache
@@ -700,8 +688,6 @@ namespace Clipbox.Services
 
             int itemRequestedHeight = CalculateItemRequestedHeight(monitorDimensions, out bool hasHeightBeenDpiScaled);
             int itemRequestedWidth = itemRequestedHeight;
-
-            List<string> availableChecksums = null;
             
             foreach (var keyValuePair in _extensionSettingChecksums)
             {
