@@ -96,6 +96,22 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
             _requestSettingChange?.Invoke(this, new RequestSettingChangeEventArgs(key, value));
         }
 
+        /// <summary>
+        /// Allows for passing settings to an instance of the extension(s),
+        /// for which this setting ui extensions provides configurability.
+        /// Useful for providing setting preview using the actual preview generator.
+        /// </summary>
+        /// <typeparam name="TExtension">The type of the extension to receive the settings</typeparam>
+        /// <param name="extension">The instance of the extension</param>
+        protected void PassSettingsTo<TExtension>(TExtension extension)
+            where TExtension : IConfigurationRecipient
+        {
+            foreach (ISettingKey key in _settings.Keys)
+            {
+                extension.PutSetting(key, _settings[key]);
+            }
+        }
+
         #region ISettingsRegistrator
 
         IEnumerable<ISettingKey> ISettingsRegistrator.GetSettingKeys()

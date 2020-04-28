@@ -1,17 +1,13 @@
-﻿using Clipbox.Core.Configuration;
-using Clipbox.Core.Extensibility.Attributes;
+﻿using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
 using Clipbox.Core.Extensibility.Contracts.PreviewData;
 using Clipbox.Extensions.BuiltIn.TextFormats.IntermediateFormats;
 using Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators;
 using Clipbox.Infrastructure.UI.ExtensionMethods;
-using Clipbox.Infrastructure.UI.Windows;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Windows;
-using System.Windows.Media.Imaging;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
 {
@@ -32,9 +28,9 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
             };
 
             _extensionUI.SettingChanged += _extensionUI_SettingChanged;
-            
-            SetSettingsToSamplePreviewGenerator();
-            
+
+            base.PassSettingsTo(_previewGenerator);
+
             return _extensionUI;
         }
 
@@ -64,41 +60,10 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
             RequestSettingChange<bool, RtfPreviewGenerator>(ExtensionSettingNames.ShowFormattingCharacters, _extensionUI.IsShowFormattingCharsToggled);
             RequestSettingChange<bool, UnicodeTextPreviewGenerator>(ExtensionSettingNames.ShowFormattingCharacters, _extensionUI.IsShowFormattingCharsToggled);
         }
-
-        private void SetSettingsToSamplePreviewGenerator(string settingName = null)
-        {
-            if (!(_previewGenerator is IConfigurationRecipient confRecipient))
-            {
-                throw new InvalidCastException($"The preview generator cannot receive settings. Please make it implement {nameof(IConfigurationRecipient)}");
-            }
-
-            SettingKeyCollectionBuilder settingKeyColBuilder = new SettingKeyCollectionBuilder();
-            settingKeyColBuilder.Add<string, TextPreviewGenerator>(ExtensionSettingNames.Background, null)
-                .Add<string, TextPreviewGenerator>(ExtensionSettingNames.Foreground, null)
-                .Add<double, TextPreviewGenerator>(ExtensionSettingNames.FontSize, 14d)
-                .Add<bool, TextPreviewGenerator>(ExtensionSettingNames.PreserveOriginalFontProperties, false)
-                .Add<bool, TextPreviewGenerator>(ExtensionSettingNames.ScaleFontSizeToDpi, false)
-                .Add<bool, TextPreviewGenerator>(ExtensionSettingNames.IncludeAnnotation, false)
-                .Add<bool, TextPreviewGenerator>(ExtensionSettingNames.ShowFormattingCharacters, false);
-
-            foreach (ISettingKey key in settingKeyColBuilder.GetSettingKeys())
-            {
-                if (!string.IsNullOrEmpty(settingName) && key.Name != settingName)
-                {
-                    continue;
-                }
-
-                var method = typeof(SettingsUIExtension).GetMethod(nameof(GetSetting), System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-                var generic = method.MakeGenericMethod(key.TypeOfValue, key.TargetComponentType);
-                object value = generic.Invoke(this, new object[] { key.Name });
-
-                confRecipient.PutSetting(key, value);
-            }
-        }
         
         protected override void OnSettingUpdated(string settingName, Type targetType)
         {
-            SetSettingsToSamplePreviewGenerator(settingName);
+            base.PassSettingsTo(_previewGenerator);
         }
 
         protected override void RegisterSettingKeys(SettingKeyCollectionBuilder settingKeyColBuilder)
