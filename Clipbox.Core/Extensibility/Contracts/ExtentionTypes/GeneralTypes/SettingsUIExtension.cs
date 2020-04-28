@@ -15,7 +15,7 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
         public SettingsUIExtension()
         {
             var settingKeyColBuilder = new SettingKeyCollectionBuilder();
-            RegisterSettingKeys(settingKeyColBuilder);
+            RegisterSettings(settingKeyColBuilder);
             _registeredSettingKeys = settingKeyColBuilder.GetSettingKeys();
         }
 
@@ -47,10 +47,11 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
         { return null; }
 
         /// <summary>
-        /// Register keys for the settings 
-        /// that will be used by the consuming extensions.
+        /// Register the settings thet will be used by the consuming extensions.
+        /// To register a setting, add it to the instance of <see cref="IRegisteredSettingStore"/>
+        /// which is passed as a parameter to the medthod.
         /// </summary>
-        protected abstract void RegisterSettingKeys(SettingKeyCollectionBuilder settingKeyColBuilder);
+        protected abstract void RegisterSettings(IRegisteredSettingStore settingsStore);
 
         /// <summary>
         /// Gets the value of a setting.
@@ -172,8 +173,24 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
 
         private readonly object _lockObject = new object();
 
+        /// <summary>
+        /// Allows creating of a SettingKey collection.
+        /// </summary>
+        protected interface IRegisteredSettingStore
+        {
+            IRegisteredSettingStore Add<TValueType, TTargetExtensionType>(string keyName, TValueType defaultValue)
+                where TTargetExtensionType : ConfigurableExtension;
+        }
 
-        protected class SettingKeyCollectionBuilder
+        /// <summary>
+        /// We do not want the actual ISettingKey to be accessible by the extensions.
+        /// They are an implementation detail and should not be exposed. So, construct
+        /// that builder only here and provide a ready object to the method
+        /// <see cref="RegisterSettings(IRegisteredSettingStore)"/>
+        /// The extensions can therefore register keys without constructing
+        /// ISettingKey objects.
+        /// </summary>
+        private class SettingKeyCollectionBuilder : IRegisteredSettingStore
         {
             private readonly List<ISettingKey> _settingKeys;
 
@@ -182,7 +199,7 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
                 _settingKeys = new List<ISettingKey>();
             }
 
-            public SettingKeyCollectionBuilder Add<TValueType, TTargetExtensionType>(string keyName, TValueType defaultValue)
+            public IRegisteredSettingStore Add<TValueType, TTargetExtensionType>(string keyName, TValueType defaultValue)
                 where TTargetExtensionType : ConfigurableExtension
             {
                 _settingKeys.Add(new SettingKey<TValueType, TTargetExtensionType>(keyName, defaultValue));

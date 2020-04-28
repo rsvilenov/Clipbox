@@ -27,9 +27,9 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
             RequestSettingChange<bool, MultipleTextSelectionsAlignmentUIExtension>(ExtensionSettingNames.SaveSelectedSeparatorAsDefault, _extensionUI.IsSaveSeparatorToggled);
         }
 
-        protected override void RegisterSettingKeys(SettingKeyCollectionBuilder settingKeyColBuilder)
+        protected override void RegisterSettings(IRegisteredSettingStore settingsStore)
         {
-            settingKeyColBuilder
+            settingsStore
                 .Add<int, MultipleTextSelectionsAlignmentUIExtension>(ExtensionSettingNames.DefaultSeparator, (int)TextConcatenateSeparators.None)
                 .Add<bool, RemoveFormattingUIExtension>(ExtensionSettingNames.RemoveFormatting, false)
                 .Add<bool, MultipleTextSelectionsAlignmentUIExtension>(ExtensionSettingNames.SaveSelectedSeparatorAsDefault, false)

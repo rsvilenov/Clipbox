@@ -66,9 +66,9 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
             base.PassSettingsTo(_previewGenerator);
         }
 
-        protected override void RegisterSettingKeys(SettingKeyCollectionBuilder settingKeyColBuilder)
+        protected override void RegisterSettings(IRegisteredSettingStore settingsStore)
         {
-            settingKeyColBuilder
+            settingsStore
                 .Add<string, RtfPreviewGenerator>(ExtensionSettingNames.Background, null)
                 .Add<string, RtfPreviewGenerator>(ExtensionSettingNames.Foreground, null)
                 .Add<double, RtfPreviewGenerator>(ExtensionSettingNames.FontSize, 14d)
@@ -92,7 +92,6 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
                 .Add<bool, UnicodeTextPreviewGenerator>(ExtensionSettingNames.ScaleFontSizeToDpi, false)
                 .Add<bool, UnicodeTextPreviewGenerator>(ExtensionSettingNames.IncludeAnnotation, false)
                 .Add<bool, UnicodeTextPreviewGenerator>(ExtensionSettingNames.ShowFormattingCharacters, false);
-
         }
     }
 }
