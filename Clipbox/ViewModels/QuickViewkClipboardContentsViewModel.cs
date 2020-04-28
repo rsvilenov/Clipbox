@@ -81,7 +81,7 @@ namespace Clipbox.ViewModels
 
             // reload the items, whose generator extensions have some settings changed
             base.ClipboardViewItemWrappers
-                .Where(w => w.IsViewItemLoaded && w.ViewItem.GeneratorExtensionTypeName == extType.AssemblyQualifiedName)
+                .Where(w => w.IsViewItemLoaded && w.ViewItem.GeneratorExtensionTypeName == extType?.AssemblyQualifiedName)
                 .ToList()
                 .ForEach(w => LoadViewItem(w.Id, _lastUsedMonitorDimensions));
         }
