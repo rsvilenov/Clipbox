@@ -70,6 +70,15 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show formatting characters in text previews.
+        /// </summary>
+        internal static string LBL_SHOW_FORMATTING_CHARS {
+            get {
+                return ResourceManager.GetString("LBL_SHOW_FORMATTING_CHARS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to character.
         /// </summary>
         internal static string STR_CHARACTER {

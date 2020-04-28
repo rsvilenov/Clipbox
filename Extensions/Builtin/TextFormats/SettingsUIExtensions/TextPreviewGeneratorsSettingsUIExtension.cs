@@ -2,22 +2,30 @@
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
 using Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Media;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
 {
     [ClipboxExtension]
     public class TextPreviewGeneratorsSettingsUIExtension : SettingsUIExtension
     {
+        private TextPreviewGeneratorsSettings _extensionUI;
         public override UIElement GetSettingsViewPart()
         {
-            return new Border
+            _extensionUI = new TextPreviewGeneratorsSettings
             {
-                Width = 200,
-                Height = 50,
-                Background = Brushes.Green
+                IsShowFormattingCharsToggled = GetSetting<bool, TextPreviewGenerator>(ExtensionSettingNames.ShowFormattingCharacters)
             };
+
+            _extensionUI.SettingChanged += _extensionUI_SettingChanged;
+
+            return _extensionUI;
+        }
+
+        private void _extensionUI_SettingChanged(object sender, System.EventArgs e)
+        {
+            RequestSettingChange<bool, TextPreviewGenerator>(ExtensionSettingNames.ShowFormattingCharacters, _extensionUI.IsShowFormattingCharsToggled);
+            RequestSettingChange<bool, RtfPreviewGenerator>(ExtensionSettingNames.ShowFormattingCharacters, _extensionUI.IsShowFormattingCharsToggled);
+            RequestSettingChange<bool, UnicodeTextPreviewGenerator>(ExtensionSettingNames.ShowFormattingCharacters, _extensionUI.IsShowFormattingCharsToggled);
         }
 
         protected override void RegisterSettingKeys(SettingKeyCollectionBuilder settingKeyColBuilder)

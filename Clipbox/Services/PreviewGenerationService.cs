@@ -61,13 +61,20 @@ namespace Clipbox.Services
         private readonly ConcurrentDictionary<string, ManualResetEvent> _mreStartedForClipboardItemIds;
         private readonly ConcurrentDictionary<string, ThreadExecutor> _threadExecutorsForClipboardItemIds;
 
-        private readonly ConcurrentDictionary<Type, string> _extensionSettingChecksums;
+        private readonly ConcurrentDictionary<string, string> _extensionSettingChecksums;
+        private readonly ConcurrentDictionary<string, string> _recentlyChangedExtensionSettingChecksums;
+        private readonly object _checkSumLockHandle = new object();
+        private readonly ManualResetEvent _checkSumsCanChangeMre;
+        private readonly ManualResetEvent _checkSumsChangeFinishedMre;
+        private int _previewGenerationThreadsCounter;
 
         private readonly ByteArrayCache _byteArrayCache;
 
         private readonly int _previewGenerationTimeoutMs;
 
         private bool _disposeBegun;
+
+         
         
         public PreviewGenerationService(
             IClipboardManager clipboardManager,
@@ -84,9 +91,15 @@ namespace Clipbox.Services
 
             // a checksum used to determine whether a preview item can be fetched
             // from the preview item cache, or it shoud be generated anew
-            _extensionSettingChecksums = new ConcurrentDictionary<Type, string>();
+            _extensionSettingChecksums = new ConcurrentDictionary<string, string>();
+            // when a setting has changed, the setting checksum changes as well
+            // but we want to update it in the main dictionary only after the new
+            // preview with the new settings has been generated.
+            _recentlyChangedExtensionSettingChecksums = new ConcurrentDictionary<string, string>();
             // cache the checksums of the initial settings of the extensions
             CacheExtensionSettingChecksums();
+            _checkSumsCanChangeMre = new ManualResetEvent(true);
+            _checkSumsChangeFinishedMre = new ManualResetEvent(true);
             // listen for setting changes and update the chekcksum dictionary on a change
             _settingsService.SettingChanged += _settingsService_SettingChanged;
 
@@ -125,7 +138,7 @@ namespace Clipbox.Services
 
             foreach (Type extType in previewExtensionTypes)
             { 
-                    _extensionSettingChecksums.TryAdd(extType, 
+                    _extensionSettingChecksums.TryAdd(extType.AssemblyQualifiedName, 
                         GetExtensionSettingsChecksum(extType, 
                             _settingsService.GetSettingKeys(extType)));
             }
@@ -136,13 +149,32 @@ namespace Clipbox.Services
             Type extType = e.Key.TargetComponentType;
 
             if (extType != null
-                && _extensionSettingChecksums.ContainsKey(extType))
+                && extType.GetInterface(nameof(IPreviewGenerator)) != null
+                && extType.GetInterface(nameof(IConfigurationRecipient)) != null)
             {
                 IEnumerable<ISettingKey> newSettings = _settingsService
                     .GetSettingKeys(extType);
 
                 string checkSum = GetExtensionSettingsChecksum(extType, newSettings);
-                _extensionSettingChecksums.AddOrUpdate(extType, checkSum, (key, oldChecksum) => checkSum);
+
+                // stop new preview generation threads from starting
+                _checkSumsChangeFinishedMre.Reset();
+
+                // wait fot the already running threads to finish
+                _checkSumsCanChangeMre.WaitOne();
+
+                // while ConcurrentDictionary is thread-safe in terms of not throwing exceptions,
+                // it does not solve the problem of for example one thread removing keys just before
+                // another tries to get the value... So, the cost of TryRemove is... locks, reset events...
+                // TODO: devise a better way for handling the checksums, which does not require such things.
+                lock (_checkSumLockHandle)
+                {
+                    _recentlyChangedExtensionSettingChecksums.TryAdd(extType.AssemblyQualifiedName, checkSum);
+                    _extensionSettingChecksums.TryRemove(extType.AssemblyQualifiedName, out string _);
+                }
+
+                // allow the preview generation threads to start again
+                _checkSumsChangeFinishedMre.Set();
             }
         }
 
@@ -150,7 +182,7 @@ namespace Clipbox.Services
         {
             string cultureSetting = _settingsService.GetSetting<string>(SettingsKeys.LocalizationCulture);
 
-            StringBuilder settingsStr = new StringBuilder(extensionType.FullName);
+            StringBuilder settingsStr = new StringBuilder(extensionType.AssemblyQualifiedName);
             settingsStr.Append(cultureSetting);
 
             foreach (ISettingKey key in settingKeys)
@@ -265,7 +297,10 @@ namespace Clipbox.Services
             int itemRequestedHeight = CalculateItemRequestedHeight(monitorDimensions, out bool hasHeightBeenDpiScaled);
             int itemRequestedWidth = itemRequestedHeight;
 
+            // get the clipboard item with its full contents
             IClipboardItem clipboardItem = _clipboardManager.GetClipboardItem(clipboardItemId, restoreShrinked: true);
+
+            // generate the preview
             PreviewDataTransferObject pdto = GeneratePreviewDataTransferObject(clipboardItem, 
                 itemRequestedHeight, 
                 itemRequestedWidth, 
@@ -273,14 +308,15 @@ namespace Clipbox.Services
                 cancellationToken,
                 out Type previewGeneratorUsed);
 
+            // store the preview for faster access
             CacheGeneratedData(monitorDimensions, 
                 itemRequestedHeight, 
                 itemRequestedWidth, 
                 pdto, 
                 hasHeightBeenDpiScaled,
-                previewGeneratorUsed ?? GetType());
+                previewGeneratorUsed);
         }
-        
+
         public PreviewDataTransferObject GetPreviewDataTransferObject(IClipboardItem clipboardItem, MonitorDimensions monitorDimensions)
         {
             if (clipboardItem == null)
@@ -297,29 +333,45 @@ namespace Clipbox.Services
             {
                 throw new ArgumentException($"{clipboardItem.Id} does not have any {nameof(clipboardItem.ClipboardDataObjects)}");
             }
+            
+            // wait if a setting change is ongoing and the
+            // setting checksum dictionaries are being modified
+            _checkSumsChangeFinishedMre.WaitOne();
+            // increment the thread counter
+            Interlocked.Increment(ref _previewGenerationThreadsCounter);
 
             PreviewDataTransferObject pdto = null;
-            
-            // wait for the generation task if such is running
-            bool hasTaskBeenRunning = WaitForPreviewGenerationTaskResult(clipboardItem.Id, monitorDimensions, out pdto);
 
-            // if no task existed
-            if (!hasTaskBeenRunning
-                // and if we could not load any saved data
-                && !TryGetStoredPreviewDataTransferObject(clipboardItem.Id, monitorDimensions, out pdto))
-            { 
-                // schedule a preview generation task if it is not sheduled already
-                TryEnqueuePreviewGenerationTask(clipboardItem.Id, monitorDimensions);
-                // and wait for its completion
-                bool hasTheNewTaskBeenStarted = WaitForPreviewGenerationTaskResult(clipboardItem.Id, monitorDimensions, out pdto);
-                if (!hasTheNewTaskBeenStarted)
+            try
+            {
+                // wait for the generation task if such is running
+                bool hasTaskBeenRunning = WaitForPreviewGenerationTaskResult(clipboardItem.Id, monitorDimensions, out pdto);
+
+                // if no task existed
+                if (!hasTaskBeenRunning
+                    // and if we could not load any saved data
+                    && !TryGetStoredPreviewDataTransferObject(clipboardItem.Id, monitorDimensions, out pdto))
                 {
-                    throw new InvalidOperationException($"It seems that the newly enqueued task for clipboard item with id {clipboardItem.Id} has not been started.");
-                }
+                    // schedule a preview generation task if it is not sheduled already
+                    TryEnqueuePreviewGenerationTask(clipboardItem.Id, monitorDimensions);
+                    // and wait for its completion
+                    bool hasTheNewTaskBeenStarted = WaitForPreviewGenerationTaskResult(clipboardItem.Id, monitorDimensions, out pdto);
+                    if (!hasTheNewTaskBeenStarted)
+                    {
+                        throw new InvalidOperationException($"It seems that the newly enqueued task for clipboard item with id {clipboardItem.Id} has not been started.");
+                    }
 
-                // if we do not have a preview by now, abandon; the ThreadExecutor will try to
-                // cancel the thread gracefully and if the thread's code does not cooperate,
-                // it will try to abort it.
+                    // if we do not have a preview by now, abandon; the ThreadExecutor will try to
+                    // cancel the thread gracefully and if the thread's code does not cooperate,
+                    // it will try to abort it.
+                }
+            }
+            finally
+            {
+                if (Interlocked.Decrement(ref _previewGenerationThreadsCounter) == 0)
+                {
+                    _checkSumsCanChangeMre.Set();
+                }
             }
 
             if (pdto == null)
@@ -431,8 +483,30 @@ namespace Clipbox.Services
             // serialize
             byte[] serializedData = pdto.ToByteArray();
 
+            string extensionSettingsChecksum = null;
+            // check whether there has been a setting change, which has triggered
+            // this preview generation, and if this is the case,
+            // update the setting checksum dictionary with the new settings checksum
+            lock (_checkSumLockHandle)
+            {
+                _recentlyChangedExtensionSettingChecksums.TryRemove(previewGeneratorType.AssemblyQualifiedName, out string newSettingChecksum);
+                if (newSettingChecksum != null)
+                {
+                    _extensionSettingChecksums.AddOrUpdate(previewGeneratorType.AssemblyQualifiedName, newSettingChecksum, (key, oldChecksum) => newSettingChecksum);
+                }
+
+                // construct unique persistence key for the data
+                if (!_extensionSettingChecksums.TryGetValue(previewGeneratorType.AssemblyQualifiedName, out extensionSettingsChecksum))
+                {
+                    // if we fail to get the setting checksum, then someone else has managed to mess up with our dictionaries
+                    throw new InvalidOperationException($"Thread synchronization error.");
+                }
+            }
+
+            string persistenceKey = $"{clipboardItemId}_{itemRequestedWidth}_{itemRequestedHeight}_{monitorDimensions.MonitorDPI}_{extensionSettingsChecksum}.pdto";
+
             // store in the byte array cache
-            _byteArrayCache.AddOrUpdate(clipboardItemId, serializedData);
+            _byteArrayCache.AddOrUpdate(persistenceKey, serializedData);
 
             // schedule storeing to disk
             _storeToDiskDispatcher.BeginInvoke(() =>
@@ -440,10 +514,7 @@ namespace Clipbox.Services
                 StorePreviewDimensionsDictionaryТoDisk();
                 StoreSerializedPreviewDataTransferObjectToDisk(clipboardItemId, 
                     serializedData, 
-                    itemRequestedWidth, 
-                    itemRequestedHeight,
-                    monitorDimensions.MonitorDPI,
-                    previewGeneratorType);
+                    persistenceKey);
             });
         }
         
@@ -616,12 +687,8 @@ namespace Clipbox.Services
             }
         }
 
-        private void StoreSerializedPreviewDataTransferObjectToDisk(string clipboardItemId, byte[] serializedPdto, int itemRequestedWidth, int itemRequestedHeight, double dpi, Type previewGeneratorType)
+        private void StoreSerializedPreviewDataTransferObjectToDisk(string clipboardItemId, byte[] serializedPdto, string persistenceKey)
         {
-            string extensionSettingsChecksum = _extensionSettingChecksums[previewGeneratorType];
-
-            string persistenceKey = $"{clipboardItemId}_{itemRequestedWidth}_{itemRequestedHeight}_{dpi}_{extensionSettingsChecksum}.pdto";
-
             _persistenceProvider.Write(persistenceKey, serializedPdto, PERSISTENCE_STORE_CATEGORY);
         }
 
@@ -629,33 +696,35 @@ namespace Clipbox.Services
         {
             pdto = null;
 
-            if (!_byteArrayCache.TryGet(clipboardItemId, out byte[] pdtoByteArray))
+            byte[] pdtoByteArray = null;
+
+            int itemRequestedHeight = CalculateItemRequestedHeight(monitorDimensions, out bool hasHeightBeenDpiScaled);
+            int itemRequestedWidth = itemRequestedHeight;
+
+            List<string> availableChecksums = null;
+            
+            foreach (var keyValuePair in _extensionSettingChecksums)
             {
-                int itemRequestedHeight = CalculateItemRequestedHeight(monitorDimensions, out bool hasHeightBeenDpiScaled);
-                int itemRequestedWidth = itemRequestedHeight;
+                string checkSum = keyValuePair.Value;
+                string key = $"{clipboardItemId}_{itemRequestedWidth}_{itemRequestedHeight}_{monitorDimensions.MonitorDPI}_{checkSum}.pdto";
 
-                string persistenceKey = null;
-                // try to find a matching key for any of the present setting checksums
-                foreach (string checkSum in _extensionSettingChecksums.Values)
+                if (_byteArrayCache.TryGet(key, out pdtoByteArray))
                 {
-                    string key = $"{clipboardItemId}_{itemRequestedWidth}_{itemRequestedHeight}_{monitorDimensions.MonitorDPI}__{checkSum}.pdto";
-                    if (_persistenceProvider
-                        .CheckIfKeyExists(key, PERSISTENCE_STORE_CATEGORY))
-                    {
-                        persistenceKey = key;
-                        break;
-                    }
-                }
-                
-                // if no key is found, this means that the settings of the item's
-                // preview generator has changed since, therefore - generate a new preview item.
-                if (persistenceKey == null)
-                {
-                    return false;
+                    break;
                 }
 
-                pdtoByteArray = _persistenceProvider.ReadBytes(persistenceKey, PERSISTENCE_STORE_CATEGORY);
-                _byteArrayCache.AddOrUpdate(clipboardItemId, pdtoByteArray);
+                if (_persistenceProvider
+                    .CheckIfKeyExists(key, PERSISTENCE_STORE_CATEGORY))
+                {
+                    pdtoByteArray = _persistenceProvider.ReadBytes(key, PERSISTENCE_STORE_CATEGORY);
+                    _byteArrayCache.AddOrUpdate(key, pdtoByteArray);
+                    break;
+                }
+            }
+
+            if (pdtoByteArray == null)
+            {
+                return false;
             }
 
             // deserialize

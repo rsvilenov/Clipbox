@@ -83,6 +83,9 @@
       <DependentUpon>TextFormattingSettings.xaml</DependentUpon>
     </Compile>
     <Compile Include="SettingsUIExtensions\TextFormattingSettingsUIExtension.cs" />
+    <Compile Include="SettingsUIExtensions\TextPreviewGeneratorsSettings.xaml.cs">
+      <DependentUpon>TextPreviewGeneratorsSettings.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SettingsUIExtensions\TextPreviewGeneratorsSettingsUIExtension.cs" />
     <Compile Include="StringExtensions.cs" />
     <Compile Include="SearchSupport\HtmlSearchSupport.cs" />
@@ -125,6 +128,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="SettingsUIExtensions\TextFormattingSettings.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SettingsUIExtensions\TextPreviewGeneratorsSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

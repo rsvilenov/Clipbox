@@ -144,4 +144,7 @@
   <data name="STR_LINES" xml:space="preserve">
     <value>lines</value>
   </data>
+  <data name="LBL_SHOW_FORMATTING_CHARS" xml:space="preserve">
+    <value>Show formatting characters in text previews</value>
+  </data>
 </root>
