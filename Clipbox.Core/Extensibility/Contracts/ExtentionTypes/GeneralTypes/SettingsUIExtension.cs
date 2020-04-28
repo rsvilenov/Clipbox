@@ -32,8 +32,19 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
         /// Create and return the part of the Settings view,
         /// corresponding to the settings for an extension. 
         /// </summary>
-        /// <returns></returns>
-        public abstract UIElement GetSettingsViewPart();
+        /// <param name="maxHeight">MaxWidth of the settings view UIElement</param>
+        /// <returns>The ui part to show in the settings windpw</returns>
+        public abstract UIElement GetSettingsViewPart(double maxWidth);
+
+        /// <summary>
+        /// Create and return the part of the Settings view,
+        /// which shows a preview of how the settings will
+        /// affect the functionning of their extensions.
+        /// </summary>
+        /// <param name="previewParams">The parameters passed to the preview generators</param>
+        /// <returns>The preview of the settings, which will be shown in the settings window</returns>
+        public virtual UIElement GetResultPreview(PreviewParams previewParams)
+        { return null; }
 
         /// <summary>
         /// Register keys for the settings 

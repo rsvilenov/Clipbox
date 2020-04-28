@@ -10,7 +10,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
     public class TextFormattingSettingsUIExtension : SettingsUIExtension
     {
         private TextFormattingSettings _extensionUI;
-        public override UIElement GetSettingsViewPart()
+        public override UIElement GetSettingsViewPart(double maxWidth)
         {
             _extensionUI = new TextFormattingSettings
             {

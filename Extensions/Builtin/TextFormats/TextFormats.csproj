@@ -73,6 +73,11 @@
     <Compile Include="PreviewGenerators\Common\RtbTextProcessor.cs" />
     <Compile Include="PreviewGenerators\UnicodeTextPreviewGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resources\SampleData.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SampleData.resx</DependentUpon>
+    </Compile>
     <Compile Include="Resources\Translations\Translations.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -149,6 +154,10 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\SampleData.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SampleData.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\Translations\Translations.bg-BG.resx" />
     <EmbeddedResource Include="Resources\Translations\Translations.resx">
       <Generator>ResXFileCodeGenerator</Generator>

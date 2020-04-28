@@ -15,6 +15,7 @@ namespace Clipbox.Infrastructure.UI.Localization
     /// <summary>
     /// A markup extension for localization
     /// </summary>
+    [MarkupExtensionReturnType(typeof(string))]
     public class LocalizeExtension : MarkupExtension
     {
         [ConstructorArgument(nameof(Key))]

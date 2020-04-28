@@ -63,7 +63,7 @@ namespace Clipbox.Views
                     settingChangeRequestor.RequestSettingChange += SettingChangeRequestor_RequestSettingChange;
                 }
 
-                UIElement extUI = ext.GetSettingsViewPart();
+                UIElement extUI = ext.GetSettingsViewPart(200);
                 pluginContainer.Children.Add(extUI);
             }
         }
