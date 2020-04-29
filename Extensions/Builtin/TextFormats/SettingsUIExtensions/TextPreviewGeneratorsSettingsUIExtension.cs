@@ -22,7 +22,8 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
 
             _extensionUI = new TextPreviewGeneratorsSettings
             {
-                IsShowFormattingCharsToggled = GetSetting<bool, TextPreviewGenerator>(ExtensionSettingNames.ShowFormattingCharacters)
+                IsCompactifyToggled = GetSetting<bool, TextPreviewGenerator>(ExtensionSettingNames.Compactify),
+                IsPreserveOriginalFontPropertiesToggled = GetSetting<bool, TextPreviewGenerator>(ExtensionSettingNames.PreserveOriginalFontProperties)
             };
 
             _extensionUI.SettingChanged += _extensionUI_SettingChanged;
@@ -64,29 +65,29 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
             settingsStore
                 .Add<string, RtfPreviewGenerator>(ExtensionSettingNames.Background, null)
                 .Add<string, RtfPreviewGenerator>(ExtensionSettingNames.Foreground, null)
+                .Add<string, RtfPreviewGenerator>(ExtensionSettingNames.FormattingCharsForeground, null)
                 .Add<double, RtfPreviewGenerator>(ExtensionSettingNames.FontSize, 14d)
                 .Add<bool, RtfPreviewGenerator>(ExtensionSettingNames.PreserveOriginalFontProperties, false)
                 .Add<bool, RtfPreviewGenerator>(ExtensionSettingNames.ScaleFontSizeToDpi, false)
                 .Add<bool, RtfPreviewGenerator>(ExtensionSettingNames.IncludeAnnotation, false)
-                .Add<bool, RtfPreviewGenerator>(ExtensionSettingNames.ShowFormattingCharacters, false)
                 .Add<bool, RtfPreviewGenerator>(ExtensionSettingNames.Compactify, false)
 
                 .Add<string, TextPreviewGenerator>(ExtensionSettingNames.Background, null)
                 .Add<string, TextPreviewGenerator>(ExtensionSettingNames.Foreground, null)
+                .Add<string, TextPreviewGenerator>(ExtensionSettingNames.FormattingCharsForeground, null)
                 .Add<double, TextPreviewGenerator>(ExtensionSettingNames.FontSize, 14d)
                 .Add<bool, TextPreviewGenerator>(ExtensionSettingNames.PreserveOriginalFontProperties, false)
                 .Add<bool, TextPreviewGenerator>(ExtensionSettingNames.ScaleFontSizeToDpi, false)
                 .Add<bool, TextPreviewGenerator>(ExtensionSettingNames.IncludeAnnotation, false)
-                .Add<bool, TextPreviewGenerator>(ExtensionSettingNames.ShowFormattingCharacters, false)
                 .Add<bool, TextPreviewGenerator>(ExtensionSettingNames.Compactify, false)
 
                 .Add<string, UnicodeTextPreviewGenerator>(ExtensionSettingNames.Background, null)
                 .Add<string, UnicodeTextPreviewGenerator>(ExtensionSettingNames.Foreground, null)
+                .Add<string, UnicodeTextPreviewGenerator>(ExtensionSettingNames.FormattingCharsForeground, null)
                 .Add<double, UnicodeTextPreviewGenerator>(ExtensionSettingNames.FontSize, 14d)
                 .Add<bool, UnicodeTextPreviewGenerator>(ExtensionSettingNames.PreserveOriginalFontProperties, false)
                 .Add<bool, UnicodeTextPreviewGenerator>(ExtensionSettingNames.ScaleFontSizeToDpi, false)
                 .Add<bool, UnicodeTextPreviewGenerator>(ExtensionSettingNames.IncludeAnnotation, false)
-                .Add<bool, UnicodeTextPreviewGenerator>(ExtensionSettingNames.ShowFormattingCharacters, false)
                 .Add<bool, UnicodeTextPreviewGenerator>(ExtensionSettingNames.Compactify, false);
         }
     }

@@ -11,23 +11,6 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
     public partial class TextPreviewGeneratorsSettings : UserControl
     {
         public event EventHandler<ExtensionSettingChangedEventArgs> SettingChanged;
-
-
-        public bool IsShowFormattingCharsToggled
-        {
-            get { return (bool)GetValue(IsShowFormattingCharsToggledProperty); }
-            set { SetValue(IsShowFormattingCharsToggledProperty, value); }
-        }
-
-        public static readonly DependencyProperty IsShowFormattingCharsToggledProperty =
-            DependencyProperty.Register(nameof(IsShowFormattingCharsToggled), typeof(bool), typeof(TextPreviewGeneratorsSettings), new PropertyMetadata(false, IsShowFormattingCharsToggled_PropertyChanged));
-
-        private static void IsShowFormattingCharsToggled_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var self = ((TextPreviewGeneratorsSettings)d);
-            self.SettingChanged?.Invoke(self, new ExtensionSettingChangedEventArgs(ExtensionSettingNames.ShowFormattingCharacters, e.NewValue));
-        }
-
         
         public bool IsCompactifyToggled
         {
@@ -43,6 +26,24 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
             var self = ((TextPreviewGeneratorsSettings)d);
             self.SettingChanged?.Invoke(self, new ExtensionSettingChangedEventArgs(ExtensionSettingNames.Compactify, e.NewValue));
         }
+
+
+
+        public bool IsPreserveOriginalFontPropertiesToggled
+        {
+            get { return (bool)GetValue(IsPreserveOriginalFontPropertiesToggledProperty); }
+            set { SetValue(IsPreserveOriginalFontPropertiesToggledProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsPreserveOriginalFontPropertiesToggledProperty =
+            DependencyProperty.Register(nameof(IsPreserveOriginalFontPropertiesToggled), typeof(bool), typeof(TextPreviewGeneratorsSettings), new PropertyMetadata(false, IsPreserveOriginalFontPropertiesToggled_PropertyChanged));
+
+        private static void IsPreserveOriginalFontPropertiesToggled_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var self = ((TextPreviewGeneratorsSettings)d);
+            self.SettingChanged?.Invoke(self, new ExtensionSettingChangedEventArgs(ExtensionSettingNames.PreserveOriginalFontProperties, e.NewValue));
+        }
+
 
         public TextPreviewGeneratorsSettings()
         {

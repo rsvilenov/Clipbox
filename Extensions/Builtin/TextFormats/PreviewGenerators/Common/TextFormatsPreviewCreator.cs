@@ -25,8 +25,6 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
 
         public class PreviewGenerationOptions
         {
-            public bool ShowFormattingCharacters { get; set; } = true;
-
             public bool InclideAnnotation { get; set; } = true;
 
             public bool PreserveRtfFormatting { get; set; } = true;
@@ -34,6 +32,8 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
             public System.Windows.Media.Color? Background { get; set; } =  null;
 
             public System.Windows.Media.Color? Foreground { get; set; } = null;
+
+            public System.Windows.Media.Color? FormattingCharsForeground { get; set; } = null;
 
             public double FontSize { get; set; } = 14;
 
@@ -72,7 +72,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
 
             try
             {
-                RtfProcessor rp = new RtfProcessor(Colors.Brown, 18 * 2, options.ShowFormattingCharacters, options.MakeTextCompact);
+                RtfProcessor rp = new RtfProcessor(options.FormattingCharsForeground ?? Colors.Brown, 18 * 2);
                 if (format == TextFormat.Text)
                 {
                     if (!rp.TryLoadFromText(textData, 14 * 2))
@@ -86,13 +86,18 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
                 {
                     rp.LoadFromRtf(textData);
                 }
-                
-                rp.ReplaceSpacingChar(RtfProcessor.SpacingChars.LineBreak);
-                rp.ReplaceSpacingChar(RtfProcessor.SpacingChars.Tab);
-                rp.ReplaceSpacingChar(RtfProcessor.SpacingChars.Space);
 
-                string res = rp.GetProcessedRtf();
-                LoadTextDataIntoRichTextBox(res, TextFormat.Rtf, rtb);
+                string resultingText = null;
+                if (options.MakeTextCompact)
+                {
+                    rp.ReplaceSpacingChar(RtfProcessor.SpacingChars.LineBreak);
+                    rp.ReplaceSpacingChar(RtfProcessor.SpacingChars.Tab);
+                    rp.ReplaceSpacingChar(RtfProcessor.SpacingChars.Space);
+
+                    resultingText = rp.GetProcessedRtf();
+                }
+
+                LoadTextDataIntoRichTextBox(resultingText ?? textData, TextFormat.Rtf, rtb);
             }
             catch
             {

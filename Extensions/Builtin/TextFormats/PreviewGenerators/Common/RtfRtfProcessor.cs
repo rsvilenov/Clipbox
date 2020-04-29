@@ -19,25 +19,15 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
         private string _resultRtf;
 
         private readonly string _replacementCharsRtfColorStr;
-
-        private readonly bool _showReplacementChars;
-
-        private readonly bool _makeTextCompact;
-
-        public RtfProcessor(Color replacementCharsColor, int replacementCharsFontSizeHalfPoints, bool showFormattingChars = true, bool makeTextCompact = true)
+        
+        public RtfProcessor(Color replacementCharsColor, int replacementCharsFontSizeHalfPoints)
         {
-            _replacementChars = showFormattingChars ?
-                    GetVisibleSpacingReplacementChars() :
-                    GetBlankSpacingReplacementChars();
+            _replacementChars = GetVisibleSpacingReplacementChars();
 
             // create an rtf color stirng
             _replacementCharsRtfColorStr = $"\\red{replacementCharsColor.R}\\green{replacementCharsColor.G}\\blue{replacementCharsColor.B}";
 
             _replacementCharFontSize = replacementCharsFontSizeHalfPoints;
-
-            _showReplacementChars = showFormattingChars;
-
-            _makeTextCompact = makeTextCompact;
         }
 
 
@@ -103,16 +93,6 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
             };
         }
 
-        private Dictionary<SpacingChars, string> GetBlankSpacingReplacementChars()
-        {
-            return new Dictionary<SpacingChars, string>
-            {
-                { SpacingChars.LineBreak, " " },
-                { SpacingChars.Tab, " " },
-                { SpacingChars.Space, " " }
-            };
-        }
-
         public void ReplaceSpacingChar(SpacingChars spacingChar)
         {
             if (replacementCharColorRtfNumber == -1)
@@ -120,56 +100,31 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
                 throw new InvalidOperationException("Spacing char color has not been set.");
             }
 
-            if (!_makeTextCompact && !_showReplacementChars)
-            {
-                return;
-            }
-            
-            string tabOccurrancePattern = "{5,}";
-
-            string generalOccurrancePattern;
-            if (_makeTextCompact)
-            {
-                generalOccurrancePattern = _showReplacementChars ? "{2,}" : "+";
-            }
-            else
-            {
-                generalOccurrancePattern = "";
-                tabOccurrancePattern = "";
-            }
-
             string regex = "";
             switch (spacingChar)
             {
                 case SpacingChars.LineBreak:
-                    regex = @"((\\par|\\line|\r\n)[\r|\n|\s]+)" + generalOccurrancePattern;
+                    regex = @"((\\par|\\line)[\r|\n|\s]+){2,}";
                     break;
                 case SpacingChars.Tab:
-                    regex = @"(\\tab\s*)" + tabOccurrancePattern;
+                    regex = @"(\\tab\s*){2,}";
                     break;
                 case SpacingChars.Space:
-                    regex = @"(\s)" + generalOccurrancePattern;
+                    regex = @"(\s){5,}";
                     break;
-            }
-
-            string replacedMatchEnding = " ";
-            if (_makeTextCompact && _showReplacementChars)
-            {
-                replacedMatchEnding = "+";
             }
 
             _resultRtf = Regex.Replace((_resultRtf ?? _originalRtf), regex,
-            m => $@"{{\cf{replacementCharColorRtfNumber}\fs{_replacementCharFontSize} {Escape(_replacementChars[spacingChar])}{replacedMatchEnding}}}",
+            m => $@"{{\cf{replacementCharColorRtfNumber}\fs{_replacementCharFontSize} {Escape(_replacementChars[spacingChar])}+}}",
             RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Multiline);
+
         }
 
         public void SetSpacingCharFontSize(int fontSizeInHalfPoints)
         {
             _replacementCharFontSize = fontSizeInHalfPoints;
         }
-
-
-
+        
         private void AdjustRtfColorTable()
         {
             // find the color table

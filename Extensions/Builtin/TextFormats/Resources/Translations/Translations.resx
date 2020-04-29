@@ -145,9 +145,9 @@
     <value>lines</value>
   </data>
   <data name="LBL_COMPACTIFY" xml:space="preserve">
-    <value>Compactify text by removing empty space</value>
+    <value>Compactify the preview by removing empty space</value>
   </data>
-  <data name="LBL_SHOW_FORMATTING_CHARS" xml:space="preserve">
-    <value>Show formatting characters in text previews</value>
+  <data name="TTP_PRESERVE_ORIG_FONT_PROPS" xml:space="preserve">
+    <value>To to show the preview with the original formatting of the text</value>
   </data>
 </root>

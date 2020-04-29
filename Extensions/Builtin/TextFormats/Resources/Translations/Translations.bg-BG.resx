@@ -145,9 +145,9 @@
     <value>реда</value>
   </data>
   <data name="LBL_COMPACTIFY" xml:space="preserve">
-    <value>Направи текста компактен, премахвайки празното пространство</value>
+    <value>Направи текстовия преглед компактен, премахвайки празното пространство</value>
   </data>
-  <data name="LBL_SHOW_FORMATTING_CHARS" xml:space="preserve">
-    <value>Показвай символи за форматиране в текстовите прегледи</value>
+  <data name="TTP_PRESERVE_ORIG_FONT_PROPS" xml:space="preserve">
+    <value>Опитай се да покажеш текста с оригиналното му форматиране</value>
   </data>
 </root>

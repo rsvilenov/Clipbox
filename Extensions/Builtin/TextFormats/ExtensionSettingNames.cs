@@ -8,7 +8,7 @@
         public static string PreserveOriginalFontProperties = nameof(PreserveOriginalFontProperties);
         public static string Background = nameof(Background);
         public static string Foreground = nameof(Foreground);
-        public static string ShowFormattingCharacters = nameof(ShowFormattingCharacters);
+        public static string FormattingCharsForeground = nameof(FormattingCharsForeground);
         public static string IncludeAnnotation = nameof(IncludeAnnotation);
         public static string Compactify = nameof(Compactify);
 

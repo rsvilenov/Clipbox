@@ -21,7 +21,6 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators
             {
                 InclideAnnotation = GetSetting<bool>(ExtensionSettingNames.IncludeAnnotation),
                 PreserveRtfFormatting = GetSetting<bool>(ExtensionSettingNames.PreserveOriginalFontProperties),
-                ShowFormattingCharacters = GetSetting<bool>(ExtensionSettingNames.ShowFormattingCharacters),
                 MakeTextCompact = GetSetting<bool>(ExtensionSettingNames.Compactify)
             };
 
@@ -43,6 +42,12 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators
             if (!string.IsNullOrEmpty(foregroundColorStr))
             {
                 options.Foreground = (Color)ColorConverter.ConvertFromString(foregroundColorStr);
+            }
+
+            string formattingCharsForegroundColorStr = GetSetting<string>(ExtensionSettingNames.FormattingCharsForeground);
+            if (!string.IsNullOrEmpty(formattingCharsForegroundColorStr))
+            {
+                options.FormattingCharsForeground = (Color)ColorConverter.ConvertFromString(formattingCharsForegroundColorStr);
             }
 
             ImagePreviewData preview = null;

@@ -61,7 +61,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Compactify text by removing empty space.
+        ///   Looks up a localized string similar to Compactify the preview by removing empty space.
         /// </summary>
         internal static string LBL_COMPACTIFY {
             get {
@@ -75,15 +75,6 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.Resources.Translations {
         internal static string LBL_SAVE_LAST_SEPARATOR {
             get {
                 return ResourceManager.GetString("LBL_SAVE_LAST_SEPARATOR", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Show formatting characters in text previews.
-        /// </summary>
-        internal static string LBL_SHOW_FORMATTING_CHARS {
-            get {
-                return ResourceManager.GetString("LBL_SHOW_FORMATTING_CHARS", resourceCulture);
             }
         }
         
@@ -156,6 +147,15 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.Resources.Translations {
         internal static string TTP_PASTE_SPACE_SEPARATOR {
             get {
                 return ResourceManager.GetString("TTP_PASTE_SPACE_SEPARATOR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to To to show the preview with the original formatting of the text.
+        /// </summary>
+        internal static string TTP_PRESERVE_ORIG_FONT_PROPS {
+            get {
+                return ResourceManager.GetString("TTP_PRESERVE_ORIG_FONT_PROPS", resourceCulture);
             }
         }
     }
