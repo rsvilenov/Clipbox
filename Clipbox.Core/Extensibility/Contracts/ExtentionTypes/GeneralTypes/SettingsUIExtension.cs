@@ -12,7 +12,9 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
     /// Settings view extension
     /// </summary>
     public abstract class SettingsUIExtension : IClipboxExtension, ISettingsRegistrator, IConfigurationRecipient, ISettingChangeRequestor
-    {   
+    {
+        public event EventHandler ResultPreviewInvalidated;
+
         public SettingsUIExtension()
         {
             var settingKeyColBuilder = new SettingKeyCollectionBuilder();
@@ -112,6 +114,11 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
             {
                 extension.PutSetting(key, _settings[key]);
             }
+        }
+
+        protected void InvalidateResultPreview()
+        {
+            ResultPreviewInvalidated?.Invoke(this, new EventArgs());
         }
 
         #region ISettingsRegistrator

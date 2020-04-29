@@ -84,6 +84,7 @@
       <DependentUpon>Translations.resx</DependentUpon>
     </Compile>
     <Compile Include="SearchSupport\UnicodeTextSearchSupport.cs" />
+    <Compile Include="SettingsUIExtensions\EventArgsClasses\ExtensionSettingChangedEventArgs.cs" />
     <Compile Include="SettingsUIExtensions\TextFormattingSettings.xaml.cs">
       <DependentUpon>TextFormattingSettings.xaml</DependentUpon>
     </Compile>

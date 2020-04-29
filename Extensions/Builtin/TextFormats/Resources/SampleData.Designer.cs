@@ -61,6 +61,20 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {\rtf1\ansi\ansicpg1252\deff0\nouicompat\deflang2057{\fonttbl{\f0\fnil\fcharset0 Calibri;}{\f1\fnil Calibri;}{\f2\fnil\fcharset161 Calibri;}{\f3\fnil\fcharset238 Calibri;}}
+        ///{\colortbl ;\red255\green255\blue255;\red0\green128\blue0;\red0\green128\blue255;}
+        ///{\*\generator Riched20 10.0.18362}\viewkind4\uc1 
+        ///\pard\sa200\sl276\slmult1\b\f0\fs32\lang9 Sappho\b0\fs22\par
+        ///\par
+        ///\tab Sappho (\cf1\highlight2 /\f1\u712?s\f0\&apos;e6fo\f1\u650?/\highlight0 ; \cf0 Greek\cf3\i : \f2\lang1032\&apos;d3\&apos;e1\&apos;f0\&apos;f6\&apos;fe Sapph\f0\l [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string RtfForSamplePreview {
+            get {
+                return ResourceManager.GetString("RtfForSamplePreview", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sappho
         ///			Poet
         ///

@@ -12,8 +12,8 @@
     xmlns:localWindows="clr-namespace:Clipbox.Infrastructure.UI.Windows;assembly=Clipbox.Infrastructure.UI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sysTheme="clr-namespace:Clipbox.Infrastructure.UI.Theme;assembly=Clipbox.Infrastructure.UI"
-    Width="300"
-    Height="300"
+    Width="620"
+    Height="400"
     AllowsTransparency="True"
     Background="{DynamicResource TaskbarColorBrush}"
     BorderBrush="{DynamicResource AccentBrush}"
@@ -42,7 +42,7 @@
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="0" ResizeBorderThickness="5" />
     </WindowChrome.WindowChrome>
-    <Grid>
+    <Grid Margin="15">
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
             <RowDefinition />
@@ -118,6 +118,7 @@
                             <ContentControl
                                 Grid.Row="0"
                                 Grid.Column="0"
+                                Margin="0,0,25,0"
                                 HorizontalAlignment="Left"
                                 VerticalAlignment="Center"
                                 Content="{Binding ExtensionUIPart}" />
@@ -127,7 +128,7 @@
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
                                 Source="{Binding PreviewImage}"
-                                Stretch="Uniform" />
+                                Stretch="None" />
                             <TextBlock
                                 Grid.Row="1"
                                 Grid.ColumnSpan="2"
@@ -139,10 +140,6 @@
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>
-            <StackPanel
-                x:Name="pluginContainer"
-                Grid.Row="2"
-                Orientation="Vertical" />
 
         </Grid>
 

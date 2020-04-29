@@ -10,6 +10,7 @@
         public static string Foreground = nameof(Foreground);
         public static string ShowFormattingCharacters = nameof(ShowFormattingCharacters);
         public static string IncludeAnnotation = nameof(IncludeAnnotation);
+        public static string Compactify = nameof(Compactify);
 
         // extensions for pasted text formatting
         public static string DefaultSeparator = nameof(DefaultSeparator);

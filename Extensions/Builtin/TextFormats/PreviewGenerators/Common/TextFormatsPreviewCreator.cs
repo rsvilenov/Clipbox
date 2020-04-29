@@ -37,6 +37,8 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
 
             public double FontSize { get; set; } = 14;
 
+            public bool MakeTextCompact { get; set; } = true;
+
             public void Validate(TextFormat format)
             {
                 if (format == TextFormat.Rtf
@@ -70,7 +72,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
 
             try
             {
-                RtfProcessor rp = new RtfProcessor(Colors.Brown, 18 * 2, options.ShowFormattingCharacters);
+                RtfProcessor rp = new RtfProcessor(Colors.Brown, 18 * 2, options.ShowFormattingCharacters, options.MakeTextCompact);
                 if (format == TextFormat.Text)
                 {
                     if (!rp.TryLoadFromText(textData, 14 * 2))
@@ -84,10 +86,10 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
                 {
                     rp.LoadFromRtf(textData);
                 }
-
-                rp.ReplaceSpacingChar(RtfProcessor.SpacingChars.Space);
-                rp.ReplaceSpacingChar(RtfProcessor.SpacingChars.Tab);
+                
                 rp.ReplaceSpacingChar(RtfProcessor.SpacingChars.LineBreak);
+                rp.ReplaceSpacingChar(RtfProcessor.SpacingChars.Tab);
+                rp.ReplaceSpacingChar(RtfProcessor.SpacingChars.Space);
 
                 string res = rp.GetProcessedRtf();
                 LoadTextDataIntoRichTextBox(res, TextFormat.Rtf, rtb);

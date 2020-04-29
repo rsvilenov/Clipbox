@@ -25,7 +25,8 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators
             {
                 InclideAnnotation = GetSetting<bool>(ExtensionSettingNames.IncludeAnnotation),
                 PreserveRtfFormatting = GetSetting<bool>(ExtensionSettingNames.PreserveOriginalFontProperties),
-                ShowFormattingCharacters = GetSetting<bool>(ExtensionSettingNames.ShowFormattingCharacters)
+                ShowFormattingCharacters = GetSetting<bool>(ExtensionSettingNames.ShowFormattingCharacters),
+                MakeTextCompact = GetSetting<bool>(ExtensionSettingNames.Compactify)
             };
 
             double fontSize = GetSetting<double>(ExtensionSettingNames.FontSize);

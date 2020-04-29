@@ -22,7 +22,9 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
 
         private readonly bool _showReplacementChars;
 
-        public RtfProcessor(Color replacementCharsColor, int replacementCharsFontSizeHalfPoints, bool showFormattingChars = true)
+        private readonly bool _makeTextCompact;
+
+        public RtfProcessor(Color replacementCharsColor, int replacementCharsFontSizeHalfPoints, bool showFormattingChars = true, bool makeTextCompact = true)
         {
             _replacementChars = showFormattingChars ?
                     GetVisibleSpacingReplacementChars() :
@@ -34,6 +36,8 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
             _replacementCharFontSize = replacementCharsFontSizeHalfPoints;
 
             _showReplacementChars = showFormattingChars;
+
+            _makeTextCompact = makeTextCompact;
         }
 
 
@@ -116,23 +120,43 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
                 throw new InvalidOperationException("Spacing char color has not been set.");
             }
 
-            string occurancePaattern = _showReplacementChars ? "{2,}" : "+";
+            if (!_makeTextCompact && !_showReplacementChars)
+            {
+                return;
+            }
+            
+            string tabOccurrancePattern = "{5,}";
+
+            string generalOccurrancePattern;
+            if (_makeTextCompact)
+            {
+                generalOccurrancePattern = _showReplacementChars ? "{2,}" : "+";
+            }
+            else
+            {
+                generalOccurrancePattern = "";
+                tabOccurrancePattern = "";
+            }
 
             string regex = "";
             switch (spacingChar)
             {
                 case SpacingChars.LineBreak:
-                    regex = @"((\\par|\\line)[\r|\n|\s]+)" + occurancePaattern;
+                    regex = @"((\\par|\\line|\r\n)[\r|\n|\s]+)" + generalOccurrancePattern;
                     break;
                 case SpacingChars.Tab:
-                    regex = @"(\\tab\s*)" + occurancePaattern;
+                    regex = @"(\\tab\s*)" + tabOccurrancePattern;
                     break;
                 case SpacingChars.Space:
-                    regex = @"(\s){5,}";
+                    regex = @"(\s)" + generalOccurrancePattern;
                     break;
             }
-            
-            string replacedMatchEnding = _showReplacementChars ? "+" : "";
+
+            string replacedMatchEnding = " ";
+            if (_makeTextCompact && _showReplacementChars)
+            {
+                replacedMatchEnding = "+";
+            }
 
             _resultRtf = Regex.Replace((_resultRtf ?? _originalRtf), regex,
             m => $@"{{\cf{replacementCharColorRtfNumber}\fs{_replacementCharFontSize} {Escape(_replacementChars[spacingChar])}{replacedMatchEnding}}}",

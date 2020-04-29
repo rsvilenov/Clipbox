@@ -3,6 +3,7 @@ using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
 using Clipbox.Extensions.BuiltIn.TextFormats.IntermediateFormats;
 using Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators;
+using Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.EventArgsClasses;
 using System;
 using System.Windows;
 
@@ -13,11 +14,11 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
     {
         private TextPreviewGeneratorsSettings _extensionUI;
 
-        private TextPreviewGenerator _previewGenerator;
+        private RtfPreviewGenerator _previewGenerator;
 
         public override UIElement GetSettingsViewPart(double maxWidth)
         {
-            _previewGenerator = new TextPreviewGenerator();
+            _previewGenerator = new RtfPreviewGenerator();
 
             _extensionUI = new TextPreviewGeneratorsSettings
             {
@@ -33,18 +34,24 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
 
         public override IPreviewData GetResultPreview(PreviewParams previewParams)
         {
-            string sampleText = Resources.SampleData.TextForSamplePreview;
+            string sampleRtf = Resources.SampleData.RtfForSamplePreview;
 
-            TextIntermediateFormat intFormat = new TextIntermediateFormat(sampleText);
+            RichTextIntermediateFormat intFormat = new RichTextIntermediateFormat(sampleRtf);
 
             return _previewGenerator.GetPreview(intFormat, previewParams);
         }
 
-        private void _extensionUI_SettingChanged(object sender, System.EventArgs e)
+        private void _extensionUI_SettingChanged(object sender, ExtensionSettingChangedEventArgs e)
         {
-            RequestSettingChange<bool, TextPreviewGenerator>(ExtensionSettingNames.ShowFormattingCharacters, _extensionUI.IsShowFormattingCharsToggled);
-            RequestSettingChange<bool, RtfPreviewGenerator>(ExtensionSettingNames.ShowFormattingCharacters, _extensionUI.IsShowFormattingCharsToggled);
-            RequestSettingChange<bool, UnicodeTextPreviewGenerator>(ExtensionSettingNames.ShowFormattingCharacters, _extensionUI.IsShowFormattingCharsToggled);
+            foreach (Type t in new Type[] { typeof(TextPreviewGenerator), typeof(RtfPreviewGenerator), typeof(UnicodeTextPreviewGenerator) })
+            {
+                GetType()
+                .GetMethod(nameof(RequestSettingChange), System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)
+                .MakeGenericMethod(e.Value.GetType(), t)
+                .Invoke(this, new object[] { e.SettingName, e.Value });
+            }
+
+            base.InvalidateResultPreview();
         }
         
         protected override void OnSettingUpdated(string settingName, Type targetType)
@@ -62,6 +69,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
                 .Add<bool, RtfPreviewGenerator>(ExtensionSettingNames.ScaleFontSizeToDpi, false)
                 .Add<bool, RtfPreviewGenerator>(ExtensionSettingNames.IncludeAnnotation, false)
                 .Add<bool, RtfPreviewGenerator>(ExtensionSettingNames.ShowFormattingCharacters, false)
+                .Add<bool, RtfPreviewGenerator>(ExtensionSettingNames.Compactify, false)
 
                 .Add<string, TextPreviewGenerator>(ExtensionSettingNames.Background, null)
                 .Add<string, TextPreviewGenerator>(ExtensionSettingNames.Foreground, null)
@@ -70,6 +78,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
                 .Add<bool, TextPreviewGenerator>(ExtensionSettingNames.ScaleFontSizeToDpi, false)
                 .Add<bool, TextPreviewGenerator>(ExtensionSettingNames.IncludeAnnotation, false)
                 .Add<bool, TextPreviewGenerator>(ExtensionSettingNames.ShowFormattingCharacters, false)
+                .Add<bool, TextPreviewGenerator>(ExtensionSettingNames.Compactify, false)
 
                 .Add<string, UnicodeTextPreviewGenerator>(ExtensionSettingNames.Background, null)
                 .Add<string, UnicodeTextPreviewGenerator>(ExtensionSettingNames.Foreground, null)
@@ -77,7 +86,8 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
                 .Add<bool, UnicodeTextPreviewGenerator>(ExtensionSettingNames.PreserveOriginalFontProperties, false)
                 .Add<bool, UnicodeTextPreviewGenerator>(ExtensionSettingNames.ScaleFontSizeToDpi, false)
                 .Add<bool, UnicodeTextPreviewGenerator>(ExtensionSettingNames.IncludeAnnotation, false)
-                .Add<bool, UnicodeTextPreviewGenerator>(ExtensionSettingNames.ShowFormattingCharacters, false);
+                .Add<bool, UnicodeTextPreviewGenerator>(ExtensionSettingNames.ShowFormattingCharacters, false)
+                .Add<bool, UnicodeTextPreviewGenerator>(ExtensionSettingNames.Compactify, false);
         }
     }
 }

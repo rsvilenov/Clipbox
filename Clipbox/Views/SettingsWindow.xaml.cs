@@ -11,6 +11,7 @@ using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.Win32;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Globalization;
@@ -44,6 +45,22 @@ namespace Clipbox.Views
             Closing += SettingsWindow_Closing;
         }
 
+        private double GetThumbnailMaxHeight(DisplayMonitor monitor, out bool hasHeightBeenDpiScaled)
+        {
+            bool resizeToDpi = _settingsService.GetSetting<bool>(SettingsKeys.ResizeAccordingToMonitorOrSystemDpi);
+
+            double currentDisplayHeight = monitor.WorkingArea.Height;
+            if (resizeToDpi)
+            {
+                double scaleFactor = monitor.Dpi / 96;
+                currentDisplayHeight *= scaleFactor;
+            }
+
+            hasHeightBeenDpiScaled = resizeToDpi;
+
+            return currentDisplayHeight * _settingsService.GetSetting<double>(SettingsKeys.PreviewItemHeightRatio);
+        }
+
         private void SettingsWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             foreach (ISettingChangeRequestor ext in _settingUIExtensions
@@ -59,14 +76,17 @@ namespace Clipbox.Views
             IEnumerable<SettingsUIExtension> extensions = _extContainer.ResolveAll();
             foreach (var ext in extensions)
             {
+
+                var configurationRecipient = (IConfigurationRecipient)ext;
+                var settingChangeRequestor = (ISettingChangeRequestor)ext;
+                settingChangeRequestor.RequestSettingChange += SettingChangeRequestor_RequestSettingChange;
+                ext.ResultPreviewInvalidated += Ext_ResultPreviewInvalidated;
+
                 IEnumerable<ISettingKey> allRegisteredKeys = ((ISettingsRegistrator)ext).GetSettingKeys();
                 foreach (ISettingKey key in allRegisteredKeys)
                 {
-                    var configurationRecipient = (IConfigurationRecipient)ext;
                     configurationRecipient.PutSetting(key, _settingsService.GetSetting(key));
                     _settingUIExtensions.Add(configurationRecipient);
-                    var settingChangeRequestor = (ISettingChangeRequestor)ext;
-                    settingChangeRequestor.RequestSettingChange += SettingChangeRequestor_RequestSettingChange;
                 }
 
                 UIElement extUI = ext.GetSettingsViewPart(200);
@@ -75,9 +95,19 @@ namespace Clipbox.Views
             }
         }
 
+        private void Ext_ResultPreviewInvalidated(object sender, EventArgs e)
+        {
+            UpdatePreview((SettingsUIExtension)sender);
+        }
+
         private void UpdatePreview(SettingsUIExtension ext)
         {
-            IPreviewData previewData = ext.GetResultPreview(new PreviewParams(100, 80, 96, true));
+            PerMonitorDpiWindow wnd = (PerMonitorDpiWindow)Window.GetWindow(this);
+            DisplayMonitor monitor = MonitorUtils.GetByWindowHandle(wnd.Handle);
+
+            double maxPreviewHeight = GetThumbnailMaxHeight(monitor, out bool isScaled);
+            IPreviewData previewData = ext.GetResultPreview(new PreviewParams((int)maxPreviewHeight, (int)maxPreviewHeight, monitor.Dpi, isScaled));
+
             if (previewData is ImagePreviewData imgPreviewData
                 && imgPreviewData.Preview is Bitmap bmp)
             {
@@ -139,7 +169,6 @@ namespace Clipbox.Views
         {
             ((IConfigurationRecipient)sender).PutSetting(e.SettingKey, e.Value);
             _settingsService.SetSetting(e.SettingKey, e.Value);
-            UpdatePreview((SettingsUIExtension)sender);
         }
 
         public bool IsSettingChanged

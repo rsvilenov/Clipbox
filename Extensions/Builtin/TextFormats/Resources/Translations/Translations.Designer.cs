@@ -61,6 +61,15 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Compactify text by removing empty space.
+        /// </summary>
+        internal static string LBL_COMPACTIFY {
+            get {
+                return ResourceManager.GetString("LBL_COMPACTIFY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Save the last chosen separator.
         /// </summary>
         internal static string LBL_SAVE_LAST_SEPARATOR {
