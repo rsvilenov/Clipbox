@@ -6,6 +6,8 @@ namespace Clipbox.Core
     {
         public const string PRODUCT_NAME = "Clipbox";
 
+        public const double PRODUCT_VERSION = 0.1;
+
         public const string CLIENT_EXE_NAME = "Clipbox.exe";
 
         public const string GUARD_EXE_NAME = "ClipboxGuard.exe";

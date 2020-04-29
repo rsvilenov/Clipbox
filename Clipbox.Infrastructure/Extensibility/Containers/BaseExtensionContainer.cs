@@ -1,4 +1,5 @@
-﻿using Clipbox.Core.Extensibility.Attributes;
+﻿using Clipbox.Core;
+using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Infrastructure.Factories;
 using System;
@@ -32,7 +33,34 @@ namespace Clipbox.Infrastructure.Extensibility.Containers
             _registeredExtensions = new ConcurrentDictionary<Type, IExtensionInfo>();
         }
 
-        public virtual void RegisterExtension<TExtensionType>()
+        public bool IsExtensionCompatible<TExtensionType>()
+            where TExtensionType : class, TExtensionBaseType, new()
+        {
+            return IsExtensionCompatible(typeof(TExtensionBaseType));
+        }
+
+        public virtual bool IsExtensionCompatible(Type type)
+        {
+            if (_registeredExtensions.ContainsKey(type))
+            {
+                throw new ArgumentException($"Type {type.Name} has already been added.");
+            }
+
+            if (!ClipboxExtensionAttribute.IsDefinedFor(type))
+            {
+                throw new ArgumentException($"{type.Name} is not decorated with {nameof(ClipboxExtensionAttribute)}");
+            }
+
+            if (!type.GetInterfaces().Contains(typeof(TExtensionBaseType)) && !type.IsSubclassOf(typeof(TExtensionBaseType)))
+            {
+                throw new InvalidCastException($"{type.Name} does not implement {typeof(TExtensionBaseType).FullName}");
+            }
+
+            IExtensionInfo extensionInfo = ClipboxExtensionAttribute.GetExtensionInfo(type);
+            return extensionInfo.MinHostVersion <= ProductConstants.PRODUCT_VERSION;
+        }
+
+        public void RegisterExtension<TExtensionType>()
             where TExtensionType : class, TExtensionBaseType, new()
         {
             RegisterExtension(typeof(TExtensionBaseType));
@@ -44,16 +72,25 @@ namespace Clipbox.Infrastructure.Extensibility.Containers
             {
                 throw new ArgumentException($"Type {type.Name} has already been added.");
             }
-            
+
+            if (!ClipboxExtensionAttribute.IsDefinedFor(type))
+            {
+                throw new ArgumentException($"{type.Name} is not decorated with {nameof(ClipboxExtensionAttribute)}");
+            }
+
             if (!type.GetInterfaces().Contains(typeof(TExtensionBaseType)) && !type.IsSubclassOf(typeof(TExtensionBaseType)))
             {
                 throw new InvalidCastException($"{type.Name} does not implement {typeof(TExtensionBaseType).FullName}");
             }
-
-            if (ClipboxExtensionAttribute.IsDefinedFor(type))
+            
+            IExtensionInfo extensionInfo = ClipboxExtensionAttribute.GetExtensionInfo(type);
+            if (extensionInfo.MinHostVersion <= ProductConstants.PRODUCT_VERSION)
             {
-                IExtensionInfo extensionInfo = ClipboxExtensionAttribute.GetExtensionInfo(type);
                 _registeredExtensions.TryAdd(type, extensionInfo);
+            }
+            else
+            {
+                throw new InvalidOperationException($"{type.Name} requires host version {extensionInfo.MinHostVersion} or higher. However, the current host version is {ProductConstants.PRODUCT_VERSION}");
             }
         }
         
@@ -91,7 +128,5 @@ namespace Clipbox.Infrastructure.Extensibility.Containers
 
             return extInfo;
         }
-
-        
     }
 }

@@ -81,56 +81,77 @@ namespace Clipbox
                 var cfsExtensions = walker.FindExtensions<IClipboardFormatSupport>();
                 foreach (var ext in cfsExtensions)
                 {
-                    FormatsContainer.RegisterExtension(ext);
-                    LoadedTypes.Add(ext);
+                    if (FormatsContainer.IsExtensionCompatible(ext))
+                    {
+                        FormatsContainer.RegisterExtension(ext);
+                        LoadedTypes.Add(ext);
+                    }
                 }
 
                 // find all extensions of type IPreviewHandler
                 var previewExtensions = walker.FindExtensions<IPreviewGenerator>();
                 foreach (var ext in previewExtensions)
                 {
-                    PreviewGeneratorsContainer.RegisterExtension(ext);
-                    LoadedTypes.Add(ext);
+                    if (PreviewGeneratorsContainer.IsExtensionCompatible(ext))
+                    {
+                        PreviewGeneratorsContainer.RegisterExtension(ext);
+                        LoadedTypes.Add(ext);
+                    }
                 }
 
                 // find all extensions of type ISearchSupport
                 var searchSupportExtensionExtensions = walker.FindExtensions<ISearchSupport>();
                 foreach (var ext in searchSupportExtensionExtensions)
                 {
-                    SearchSupportExtensionContainer.RegisterExtension(ext);
-                    LoadedTypes.Add(ext);
+                    if (SearchSupportExtensionContainer.IsExtensionCompatible(ext))
+                    {
+                        SearchSupportExtensionContainer.RegisterExtension(ext);
+                        LoadedTypes.Add(ext);
+                    }
                 }
 
                 // find all extensions of type IPersistenceSupport
                 var persistenceExtensions = walker.FindExtensions<IPersistenceSupport>();
                 foreach (var ext in persistenceExtensions)
                 {
-                    PersistenceSupportExtensionContainer.RegisterExtension(ext);
-                    LoadedTypes.Add(ext);
+                    if (PersistenceSupportExtensionContainer.IsExtensionCompatible(ext))
+                    {
+                        PersistenceSupportExtensionContainer.RegisterExtension(ext);
+                        LoadedTypes.Add(ext);
+                    }
                 }
 
                 // find all extensions of type FlowExtension
                 var flowExtensions = walker.FindExtensions<FlowExtension>();
                 foreach (var ext in flowExtensions)
                 {
-                    FlowExtensionContainer.RegisterExtension(ext);
-                    LoadedTypes.Add(ext);
+                    if (FlowExtensionContainer.IsExtensionCompatible(ext))
+                    {
+                        FlowExtensionContainer.RegisterExtension(ext);
+                        LoadedTypes.Add(ext);
+                    }
                 }
 
                 // find all extensions of type UIExtension
                 var uiExtensions = walker.FindExtensions<UIExtension>();
                 foreach (var ext in uiExtensions)
                 {
-                    UIExtensionContainer.RegisterExtension(ext);
-                    LoadedTypes.Add(ext);
+                    if (UIExtensionContainer.IsExtensionCompatible(ext))
+                    {
+                        UIExtensionContainer.RegisterExtension(ext);
+                        LoadedTypes.Add(ext);
+                    }
                 }
 
                 // find all extensions of type SettingsUIExtension
                 var settingsUiExtensions = walker.FindExtensions<SettingsUIExtension>();
                 foreach (var ext in settingsUiExtensions)
                 {
-                    SettingsUIExtensionContainer.RegisterExtension(ext);
-                    LoadedTypes.Add(ext);
+                    if (SettingsUIExtensionContainer.IsExtensionCompatible(ext))
+                    {
+                        SettingsUIExtensionContainer.RegisterExtension(ext);
+                        LoadedTypes.Add(ext);
+                    }
                 }
             }
         }

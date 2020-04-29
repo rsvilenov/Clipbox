@@ -4,14 +4,31 @@ using System.Linq;
 
 namespace Clipbox.Core.Extensibility.Attributes
 {
+    /// <summary>
+    /// An attribute, indicating that a class is a Clipbox extension.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
     public class ClipboxExtensionAttribute : Attribute
     {
+        /// <summary>
+        /// The version of the extension
+        /// </summary>
         public string Description { get; set; }
 
+        /// <summary>
+        /// Who wrote the extension
+        /// </summary>
         public string Author { get; set; }
 
+        /// <summary>
+        /// The version of the extension
+        /// </summary>
         public double Version { get; set; }
+
+        /// <summary>
+        /// The minimum version of Clipbox on which this extension can run
+        /// </summary>
+        public double MinHostVersion { get; set; }
 
         public static bool IsDefinedFor(Type type)
         {
@@ -34,7 +51,8 @@ namespace Clipbox.Core.Extensibility.Attributes
             {
                 Author = extensionAttribute.Author,
                 Description = extensionAttribute.Description,
-                Version = extensionAttribute.Version
+                Version = extensionAttribute.Version,
+                MinHostVersion = extensionAttribute.MinHostVersion
             };
         }
 
@@ -45,6 +63,8 @@ namespace Clipbox.Core.Extensibility.Attributes
             public string Author { get; set; }
 
             public string Description { get; set; }
+
+            public double MinHostVersion { get; set; }
         }
     }
 }
