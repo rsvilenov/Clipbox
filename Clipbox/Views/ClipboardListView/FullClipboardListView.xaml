@@ -250,7 +250,7 @@
                                                             <MultiBinding Converter="{StaticResource MultiValueEqualityConverter}">
                                                                 <Binding
                                                                     Mode="OneWay"
-                                                                    Path="TotalItemsCountToLoad"
+                                                                    Path="AllPagesItemsCount"
                                                                     RelativeSource="{RelativeSource Mode=FindAncestor,
                                                                                                     AncestorType=ListView}" />
                                                                 <Binding

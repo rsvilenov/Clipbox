@@ -137,14 +137,14 @@ namespace Clipbox.Views.ClipboardListView
 
 
 
-        public int TotalItemsCountToLoad
+        public int AllPagesItemsCount
         {
-            get { return (int)GetValue(TotalItemsCountToLoadProperty); }
-            set { SetValue(TotalItemsCountToLoadProperty, value); }
+            get { return (int)GetValue(AllPagesItemsCountProperty); }
+            set { SetValue(AllPagesItemsCountProperty, value); }
         }
 
-        public static readonly DependencyProperty TotalItemsCountToLoadProperty =
-            DependencyProperty.Register(nameof(TotalItemsCountToLoad), typeof(int), typeof(FullClipboardListView), new PropertyMetadata(0));
+        public static readonly DependencyProperty AllPagesItemsCountProperty =
+            DependencyProperty.Register(nameof(AllPagesItemsCount), typeof(int), typeof(FullClipboardListView), new PropertyMetadata(0));
         
 
         private Rect _listViewVisibleArea;

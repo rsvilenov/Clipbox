@@ -72,14 +72,14 @@ namespace Clipbox.Views
         public static readonly DependencyProperty NumOfNotYetVisibleRowsToPreloadProperty =
             DependencyProperty.Register(nameof(NumOfNotYetVisibleRowsToPreload), typeof(int), typeof(MainViewClipboardContents), new PropertyMetadata(0));
 
-        public int TotalItemsCountToLoad
+        public int AllPagesItemsCount
         {
-            get { return (int)GetValue(TotalItemsCountToLoadProperty); }
-            set { SetValue(TotalItemsCountToLoadProperty, value); }
+            get { return (int)GetValue(AllPagesItemsCountProperty); }
+            set { SetValue(AllPagesItemsCountProperty, value); }
         }
 
-        public static readonly DependencyProperty TotalItemsCountToLoadProperty =
-            DependencyProperty.Register(nameof(TotalItemsCountToLoad), typeof(int), typeof(MainViewClipboardContents), new PropertyMetadata(0));
+        public static readonly DependencyProperty AllPagesItemsCountProperty =
+            DependencyProperty.Register(nameof(AllPagesItemsCount), typeof(int), typeof(MainViewClipboardContents), new PropertyMetadata(0));
 
 
         private readonly int _maxNumOfItemsToLoadAtOnce;
@@ -218,7 +218,7 @@ namespace Clipbox.Views
                         }
                         else
                         {
-                            TotalItemsCountToLoad = allMatchingClipboardItemIdCount - removedClipboardItemIds.Count();
+                            AllPagesItemsCount = allMatchingClipboardItemIdCount - removedClipboardItemIds.Count();
 
                             PerformDisposeSafeOperation
                             (
@@ -363,6 +363,13 @@ namespace Clipbox.Views
                             (
                                 () => _viewModel.DeleteItems(selectedItemIds)
                             );
+
+                            Dispatcher.Invoke(() =>
+                            {
+                                // decrease the total number of items to load in all pages
+                                // by the number of the deleted items.
+                                AllPagesItemsCount -= selectedItemIds.Count();
+                            });
                         }
                         finally
                         {
@@ -585,6 +592,9 @@ namespace Clipbox.Views
                 if (args.SelectedButton == Dialog.Enums.DialogButtons.Yes)
                 {
                     _viewModel.DeleteClipboardEntry(e.ClipboardItemId);
+
+                    // decrease the total number of items to load in all pages by 1
+                    AllPagesItemsCount -= 1;
                 }
                 else
                 {
