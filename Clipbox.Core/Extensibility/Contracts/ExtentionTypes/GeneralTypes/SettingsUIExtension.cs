@@ -2,6 +2,7 @@
 using Clipbox.Core.Extensibility.EventArgsClasses;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Windows;
 
@@ -42,8 +43,8 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
         /// affect the functionning of their extensions.
         /// </summary>
         /// <param name="previewParams">The parameters passed to the preview generators</param>
-        /// <returns>The preview of the settings, which will be shown in the settings window</returns>
-        public virtual UIElement GetResultPreview(PreviewParams previewParams)
+        /// <returns>The preview (IPeviewData object) of the settings, which will be shown in the settings window</returns>
+        public virtual IPreviewData GetResultPreview(PreviewParams previewParams)
         { return null; }
 
         /// <summary>

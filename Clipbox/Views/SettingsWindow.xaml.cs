@@ -1,7 +1,10 @@
 ﻿using Clipbox.Core.Configuration;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
+using Clipbox.Core.Extensibility.Contracts.PreviewData;
 using Clipbox.Infrastructure.Extensibility.Containers;
+using Clipbox.Infrastructure.UI;
+using Clipbox.Infrastructure.UI.ExtensionMethods;
 using Clipbox.Infrastructure.UI.Localization;
 using Clipbox.Infrastructure.UI.Windows;
 using Clipbox.Services.Interfaces;
@@ -9,12 +12,14 @@ using Clipbox.Settings;
 using Clipbox.Win32;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Markup;
+using System.Windows.Media.Imaging;
 using static Clipbox.Win32.MonitorUtils;
 
 namespace Clipbox.Views
@@ -30,6 +35,7 @@ namespace Clipbox.Views
             _extContainer = extContainer;
 
             InitializeComponent();
+            ExtensionUIItems = new AsyncObservableCollection<ExtensionUIItem>();
 
             this.mainGrid.DataContext = this;
 
@@ -64,7 +70,68 @@ namespace Clipbox.Views
                 }
 
                 UIElement extUI = ext.GetSettingsViewPart(200);
-                pluginContainer.Children.Add(extUI);
+                ExtensionUIItems.Add(new ExtensionUIItem(extUI, ext.GetType()));
+                UpdatePreview(ext);
+            }
+        }
+
+        private void UpdatePreview(SettingsUIExtension ext)
+        {
+            IPreviewData previewData = ext.GetResultPreview(new PreviewParams(100, 80, 96, true));
+            if (previewData is ImagePreviewData imgPreviewData
+                && imgPreviewData.Preview is Bitmap bmp)
+            {
+                ExtensionUIItem extUIItem = ExtensionUIItems
+                    .Single(e => e.ExtensionType == ext.GetType());
+
+                using (imgPreviewData)
+                {
+                    extUIItem.PreviewImage = bmp.ToBitmapSource();
+                    extUIItem.Description = imgPreviewData.Annotation;
+                }
+            }
+        }
+
+        private AsyncObservableCollection<ExtensionUIItem> ExtensionUIItems
+        {
+            get { return (AsyncObservableCollection<ExtensionUIItem>)GetValue(ExtensionUIItemsProperty); }
+            set { SetValue(ExtensionUIItemsProperty, value); }
+        }
+
+        private static readonly DependencyProperty ExtensionUIItemsProperty =
+            DependencyProperty.Register(nameof(ExtensionUIItems), typeof(AsyncObservableCollection<ExtensionUIItem>), typeof(SettingsWindow), new PropertyMetadata(null));
+
+
+
+        private class ExtensionUIItem : BindableObject
+        {
+            public ExtensionUIItem(UIElement extUIPart, Type extType)
+            {
+                _extensionUIPart = extUIPart;
+                ExtensionType = extType;
+            }
+
+            public Type ExtensionType { get; }
+
+            private UIElement _extensionUIPart;
+            public UIElement ExtensionUIPart
+            {
+                get { return _extensionUIPart; }
+                set { SetField(ref _extensionUIPart, value); }
+            }
+
+            private BitmapSource _previewImage;
+            public BitmapSource PreviewImage
+            {
+                get { return _previewImage; }
+                set { SetField(ref _previewImage, value); }
+            }
+
+            private string _description;
+            public string Description
+            {
+                get { return _description; }
+                set { SetField(ref _description, value); }
             }
         }
 
@@ -72,6 +139,7 @@ namespace Clipbox.Views
         {
             ((IConfigurationRecipient)sender).PutSetting(e.SettingKey, e.Value);
             _settingsService.SetSetting(e.SettingKey, e.Value);
+            UpdatePreview((SettingsUIExtension)sender);
         }
 
         public bool IsSettingChanged

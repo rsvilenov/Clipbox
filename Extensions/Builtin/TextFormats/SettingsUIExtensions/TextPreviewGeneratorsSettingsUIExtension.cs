@@ -1,12 +1,9 @@
 ﻿using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
-using Clipbox.Core.Extensibility.Contracts.PreviewData;
 using Clipbox.Extensions.BuiltIn.TextFormats.IntermediateFormats;
 using Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators;
-using Clipbox.Infrastructure.UI.ExtensionMethods;
 using System;
-using System.Drawing;
 using System.Windows;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
@@ -34,24 +31,13 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
             return _extensionUI;
         }
 
-        public override UIElement GetResultPreview(PreviewParams previewParams)
+        public override IPreviewData GetResultPreview(PreviewParams previewParams)
         {
             string sampleText = Resources.SampleData.TextForSamplePreview;
 
             TextIntermediateFormat intFormat = new TextIntermediateFormat(sampleText);
 
-            ImagePreviewData previewData = (ImagePreviewData)_previewGenerator.GetPreview(intFormat, previewParams);
-
-            System.Windows.Controls.Image img = new System.Windows.Controls.Image();
-
-            using (var bmp = (Bitmap)previewData.Preview)
-            {
-                img.BeginInit();
-                img.Source = bmp.ToBitmapSource();
-                img.EndInit();
-            }
-
-            return img;
+            return _previewGenerator.GetPreview(intFormat, previewParams);
         }
 
         private void _extensionUI_SettingChanged(object sender, System.EventArgs e)
