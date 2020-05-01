@@ -6,6 +6,7 @@
         <ResourceDictionary Source="Expander.xaml" />
         <ResourceDictionary Source="ScrollBar.xaml" />
         <ResourceDictionary Source="Brushes.xaml" />
+        <ResourceDictionary Source="Slider.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
 </ResourceDictionary>

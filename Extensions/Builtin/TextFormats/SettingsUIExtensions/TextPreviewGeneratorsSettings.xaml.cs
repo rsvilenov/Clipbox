@@ -45,6 +45,22 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
         }
 
 
+
+        public double SelectedFontSize
+        {
+            get { return (double)GetValue(SelectedFontSizeProperty); }
+            set { SetValue(SelectedFontSizeProperty, value); }
+        }
+
+        public static readonly DependencyProperty SelectedFontSizeProperty =
+            DependencyProperty.Register(nameof(SelectedFontSize), typeof(double), typeof(TextPreviewGeneratorsSettings), new PropertyMetadata(0d, SelectedFontSize_PropertyChanged));
+
+        private static void SelectedFontSize_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var self = ((TextPreviewGeneratorsSettings)d);
+            self.SettingChanged?.Invoke(self, new ExtensionSettingChangedEventArgs(ExtensionSettingNames.FontSize, e.NewValue));
+        }
+
         public TextPreviewGeneratorsSettings()
         {
             InitializeComponent();

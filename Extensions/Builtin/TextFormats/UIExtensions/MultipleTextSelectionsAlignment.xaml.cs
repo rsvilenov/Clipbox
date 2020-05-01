@@ -15,6 +15,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.UIExtensions
         public MultipleTextSelectionsAlignment()
         {
             InitializeComponent();
+            this.mainGrid.DataContext = this;
         }
 
         internal void SetSeparatorType(TextConcatenateSeparators separatorType)
@@ -66,5 +67,16 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.UIExtensions
 
             internal TextConcatenateSeparators Separator { get; private set; }
         }
+
+        public bool ShowLabels
+        {
+            get { return (bool)GetValue(ShowLabelsProperty); }
+            set { SetValue(ShowLabelsProperty, value); }
+        }
+
+        public static readonly DependencyProperty ShowLabelsProperty =
+            DependencyProperty.Register(nameof(ShowLabels), typeof(bool), typeof(MultipleTextSelectionsAlignment), new PropertyMetadata(false));
+
+
     }
 }

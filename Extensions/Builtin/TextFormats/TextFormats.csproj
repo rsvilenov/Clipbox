@@ -85,6 +85,21 @@
     </Compile>
     <Compile Include="SearchSupport\UnicodeTextSearchSupport.cs" />
     <Compile Include="SettingsUIExtensions\EventArgsClasses\ExtensionSettingChangedEventArgs.cs" />
+    <Compile Include="SettingsUIExtensions\SettingUIParts\CompactifySettingUIPart.xaml.cs">
+      <DependentUpon>CompactifySettingUIPart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SettingsUIExtensions\SettingUIParts\DefaultSeparatorSettingUIPart.xaml.cs">
+      <DependentUpon>DefaultSeparatorSettingUIPart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SettingsUIExtensions\SettingUIParts\PreserveFontPropsSettingUIPart.xaml.cs">
+      <DependentUpon>PreserveFontPropsSettingUIPart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SettingsUIExtensions\SettingUIParts\SaveLastSeparatorSettingUIPart.xaml.cs">
+      <DependentUpon>SaveLastSeparatorSettingUIPart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SettingsUIExtensions\SettingUIParts\TextScaleSettingUIPart.xaml.cs">
+      <DependentUpon>TextScaleSettingUIPart.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SettingsUIExtensions\TextFormattingSettings.xaml.cs">
       <DependentUpon>TextFormattingSettings.xaml</DependentUpon>
     </Compile>
@@ -133,6 +148,26 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="SettingsUIExtensions\SettingUIParts\CompactifySettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SettingsUIExtensions\SettingUIParts\DefaultSeparatorSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SettingsUIExtensions\SettingUIParts\PreserveFontPropsSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SettingsUIExtensions\SettingUIParts\SaveLastSeparatorSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SettingsUIExtensions\SettingUIParts\TextScaleSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="SettingsUIExtensions\TextFormattingSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

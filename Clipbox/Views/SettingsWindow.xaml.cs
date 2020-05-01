@@ -89,8 +89,8 @@ namespace Clipbox.Views
                     _settingUIExtensions.Add(configurationRecipient);
                 }
 
-                UIElement extUI = ext.GetSettingsViewPart(200);
-                ExtensionUIItems.Add(new ExtensionUIItem(extUI, ext.GetType()));
+                IEnumerable<UIElement> extUIParts = ext.GetSettingsViewParts();
+                ExtensionUIItems.Add(new ExtensionUIItem(extUIParts, ext.GetType()));
                 UpdatePreview(ext);
             }
         }
@@ -135,19 +135,19 @@ namespace Clipbox.Views
 
         private class ExtensionUIItem : BindableObject
         {
-            public ExtensionUIItem(UIElement extUIPart, Type extType)
+            public ExtensionUIItem(IEnumerable<UIElement> extUIParts, Type extType)
             {
-                _extensionUIPart = extUIPart;
+                _extensionUIParts = new AsyncObservableCollection<UIElement>(extUIParts);
                 ExtensionType = extType;
             }
 
             public Type ExtensionType { get; }
 
-            private UIElement _extensionUIPart;
-            public UIElement ExtensionUIPart
+            private AsyncObservableCollection<UIElement> _extensionUIParts;
+            public AsyncObservableCollection<UIElement> ExtensionUIParts
             {
-                get { return _extensionUIPart; }
-                set { SetField(ref _extensionUIPart, value); }
+                get { return _extensionUIParts; }
+                set { SetField(ref _extensionUIParts, value); }
             }
 
             private BitmapSource _previewImage;

@@ -13,6 +13,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="CommonStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <ControlTemplate x:Key="NoSeparatorIcon">
                 <Viewbox>
                     <Grid>
@@ -160,6 +161,7 @@
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid
+        x:Name="mainGrid"
         Margin="10,0,0,5"
         HorizontalAlignment="Left"
         VerticalAlignment="Stretch">
@@ -167,9 +169,11 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <ToggleButton
             Name="TgNoSeparator"
+            Grid.Row="0"
             Grid.Column="0"
             Margin="2,0"
             Checked="ToggleButtonNoSeparator_Checked"
@@ -177,6 +181,7 @@
             ToolTip="{loc:Localize TTP_PASTE_NO_SEPARATOR}" />
         <ToggleButton
             Name="TgSpace"
+            Grid.Row="0"
             Grid.Column="1"
             Margin="2,0"
             Checked="ToggleButtonSpace_Checked"
@@ -184,10 +189,35 @@
             ToolTip="{loc:Localize TTP_PASTE_SPACE_SEPARATOR}" />
         <ToggleButton
             Name="TgNewLine"
+            Grid.Row="0"
             Grid.Column="2"
             Margin="2,0"
             Checked="ToggleButtonNewLine_Checked"
             Style="{StaticResource NewLineSeparatorToggleBtnStyle}"
             ToolTip="{loc:Localize TTP_PASTE_NEWLINE_SEPARATOR}" />
+
+        <Grid
+            Grid.Column="3"
+            VerticalAlignment="Center"
+            Visibility="{Binding ShowLabels, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <TextBlock
+                Grid.Row="1"
+                Grid.Column="0"
+                Margin="5,0,0,0"
+                Text="No space"
+                Visibility="{Binding ElementName=TgNoSeparator, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <TextBlock
+                Grid.Row="1"
+                Grid.Column="1"
+                Margin="5,0,0,0"
+                Text="Space"
+                Visibility="{Binding ElementName=TgSpace, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <TextBlock
+                Grid.Row="1"
+                Grid.Column="2"
+                Margin="5,0,0,0"
+                Text="New line"
+                Visibility="{Binding ElementName=TgNewLine, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}" />
+        </Grid>
     </Grid>
 </UserControl>

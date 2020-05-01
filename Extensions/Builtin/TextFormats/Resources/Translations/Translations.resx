@@ -150,4 +150,16 @@
   <data name="TTP_PRESERVE_ORIG_FONT_PROPS" xml:space="preserve">
     <value>To to show the preview with the original formatting of the text</value>
   </data>
+  <data name="LBL_FONT_SIZE" xml:space="preserve">
+    <value>Font size</value>
+  </data>
+  <data name="LBL_LARGER" xml:space="preserve">
+    <value>Larger</value>
+  </data>
+  <data name="LBL_SET_DEFAULT_SEPARATPR_TO" xml:space="preserve">
+    <value>Default separator:</value>
+  </data>
+  <data name="LBL_SMALLER" xml:space="preserve">
+    <value>Smaller</value>
+  </data>
 </root>

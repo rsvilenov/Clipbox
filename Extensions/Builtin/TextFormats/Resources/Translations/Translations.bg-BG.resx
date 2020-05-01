@@ -150,4 +150,16 @@
   <data name="TTP_PRESERVE_ORIG_FONT_PROPS" xml:space="preserve">
     <value>Опитай се да покажеш текста с оригиналното му форматиране</value>
   </data>
+  <data name="LBL_FONT_SIZE" xml:space="preserve">
+    <value>Размер на шрифта</value>
+  </data>
+  <data name="LBL_LARGER" xml:space="preserve">
+    <value>По-голям</value>
+  </data>
+  <data name="LBL_SET_DEFAULT_SEPARATPR_TO" xml:space="preserve">
+    <value>Сепаратор по подразбиране:</value>
+  </data>
+  <data name="LBL_SMALLER" xml:space="preserve">
+    <value>По-малък</value>
+  </data>
 </root>

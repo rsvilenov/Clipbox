@@ -1,0 +1,26 @@
+﻿<infUI:SettingUIPart
+    x:Class="Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIParts.DefaultSeparatorSettingUIPart"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:customControls="clr-namespace:Clipbox.Infrastructure.UI.CustomControls;assembly=Clipbox.Infrastructure.UI.CustomControls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:infUI="clr-namespace:Clipbox.Infrastructure.UI.Extensibility;assembly=Clipbox.Infrastructure.UI"
+    xmlns:loc="clr-namespace:Clipbox.Infrastructure.UI.Localization;assembly=Clipbox.Infrastructure.UI.Localization"
+    xmlns:local="clr-namespace:Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIParts"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:uiExt="clr-namespace:Clipbox.Extensions.BuiltIn.TextFormats.UIExtensions"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    x:TypeArguments="sys:Int32"
+    mc:Ignorable="d">
+    <StackPanel x:Name="mainStackPanel" Orientation="Vertical">
+        <TextBlock VerticalAlignment="Center" Text="{loc:Localize LBL_SET_DEFAULT_SEPARATPR_TO, ResourceLookupMode=CurrentAssembly}" />
+        <uiExt:MultipleTextSelectionsAlignment
+            x:Name="mtsaUiExt"
+            MaxHeight="50"
+            Margin="0,5,0,0"
+            ShowLabels="True" />
+
+    </StackPanel>
+</infUI:SettingUIPart>

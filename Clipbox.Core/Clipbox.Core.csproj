@@ -63,6 +63,7 @@
     <Compile Include="Extensibility\Contracts\ExtentionTypes\GeneralTypes\ConfigurableExtension.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\GeneralTypes\SearchSupportExtension.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\GeneralTypes\SettingsUIExtension.cs" />
+    <Compile Include="Extensibility\Contracts\ExtentionTypes\ISettingUIPart.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\PreviewGenerationTypes\ICancellablePreviewGenerator.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\IPersistenceSupport.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\IPreviewGenerator.cs" />

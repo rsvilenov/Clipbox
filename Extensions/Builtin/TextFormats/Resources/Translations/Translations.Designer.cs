@@ -70,11 +70,47 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Font size.
+        /// </summary>
+        internal static string LBL_FONT_SIZE {
+            get {
+                return ResourceManager.GetString("LBL_FONT_SIZE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Larger.
+        /// </summary>
+        internal static string LBL_LARGER {
+            get {
+                return ResourceManager.GetString("LBL_LARGER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Save the last chosen separator.
         /// </summary>
         internal static string LBL_SAVE_LAST_SEPARATOR {
             get {
                 return ResourceManager.GetString("LBL_SAVE_LAST_SEPARATOR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Default separator:.
+        /// </summary>
+        internal static string LBL_SET_DEFAULT_SEPARATPR_TO {
+            get {
+                return ResourceManager.GetString("LBL_SET_DEFAULT_SEPARATPR_TO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Smaller.
+        /// </summary>
+        internal static string LBL_SMALLER {
+            get {
+                return ResourceManager.GetString("LBL_SMALLER", resourceCulture);
             }
         }
         

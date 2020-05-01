@@ -1,0 +1,42 @@
+﻿<infUI:SettingUIPart
+    x:Class="Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIParts.SaveLastSeparatorSettingUIPart"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:customControls="clr-namespace:Clipbox.Infrastructure.UI.CustomControls;assembly=Clipbox.Infrastructure.UI.CustomControls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:infUI="clr-namespace:Clipbox.Infrastructure.UI.Extensibility;assembly=Clipbox.Infrastructure.UI"
+    xmlns:loc="clr-namespace:Clipbox.Infrastructure.UI.Localization;assembly=Clipbox.Infrastructure.UI.Localization"
+    xmlns:local="clr-namespace:Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIParts"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    x:TypeArguments="sys:Boolean"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Clipbox.Infrastructure.UI.CustomControls;component/Styles/ToggleSwitchWindows10.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <Grid x:Name="mainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        <TextBlock
+            Grid.Row="0"
+            VerticalAlignment="Center"
+            Text="{loc:Localize LBL_SAVE_LAST_SEPARATOR,
+                                ResourceLookupMode=CurrentAssembly}" />
+
+        <customControls:ToggleSwitch
+            Grid.Row="1"
+            Margin="0,10,0,0"
+            HorizontalAlignment="Left"
+            IsChecked="{Binding IsSaveSeparatorToggled, Mode=TwoWay}"
+            OffText="Off"
+            OnText="On" />
+    </Grid>
+</infUI:SettingUIPart>
