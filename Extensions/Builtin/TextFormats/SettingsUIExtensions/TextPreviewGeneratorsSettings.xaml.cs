@@ -58,7 +58,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
         private static void SelectedFontSize_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var self = ((TextPreviewGeneratorsSettings)d);
-            self.SettingChanged?.Invoke(self, new ExtensionSettingChangedEventArgs(ExtensionSettingNames.FontSize, e.NewValue));
+            self.SettingChanged?.Invoke(self, new ExtensionSettingChangedEventArgs(ExtensionSettingNames.FontScale, e.NewValue));
         }
 
         public TextPreviewGeneratorsSettings()

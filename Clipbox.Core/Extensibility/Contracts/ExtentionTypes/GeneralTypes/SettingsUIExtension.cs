@@ -15,15 +15,15 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
     {
         public event EventHandler ResultPreviewInvalidated;
 
-        private readonly Dictionary<ISettingKey, ISettingUIPart> _settingUIParts;
+        private readonly Dictionary<ISettingKey, ISettingUIPart> _settingKeyUIPartMapping;
 
         public SettingsUIExtension()
         {
-            _settingUIParts = new Dictionary<ISettingKey, ISettingUIPart>();
-
             var settingKeyColBuilder = new SettingKeyCollectionBuilder();
             RegisterSettings(settingKeyColBuilder);
             _registeredSettingKeys = settingKeyColBuilder.GetSettingKeys();
+            
+            _settingKeyUIPartMapping = new Dictionary<ISettingKey, ISettingUIPart>();
         }
 
         /// <summary>
@@ -36,19 +36,20 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
         protected virtual void OnSettingUpdated(string settingName, Type targetType) { }
 
         /// <summary>
-        /// Create and return the parts of the Settings view,
-        /// corresponding to the settings for an extension. 
+        /// Returns the parts of the Settings view,
+        /// corresponding to the settings for an extension.
+        /// The parts are all set up and ready.
         /// </summary>
         /// <returns>The ui part to show in the settings windpw</returns>
-        public IEnumerable<UIElement> GetSettingsViewParts()
+        public IEnumerable<ISettingUIPart> GetSettingsViewParts()
         {
             SettingsUIBuilder builder = new SettingsUIBuilder(_settings);
             RegisterSettingUIParts(builder);
-            Dictionary<ISettingKey, ISettingUIPart> uiParts = builder.GetParts();
+            Dictionary<ISettingKey, ISettingUIPart> mapping = builder.GetSettingKeyUIPartMapping();
 
-            foreach (ISettingKey settingKey in uiParts.Keys)
+            foreach (ISettingKey settingKey in mapping.Keys)
             {
-                ISettingUIPart settingUIPart = uiParts[settingKey];
+                ISettingUIPart settingUIPart = mapping[settingKey];
 
                 if (!_settings.Any(s => s.Key == settingKey))
                 {
@@ -56,10 +57,11 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
                 }
 
                 SetUpUpSettingUIPart(settingKey, settingUIPart);
-                _settingUIParts.Add(settingKey, settingUIPart);
-            }
 
-            return uiParts.Values.Cast<UIElement>();
+                _settingKeyUIPartMapping.Add(settingKey, settingUIPart);
+
+                yield return settingUIPart;
+            }
         }
 
         /// <summary>
@@ -167,15 +169,16 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
         {
             ISettingUIPart uiPart = (ISettingUIPart)sender;
 
-            ISettingKey settingKey = _settingUIParts.First(kvp => kvp.Value == uiPart).Key;
-
-            if (!_settings.Any(s => s.Key == settingKey))
+            foreach (ISettingKey settingKey in _settingKeyUIPartMapping.Where(kvp => kvp.Value == uiPart).Select(kvp => kvp.Key))
             {
-                throw new InvalidOperationException($"No settings available for SettingUIPart {typeof(ISettingUIPart).Name}");
+                if (!_settings.Any(s => s.Key == settingKey))
+                {
+                    throw new InvalidOperationException($"No settings available for SettingUIPart {typeof(ISettingUIPart).Name}");
+                }
+
+                _settings.FirstOrDefault(s => s.Key == settingKey);
+                _requestSettingChange?.Invoke(this, new RequestSettingChangeEventArgs(settingKey, uiPart.GetSettingValue()));
             }
-            
-            _settings.FirstOrDefault(s => s.Key == settingKey);
-            _requestSettingChange?.Invoke(this, new RequestSettingChangeEventArgs(settingKey, uiPart.GetSettingValue()));
         }
 
         #region ISettingsRegistrator
@@ -305,21 +308,23 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
                     throw new ArgumentException($"{nameof(uiPart)} should implement {nameof(ISettingUIPart)}.");
                 }
 
-                ISettingKey settingKey = _settings.Keys
-                    .FirstOrDefault(k => k.Name == settingName 
-                        && uiPart.GetSettingValueType() == k.TypeOfValue);
-
-                if (settingKey == null)
+                foreach (ISettingKey settingKey in _settings.Keys
+                    .Where(k => k.Name == settingName
+                        && uiPart.GetSettingValueType() == k.TypeOfValue))
                 {
-                    throw new ArgumentException($"{nameof(settingName)} : {settingName} of type {uiPart.GetSettingValueType().Name} is not registered.");
-                }
 
-                _parts.Add(settingKey, uiPart);
+                    if (settingKey == null)
+                    {
+                        throw new ArgumentException($"{nameof(settingName)} : {settingName} of type {uiPart.GetSettingValueType().Name} is not registered.");
+                    }
+
+                    _parts.Add(settingKey, uiPart);
+                }
 
                 return this;
             }
 
-            public Dictionary<ISettingKey, ISettingUIPart> GetParts()
+            public Dictionary<ISettingKey, ISettingUIPart> GetSettingKeyUIPartMapping()
             {
                 return _parts;
             }

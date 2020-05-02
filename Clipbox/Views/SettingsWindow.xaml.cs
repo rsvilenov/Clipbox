@@ -1,6 +1,7 @@
 ﻿using Clipbox.Core.Configuration;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
+using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using Clipbox.Core.Extensibility.Contracts.PreviewData;
 using Clipbox.Infrastructure.Extensibility.Containers;
 using Clipbox.Infrastructure.UI;
@@ -79,25 +80,30 @@ namespace Clipbox.Views
 
                 var configurationRecipient = (IConfigurationRecipient)ext;
                 var settingChangeRequestor = (ISettingChangeRequestor)ext;
-                settingChangeRequestor.RequestSettingChange += SettingChangeRequestor_RequestSettingChange;
-                ext.ResultPreviewInvalidated += Ext_ResultPreviewInvalidated;
-
+                
                 IEnumerable<ISettingKey> allRegisteredKeys = ((ISettingsRegistrator)ext).GetSettingKeys();
                 foreach (ISettingKey key in allRegisteredKeys)
                 {
                     configurationRecipient.PutSetting(key, _settingsService.GetSetting(key));
                     _settingUIExtensions.Add(configurationRecipient);
                 }
+                
+                IEnumerable<UIElement> extUIParts = ext.GetSettingsViewParts()
+                    .Cast<UIElement>();
 
-                IEnumerable<UIElement> extUIParts = ext.GetSettingsViewParts();
                 ExtensionUIItems.Add(new ExtensionUIItem(extUIParts, ext.GetType()));
                 UpdatePreview(ext);
+
+                ext.ResultPreviewInvalidated += Ext_ResultPreviewInvalidated;
+                settingChangeRequestor.RequestSettingChange += SettingChangeRequestor_RequestSettingChange;
+
             }
         }
 
         private void Ext_ResultPreviewInvalidated(object sender, EventArgs e)
         {
-            UpdatePreview((SettingsUIExtension)sender);
+            Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background,
+                new Action(() => UpdatePreview((SettingsUIExtension)sender)));
         }
 
         private void UpdatePreview(SettingsUIExtension ext)

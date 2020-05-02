@@ -3,7 +3,7 @@
     public static class ExtensionSettingNames
     {
         // preview generation extensions
-        public static string FontSize = nameof(FontSize);
+        public static string FontScale = nameof(FontScale);
         public static string ScaleFontSizeToDpi = nameof(ScaleFontSizeToDpi);
         public static string PreserveOriginalFontProperties = nameof(PreserveOriginalFontProperties);
         public static string Background = nameof(Background);

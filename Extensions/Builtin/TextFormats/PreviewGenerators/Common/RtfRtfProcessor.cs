@@ -30,6 +30,18 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
             _replacementCharFontSize = replacementCharsFontSizeHalfPoints;
         }
 
+        public void ScaleFontSize(double scaleFactor)
+        {
+            _resultRtf = Regex.Replace((_resultRtf ?? _originalRtf), @"(\\fs)(\d+)(\s*)",
+            m => m.Groups[1].Value + Math.Round(int.Parse(m.Groups[2].Value) * scaleFactor).ToString() + m.Groups[3].Value,
+            RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Multiline);
+
+            // TODO: do I need the second regex?
+            _resultRtf = Regex.Replace((_resultRtf), @"(\\b)(\d+)(\s*)",
+           m => m.Groups[1].Value + Math.Round(int.Parse(m.Groups[2].Value) * scaleFactor).ToString() + m.Groups[3].Value,
+           RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Multiline);
+        }
+
 
         public void LoadFromRtf(string rtf)
         {

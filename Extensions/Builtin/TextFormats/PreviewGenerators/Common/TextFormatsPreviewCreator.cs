@@ -35,7 +35,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
 
             public System.Windows.Media.Color? FormattingCharsForeground { get; set; } = null;
 
-            public double FontSize { get; set; } = 14;
+            public double FontScale { get; set; } = 14;
 
             public bool MakeTextCompact { get; set; } = true;
 
@@ -72,12 +72,12 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
 
             try
             {
-                RtfProcessor rp = new RtfProcessor(options.FormattingCharsForeground ?? Colors.Brown, 18 * 2);
+                RtfProcessor rp = new RtfProcessor(options.FormattingCharsForeground ?? Colors.Brown, 12 * 2);
                 if (format == TextFormat.Text)
                 {
-                    if (!rp.TryLoadFromText(textData, 14 * 2))
+                    if (!rp.TryLoadFromText(textData, 12 * 2))
                     {
-                        rtb.FontSize = options.FontSize;
+                        rtb.FontSize = 12;
                         string rtfFromRtb = GetRtfUsingRichTextBox(textData, rtb);
                         rp.LoadFromRtf(rtfFromRtb);
                     }
@@ -87,15 +87,17 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
                     rp.LoadFromRtf(textData);
                 }
 
+                rp.ScaleFontSize(options.FontScale);
+
                 string resultingText = null;
                 if (options.MakeTextCompact)
                 {
                     rp.ReplaceSpacingChar(RtfProcessor.SpacingChars.LineBreak);
                     rp.ReplaceSpacingChar(RtfProcessor.SpacingChars.Tab);
                     rp.ReplaceSpacingChar(RtfProcessor.SpacingChars.Space);
-
-                    resultingText = rp.GetProcessedRtf();
                 }
+                
+                resultingText = rp.GetProcessedRtf();
 
                 LoadTextDataIntoRichTextBox(resultingText ?? textData, TextFormat.Rtf, rtb);
             }
