@@ -1,0 +1,227 @@
+﻿<UserControl
+    x:Class="Clipbox.Infrastructure.UI.ColorPicker.ColorPicker"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    MinWidth="300"
+    MinHeight="200"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style x:Key="Slider_RepeatButton" TargetType="RepeatButton">
+            <Setter Property="SnapsToDevicePixels" Value="True" />
+            <Setter Property="OverridesDefaultStyle" Value="True" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RepeatButton">
+                        <!--  draw a rectangle with a thin line crossing it. The line takes the accent color.  -->
+                        <Border
+                            x:Name="repeatButtonBorder"
+                            Height="{TemplateBinding Height}"
+                            Background="Transparent"
+                            SnapsToDevicePixels="True" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <ControlTemplate x:Key="Slider_ThumbTemplate" TargetType="Thumb">
+            <Border
+                Name="thumbBorder"
+                Width="8"
+                Height="{TemplateBinding Height}"
+                BorderThickness="2"
+                CornerRadius="2"
+                SnapsToDevicePixels="True">
+                <Border.Style>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="Background" Value="White" />
+                        <Setter Property="BorderBrush" Value="White" />
+                        <Style.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="BorderBrush" Value="Gray" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Effect">
+                                    <Setter.Value>
+                                        <DropShadowEffect
+                                            BlurRadius="20"
+                                            ShadowDepth="0"
+                                            Color="{Binding ElementName=thumbBorder, Path=BorderBrush.Color}" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+            </Border>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsDragging" Value="True">
+                    <Setter TargetName="thumbBorder" Property="Background" Value="White" />
+                    <Setter TargetName="thumbBorder" Property="Effect">
+                        <Setter.Value>
+                            <DropShadowEffect
+                                BlurRadius="20"
+                                ShadowDepth="0"
+                                Color="{Binding ElementName=thumbEllipse, Path=Stroke.Color}" />
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <ControlTemplate x:Key="MinimalisticSlider" TargetType="{x:Type Slider}">
+            <Border
+                BorderBrush="{TemplateBinding BorderBrush}"
+                BorderThickness="{TemplateBinding BorderThickness}"
+                SnapsToDevicePixels="true">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" MinHeight="{TemplateBinding MinHeight}" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Rectangle x:Name="PART_SelectionRange" />
+
+                    <Track x:Name="PART_Track" Grid.Row="1">
+                        <Track.DecreaseRepeatButton>
+                            <RepeatButton
+                                Height="{TemplateBinding Height}"
+                                Command="Slider.DecreaseSmall"
+                                Style="{StaticResource Slider_RepeatButton}" />
+                        </Track.DecreaseRepeatButton>
+                        <Track.Thumb>
+                            <Thumb
+                                x:Name="Thumb"
+                                Height="{TemplateBinding Height}"
+                                Template="{StaticResource Slider_ThumbTemplate}" />
+                        </Track.Thumb>
+                        <Track.IncreaseRepeatButton>
+                            <RepeatButton
+                                Height="{TemplateBinding Height}"
+                                Command="Slider.IncreaseSmall"
+                                Style="{StaticResource Slider_RepeatButton}" />
+                        </Track.IncreaseRepeatButton>
+                    </Track>
+                </Grid>
+            </Border>
+        </ControlTemplate>
+    </UserControl.Resources>
+
+    <Grid x:Name="mainGrid" Background="Transparent">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="60" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="10" />
+            <ColumnDefinition Width="0.08*" />
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Row="0" Grid.Column="0">
+
+            <Canvas
+                x:Name="mainCanvas"
+                MinWidth="100"
+                MinHeight="80"
+                MouseDown="Canvas_MouseDown"
+                MouseMove="MainCanvas_MouseMove"
+                MouseUp="MainCanvas_MouseUp">
+                <Canvas.Background>
+                    <!--  Thanks to this: https://stackoverflow.com/questions/32513387/how-to-create-a-color-canvas-for-color-picker-wpf  -->
+                    <VisualBrush TileMode="None">
+                        <VisualBrush.Visual>
+                            <!--  SnapsToDevicePixels="False" causes visual artefacts when dragging the selector  -->
+                            <Canvas
+                                Width="1"
+                                Height="1"
+                                Background="White"
+                                SnapsToDevicePixels="False">
+                                <Rectangle
+                                    Width="1"
+                                    Height="1"
+                                    SnapsToDevicePixels="False">
+                                    <Rectangle.Fill>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                            <LinearGradientBrush.GradientStops>
+                                                <GradientStop Offset="0" Color="#FF0000" />
+                                                <GradientStop Offset="0.167" Color="#FFFF00" />
+                                                <GradientStop Offset="0.333" Color="#00FF00" />
+                                                <GradientStop Offset="0.5" Color="#00FFFF" />
+                                                <GradientStop Offset="0.667" Color="#0000FF" />
+                                                <GradientStop Offset="0.833" Color="#FF00FF" />
+                                                <GradientStop Offset="1" Color="#FF0000" />
+                                            </LinearGradientBrush.GradientStops>
+                                        </LinearGradientBrush>
+                                    </Rectangle.Fill>
+                                    <Rectangle.OpacityMask>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                            <LinearGradientBrush.GradientStops>
+                                                <GradientStop Offset="0" Color="#FFFFFFFF" />
+                                                <GradientStop Offset="1" Color="#00FFFFFF" />
+                                            </LinearGradientBrush.GradientStops>
+                                        </LinearGradientBrush>
+                                    </Rectangle.OpacityMask>
+                                </Rectangle>
+                            </Canvas>
+                        </VisualBrush.Visual>
+                    </VisualBrush>
+                </Canvas.Background>
+
+                <Ellipse
+                    x:Name="selector"
+                    Width="10"
+                    Height="10"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Fill="Transparent"
+                    Stroke="{Binding SelectorColorBrush, IsAsync=True}"
+                    StrokeThickness="1" />
+            </Canvas>
+
+        </Grid>
+
+        <Rectangle
+            Grid.Row="1"
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            Height="12"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Center">
+            <Rectangle.Fill>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <LinearGradientBrush.GradientStops>
+                        <GradientStop Offset="0" Color="{Binding SelectedColorMinVVariant, IsAsync=True}" />
+                        <GradientStop Offset="1" Color="{Binding SelectedColorMaxVVariant, IsAsync=True}" />
+                    </LinearGradientBrush.GradientStops>
+                </LinearGradientBrush>
+            </Rectangle.Fill>
+        </Rectangle>
+        <Slider
+            Grid.Row="1"
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            Height="24"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Center"
+            Maximum="{Binding SelectedColorMaxV, IsAsync=True}"
+            Minimum="{Binding SelectedColorMinV, IsAsync=True}"
+            Template="{StaticResource MinimalisticSlider}"
+            Value="{Binding SelectedColorCurrentV, IsAsync=True}" />
+
+
+        <Rectangle
+            Grid.Row="0"
+            Grid.Column="3"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Fill="{Binding SelectedColorBrush, IsAsync=True}"
+            Stroke="#272229"
+            StrokeThickness="1" />
+
+    </Grid>
+</UserControl>

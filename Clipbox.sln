@@ -60,6 +60,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clipbox.Infrastructure.Conf
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clipbox.Infrastructure.Persistence", "Clipbox.Infrastructure.Persistence\Clipbox.Infrastructure.Persistence.csproj", "{95FFF54A-021C-4A0E-94A8-6AF68AE696A0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clipbox.Infrastructure.UI.ColorPicker", "Clipbox.Infrastructure.UI.ColorPicker\Clipbox.Infrastructure.UI.ColorPicker.csproj", "{716759C8-2FB5-4178-9A7A-27EA116C1597}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -357,6 +359,18 @@ Global
 		{95FFF54A-021C-4A0E-94A8-6AF68AE696A0}.Release|x64.Build.0 = Release|Any CPU
 		{95FFF54A-021C-4A0E-94A8-6AF68AE696A0}.Release|x86.ActiveCfg = Release|Any CPU
 		{95FFF54A-021C-4A0E-94A8-6AF68AE696A0}.Release|x86.Build.0 = Release|Any CPU
+		{716759C8-2FB5-4178-9A7A-27EA116C1597}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{716759C8-2FB5-4178-9A7A-27EA116C1597}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{716759C8-2FB5-4178-9A7A-27EA116C1597}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{716759C8-2FB5-4178-9A7A-27EA116C1597}.Debug|x64.Build.0 = Debug|Any CPU
+		{716759C8-2FB5-4178-9A7A-27EA116C1597}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{716759C8-2FB5-4178-9A7A-27EA116C1597}.Debug|x86.Build.0 = Debug|Any CPU
+		{716759C8-2FB5-4178-9A7A-27EA116C1597}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{716759C8-2FB5-4178-9A7A-27EA116C1597}.Release|Any CPU.Build.0 = Release|Any CPU
+		{716759C8-2FB5-4178-9A7A-27EA116C1597}.Release|x64.ActiveCfg = Release|Any CPU
+		{716759C8-2FB5-4178-9A7A-27EA116C1597}.Release|x64.Build.0 = Release|Any CPU
+		{716759C8-2FB5-4178-9A7A-27EA116C1597}.Release|x86.ActiveCfg = Release|Any CPU
+		{716759C8-2FB5-4178-9A7A-27EA116C1597}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
