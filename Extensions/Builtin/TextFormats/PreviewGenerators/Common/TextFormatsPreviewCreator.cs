@@ -35,7 +35,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
 
             public System.Windows.Media.Color? FormattingCharsForeground { get; set; } = null;
 
-            public double FontScale { get; set; } = 14;
+            public double FontScaleFactor { get; set; } = 14;
 
             public bool MakeTextCompact { get; set; } = true;
 
@@ -87,7 +87,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
                     rp.LoadFromRtf(textData);
                 }
 
-                rp.ScaleFontSize(options.FontScale);
+                rp.ScaleFontSize(options.FontScaleFactor);
 
                 string resultingText = null;
                 if (options.MakeTextCompact)

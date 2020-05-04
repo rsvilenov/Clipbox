@@ -24,13 +24,13 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators
                 MakeTextCompact = GetSetting<bool>(ExtensionSettingNames.Compactify)
             };
 
-            double fontScale = GetSetting<double>(ExtensionSettingNames.FontScale);
+            double fontScaleFactor = GetSetting<double>(ExtensionSettingNames.FontScaleFactor);
             if (GetSetting<bool>(ExtensionSettingNames.ScaleFontSizeToDpi))
             {
                 double scaleFactor = previewParams.DisplayDpi / 96;
-                fontScale *= scaleFactor;
+                fontScaleFactor *= scaleFactor;
             }
-            options.FontScale = fontScale;
+            options.FontScaleFactor = fontScaleFactor;
 
             string backgroundColorStr = GetSetting<string>(ExtensionSettingNames.Background);
             if (!string.IsNullOrEmpty(backgroundColorStr))
