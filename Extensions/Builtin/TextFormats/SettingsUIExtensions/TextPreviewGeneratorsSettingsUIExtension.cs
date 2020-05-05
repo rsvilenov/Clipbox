@@ -36,8 +36,8 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
         protected override void RegisterSettings(IRegisteredSettingStore settingsStore)
         {
             settingsStore
-                .Add<string, RtfPreviewGenerator>(ExtensionSettingNames.Background, null)
-                .Add<string, RtfPreviewGenerator>(ExtensionSettingNames.Foreground, null)
+                .Add<string, RtfPreviewGenerator>(ExtensionSettingNames.PreferredBackground, null)
+                .Add<string, RtfPreviewGenerator>(ExtensionSettingNames.PreferredForeground, null)
                 .Add<string, RtfPreviewGenerator>(ExtensionSettingNames.FormattingCharsForeground, null)
                 .Add<double, RtfPreviewGenerator>(ExtensionSettingNames.FontScaleFactor, 14d)
                 .Add<bool, RtfPreviewGenerator>(ExtensionSettingNames.PreserveOriginalFontProperties, false)
@@ -45,8 +45,8 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
                 .Add<bool, RtfPreviewGenerator>(ExtensionSettingNames.IncludeAnnotation, false)
                 .Add<bool, RtfPreviewGenerator>(ExtensionSettingNames.Compactify, false)
 
-                .Add<string, TextPreviewGenerator>(ExtensionSettingNames.Background, null)
-                .Add<string, TextPreviewGenerator>(ExtensionSettingNames.Foreground, null)
+                .Add<string, TextPreviewGenerator>(ExtensionSettingNames.PreferredBackground, null)
+                .Add<string, TextPreviewGenerator>(ExtensionSettingNames.PreferredForeground, null)
                 .Add<string, TextPreviewGenerator>(ExtensionSettingNames.FormattingCharsForeground, null)
                 .Add<double, TextPreviewGenerator>(ExtensionSettingNames.FontScaleFactor, 14d)
                 .Add<bool, TextPreviewGenerator>(ExtensionSettingNames.PreserveOriginalFontProperties, false)
@@ -54,8 +54,8 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
                 .Add<bool, TextPreviewGenerator>(ExtensionSettingNames.IncludeAnnotation, false)
                 .Add<bool, TextPreviewGenerator>(ExtensionSettingNames.Compactify, false)
 
-                .Add<string, UnicodeTextPreviewGenerator>(ExtensionSettingNames.Background, null)
-                .Add<string, UnicodeTextPreviewGenerator>(ExtensionSettingNames.Foreground, null)
+                .Add<string, UnicodeTextPreviewGenerator>(ExtensionSettingNames.PreferredBackground, null)
+                .Add<string, UnicodeTextPreviewGenerator>(ExtensionSettingNames.PreferredForeground, null)
                 .Add<string, UnicodeTextPreviewGenerator>(ExtensionSettingNames.FormattingCharsForeground, null)
                 .Add<double, UnicodeTextPreviewGenerator>(ExtensionSettingNames.FontScaleFactor, 14d)
                 .Add<bool, UnicodeTextPreviewGenerator>(ExtensionSettingNames.PreserveOriginalFontProperties, false)
@@ -69,7 +69,8 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
             builder
                 .Add(ExtensionSettingNames.Compactify, new CompactifySettingUIPart())
                 .Add(ExtensionSettingNames.PreserveOriginalFontProperties, new PreserveFontPropsSettingUIPart())
-                .Add(ExtensionSettingNames.FontScaleFactor, new TextScaleSettingUIPart());
+                .Add(ExtensionSettingNames.FontScaleFactor, new TextScaleSettingUIPart())
+                .Add(ExtensionSettingNames.PreferredBackground, new PreferredBgColorSettingUIPart());
         }
     }
 }

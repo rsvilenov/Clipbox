@@ -1,12 +1,15 @@
 ﻿using Clipbox.Infrastructure.UI.ColorPicker.ColorConversion;
 using Clipbox.Infrastructure.UI.ColorPicker.ColorStructures;
+using Clipbox.Infrastructure.UI.Utils;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Threading;
@@ -23,10 +26,11 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
             InitializeComponent();
             this.mainGrid.DataContext = this;
 
+            IsVisibleChanged += ColorPicker_IsVisibleChanged;
             Loaded += ColorPicker_Loaded;
             SizeChanged += ColorPicker_SizeChanged;
         }
-
+        
         private RenderTargetBitmap _paletteRtBitmap;
 
         Dictionary<Point, HSVColor> _colorMap = new Dictionary<Point, HSVColor>();
@@ -123,9 +127,45 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
             }
         }
 
+        private void ColorPicker_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            lock (_setupLockHandle)
+            {
+                if (!(bool)e.NewValue || _colorMap.Any())
+                {
+                    return;
+                }
+            }
+
+            if (ActualWidth > 0 && ActualHeight > 0)
+            {
+                SetUp();
+            }
+
+            var popupParent = Traversing.FindParent<Popup>(this);
+
+            PresentationSource source = PresentationSource.FromVisual(popupParent ?? (Visual)this);
+            source.ContentRendered += Source_ContentRendered;
+        }
+
+
         private void ColorPicker_Loaded(object sender, RoutedEventArgs e)
         {
-            StorePalette();
+            
+        }
+
+        private readonly object _setupLockHandle = new object();
+        private void SetUp()
+        {
+            lock (_setupLockHandle)
+            {
+                if (_colorMap.Any())
+                {
+                    return;
+                }
+
+                StorePalette();
+            }
 
             // wait for the binding oprerations to complete
             Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
@@ -139,6 +179,14 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
                     SelectColorUnderSelector();
                 }
             }));
+        }
+
+        private void Source_ContentRendered(object sender, EventArgs e)
+        {
+            if (ActualWidth > 0 && ActualHeight > 0)
+            {
+                SetUp();
+            }
         }
 
         private Brush SelectorColorBrush
@@ -197,11 +245,29 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
 
         public static readonly DependencyProperty SelectedColorProperty
             = SelectedColorPropertyKey.DependencyProperty;
-
+        
         public Color SelectedColor
         {
             get { return (Color)GetValue(SelectedColorProperty); }
             protected set { SetValue(SelectedColorPropertyKey, value); }
+        }
+
+
+
+        private static readonly DependencyPropertyKey SelectedColorContrastPropertyKey
+        = DependencyProperty.RegisterReadOnly(
+            nameof(SelectedColorContrast),
+            typeof(Color), typeof(ColorPicker),
+            new FrameworkPropertyMetadata(default(Color),
+                FrameworkPropertyMetadataOptions.None));
+
+        public static readonly DependencyProperty SelectedColorContrastProperty
+            = SelectedColorContrastPropertyKey.DependencyProperty;
+
+        public Color SelectedColorContrast
+        {
+            get { return (Color)GetValue(SelectedColorContrastProperty); }
+            protected set { SetValue(SelectedColorContrastPropertyKey, value); }
         }
 
         public void SetSelectedColor(Color color)
@@ -316,15 +382,9 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
 
         private void UpdateSelectedColorDPs(HSVColor hsv, bool adjustSelectorPosition)
         {
-
-            HSVColor hscForSelector = new HSVColor
-            {
-                H = 0,
-                V = (hsv.H < 200 || hsv.H > 300) || hsv.S < 0.5 ? 0 : 1,
-                S = 0
-            };
-
+            HSVColor hscForSelector = GetContrastHSV(HsvConverter.ToColorSpace(_originalColorUnderSelector));
             SelectorColorBrush = new SolidColorBrush(HsvConverter.ToColor(hscForSelector));
+
 
 
             SelectedColorMaxV = 1;
@@ -339,6 +399,10 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
             {
                 hsv.V = SelectedColorCurrentV;
             }
+
+
+            // the contrast uses the adjusted hsv value for V, not the original color.
+            SelectedColorContrast = HsvConverter.ToColor(hsv);
 
             SelectedColorMinVVariant = HsvConverter.ToColor(new HSVColor
             {
@@ -380,6 +444,23 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
                 SelectedColorHSV = new HSVColorBindable(hsv);
                 SelectedColorBrush = new SolidColorBrush(SelectedColor);
             }
+        }
+
+        private static HSVColor GetContrastHSV(HSVColor hsv)
+        {
+            double newV = (hsv.H < 200 || hsv.H > 300) || hsv.S < 0.5 ? 0 : 1;
+            return new HSVColor
+            {
+                H = 0,
+                V = hsv.V < 0.5 ? 1 : newV,
+                S = 0
+            };
+        }
+
+        public static Color GetContrastColor(Color color)
+        {
+            HSVColor contrastingHSV = GetContrastHSV(HsvConverter.ToColorSpace(color));
+            return HsvConverter.ToColor(contrastingHSV);
         }
 
         private HSVColor GetClosestColorInMap(HSVColor color)

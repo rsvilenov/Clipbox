@@ -85,6 +85,9 @@
     </Compile>
     <Compile Include="SearchSupport\UnicodeTextSearchSupport.cs" />
     <Compile Include="SettingsUIExtensions\EventArgsClasses\ExtensionSettingChangedEventArgs.cs" />
+    <Compile Include="SettingsUIExtensions\SettingUIParts\PreferredBgColorSettingUIPart.xaml.cs">
+      <DependentUpon>PreferredBgColorSettingUIPart.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SettingsUIExtensions\SettingUIParts\CompactifySettingUIPart.xaml.cs">
       <DependentUpon>CompactifySettingUIPart.xaml</DependentUpon>
     </Compile>
@@ -100,13 +103,7 @@
     <Compile Include="SettingsUIExtensions\SettingUIParts\TextScaleSettingUIPart.xaml.cs">
       <DependentUpon>TextScaleSettingUIPart.xaml</DependentUpon>
     </Compile>
-    <Compile Include="SettingsUIExtensions\TextFormattingSettings.xaml.cs">
-      <DependentUpon>TextFormattingSettings.xaml</DependentUpon>
-    </Compile>
     <Compile Include="SettingsUIExtensions\TextFormattingSettingsUIExtension.cs" />
-    <Compile Include="SettingsUIExtensions\TextPreviewGeneratorsSettings.xaml.cs">
-      <DependentUpon>TextPreviewGeneratorsSettings.xaml</DependentUpon>
-    </Compile>
     <Compile Include="SettingsUIExtensions\TextPreviewGeneratorsSettingsUIExtension.cs" />
     <Compile Include="StringExtensions.cs" />
     <Compile Include="SearchSupport\HtmlSearchSupport.cs" />
@@ -125,6 +122,10 @@
     <ProjectReference Include="..\..\..\Clipbox.Core\Clipbox.Core.csproj">
       <Project>{f4bd7048-4d9f-4036-98aa-da8232ef2afb}</Project>
       <Name>Clipbox.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Clipbox.Infrastructure.UI.ColorPicker\Clipbox.Infrastructure.UI.ColorPicker.csproj">
+      <Project>{716759c8-2fb5-4178-9a7a-27ea116c1597}</Project>
+      <Name>Clipbox.Infrastructure.UI.ColorPicker</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Clipbox.Infrastructure.UI.CustomControls\Clipbox.Infrastructure.UI.CustomControls.csproj">
       <Project>{da4c4595-1ae1-48ec-b9fa-a74508b1dc0a}</Project>
@@ -148,6 +149,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="SettingsUIExtensions\SettingUIParts\PreferredBgColorSettingUIPart.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="SettingsUIExtensions\SettingUIParts\CompactifySettingUIPart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -165,14 +170,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SettingsUIExtensions\SettingUIParts\TextScaleSettingUIPart.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="SettingsUIExtensions\TextFormattingSettings.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="SettingsUIExtensions\TextPreviewGeneratorsSettings.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

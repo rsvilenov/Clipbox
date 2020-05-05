@@ -36,7 +36,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators
             }
             options.FontScaleFactor = fontScaleFactor;
 
-            string foregroundColorStr = GetSetting<string>(ExtensionSettingNames.Foreground);
+            string foregroundColorStr = GetSetting<string>(ExtensionSettingNames.PreferredForeground);
             if (!string.IsNullOrEmpty(foregroundColorStr))
             {
                 options.Foreground = (Color)ColorConverter.ConvertFromString(foregroundColorStr);

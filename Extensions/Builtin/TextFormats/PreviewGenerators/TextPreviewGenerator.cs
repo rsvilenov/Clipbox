@@ -32,13 +32,13 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators
             }
             options.FontScaleFactor = fontScaleFactor;
 
-            string backgroundColorStr = GetSetting<string>(ExtensionSettingNames.Background);
+            string backgroundColorStr = GetSetting<string>(ExtensionSettingNames.PreferredBackground);
             if (!string.IsNullOrEmpty(backgroundColorStr))
             {
                 options.Foreground = (Color)ColorConverter.ConvertFromString(backgroundColorStr);
             }
 
-            string foregroundColorStr = GetSetting<string>(ExtensionSettingNames.Foreground);
+            string foregroundColorStr = GetSetting<string>(ExtensionSettingNames.PreferredForeground);
             if (!string.IsNullOrEmpty(foregroundColorStr))
             {
                 options.Foreground = (Color)ColorConverter.ConvertFromString(foregroundColorStr);

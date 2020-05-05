@@ -88,6 +88,15 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Preferred background for text previews.
+        /// </summary>
+        internal static string LBL_PREFERRED_BACKGROUND {
+            get {
+                return ResourceManager.GetString("LBL_PREFERRED_BACKGROUND", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Save the last chosen separator.
         /// </summary>
         internal static string LBL_SAVE_LAST_SEPARATOR {

@@ -6,8 +6,8 @@
         public static string FontScaleFactor = nameof(FontScaleFactor);
         public static string ScaleFontSizeToDpi = nameof(ScaleFontSizeToDpi);
         public static string PreserveOriginalFontProperties = nameof(PreserveOriginalFontProperties);
-        public static string Background = nameof(Background);
-        public static string Foreground = nameof(Foreground);
+        public static string PreferredBackground = nameof(PreferredBackground);
+        public static string PreferredForeground = nameof(PreferredForeground);
         public static string FormattingCharsForeground = nameof(FormattingCharsForeground);
         public static string IncludeAnnotation = nameof(IncludeAnnotation);
         public static string Compactify = nameof(Compactify);

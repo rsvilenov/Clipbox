@@ -162,4 +162,7 @@
   <data name="LBL_SMALLER" xml:space="preserve">
     <value>По-малък</value>
   </data>
+  <data name="LBL_PREFERRED_BACKGROUND" xml:space="preserve">
+    <value>Предпочитан фон за текстовите прегледи</value>
+  </data>
 </root>

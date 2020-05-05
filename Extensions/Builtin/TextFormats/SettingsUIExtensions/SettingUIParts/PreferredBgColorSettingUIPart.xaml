@@ -1,0 +1,139 @@
+﻿<infUI:SettingUIPart
+    x:Class="Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIParts.PreferredBgColorSettingUIPart"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:colorPicker="clr-namespace:Clipbox.Infrastructure.UI.ColorPicker;assembly=Clipbox.Infrastructure.UI.ColorPicker"
+    xmlns:customControls="clr-namespace:Clipbox.Infrastructure.UI.CustomControls;assembly=Clipbox.Infrastructure.UI.CustomControls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:infUI="clr-namespace:Clipbox.Infrastructure.UI.Extensibility;assembly=Clipbox.Infrastructure.UI"
+    xmlns:loc="clr-namespace:Clipbox.Infrastructure.UI.Localization;assembly=Clipbox.Infrastructure.UI.Localization"
+    xmlns:local="clr-namespace:Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIParts"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    d:DesignHeight="450"
+    d:DesignWidth="800"
+    x:TypeArguments="sys:String"
+    mc:Ignorable="d">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Clipbox.Infrastructure.UI.CustomControls;component/Styles/ToggleSwitchWindows10.xaml" />
+
+                <ResourceDictionary>
+                    <ControlTemplate x:Key="ColorPickerIcon">
+                        <Viewbox>
+                            <Grid
+                                Width="128"
+                                Height="128"
+                                Visibility="Visible">
+                                <Path
+                                    Width="88"
+                                    Height="88"
+                                    Margin="0,0,0,0"
+                                    Data="M18.125151,8.2110023L22.431188,13.018003 6.4090533,27.337008 1.8030148,27.638007 0.50100422,28.639008 0,28.239008 1.1020088,27.037007 1.9030151,22.931006z M19.026159,3.4050007C19.427162,3.4050007,19.828165,3.5050011,20.128168,3.9050007L27.138227,11.816003C27.63823,12.417003 27.53823,13.218004 27.037226,13.719004 26.437221,14.219004 25.635214,14.119004 25.13521,13.619004L18.125151,5.7080011C17.625147,5.1070013 17.725148,4.3060007 18.225152,3.8050013 18.426154,3.5050011 18.726156,3.4050007 19.026159,3.4050007z M28.940241,0C29.741249,0 30.642256,0.40100002 31.243261,1.0010004 32.34527,2.3030005 32.24527,4.2060013 30.943258,5.4070015L26.737224,9.1120024 22.631188,4.4060011 26.837224,0.70100021C27.438229,0.19999981,28.239235,0,28.940241,0z"
+                                    Fill="#FFFFFFFF"
+                                    RenderTransformOrigin="0.5,0.5"
+                                    Stretch="Uniform">
+                                    <Path.RenderTransform>
+                                        <TransformGroup>
+                                            <TransformGroup.Children>
+                                                <RotateTransform Angle="0" />
+                                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                                            </TransformGroup.Children>
+                                        </TransformGroup>
+                                    </Path.RenderTransform>
+                                </Path>
+                            </Grid>
+                        </Viewbox>
+                    </ControlTemplate>
+                </ResourceDictionary>
+
+            </ResourceDictionary.MergedDictionaries>
+
+
+            <Style x:Key="ColorPickerButton" TargetType="{x:Type Button}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                                <ContentControl Foreground="{TemplateBinding Foreground}" Template="{StaticResource ColorPickerIcon}" />
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+
+
+    </UserControl.Resources>
+    <Grid x:Name="mainGrid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <TextBlock
+            Grid.Column="0"
+            VerticalAlignment="Center"
+            Text="{loc:Localize LBL_PREFERRED_BACKGROUND,
+                                ResourceLookupMode=CurrentAssembly}"
+            TextWrapping="Wrap" />
+
+        <TextBox
+            Grid.Column="1"
+            Width="80"
+            Height="30"
+            Margin="15,0,0,0"
+            HorizontalAlignment="Right"
+            Background="{Binding SelectedColorBrush}"
+            Foreground="{Binding ContrastForeground}"
+            Text="{Binding HexColorString, UpdateSourceTrigger=PropertyChanged}" />
+        <Button
+            x:Name="colorPickerButton"
+            Grid.Column="2"
+            Width="30"
+            Height="30"
+            HorizontalAlignment="Left"
+            Background="Transparent"
+            Click="ColorPickerButton_Click"
+            Foreground="White"
+            Style="{StaticResource ColorPickerButton}" />
+
+
+        <Popup
+            x:Name="colorPickerPopup"
+            Placement="Center"
+            PlacementTarget="{Binding ElementName=mainGrid}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <colorPicker:ColorPicker
+                    x:Name="colorPicker"
+                    Grid.Row="0"
+                    Grid.ColumnSpan="2"
+                    Width="200"
+                    Height="180" />
+                <Button
+                    Grid.Row="1"
+                    Grid.Column="1"
+                    Width="30"
+                    Height="15"
+                    HorizontalAlignment="Right"
+                    Click="Button_Click"
+                    Content="OK" />
+
+            </Grid>
+
+
+        </Popup>
+    </Grid>
+</infUI:SettingUIPart>
