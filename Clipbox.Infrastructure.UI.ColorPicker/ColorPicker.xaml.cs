@@ -412,7 +412,7 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
                 if (adjustSelectorPosition)
                 {
                     HSVColor hsvOfPalette = hsv;
-                    hsvOfPalette.V = 1;
+                    //hsvOfPalette.V = 1;
 
                     Point newPositin;
                     if (_colorMap.Values.Any(v => v.V == hsvOfPalette.V && v.H == hsvOfPalette.H && v.S == hsvOfPalette.S))
@@ -425,8 +425,8 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
                         newPositin = _colorMap.First(v => v.Value.V == closestHsvColor.V && v.Value.H == closestHsvColor.H && v.Value.S == closestHsvColor.S).Key;
                     }
 
-                    Canvas.SetLeft(selector, newPositin.X);
-                    Canvas.SetTop(selector, newPositin.Y);
+                    Canvas.SetLeft(selector, newPositin.X - selector.ActualWidth / 2);
+                    Canvas.SetTop(selector, newPositin.Y - selector.ActualHeight / 2);
                 }
 
                 SelectedColor = newColor;
@@ -466,7 +466,8 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
             {
                 Color = n,
                 // https://answers.opencv.org/question/186712/find-an-image-by-nearest-color/
-                Distance = Math.Sqrt(Math.Pow(n.H - color.H, 2) + Math.Pow(n.S - color.S, 2) + Math.Pow(n.V - color.V, 2))
+                // Math.Sqrt(Math.Pow(n.H - color.H, 2) + Math.Pow(n.S - color.S, 2) + Math.Pow(n.V - color.V, 2))
+                Distance = Math.Pow(n.H - color.H, 2) + Math.Pow(n.S - color.S, 2) + Math.Pow(n.V - color.V, 2)
             })
             .OrderBy(p => p.Distance)
             .First()

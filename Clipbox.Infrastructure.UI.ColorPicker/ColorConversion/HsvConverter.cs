@@ -86,7 +86,13 @@ namespace Clipbox.Infrastructure.UI.ColorPicker.ColorConversion
             item.S = (max <= 0) ? 0 : 1d - (1d * min / max);
             item.V = max / 255d;
 
-            return item;
+            // the rounding is not present in the original code of ColorMine
+            return new HSVColor
+            {
+                H = Math.Round(item.H, 2, MidpointRounding.AwayFromZero),
+                S = Math.Round(item.S, 2, MidpointRounding.AwayFromZero),
+                V = Math.Round(item.V, 2, MidpointRounding.AwayFromZero)
+            };
         }
 
         internal static RGBColor ToRGB(HSVColor item)
@@ -125,11 +131,12 @@ namespace Clipbox.Infrastructure.UI.ColorPicker.ColorConversion
 
         private static RGBColor NewRgb(double r, double g, double b)
         {
+            // the rounding is not present in the original code of ColorMine
             return new RGBColor
             {
-                R = (byte)r,
-                G = (byte)g,
-                B = (byte)b
+                R = (byte)Math.Round(r, 2, MidpointRounding.AwayFromZero),
+                G = (byte)Math.Round(g, 2, MidpointRounding.AwayFromZero),
+                B = (byte)Math.Round(b, 2, MidpointRounding.AwayFromZero)
             };
         }
 
