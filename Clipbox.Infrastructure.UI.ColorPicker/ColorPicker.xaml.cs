@@ -44,10 +44,15 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
             _colorMap.Clear();
 
             Size pixelSize = GetPixelSize(new Size(mainCanvas.ActualWidth, mainCanvas.ActualHeight));
+
+            PresentationSource source = PresentationSource.FromVisual(this);
+            double dpiX = 96.0 * source.CompositionTarget.TransformToDevice.M11;
+            double dpiY = 96.0 * source.CompositionTarget.TransformToDevice.M22;
+
             // Use RenderTargetBitmap to get the visual, in case the image has been transformed.
             _paletteRtBitmap = new RenderTargetBitmap((int)pixelSize.Width,
                                                             (int)pixelSize.Height,
-                                                            96, 96, PixelFormats.Default);
+                                                            dpiX, dpiY, PixelFormats.Default);
 
             _paletteRtBitmap.Render(mainCanvas);
 
