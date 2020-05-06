@@ -174,8 +174,8 @@
 
                 <Ellipse
                     x:Name="selector"
-                    Width="10"
-                    Height="10"
+                    Width="15"
+                    Height="15"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Fill="Transparent"

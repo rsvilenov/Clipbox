@@ -382,8 +382,15 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
 
         private void UpdateSelectedColorDPs(HSVColor hsv, bool adjustSelectorPosition)
         {
-            HSVColor hscForSelector = GetContrastHSV(HsvConverter.ToColorSpace(_originalColorUnderSelector));
-            SelectorColorBrush = new SolidColorBrush(HsvConverter.ToColor(hscForSelector));
+            HSVColor hsvForSelector = HsvConverter.ToColorSpace(_originalColorUnderSelector);
+            // the colors in the canvas all have V = 100
+            // and if the selected color has been passed as
+            // an initial color, it means that we cannot
+            // guarantee that it has V = 100, so getting
+            // the contrast color will not be accurate.
+            hsvForSelector.V = 100; 
+            HSVColor hsvContrastForSelector = GetContrastHSV(hsvForSelector);
+            SelectorColorBrush = new SolidColorBrush(HsvConverter.ToColor(hsvContrastForSelector));
 
 
 
@@ -520,11 +527,13 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
             Canvas.SetLeft(selector, p.X - selector.ActualWidth / 2);
             Canvas.SetTop(selector, p.Y - selector.ActualHeight / 2);
             SelectColorUnderSelector();
+            mainCanvas.CaptureMouse();
             _isDragging = true;
         }
 
         private void MainCanvas_MouseUp(object sender, MouseButtonEventArgs e)
         {
+            mainCanvas.ReleaseMouseCapture();
             _isDragging = false;
         }
 
@@ -535,14 +544,28 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
                 SelectColorUnderSelector();
                 Point p = e.GetPosition(mainCanvas);
 
-                if (p.X + selector.ActualWidth / 2 < mainCanvas.ActualWidth
-                    && p.X - selector.ActualWidth / 2 > 0
-                    && p.Y + selector.ActualHeight / 2 < mainCanvas.ActualHeight
-                    && p.Y - selector.ActualHeight / 2 > 0)
+                double newXPos = p.X - selector.ActualWidth / 2;
+                if (p.X < 1)
                 {
-                    Canvas.SetLeft(selector, p.X - selector.ActualWidth / 2);
-                    Canvas.SetTop(selector, p.Y - selector.ActualHeight / 2);
+                    newXPos = 1 - selector.ActualWidth / 2;
                 }
+                else if (p.X + selector.ActualWidth / 2 > mainCanvas.ActualWidth - 1)
+                {
+                    newXPos = mainCanvas.ActualWidth - selector.ActualWidth / 2 - 1;
+                }
+
+                double newYPos = p.Y - selector.ActualHeight / 2;
+                if (p.Y < 1)
+                {
+                    newYPos = 1 - selector.ActualHeight / 2;
+                }
+                else if (p.Y + selector.ActualHeight / 2 > mainCanvas.ActualHeight - 1)
+                {
+                    newYPos = mainCanvas.ActualHeight - selector.ActualHeight / 2 - 1;
+                }
+
+                Canvas.SetLeft(selector, newXPos);
+                Canvas.SetTop(selector, newYPos);
             }
         }
         #endregion
