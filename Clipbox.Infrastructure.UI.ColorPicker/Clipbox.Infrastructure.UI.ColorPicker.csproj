@@ -51,9 +51,13 @@
     <Compile Include="ColorPicker.xaml.cs">
       <DependentUpon>ColorPicker.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ColorPickerDialog.xaml.cs">
+      <DependentUpon>ColorPickerDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ColorStructures\HSVColor.cs" />
     <Compile Include="ColorStructures\HSVColorBindable.cs" />
     <Compile Include="ColorStructures\RGBColor.cs" />
+    <Compile Include="EventArgsClasses\ColorEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -64,6 +68,10 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="ColorPicker.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ColorPickerDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

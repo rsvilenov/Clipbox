@@ -1,7 +1,9 @@
 ﻿using Clipbox.Infrastructure.UI.ColorPicker;
+using Clipbox.Infrastructure.UI.ColorPicker.EventArgsClasses;
 using Clipbox.Infrastructure.UI.Extensibility;
 using System;
 using System.Windows;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIParts
@@ -11,10 +13,14 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
     /// </summary>
     public partial class PreferredBgColorSettingUIPart : SettingUIPart<string>
     {
+        private ColorPickerDialog _colorPickerDialog;
+        private Popup _colorPickerDialogPopup;
+        
         public PreferredBgColorSettingUIPart()
         {
             InitializeComponent();
             this.mainGrid.DataContext = this;
+
             Loaded += PreferredBgColorSettingUIPart_Loaded;
         }
 
@@ -89,19 +95,34 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
             SetColorBrushes(HexColorString);
         }
         
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            colorPickerPopup.IsOpen = false;
-            HexColorString = colorPicker.SelectedColor.ToString();
-            SetColorBrushes(HexColorString);
-        }
-
+        
         private void ColorPickerButton_Click(object sender, RoutedEventArgs e)
         {
-            colorPicker.SetSelectedColor(SelectedColorBrush.Color);
-            colorPickerPopup.IsOpen = true;
+            _colorPickerDialog = new ColorPickerDialog(SelectedColorBrush?.Color ?? Colors.Green);
+            _colorPickerDialog.ColorSelected += _colorPickerDialog_ColorSelected;
 
+            _colorPickerDialogPopup = new Popup
+            {
+                MinWidth = 400,
+                Child = _colorPickerDialog,
+                PlacementTarget = Window.GetWindow(this),
+                Placement = PlacementMode.Center,
+                IsOpen = true
+            };
+        }
+
+        private void _colorPickerDialog_ColorSelected(object sender, ColorEventArgs e)
+        {
+            if (e.Color.HasValue)
+            {
+                HexColorString = e.Color.ToString();
+                SetColorBrushes(HexColorString);
+            }
+
+            _colorPickerDialogPopup.IsOpen = false;
+            _colorPickerDialog.ColorSelected -= _colorPickerDialog_ColorSelected;
+            _colorPickerDialogPopup = null;
+            _colorPickerDialog = null;
         }
     }
 }

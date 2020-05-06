@@ -84,7 +84,7 @@
 
         <TextBox
             Grid.Column="1"
-            Width="80"
+            Width="100"
             Height="30"
             Margin="15,0,0,0"
             HorizontalAlignment="Right"
@@ -101,39 +101,5 @@
             Click="ColorPickerButton_Click"
             Foreground="White"
             Style="{StaticResource ColorPickerButton}" />
-
-
-        <Popup
-            x:Name="colorPickerPopup"
-            Placement="Center"
-            PlacementTarget="{Binding ElementName=mainGrid}">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <colorPicker:ColorPicker
-                    x:Name="colorPicker"
-                    Grid.Row="0"
-                    Grid.ColumnSpan="2"
-                    Width="200"
-                    Height="180" />
-                <Button
-                    Grid.Row="1"
-                    Grid.Column="1"
-                    Width="30"
-                    Height="15"
-                    HorizontalAlignment="Right"
-                    Click="Button_Click"
-                    Content="OK" />
-
-            </Grid>
-
-
-        </Popup>
     </Grid>
 </infUI:SettingUIPart>

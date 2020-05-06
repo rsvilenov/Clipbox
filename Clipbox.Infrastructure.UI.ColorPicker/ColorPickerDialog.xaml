@@ -1,0 +1,85 @@
+﻿<UserControl
+    x:Class="Clipbox.Infrastructure.UI.ColorPicker.ColorPickerDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:Clipbox.Infrastructure.UI.ColorPicker"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    d:DesignHeight="300"
+    d:DesignWidth="350"
+    mc:Ignorable="d">
+    <Border
+        x:Name="mainBorder"
+        BorderBrush="{DynamicResource AccentBrush}"
+        BorderThickness="1">
+        <Grid Margin="15" Background="{DynamicResource TaskbarColorBrush}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <local:ColorPicker
+                x:Name="colorPicker"
+                Grid.Row="0"
+                Grid.ColumnSpan="2" />
+            <TextBlock Grid.Row="1" Foreground="{DynamicResource ControlForegroundBrush}">
+                <TextBlock.Text>
+                    <MultiBinding StringFormat="{}R: {0}   G: {1}   B: {2}">
+                        <Binding ElementName="colorPicker" Path="SelectedColor.R" />
+                        <Binding ElementName="colorPicker" Path="SelectedColor.G" />
+                        <Binding ElementName="colorPicker" Path="SelectedColor.B" />
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
+            <TextBlock
+                Grid.Row="2"
+                Margin="0,5,0,0"
+                Foreground="{DynamicResource ControlForegroundBrush}">
+                <TextBlock.Text>
+                    <MultiBinding StringFormat="{}H: {0}   S: {1}%   V: {2}%">
+                        <Binding ElementName="colorPicker" Path="SelectedColorHSV.HueRounded" />
+                        <Binding ElementName="colorPicker" Path="SelectedColorHSV.SaturationPercentRounded" />
+                        <Binding ElementName="colorPicker" Path="SelectedColorHSV.ValuePercentRounded" />
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
+
+            <TextBlock
+                Grid.Row="1"
+                Grid.Column="1"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Foreground="{DynamicResource ControlForegroundBrush}"
+                Text="{Binding ElementName=colorPicker, Path=SelectedColorHexStr}" />
+
+            <Button
+                Grid.Row="3"
+                Grid.Column="0"
+                Width="100"
+                Height="25"
+                Margin="0,25,0,0"
+                HorizontalAlignment="Left"
+                Command="{Binding OkClicked}"
+                Content="OK"
+                Foreground="{DynamicResource ControlForegroundBrush}"
+                Style="{DynamicResource BtnOk}" />
+            <Button
+                Grid.Row="3"
+                Grid.Column="1"
+                Width="100"
+                Height="25"
+                Margin="0,25,0,0"
+                HorizontalAlignment="Right"
+                Command="{Binding CancelClicked}"
+                Content="Cancel"
+                Foreground="{DynamicResource ControlForegroundBrush}"
+                Style="{DynamicResource BtnCancel}" />
+
+        </Grid>
+    </Border>
+</UserControl>

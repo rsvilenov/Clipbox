@@ -180,7 +180,7 @@
                     VerticalAlignment="Center"
                     Fill="Transparent"
                     Stroke="{Binding SelectorColorBrush, IsAsync=True}"
-                    StrokeThickness="1" />
+                    StrokeThickness="2" />
             </Canvas>
 
         </Grid>
@@ -202,16 +202,17 @@
             </Rectangle.Fill>
         </Rectangle>
         <Slider
+            x:Name="colorVSlider"
             Grid.Row="1"
             Grid.Column="0"
             Grid.ColumnSpan="3"
             Height="24"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Center"
-            Maximum="{Binding SelectedColorMaxV, IsAsync=True}"
-            Minimum="{Binding SelectedColorMinV, IsAsync=True}"
+            Maximum="1"
+            Minimum="0"
             Template="{StaticResource MinimalisticSlider}"
-            Value="{Binding SelectedColorCurrentV, IsAsync=True}" />
+            ValueChanged="Slider_ValueChanged" />
 
 
         <Rectangle

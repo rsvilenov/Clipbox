@@ -27,12 +27,17 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
             this.mainGrid.DataContext = this;
 
             IsVisibleChanged += ColorPicker_IsVisibleChanged;
-            Loaded += ColorPicker_Loaded;
             SizeChanged += ColorPicker_SizeChanged;
         }
-        
-        private RenderTargetBitmap _paletteRtBitmap;
 
+        public event EventHandler SelectedColorChanged;
+
+        public event EventHandler PickerInitialized;
+
+        public bool IsPickerInitialized { get; private set; }
+
+        private RenderTargetBitmap _paletteRtBitmap;
+        
         Dictionary<Point, HSVColor> _colorMap = new Dictionary<Point, HSVColor>();
         private void StorePalette()
         {
@@ -45,6 +50,7 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
                                                             96, 96, PixelFormats.Default);
 
             _paletteRtBitmap.Render(mainCanvas);
+
             System.Drawing.Bitmap bitmap;
             using (MemoryStream stream = new MemoryStream())
             {
@@ -53,41 +59,45 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
                 enc.Save(stream);
                 bitmap = new System.Drawing.Bitmap(stream);
             }
-            //bitmap.Save("palette.png");
 
-            System.Drawing.Imaging.BitmapData bmd = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height),
-                                  System.Drawing.Imaging.ImageLockMode.ReadWrite,
-                                  bitmap.PixelFormat);
-
-            int PixelSize = 4;
-
-            unsafe
+            try
             {
-                for (int y = 0; y < bmd.Height; y++)
+
+                System.Drawing.Imaging.BitmapData bmd = bitmap.LockBits(new System.Drawing.Rectangle(0, 0, bitmap.Width, bitmap.Height),
+                                      System.Drawing.Imaging.ImageLockMode.ReadWrite,
+                                      bitmap.PixelFormat);
+
+                int PixelSize = 4;
+
+                unsafe
                 {
-                    byte* row = (byte*)bmd.Scan0 + (y * bmd.Stride);
-
-                    for (int x = 0; x < bmd.Width; x++)
+                    for (int y = 0; y < bmd.Height; y++)
                     {
-                        // there shouldn't be any transparency in the
-                        // current implementaion of the color canvas,
-                        // but anyway...
-                        RGBColor rgb = GetRGBFromARGB(
-                            r: row[x * PixelSize + 2],
-                            g: row[x * PixelSize + 1],
-                            b: row[x * PixelSize],
-                            a: row[x * PixelSize + 3]);
+                        byte* row = (byte*)bmd.Scan0 + (y * bmd.Stride);
+
+                        for (int x = 0; x < bmd.Width; x++)
+                        {
+                            // there shouldn't be any transparency in the
+                            // current implementaion of the color canvas,
+                            // but anyway...
+                            RGBColor rgb = GetRGBFromARGB(
+                                r: row[x * PixelSize + 2],
+                                g: row[x * PixelSize + 1],
+                                b: row[x * PixelSize],
+                                a: row[x * PixelSize + 3]);
 
 
-                        _colorMap.Add(new Point(x, y), HsvConverter.ToColorSpace(rgb));
+                            _colorMap.Add(new Point(x, y), HsvConverter.ToColorSpace(rgb));
+                        }
                     }
                 }
+
+                bitmap.UnlockBits(bmd);
             }
-
-            bitmap.UnlockBits(bmd);
-            bitmap.Dispose();
-            //bitmap.Save(@"text.png");
-
+            finally
+            {
+                bitmap.Dispose();
+            }
         }
 
         private RGBColor GetRGBFromARGB(byte r, byte g, byte b, byte a)
@@ -148,12 +158,6 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
             source.ContentRendered += Source_ContentRendered;
         }
 
-
-        private void ColorPicker_Loaded(object sender, RoutedEventArgs e)
-        {
-            
-        }
-
         private readonly object _setupLockHandle = new object();
         private void SetUp()
         {
@@ -165,6 +169,9 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
                 }
 
                 StorePalette();
+
+                IsPickerInitialized = true;
+                PickerInitialized?.Invoke(this, new EventArgs());
             }
 
             // wait for the binding oprerations to complete
@@ -199,6 +206,21 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
             DependencyProperty.Register(nameof(SelectorColorBrush), typeof(Brush), typeof(ColorPicker), new PropertyMetadata(Brushes.White));
 
 
+        private static readonly DependencyPropertyKey SelectedColorHexStrPropertyKey
+        = DependencyProperty.RegisterReadOnly(
+            nameof(SelectedColorHexStr),
+            typeof(string), typeof(ColorPicker),
+            new FrameworkPropertyMetadata(default(string),
+                FrameworkPropertyMetadataOptions.None));
+
+        public static readonly DependencyProperty SelectedColorHexStrProperty
+            = SelectedColorHexStrPropertyKey.DependencyProperty;
+
+        public string SelectedColorHexStr
+        {
+            get { return (string)GetValue(SelectedColorHexStrProperty); }
+            protected set { SetValue(SelectedColorHexStrPropertyKey, value); }
+        }
 
 
 
@@ -220,16 +242,24 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
 
         public void SetSelectedColor(HSVColorBindable color)
         {
-            Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() =>
+            if (!IsPickerInitialized)
+            {
+                throw new InvalidOperationException($"Please wait for the picker to initialize. You can subscribe to {nameof(PickerInitialized)} event.");
+            }
+
+            Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
             {
                 HSVColor hsv = color.GetHSV();
-                _originalColorUnderSelector = HsvConverter.ToRGB(hsv);
                 Color newColor = HsvConverter.ToColor(hsv);
 
                 if (_originalColorUnderSelector != null && newColor.R == _originalColorUnderSelector.R && newColor.B == _originalColorUnderSelector.B && newColor.G == _originalColorUnderSelector.G)
                 {
                     return;
                 }
+                _initialColorV = hsv.V;
+                colorVSlider.Value = hsv.V;
+                
+                _originalColorUnderSelector = HsvConverter.ToRGB(hsv);
                 UpdateSelectedColorDPs(hsv, true);
             }));
 
@@ -242,7 +272,7 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
             typeof(Color), typeof(ColorPicker),
             new FrameworkPropertyMetadata(default(Color),
                 FrameworkPropertyMetadataOptions.None));
-
+        
         public static readonly DependencyProperty SelectedColorProperty
             = SelectedColorPropertyKey.DependencyProperty;
         
@@ -270,30 +300,41 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
             protected set { SetValue(SelectedColorContrastPropertyKey, value); }
         }
 
+        private double _initialColorV;
+
         public void SetSelectedColor(Color color)
         {
-            Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() =>
+            if (!IsPickerInitialized)
             {
-                _originalColorUnderSelector = new RGBColor
+                throw new InvalidOperationException($"Please wait for the picker to initialize. You can subscribe to {nameof(PickerInitialized)} event.");
+            }
+
+            Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
+            {
+                var newColor = new RGBColor
                 {
                     R = color.R,
                     G = color.G,
                     B = color.B
                 };
 
-                var hsv = HsvConverter.ToColorSpace(_originalColorUnderSelector);
+                var hsv = HsvConverter.ToColorSpace(newColor);
+                _initialColorV = hsv.V;
+                colorVSlider.Value = hsv.V;
+                
+                _originalColorUnderSelector = HsvConverter.ToRGB(hsv);
                 UpdateSelectedColorDPs(hsv, true);
             }));
 
         }
 
-        public Brush SelectedColorBrush
+        private Brush SelectedColorBrush
         {
             get { return (Brush)GetValue(SelectedColorBrushProperty); }
             set { SetValue(SelectedColorBrushProperty, value); }
         }
 
-        public static readonly DependencyProperty SelectedColorBrushProperty =
+        private static readonly DependencyProperty SelectedColorBrushProperty =
             DependencyProperty.Register(nameof(SelectedColorBrush), typeof(Brush), typeof(ColorPicker), new PropertyMetadata(Brushes.Transparent));
 
 
@@ -318,55 +359,8 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
         private static readonly DependencyProperty SelectedColorMinVVariantProperty =
             DependencyProperty.Register(nameof(SelectedColorMinVVariant), typeof(Color), typeof(ColorPicker), new PropertyMetadata(Colors.Transparent));
 
-
-        private double SelectedColorMinV
-        {
-            get { return (double)GetValue(SelectedColorMinVProperty); }
-            set { SetValue(SelectedColorMinVProperty, value); }
-        }
-
-        private static readonly DependencyProperty SelectedColorMinVProperty =
-            DependencyProperty.Register(nameof(SelectedColorMinV), typeof(double), typeof(ColorPicker), new PropertyMetadata(0d));
-
-
-
-
-        private double SelectedColorMaxV
-        {
-            get { return (double)GetValue(SelectedColorMaxVProperty); }
-            set { SetValue(SelectedColorMaxVProperty, value); }
-        }
-
-        private static readonly DependencyProperty SelectedColorMaxVProperty =
-            DependencyProperty.Register(nameof(SelectedColorMaxV), typeof(double), typeof(ColorPicker), new PropertyMetadata(1d));
-
-
-
-        private double SelectedColorCurrentV
-        {
-            get { return (double)GetValue(SelectedColorCurrentVProperty); }
-            set { SetValue(SelectedColorCurrentVProperty, value); }
-        }
-
-        private static readonly DependencyProperty SelectedColorCurrentVProperty =
-            DependencyProperty.Register(nameof(SelectedColorCurrentV), typeof(double), typeof(ColorPicker), new PropertyMetadata(1d, SelectedColorCurrentV_PropertyChanged));
-
-        private static void SelectedColorCurrentV_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            ((ColorPicker)d).SetSelectedColorV((double)e.NewValue);
-        }
-
-        private void SetSelectedColorV(double value)
-        {
-            var hsv = HsvConverter.ToColorSpace(_originalColorUnderSelector);
-            hsv.V = value;
-            var color = HsvConverter.ToColor(hsv);
-            SelectedColor = color;
-            SelectedColorBrush = new SolidColorBrush(color);
-        }
-
+        
         private RGBColor _originalColorUnderSelector;
-        private double _selectedColorOriginalV;
 
         private void SelectColorUnderSelector()
         {
@@ -383,31 +377,15 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
         private void UpdateSelectedColorDPs(HSVColor hsv, bool adjustSelectorPosition)
         {
             HSVColor hsvForSelector = HsvConverter.ToColorSpace(_originalColorUnderSelector);
-            // the colors in the canvas all have V = 100
+            // the colors in the canvas all have V = 1
             // and if the selected color has been passed as
             // an initial color, it means that we cannot
-            // guarantee that it has V = 100, so getting
+            // guarantee that it has V = 1, so getting
             // the contrast color will not be accurate.
-            hsvForSelector.V = 100; 
+            hsvForSelector.V = 1; 
             HSVColor hsvContrastForSelector = GetContrastHSV(hsvForSelector);
             SelectorColorBrush = new SolidColorBrush(HsvConverter.ToColor(hsvContrastForSelector));
-
-
-
-            SelectedColorMaxV = 1;
-            SelectedColorMinV = 0;
-
-            _selectedColorOriginalV = hsv.V;
-            if (adjustSelectorPosition)
-            {
-                SelectedColorCurrentV = _selectedColorOriginalV;
-            }
-            else
-            {
-                hsv.V = SelectedColorCurrentV;
-            }
-
-
+            
             // the contrast uses the adjusted hsv value for V, not the original color.
             SelectedColorContrast = HsvConverter.ToColor(hsv);
 
@@ -425,6 +403,7 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
                 H = hsv.H
             });
 
+            hsv.V = colorVSlider.Value;
             Color newColor = HsvConverter.ToColor(hsv);
 
             if (SelectedColor != newColor)
@@ -432,14 +411,17 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
 
                 if (adjustSelectorPosition)
                 {
+                    HSVColor hsvOfPalette = hsv;
+                    hsvOfPalette.V = 1;
+
                     Point newPositin;
-                    if (_colorMap.Values.Any(v => v.V == hsv.V && v.H == hsv.H && v.S == hsv.S))
+                    if (_colorMap.Values.Any(v => v.V == hsvOfPalette.V && v.H == hsvOfPalette.H && v.S == hsvOfPalette.S))
                     {
-                        newPositin = _colorMap.First(v => v.Value.V == hsv.V && v.Value.H == hsv.H && v.Value.S == hsv.S).Key;
+                        newPositin = _colorMap.First(v => v.Value.V == hsvOfPalette.V && v.Value.H == hsvOfPalette.H && v.Value.S == hsvOfPalette.S).Key;
                     }
                     else
                     {
-                        HSVColor closestHsvColor = GetClosestColorInMap(hsv);
+                        HSVColor closestHsvColor = GetClosestColorInMap(hsvOfPalette);
                         newPositin = _colorMap.First(v => v.Value.V == closestHsvColor.V && v.Value.H == closestHsvColor.H && v.Value.S == closestHsvColor.S).Key;
                     }
 
@@ -450,6 +432,14 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
                 SelectedColor = newColor;
                 SelectedColorHSV = new HSVColorBindable(hsv);
                 SelectedColorBrush = new SolidColorBrush(SelectedColor);
+                SelectedColorHexStr = new RGBColor
+                {
+                    R = newColor.R,
+                    G = newColor.G,
+                    B = newColor.B
+                }.HexString;
+
+                SelectedColorChanged?.Invoke(this, new EventArgs());
             }
         }
 
@@ -472,28 +462,15 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
 
         private HSVColor GetClosestColorInMap(HSVColor color)
         {
-            double mihHue = _colorMap.Values.Select(n => new { Hue = n.H, Distance = Math.Abs(n.H - color.H) })
-              .OrderBy(p => p.Distance)
-              .First().Hue;
-
-            var colorsForMinHue = _colorMap.Values.Where(hsv => hsv.H == mihHue);
-
-            double minSaturation = colorsForMinHue.Select(n => new { Saturation = n.S, Distance = Math.Abs(n.S - color.S) })
-              .OrderBy(p => p.Distance)
-              .First().Saturation;
-
-            var colorsForMinHueAndSaturation = colorsForMinHue.Where(hsv => hsv.H == mihHue && hsv.S == minSaturation);
-
-            double minValue = colorsForMinHueAndSaturation.Select(n => new { Value = n.V, Distance = Math.Abs(n.V - color.V) })
-              .OrderBy(p => p.Distance)
-              .First().Value;
-
-            return new HSVColor
+            return _colorMap.Values.Select(n => new
             {
-                H = mihHue,
-                S = minSaturation,
-                V = minValue
-            };
+                Color = n,
+                // https://answers.opencv.org/question/186712/find-an-image-by-nearest-color/
+                Distance = Math.Sqrt(Math.Pow(n.H - color.H, 2) + Math.Pow(n.S - color.S, 2) + Math.Pow(n.V - color.V, 2))
+            })
+            .OrderBy(p => p.Distance)
+            .First()
+            .Color;
         }
 
         private RGBColor GetColorUnderSelector()
@@ -570,5 +547,14 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
         }
         #endregion
 
+        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            if (_originalColorUnderSelector != null && e.NewValue != _initialColorV)
+            {
+                var hsv = HsvConverter.ToColorSpace(_originalColorUnderSelector);
+                hsv.V = e.NewValue;
+                UpdateSelectedColorDPs(hsv, false);
+            }
+        }
     }
 }
