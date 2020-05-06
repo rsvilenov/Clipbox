@@ -127,11 +127,30 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
             };
         }
 
+        private Point GetPixelPosition(Point p)
+        {
+            var converted = GetPixelSize(new Size(p.X, p.Y));
+            return new Point(converted.Width, converted.Height);
+        }
+
+        private Point GetWpfPosition(Point p)
+        {
+            var converted = GetWpfSize(new Size(p.X, p.Y));
+            return new Point(converted.Width, converted.Height);
+        }
+
         private Size GetPixelSize(Size wpfSize)
         {
             var source = PresentationSource.FromVisual(this);
             Matrix transformToDevice = source.CompositionTarget.TransformToDevice;
             return (Size)transformToDevice.Transform((Vector)wpfSize);
+        }
+
+        private Size GetWpfSize(Size pixelSize)
+        {
+            var source = PresentationSource.FromVisual(this);
+            Matrix transformFromDevice = source.CompositionTarget.TransformFromDevice;
+            return (Size)transformFromDevice.Transform((Vector)pixelSize);
         }
 
         private void ColorPicker_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -438,8 +457,10 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
                         }
                     }
 
-                    Canvas.SetLeft(selector, newPositin.X - selector.ActualWidth / 2);
-                    Canvas.SetTop(selector, newPositin.Y - selector.ActualHeight / 2);
+                    var wpfNewPos = GetWpfPosition(newPositin);
+
+                    Canvas.SetLeft(selector, wpfNewPos.X - selector.ActualWidth / 2);
+                    Canvas.SetTop(selector, wpfNewPos.Y - selector.ActualHeight / 2);
                 }
 
                 SelectedColor = newColor;
@@ -501,9 +522,9 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
                 top = 0;
             }
 
-            Size selectorPixelPosition = GetPixelSize(new Size(left, top));
+            Point selectorPixelPosition = GetPixelPosition(new Point(left, top));
 
-            Point point = new Point(selectorPixelPosition.Width + selectorPixelSize.Width / 2, selectorPixelPosition.Height + selectorPixelSize.Height / 2); //Mouse.GetPosition(this);
+            Point point = new Point(selectorPixelPosition.X + selectorPixelSize.Width / 2, selectorPixelPosition.Y + selectorPixelSize.Height / 2); //Mouse.GetPosition(this);
             HSVColor hsv = _colorMap[new Point((int)point.X, (int)point.Y)];
 
             return HsvConverter.ToRGB(hsv);
