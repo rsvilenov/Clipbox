@@ -422,7 +422,15 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
                     else
                     {
                         HSVColor closestHsvColor = GetClosestColorInMap(hsvOfPalette);
-                        newPositin = _colorMap.First(v => v.Value.V == closestHsvColor.V && v.Value.H == closestHsvColor.H && v.Value.S == closestHsvColor.S).Key;
+                        // HACK! TODO: See why for shades of gray the matched position is always top-left.
+                        if (closestHsvColor.H == 0 && closestHsvColor.S == 0 && closestHsvColor.V == 1)
+                        {
+                            newPositin = new Point(mainCanvas.ActualWidth / 2, mainCanvas.ActualHeight);
+                        }
+                        else
+                        {
+                            newPositin = _colorMap.First(v => v.Value.V == closestHsvColor.V && v.Value.H == closestHsvColor.H && v.Value.S == closestHsvColor.S).Key;
+                        }
                     }
 
                     Canvas.SetLeft(selector, newPositin.X - selector.ActualWidth / 2);
@@ -527,7 +535,7 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
                 {
                     newXPos = 1 - selector.ActualWidth / 2;
                 }
-                else if (p.X + selector.ActualWidth / 2 > mainCanvas.ActualWidth - 1)
+                else if (p.X > mainCanvas.ActualWidth - 1)
                 {
                     newXPos = mainCanvas.ActualWidth - selector.ActualWidth / 2 - 1;
                 }
@@ -537,7 +545,7 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
                 {
                     newYPos = 1 - selector.ActualHeight / 2;
                 }
-                else if (p.Y + selector.ActualHeight / 2 > mainCanvas.ActualHeight - 1)
+                else if (p.Y > mainCanvas.ActualHeight - 1)
                 {
                     newYPos = mainCanvas.ActualHeight - selector.ActualHeight / 2 - 1;
                 }
