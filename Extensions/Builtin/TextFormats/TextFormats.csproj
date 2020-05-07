@@ -85,8 +85,8 @@
     </Compile>
     <Compile Include="SearchSupport\UnicodeTextSearchSupport.cs" />
     <Compile Include="SettingsUIExtensions\EventArgsClasses\ExtensionSettingChangedEventArgs.cs" />
-    <Compile Include="SettingsUIExtensions\SettingUIParts\PreferredBgColorSettingUIPart.xaml.cs">
-      <DependentUpon>PreferredBgColorSettingUIPart.xaml</DependentUpon>
+    <Compile Include="SettingsUIExtensions\SettingUIParts\PreferredColorSettingUIPart.xaml.cs">
+      <DependentUpon>PreferredColorSettingUIPart.xaml</DependentUpon>
     </Compile>
     <Compile Include="SettingsUIExtensions\SettingUIParts\CompactifySettingUIPart.xaml.cs">
       <DependentUpon>CompactifySettingUIPart.xaml</DependentUpon>
@@ -149,7 +149,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="SettingsUIExtensions\SettingUIParts\PreferredBgColorSettingUIPart.xaml">
+    <Page Include="SettingsUIExtensions\SettingUIParts\PreferredColorSettingUIPart.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

@@ -1,5 +1,5 @@
 ﻿<infUI:SettingUIPart
-    x:Class="Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIParts.PreferredBgColorSettingUIPart"
+    x:Class="Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIParts.PreferredColorSettingUIPart"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:colorPicker="clr-namespace:Clipbox.Infrastructure.UI.ColorPicker;assembly=Clipbox.Infrastructure.UI.ColorPicker"
@@ -86,7 +86,16 @@
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}">
-                                <ContentPresenter />
+                                <Grid>
+                                    <ContentPresenter />
+                                    <Border
+                                        x:Name="disabledOverlay"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        Background="Black"
+                                        Opacity="0.5"
+                                        Visibility="Hidden" />
+                                </Grid>
                             </Border>
                             <ControlTemplate.Triggers>
                                 <Trigger Property="Button.IsMouseOver" Value="True">
@@ -94,6 +103,9 @@
                                 </Trigger>
                                 <Trigger Property="Button.IsPressed" Value="True">
                                     <Setter TargetName="btnBorder" Property="Background" Value="{DynamicResource ControlPressedBrush}" />
+                                </Trigger>
+                                <Trigger Property="Button.IsEnabled" Value="False">
+                                    <Setter TargetName="disabledOverlay" Property="Visibility" Value="Visible" />
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
@@ -201,6 +213,7 @@
             Margin="15,10,0,0"
             VerticalAlignment="Center"
             MouseUp="CustomColorPreviewContentControl_MouseUp"
+            ToolTip="{loc:Localize TTP_CUSTOM_COLOR}"
             Visibility="{Binding IsCustomColorChosen, Converter={StaticResource BooleanToVisibilityHiddenConverter}}">
 
             <ContentControl.Style>
@@ -226,13 +239,17 @@
                                         Height="1"
                                         VerticalAlignment="Center"
                                         Fill="White"
-                                        Visibility="{Binding IsCustomColorSelected, Converter={StaticResource BooleanToVisibilityHiddenConverter}}" />
+                                        Visibility="Hidden" />
                                 </Grid>
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsMouseOver" Value="true">
                                         <Setter TargetName="underline" Property="Visibility" Value="Visible" />
                                         <Setter TargetName="underline" Property="Width" Value="15" />
                                     </Trigger>
+                                    <DataTrigger Binding="{Binding IsCustomColorSelected}" Value="True">
+                                        <Setter TargetName="underline" Property="Visibility" Value="Visible" />
+                                        <Setter TargetName="underline" Property="Width" Value="30" />
+                                    </DataTrigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
                         </Setter.Value>
@@ -250,7 +267,7 @@
             HorizontalAlignment="Left"
             Background="Transparent"
             BorderBrush="{DynamicResource ControlBorderBrush}"
-            Click="ColorPickerButton_Click"
+            Command="{Binding SelectCustomColor}"
             Foreground="{DynamicResource ControlForegroundBrush}"
             Style="{StaticResource IconButton}"
             ToolTip="{loc:Localize TTP_PICK_COLOR,
@@ -265,7 +282,7 @@
             HorizontalAlignment="Left"
             Background="Transparent"
             BorderBrush="{DynamicResource ControlBorderBrush}"
-            Click="RevertToDefaultButton_Click"
+            Command="{Binding RevertToDefault}"
             Foreground="{DynamicResource ControlForegroundBrush}"
             Style="{StaticResource IconButton}"
             ToolTip="{loc:Localize TTP_REVERT_ТО_DEFAULT_COLOR,

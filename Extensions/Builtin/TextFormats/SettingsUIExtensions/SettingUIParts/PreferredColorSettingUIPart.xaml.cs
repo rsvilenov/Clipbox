@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIParts
@@ -13,8 +14,11 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
     /// <summary>
     /// Interaction logic for CompactifySettingUIPart.xaml
     /// </summary>
-    public partial class PreferredBgColorSettingUIPart : SettingUIPart<string>
+    public partial class PreferredColorSettingUIPart : SettingUIPart<string>
     {
+        public ICommand RevertToDefault { get; set; }
+        public ICommand SelectCustomColor { get; set; }
+
         private ColorPickerDialog _colorPickerDialog;
         private Popup _colorPickerDialogPopup;
 
@@ -24,18 +28,22 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
         private readonly string DEFAULT_BG_COLOR = Colors.Gainsboro.ToString();
 
 
-        public PreferredBgColorSettingUIPart(bool isForegroundSelector)
+        public PreferredColorSettingUIPart(bool isForegroundSelector)
             : this()
         {
             IsForegroundSelector = isForegroundSelector;
             LoadRecommendedColors();
+            SelectedRecommendedColor = IsForegroundSelector ? DEFAULT_FG_COLOR : DEFAULT_BG_COLOR;
         }
 
 
-        public PreferredBgColorSettingUIPart()
+        public PreferredColorSettingUIPart()
         {
             InitializeComponent();
             this.mainGrid.DataContext = this;
+
+            RevertToDefault = new DelegateCommand(RevertToDefaultCommandInvoked, RevertToDefaultCommandCanExecute);
+            SelectCustomColor = new DelegateCommand(SelectCustomColorCommandInvoked);
 
             if (RecommendedColors == null)
             {
@@ -43,6 +51,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
             }
         }
 
+        
         private void LoadRecommendedColors()
         {
             RecommendedColors = new AsyncObservableCollection<string>();
@@ -72,7 +81,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
         }
 
         private static readonly DependencyProperty IsForegroundSelectorProperty =
-            DependencyProperty.Register(nameof(IsForegroundSelector), typeof(bool), typeof(PreferredBgColorSettingUIPart), new PropertyMetadata(false));
+            DependencyProperty.Register(nameof(IsForegroundSelector), typeof(bool), typeof(PreferredColorSettingUIPart), new PropertyMetadata(false));
 
 
         private SolidColorBrush SelectedCustomColorBrush
@@ -82,7 +91,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
         }
         
         private static readonly DependencyProperty SelectedCustomColorBrushProperty =
-            DependencyProperty.Register(nameof(SelectedCustomColorBrush), typeof(SolidColorBrush), typeof(PreferredBgColorSettingUIPart), new PropertyMetadata(Brushes.White));
+            DependencyProperty.Register(nameof(SelectedCustomColorBrush), typeof(SolidColorBrush), typeof(PreferredColorSettingUIPart), new PropertyMetadata(Brushes.White));
         
 
         private AsyncObservableCollection<string> RecommendedColors
@@ -92,7 +101,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
         }
 
         private static readonly DependencyProperty RecommendedColorsProperty =
-            DependencyProperty.Register(nameof(RecommendedColors), typeof(AsyncObservableCollection<string>), typeof(PreferredBgColorSettingUIPart), new PropertyMetadata(null));
+            DependencyProperty.Register(nameof(RecommendedColors), typeof(AsyncObservableCollection<string>), typeof(PreferredColorSettingUIPart), new PropertyMetadata(null));
 
 
 
@@ -104,13 +113,13 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
         }
 
         private static readonly DependencyProperty SelectedRecommendedColorProperty =
-            DependencyProperty.Register(nameof(SelectedRecommendedColor), typeof(string), typeof(PreferredBgColorSettingUIPart), new PropertyMetadata(null, SelectedRecommendedColor_PropertyChanged));
+            DependencyProperty.Register(nameof(SelectedRecommendedColor), typeof(string), typeof(PreferredColorSettingUIPart), new PropertyMetadata(null, SelectedRecommendedColor_PropertyChanged));
 
         private static void SelectedRecommendedColor_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (e.NewValue is string newColor && !string.IsNullOrEmpty(newColor))
             {
-                var self = ((PreferredBgColorSettingUIPart)d);
+                var self = ((PreferredColorSettingUIPart)d);
                 self.IsCustomColorSelected = false;
                 self._hexColorString = newColor;
                 self.NotifySettingModified();
@@ -124,7 +133,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
         }
 
         private static readonly DependencyProperty ContrastForegroundProperty =
-            DependencyProperty.Register(nameof(ContrastForeground), typeof(SolidColorBrush), typeof(PreferredBgColorSettingUIPart), new PropertyMetadata(Brushes.White));
+            DependencyProperty.Register(nameof(ContrastForeground), typeof(SolidColorBrush), typeof(PreferredColorSettingUIPart), new PropertyMetadata(Brushes.White));
 
 
 
@@ -136,7 +145,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
         }
         
         public static readonly DependencyProperty IsCustomColorChosenProperty =
-            DependencyProperty.Register(nameof(IsCustomColorChosen), typeof(bool), typeof(PreferredBgColorSettingUIPart), new PropertyMetadata(false));
+            DependencyProperty.Register(nameof(IsCustomColorChosen), typeof(bool), typeof(PreferredColorSettingUIPart), new PropertyMetadata(false));
 
 
 
@@ -147,7 +156,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
         }
         
         public static readonly DependencyProperty IsCustomColorSelectedProperty =
-            DependencyProperty.Register(nameof(IsCustomColorSelected), typeof(bool), typeof(PreferredBgColorSettingUIPart), new PropertyMetadata(false));
+            DependencyProperty.Register(nameof(IsCustomColorSelected), typeof(bool), typeof(PreferredColorSettingUIPart), new PropertyMetadata(false));
 
 
 
@@ -180,29 +189,11 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
             {
                 IsCustomColorChosen = true;
                 IsCustomColorSelected = true;
+                SelectedRecommendedColor = null;
             }
             else
             {
                 SelectedRecommendedColor = _hexColorString;
-            }
-        }
-        
-        
-        private void ColorPickerButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (_colorPickerDialogPopup == null)
-            {
-                _colorPickerDialog = new ColorPickerDialog(SelectedCustomColorBrush?.Color ?? Colors.Green);
-                _colorPickerDialog.ColorSelected += _colorPickerDialog_ColorSelected;
-
-                _colorPickerDialogPopup = new Popup
-                {
-                    MinWidth = 400,
-                    Child = _colorPickerDialog,
-                    PlacementTarget = Window.GetWindow(this),
-                    Placement = PlacementMode.Center,
-                    IsOpen = true
-                };
             }
         }
 
@@ -232,8 +223,40 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
             _colorPickerDialogPopup = null;
             _colorPickerDialog = null;
         }
+        
 
-        private void RevertToDefaultButton_Click(object sender, RoutedEventArgs e)
+        private void CustomColorPreviewContentControl_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            IsCustomColorSelected = true;
+            SelectedRecommendedColor = null;
+            _hexColorString = SelectedCustomColorBrush.Color.ToString();
+            NotifySettingModified();
+        }
+
+        private void SelectCustomColorCommandInvoked()
+        {
+            if (_colorPickerDialogPopup == null)
+            {
+                _colorPickerDialog = new ColorPickerDialog(SelectedCustomColorBrush?.Color ?? Colors.Green);
+                _colorPickerDialog.ColorSelected += _colorPickerDialog_ColorSelected;
+
+                _colorPickerDialogPopup = new Popup
+                {
+                    MinWidth = 400,
+                    Child = _colorPickerDialog,
+                    PlacementTarget = Window.GetWindow(this),
+                    Placement = PlacementMode.Center,
+                    IsOpen = true
+                };
+            }
+        }
+
+        private bool RevertToDefaultCommandCanExecute()
+        {
+            return _hexColorString != (IsForegroundSelector ? DEFAULT_FG_COLOR : DEFAULT_BG_COLOR);
+        }
+
+        private void RevertToDefaultCommandInvoked()
         {
             _hexColorString = IsForegroundSelector ? DEFAULT_FG_COLOR : DEFAULT_BG_COLOR;
             if (!RecommendedColors.Contains(_hexColorString))
@@ -243,14 +266,6 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
 
             SelectedRecommendedColor = _hexColorString;
 
-            NotifySettingModified();
-        }
-
-        private void CustomColorPreviewContentControl_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            IsCustomColorSelected = true;
-            SelectedRecommendedColor = null;
-            _hexColorString = SelectedCustomColorBrush.Color.ToString();
             NotifySettingModified();
         }
     }

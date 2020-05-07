@@ -177,4 +177,7 @@
   <data name="TTP_RECOMMENDED_COLORS" xml:space="preserve">
     <value>Препоръчителни цветове</value>
   </data>
+  <data name="TTP_CUSTOM_COLOR" xml:space="preserve">
+    <value>Цвят по желание</value>
+  </data>
 </root>

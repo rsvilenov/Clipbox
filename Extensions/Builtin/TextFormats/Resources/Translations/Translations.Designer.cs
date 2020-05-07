@@ -169,6 +169,15 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Custom color.
+        /// </summary>
+        internal static string TTP_CUSTOM_COLOR {
+            get {
+                return ResourceManager.GetString("TTP_CUSTOM_COLOR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Paste each item on a new line.
         /// </summary>
         internal static string TTP_PASTE_NEWLINE_SEPARATOR {

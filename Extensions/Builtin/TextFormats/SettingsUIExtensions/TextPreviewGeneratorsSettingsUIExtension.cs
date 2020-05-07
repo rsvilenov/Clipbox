@@ -70,8 +70,8 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
                 .Add(ExtensionSettingNames.Compactify, new CompactifySettingUIPart())
                 .Add(ExtensionSettingNames.PreserveOriginalFontProperties, new PreserveFontPropsSettingUIPart())
                 .Add(ExtensionSettingNames.FontScaleFactor, new TextScaleSettingUIPart())
-                .Add(ExtensionSettingNames.PreferredBackground, new PreferredBgColorSettingUIPart(isForegroundSelector : false))
-                .Add(ExtensionSettingNames.PreferredForeground, new PreferredBgColorSettingUIPart(isForegroundSelector: true));
+                .Add(ExtensionSettingNames.PreferredBackground, new PreferredColorSettingUIPart(isForegroundSelector : false))
+                .Add(ExtensionSettingNames.PreferredForeground, new PreferredColorSettingUIPart(isForegroundSelector: true));
         }
     }
 }
