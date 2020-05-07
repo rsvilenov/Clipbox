@@ -50,7 +50,6 @@
 
             </ResourceDictionary.MergedDictionaries>
 
-
             <Style x:Key="ColorPickerButton" TargetType="{x:Type Button}">
                 <Setter Property="Template">
                     <Setter.Value>
@@ -64,6 +63,14 @@
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource ControlHighlightBackgroundBrush}" />
+                    </Trigger>
+                    <Trigger Property="IsPressed" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource ControlPressedBrush}" />
+                    </Trigger>
+                </Style.Triggers>
             </Style>
         </ResourceDictionary>
 
@@ -71,26 +78,33 @@
     </UserControl.Resources>
     <Grid x:Name="mainGrid">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <TextBlock
             Grid.Column="0"
             VerticalAlignment="Center"
-            Text="{loc:Localize LBL_PREFERRED_BACKGROUND,
-                                ResourceLookupMode=CurrentAssembly}"
-            TextWrapping="Wrap" />
+            TextWrapping="Wrap">
+            <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                    <Setter Property="Text" Value="{loc:Localize LBL_PREFERRED_BACKGROUND, ResourceLookupMode=CurrentAssembly}" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsForegroundSelector}" Value="True">
+                            <Setter Property="Text" Value="{loc:Localize LBL_PREFERRED_FOREGROUND, ResourceLookupMode=CurrentAssembly}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </TextBlock.Style>
+        </TextBlock>
 
-        <TextBox
+        <Rectangle
             Grid.Column="1"
-            Width="100"
+            Width="30"
             Height="30"
             Margin="15,0,0,0"
             HorizontalAlignment="Right"
-            Background="{Binding SelectedColorBrush}"
-            Foreground="{Binding ContrastForeground}"
-            Text="{Binding HexColorString, UpdateSourceTrigger=PropertyChanged}" />
+            Fill="{Binding SelectedColorBrush}" />
         <Button
             x:Name="colorPickerButton"
             Grid.Column="2"

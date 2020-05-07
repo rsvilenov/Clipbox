@@ -15,6 +15,8 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
     {
         private ColorPickerDialog _colorPickerDialog;
         private Popup _colorPickerDialogPopup;
+
+        private string _hexColorString;
         
         public PreferredBgColorSettingUIPart()
         {
@@ -29,23 +31,17 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
             SetColorBrushes(GetSettingValue());
         }
 
-        public string HexColorString
-        {
-            get { return (string)GetValue(HexColorStringProperty); }
-            set { SetValue(HexColorStringProperty, value); }
-        }
-
-        public static readonly DependencyProperty HexColorStringProperty =
-            DependencyProperty.Register(nameof(HexColorString), typeof(string), typeof(PreferredBgColorSettingUIPart), new PropertyMetadata(string.Empty, HexColorString_PropertyChanged));
-
         
-        private static void HexColorString_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        public bool IsForegroundSelector
         {
-            var self = (PreferredBgColorSettingUIPart)d;
-            self.NotifySettingModified();
-            self.SetColorBrushes(e.NewValue as string);
+            get { return (bool)GetValue(IsForegroundSelectorProperty); }
+            set { SetValue(IsForegroundSelectorProperty, value); }
         }
         
+        public static readonly DependencyProperty IsForegroundSelectorProperty =
+            DependencyProperty.Register(nameof(IsForegroundSelector), typeof(bool), typeof(PreferredBgColorSettingUIPart), new PropertyMetadata(false));
+
+
         public SolidColorBrush SelectedColorBrush
         {
             get { return (SolidColorBrush)GetValue(SelectedColorBrushProperty); }
@@ -86,37 +82,41 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
 
         public override string GetSettingValue()
         {
-            return HexColorString;
+            return _hexColorString;
         }
 
         public override void SetSettingValue(string value)
         {
-            HexColorString = value ?? "#FFFFFF";
-            SetColorBrushes(HexColorString);
+            _hexColorString = value ?? "#FFFFFF";
+            SetColorBrushes(_hexColorString);
         }
         
         
         private void ColorPickerButton_Click(object sender, RoutedEventArgs e)
         {
-            _colorPickerDialog = new ColorPickerDialog(SelectedColorBrush?.Color ?? Colors.Green);
-            _colorPickerDialog.ColorSelected += _colorPickerDialog_ColorSelected;
-
-            _colorPickerDialogPopup = new Popup
+            if (_colorPickerDialogPopup == null)
             {
-                MinWidth = 400,
-                Child = _colorPickerDialog,
-                PlacementTarget = Window.GetWindow(this),
-                Placement = PlacementMode.Center,
-                IsOpen = true
-            };
+                _colorPickerDialog = new ColorPickerDialog(SelectedColorBrush?.Color ?? Colors.Green);
+                _colorPickerDialog.ColorSelected += _colorPickerDialog_ColorSelected;
+
+                _colorPickerDialogPopup = new Popup
+                {
+                    MinWidth = 400,
+                    Child = _colorPickerDialog,
+                    PlacementTarget = Window.GetWindow(this),
+                    Placement = PlacementMode.Center,
+                    IsOpen = true
+                };
+            }
         }
 
         private void _colorPickerDialog_ColorSelected(object sender, ColorEventArgs e)
         {
             if (e.Color.HasValue)
             {
-                HexColorString = e.Color.ToString();
-                SetColorBrushes(HexColorString);
+                _hexColorString = e.Color.ToString();
+                SetColorBrushes(_hexColorString);
+                NotifySettingModified();
             }
 
             _colorPickerDialogPopup.IsOpen = false;

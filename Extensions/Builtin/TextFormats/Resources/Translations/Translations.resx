@@ -165,4 +165,7 @@
   <data name="LBL_PREFERRED_BACKGROUND" xml:space="preserve">
     <value>Preferred background for text previews</value>
   </data>
+  <data name="LBL_PREFERRED_FOREGROUND" xml:space="preserve">
+    <value>Preferred text color for text previews</value>
+  </data>
 </root>

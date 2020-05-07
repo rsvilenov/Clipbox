@@ -165,4 +165,7 @@
   <data name="LBL_PREFERRED_BACKGROUND" xml:space="preserve">
     <value>Предпочитан фон за текстовите прегледи</value>
   </data>
+  <data name="LBL_PREFERRED_FOREGROUND" xml:space="preserve">
+    <value>Предпочитан цвят на текста за текстовите прегледи</value>
+  </data>
 </root>
