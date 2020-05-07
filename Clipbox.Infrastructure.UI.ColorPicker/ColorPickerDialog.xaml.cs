@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace Clipbox.Infrastructure.UI.ColorPicker
 {
@@ -57,6 +58,7 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
 
         private void PmDpiWnd_DPIChanged(object sender, DpiChangedEventArgs e)
         {
+            loadingOverlay.Visibility = Visibility.Visible;
             colorPicker.ReloadPalette();
         }
 
@@ -67,6 +69,8 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
             {
                 pmDpiWnd.DPIChanged += PmDpiWnd_DPIChanged;
             }
+
+            Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => loadingOverlay.Visibility = Visibility.Collapsed));
         }
 
         private void OnCancelButton()

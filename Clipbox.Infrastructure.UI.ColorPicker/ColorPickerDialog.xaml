@@ -112,6 +112,24 @@
                 Foreground="{DynamicResource ControlForegroundBrush}"
                 Style="{DynamicResource BtnCancel}" />
 
+            <Grid
+                x:Name="loadingOverlay"
+                Grid.Row="0"
+                Grid.RowSpan="4"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                Background="Black"
+                Opacity="0.9">
+                <ContentControl
+                    Width="60"
+                    Height="60"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Foreground="Gray"
+                    Template="{DynamicResource LoadingSolidIcon}" />
+            </Grid>
+
+
         </Grid>
     </Border>
 </UserControl>
