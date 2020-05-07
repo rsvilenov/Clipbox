@@ -1,7 +1,9 @@
-﻿using Clipbox.Infrastructure.UI.ColorPicker;
+﻿using Clipbox.Infrastructure.UI;
+using Clipbox.Infrastructure.UI.ColorPicker;
 using Clipbox.Infrastructure.UI.ColorPicker.EventArgsClasses;
 using Clipbox.Infrastructure.UI.Extensibility;
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Media;
@@ -17,66 +19,135 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
         private Popup _colorPickerDialogPopup;
 
         private string _hexColorString;
-        
+
+        private readonly string DEFAULT_FG_COLOR = Colors.Black.ToString();
+        private readonly string DEFAULT_BG_COLOR = Colors.Gainsboro.ToString();
+
+
+        public PreferredBgColorSettingUIPart(bool isForegroundSelector)
+            : this()
+        {
+            IsForegroundSelector = isForegroundSelector;
+            LoadRecommendedColors();
+        }
+
+
         public PreferredBgColorSettingUIPart()
         {
             InitializeComponent();
             this.mainGrid.DataContext = this;
 
-            Loaded += PreferredBgColorSettingUIPart_Loaded;
+            if (RecommendedColors == null)
+            {
+                LoadRecommendedColors();
+            }
         }
 
-        private void PreferredBgColorSettingUIPart_Loaded(object sender, RoutedEventArgs e)
+        private void LoadRecommendedColors()
         {
-            SetColorBrushes(GetSettingValue());
+            RecommendedColors = new AsyncObservableCollection<string>();
+
+            if (IsForegroundSelector)
+            {
+                RecommendedColors.Add(Colors.Black.ToString());
+                RecommendedColors.Add("#7e735f");
+                RecommendedColors.Add("#007acc");
+                RecommendedColors.Add("#a3a3a3");
+                RecommendedColors.Add(Colors.White.ToString());
+            }
+            else
+            {
+                RecommendedColors.Add(Colors.White.ToString());
+                RecommendedColors.Add(Colors.Gainsboro.ToString());
+                RecommendedColors.Add("#7e7d7d");
+                RecommendedColors.Add("#2a455b");
+                RecommendedColors.Add("#1e1d1c");
+            }
         }
 
-        
-        public bool IsForegroundSelector
+        private bool IsForegroundSelector
         {
             get { return (bool)GetValue(IsForegroundSelectorProperty); }
             set { SetValue(IsForegroundSelectorProperty, value); }
         }
-        
-        public static readonly DependencyProperty IsForegroundSelectorProperty =
+
+        private static readonly DependencyProperty IsForegroundSelectorProperty =
             DependencyProperty.Register(nameof(IsForegroundSelector), typeof(bool), typeof(PreferredBgColorSettingUIPart), new PropertyMetadata(false));
 
 
-        public SolidColorBrush SelectedColorBrush
+        private SolidColorBrush SelectedCustomColorBrush
         {
-            get { return (SolidColorBrush)GetValue(SelectedColorBrushProperty); }
-            set { SetValue(SelectedColorBrushProperty, value); }
+            get { return (SolidColorBrush)GetValue(SelectedCustomColorBrushProperty); }
+            set { SetValue(SelectedCustomColorBrushProperty, value); }
         }
         
-        public static readonly DependencyProperty SelectedColorBrushProperty =
-            DependencyProperty.Register(nameof(SelectedColorBrush), typeof(SolidColorBrush), typeof(PreferredBgColorSettingUIPart), new PropertyMetadata(Brushes.White));
+        private static readonly DependencyProperty SelectedCustomColorBrushProperty =
+            DependencyProperty.Register(nameof(SelectedCustomColorBrush), typeof(SolidColorBrush), typeof(PreferredBgColorSettingUIPart), new PropertyMetadata(Brushes.White));
+        
 
-        private void SetColorBrushes(string hexColStr)
+        private AsyncObservableCollection<string> RecommendedColors
         {
-            var brushConverter = new BrushConverter();
-            try
-            {
-                SelectedColorBrush = (SolidColorBrush)(brushConverter.ConvertFrom(hexColStr));
-                ContrastForeground = new SolidColorBrush(ColorPicker.GetContrastColor(SelectedColorBrush.Color));
-            }
-            catch
-            {
-                SelectedColorBrush = Brushes.White;
-                ContrastForeground = Brushes.Black;
-            }
-            
+            get { return (AsyncObservableCollection<string>)GetValue(RecommendedColorsProperty); }
+            set { SetValue(RecommendedColorsProperty, value); }
         }
 
+        private static readonly DependencyProperty RecommendedColorsProperty =
+            DependencyProperty.Register(nameof(RecommendedColors), typeof(AsyncObservableCollection<string>), typeof(PreferredBgColorSettingUIPart), new PropertyMetadata(null));
 
 
-        public SolidColorBrush ContrastForeground
+
+
+        private string SelectedRecommendedColor
+        {
+            get { return (string)GetValue(SelectedRecommendedColorProperty); }
+            set { SetValue(SelectedRecommendedColorProperty, value); }
+        }
+
+        private static readonly DependencyProperty SelectedRecommendedColorProperty =
+            DependencyProperty.Register(nameof(SelectedRecommendedColor), typeof(string), typeof(PreferredBgColorSettingUIPart), new PropertyMetadata(null, SelectedRecommendedColor_PropertyChanged));
+
+        private static void SelectedRecommendedColor_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (e.NewValue is string newColor && !string.IsNullOrEmpty(newColor))
+            {
+                var self = ((PreferredBgColorSettingUIPart)d);
+                self.IsCustomColorSelected = false;
+                self._hexColorString = newColor;
+                self.NotifySettingModified();
+            }
+        }
+
+        private SolidColorBrush ContrastForeground
         {
             get { return (SolidColorBrush)GetValue(ContrastForegroundProperty); }
             set { SetValue(ContrastForegroundProperty, value); }
         }
 
-        public static readonly DependencyProperty ContrastForegroundProperty =
+        private static readonly DependencyProperty ContrastForegroundProperty =
             DependencyProperty.Register(nameof(ContrastForeground), typeof(SolidColorBrush), typeof(PreferredBgColorSettingUIPart), new PropertyMetadata(Brushes.White));
+
+
+
+
+        public bool IsCustomColorChosen
+        {
+            get { return (bool)GetValue(IsCustomColorChosenProperty); }
+            set { SetValue(IsCustomColorChosenProperty, value); }
+        }
+        
+        public static readonly DependencyProperty IsCustomColorChosenProperty =
+            DependencyProperty.Register(nameof(IsCustomColorChosen), typeof(bool), typeof(PreferredBgColorSettingUIPart), new PropertyMetadata(false));
+
+
+
+        public bool IsCustomColorSelected
+        {
+            get { return (bool)GetValue(IsCustomColorSelectedProperty); }
+            set { SetValue(IsCustomColorSelectedProperty, value); }
+        }
+        
+        public static readonly DependencyProperty IsCustomColorSelectedProperty =
+            DependencyProperty.Register(nameof(IsCustomColorSelected), typeof(bool), typeof(PreferredBgColorSettingUIPart), new PropertyMetadata(false));
 
 
 
@@ -105,7 +176,15 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
                 _hexColorString = value;
             }
 
-            SetColorBrushes(_hexColorString);
+            if (!RecommendedColors.Contains(_hexColorString))
+            {
+                IsCustomColorChosen = true;
+                IsCustomColorSelected = true;
+            }
+            else
+            {
+                SelectedRecommendedColor = _hexColorString;
+            }
         }
         
         
@@ -113,7 +192,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
         {
             if (_colorPickerDialogPopup == null)
             {
-                _colorPickerDialog = new ColorPickerDialog(SelectedColorBrush?.Color ?? Colors.Green);
+                _colorPickerDialog = new ColorPickerDialog(SelectedCustomColorBrush?.Color ?? Colors.Green);
                 _colorPickerDialog.ColorSelected += _colorPickerDialog_ColorSelected;
 
                 _colorPickerDialogPopup = new Popup
@@ -132,7 +211,19 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
             if (e.Color.HasValue)
             {
                 _hexColorString = e.Color.ToString();
-                SetColorBrushes(_hexColorString);
+                SelectedCustomColorBrush = new SolidColorBrush(e.Color.Value);
+
+                if (!RecommendedColors.Contains(_hexColorString))
+                {
+                    IsCustomColorSelected = true;
+                    IsCustomColorChosen = true;
+                    SelectedRecommendedColor = null;
+                }
+                else
+                {
+                    SelectedRecommendedColor = _hexColorString;
+                }
+
                 NotifySettingModified();
             }
 
@@ -144,18 +235,22 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
 
         private void RevertToDefaultButton_Click(object sender, RoutedEventArgs e)
         {
-            if (IsForegroundSelector)
+            _hexColorString = IsForegroundSelector ? DEFAULT_FG_COLOR : DEFAULT_BG_COLOR;
+            if (!RecommendedColors.Contains(_hexColorString))
             {
-                // the default foreground
-                _hexColorString = Colors.Black.ToString();
-            }
-            else
-            {
-                // the default background
-                _hexColorString = Colors.Gainsboro.ToString();
+                throw new InvalidOperationException($"The default color should be present in {nameof(RecommendedColors)} collection.");
             }
 
-            SetColorBrushes(_hexColorString);
+            SelectedRecommendedColor = _hexColorString;
+
+            NotifySettingModified();
+        }
+
+        private void CustomColorPreviewContentControl_MouseUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            IsCustomColorSelected = true;
+            SelectedRecommendedColor = null;
+            _hexColorString = SelectedCustomColorBrush.Color.ToString();
             NotifySettingModified();
         }
     }

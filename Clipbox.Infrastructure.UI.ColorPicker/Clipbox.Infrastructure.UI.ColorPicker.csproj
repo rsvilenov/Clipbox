@@ -58,6 +58,7 @@
     <Compile Include="ColorStructures\HSVColorBindable.cs" />
     <Compile Include="ColorStructures\RGBColor.cs" />
     <Compile Include="EventArgsClasses\ColorEventArgs.cs" />
+    <Compile Include="GetContrastingSolidColorBrushConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

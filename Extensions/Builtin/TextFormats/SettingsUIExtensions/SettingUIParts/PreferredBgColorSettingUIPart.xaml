@@ -5,6 +5,7 @@
     xmlns:colorPicker="clr-namespace:Clipbox.Infrastructure.UI.ColorPicker;assembly=Clipbox.Infrastructure.UI.ColorPicker"
     xmlns:customControls="clr-namespace:Clipbox.Infrastructure.UI.CustomControls;assembly=Clipbox.Infrastructure.UI.CustomControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:infConv="clr-namespace:Clipbox.Infrastructure.UI.Converters;assembly=Clipbox.Infrastructure.UI"
     xmlns:infUI="clr-namespace:Clipbox.Infrastructure.UI.Extensibility;assembly=Clipbox.Infrastructure.UI"
     xmlns:loc="clr-namespace:Clipbox.Infrastructure.UI.Localization;assembly=Clipbox.Infrastructure.UI.Localization"
     xmlns:local="clr-namespace:Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIParts"
@@ -68,6 +69,9 @@
 
             </ResourceDictionary.MergedDictionaries>
 
+            <colorPicker:GetContrastingSolidColorBrushConverter x:Key="GetContrastingSolidColorBrushConverter" />
+            <infConv:BooleanToVisibilityHiddenConverter x:Key="BooleanToVisibilityHiddenConverter" />
+
             <Style x:Key="IconButton" TargetType="{x:Type Button}">
                 <Setter Property="Background" Value="Transparent" />
                 <Setter Property="BorderBrush" Value="Transparent" />
@@ -106,6 +110,7 @@
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
         <TextBlock
             Grid.Column="0"
@@ -122,18 +127,124 @@
                 </Style>
             </TextBlock.Style>
         </TextBlock>
-
-        <Rectangle
+        <ListBox
             Grid.Column="1"
-            Width="30"
-            Height="30"
-            Margin="15,0,0,0"
-            HorizontalAlignment="Right"
-            Fill="{Binding SelectedColorBrush}"
-            Stroke="{DynamicResource ControlBorderBrush}" />
+            Margin="15,10,0,0"
+            VerticalAlignment="Bottom"
+            Background="Transparent"
+            BorderThickness="0"
+            ItemsSource="{Binding RecommendedColors}"
+            SelectedValue="{Binding SelectedRecommendedColor}"
+            ToolTip="{loc:Localize TTP_RECOMMENDED_COLORS}">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="{x:Type ListBoxItem}">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="10" />
+                                    </Grid.RowDefinitions>
+                                    <ContentPresenter
+                                        Grid.Row="0"
+                                        HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                        VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                        SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                    <Rectangle
+                                        x:Name="underline"
+                                        Grid.Row="1"
+                                        Width="30"
+                                        Height="1"
+                                        VerticalAlignment="Center"
+                                        Fill="White"
+                                        Visibility="Hidden" />
+                                </Grid>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="true">
+                                        <Setter TargetName="underline" Property="Visibility" Value="Visible" />
+                                        <Setter TargetName="underline" Property="Width" Value="15" />
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="true">
+                                        <Setter TargetName="underline" Property="Visibility" Value="Visible" />
+                                        <Setter TargetName="underline" Property="Width" Value="30" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+
+                </Style>
+            </ListBox.ItemContainerStyle>
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal" />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <Rectangle
+                        Grid.Row="0"
+                        Width="30"
+                        Height="30"
+                        VerticalAlignment="Bottom"
+                        Fill="{Binding}"
+                        Stroke="{DynamicResource ControlBorderBrush}"
+                        StrokeThickness="1" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+
+        <ContentControl
+            Grid.Column="2"
+            Margin="15,10,0,0"
+            VerticalAlignment="Center"
+            MouseUp="CustomColorPreviewContentControl_MouseUp"
+            Visibility="{Binding IsCustomColorChosen, Converter={StaticResource BooleanToVisibilityHiddenConverter}}">
+
+            <ContentControl.Style>
+                <Style TargetType="ContentControl">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="ContentControl">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="10" />
+                                    </Grid.RowDefinitions>
+                                    <Rectangle
+                                        Grid.Row="0"
+                                        Width="30"
+                                        Height="30"
+                                        Fill="{Binding SelectedCustomColorBrush}"
+                                        Stroke="{DynamicResource ControlBorderBrush}" />
+                                    <Rectangle
+                                        x:Name="underline"
+                                        Grid.Row="1"
+                                        Width="30"
+                                        Height="1"
+                                        VerticalAlignment="Center"
+                                        Fill="White"
+                                        Visibility="{Binding IsCustomColorSelected, Converter={StaticResource BooleanToVisibilityHiddenConverter}}" />
+                                </Grid>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="true">
+                                        <Setter TargetName="underline" Property="Visibility" Value="Visible" />
+                                        <Setter TargetName="underline" Property="Width" Value="15" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+
+                </Style>
+            </ContentControl.Style>
+        </ContentControl>
+
         <Button
             x:Name="colorPickerButton"
-            Grid.Column="2"
+            Grid.Column="3"
             Width="30"
             Height="30"
             HorizontalAlignment="Left"
@@ -147,7 +258,7 @@
             <ContentControl Template="{StaticResource ColorPickerIcon}" />
         </Button>
         <Button
-            Grid.Column="3"
+            Grid.Column="4"
             Width="30"
             Height="30"
             Margin="10"

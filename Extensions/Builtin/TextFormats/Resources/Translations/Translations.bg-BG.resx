@@ -174,4 +174,7 @@
   <data name="TTP_REVERT_ТО_DEFAULT_COLOR" xml:space="preserve">
     <value>Върни цвета по подразбиране</value>
   </data>
+  <data name="TTP_RECOMMENDED_COLORS" xml:space="preserve">
+    <value>Препоръчителни цветове</value>
+  </data>
 </root>

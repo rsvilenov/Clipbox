@@ -223,6 +223,15 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Recommended colors.
+        /// </summary>
+        internal static string TTP_RECOMMENDED_COLORS {
+            get {
+                return ResourceManager.GetString("TTP_RECOMMENDED_COLORS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Revert to default color.
         /// </summary>
         internal static string TTP_REVERT_ТО_DEFAULT_COLOR {
