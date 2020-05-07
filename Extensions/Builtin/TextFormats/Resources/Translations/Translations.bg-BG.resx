@@ -168,4 +168,10 @@
   <data name="LBL_PREFERRED_FOREGROUND" xml:space="preserve">
     <value>Предпочитан цвят на текста за текстовите прегледи</value>
   </data>
+  <data name="TTP_PICK_COLOR" xml:space="preserve">
+    <value>Избери цвят</value>
+  </data>
+  <data name="TTP_REVERT_ТО_DEFAULT_COLOR" xml:space="preserve">
+    <value>Върни цвета по подразбиране</value>
+  </data>
 </root>

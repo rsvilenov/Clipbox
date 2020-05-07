@@ -407,6 +407,15 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
                     _originalColorUnderSelector = GetColorUnderSelector();
                     var hsv = HsvConverter.ToColorSpace(_originalColorUnderSelector);
 
+                    // if the user has slided the V slider all the way to 0 or near,
+                    // then all colors that they select will be black.
+                    // So, to avoid confusion on the user's part, just
+                    // reset the Value to 1 when the user selects a new color.
+                    if (colorVSlider.Value <= 0.07)
+                    {
+                        colorVSlider.Value = 1;
+                    }
+
                     UpdateSelectedColorDPs(hsv, false);
                 }));
         }

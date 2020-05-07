@@ -205,11 +205,29 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Pick a color.
+        /// </summary>
+        internal static string TTP_PICK_COLOR {
+            get {
+                return ResourceManager.GetString("TTP_PICK_COLOR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to To to show the preview with the original formatting of the text.
         /// </summary>
         internal static string TTP_PRESERVE_ORIG_FONT_PROPS {
             get {
                 return ResourceManager.GetString("TTP_PRESERVE_ORIG_FONT_PROPS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Revert to default color.
+        /// </summary>
+        internal static string TTP_REVERT_ТО_DEFAULT_COLOR {
+            get {
+                return ResourceManager.GetString("TTP_REVERT_ТО_DEFAULT_COLOR", resourceCulture);
             }
         }
     }

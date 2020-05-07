@@ -20,6 +20,24 @@
                 <ResourceDictionary Source="pack://application:,,,/Clipbox.Infrastructure.UI.CustomControls;component/Styles/ToggleSwitchWindows10.xaml" />
 
                 <ResourceDictionary>
+                    <ControlTemplate x:Key="RevertToDefaultIcon">
+                        <Viewbox>
+                            <Grid
+                                Width="128"
+                                Height="128"
+                                Visibility="Visible">
+                                <Path
+                                    Width="94"
+                                    Height="94"
+                                    Margin="0,0,0,0"
+                                    Data="M17.963042,0C25.703039,2.0206062E-07 32.000041,6.3359963 32.000041,14.123042 32.000041,21.911003 25.703039,28.247 17.963042,28.247 11.163974,28.247 5.2728667,23.230517 4.1279589,16.526549L4.1048444,16.381052 0.6719842,16.381052C0.074956894,16.381052,-0.22505713,15.654055,0.19796205,15.228057L4.9581807,10.43708C5.2201926,10.173081,5.6452121,10.173081,5.9072242,10.43708L10.667442,15.228057C11.089462,15.654055,10.790448,16.381052,10.19242,16.381052L6.1346316,16.381052 6.1495974,16.462975C7.2428532,22.079247 12.226101,26.247 17.963042,26.247 24.60111,26.247 30.00004,20.809014 30.00004,14.123042 30.00004,7.4380466 24.60111,1.9999995 17.963042,1.9999992 13.616113,1.9999995 9.5910854,4.3740222 7.4591253,8.1950046L5.7130296,7.2210061C8.197041,2.767028,12.892114,2.0206062E-07,17.963042,0z"
+                                    Fill="#FFFFFFFF"
+                                    RenderTransformOrigin="0.5,0.5"
+                                    Stretch="Uniform" />
+                            </Grid>
+                        </Viewbox>
+                    </ControlTemplate>
+
                     <ControlTemplate x:Key="ColorPickerIcon">
                         <Viewbox>
                             <Grid
@@ -50,27 +68,33 @@
 
             </ResourceDictionary.MergedDictionaries>
 
-            <Style x:Key="ColorPickerButton" TargetType="{x:Type Button}">
+            <Style x:Key="IconButton" TargetType="{x:Type Button}">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderBrush" Value="Transparent" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="OverridesDefaultStyle" Value="True" />
+                <Setter Property="Foreground" Value="{DynamicResource ControlForegroundBrush}" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type Button}">
                             <Border
+                                x:Name="btnBorder"
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}">
-                                <ContentControl Foreground="{TemplateBinding Foreground}" Template="{StaticResource ColorPickerIcon}" />
+                                <ContentPresenter />
                             </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="Button.IsMouseOver" Value="True">
+                                    <Setter TargetName="btnBorder" Property="Background" Value="{DynamicResource ControlHighlightBackgroundBrush}" />
+                                </Trigger>
+                                <Trigger Property="Button.IsPressed" Value="True">
+                                    <Setter TargetName="btnBorder" Property="Background" Value="{DynamicResource ControlPressedBrush}" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
-                <Style.Triggers>
-                    <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Background" Value="{DynamicResource ControlHighlightBackgroundBrush}" />
-                    </Trigger>
-                    <Trigger Property="IsPressed" Value="True">
-                        <Setter Property="Background" Value="{DynamicResource ControlPressedBrush}" />
-                    </Trigger>
-                </Style.Triggers>
             </Style>
         </ResourceDictionary>
 
@@ -79,6 +103,7 @@
     <Grid x:Name="mainGrid">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
@@ -104,7 +129,8 @@
             Height="30"
             Margin="15,0,0,0"
             HorizontalAlignment="Right"
-            Fill="{Binding SelectedColorBrush}" />
+            Fill="{Binding SelectedColorBrush}"
+            Stroke="{DynamicResource ControlBorderBrush}" />
         <Button
             x:Name="colorPickerButton"
             Grid.Column="2"
@@ -112,8 +138,28 @@
             Height="30"
             HorizontalAlignment="Left"
             Background="Transparent"
+            BorderBrush="{DynamicResource ControlBorderBrush}"
             Click="ColorPickerButton_Click"
-            Foreground="White"
-            Style="{StaticResource ColorPickerButton}" />
+            Foreground="{DynamicResource ControlForegroundBrush}"
+            Style="{StaticResource IconButton}"
+            ToolTip="{loc:Localize TTP_PICK_COLOR,
+                                   ResourceLookupMode=CurrentAssembly}">
+            <ContentControl Template="{StaticResource ColorPickerIcon}" />
+        </Button>
+        <Button
+            Grid.Column="3"
+            Width="30"
+            Height="30"
+            Margin="10"
+            HorizontalAlignment="Left"
+            Background="Transparent"
+            BorderBrush="{DynamicResource ControlBorderBrush}"
+            Click="RevertToDefaultButton_Click"
+            Foreground="{DynamicResource ControlForegroundBrush}"
+            Style="{StaticResource IconButton}"
+            ToolTip="{loc:Localize TTP_REVERT_ТО_DEFAULT_COLOR,
+                                   ResourceLookupMode=CurrentAssembly}">
+            <ContentControl Template="{StaticResource RevertToDefaultIcon}" />
+        </Button>
     </Grid>
 </infUI:SettingUIPart>

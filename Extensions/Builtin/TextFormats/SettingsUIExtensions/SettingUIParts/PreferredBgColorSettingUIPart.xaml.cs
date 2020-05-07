@@ -87,7 +87,24 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
 
         public override void SetSettingValue(string value)
         {
-            _hexColorString = value ?? "#FFFFFF";
+            if (string.IsNullOrEmpty(value))
+            {
+                if (IsForegroundSelector)
+                {
+                    // the default foreground
+                    _hexColorString = Colors.Black.ToString();
+                }
+                else
+                {
+                    // the default background
+                    _hexColorString = Colors.Gainsboro.ToString();
+                }
+            }
+            else
+            {
+                _hexColorString = value;
+            }
+
             SetColorBrushes(_hexColorString);
         }
         
@@ -123,6 +140,23 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
             _colorPickerDialog.ColorSelected -= _colorPickerDialog_ColorSelected;
             _colorPickerDialogPopup = null;
             _colorPickerDialog = null;
+        }
+
+        private void RevertToDefaultButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (IsForegroundSelector)
+            {
+                // the default foreground
+                _hexColorString = Colors.Black.ToString();
+            }
+            else
+            {
+                // the default background
+                _hexColorString = Colors.Gainsboro.ToString();
+            }
+
+            SetColorBrushes(_hexColorString);
+            NotifySettingModified();
         }
     }
 }
