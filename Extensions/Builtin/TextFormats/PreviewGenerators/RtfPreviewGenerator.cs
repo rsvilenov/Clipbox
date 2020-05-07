@@ -42,6 +42,12 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators
                 options.Foreground = (Color)ColorConverter.ConvertFromString(foregroundColorStr);
             }
 
+            string backgroundColorStr = GetSetting<string>(ExtensionSettingNames.PreferredBackground);
+            if (!string.IsNullOrEmpty(backgroundColorStr))
+            {
+                options.Background = (Color)ColorConverter.ConvertFromString(backgroundColorStr);
+            }
+
             string formattingCharsForegroundColorStr = GetSetting<string>(ExtensionSettingNames.FormattingCharsForeground);
             if (!string.IsNullOrEmpty(formattingCharsForegroundColorStr))
             {

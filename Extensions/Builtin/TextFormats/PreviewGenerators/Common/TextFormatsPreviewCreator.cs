@@ -61,6 +61,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
             RichTextBox rtb = new RichTextBox
             {
                 Background = new SolidColorBrush(options.Background ?? System.Windows.Media.Colors.Gainsboro),
+                BorderThickness = new Thickness(0)
             };
 
             if (options.Foreground.HasValue)
