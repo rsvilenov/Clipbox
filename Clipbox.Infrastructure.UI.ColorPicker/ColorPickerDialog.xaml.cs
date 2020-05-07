@@ -1,5 +1,7 @@
 ﻿using Clipbox.Infrastructure.UI.ColorPicker.EventArgsClasses;
+using Clipbox.Infrastructure.UI.Windows;
 using System;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -18,6 +20,7 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
 
         private Color _initialColor;
         private Color? _selectedColor;
+        private PerMonitorDpiWindow _pmDpiWindow;
 
         public ColorPickerDialog()
             : this(Colors.Green)
@@ -28,6 +31,12 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
             InitializeComponent();
             this.mainBorder.DataContext = this;
 
+            _pmDpiWindow = Window.GetWindow(this) as PerMonitorDpiWindow;
+            if (_pmDpiWindow != null)
+            {
+                _pmDpiWindow.DPIChanged += PmDpiWnd_DPIChanged;
+            }
+
             _initialColor = initialColor;
 
             colorPicker.SelectedColorChanged += ColorPicker_SelectedColorChanged;
@@ -35,11 +44,29 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
 
             OkClicked = new DelegateCommand(OnOkButton);
             CancelClicked = new DelegateCommand(OnCancelButton);
+            Unloaded += ColorPickerDialog_Unloaded;
+        }
+
+        private void ColorPickerDialog_Unloaded(object sender, RoutedEventArgs e)
+        {
+            if (_pmDpiWindow != null)
+            {
+                _pmDpiWindow.DPIChanged -= PmDpiWnd_DPIChanged;
+            }
+        }
+
+        private void PmDpiWnd_DPIChanged(object sender, DpiChangedEventArgs e)
+        {
+            colorPicker.ReloadPalette();
         }
 
         private void ColorPicker_PickerInitialized(object sender, EventArgs e)
         {
             colorPicker.SetSelectedColor(_initialColor);
+            if (Window.GetWindow(this) is PerMonitorDpiWindow pmDpiWnd)
+            {
+                pmDpiWnd.DPIChanged += PmDpiWnd_DPIChanged;
+            }
         }
 
         private void OnCancelButton()
@@ -55,7 +82,18 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
         private void ColorPicker_SelectedColorChanged(object sender, EventArgs e)
         {
             _selectedColor = colorPicker.SelectedColor;
+            searchTextBox.Text = colorPicker.SelectedColorHexStr;
         }
-        
+
+        private void SearchTextBox_SearchRequested(object sender, RoutedEventArgs e)
+        {
+            Color typedColor;
+            try
+            {
+                typedColor = (Color)ColorConverter.ConvertFromString(searchTextBox.Text);
+                colorPicker.SetSelectedColor(typedColor);
+            }
+            catch { }
+        }
     }
 }

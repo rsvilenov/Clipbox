@@ -61,6 +61,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Clipbox.Infrastructure.UI.CustomControls\Clipbox.Infrastructure.UI.CustomControls.csproj">
+      <Project>{da4c4595-1ae1-48ec-b9fa-a74508b1dc0a}</Project>
+      <Name>Clipbox.Infrastructure.UI.CustomControls</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Clipbox.Infrastructure.UI\Clipbox.Infrastructure.UI.csproj">
       <Project>{9f5482b0-7101-4473-9629-458693bf38d0}</Project>
       <Name>Clipbox.Infrastructure.UI</Name>

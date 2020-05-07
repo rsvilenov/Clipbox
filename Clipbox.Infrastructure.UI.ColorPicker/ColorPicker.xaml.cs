@@ -153,6 +153,19 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
             return (Size)transformFromDevice.Transform((Vector)pixelSize);
         }
 
+        public void ReloadPalette()
+        {
+            if (this.IsLoaded)
+            {
+                IsPickerInitialized = false;
+
+                StorePalette();
+
+                IsPickerInitialized = true;
+                PickerInitialized?.Invoke(this, new EventArgs());
+            }
+        }
+
         private void ColorPicker_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (this.IsLoaded)
