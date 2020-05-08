@@ -169,16 +169,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
         {
             if (string.IsNullOrEmpty(value))
             {
-                if (IsForegroundSelector)
-                {
-                    // the default foreground
-                    _hexColorString = Colors.Black.ToString();
-                }
-                else
-                {
-                    // the default background
-                    _hexColorString = Colors.Gainsboro.ToString();
-                }
+                _hexColorString = IsForegroundSelector ? DEFAULT_FG_COLOR : DEFAULT_BG_COLOR;
             }
             else
             {
