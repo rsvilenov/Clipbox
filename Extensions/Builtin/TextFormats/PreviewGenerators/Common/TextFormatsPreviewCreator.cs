@@ -111,6 +111,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
             string text = rtb.Selection.Text;
             if (!options.PreserveRtfFormatting)
             {
+                rtb.FontSize = 12 * options.FontScaleFactor;
                 LoadTextDataIntoRichTextBox(text, TextFormat.Text, rtb);
             }
 

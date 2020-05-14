@@ -3,6 +3,7 @@ using Clipbox.Infrastructure.UI.ColorPicker;
 using Clipbox.Infrastructure.UI.ColorPicker.EventArgsClasses;
 using Clipbox.Infrastructure.UI.Extensibility;
 using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls.Primitives;
@@ -29,15 +30,6 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
 
 
         public PreferredColorSettingUIPart(bool isForegroundSelector)
-            : this()
-        {
-            IsForegroundSelector = isForegroundSelector;
-            LoadRecommendedColors();
-            SelectedRecommendedColor = IsForegroundSelector ? DEFAULT_FG_COLOR : DEFAULT_BG_COLOR;
-        }
-
-
-        public PreferredColorSettingUIPart()
         {
             InitializeComponent();
             this.mainGrid.DataContext = this;
@@ -45,18 +37,31 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
             RevertToDefault = new DelegateCommand(RevertToDefaultCommandInvoked, RevertToDefaultCommandCanExecute);
             SelectCustomColor = new DelegateCommand(SelectCustomColorCommandInvoked);
 
-            if (RecommendedColors == null)
+            IsForegroundSelector = isForegroundSelector;
+            LoadRecommendedColors(isForegroundSelector);
+            SelectedRecommendedColor = IsForegroundSelector ? DEFAULT_FG_COLOR : DEFAULT_BG_COLOR;
+        }
+
+
+        /// <summary>
+        /// This constructorr is for the designer only!
+        /// </summary>
+        public PreferredColorSettingUIPart()
+        {
+            if (!DesignerProperties.GetIsInDesignMode(this))
             {
-                LoadRecommendedColors();
+                throw new InvalidOperationException("This constructorr is for the designer only!");
             }
+
+            InitializeComponent();
         }
 
         
-        private void LoadRecommendedColors()
+        private void LoadRecommendedColors(bool isForegroundSelector)
         {
             RecommendedColors = new AsyncObservableCollection<string>();
 
-            if (IsForegroundSelector)
+            if (isForegroundSelector)
             {
                 RecommendedColors.Add(Colors.Black.ToString());
                 RecommendedColors.Add("#7e735f");
