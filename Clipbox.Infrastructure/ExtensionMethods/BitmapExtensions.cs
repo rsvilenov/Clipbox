@@ -67,7 +67,17 @@ namespace Clipbox.Infrastructure.ExtensionMethods
             return largeBmp;
         }
 
-        public static Bitmap GetCenteredOverTransparentCanvas(this Bitmap image, int canvasWidth, int canvasHeight)
+        public static Bitmap GetCenteredOverTransparentCanvas(this Bitmap image, int canvasWidth, int canvasHeight, bool centerX = true, bool centerY = true)
+        {
+            return GetCenteredOverCanvas(image, canvasWidth, canvasHeight);
+        }
+
+        public static Bitmap GetCenteredOverCanvasWithBackground(this Bitmap image, int canvasWidth, int canvasHeight, Color background, bool centerX = true, bool centerY = true)
+        {
+            return GetCenteredOverCanvas(image, canvasWidth, canvasHeight, background, centerX, centerY);
+        }
+
+        private static Bitmap GetCenteredOverCanvas(Bitmap image, int canvasWidth, int canvasHeight, Color? color = null, bool centerX = true, bool centerY = true)
         {
             Bitmap canvas = new Bitmap(canvasWidth, canvasHeight, PixelFormat.Format32bppArgb);
 
@@ -81,11 +91,16 @@ namespace Clipbox.Infrastructure.ExtensionMethods
                 sourceImage = image;
             }
 
-            int x = (canvasWidth - sourceImage.Width) / 2;
-            int y = (canvasHeight - sourceImage.Height) / 2;
+            int x = centerX ? (canvasWidth - sourceImage.Width) / 2 : 0;
+            int y = centerY ? (canvasHeight - sourceImage.Height) / 2 : 0;
 
             using (Graphics canvasGr = Graphics.FromImage(canvas))
             {
+                if (color.HasValue)
+                {
+                    canvasGr.FillRectangle(new SolidBrush(color.Value), new Rectangle(0, 0, canvasWidth, canvasHeight));
+                }
+
                 canvasGr.DrawImage(sourceImage, x, y, sourceImage.Width, sourceImage.Height);
             }
 

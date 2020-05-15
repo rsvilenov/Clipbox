@@ -180,4 +180,7 @@
   <data name="TTP_RECOMMENDED_COLORS" xml:space="preserve">
     <value>Recommended colors</value>
   </data>
+  <data name="LBL_STRETCH_BACKGROUND" xml:space="preserve">
+    <value>Unify text preview area height</value>
+  </data>
 </root>

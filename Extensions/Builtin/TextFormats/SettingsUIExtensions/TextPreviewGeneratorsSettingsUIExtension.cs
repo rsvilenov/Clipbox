@@ -13,6 +13,10 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
     {
         private RtfPreviewGenerator _previewGenerator;
 
+
+        PreferredColorSettingUIPart _foregroundSelector;
+        PreferredColorSettingUIPart _backgroundSelector;
+
         public TextPreviewGeneratorsSettingsUIExtension()
         {
             _previewGenerator = new RtfPreviewGenerator();
@@ -30,9 +34,16 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
         
         protected override void OnSettingUpdated(string settingName, Type targetType)
         {
+            if (settingName == ExtensionSettingNames.PreserveOriginalFontProperties
+                && _backgroundSelector != null
+                & _foregroundSelector != null)
+            {
+                AdjustColorSelectorsProperties();
+            }
+
             base.InvalidateResultPreview();
         }
-
+        
         protected override void RegisterSettings(IRegisteredSettingStore settingsStore)
         {
             settingsStore
@@ -44,6 +55,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
                 .Add<bool, RtfPreviewGenerator>(ExtensionSettingNames.ScaleFontSizeToDpi, false)
                 .Add<bool, RtfPreviewGenerator>(ExtensionSettingNames.IncludeAnnotation, false)
                 .Add<bool, RtfPreviewGenerator>(ExtensionSettingNames.Compactify, false)
+                .Add<bool, RtfPreviewGenerator>(ExtensionSettingNames.StretchBackgroundToFill, false)
 
                 .Add<string, TextPreviewGenerator>(ExtensionSettingNames.PreferredBackground, null)
                 .Add<string, TextPreviewGenerator>(ExtensionSettingNames.PreferredForeground, null)
@@ -53,6 +65,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
                 .Add<bool, TextPreviewGenerator>(ExtensionSettingNames.ScaleFontSizeToDpi, false)
                 .Add<bool, TextPreviewGenerator>(ExtensionSettingNames.IncludeAnnotation, false)
                 .Add<bool, TextPreviewGenerator>(ExtensionSettingNames.Compactify, false)
+                .Add<bool, TextPreviewGenerator>(ExtensionSettingNames.StretchBackgroundToFill, false)
 
                 .Add<string, UnicodeTextPreviewGenerator>(ExtensionSettingNames.PreferredBackground, null)
                 .Add<string, UnicodeTextPreviewGenerator>(ExtensionSettingNames.PreferredForeground, null)
@@ -61,17 +74,42 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
                 .Add<bool, UnicodeTextPreviewGenerator>(ExtensionSettingNames.PreserveOriginalFontProperties, false)
                 .Add<bool, UnicodeTextPreviewGenerator>(ExtensionSettingNames.ScaleFontSizeToDpi, false)
                 .Add<bool, UnicodeTextPreviewGenerator>(ExtensionSettingNames.IncludeAnnotation, false)
-                .Add<bool, UnicodeTextPreviewGenerator>(ExtensionSettingNames.Compactify, false);
+                .Add<bool, UnicodeTextPreviewGenerator>(ExtensionSettingNames.Compactify, false)
+                .Add<bool, UnicodeTextPreviewGenerator>(ExtensionSettingNames.StretchBackgroundToFill, false);
         }
 
         protected override void RegisterSettingUIParts(ISettingsUIBuilder builder)
         {
+            _foregroundSelector = new PreferredColorSettingUIPart(isForegroundSelector: true);
+            _backgroundSelector = new PreferredColorSettingUIPart(isForegroundSelector: false);
+
+            AdjustColorSelectorsProperties();
+
             builder
+
+                .Add(ExtensionSettingNames.StretchBackgroundToFill, new StretchBackgroundSettingUIPart())
                 .Add(ExtensionSettingNames.Compactify, new CompactifySettingUIPart())
                 .Add(ExtensionSettingNames.PreserveOriginalFontProperties, new PreserveFontPropsSettingUIPart())
-                .Add(ExtensionSettingNames.FontScaleFactor, new TextScaleSettingUIPart())
-                .Add(ExtensionSettingNames.PreferredBackground, new PreferredColorSettingUIPart(isForegroundSelector : false))
-                .Add(ExtensionSettingNames.PreferredForeground, new PreferredColorSettingUIPart(isForegroundSelector: true));
+                .Add(ExtensionSettingNames.PreferredBackground, _backgroundSelector)
+                .Add(ExtensionSettingNames.PreferredForeground, _foregroundSelector)
+                .Add(ExtensionSettingNames.FontScaleFactor, new TextScaleSettingUIPart());
+        }
+
+        private void AdjustColorSelectorsProperties()
+        {
+            if (GetSetting<bool, RtfPreviewGenerator>(ExtensionSettingNames.PreserveOriginalFontProperties))
+            {
+                _backgroundSelector.Visibility = System.Windows.Visibility.Collapsed;
+                _foregroundSelector.Visibility = System.Windows.Visibility.Collapsed;
+
+                _backgroundSelector.SetToDefaultColor();
+                _foregroundSelector.SetToDefaultColor();
+            }
+            else
+            {
+                _backgroundSelector.Visibility = System.Windows.Visibility.Visible;
+                _foregroundSelector.Visibility = System.Windows.Visibility.Visible;
+            }
         }
     }
 }

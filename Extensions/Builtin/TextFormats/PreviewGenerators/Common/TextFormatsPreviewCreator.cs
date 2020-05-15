@@ -39,6 +39,8 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
 
             public bool MakeTextCompact { get; set; } = true;
 
+            public bool StretchBackgroundToFill { get; set; } = false;
+
             public void Validate(TextFormat format)
             {
                 if (format == TextFormat.Rtf
@@ -171,7 +173,12 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
                 }
                 else if (previewBmp.Height < maxPreviewHeight)
                 {
-                    preview = previewBmp.GetCenteredOverTransparentCanvas(previewBmp.Width, maxPreviewHeight);
+                    preview = options.StretchBackgroundToFill
+                        && options.Background.HasValue ?
+                        previewBmp.GetCenteredOverCanvasWithBackground(previewBmp.Width, maxPreviewHeight, System.Drawing.Color.FromArgb(options.Background.Value.R, options.Background.Value.G, options.Background.Value.B),
+                            centerX: true,
+                            centerY : false)
+                        : previewBmp.GetCenteredOverTransparentCanvas(previewBmp.Width, maxPreviewHeight);
                 }
                 else
                 {

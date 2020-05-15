@@ -11,6 +11,7 @@
         public static string FormattingCharsForeground = nameof(FormattingCharsForeground);
         public static string IncludeAnnotation = nameof(IncludeAnnotation);
         public static string Compactify = nameof(Compactify);
+        public static string StretchBackgroundToFill = nameof(StretchBackgroundToFill);
 
         // extensions for pasted text formatting
         public static string DefaultSeparator = nameof(DefaultSeparator);

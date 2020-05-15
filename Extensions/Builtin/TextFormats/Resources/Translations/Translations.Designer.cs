@@ -133,6 +133,15 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unify text preview area height.
+        /// </summary>
+        internal static string LBL_STRETCH_BACKGROUND {
+            get {
+                return ResourceManager.GetString("LBL_STRETCH_BACKGROUND", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to character.
         /// </summary>
         internal static string STR_CHARACTER {

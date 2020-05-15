@@ -180,4 +180,7 @@
   <data name="TTP_CUSTOM_COLOR" xml:space="preserve">
     <value>Цвят по желание</value>
   </data>
+  <data name="LBL_STRETCH_BACKGROUND" xml:space="preserve">
+    <value>Еднакво високи текстови прегледи</value>
+  </data>
 </root>

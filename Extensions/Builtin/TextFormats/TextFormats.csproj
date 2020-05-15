@@ -100,6 +100,9 @@
     <Compile Include="SettingsUIExtensions\SettingUIParts\SaveLastSeparatorSettingUIPart.xaml.cs">
       <DependentUpon>SaveLastSeparatorSettingUIPart.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SettingsUIExtensions\SettingUIParts\StretchBackgroundSettingUIPart.xaml.cs">
+      <DependentUpon>StretchBackgroundSettingUIPart.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SettingsUIExtensions\SettingUIParts\TextScaleSettingUIPart.xaml.cs">
       <DependentUpon>TextScaleSettingUIPart.xaml</DependentUpon>
     </Compile>
@@ -166,6 +169,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SettingsUIExtensions\SettingUIParts\SaveLastSeparatorSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SettingsUIExtensions\SettingUIParts\StretchBackgroundSettingUIPart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

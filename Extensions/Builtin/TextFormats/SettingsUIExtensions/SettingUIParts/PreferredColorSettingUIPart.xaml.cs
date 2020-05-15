@@ -39,7 +39,18 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
 
             IsForegroundSelector = isForegroundSelector;
             LoadRecommendedColors(isForegroundSelector);
-            SelectedRecommendedColor = IsForegroundSelector ? DEFAULT_FG_COLOR : DEFAULT_BG_COLOR;
+            SetToDefaultColor();
+        }
+
+        internal void SetToDefaultColor()
+        {
+            _hexColorString = IsForegroundSelector ? DEFAULT_FG_COLOR : DEFAULT_BG_COLOR;
+            if (!RecommendedColors.Contains(_hexColorString))
+            {
+                throw new InvalidOperationException($"The default color should be present in {nameof(RecommendedColors)} collection.");
+            }
+
+            SelectedRecommendedColor = _hexColorString;
         }
 
 
@@ -254,13 +265,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
 
         private void RevertToDefaultCommandInvoked()
         {
-            _hexColorString = IsForegroundSelector ? DEFAULT_FG_COLOR : DEFAULT_BG_COLOR;
-            if (!RecommendedColors.Contains(_hexColorString))
-            {
-                throw new InvalidOperationException($"The default color should be present in {nameof(RecommendedColors)} collection.");
-            }
-
-            SelectedRecommendedColor = _hexColorString;
+            SetToDefaultColor();
 
             NotifySettingModified();
         }
