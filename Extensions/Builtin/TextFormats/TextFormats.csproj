@@ -49,6 +49,7 @@
     <Compile Include="ExtensionSettingNames.cs" />
     <Compile Include="FlowExtensions\ConcatTextSelectionsFlowExtension.cs" />
     <Compile Include="FlowExtensions\RemoveFormattingFlowExtension.cs" />
+    <Compile Include="FlowExtensions\SkipShortStringsFlowExtension.cs" />
     <Compile Include="FlowParameters.cs" />
     <Compile Include="FormatSupport\AnsiTextFormatSupport.cs" />
     <Compile Include="FormatSupport\RichTextFormatSupport.cs" />
@@ -100,6 +101,9 @@
     <Compile Include="SettingsUIExtensions\SettingUIParts\SaveLastSeparatorSettingUIPart.xaml.cs">
       <DependentUpon>SaveLastSeparatorSettingUIPart.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SettingsUIExtensions\SettingUIParts\SkipShortStringsSettingsUIPart.xaml.cs">
+      <DependentUpon>SkipShortStringsSettingsUIPart.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SettingsUIExtensions\SettingUIParts\StretchBackgroundSettingUIPart.xaml.cs">
       <DependentUpon>StretchBackgroundSettingUIPart.xaml</DependentUpon>
     </Compile>
@@ -107,6 +111,7 @@
       <DependentUpon>TextScaleSettingUIPart.xaml</DependentUpon>
     </Compile>
     <Compile Include="SettingsUIExtensions\TextFormattingSettingsUIExtension.cs" />
+    <Compile Include="SettingsUIExtensions\TextPreProcessingSettingUIExtension.cs" />
     <Compile Include="SettingsUIExtensions\TextPreviewGeneratorsSettingsUIExtension.cs" />
     <Compile Include="StringExtensions.cs" />
     <Compile Include="SearchSupport\HtmlSearchSupport.cs" />
@@ -169,6 +174,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SettingsUIExtensions\SettingUIParts\SaveLastSeparatorSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SettingsUIExtensions\SettingUIParts\SkipShortStringsSettingsUIPart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

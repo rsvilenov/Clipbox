@@ -18,5 +18,8 @@
         public static string SaveSelectedSeparatorAsDefault = nameof(SaveSelectedSeparatorAsDefault);
         public static string RemoveFormatting = nameof(RemoveFormatting);
         public static string SaveRemoveFormattingState = nameof(SaveRemoveFormattingState);
+
+        // extensions for on copy modifications of text formats
+        public static string MinTextLengthToStore = nameof(MinTextLengthToStore);
     }
 }

@@ -183,4 +183,13 @@
   <data name="LBL_STRETCH_BACKGROUND" xml:space="preserve">
     <value>Еднакво високи текстови прегледи</value>
   </data>
+  <data name="LBL_SKIP_SHORT_STRINGS" xml:space="preserve">
+    <value>Не запазвай кратки думи и фрази</value>
+  </data>
+  <data name="LBL_SKIP_SHORTER_THAN" xml:space="preserve">
+    <value>По къси от</value>
+  </data>
+  <data name="LBL_SKIP_SHORTER_THAN_CHARS" xml:space="preserve">
+    <value>символа.</value>
+  </data>
 </root>

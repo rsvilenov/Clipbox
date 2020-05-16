@@ -44,6 +44,13 @@ namespace Clipbox.Views
             SourceInitialized += SettingsWindow_SourceInitialized;
             Loaded += SettingsWindow_Loaded;
             Closing += SettingsWindow_Closing;
+            MouseDown += SettingsWindow_MouseDown;
+        }
+
+        private void SettingsWindow_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            // make sure that clicking outside of a conrol moves the focus away from it
+            mainGrid.Focus();
         }
 
         private double GetThumbnailMaxHeight(DisplayMonitor monitor, out bool hasHeightBeenDpiScaled)

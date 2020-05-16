@@ -73,7 +73,8 @@
         <Grid
             x:Name="mainGrid"
             Grid.Row="1"
-            Margin="15">
+            Margin="15"
+            Focusable="True">
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition />

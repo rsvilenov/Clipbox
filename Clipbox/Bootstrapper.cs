@@ -180,7 +180,7 @@ namespace Clipbox
             _previewWindowService = new QuickClipboardViewWindowService(_quickViewClipboardContents, _settingsService);
 
             // Initialize the FlowExtension executor service
-            _flowExtensionExecutorService = new FlowExtensionExecutorService(_extensionLoader.FlowExtensionContainer);
+            _flowExtensionExecutorService = new FlowExtensionExecutorService(_extensionLoader.FlowExtensionContainer, _settingsService);
 
             // Initialize the keyboard service
             _keyboardService = new LowLevelKeyboardService();

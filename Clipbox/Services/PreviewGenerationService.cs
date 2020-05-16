@@ -539,7 +539,8 @@ namespace Clipbox.Services
                 {
                     foreach (ISettingKey settingKey in _settingsService.GetSettingKeys(previewGeneratorUsed))
                     {
-                        confRecipient.PutSetting(settingKey, _settingsService.GetSetting(settingKey));
+                        try { confRecipient.PutSetting(settingKey, _settingsService.GetSetting(settingKey)); }
+                        catch (Exception ex) { throw new ClipboxExtensionException(nameof(confRecipient.PutSetting), previewGeneratorUsed, ex); }
                     }
                 }
 

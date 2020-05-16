@@ -108,14 +108,14 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes
         /// the system clipboard, but before it has been stored by the
         /// program. The storing of the data can also be cancelled here.
         /// </summary>
-        /// <param name="sourceWindowInfo"></param>
-        /// <param name="originalIntermediateFormats"></param>
-        /// <param name="modifiedIntermediateFormats"></param>
-        /// <param name="cancelStoreToItemList"></param>
+        /// <param name="sourceWindowInfo">Info for the source application window.</param>
+        /// <param name="originalIntermediateFormats">A collection of processed clipboard data for this clipboard item, stored in IIntermediateFormat objects.</param>
+        /// <param name="modifiedIntermediateFormats">To change the clipboard data before the program stores it, add the modified IIntermediateFormat objects to this list.</param>
+        /// <param name="cancelStoreToItem">If set to true, cancels the storing of the clipboard item.</param>
         public virtual void OnItemStoring(IWindowInfo sourceWindowInfo,
             IEnumerable<IIntermediateFormat> originalIntermediateFormats,
             ref IList<IIntermediateFormat> modifiedIntermediateFormats,
-            ref bool cancelStoreToItemList)
+            ref bool cancelStoreToItem)
         { }
 
         /// <summary>

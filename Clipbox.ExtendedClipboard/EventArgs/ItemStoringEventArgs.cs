@@ -9,6 +9,7 @@ namespace Clipbox.ExtendedClipboard.EventArgs
         public ItemStoringEventArgs(IWindowInfo sourceWindowInfo, IEnumerable<IIntermediateFormat> intermediateFormats)
         {
             SourceWindowInfo = sourceWindowInfo;
+            IntermediateFormats = intermediateFormats;
         }
 
         public IWindowInfo SourceWindowInfo { get; private set; }

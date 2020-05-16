@@ -124,6 +124,33 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Do not store short words and phrases.
+        /// </summary>
+        internal static string LBL_SKIP_SHORT_STRINGS {
+            get {
+                return ResourceManager.GetString("LBL_SKIP_SHORT_STRINGS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Shorter than.
+        /// </summary>
+        internal static string LBL_SKIP_SHORTER_THAN {
+            get {
+                return ResourceManager.GetString("LBL_SKIP_SHORTER_THAN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to characters..
+        /// </summary>
+        internal static string LBL_SKIP_SHORTER_THAN_CHARS {
+            get {
+                return ResourceManager.GetString("LBL_SKIP_SHORTER_THAN_CHARS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Smaller.
         /// </summary>
         internal static string LBL_SMALLER {

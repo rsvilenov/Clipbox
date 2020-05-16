@@ -1,4 +1,5 @@
 ﻿using Clipbox.Core.ClipboardContent.Interfaces;
+using Clipbox.Core.Configuration;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Core.Extensibility.Exceptions;
@@ -25,12 +26,16 @@ namespace Clipbox.Services
         // TODO: find a better way to store the extension, which can perform the concatenation
         private FlowExtension _lastExtensionForModification;
 
-        public FlowExtensionExecutorService(FlowExtensionContainer flowExtensionContainer)
+        private ISettingsService _settingsService;
+
+        public FlowExtensionExecutorService(FlowExtensionContainer flowExtensionContainer, ISettingsService settingsService)
         {
+            _settingsService = settingsService;
+            _settingsService.SettingChanged += _settingsService_SettingChanged;
             InitializeFlowExtensions(flowExtensionContainer);
             RunRegisterHousekeepingTaskMethods();
         }
-
+        
         [SecurityCritical]
         [HandleProcessCorruptedStateExceptions]
         private void InitializeFlowExtensions(FlowExtensionContainer flowExtensionContainer)
@@ -44,8 +49,46 @@ namespace Clipbox.Services
             List<FlowExtension> failedExtensions = new List<FlowExtension>();
             foreach (FlowExtension extension in _flowExtensions)
             {
+                // load the settings
+                if (extension is IConfigurationRecipient confRecipient)
+                {
+                    foreach (ISettingKey settingKey in _settingsService.GetSettingKeys(extension.GetType()))
+                    {
+                        try { confRecipient.PutSetting(settingKey, _settingsService.GetSetting(settingKey)); }
+                        catch (Exception ex) { throw new ClipboxExtensionException(nameof(confRecipient.PutSetting), extension.GetType(), ex); }
+                    }
+                }
+
                 try { extension.OnInitialized(); }
                 catch (Exception ex) { throw new ClipboxExtensionException(nameof(extension.OnInitialized), extension.GetType(), ex); }
+            }
+        }
+
+        [SecurityCritical]
+        [HandleProcessCorruptedStateExceptions]
+        private void _settingsService_SettingChanged(object sender, EventArgsClasses.SettingsEventArgs e)
+        {
+            Type extensionType = e.Key.TargetComponentType;
+            if (!typeof(FlowExtension).IsAssignableFrom(extensionType))
+            {
+                return;
+            }
+
+            IConfigurationRecipient confRecipient = _flowExtensions.SingleOrDefault(ext => ext.GetType().Equals(extensionType));
+
+            if (confRecipient == null)
+            {
+#if DEBUG
+                throw new InvalidOperationException($"No extension for type {extensionType.Name} has been loaded. Check why.");
+#else
+                return;
+#endif
+            }
+
+            foreach (ISettingKey settingKey in _settingsService.GetSettingKeys(extensionType))
+            {
+                try { confRecipient.PutSetting(settingKey, _settingsService.GetSetting(settingKey)); }
+                catch (Exception ex) { throw new ClipboxExtensionException(nameof(confRecipient.PutSetting), extensionType, ex); }
             }
         }
 

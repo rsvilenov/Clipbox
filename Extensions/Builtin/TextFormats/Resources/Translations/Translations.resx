@@ -183,4 +183,13 @@
   <data name="LBL_STRETCH_BACKGROUND" xml:space="preserve">
     <value>Unify text preview area height</value>
   </data>
+  <data name="LBL_SKIP_SHORT_STRINGS" xml:space="preserve">
+    <value>Do not store short words and phrases</value>
+  </data>
+  <data name="LBL_SKIP_SHORTER_THAN" xml:space="preserve">
+    <value>Shorter than</value>
+  </data>
+  <data name="LBL_SKIP_SHORTER_THAN_CHARS" xml:space="preserve">
+    <value>characters.</value>
+  </data>
 </root>
