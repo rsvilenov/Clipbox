@@ -137,7 +137,9 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
             
             FormattedText ft = FlowDocumentToFormattedTextConverter.GetFormattedText(rtb.Document);
 
-            double newRtbWidth = ft.WidthIncludingTrailingWhitespace;
+            const int rtbContentMargin = 20;
+
+            double newRtbWidth = ft.WidthIncludingTrailingWhitespace + rtbContentMargin;
             if (newRtbWidth > maxRtbWidth)
             {
                 newRtbWidth = maxRtbWidth;
@@ -145,6 +147,11 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
             else if (newRtbWidth < desiredPreviewWidth)
             {
                 newRtbWidth = desiredPreviewWidth;
+            }
+
+            if (options.StretchBackgroundToFill)
+            {
+                rtb.Height = maxRtbHeight + rtbContentMargin;
             }
 
             // hack: after the measuring phase, it seems that the desired hight is less than the text height, hence maxRtbHeight + 20 
@@ -173,12 +180,14 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
                 }
                 else if (previewBmp.Height < maxPreviewHeight)
                 {
-                    preview = options.StretchBackgroundToFill
-                        && options.Background.HasValue ?
-                        previewBmp.GetCenteredOverCanvasWithBackground(previewBmp.Width, maxPreviewHeight, System.Drawing.Color.FromArgb(options.Background.Value.R, options.Background.Value.G, options.Background.Value.B),
-                            centerX: true,
-                            centerY : false)
-                        : previewBmp.GetCenteredOverTransparentCanvas(previewBmp.Width, maxPreviewHeight);
+                    preview = 
+                        //options.StretchBackgroundToFill
+                        //&& options.Background.HasValue ?
+                        //previewBmp.GetCenteredOverCanvasWithBackground(previewBmp.Width, maxPreviewHeight, System.Drawing.Color.FromArgb(options.Background.Value.R, options.Background.Value.G, options.Background.Value.B),
+                        //    centerX: true,
+                        //    centerY : false)
+                        //: 
+                        previewBmp.GetCenteredOverTransparentCanvas(previewBmp.Width, maxPreviewHeight);
                 }
                 else
                 {
