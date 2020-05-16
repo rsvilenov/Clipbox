@@ -66,6 +66,8 @@ namespace Clipbox.ExtendedClipboard
 
         public event EventHandler<ItemFetchingEventArgs> ItemFetching;
 
+        public event EventHandler<ItemStoringEventArgs> ItemStoring;
+
         public event EventHandler<ClipboardManagerEventArgs> ItemAdded;
 
         public event EventHandler<ClipboardManagerEventArgs> ItemRemoved;
@@ -361,6 +363,8 @@ namespace Clipbox.ExtendedClipboard
             {
                 return;
             }
+            
+            e.CancelPropagatingToOtherClipboardListeners = _isClipboardForwardingSuspended;
 
             var source = new ClipboardItemSource
             {
@@ -383,15 +387,36 @@ namespace Clipbox.ExtendedClipboard
                 return;
             }
 
-            var clipboardDataObjects = ReadClipboardDataObjectsFromSystemClipboard();
+            var originalClipboardDataObjects = ReadClipboardDataObjectsFromSystemClipboard();
             
             // for some reason I receive WM_DRAWCLIPBOARD on pasting a file which has been cut the moment before
             // and GetAvailableFormats() returns zero items...
-            if (!clipboardDataObjects.Any())
+            if (!originalClipboardDataObjects.Any())
             {
                 return;
             }
 
+            var itemStoringArgs = new ItemStoringEventArgs(source.SourceWindowInfo,
+                    originalClipboardDataObjects.Select(cdo => cdo.IntermediateFormatObject));
+
+            ItemStoring?.Invoke(this, itemStoringArgs);
+
+            if (itemStoringArgs.Cancel)
+            {
+                return;
+            }
+
+            List<IClipboardDataObject> clipboardDataObjects = new List<IClipboardDataObject>();
+
+            if (itemStoringArgs.AreIntermediateFormatsChanged)
+            {
+                clipboardDataObjects.AddRange(GetChangedCdos(originalClipboardDataObjects, itemStoringArgs.IntermediateFormats));
+            }
+            else
+            {
+                clipboardDataObjects.AddRange(originalClipboardDataObjects);
+            }
+            
             var currentItem = new ClipboardItem(source, clipboardDataObjects);
 
             lock (_ioLockHandle)
@@ -407,9 +432,17 @@ namespace Clipbox.ExtendedClipboard
                 _persistenceHelper.StoreAndShrinkClipboardItem(currentItem);
             }
 
-            e.CancelPropagatingToOtherClipboardListeners = _isClipboardForwardingSuspended;
             
             ItemAdded?.Invoke(this, new ClipboardManagerEventArgs(currentItem.Id));
+        }
+
+        private IEnumerable<IClipboardDataObject> GetChangedCdos(IEnumerable<IClipboardDataObject> originalCdos, IEnumerable<IIntermediateFormat> changedIntermediateFormatObjects)
+        {
+            foreach (var cdo in originalCdos)
+            {
+                IIntermediateFormat changedIntermediateFormat = changedIntermediateFormatObjects.Single(ifo => ifo.Metadata.FormatGuid == cdo.IntermediateFormatMetadata.FormatGuid);
+                yield return new ClipboardDataObject(cdo.ClipboardFormatName, changedIntermediateFormat);
+            }
         }
 
         /// <summary>

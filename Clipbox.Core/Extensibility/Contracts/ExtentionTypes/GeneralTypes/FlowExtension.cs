@@ -104,6 +104,21 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes
         { }
 
         /// <summary>
+        /// Allows modifying of the data after it has been fetched from
+        /// the system clipboard, but before it has been stored by the
+        /// program. The storing of the data can also be cancelled here.
+        /// </summary>
+        /// <param name="sourceWindowInfo"></param>
+        /// <param name="originalIntermediateFormats"></param>
+        /// <param name="modifiedIntermediateFormats"></param>
+        /// <param name="cancelStoreToItemList"></param>
+        public virtual void OnItemStoring(IWindowInfo sourceWindowInfo,
+            IEnumerable<IIntermediateFormat> originalIntermediateFormats,
+            ref IList<IIntermediateFormat> modifiedIntermediateFormats,
+            ref bool cancelStoreToItemList)
+        { }
+
+        /// <summary>
         /// Allows doing a custom operation after copying.
         /// </summary>
         /// <param name="clipboardItem">The item copied. It contains info for the source window.</param>

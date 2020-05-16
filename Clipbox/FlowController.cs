@@ -56,6 +56,7 @@ namespace Clipbox
             _houseKeepingTasks = _flowExtensionExecutorService.RunRegisterHousekeepingTaskMethods();
 
             _clipboardManager.ItemFetching += _clipboardManager_ItemFetching;
+            _clipboardManager.ItemStoring += _clipboardManager_ItemStoring;
 
             // IMPORTANT: if we try greater delays than the keyboard repeat delay, weard things start to happen.
             int keyboardDelayMs = 250; // this is the default keyboard delay
@@ -69,7 +70,7 @@ namespace Clipbox
             _keyboardService.ControlKeyUp += _keyboardListener_ControlKeyUp;
             _keyboardService.VKeyUp += _keyboardListener_VKeyUp;
         }
-
+        
         private void _clipboardViewWindowService_HousekeepingRequested(object sender, HousekeepingEventArgs e)
         {
             PerformHouseKeeping(e.ClipboardItemIdsToProcess,
@@ -107,6 +108,22 @@ namespace Clipbox
         {
             bool cancel = false;
             _flowExtensionExecutorService.RunOnCopyRequestedMethods(e.SourceWindowInfo, ref cancel);
+            e.Cancel = cancel;
+        }
+
+        private void _clipboardManager_ItemStoring(object sender, ExtendedClipboard.EventArgs.ItemStoringEventArgs e)
+        {
+            bool cancel = false;
+            IList<IIntermediateFormat> modifiedIfs;
+
+            _flowExtensionExecutorService.RunOnOnItemStoringMethods(e.SourceWindowInfo, e.IntermediateFormats, out modifiedIfs, ref cancel);
+
+            if (modifiedIfs != null && modifiedIfs.Any())
+            {
+                e.IntermediateFormats = modifiedIfs;
+                e.AreIntermediateFormatsChanged = true;
+            }
+
             e.Cancel = cancel;
         }
 

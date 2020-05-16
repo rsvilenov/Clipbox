@@ -10,6 +10,6 @@ namespace Clipbox.ExtendedClipboard.EventArgs
             SourceWindowInfo = sourceWindowInfo;
         }
 
-        public IWindowInfo SourceWindowInfo { get; set; }
+        public IWindowInfo SourceWindowInfo { get; private set; }
     }
 }

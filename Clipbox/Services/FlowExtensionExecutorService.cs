@@ -110,6 +110,19 @@ namespace Clipbox.Services
                 catch (Exception ex) { throw new ClipboxExtensionException(nameof(ext.OnCopyCompleted), ext.GetType(), ex); }
             }
         }
+        
+        [SecurityCritical]
+        [HandleProcessCorruptedStateExceptions]
+        public void RunOnOnItemStoringMethods(IWindowInfo sourceWindowInfo, IEnumerable<IIntermediateFormat> originalIntermediateFormats, out IList<IIntermediateFormat> modifiedIntermediateFormats, ref bool cancelStoreToItem)
+        {
+            modifiedIntermediateFormats = new List<IIntermediateFormat>();
+
+            foreach (var ext in _flowExtensions)
+            {
+                try { ext.OnItemStoring(sourceWindowInfo, originalIntermediateFormats, ref modifiedIntermediateFormats, ref cancelStoreToItem); }
+                catch (Exception ex) { throw new ClipboxExtensionException(nameof(ext.OnItemStoring), ext.GetType(), ex); }
+            }
+        }
 
         [SecurityCritical]
         [HandleProcessCorruptedStateExceptions]
@@ -237,7 +250,7 @@ namespace Clipbox.Services
 
         [SecurityCritical]
         [HandleProcessCorruptedStateExceptions]
-        public void RunOnCopyRequestedMethods(IWindowInfo sourceWindowInfo, ref bool cancelStoreToItemList)
+        public void RunOnCopyRequestedMethods(IWindowInfo sourceWindowInfo, ref bool cancelStoreToItem)
         {
             foreach (var flowExtension in _flowExtensions)
             {
@@ -247,7 +260,7 @@ namespace Clipbox.Services
                 // if any of the extension says that we should cancel storing the item, set the flag to true
                 if (cancel)
                 {
-                    cancelStoreToItemList = true;
+                    cancelStoreToItem = true;
                 }
             }
         }

@@ -56,6 +56,7 @@
     <Compile Include="ClipboardContent\TransferableClipboardDataObject.cs" />
     <Compile Include="ClipboardContent\TransferableClipboardItem.cs" />
     <Compile Include="EventArgs\ItemFetchingEventArgs.cs" />
+    <Compile Include="EventArgs\ItemStoringEventArgs.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Interfaces\IClipboardEventProvider.cs" />
     <Compile Include="Interfaces\IClipboardItemsDataProvider.cs" />

@@ -11,6 +11,8 @@ namespace Clipbox.Services.Interfaces
 
         void RunOnCopyRequestedMethods(IWindowInfo sourceWindowInfo, ref bool cancelStoreToItemList);
 
+        void RunOnOnItemStoringMethods(IWindowInfo sourceWindowInfo, IEnumerable<IIntermediateFormat> originalIntermediateFormats, out IList<IIntermediateFormat> modifiedIntermediateFormats, ref bool cancelStoreToItem);
+
         void RunOnBeforeManagedPasteMethods(IClipboardItem currentClipboardItem, ref bool cancelPasteRequested);
 
         /// <summary>

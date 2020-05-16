@@ -60,6 +60,8 @@ namespace Clipbox.ExtendedClipboard.Interfaces
 
         event EventHandler<ItemFetchingEventArgs> ItemFetching;
 
+        event EventHandler<ItemStoringEventArgs> ItemStoring;
+
         event EventHandler<ClipboardManagerEventArgs> ItemAdded;
 
         event EventHandler<ClipboardManagerEventArgs> ItemRemoved;
