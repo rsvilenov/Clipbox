@@ -396,44 +396,48 @@ namespace Clipbox.ExtendedClipboard
                 return;
             }
 
-            var itemStoringArgs = new ItemStoringEventArgs(source.SourceWindowInfo,
+            // do not block this handler for too long
+            Task.Run(() =>
+            {
+                var itemStoringArgs = new ItemStoringEventArgs(source.SourceWindowInfo,
                     originalClipboardDataObjects.Select(cdo => cdo.IntermediateFormatObject));
 
-            ItemStoring?.Invoke(this, itemStoringArgs);
+                ItemStoring?.Invoke(this, itemStoringArgs);
 
-            if (itemStoringArgs.Cancel)
-            {
-                return;
-            }
-
-            List<IClipboardDataObject> clipboardDataObjects = new List<IClipboardDataObject>();
-
-            if (itemStoringArgs.AreIntermediateFormatsChanged)
-            {
-                clipboardDataObjects.AddRange(GetChangedCdos(originalClipboardDataObjects, itemStoringArgs.IntermediateFormats));
-            }
-            else
-            {
-                clipboardDataObjects.AddRange(originalClipboardDataObjects);
-            }
-            
-            var currentItem = new ClipboardItem(source, clipboardDataObjects);
-
-            lock (_ioLockHandle)
-            {
-                _clipboardItems.Add(currentItem);
-
-                if (_clipboardItems.Count > MAX_CLIPBOARD_ITEMS_TO_KEEP)
+                if (itemStoringArgs.Cancel)
                 {
-                    DiscardLastClipboardItem();
+                    return;
                 }
 
-                // try to save memory by swapping the big data to the hard drive
-                _persistenceHelper.StoreAndShrinkClipboardItem(currentItem);
-            }
+                List<IClipboardDataObject> clipboardDataObjects = new List<IClipboardDataObject>();
 
-            
-            ItemAdded?.Invoke(this, new ClipboardManagerEventArgs(currentItem.Id));
+                if (itemStoringArgs.AreIntermediateFormatsChanged)
+                {
+                    clipboardDataObjects.AddRange(GetChangedCdos(originalClipboardDataObjects, itemStoringArgs.IntermediateFormats));
+                }
+                else
+                {
+                    clipboardDataObjects.AddRange(originalClipboardDataObjects);
+                }
+
+                var currentItem = new ClipboardItem(source, clipboardDataObjects);
+
+                lock (_ioLockHandle)
+                {
+                    _clipboardItems.Add(currentItem);
+
+                    if (_clipboardItems.Count > MAX_CLIPBOARD_ITEMS_TO_KEEP)
+                    {
+                        DiscardLastClipboardItem();
+                    }
+
+                    // try to save memory by swapping the big data to the hard drive
+                    _persistenceHelper.StoreAndShrinkClipboardItem(currentItem);
+                }
+
+
+                ItemAdded?.Invoke(this, new ClipboardManagerEventArgs(currentItem.Id));
+            });
         }
 
         private IEnumerable<IClipboardDataObject> GetChangedCdos(IEnumerable<IClipboardDataObject> originalCdos, IEnumerable<IIntermediateFormat> changedIntermediateFormatObjects)

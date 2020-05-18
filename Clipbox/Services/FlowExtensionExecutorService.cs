@@ -5,7 +5,9 @@ using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Core.Extensibility.Exceptions;
 using Clipbox.Infrastructure.Extensibility.Containers;
 using Clipbox.Infrastructure.ExtensionMethods;
+using Clipbox.Infrastructure.Threading;
 using Clipbox.Services.Interfaces;
+using Clipbox.Settings;
 using Clipbox.Win32;
 using System;
 using System.Collections.Generic;
@@ -14,6 +16,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.ExceptionServices;
 using System.Security;
+using System.Threading;
 
 namespace Clipbox.Services
 {
@@ -28,10 +31,17 @@ namespace Clipbox.Services
 
         private ISettingsService _settingsService;
 
+        private readonly SemaphoreSlim _maxItemStoringTasksSemaphore;
+
+        private readonly int _onItemStoringFlowExtensionsTimeoutMs;
+
         public FlowExtensionExecutorService(FlowExtensionContainer flowExtensionContainer, ISettingsService settingsService)
         {
             _settingsService = settingsService;
+            _onItemStoringFlowExtensionsTimeoutMs = _settingsService.GetSetting(SettingsKeys.OnItemStoringFlowExtensionsTimeoutMs);
             _settingsService.SettingChanged += _settingsService_SettingChanged;
+
+            _maxItemStoringTasksSemaphore = new SemaphoreSlim(_settingsService.GetSetting(SettingsKeys.OnItemStoringFlowExtensionsMaxTasks));
             InitializeFlowExtensions(flowExtensionContainer);
             RunRegisterHousekeepingTaskMethods();
         }
@@ -158,13 +168,37 @@ namespace Clipbox.Services
         [HandleProcessCorruptedStateExceptions]
         public void RunOnOnItemStoringMethods(IWindowInfo sourceWindowInfo, IEnumerable<IIntermediateFormat> originalIntermediateFormats, out IList<IIntermediateFormat> modifiedIntermediateFormats, ref bool cancelStoreToItem)
         {
-            modifiedIntermediateFormats = new List<IIntermediateFormat>();
+            IList<IIntermediateFormat> modifiedIfos = new List<IIntermediateFormat>();
+            bool cancel = false;
 
-            foreach (var ext in _flowExtensions)
+            _maxItemStoringTasksSemaphore.Wait();
+
+            ManualResetEvent mre = new ManualResetEvent(false);
+            using (ThreadExecutor te = new ThreadExecutor((cancellationToken) =>
+             {
+                 try
+                 {
+
+                     foreach (var ext in _flowExtensions)
+                     {
+                         try { ext.OnItemStoring(sourceWindowInfo, originalIntermediateFormats, ref modifiedIfos, ref cancel); }
+                         catch (Exception ex) { throw new ClipboxExtensionException(nameof(ext.OnItemStoring), ext.GetType(), ex); }
+                     }
+                 }
+                 finally
+                 {
+                     _maxItemStoringTasksSemaphore.Release();
+                     mre.Set();
+                 }
+
+             }, _onItemStoringFlowExtensionsTimeoutMs))
             {
-                try { ext.OnItemStoring(sourceWindowInfo, originalIntermediateFormats, ref modifiedIntermediateFormats, ref cancelStoreToItem); }
-                catch (Exception ex) { throw new ClipboxExtensionException(nameof(ext.OnItemStoring), ext.GetType(), ex); }
+                te.Start();
+                mre.WaitOne();
             }
+            
+            modifiedIntermediateFormats = modifiedIfos;
+            cancelStoreToItem = cancel;
         }
 
         [SecurityCritical]

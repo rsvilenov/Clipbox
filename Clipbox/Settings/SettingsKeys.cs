@@ -46,7 +46,11 @@ namespace Clipbox.Settings
         public static SettingKey<int> MaxNumOfItemToLoadAtOnce = new SettingKey<int>(nameof(MaxNumOfItemToLoadAtOnce), 50);
 
         public static SettingKey<string> LocalizationCulture = new SettingKey<string>(nameof(LocalizationCulture), "en-US");
-        
+
+        public static SettingKey<int> OnItemStoringFlowExtensionsTimeoutMs = new SettingKey<int>(nameof(OnItemStoringFlowExtensionsTimeoutMs), 1000);
+
+        public static SettingKey<int> OnItemStoringFlowExtensionsMaxTasks = new SettingKey<int>(nameof(OnItemStoringFlowExtensionsMaxTasks), 10);
+
         internal static IEnumerable<ISettingKey> GetAllSettings()
         {
             return typeof(SettingsKeys)
