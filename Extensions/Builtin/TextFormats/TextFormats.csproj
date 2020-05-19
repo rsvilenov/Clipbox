@@ -117,14 +117,14 @@
     <Compile Include="SearchSupport\HtmlSearchSupport.cs" />
     <Compile Include="SearchSupport\RtfSearchSupport.cs" />
     <Compile Include="SearchSupport\TextSearchSupport.cs" />
-    <Compile Include="UIExtensions\MultipleTextSelectionsAlignment.xaml.cs">
+    <Compile Include="FlowUIExtensions\UIControls\MultipleTextSelectionsAlignment.xaml.cs">
       <DependentUpon>MultipleTextSelectionsAlignment.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UIExtensions\MultipleTextSelectionsAlignmentUIExtension.cs" />
-    <Compile Include="UIExtensions\RemoveFormatting.xaml.cs">
+    <Compile Include="FlowUIExtensions\MultipleTextSelectionsAlignmentFlowUIExtension.cs" />
+    <Compile Include="FlowUIExtensions\UIControls\RemoveFormatting.xaml.cs">
       <DependentUpon>RemoveFormatting.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UIExtensions\RemoveFormattingUIExtension.cs" />
+    <Compile Include="FlowUIExtensions\RemoveFormattingFlowUIExtension.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Clipbox.Core\Clipbox.Core.csproj">
@@ -189,15 +189,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UIExtensions\MultipleTextSelectionsAlignment.xaml">
+    <Page Include="FlowUIExtensions\UIControls\MultipleTextSelectionsAlignment.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UIExtensions\RemoveFormatting.xaml">
+    <Page Include="FlowUIExtensions\UIControls\RemoveFormatting.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UIExtensions\CommonStyles.xaml">
+    <Page Include="FlowUIExtensions\UIControls\CommonStyles.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

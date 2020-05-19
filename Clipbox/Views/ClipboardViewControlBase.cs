@@ -2,6 +2,7 @@
 using Clipbox.Core.Configuration;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
+using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using Clipbox.Core.Extensibility.EventArgsClasses;
 using Clipbox.Core.Extensibility.Exceptions;
 using Clipbox.Infrastructure.Extensibility.Containers;
@@ -32,7 +33,7 @@ namespace Clipbox.Views
 
         private ISettingsService _settingsService;
 
-        private readonly List<UIExtension> _loadedExtensions;
+        private readonly List<IFlowUIExtension> _loadedExtensions;
 
         private readonly object _loadedExtensionsLockHandle = new object();
 
@@ -86,7 +87,7 @@ namespace Clipbox.Views
         {
             _container = container;
             _settingsService = settingsService;
-            _loadedExtensions = new List<UIExtension>();
+            _loadedExtensions = new List<IFlowUIExtension>();
             
             Loaded += ClipboardViewControlBase_Loaded;
         }
@@ -105,12 +106,19 @@ namespace Clipbox.Views
             }
         }
         
-        
         protected void LoadUIExtensions(ClipboardListViewBase mainListView)
         {
             if (!mainListView.GetSelectedItemIds().Any()
                 && !mainListView.GetSelectedMultiItemsIds().Any())
             {
+                lock (_extensionLoadingLockHandle)
+                {
+                    if (_loadedExtensions.Any())
+                    {
+                        ShutDownExtensions(_loadedExtensions);
+                    }
+                }
+
                 return;
             }
 
@@ -158,10 +166,20 @@ namespace Clipbox.Views
 
                 SetUpExtensions(extensions);
 
-                foreach (var extension in _loadedExtensions)
+                foreach (var extension in extensions)
                 {
-                    UIElement extensionUIElement = null;
-                    extension.OnExtensionViewGenerating(selectedClipboardItems, ref extensionUIElement, new Size(_uiExtensionContainer.MaxWidth, _uiExtensionContainer.MaxHeight));
+                    IFlowExtensionUIControl extensionUIControl = null;
+
+                    try { extensionUIControl = extension.CreateExtensionUI(selectedClipboardItems, _uiExtensionContainer.MaxWidth, _uiExtensionContainer.MaxHeight); }
+                    catch (Exception ex) { throw new ClipboxExtensionException(nameof(extension.CreateExtensionUI), extension.GetType(), ex); }
+                    
+                    if (!(extensionUIControl is UIElement extensionUIElement))
+                    {
+#if DEBUG
+                        throw new InvalidCastException($"{extension.GetType().Name} did not create an element of type UIElement when {nameof(extension.CreateExtensionUI)} was called");
+#endif
+                    }
+
                     _uiExtensionContainer.Children.Add(extensionUIElement);
                 }
 
@@ -169,23 +187,24 @@ namespace Clipbox.Views
             }
         }
         
-        private IEnumerable<UIExtension> GetExtensions(IEnumerable<IClipboardItem> clipboardItems)
+        private IEnumerable<IFlowUIExtension> GetExtensions(IEnumerable<IClipboardItem> clipboardItems)
         {
             return _container
                 .ResolveAll()
                 .Where(ext => CheckShouldLoadExtension(ext, clipboardItems));
         }
 
-        private void SetUpExtensions(IEnumerable<UIExtension> extensions)
+        private void SetUpExtensions(IEnumerable<IFlowUIExtension> extensions)
         {
-            foreach (UIExtension extension in extensions
+            foreach (IFlowUIExtension extension in extensions
                 .ToList() /* avoid 'collection was modified' if we pass _loadedExtensions as a parameter */)
             {
                 if (extension is IConfigurationRecipient confRecipient)
                 {
                     foreach (ISettingKey settingKey in _settingsService.GetSettingKeys(extension.GetType()))
                     {
-                        confRecipient.PutSetting(settingKey, _settingsService.GetSetting(settingKey));
+                        try { confRecipient.PutSetting(settingKey, _settingsService.GetSetting(settingKey)); }
+                        catch (Exception ex) { throw new ClipboxExtensionException(nameof(confRecipient.PutSetting), extension.GetType(), ex); }
                     }
                 }
 
@@ -201,9 +220,9 @@ namespace Clipbox.Views
             }
         }
 
-        private void ShutDownExtensions(IEnumerable<UIExtension> extensions)
+        private void ShutDownExtensions(IEnumerable<IFlowUIExtension> extensions)
         {
-            foreach (UIExtension extension in extensions.ToList())
+            foreach (IFlowUIExtension extension in extensions.ToList())
             {
                 if (extension is ISettingChangeRequestor settingChangeRequestor)
                 {
@@ -213,6 +232,9 @@ namespace Clipbox.Views
                 lock (_loadedExtensionsLockHandle)
                 {
                     _loadedExtensions.Remove(extension);
+
+                    try { extension.Destroy(); }
+                    catch (Exception ex) { throw new ClipboxExtensionException(nameof(extension.Destroy), extension.GetType(), ex); }
                 }
             }
         }
@@ -226,7 +248,7 @@ namespace Clipbox.Views
             ext.PutSetting(e.SettingKey, e.Value);
         }
 
-        private bool CheckShouldLoadExtension(UIExtension extension, IEnumerable<IClipboardItem> clipboardItems)
+        private bool CheckShouldLoadExtension(IFlowUIExtension extension, IEnumerable<IClipboardItem> clipboardItems)
         {
             try { return extension.OnShouldShow(clipboardItems); }
             catch (Exception ex)
@@ -246,11 +268,6 @@ namespace Clipbox.Views
             }
             
             return parameters.ToList().AsReadOnly();
-        }
-
-        public void ClearParameters()
-        {
-            _loadedExtensions.ForEach(ext => ext.ClearParameters());
         }
         
         public virtual void ResumeDefaultState()

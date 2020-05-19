@@ -1,10 +1,11 @@
 ﻿using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
+using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes
 {
-    public abstract class ParametrizedExtension : ConfigurableExtension, IClipboxExtension
+    public abstract class ParametrizedExtension : ConfigurableExtension, IHaveFlowParameters, IClipboxExtension
     {
         private readonly List<IFlowParameter> _parameters = new List<IFlowParameter>();
         

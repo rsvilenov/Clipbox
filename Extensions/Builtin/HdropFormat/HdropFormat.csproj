@@ -63,10 +63,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PreviewGenerators\WindowsThumbnailProvider.cs" />
     <Compile Include="SearchSupport\FilesystemPathsSearchSupport.cs" />
-    <Compile Include="UIExtensions\PreferredDropEffect.xaml.cs">
+    <Compile Include="FlowUIExtensions\UIControls\PreferredDropEffect.xaml.cs">
       <DependentUpon>PreferredDropEffect.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UIExtensions\PreferredDropEffectUIExtension.cs" />
+    <Compile Include="FlowUIExtensions\PreferredDropEffectFlowUIExtension.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Clipbox.Core\Clipbox.Core.csproj">
@@ -83,7 +83,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="UIExtensions\PreferredDropEffect.xaml">
+    <Page Include="FlowUIExtensions\UIControls\PreferredDropEffect.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

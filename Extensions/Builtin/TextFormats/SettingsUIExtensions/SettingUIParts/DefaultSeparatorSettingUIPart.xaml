@@ -9,7 +9,7 @@
     xmlns:local="clr-namespace:Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIParts"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    xmlns:uiExt="clr-namespace:Clipbox.Extensions.BuiltIn.TextFormats.UIExtensions"
+    xmlns:uiExt="clr-namespace:Clipbox.Extensions.BuiltIn.TextFormats.FlowUIExtensions.UIControls"
     d:DesignHeight="450"
     d:DesignWidth="800"
     x:TypeArguments="sys:Int32"

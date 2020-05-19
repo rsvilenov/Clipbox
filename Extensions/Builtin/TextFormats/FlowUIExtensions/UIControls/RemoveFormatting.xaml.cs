@@ -1,13 +1,14 @@
-﻿using System;
+﻿using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
+using System;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace Clipbox.Extensions.BuiltIn.TextFormats.UIExtensions
+namespace Clipbox.Extensions.BuiltIn.TextFormats.FlowUIExtensions.UIControls
 {
     /// <summary>
     /// Interaction logic for RemoveFormatting.xaml
     /// </summary>
-    public partial class RemoveFormatting : UserControl
+    public partial class RemoveFormatting : UserControl, IFlowExtensionUIControl
     {
         internal event EventHandler<RemoveFormattingEventArgs> RemoveFormattingChanged;
 

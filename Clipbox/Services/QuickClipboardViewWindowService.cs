@@ -177,8 +177,6 @@ namespace Clipbox.Services
 
         public void ShowQuickClipboardViewWindow()
         {
-            _previewControl.ClearParameters();
-
             _currentMonitor = MonitorUtils.GetByForegroundWindow();
             bool resizeToDpi = ShouldResizeToDpi();
 

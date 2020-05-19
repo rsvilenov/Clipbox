@@ -1,5 +1,6 @@
 ﻿using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
+using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using Clipbox.Infrastructure.Extensibility.Containers;
 using Clipbox.Infrastructure.Extensibility.Discovery;
 using System;
@@ -133,7 +134,7 @@ namespace Clipbox
                 }
 
                 // find all extensions of type UIExtension
-                var uiExtensions = walker.FindExtensions<UIExtension>();
+                var uiExtensions = walker.FindExtensions<IFlowUIExtension>();
                 foreach (var ext in uiExtensions)
                 {
                     if (UIExtensionContainer.IsExtensionCompatible(ext))

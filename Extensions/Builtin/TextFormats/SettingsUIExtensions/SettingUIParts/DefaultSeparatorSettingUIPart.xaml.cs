@@ -1,19 +1,7 @@
 ﻿using Clipbox.Extensions.BuiltIn.TextFormats.Enums;
+using Clipbox.Extensions.BuiltIn.TextFormats.FlowUIExtensions.UIControls;
 using Clipbox.Infrastructure.UI.Extensibility;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIParts
 {
@@ -31,7 +19,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
             mtsaUiExt.SeparatorChanged += MtsaUiExt_SeparatorChanged;
         }
 
-        private void MtsaUiExt_SeparatorChanged(object sender, UIExtensions.MultipleTextSelectionsAlignment.SeparatorEventArgs e)
+        private void MtsaUiExt_SeparatorChanged(object sender, MultipleTextSelectionsAlignment.SeparatorEventArgs e)
         {
             _currentSeparator = e.Separator;
             NotifySettingModified();

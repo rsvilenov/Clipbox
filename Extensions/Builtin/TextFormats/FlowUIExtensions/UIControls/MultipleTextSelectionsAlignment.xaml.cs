@@ -1,14 +1,15 @@
-﻿using Clipbox.Extensions.BuiltIn.TextFormats.Enums;
+﻿using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
+using Clipbox.Extensions.BuiltIn.TextFormats.Enums;
 using System;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace Clipbox.Extensions.BuiltIn.TextFormats.UIExtensions
+namespace Clipbox.Extensions.BuiltIn.TextFormats.FlowUIExtensions.UIControls
 {
     /// <summary>
     /// Interaction logic for MultipleTextSelectionsAlignment.xaml
     /// </summary>
-    public partial class MultipleTextSelectionsAlignment : UserControl
+    public partial class MultipleTextSelectionsAlignment : UserControl, IFlowExtensionUIControl
     {
         internal event EventHandler<SeparatorEventArgs> SeparatorChanged;
 

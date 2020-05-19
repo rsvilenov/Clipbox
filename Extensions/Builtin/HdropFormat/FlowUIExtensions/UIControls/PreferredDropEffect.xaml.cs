@@ -1,4 +1,5 @@
-﻿using Clipbox.Extensions.BuiltIn.HdropFormat.Enums;
+﻿using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
+using Clipbox.Extensions.BuiltIn.HdropFormat.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,12 +15,12 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace Clipbox.Extensions.BuiltIn.HdropFormat.UIExtensions
+namespace Clipbox.Extensions.BuiltIn.HdropFormat.FlowUIExtensions.UIControls
 {
     /// <summary>
     /// Interaction logic for PreferredDropEffect.xaml
     /// </summary>
-    public partial class PreferredDropEffect : UserControl
+    public partial class PreferredDropEffect : UserControl, IFlowExtensionUIControl
     {
         internal event EventHandler<SelectedDropEffectEventArgs> DropEffectSelectionChanged;
 

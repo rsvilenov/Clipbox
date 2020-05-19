@@ -298,11 +298,6 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
 
             public ISettingsUIBuilder Add(string settingName, ISettingUIPart uiPart)
             {
-                if (!(uiPart is UIElement))
-                {
-                    throw new ArgumentException($"{nameof(uiPart)} should be an UIElement.");
-                }
-
                 if (!(uiPart is ISettingUIPart))
                 {
                     throw new ArgumentException($"{nameof(uiPart)} should implement {nameof(ISettingUIPart)}.");

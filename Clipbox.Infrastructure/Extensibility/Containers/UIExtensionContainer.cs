@@ -1,4 +1,4 @@
-﻿using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
+﻿using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using Clipbox.Infrastructure.Factories;
 using System;
 using System.Collections.Generic;
@@ -6,9 +6,9 @@ using System.Collections.Generic;
 namespace Clipbox.Infrastructure.Extensibility.Containers
 {
     public class UIExtensionContainer :
-        BaseExtensionContainer<UIExtension, WeakFactory>
+        BaseExtensionContainer<IFlowUIExtension, WeakFactory>
     {
-        public IEnumerable<UIExtension> ResolveAll()
+        public IEnumerable<IFlowUIExtension> ResolveAll()
         {
             foreach (Type t in base.RegisteredTypes)
             {
