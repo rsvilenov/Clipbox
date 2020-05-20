@@ -172,8 +172,9 @@ namespace Clipbox.Views
 
                     try { extensionUIControl = extension.CreateExtensionUI(selectedClipboardItems, _uiExtensionContainer.MaxWidth, _uiExtensionContainer.MaxHeight); }
                     catch (Exception ex) { throw new ClipboxExtensionException(nameof(extension.CreateExtensionUI), extension.GetType(), ex); }
-                    
-                    if (!(extensionUIControl is UIElement extensionUIElement))
+
+                    UIElement extensionUIElement = extensionUIControl as UIElement;
+                    if (extensionUIElement == null)
                     {
 #if DEBUG
                         throw new InvalidCastException($"{extension.GetType().Name} did not create an element of type UIElement when {nameof(extension.CreateExtensionUI)} was called");

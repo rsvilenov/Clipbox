@@ -82,7 +82,11 @@ namespace Clipbox
                 // ignore args.IsTerminating - we will "fail fast"
                 ProcessUnhandledException(args.ExceptionObject);
             };
-            
+
+            // some functions such as registry access cannot work properly
+            // if the program is not compiled for the appropriate platform
+            EnsurePlatformMatch();
+
             string[] startupArgs = Environment.GetCommandLineArgs();
 
             if (startupArgs.Any(arg => arg == "ShowBrushes"))
@@ -401,6 +405,15 @@ namespace Clipbox
             catch { }
 
             Environment.Exit((int)ProcessExitCodes.Error);
+        }
+
+        private void EnsurePlatformMatch()
+        {
+            if (Environment.Is64BitOperatingSystem
+                && IntPtr.Size == 4 /* int ptr size of 4 indicates that the program is compiled for 32 bit platform */)
+            {
+                throw new PlatformNotSupportedException("Please compile this program for 64 bit architecure.");
+            }
         }
     }
 }
