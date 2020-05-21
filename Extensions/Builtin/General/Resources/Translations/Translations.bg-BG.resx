@@ -126,6 +126,12 @@
   <data name="LBL_BLACKLISTED_APPS_HELP" xml:space="preserve">
     <value>Нищо, копирано от тези приложения, няма да се запази.</value>
   </data>
+  <data name="LBL_BLACKLISTED_APPS_INSTALLED_LIST" xml:space="preserve">
+    <value>Инсталирани приложения</value>
+  </data>
+  <data name="LBL_BLACKLISTED_APPS_LIST" xml:space="preserve">
+    <value>Черен списък</value>
+  </data>
   <data name="LBL_BLACKLISTED_APPS_MORE_AFTER" xml:space="preserve">
     <value>други</value>
   </data>
@@ -134,5 +140,11 @@
   </data>
   <data name="LBL_BLACKLISTED_APPS_NONE" xml:space="preserve">
     <value>Няма</value>
+  </data>
+  <data name="LBL_INSTALLED_APP_SELECTOR_TITLE" xml:space="preserve">
+    <value>Приложения в черния списък</value>
+  </data>
+  <data name="TTP_BROWSE_APP" xml:space="preserve">
+    <value>Избери програма, която не е в списъка</value>
   </data>
 </root>

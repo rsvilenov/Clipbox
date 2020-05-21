@@ -11,7 +11,7 @@ namespace Clipbox.Win32
 {
     public class ApplicationUtils
     {
-        public struct InstalledAppInfo
+        public class InstalledAppInfo
         {
             public string InstallLocation { get; internal set; }
 
@@ -60,28 +60,28 @@ namespace Clipbox.Win32
                     {
                         using (RegistryKey subKey = rootKey.OpenSubKey(subKeyName))
                         {
-                            var installedAppInfo = new InstalledAppInfo();
+                            InstalledAppInfo installedAppInfo = null;
 
                             string exePath = (string)subKey.GetValue("");
                             if (!string.IsNullOrWhiteSpace(exePath))
                             {
                                 exePath = exePath.TrimStart('\"').TrimEnd('\"');
-                                if (File.Exists(exePath))
+                                bool pathExists = false;
+                                try
                                 {
-                                    installedAppInfo.DisplayIcon = ExtractIconFromModule(exePath);
-                                    installedAppInfo.InstallLocation = Path.GetDirectoryName(exePath);
-                                    FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(exePath);
+                                    pathExists = File.Exists(exePath);
+                                }
+                                catch { }
 
-                                    installedAppInfo.DisplayName = fileVersionInfo.FileDescription;
-                                    if (exePath.Contains("\\WindowsApps\\") && fileVersionInfo.FileDescription != fileVersionInfo.ProductName)
-                                    {
-                                        installedAppInfo.DisplayName += " (" + fileVersionInfo.ProductName + ")";
-                                    }
+                                if (pathExists)
+                                {
+                                    installedAppInfo = GetAppInfoFromPath(exePath);
                                 }
                             }
 
 
-                            if (!string.IsNullOrWhiteSpace(installedAppInfo.DisplayName)
+                            if (installedAppInfo != null
+                                && !string.IsNullOrWhiteSpace(installedAppInfo.DisplayName)
                                 && !string.IsNullOrWhiteSpace(installedAppInfo.InstallLocation)
                                 && !installedApps.Any(ia => ia.InstallLocation == installedAppInfo.InstallLocation))
                             {
@@ -98,6 +98,31 @@ namespace Clipbox.Win32
             }
 
             return installedApps;
+        }
+
+        public static InstalledAppInfo GetAppInfoFromPath(string exePath)
+        {
+            InstalledAppInfo installedAppInfo = new InstalledAppInfo();
+
+            installedAppInfo.DisplayIcon = ExtractIconFromModule(exePath);
+            installedAppInfo.InstallLocation = Path.GetDirectoryName(exePath);
+            FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(exePath);
+
+            if (string.IsNullOrWhiteSpace(installedAppInfo.DisplayName))
+            {
+                installedAppInfo.DisplayName = Path.GetFileNameWithoutExtension(exePath);
+            }
+            else
+            {
+                installedAppInfo.DisplayName = fileVersionInfo.FileDescription;
+            }
+
+            if (exePath.Contains("\\WindowsApps\\") && fileVersionInfo.FileDescription != fileVersionInfo.ProductName)
+            {
+                installedAppInfo.DisplayName += " (" + fileVersionInfo.ProductName + ")";
+            }
+
+            return installedAppInfo;
         }
 
         private static IEnumerable<InstalledAppInfo> CollectInstalledApplications(RegistryKey root, string path)
@@ -135,8 +160,17 @@ namespace Clipbox.Win32
                                         {
                                             iconIndex = int.Parse(iconParts[1].Trim());
                                         }
-                                        string modulePath = iconParts[0].Trim();
-                                        if (File.Exists(modulePath))
+
+                                        string modulePath = iconParts[0].TrimStart('\"').TrimEnd('\"').Trim();
+
+                                        bool pathExists = false;
+                                        try
+                                        {
+                                            pathExists = File.Exists(modulePath);
+                                        }
+                                        catch { }
+
+                                        if (pathExists)
                                         {
                                             installedAppInfo.DisplayIcon = ExtractIconFromModule(modulePath, iconIndex);
                                         }

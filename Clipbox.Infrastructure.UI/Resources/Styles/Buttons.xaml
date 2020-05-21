@@ -690,4 +690,46 @@
         </Style.Triggers>
     </Style>
 
+    <!--  general style for the buttons consisting only of an icon  -->
+    <Style x:Key="IconButton" TargetType="{x:Type Button}">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="Foreground" Value="{DynamicResource ControlForegroundBrush}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border
+                        x:Name="btnBorder"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                        <Grid>
+                            <ContentPresenter />
+                            <Border
+                                x:Name="disabledOverlay"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                Background="Black"
+                                Opacity="0.5"
+                                Visibility="Hidden" />
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="Button.IsMouseOver" Value="True">
+                            <Setter TargetName="btnBorder" Property="Background" Value="{DynamicResource ControlHighlightBackgroundBrush}" />
+                        </Trigger>
+                        <Trigger Property="Button.IsPressed" Value="True">
+                            <Setter TargetName="btnBorder" Property="Background" Value="{DynamicResource ControlPressedBrush}" />
+                        </Trigger>
+                        <Trigger Property="Button.IsEnabled" Value="False">
+                            <Setter TargetName="disabledOverlay" Property="Visibility" Value="Visible" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
 </ResourceDictionary>

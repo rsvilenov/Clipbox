@@ -54,6 +54,10 @@
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Expression.Blend.Sdk.1.0.2\lib\net45\System.Windows.Interactivity.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -74,6 +78,11 @@
       <DependentUpon>Translations.resx</DependentUpon>
     </Compile>
     <Compile Include="SettingsUIExtensions\BlacklistedAppsSettingsUIExtension.cs" />
+    <Compile Include="SettingsUIExtensions\SettingUIParts\BindableObjects\InstalledApplicationInfo.cs" />
+    <Compile Include="SettingsUIExtensions\SettingUIParts\EventArgsClasses\InstalledApplicationInfoEventArgs.cs" />
+    <Compile Include="SettingsUIExtensions\SettingUIParts\InstalledApplicationSelector.xaml.cs">
+      <DependentUpon>InstalledApplicationSelector.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SettingsUIExtensions\SettingUIParts\BlacklistedAppsSettingUIParts.xaml.cs">
       <DependentUpon>BlacklistedAppsSettingUIParts.xaml</DependentUpon>
     </Compile>
@@ -99,8 +108,16 @@
       <Project>{c19e1a93-8a1f-4a5e-82ec-848f8c535aa7}</Project>
       <Name>Clipbox.Infrastructure.UI.Localization</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Clipbox.Win32\Clipbox.Win32.csproj">
+      <Project>{14442748-D4F5-4A60-A9DA-7E0B86D48B73}</Project>
+      <Name>Clipbox.Win32</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="SettingsUIExtensions\SettingUIParts\InstalledApplicationSelector.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="SettingsUIExtensions\SettingUIParts\BlacklistedAppsSettingUIParts.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -112,6 +129,9 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Translations.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

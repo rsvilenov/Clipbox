@@ -88,6 +88,24 @@ namespace Clipbox.Extensions.BuiltIn.General.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Installed applications.
+        /// </summary>
+        internal static string LBL_BLACKLISTED_APPS_INSTALLED_LIST {
+            get {
+                return ResourceManager.GetString("LBL_BLACKLISTED_APPS_INSTALLED_LIST", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Application blacklist.
+        /// </summary>
+        internal static string LBL_BLACKLISTED_APPS_LIST {
+            get {
+                return ResourceManager.GetString("LBL_BLACKLISTED_APPS_LIST", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to more.
         /// </summary>
         internal static string LBL_BLACKLISTED_APPS_MORE_AFTER {
@@ -111,6 +129,24 @@ namespace Clipbox.Extensions.BuiltIn.General.Resources.Translations {
         internal static string LBL_BLACKLISTED_APPS_NONE {
             get {
                 return ResourceManager.GetString("LBL_BLACKLISTED_APPS_NONE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Blacklisted applications.
+        /// </summary>
+        internal static string LBL_INSTALLED_APP_SELECTOR_TITLE {
+            get {
+                return ResourceManager.GetString("LBL_INSTALLED_APP_SELECTOR_TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Browse a pogram which is not in the list.
+        /// </summary>
+        internal static string TTP_BROWSE_APP {
+            get {
+                return ResourceManager.GetString("TTP_BROWSE_APP", resourceCulture);
             }
         }
     }

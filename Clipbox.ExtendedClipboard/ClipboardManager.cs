@@ -368,7 +368,7 @@ namespace Clipbox.ExtendedClipboard
 
             var source = new ClipboardItemSource
             {
-                SourceWindowInfo = GetForemostWindowInfo(),
+                SourceWindowInfo = GetClipboardItemSourceWindowInfo(),
                 UserName = Environment.UserName,
                 SourceMachineInfo = new SourceMachineInfo
                 {
@@ -453,7 +453,7 @@ namespace Clipbox.ExtendedClipboard
         /// Construct a SourceWindowInfo for the foreground window 
         /// </summary>
         /// <returns></returns>
-        private SourceWindowInfo GetForemostWindowInfo()
+        private SourceWindowInfo GetClipboardItemSourceWindowInfo()
         {
             bool isForemostWindowUsed = false;
 

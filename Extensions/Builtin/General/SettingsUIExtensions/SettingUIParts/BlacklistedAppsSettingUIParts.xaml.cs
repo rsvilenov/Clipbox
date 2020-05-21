@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -33,6 +34,35 @@ namespace Clipbox.Extensions.BuiltIn.General.SettingsUIExtensions.SettingUIParts
 
         public override void SetSettingValue(string value)
         {
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Popup popup = new Popup
+            {
+                PlacementTarget = Window.GetWindow(this),
+                Placement = PlacementMode.Center,
+                MinWidth = 450,
+                MinHeight = 200
+            };
+
+            InstalledApplicationSelector appSelector = new InstalledApplicationSelector();
+
+            popup.Child = appSelector;
+
+            EventHandler<EventArgsClasses.InstalledApplicationInfoEventArgs> appInfoSelectedEventHandler = null;
+
+            appInfoSelectedEventHandler = new EventHandler<EventArgsClasses.InstalledApplicationInfoEventArgs>
+                ((_, dialogArgs) =>
+                {
+                    popup.IsOpen = false;
+                    appSelector.AppInfoSelected -= appInfoSelectedEventHandler;
+                    
+                });
+
+            appSelector.AppInfoSelected += appInfoSelectedEventHandler;
+
+            popup.IsOpen = true;
         }
     }
 }

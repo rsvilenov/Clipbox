@@ -197,6 +197,7 @@
             Margin="0,10,0,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
+            Click="Button_Click"
             Content="{loc:Localize BTN_MANAGE_BLACKLISTED_APPS,
                                    ResourceLookupMode=CurrentAssembly}"
             Foreground="{DynamicResource ControlForegroundBrush}"

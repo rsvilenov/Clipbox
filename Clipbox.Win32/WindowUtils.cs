@@ -295,13 +295,31 @@ namespace Clipbox.Win32
         private static NativeEnums.WindowStylesEx GetWindowStylesEx(IntPtr hWnd)
         {
             IntPtr exStylePtr = GetWindowLong(hWnd, NativeConstants.GWL_EXSTYLE);
-            return (NativeEnums.WindowStylesEx)exStylePtr.ToInt32();
+            long exStyle = 0;
+            if (IntPtr.Size == 4)
+            {
+                exStyle = exStylePtr.ToInt32();
+            }
+            else
+            {
+                exStyle = exStylePtr.ToInt64();
+            }
+            return (NativeEnums.WindowStylesEx)exStyle;
         }
 
         private static NativeEnums.WindowStyles GetWindowStyles(IntPtr hWnd)
         {
-            IntPtr exStylePtr = GetWindowLong(hWnd, (int)NativeConstants.GWL_STYLE);
-            return (NativeEnums.WindowStyles)exStylePtr.ToInt32();
+            IntPtr stylePtr = GetWindowLong(hWnd, (int)NativeConstants.GWL_STYLE);
+            long style = 0;
+            if (IntPtr.Size == 4)
+            {
+                style = stylePtr.ToInt32();
+            }
+            else
+            {
+                style = stylePtr.ToInt64();
+            }
+            return (NativeEnums.WindowStyles)style;
         }
 
         private static int IntPtrToInt32(IntPtr intPtr)
@@ -338,12 +356,15 @@ namespace Clipbox.Win32
         }
 
         /// <summary>
-        /// Gets the foremost window hwnd
+        /// Gets the foremost (currently active) window hwnd
         /// <exception>Win32Exception</exception>
         /// </summary>
         /// <returns></returns>
         public static IntPtr GetForemostWindowHwnd()
         {
+            // MSDN: Retrieves a handle to the foreground window 
+            // (the window with which the user is currently working).
+            // https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getforegroundwindow
             return User32.GetForegroundWindow();
         }
 

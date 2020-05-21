@@ -126,6 +126,12 @@
   <data name="LBL_BLACKLISTED_APPS_HELP" xml:space="preserve">
     <value>The data, copied from these applications will not be stored.</value>
   </data>
+  <data name="LBL_BLACKLISTED_APPS_INSTALLED_LIST" xml:space="preserve">
+    <value>Installed applications</value>
+  </data>
+  <data name="LBL_BLACKLISTED_APPS_LIST" xml:space="preserve">
+    <value>Application blacklist</value>
+  </data>
   <data name="LBL_BLACKLISTED_APPS_MORE_AFTER" xml:space="preserve">
     <value>more</value>
   </data>
@@ -134,5 +140,11 @@
   </data>
   <data name="LBL_BLACKLISTED_APPS_NONE" xml:space="preserve">
     <value>None</value>
+  </data>
+  <data name="LBL_INSTALLED_APP_SELECTOR_TITLE" xml:space="preserve">
+    <value>Blacklisted applications</value>
+  </data>
+  <data name="TTP_BROWSE_APP" xml:space="preserve">
+    <value>Browse a pogram which is not in the list</value>
   </data>
 </root>

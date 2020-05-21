@@ -56,7 +56,7 @@ namespace Clipbox.Win32.Native
             SendMessageTimeoutFlags fuFlags,
             uint uTimeout,
             out UIntPtr lpdwResult);
-
+        
         [DllImport(ExternDll.User32)]
         public static extern IntPtr GetForegroundWindow();
 
