@@ -33,10 +33,12 @@ namespace Clipbox.Extensions.BuiltIn.General.SettingsUIExtensions.SettingUIParts
 
         public event EventHandler<InstalledApplicationInfoEventArgs> AppInfoSelected;
 
-        public InstalledApplicationSelector()
+        private IEnumerable<string> _selectedAppsInstallLocations;
+        public InstalledApplicationSelector(IEnumerable<string> selectedAppsInstallLocations)
         {
             InitializeComponent();
 
+            _selectedAppsInstallLocations = selectedAppsInstallLocations;
             AddApplication = new DelegateCommand<InstalledApplicationInfo>(AddApplicationHandler);
             RemoveApplication = new DelegateCommand<InstalledApplicationInfo>(RemoveApplicationHandler);
             BrowseApplication = new DelegateCommand(BrowseApplicationHandler);
@@ -130,7 +132,7 @@ namespace Clipbox.Extensions.BuiltIn.General.SettingsUIExtensions.SettingUIParts
             }
         }
 
-        public static void SetNoTopMost(IntPtr hWnd)
+        private static void SetNoTopMost(IntPtr hWnd)
         {
             User32.GetWindowRect(hWnd, out NativeStructures.RECT lpRect);
             int ret = User32.SetWindowPos(hWnd, -1, lpRect.Left, lpRect.Top, lpRect.Width, lpRect.Height, 0);
@@ -138,12 +140,25 @@ namespace Clipbox.Extensions.BuiltIn.General.SettingsUIExtensions.SettingUIParts
                 MarshalExt.ThrowOnWin32Error();
         }
 
-        public static void SetTopMost(IntPtr hWnd)
+        private static void SetTopMost(IntPtr hWnd)
         {
             User32.GetWindowRect(hWnd, out NativeStructures.RECT lpRect);
             int ret = User32.SetWindowPos(hWnd, 0, lpRect.Left, lpRect.Top, lpRect.Width, lpRect.Height, (int)NativeEnums.SetWindowPosFlags.SWP_FRAMECHANGED);
             if (ret == 0)
                 MarshalExt.ThrowOnWin32Error();
+        }
+
+        private void SetSelectedPrograms()
+        {
+            foreach (string selectedProgramLocation in _selectedAppsInstallLocations)
+            {
+                var appInfo = _appInfoCollection.FirstOrDefault(ai => ai.InstallationLocation == selectedProgramLocation);
+                if (appInfo != null)
+                {
+                    AppInfoCollection.Remove(appInfo);
+                    SelectedApps.Add(appInfo);
+                }
+            }
         }
 
         private void InstalledApplicationSelector_Loaded(object sender, System.Windows.RoutedEventArgs e)
@@ -255,6 +270,7 @@ namespace Clipbox.Extensions.BuiltIn.General.SettingsUIExtensions.SettingUIParts
         private void OnLoadDataComplete()
         {
             AppInfoCollection = new AsyncObservableCollection<InstalledApplicationInfo>(_appInfoCollection);
+            SetSelectedPrograms();
         }
 
         private void OnOkButton()

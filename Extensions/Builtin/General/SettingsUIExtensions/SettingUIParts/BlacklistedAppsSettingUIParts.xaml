@@ -154,6 +154,14 @@
                                 ResourceLookupMode=CurrentAssembly}"
             TextWrapping="Wrap" />
 
+        <TextBlock
+            Grid.Row="0"
+            Grid.Column="1"
+            Margin="10,0,0,0"
+            VerticalAlignment="Center"
+            Text="{Binding FirstBlackListedPrograms}"
+            TextWrapping="Wrap" />
+
         <StackPanel
             Grid.Row="0"
             Grid.Column="1"
@@ -168,9 +176,9 @@
             <TextBlock
                 Margin="5,0,0,0"
                 VerticalAlignment="Center"
-                Text="{loc:Localize LBL_BLACKLISTED_APPS_NONE,
-                                    ResourceLookupMode=CurrentAssembly}"
+                Text="{Binding BlackListedProgramsNMore}"
                 TextWrapping="Wrap" />
+
             <TextBlock
                 Margin="5,0,0,0"
                 VerticalAlignment="Center"

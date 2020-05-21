@@ -25,15 +25,52 @@ namespace Clipbox.Extensions.BuiltIn.General.SettingsUIExtensions.SettingUIParts
         public BlacklistedAppsSettingUIParts()
         {
             InitializeComponent();
+            this.mainGrid.DataContext = this;
+        }
+
+
+
+        public string FirstBlacklistedPrograms
+        {
+            get { return (string)GetValue(FirstBlacklistedProgramsProperty); }
+            set { SetValue(FirstBlacklistedProgramsProperty, value); }
         }
         
+        public static readonly DependencyProperty FirstBlacklistedProgramsProperty =
+            DependencyProperty.Register(nameof(FirstBlacklistedPrograms), typeof(string), typeof(BlacklistedAppsSettingUIParts), new PropertyMetadata(string.Empty));
+
+
+
+
+        public int BlackListedProgramsNMore
+        {
+            get { return (int)GetValue(BlackListedProgramsNMoreProperty); }
+            set { SetValue(BlackListedProgramsNMoreProperty, value); }
+        }
+
+        public static readonly DependencyProperty BlackListedProgramsNMoreProperty =
+            DependencyProperty.Register(nameof(BlackListedProgramsNMore), typeof(int), typeof(BlacklistedAppsSettingUIParts), new PropertyMetadata(0));
+
+        
+        public string BlackListedPrograms
+        {
+            get { return (string)GetValue(BlackListedProgramsProperty); }
+            set { SetValue(BlackListedProgramsProperty, value); }
+        }
+        
+        public static readonly DependencyProperty BlackListedProgramsProperty =
+            DependencyProperty.Register(nameof(BlackListedPrograms), typeof(string), typeof(BlacklistedAppsSettingUIParts), new PropertyMetadata(string.Empty));
+
+
+
         public override string GetSettingValue()
         {
-            return "";
+            return BlackListedPrograms;
         }
 
         public override void SetSettingValue(string value)
         {
+            BlackListedPrograms = value;
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -46,7 +83,9 @@ namespace Clipbox.Extensions.BuiltIn.General.SettingsUIExtensions.SettingUIParts
                 MinHeight = 200
             };
 
-            InstalledApplicationSelector appSelector = new InstalledApplicationSelector();
+
+            IEnumerable<string> selectedAppInstallLocations = BlackListedPrograms.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+            InstalledApplicationSelector appSelector = new InstalledApplicationSelector(selectedAppInstallLocations);
 
             popup.Child = appSelector;
 
@@ -57,7 +96,24 @@ namespace Clipbox.Extensions.BuiltIn.General.SettingsUIExtensions.SettingUIParts
                 {
                     popup.IsOpen = false;
                     appSelector.AppInfoSelected -= appInfoSelectedEventHandler;
-                    
+
+                    if (dialogArgs.SelectedApplications != null && dialogArgs.SelectedApplications.Any())
+                    {
+                        Dispatcher.BeginInvoke(new Action(() =>
+                        {
+                            BlackListedPrograms = string.Join(";", dialogArgs.SelectedApplications
+                               .Select(ia => ia.InstallationLocation).ToArray());
+                            FirstBlacklistedPrograms = dialogArgs.SelectedApplications
+                                .Select(ia => ia.InstallationLocation).First();
+                            int selectedAppsCount = dialogArgs.SelectedApplications.Count();
+                            if (selectedAppsCount > 0)
+                            {
+                                BlackListedProgramsNMore = selectedAppsCount - 1;
+                            }
+
+                            NotifySettingModified();
+                        }));
+                    }
                 });
 
             appSelector.AppInfoSelected += appInfoSelectedEventHandler;
