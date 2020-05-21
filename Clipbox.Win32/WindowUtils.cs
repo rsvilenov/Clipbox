@@ -338,15 +338,25 @@ namespace Clipbox.Win32
         }
 
         /// <summary>
-        /// Gets the foremost window info
+        /// Gets the foremost window hwnd
         /// <exception>Win32Exception</exception>
         /// </summary>
         /// <returns></returns>
-        public static WindowInfo GetForemostWindowInfo()
+        public static IntPtr GetForemostWindowHwnd()
         {
-            var foregroundHWnd = User32.GetForegroundWindow();
-            var applicationPid = GetPidByHWnd(foregroundHWnd);
-            string windowCaption = GetWindowCaptionText(foregroundHWnd);
+            return User32.GetForegroundWindow();
+        }
+
+        /// <summary>
+        /// Gets the window info for the specified HWND
+        /// <exception>Win32Exception</exception>
+        /// </summary>
+        /// <returns></returns>
+
+        public static WindowInfo GetWindowInfo(IntPtr hwnd)
+        {
+            var applicationPid = GetPidByHWnd(hwnd);
+            string windowCaption = GetWindowCaptionText(hwnd);
 
             //using (Process applicationProcess = Process.GetProcessById(applicationPid))
             //{
@@ -370,7 +380,7 @@ namespace Clipbox.Win32
             else
             {
                 windowInfo.Caption = windowCaption;
-                windowInfo.Icon = GetSmallWindowIcon(foregroundHWnd);
+                windowInfo.Icon = GetSmallWindowIcon(hwnd);
             }
             
             return windowInfo;

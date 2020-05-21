@@ -112,7 +112,9 @@ namespace Clipbox.Services
             // receiver of the clipboard contents during paste.
             DestinationWindowInfo destWindowInfo = new DestinationWindowInfo();
 
-            using (WindowUtils.WindowInfo wInfo = WindowUtils.GetForemostWindowInfo())
+            IntPtr foremostWindowHwnd = WindowUtils.GetForemostWindowHwnd();
+
+            using (WindowUtils.WindowInfo wInfo = WindowUtils.GetWindowInfo(foremostWindowHwnd))
             {
                 destWindowInfo.ApplicationPath = wInfo.ApplicationPath;
 
