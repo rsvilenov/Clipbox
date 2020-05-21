@@ -91,12 +91,19 @@ namespace Clipbox.Extensions.BuiltIn.General.SettingsUIExtensions.SettingUIParts
                     if (fileNameExists)
                     {
                         var pathAppInfo = ApplicationUtils.GetAppInfoFromPath(fileName);
+                        string productName = pathAppInfo.DisplayName;
+
+                        if (string.IsNullOrWhiteSpace(productName))
+                        {
+                            productName = Path.GetFileNameWithoutExtension(fileName);
+                        }
+
                         var installedAppInfo = new InstalledApplicationInfo
                         {
                             InstallationLocation = pathAppInfo.InstallLocation,
-                            ProductName = pathAppInfo.DisplayName
+                            ProductName = productName
                         };
-
+                        
                         if (pathAppInfo.DisplayIcon != null)
                         {
                             using (pathAppInfo.DisplayIcon)

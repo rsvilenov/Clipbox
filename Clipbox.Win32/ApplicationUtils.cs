@@ -107,15 +107,7 @@ namespace Clipbox.Win32
             installedAppInfo.DisplayIcon = ExtractIconFromModule(exePath);
             installedAppInfo.InstallLocation = Path.GetDirectoryName(exePath);
             FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(exePath);
-
-            if (string.IsNullOrWhiteSpace(installedAppInfo.DisplayName))
-            {
-                installedAppInfo.DisplayName = Path.GetFileNameWithoutExtension(exePath);
-            }
-            else
-            {
-                installedAppInfo.DisplayName = fileVersionInfo.FileDescription;
-            }
+            installedAppInfo.DisplayName = fileVersionInfo.FileDescription;
 
             if (exePath.Contains("\\WindowsApps\\") && fileVersionInfo.FileDescription != fileVersionInfo.ProductName)
             {
