@@ -3,7 +3,7 @@ using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using System.IO;
 
-namespace Clipbox.Extensions.BuiltIn.General
+namespace Clipbox.Extensions.BuiltIn.General.FlowExtensions
 {
     [ClipboxExtension]
     public class DisableRemoteDesktopOperations : FlowExtension
