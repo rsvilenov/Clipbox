@@ -455,13 +455,52 @@ namespace Clipbox.ExtendedClipboard
         /// <returns></returns>
         private SourceWindowInfo GetForemostWindowInfo()
         {
+            bool isForemostWindowUsed = false;
+
+            IntPtr lastClipboardUserHwnd = _systemClipboard.GetClipboardLastUserHWnd();
+
+            IntPtr foremostWindowHwnd = WindowUtils.GetForemostWindowHwnd();
+
+            if (lastClipboardUserHwnd == IntPtr.Zero)
+            {
+                isForemostWindowUsed = true;
+                lastClipboardUserHwnd = foremostWindowHwnd;
+            }
+
             SourceWindowInfo windowInfo = new SourceWindowInfo();
 
-            using (WindowUtils.WindowInfo wInfo = WindowUtils.GetForemostWindowInfo())
+            using (WindowUtils.WindowInfo wInfo = WindowUtils.GetWindowInfo(lastClipboardUserHwnd))
             {
+                if (!isForemostWindowUsed)
+                {
+                    using (WindowUtils.WindowInfo foremostWInfo = WindowUtils.GetWindowInfo(foremostWindowHwnd))
+                    {
+                        // always prefer the title of the window in view
+                        windowInfo.Caption =
+                            foremostWInfo.ApplicationPath == wInfo.ApplicationPath ?
+                            foremostWInfo.Caption
+                            : wInfo.Caption;
+                    }
+                }
+                else
+                {
+                    windowInfo.Caption = wInfo.Caption;
+                }
+
                 windowInfo.ApplicationInfo = GetApplicationInfo(wInfo.ApplicationPath);
-                windowInfo.Caption = wInfo.Caption;
-                windowInfo.Icon = wInfo.Icon?.ToByteArray();
+                
+                if (isForemostWindowUsed)
+                {
+                    windowInfo.Icon = wInfo.Icon?.ToByteArray();
+                }
+                else
+                {
+                    using (var icon = Icon.ExtractAssociatedIcon(wInfo.ApplicationPath))
+                    using (var bmp = icon.ToBitmap())
+                    {
+                        windowInfo.Icon = bmp.ToByteArray();
+                    }
+                }
             }
 
             return windowInfo;

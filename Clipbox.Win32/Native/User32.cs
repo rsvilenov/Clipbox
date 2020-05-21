@@ -11,6 +11,9 @@ namespace Clipbox.Win32.Native
     public static class User32
     {
         [DllImport(ExternDll.User32, SetLastError = true)]
+        public static extern IntPtr GetClipboardOwner();
+
+        [DllImport(ExternDll.User32, SetLastError = true)]
         public static extern IntPtr SetClipboardViewer(IntPtr hWndNewViewer);
 
         [DllImport(ExternDll.User32, SetLastError = true)]

@@ -52,10 +52,20 @@ namespace Clipbox.Extensions.BuiltIn.ImageFormats.FormatSupport
                         throw new FormatException("The format is not supported");
                 }
 
+                long startPtr = 0;
+                if (IntPtr.Size == 8)
+                {
+                    startPtr = hBitmap.AddrOfPinnedObject().ToInt64();
+                }
+                else
+                {
+                    startPtr = hBitmap.AddrOfPinnedObject().ToInt32();
+                }
+
                 // https://stackoverflow.com/questions/14333336/how-can-i-convert-a-cf-dibv5-from-clipboard-format17-to-a-transparent-bitmap/14335591#14335591
                 using (Bitmap bitmap = new Bitmap((int)bmi.bV5Width, (int)bmi.bV5Height, -
                            (int)(bmi.bV5SizeImage / bmi.bV5Height), pixelFormat,
-                           new IntPtr(hBitmap.AddrOfPinnedObject().ToInt32()
+                           new IntPtr(startPtr
                            + bmi.bV5Size + (bmi.bV5Height - 1)
                            * (int)(bmi.bV5SizeImage / bmi.bV5Height))))
                 {
