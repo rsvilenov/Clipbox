@@ -15,7 +15,7 @@ namespace Clipbox.Extensions.BuiltIn.General.SettingsUIExtensions
 
         protected override void RegisterSettingUIParts(ISettingsUIBuilder builder)
         {
-            builder.Add(ExtensionSettingNames.BlacklistedApps, new BlacklistedAppsSettingUIParts());
+            builder.Add(ExtensionSettingNames.BlacklistedApps, new BlacklistedAppsSettingUIPart());
         }
     }
 }

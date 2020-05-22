@@ -7,14 +7,9 @@ namespace Clipbox.Extensions.BuiltIn.General.SettingsUIExtensions.SettingUIParts
 {
     public class InstalledApplicationInfoEventArgs : EventArgs
         {
-            public InstalledApplicationInfoEventArgs(string captionSearchString, IEnumerable<InstalledApplicationInfo> selectedApplications)
+            public InstalledApplicationInfoEventArgs(IEnumerable<InstalledApplicationInfo> selectedApplications)
             {
-                if (selectedApplications == null)
-                {
-                    throw new ArgumentNullException(nameof(selectedApplications));
-                }
-
-                SelectedApplications = selectedApplications.ToList().AsReadOnly();
+                SelectedApplications = selectedApplications?.ToList().AsReadOnly();
             }
 
             public IReadOnlyList<InstalledApplicationInfo> SelectedApplications { get; set; }

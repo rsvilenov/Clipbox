@@ -106,24 +106,6 @@ namespace Clipbox.Extensions.BuiltIn.General.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to more.
-        /// </summary>
-        internal static string LBL_BLACKLISTED_APPS_MORE_AFTER {
-            get {
-                return ResourceManager.GetString("LBL_BLACKLISTED_APPS_MORE_AFTER", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to .
-        /// </summary>
-        internal static string LBL_BLACKLISTED_APPS_MORE_BEFORE {
-            get {
-                return ResourceManager.GetString("LBL_BLACKLISTED_APPS_MORE_BEFORE", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to None.
         /// </summary>
         internal static string LBL_BLACKLISTED_APPS_NONE {
@@ -138,6 +120,24 @@ namespace Clipbox.Extensions.BuiltIn.General.Resources.Translations {
         internal static string LBL_INSTALLED_APP_SELECTOR_TITLE {
             get {
                 return ResourceManager.GetString("LBL_INSTALLED_APP_SELECTOR_TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add to blacklist.
+        /// </summary>
+        internal static string TTP_BLACKLISTED_APPS_ADD {
+            get {
+                return ResourceManager.GetString("TTP_BLACKLISTED_APPS_ADD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Remove from blacklist.
+        /// </summary>
+        internal static string TTP_BLACKLISTED_APPS_REMOVE {
+            get {
+                return ResourceManager.GetString("TTP_BLACKLISTED_APPS_REMOVE", resourceCulture);
             }
         }
         

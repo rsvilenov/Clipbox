@@ -132,17 +132,17 @@
   <data name="LBL_BLACKLISTED_APPS_LIST" xml:space="preserve">
     <value>Application blacklist</value>
   </data>
-  <data name="LBL_BLACKLISTED_APPS_MORE_AFTER" xml:space="preserve">
-    <value>more</value>
-  </data>
-  <data name="LBL_BLACKLISTED_APPS_MORE_BEFORE" xml:space="preserve">
-    <value />
-  </data>
   <data name="LBL_BLACKLISTED_APPS_NONE" xml:space="preserve">
     <value>None</value>
   </data>
   <data name="LBL_INSTALLED_APP_SELECTOR_TITLE" xml:space="preserve">
     <value>Blacklisted applications</value>
+  </data>
+  <data name="TTP_BLACKLISTED_APPS_ADD" xml:space="preserve">
+    <value>Add to blacklist</value>
+  </data>
+  <data name="TTP_BLACKLISTED_APPS_REMOVE" xml:space="preserve">
+    <value>Remove from blacklist</value>
   </data>
   <data name="TTP_BROWSE_APP" xml:space="preserve">
     <value>Browse a pogram which is not in the list</value>

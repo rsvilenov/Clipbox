@@ -216,7 +216,8 @@
                                         Command="{Binding DataContext.RemoveApplication, ElementName=mainBorder}"
                                         CommandParameter="{Binding}"
                                         Style="{DynamicResource BtnRemove}"
-                                        ToolTip="Deselect" />
+                                        ToolTip="{loc:Localize TTP_BLACKLISTED_APPS_REMOVE,
+                                                               ResourceLookupMode=CurrentAssembly}" />
                                 </Grid>
                             </Border>
                         </DataTemplate>
@@ -347,7 +348,8 @@
                                             Command="{Binding DataContext.AddApplication, ElementName=mainBorder}"
                                             CommandParameter="{Binding}"
                                             Style="{DynamicResource BtnAdd}"
-                                            ToolTip="Select" />
+                                            ToolTip="{loc:Localize TTP_BLACKLISTED_APPS_ADD,
+                                                                   ResourceLookupMode=CurrentAssembly}" />
                                     </Grid>
                                 </Border>
                             </DataTemplate>

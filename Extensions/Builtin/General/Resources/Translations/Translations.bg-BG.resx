@@ -132,17 +132,17 @@
   <data name="LBL_BLACKLISTED_APPS_LIST" xml:space="preserve">
     <value>Черен списък</value>
   </data>
-  <data name="LBL_BLACKLISTED_APPS_MORE_AFTER" xml:space="preserve">
-    <value>други</value>
-  </data>
-  <data name="LBL_BLACKLISTED_APPS_MORE_BEFORE" xml:space="preserve">
-    <value />
-  </data>
   <data name="LBL_BLACKLISTED_APPS_NONE" xml:space="preserve">
     <value>Няма</value>
   </data>
   <data name="LBL_INSTALLED_APP_SELECTOR_TITLE" xml:space="preserve">
     <value>Приложения в черния списък</value>
+  </data>
+  <data name="TTP_BLACKLISTED_APPS_ADD" xml:space="preserve">
+    <value>Добави в черния списък</value>
+  </data>
+  <data name="TTP_BLACKLISTED_APPS_REMOVE" xml:space="preserve">
+    <value>Премахни от черния списък</value>
   </data>
   <data name="TTP_BROWSE_APP" xml:space="preserve">
     <value>Избери програма, която не е в списъка</value>

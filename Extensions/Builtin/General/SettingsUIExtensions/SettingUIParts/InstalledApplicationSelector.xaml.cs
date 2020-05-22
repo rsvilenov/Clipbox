@@ -42,8 +42,8 @@ namespace Clipbox.Extensions.BuiltIn.General.SettingsUIExtensions.SettingUIParts
             AddApplication = new DelegateCommand<InstalledApplicationInfo>(AddApplicationHandler);
             RemoveApplication = new DelegateCommand<InstalledApplicationInfo>(RemoveApplicationHandler);
             BrowseApplication = new DelegateCommand(BrowseApplicationHandler);
-            OkClicked = new DelegateCommand(OnOkButton, ShouldOkButtonBeEnabled);
-            CancelClicked = new DelegateCommand(OnCancelButton);
+            OkClicked = new DelegateCommand(OkButtonHandler);
+            CancelClicked = new DelegateCommand(CancelButtonHandler);
 
             SelectedApps = new AsyncObservableCollection<InstalledApplicationInfo>();
             this.mainBorder.DataContext = this;
@@ -92,28 +92,7 @@ namespace Clipbox.Extensions.BuiltIn.General.SettingsUIExtensions.SettingUIParts
 
                     if (fileNameExists)
                     {
-                        var pathAppInfo = ApplicationUtils.GetAppInfoFromPath(fileName);
-                        string productName = pathAppInfo.DisplayName;
-
-                        if (string.IsNullOrWhiteSpace(productName))
-                        {
-                            productName = Path.GetFileNameWithoutExtension(fileName);
-                        }
-
-                        var installedAppInfo = new InstalledApplicationInfo
-                        {
-                            InstallationLocation = pathAppInfo.InstallLocation,
-                            ProductName = productName
-                        };
-                        
-                        if (pathAppInfo.DisplayIcon != null)
-                        {
-                            using (pathAppInfo.DisplayIcon)
-                            using (Bitmap bmp = pathAppInfo.DisplayIcon.ToBitmap())
-                            {
-                                installedAppInfo.Icon = bmp.ToBitmapSource();
-                            }
-                        }
+                        InstalledApplicationInfo installedAppInfo = GetAppInfoFromFilePath(fileName);
 
                         if (!SelectedApps.Any(ap => ap.ProductName == installedAppInfo.ProductName))
                         {
@@ -130,6 +109,45 @@ namespace Clipbox.Extensions.BuiltIn.General.SettingsUIExtensions.SettingUIParts
                     SetTopMost(source.Handle);
                 }
             }
+        }
+
+        private static InstalledApplicationInfo GetAppInfoFromFilePath(string fileName)
+        {
+            var pathAppInfo = ApplicationUtils.GetAppInfoFromPath(fileName);
+            string productName = pathAppInfo.DisplayName;
+
+            if (string.IsNullOrWhiteSpace(productName))
+            {
+                productName = Path.GetFileNameWithoutExtension(fileName);
+            }
+
+            var installedAppInfo = new InstalledApplicationInfo
+            {
+                ProductName = productName
+            };
+
+            // for browsed exe files, save the full path as the installation location,
+            // not just the directory, as the exe may be located for example in the
+            // Downloads folder along with other executables for other software products.
+            if (pathAppInfo.InstallLocation.EndsWith(Path.GetFileName(fileName)))
+            {
+                installedAppInfo.InstallationLocation = pathAppInfo.InstallLocation;
+            }
+            else
+            {
+                installedAppInfo.InstallationLocation = Path.Combine(pathAppInfo.InstallLocation, Path.GetFileName(fileName));
+            }
+
+            if (pathAppInfo.DisplayIcon != null)
+            {
+                using (pathAppInfo.DisplayIcon)
+                using (Bitmap bmp = pathAppInfo.DisplayIcon.ToBitmap())
+                {
+                    installedAppInfo.Icon = bmp.ToBitmapSource();
+                }
+            }
+
+            return installedAppInfo;
         }
 
         private static void SetNoTopMost(IntPtr hWnd)
@@ -150,12 +168,24 @@ namespace Clipbox.Extensions.BuiltIn.General.SettingsUIExtensions.SettingUIParts
 
         private void SetSelectedPrograms()
         {
-            foreach (string selectedProgramLocation in _selectedAppsInstallLocations)
+            if (_selectedAppsInstallLocations != null)
             {
-                var appInfo = _appInfoCollection.FirstOrDefault(ai => ai.InstallationLocation == selectedProgramLocation);
-                if (appInfo != null)
+                foreach (string selectedProgramLocation in _selectedAppsInstallLocations)
                 {
-                    AppInfoCollection.Remove(appInfo);
+                    var appInfo = _appInfoCollection.FirstOrDefault(ai => ai.InstallationLocation == selectedProgramLocation);
+                    if (appInfo != null)
+                    {
+                        AppInfoCollection.Remove(appInfo);
+                    }
+                    else
+                    {
+                        // if the file does not exist or cannot be accessed, skip
+                        try { if (!File.Exists(selectedProgramLocation)) continue; }
+                        catch { continue; }
+
+                        appInfo = GetAppInfoFromFilePath(selectedProgramLocation);
+                    }
+
                     SelectedApps.Add(appInfo);
                 }
             }
@@ -214,20 +244,7 @@ namespace Clipbox.Extensions.BuiltIn.General.SettingsUIExtensions.SettingUIParts
         public static readonly DependencyProperty SelectedAppsProperty =
             DependencyProperty.Register(nameof(SelectedApps), typeof(AsyncObservableCollection<InstalledApplicationInfo>), typeof(InstalledApplicationSelector), new PropertyMetadata(null));
 
-
-
-
-        private string WindowCaptionSearchString
-        {
-            get { return (string)GetValue(WindowCaptionSearchStringProperty); }
-            set { SetValue(WindowCaptionSearchStringProperty, value); }
-        }
-
-        private static readonly DependencyProperty WindowCaptionSearchStringProperty =
-            DependencyProperty.Register(nameof(WindowCaptionSearchString), typeof(string), typeof(InstalledApplicationSelector), new PropertyMetadata(null));
-
-
-
+        
         /// <summary>
         /// Indicates that the code in LoadData() is executing
         /// </summary>
@@ -273,19 +290,14 @@ namespace Clipbox.Extensions.BuiltIn.General.SettingsUIExtensions.SettingUIParts
             SetSelectedPrograms();
         }
 
-        private void OnOkButton()
+        private void OkButtonHandler()
         {
-            AppInfoSelected?.Invoke(this, new InstalledApplicationInfoEventArgs(WindowCaptionSearchString, SelectedApps));
+            AppInfoSelected?.Invoke(this, new InstalledApplicationInfoEventArgs(SelectedApps));
         }
 
-        private bool ShouldOkButtonBeEnabled()
+        private void CancelButtonHandler()
         {
-            return SelectedApps.Any() || !string.IsNullOrWhiteSpace(WindowCaptionSearchString);
-        }
-
-        private void OnCancelButton()
-        {
-            AppInfoSelected?.Invoke(this, new InstalledApplicationInfoEventArgs(null, Enumerable.Empty<InstalledApplicationInfo>()));
+            AppInfoSelected?.Invoke(this, new InstalledApplicationInfoEventArgs(null));
         }
 
         private void SearchTextBox_SearchRequested(object sender, RoutedEventArgs e)
