@@ -268,5 +268,8 @@ namespace Clipbox.Win32.Native
 
         [DllImport(ExternDll.User32, CharSet = CharSet.Auto, ExactSpelling = true)]
         public static extern int GetDoubleClickTime();
+
+        [DllImport(ExternDll.User32, SetLastError = true)]
+        internal static extern bool GetGUIThreadInfo(uint idThread, ref GuiThreadInfo lpgui);
     }
 }

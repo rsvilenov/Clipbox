@@ -125,12 +125,24 @@ namespace Clipbox.Views.FilterBand
                 {
                     Icon = GetApplicationIcon(i.Key, i.Value),
                     ExecutablePath = i.Key.ApplicationPath,
-                    ExecutableName = System.IO.Path.GetFileNameWithoutExtension(i.Key.ApplicationPath),
+                    ExecutableName = Path.GetFileNameWithoutExtension(i.Key.ApplicationPath),
                     ProductName = i.Key.ProductName,
                     FileDescription = i.Key.FileDescription,
-                    FormattedProductName = AppDescriptionFormatter.Format(i.Key)
+                    FormattedProductName = FormatProductName(i.Key)
                 })
                 .ToList();
+        }
+
+        private string FormatProductName(IApplicationInfo appInfo)
+        {
+            string formattedName = AppDescriptionFormatter.Format(appInfo);
+
+            if (string.IsNullOrWhiteSpace(formattedName))
+            {
+                formattedName = Path.GetFileNameWithoutExtension(appInfo.ApplicationPath);
+            }
+
+            return formattedName;
         }
 
         protected override void OnLoadDataComplete()

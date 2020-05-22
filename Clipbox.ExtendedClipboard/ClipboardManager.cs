@@ -471,29 +471,42 @@ namespace Clipbox.ExtendedClipboard
 
             using (WindowUtils.WindowInfo wInfo = WindowUtils.GetWindowInfo(lastClipboardUserHwnd))
             {
-                if (!isForemostWindowUsed)
+                bool isSourceSvcHost = wInfo.ApplicationPath.EndsWith("svchost.exe");
+                if (!isForemostWindowUsed ||
+                    /* some apps may use a service for clipboard access (it looks like "Paint 3d" is doing that) */
+                    isSourceSvcHost)
                 {
                     using (WindowUtils.WindowInfo foremostWInfo = WindowUtils.GetWindowInfo(foremostWindowHwnd))
                     {
-                        // always prefer the title of the window in view
-                        windowInfo.Caption =
-                            foremostWInfo.ApplicationPath == wInfo.ApplicationPath ?
-                            foremostWInfo.Caption
-                            : wInfo.Caption;
+                        if (isSourceSvcHost)
+                        {
+                            windowInfo.Icon = foremostWInfo.Icon?.ToByteArray();
+                            windowInfo.Caption = foremostWInfo.Caption;
+                            windowInfo.ApplicationInfo = GetApplicationInfo(foremostWInfo.ApplicationPath);
+                        }
+                        else
+                        {
+                            // always prefer the title of the window in view
+                            windowInfo.Caption =
+                                foremostWInfo.ApplicationPath == wInfo.ApplicationPath ?
+                                foremostWInfo.Caption
+                                : wInfo.Caption;
+                            windowInfo.ApplicationInfo = GetApplicationInfo(wInfo.ApplicationPath);
+                        }
                     }
                 }
                 else
                 {
                     windowInfo.Caption = wInfo.Caption;
+                    windowInfo.ApplicationInfo = GetApplicationInfo(wInfo.ApplicationPath);
                 }
 
-                windowInfo.ApplicationInfo = GetApplicationInfo(wInfo.ApplicationPath);
                 
                 if (isForemostWindowUsed)
                 {
                     windowInfo.Icon = wInfo.Icon?.ToByteArray();
                 }
-                else
+                else if (!isSourceSvcHost)
                 {
                     using (var icon = Icon.ExtractAssociatedIcon(wInfo.ApplicationPath))
                     using (var bmp = icon.ToBitmap())

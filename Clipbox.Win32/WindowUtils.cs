@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Xml.Linq;
 
 namespace Clipbox.Win32
 {
@@ -362,10 +363,21 @@ namespace Clipbox.Win32
         /// <returns></returns>
         public static IntPtr GetForemostWindowHwnd()
         {
-            // MSDN: Retrieves a handle to the foreground window 
-            // (the window with which the user is currently working).
-            // https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getforegroundwindow
-            return User32.GetForegroundWindow();
+            var info = new NativeStructures.GuiThreadInfo();
+            info.cbSize = Marshal.SizeOf(info);
+            // in apps, hosted inside an ApplicationFrameHost, we need
+            // to obtain the actual window.
+            if (!User32.GetGUIThreadInfo(0, ref info))
+            {
+                // if GetGUIThreadInfo fails, try with GetForegroundWindow()
+
+                // MSDN: Retrieves a handle to the foreground window 
+                // (the window with which the user is currently working).
+                // https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getforegroundwindow
+                return User32.GetForegroundWindow();
+            }
+
+            return info.hwndFocus;
         }
 
         /// <summary>
@@ -397,6 +409,13 @@ namespace Clipbox.Win32
             {
                 windowInfo.Caption = "Desktop";
                 windowInfo.Icon = GetSmallIconFromDirectoryPath(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory));
+            }
+            else if (!string.IsNullOrWhiteSpace(applicationPath)
+                && applicationPath.All(c => !Path.GetInvalidPathChars().Contains(c))
+                && applicationPath.Contains("\\WindowsApps\\"))
+            {
+                windowInfo.Caption = windowCaption;
+                windowInfo.Icon = ApplicationUtils.GetModernAppIcon(applicationPath);
             }
             else
             {

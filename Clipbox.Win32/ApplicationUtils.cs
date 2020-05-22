@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace Clipbox.Win32
 {
@@ -219,6 +220,50 @@ namespace Clipbox.Win32
             }
 
             return icon;
+        }
+
+        public static Bitmap GetModernAppIcon(string appFullPath)
+        {
+            // https://stackoverflow.com/questions/32122679/getting-icon-of-modern-windows-app-from-a-desktop-application
+
+            var dir = System.IO.Path.GetDirectoryName(appFullPath);
+            var manifestPath = System.IO.Path.Combine(dir, "AppxManifest.xml");
+            if (File.Exists(manifestPath))
+            {
+                // this is manifest file
+                string pathToLogo;
+                using (var fs = File.OpenRead(manifestPath))
+                {
+                    var manifest = XDocument.Load(fs);
+                    const string ns = "http://schemas.microsoft.com/appx/manifest/foundation/windows10";
+                    // rude parsing - take more care here
+                    try
+                    {
+                        pathToLogo = manifest.Root.Element(XName.Get("Properties", ns)).Element(XName.Get("Logo", ns)).Value;
+                    }
+                    catch
+                    {
+                        return null;
+                    }
+                }
+                // now here it is tricky again - there are several files that match logo, for example
+                // black, white, contrast white. Here we choose first, but you might do differently
+                string finalLogo = null;
+                // serach for all files that match file name in Logo element but with any suffix (like "Logo.black.png, Logo.white.png etc)
+                foreach (var logoFile in Directory.GetFiles(System.IO.Path.Combine(dir, Path.GetDirectoryName(pathToLogo)),
+                    System.IO.Path.GetFileNameWithoutExtension(pathToLogo) + "*" + Path.GetExtension(pathToLogo)))
+                {
+                    finalLogo = logoFile;
+                    break;
+                }
+
+                if (File.Exists(finalLogo))
+                {
+                    return (Bitmap)Image.FromFile(finalLogo);
+                }
+            }
+            
+            return null;
         }
     }
 }
