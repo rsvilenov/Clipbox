@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Xml.Linq;
 
 namespace Clipbox.Win32
@@ -264,6 +265,160 @@ namespace Clipbox.Win32
             }
             
             return null;
+        }
+
+        /// <summary>
+        /// Gets the logo of a Windows App (WinRT, UWP...).
+        /// </summary>
+        /// <param name="appFullDirectoryPath">The installation directory of the app</param>
+        /// <param name="manifestData">The manifest info, as obtained by <see cref="ApplicationUtils.GetWindowsAppManifestData()"/></param>
+        /// <returns>The application icon or null if an icon is not found.</returns>
+        public Bitmap GetWindowsAppIcon(string appFullDirectoryPath, WindowsAppManifestData manifestData)
+        {
+            string finalLogo = null;
+
+            // serach for all files that match file name in Logo element but with any suffix (like "Logo.black.png, Logo.white.png etc)
+            string fileSearchPattern = Path.GetFileNameWithoutExtension(manifestData.PathToLogo) + "*" + Path.GetExtension(manifestData.PathToLogo);
+
+            foreach (var logoFile in Directory.GetFiles(Path.Combine(appFullDirectoryPath, Path.GetDirectoryName(manifestData.PathToLogo)), fileSearchPattern))
+            {
+                finalLogo = logoFile;
+                break;
+            }
+
+            if (File.Exists(finalLogo))
+            {
+                return (Bitmap)Image.FromFile(finalLogo);
+            }
+
+            return null;
+        }
+
+        public WindowsAppManifestData GetWindowsAppManifestData(string appFullDirectoryPath)
+        {
+            WindowsAppManifestData manifestInfo = null;
+            
+            var manifestPath = Path.Combine(appFullDirectoryPath, "AppxManifest.xml");
+
+            if (File.Exists(manifestPath))
+            {
+                manifestInfo = new WindowsAppManifestData();
+                
+                using (var fs = File.OpenRead(manifestPath))
+                {
+                    var manifest = XDocument.Load(fs);
+                    const string ns = "http://schemas.microsoft.com/appx/manifest/foundation/windows10";
+
+                    manifestInfo.Version = manifest.Root
+                        .Element(XName.Get("Identity", ns))
+                        ?.Attribute(XName.Get("Version", ns)).Value;
+
+                    var properties = manifest.Root.Element(XName.Get("Properties", ns));
+                    if (properties != null)
+                    {
+                        manifestInfo.PathToLogo = properties.Element(XName.Get("Logo", ns))?.Value;
+                        manifestInfo.PublisherDisplayName = properties.Element(XName.Get("PublisherDisplayName", ns))?.Value;
+                    }
+                }
+            }
+
+            return manifestInfo;
+        }
+
+        public string[] GetInstalledWindowsAppPackageNames()
+        {
+            using (RegistryKey hkcr = RegistryKey.OpenBaseKey(RegistryHive.ClassesRoot, RegistryView.Registry32))
+            {
+                RegistryKey packagesKey = hkcr.OpenSubKey(@"Local Settings\Software\Microsoft\Windows\CurrentVersion\AppModel\Repository\Packages");
+                return  packagesKey?.GetSubKeyNames();
+            }
+        }
+
+        public static WindowsAppPackageData GetWindowsAppResourceData(string packageName)
+        {
+            WindowsAppPackageData packageData = null;
+
+            // https://stackoverflow.com/questions/23331385/how-to-obtain-the-display-name-of-installed-metro-apps
+            using (RegistryKey hkcr = RegistryKey.OpenBaseKey(RegistryHive.ClassesRoot, RegistryView.Registry32))
+            using (RegistryKey packagesKey = hkcr.OpenSubKey(@"Local Settings\Software\Microsoft\Windows\CurrentVersion\AppModel\Repository\Packages"))
+            using (RegistryKey packageKey = packagesKey.OpenSubKey(packageName))
+            {
+                if (packageKey != null && packageKey.SubKeyCount > 0)
+                {
+                    string[] packageAppNames = packageKey.GetSubKeyNames();
+
+                    foreach (string packageAppName in packageAppNames)
+                    {
+                        using (RegistryKey packageAppKey = packageKey.OpenSubKey(packageAppName))
+                        {
+                            if (packageAppKey != null && packageAppKey.SubKeyCount > 0)
+                            {
+                                packageData = GetAppPackageInfoFromRegistry(packageKey, packageAppKey);
+
+                                if (packageData.Name.StartsWith("@"))
+                                    packageData.Name = GetResourceString(packageData.Name);
+
+                                if (packageData.Description.StartsWith("@"))
+                                    packageData.Description = GetResourceString(packageData.Description);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return packageData;
+        }
+
+        private static WindowsAppPackageData GetAppPackageInfoFromRegistry(RegistryKey packageKey, RegistryKey packageAppKey)
+        {
+            WindowsAppPackageData packageData = null;
+
+            using (RegistryKey capabilitiesKey = packageAppKey.OpenSubKey("Capabilities"))
+            {
+
+                if (capabilitiesKey != null)
+                {
+                    packageData = new WindowsAppPackageData();
+                    packageData.Name = (string)capabilitiesKey.GetValue("ApplicationName");
+                    packageData.Description = (string)capabilitiesKey.GetValue("ApplicationDescription");
+                    packageData.PackageId = (string)packageKey.GetValue("PackageID");
+                    packageData.RootFolder = (string)packageKey.GetValue("PackageRootFolder");
+                }
+            }
+
+            return packageData;
+        }
+
+        private static string GetResourceString(string resString)
+        {
+            StringBuilder sb = new StringBuilder(1024);
+
+            if (ShlwApi.SHLoadIndirectString(resString, sb, (uint)sb.Capacity, IntPtr.Zero) == 0)
+                return sb.ToString();
+
+            return null;
+        }
+
+        public class WindowsAppManifestData
+        {
+            public string AppDirectory { get; internal set; }
+
+            public string Version { get; internal set; }
+
+            public string PublisherDisplayName { get; internal set; }
+
+            public string PathToLogo { get; internal set; }
+        }
+
+        public class WindowsAppPackageData
+        {
+            public string Name { get; internal set; }
+
+            public string Description { get; internal set; }
+
+            public string PackageId { get; internal set; }
+
+            public string RootFolder { get; internal set; }
         }
     }
 }

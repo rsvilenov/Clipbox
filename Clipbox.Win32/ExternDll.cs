@@ -12,5 +12,6 @@
         public const string UxTheme = "uxtheme.dll";
         public const string WtsApi32 = "wtsapi32.dll";
         public const string Shell32 = "Shell32.dll";
+        public const string ShlwApi = "shlwapi.dll";
     }
 }

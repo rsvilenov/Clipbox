@@ -85,6 +85,7 @@
     <Compile Include="Native\Ole32.cs" />
     <Compile Include="Native\SHCore.cs" />
     <Compile Include="Native\Shell32.cs" />
+    <Compile Include="Native\ShlwApi.cs" />
     <Compile Include="Native\User32.cs" />
     <Compile Include="ExternDll.cs" />
     <Compile Include="MarshalExt.cs" />
