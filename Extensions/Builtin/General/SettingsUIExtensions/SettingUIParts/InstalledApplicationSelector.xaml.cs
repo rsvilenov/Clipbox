@@ -141,9 +141,8 @@ namespace Clipbox.Extensions.BuiltIn.General.SettingsUIExtensions.SettingUIParts
             if (pathAppInfo.DisplayIcon != null)
             {
                 using (pathAppInfo.DisplayIcon)
-                using (Bitmap bmp = pathAppInfo.DisplayIcon.ToBitmap())
-                {
-                    installedAppInfo.Icon = bmp.ToBitmapSource();
+                { 
+                    installedAppInfo.Icon = pathAppInfo.DisplayIcon.ToBitmapSource();
                 }
             }
 
@@ -274,9 +273,8 @@ namespace Clipbox.Extensions.BuiltIn.General.SettingsUIExtensions.SettingUIParts
                 if (ia.DisplayIcon != null)
                 {
                     using (ia.DisplayIcon)
-                    using (Bitmap bmp = ia.DisplayIcon.ToBitmap())
                     {
-                        appInfo.Icon = bmp.ToBitmapSource();
+                        appInfo.Icon = ia.DisplayIcon.ToBitmapSource();
                     }
                 }
 

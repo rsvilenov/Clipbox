@@ -527,9 +527,9 @@ namespace Clipbox.ExtendedClipboard
                     return new SourceApplicationInfo
                     {
                         ApplicationPath = path,
-                        CompanyName = windowsAppInfo.ManifestData.PublisherDisplayName,
-                        FileDescription = windowsAppInfo.PackageData.Description,
-                        ProductName = windowsAppInfo.PackageData.Name,
+                        CompanyName = windowsAppInfo.ManifestData.PublisherDisplayName ?? windowsAppInfo.PackageData.Name,
+                        FileDescription = windowsAppInfo.ManifestData.Description ?? windowsAppInfo.PackageData.Description,
+                        ProductName = windowsAppInfo.ManifestData.DisplayName ?? windowsAppInfo.PackageData.Name,
                         ProductVersion = windowsAppInfo.ManifestData.Version
                     };
                 }

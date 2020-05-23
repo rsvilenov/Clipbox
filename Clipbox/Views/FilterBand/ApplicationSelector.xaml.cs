@@ -99,7 +99,7 @@ namespace Clipbox.Views.FilterBand
             {
                 if (_explorerIcon == null)
                 {
-                    using (Icon appIcon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location))
+                    using (Icon appIcon = Icon.ExtractAssociatedIcon(explorerPath))
                     using (Bitmap appIconBmp = appIcon.ToBitmap())
                     {
                         _explorerIcon = appIconBmp.ToBitmapSource();

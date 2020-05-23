@@ -23,12 +23,15 @@ namespace Clipbox.Win32
 
             public string DisplayIconPath { get; internal set; }
 
-            public Icon DisplayIcon { get; internal set; }
+            public Bitmap DisplayIcon { get; internal set; }
         }
 
         public static List<InstalledAppInfo> GetAllInstalledApplications()
         {
             List<InstalledAppInfo> installedApps = new List<InstalledAppInfo>();
+
+            installedApps.AddRange(CollectFromWindowsApps());
+
             installedApps.AddRange(CollectInstalledApplications(Registry.CurrentUser, @"Software\Microsoft\Windows\CurrentVersion\Uninstall"));
             installedApps.AddRange(CollectInstalledApplications(Registry.LocalMachine, @"Software\Microsoft\Windows\CurrentVersion\Uninstall"));
 
@@ -46,12 +49,36 @@ namespace Clipbox.Win32
             installedApps.AddRange(CollectFromAppPaths(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths"));
 
             return installedApps
-                .GroupBy(ia => ia.DisplayName)
+                .GroupBy(ia => ia.InstallLocation)
                 .Select(g => g.First())
                 .ToList();
         }
 
-        private static IEnumerable<InstalledAppInfo> CollectFromAppPaths(RegistryKey root, string path)
+
+        private static IEnumerable<InstalledAppInfo> CollectFromWindowsApps()
+        {
+            if (_windowsAppInfoCache == null)
+            {
+                CacheWindowsAppInfo();
+            }
+
+            foreach (var appInfo in _windowsAppInfoCache)
+            {
+                string appInstallLocation = string.IsNullOrEmpty(appInfo.ManifestData.AppFolderFullPath)
+                    ? appInfo.PackageData.RootFolder
+                    : appInfo.ManifestData.AppFolderFullPath;
+
+                yield return new InstalledAppInfo
+                {
+                    DisplayIcon = appInfo.Icon,
+                    DisplayName = appInfo.PackageData.Name,
+                    InstallLocation = appInstallLocation
+                };
+            }
+
+        }
+
+            private static IEnumerable<InstalledAppInfo> CollectFromAppPaths(RegistryKey root, string path)
         {
             List<InstalledAppInfo> installedApps = new List<InstalledAppInfo>();
 
@@ -147,7 +174,10 @@ namespace Clipbox.Win32
                                 {
                                     if (installedAppInfo.DisplayIconPath.EndsWith(".ico"))
                                     {
-                                        installedAppInfo.DisplayIcon = new Icon(installedAppInfo.DisplayIconPath);
+                                        using (Icon icon = new Icon(installedAppInfo.DisplayIconPath))
+                                        {
+                                            installedAppInfo.DisplayIcon = icon.ToBitmap();
+                                        }
                                     }
                                     else
                                     {
@@ -199,7 +229,7 @@ namespace Clipbox.Win32
             }
         }
 
-        private static Icon ExtractIconFromModule(string path, int iconIndex = 0)
+        private static Bitmap ExtractIconFromModule(string path, int iconIndex = 0)
         {
             if (path == null)
             {
@@ -211,7 +241,7 @@ namespace Clipbox.Win32
                 throw new ArgumentException($"{path} does not exist.");
             }
 
-            Icon icon = null;
+            Bitmap iconBmp = null;
 
             IntPtr[] hDummy = new IntPtr[1] { IntPtr.Zero };
             IntPtr[] hIconEx = new IntPtr[1] { IntPtr.Zero };
@@ -220,10 +250,13 @@ namespace Clipbox.Win32
 
             if (readIconCount > 0 && hIconEx[0] != IntPtr.Zero)
             {
-                icon = (Icon)Icon.FromHandle(hIconEx[0]).Clone();
+                using (Icon icon = (Icon)Icon.FromHandle(hIconEx[0]))
+                {
+                    iconBmp = icon.ToBitmap();
+                }
             }
 
-            return icon;
+            return iconBmp;
         }
 
         public static Bitmap GetModernAppIcon(string exeFullPath)
@@ -266,29 +299,110 @@ namespace Clipbox.Win32
             return null;
         }
 
-        private static WindowsAppManifestData GetWindowsAppManifestData(string appFullDirectoryPath)
+        private static IEnumerable<WindowsAppManifestData> GetWindowsAppManifestData(WindowsAppPackageData pkgData)
         {
-            WindowsAppManifestData manifestInfo = null;
-            
+            if (pkgData == null 
+                || string.IsNullOrEmpty(pkgData.PackageId) 
+                || string.IsNullOrEmpty(pkgData.RootFolder))
+            {
+                return Enumerable.Empty<WindowsAppManifestData>();
+            }
+
+            List<WindowsAppManifestData> manifestInfo = new List<WindowsAppManifestData>();
+
+            string appFullDirectoryPath = pkgData.RootFolder;
+            string packageId = pkgData.PackageId;
+
             var manifestPath = Path.Combine(appFullDirectoryPath, "AppxManifest.xml");
 
             if (File.Exists(manifestPath))
             {
-                manifestInfo = new WindowsAppManifestData();
-                
                 using (var fs = File.OpenRead(manifestPath))
                 {
                     var manifest = XDocument.Load(fs);
-                    //const string ns = "http://schemas.microsoft.com/appx/manifest/foundation/windows10";
-                    string ns = manifest.Root.Attribute("xmlns").Value;
-                    manifestInfo.Version = manifest.Root.Element(XName.Get("Identity", ns))
-                        .Attribute("Version").Value;
 
-                    var properties = manifest.Root.Element(XName.Get("Properties", ns));
-                    if (properties != null)
+                    string ns = manifest.Root.GetDefaultNamespace().NamespaceName; //"http://schemas.microsoft.com/appx/manifest/foundation/windows10";
+
+                    const string uap = "http://schemas.microsoft.com/appx/manifest/uap/windows10";
+                    const string m2 = "http://schemas.microsoft.com/appx/2013/manifest";
+
+                    string appNs = ns.EndsWith("windows10") ? uap : m2;
+
+
+                    string packageVersion = manifest.Root.Element(XName.Get("Identity", ns))
+                        .Attribute("Version")?.Value;
+
+                    string pathToPackageLogo = null;
+                    string publisherDisplayName = null;
+                    string packageDisplayName = null;
+                    var packageProperties = manifest.Root.Element(XName.Get("Properties", ns));
+                    if (packageProperties != null)
                     {
-                        manifestInfo.PathToLogo = properties.Element(XName.Get("Logo", ns))?.Value;
-                        manifestInfo.PublisherDisplayName = properties.Element(XName.Get("PublisherDisplayName", ns))?.Value;
+                        pathToPackageLogo = packageProperties.Element(XName.Get("Logo", ns))?.Value;
+                        publisherDisplayName = packageProperties.Element(XName.Get("PublisherDisplayName", ns))?.Value;
+
+                        packageDisplayName = packageProperties.Element(XName.Get("DisplayName", ns))?.Value;
+                        if (packageDisplayName != null && packageDisplayName.StartsWith("ms-resource:"))
+                        {
+                            string resourceKeyString = $"@{{{packageId}}}?{packageDisplayName}";
+                            packageDisplayName = GetResourceString(resourceKeyString);
+                        }
+                    }
+
+                    var applications = manifest.Root.Element(XName.Get("Applications", ns));
+                    foreach (var application in applications.Elements(XName.Get("Application", ns)))
+                    {
+                        string appDirectory = appFullDirectoryPath;
+                        string executable = application.Attribute("Executable")?.Value;
+                        if (!string.IsNullOrEmpty(executable))
+                        {
+                            string subDir = Path.GetDirectoryName(executable);
+                            if (!string.IsNullOrEmpty(subDir))
+                            {
+                                appDirectory = Path.Combine(appDirectory, subDir);
+                            }
+                        }
+                        
+                        var visualElements = application.Element(XName.Get("VisualElements", appNs));
+                        string pathToLogo = null;
+                        string displayName = null;
+                        string description = null;
+                        if (visualElements != null)
+                        {
+                            displayName = visualElements.Attribute("DisplayName")?.Value;
+                            if (displayName != null && displayName.StartsWith("ms-resource:"))
+                            {
+                                string resourceKeyString = $"@{{{packageId}}}?{displayName}";
+                                displayName = GetResourceString(resourceKeyString);
+                            }
+
+                            description = visualElements.Attribute("Description")?.Value;
+                            pathToLogo = visualElements.Attributes()
+                                .FirstOrDefault(a => a.Name.LocalName.EndsWith("Logo", StringComparison.OrdinalIgnoreCase))
+                                ?.Value;
+                            manifestInfo.Add(new WindowsAppManifestData
+                            {
+                                AppFolderFullPath = appDirectory,
+                                PathToLogo = pathToLogo ?? pathToPackageLogo,
+                                PublisherDisplayName = publisherDisplayName,
+                                Version = packageVersion,
+                                Description = description,
+                                ExecutableName = executable,
+                                DisplayName = displayName ?? packageDisplayName
+                            });
+                        }
+                    }
+
+                    if (!manifestInfo.Any())
+                    {
+                        manifestInfo.Add(new WindowsAppManifestData
+                        {
+                            AppFolderFullPath = appFullDirectoryPath,
+                            PathToLogo = pathToPackageLogo,
+                            PublisherDisplayName = publisherDisplayName,
+                            Version = packageVersion,
+                            DisplayName = packageDisplayName
+                        });
                     }
                 }
             }
@@ -308,10 +422,14 @@ namespace Clipbox.Win32
             {
                 foreach (var packageName in packageNames)
                 {
-                    WindowsAppInfo appInfo = GetWindowsAppInfoForPackage(packageName);
-                    if (appInfo != null)
+                    foreach (var appInfo in GetWindowsAppsInfoForPackage(packageName))
                     {
-                        _windowsAppInfoCache.Add(appInfo);
+                        if (appInfo != null 
+                            && appInfo.PackageData != null 
+                            && appInfo.ManifestData != null)
+                        {
+                            _windowsAppInfoCache.Add(appInfo);
+                        }
                     }
                 }
             }
@@ -323,27 +441,25 @@ namespace Clipbox.Win32
             return exeFullPath.StartsWith(packagesRoot);
         }
 
-        private static WindowsAppInfo GetWindowsAppInfoForPackage(string packageName)
+        private static IEnumerable<WindowsAppInfo> GetWindowsAppsInfoForPackage(string packageName)
         {
-            WindowsAppInfo appInfo = new WindowsAppInfo
-            { };
-
-            appInfo.PackageData = GetWindowsAppPackageData(packageName);
-            if (appInfo.PackageData == null 
-                || !Directory.Exists(appInfo.PackageData.RootFolder))
+            var packageData = GetWindowsAppPackageData(packageName);
+            if (packageData == null
+                || !Directory.Exists(packageData.RootFolder))
             {
-                return null;
+                yield break;
             }
 
-            appInfo.ManifestData = GetWindowsAppManifestData(appInfo.PackageData.RootFolder);
-            if (appInfo.ManifestData == null)
+            foreach (var manifestData in GetWindowsAppManifestData(packageData))
             {
-                return null;
+
+                yield return new WindowsAppInfo
+                {
+                    ManifestData = manifestData,
+                    PackageData = packageData,
+                    Icon = GetWindowsAppIcon(packageData.RootFolder, manifestData)
+                };
             }
-
-            appInfo.Icon = GetWindowsAppIcon(appInfo.PackageData.RootFolder, appInfo.ManifestData);
-
-            return appInfo;
         }
 
         private static string _packagesRootFolder;
@@ -366,9 +482,12 @@ namespace Clipbox.Win32
             {
                 throw new ArgumentException($"Not a windows app: {exeFullPath}");
             }
+            string exeDir = Path.GetDirectoryName(exeFullPath);
 
             WindowsAppInfo appInfo = _windowsAppInfoCache
-                .FirstOrDefault(ai => ai.PackageData.RootFolder.Equals(Path.GetDirectoryName(exeFullPath), StringComparison.OrdinalIgnoreCase));
+                .FirstOrDefault(ai => 
+                ai.ManifestData.AppFolderFullPath.Equals(exeDir, StringComparison.OrdinalIgnoreCase)
+                || ai.PackageData.RootFolder.Equals(exeDir, StringComparison.OrdinalIgnoreCase));
 
             if (appInfo == null)
             {
@@ -376,7 +495,9 @@ namespace Clipbox.Win32
                 CacheWindowsAppInfo();
 
                 appInfo = _windowsAppInfoCache
-                .FirstOrDefault(ai => ai.PackageData.RootFolder.Equals(Path.GetDirectoryName(exeFullPath), StringComparison.OrdinalIgnoreCase));
+                    .FirstOrDefault(ai =>
+                    ai.ManifestData.AppFolderFullPath.Equals(exeDir, StringComparison.OrdinalIgnoreCase)
+                    || ai.PackageData.RootFolder.Equals(exeDir, StringComparison.OrdinalIgnoreCase));
 
             }
 
@@ -455,20 +576,28 @@ namespace Clipbox.Win32
             StringBuilder sb = new StringBuilder(1024);
 
             if (ShlwApi.SHLoadIndirectString(resString, sb, (uint)sb.Capacity, IntPtr.Zero) == 0)
+            {
                 return sb.ToString();
+            }
 
             return null;
         }
 
         public class WindowsAppManifestData
         {
-            public string AppDirectory { get; internal set; }
+            public string AppFolderFullPath { get; internal set; }
 
             public string Version { get; internal set; }
 
             public string PublisherDisplayName { get; internal set; }
 
             public string PathToLogo { get; internal set; }
+
+            public string Description { get; internal set; }
+
+            public string ExecutableName { get; internal set; }
+
+            public string DisplayName { get; set; }
         }
 
         public class WindowsAppPackageData
