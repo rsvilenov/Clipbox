@@ -483,6 +483,7 @@ namespace Clipbox.ExtendedClipboard
                             windowInfo.Icon = foremostWInfo.Icon?.ToByteArray();
                             windowInfo.Caption = foremostWInfo.Caption;
                             windowInfo.ApplicationInfo = GetApplicationInfo(foremostWInfo.ApplicationPath);
+                            windowInfo.Icon = foremostWInfo.Icon?.ToByteArray();
                         }
                         else
                         {
@@ -492,6 +493,7 @@ namespace Clipbox.ExtendedClipboard
                                 foremostWInfo.Caption
                                 : wInfo.Caption;
                             windowInfo.ApplicationInfo = GetApplicationInfo(wInfo.ApplicationPath);
+                            windowInfo.Icon = wInfo.Icon?.ToByteArray();
                         }
                     }
                 }
@@ -499,14 +501,10 @@ namespace Clipbox.ExtendedClipboard
                 {
                     windowInfo.Caption = wInfo.Caption;
                     windowInfo.ApplicationInfo = GetApplicationInfo(wInfo.ApplicationPath);
-                }
-
-                
-                if (isForemostWindowUsed)
-                {
                     windowInfo.Icon = wInfo.Icon?.ToByteArray();
                 }
-                else if (!isSourceSvcHost)
+                
+                if (windowInfo.Icon == null)
                 {
                     using (var icon = Icon.ExtractAssociatedIcon(wInfo.ApplicationPath))
                     using (var bmp = icon.ToBitmap())
@@ -523,18 +521,34 @@ namespace Clipbox.ExtendedClipboard
         {
             try
             {
-                FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(path);
-                return new SourceApplicationInfo
+                if (ApplicationUtils.CheckIsWindowsApp(path))
                 {
-                    ApplicationPath = path,
-                    CompanyName = fileVersionInfo.CompanyName,
-                    FileDescription = fileVersionInfo.FileDescription,
-                    ProductName = fileVersionInfo.ProductName,
-                    ProductVersion = fileVersionInfo.ProductVersion
-                };
+                    var windowsAppInfo = ApplicationUtils.GetAppInfo(path);
+                    return new SourceApplicationInfo
+                    {
+                        ApplicationPath = path,
+                        CompanyName = windowsAppInfo.ManifestData.PublisherDisplayName,
+                        FileDescription = windowsAppInfo.PackageData.Description,
+                        ProductName = windowsAppInfo.PackageData.Name,
+                        ProductVersion = windowsAppInfo.ManifestData.Version
+                    };
+                }
+                else
+                {
+                    FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(path);
+                    return new SourceApplicationInfo
+                    {
+                        ApplicationPath = path,
+                        CompanyName = fileVersionInfo.CompanyName,
+                        FileDescription = fileVersionInfo.FileDescription,
+                        ProductName = fileVersionInfo.ProductName,
+                        ProductVersion = fileVersionInfo.ProductVersion
+                    };
+                }
             }
             // this exception can happen even if the file exists, for example when we don't have permission to access it.
-            catch (FileNotFoundException)
+            //catch (FileNotFoundException)
+            catch (Exception) // TODO: do better here...
             {
                 return new SourceApplicationInfo
                 {

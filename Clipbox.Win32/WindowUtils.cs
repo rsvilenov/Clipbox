@@ -412,7 +412,7 @@ namespace Clipbox.Win32
             }
             else if (!string.IsNullOrWhiteSpace(applicationPath)
                 && applicationPath.All(c => !Path.GetInvalidPathChars().Contains(c))
-                && applicationPath.Contains("\\WindowsApps\\"))
+                && ApplicationUtils.CheckIsWindowsApp(applicationPath))
             {
                 windowInfo.Caption = windowCaption;
                 windowInfo.Icon = ApplicationUtils.GetModernAppIcon(applicationPath);

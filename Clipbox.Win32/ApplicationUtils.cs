@@ -1,12 +1,14 @@
 ﻿using Clipbox.Win32.Native;
 using Microsoft.Win32;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Xml.Linq;
 
 namespace Clipbox.Win32
@@ -111,7 +113,8 @@ namespace Clipbox.Win32
             FileVersionInfo fileVersionInfo = FileVersionInfo.GetVersionInfo(exePath);
             installedAppInfo.DisplayName = fileVersionInfo.FileDescription;
 
-            if (exePath.Contains("\\WindowsApps\\") && fileVersionInfo.FileDescription != fileVersionInfo.ProductName)
+            string packagesRoot = GetWindowsAppPackagesRootFolder();
+            if (exePath.StartsWith(packagesRoot) && fileVersionInfo.FileDescription != fileVersionInfo.ProductName)
             {
                 installedAppInfo.DisplayName += " (" + fileVersionInfo.ProductName + ")";
             }
@@ -223,48 +226,12 @@ namespace Clipbox.Win32
             return icon;
         }
 
-        public static Bitmap GetModernAppIcon(string appFullPath)
+        public static Bitmap GetModernAppIcon(string exeFullPath)
         {
             // https://stackoverflow.com/questions/32122679/getting-icon-of-modern-windows-app-from-a-desktop-application
 
-            var dir = System.IO.Path.GetDirectoryName(appFullPath);
-            var manifestPath = System.IO.Path.Combine(dir, "AppxManifest.xml");
-            if (File.Exists(manifestPath))
-            {
-                // this is manifest file
-                string pathToLogo;
-                using (var fs = File.OpenRead(manifestPath))
-                {
-                    var manifest = XDocument.Load(fs);
-                    const string ns = "http://schemas.microsoft.com/appx/manifest/foundation/windows10";
-                    // rude parsing - take more care here
-                    try
-                    {
-                        pathToLogo = manifest.Root.Element(XName.Get("Properties", ns)).Element(XName.Get("Logo", ns)).Value;
-                    }
-                    catch
-                    {
-                        return null;
-                    }
-                }
-                // now here it is tricky again - there are several files that match logo, for example
-                // black, white, contrast white. Here we choose first, but you might do differently
-                string finalLogo = null;
-                // serach for all files that match file name in Logo element but with any suffix (like "Logo.black.png, Logo.white.png etc)
-                foreach (var logoFile in Directory.GetFiles(System.IO.Path.Combine(dir, Path.GetDirectoryName(pathToLogo)),
-                    System.IO.Path.GetFileNameWithoutExtension(pathToLogo) + "*" + Path.GetExtension(pathToLogo)))
-                {
-                    finalLogo = logoFile;
-                    break;
-                }
-
-                if (File.Exists(finalLogo))
-                {
-                    return (Bitmap)Image.FromFile(finalLogo);
-                }
-            }
-            
-            return null;
+            WindowsAppInfo appInfo = GetAppInfo(exeFullPath);
+            return appInfo?.Icon?.Clone() as Bitmap;
         }
 
         /// <summary>
@@ -273,14 +240,19 @@ namespace Clipbox.Win32
         /// <param name="appFullDirectoryPath">The installation directory of the app</param>
         /// <param name="manifestData">The manifest info, as obtained by <see cref="ApplicationUtils.GetWindowsAppManifestData()"/></param>
         /// <returns>The application icon or null if an icon is not found.</returns>
-        public Bitmap GetWindowsAppIcon(string appFullDirectoryPath, WindowsAppManifestData manifestData)
+        private static Bitmap GetWindowsAppIcon(string appFullDirectoryPath, WindowsAppManifestData manifestData)
         {
             string finalLogo = null;
 
             // serach for all files that match file name in Logo element but with any suffix (like "Logo.black.png, Logo.white.png etc)
             string fileSearchPattern = Path.GetFileNameWithoutExtension(manifestData.PathToLogo) + "*" + Path.GetExtension(manifestData.PathToLogo);
+            string logoFolder = Path.Combine(appFullDirectoryPath, Path.GetDirectoryName(manifestData.PathToLogo));
+            if (!Directory.Exists(logoFolder))
+            {
+                return null;
+            }
 
-            foreach (var logoFile in Directory.GetFiles(Path.Combine(appFullDirectoryPath, Path.GetDirectoryName(manifestData.PathToLogo)), fileSearchPattern))
+            foreach (var logoFile in Directory.GetFiles(logoFolder, fileSearchPattern))
             {
                 finalLogo = logoFile;
                 break;
@@ -294,7 +266,7 @@ namespace Clipbox.Win32
             return null;
         }
 
-        public WindowsAppManifestData GetWindowsAppManifestData(string appFullDirectoryPath)
+        private static WindowsAppManifestData GetWindowsAppManifestData(string appFullDirectoryPath)
         {
             WindowsAppManifestData manifestInfo = null;
             
@@ -307,11 +279,10 @@ namespace Clipbox.Win32
                 using (var fs = File.OpenRead(manifestPath))
                 {
                     var manifest = XDocument.Load(fs);
-                    const string ns = "http://schemas.microsoft.com/appx/manifest/foundation/windows10";
-
-                    manifestInfo.Version = manifest.Root
-                        .Element(XName.Get("Identity", ns))
-                        ?.Attribute(XName.Get("Version", ns)).Value;
+                    //const string ns = "http://schemas.microsoft.com/appx/manifest/foundation/windows10";
+                    string ns = manifest.Root.Attribute("xmlns").Value;
+                    manifestInfo.Version = manifest.Root.Element(XName.Get("Identity", ns))
+                        .Attribute("Version").Value;
 
                     var properties = manifest.Root.Element(XName.Get("Properties", ns));
                     if (properties != null)
@@ -325,16 +296,103 @@ namespace Clipbox.Win32
             return manifestInfo;
         }
 
-        public string[] GetInstalledWindowsAppPackageNames()
+        
+        private static ConcurrentBag<WindowsAppInfo> _windowsAppInfoCache;
+        public static void CacheWindowsAppInfo()
+        {
+            var newBag = new ConcurrentBag<WindowsAppInfo>();
+            Interlocked.Exchange(ref _windowsAppInfoCache, newBag); ;
+
+            string[] packageNames = GetInstalledWindowsAppPackageNames();
+            if (packageNames != null)
+            {
+                foreach (var packageName in packageNames)
+                {
+                    WindowsAppInfo appInfo = GetWindowsAppInfoForPackage(packageName);
+                    if (appInfo != null)
+                    {
+                        _windowsAppInfoCache.Add(appInfo);
+                    }
+                }
+            }
+        }
+
+        public static bool CheckIsWindowsApp(string exeFullPath)
+        {
+            string packagesRoot = GetWindowsAppPackagesRootFolder();
+            return exeFullPath.StartsWith(packagesRoot);
+        }
+
+        private static WindowsAppInfo GetWindowsAppInfoForPackage(string packageName)
+        {
+            WindowsAppInfo appInfo = new WindowsAppInfo
+            { };
+
+            appInfo.PackageData = GetWindowsAppPackageData(packageName);
+            if (appInfo.PackageData == null 
+                || !Directory.Exists(appInfo.PackageData.RootFolder))
+            {
+                return null;
+            }
+
+            appInfo.ManifestData = GetWindowsAppManifestData(appInfo.PackageData.RootFolder);
+            if (appInfo.ManifestData == null)
+            {
+                return null;
+            }
+
+            appInfo.Icon = GetWindowsAppIcon(appInfo.PackageData.RootFolder, appInfo.ManifestData);
+
+            return appInfo;
+        }
+
+        private static string _packagesRootFolder;
+        private static string GetWindowsAppPackagesRootFolder()
+        {
+            if (_packagesRootFolder == null)
+            {
+                using (var appx = Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Appx"))
+                {
+                    _packagesRootFolder = appx.GetValue("PackageRoot") as string;
+                }
+            }
+
+            return _packagesRootFolder;
+        }
+
+        public static WindowsAppInfo GetAppInfo(string exeFullPath)
+        {
+            if (!CheckIsWindowsApp(exeFullPath))
+            {
+                throw new ArgumentException($"Not a windows app: {exeFullPath}");
+            }
+
+            WindowsAppInfo appInfo = _windowsAppInfoCache
+                .FirstOrDefault(ai => ai.PackageData.RootFolder.Equals(Path.GetDirectoryName(exeFullPath), StringComparison.OrdinalIgnoreCase));
+
+            if (appInfo == null)
+            {
+                // newly installed? reload the cache
+                CacheWindowsAppInfo();
+
+                appInfo = _windowsAppInfoCache
+                .FirstOrDefault(ai => ai.PackageData.RootFolder.Equals(Path.GetDirectoryName(exeFullPath), StringComparison.OrdinalIgnoreCase));
+
+            }
+
+            return appInfo;
+        }
+
+        private static string[] GetInstalledWindowsAppPackageNames()
         {
             using (RegistryKey hkcr = RegistryKey.OpenBaseKey(RegistryHive.ClassesRoot, RegistryView.Registry32))
             {
                 RegistryKey packagesKey = hkcr.OpenSubKey(@"Local Settings\Software\Microsoft\Windows\CurrentVersion\AppModel\Repository\Packages");
-                return  packagesKey?.GetSubKeyNames();
+                return packagesKey?.GetSubKeyNames();
             }
         }
 
-        public static WindowsAppPackageData GetWindowsAppResourceData(string packageName)
+        private static WindowsAppPackageData GetWindowsAppPackageData(string packageName)
         {
             WindowsAppPackageData packageData = null;
 
@@ -355,11 +413,14 @@ namespace Clipbox.Win32
                             {
                                 packageData = GetAppPackageInfoFromRegistry(packageKey, packageAppKey);
 
-                                if (packageData.Name.StartsWith("@"))
-                                    packageData.Name = GetResourceString(packageData.Name);
+                                if (packageData != null)
+                                {
+                                    if (packageData.Name.StartsWith("@"))
+                                        packageData.Name = GetResourceString(packageData.Name);
 
-                                if (packageData.Description.StartsWith("@"))
-                                    packageData.Description = GetResourceString(packageData.Description);
+                                    if (packageData.Description.StartsWith("@"))
+                                        packageData.Description = GetResourceString(packageData.Description);
+                                }
                             }
                         }
                     }
@@ -419,6 +480,23 @@ namespace Clipbox.Win32
             public string PackageId { get; internal set; }
 
             public string RootFolder { get; internal set; }
+        }
+
+        public class WindowsAppInfo
+        {
+            public WindowsAppPackageData PackageData { get; internal set; }
+
+            public WindowsAppManifestData ManifestData { get; internal set; }
+
+
+            private Bitmap _icon;
+            public Bitmap Icon
+            {
+                // this object stays in the cache, so if someone disposes it
+                // mess will insue... so don't give users the direct reference...
+                get { return _icon?.Clone() as Bitmap; }
+                set { _icon = value; }
+            }
         }
     }
 }

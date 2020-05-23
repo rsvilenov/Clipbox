@@ -114,6 +114,8 @@ namespace Clipbox
                 MarshalExt.ThrowOnWin32Error();
             }
 
+            ApplicationUtils.CacheWindowsAppInfo();
+
             _persistenceProvider = new AppDataPersistenceProvider();
 
             string appGuid = CreateOrGetAppGuid();
