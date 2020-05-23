@@ -15,17 +15,6 @@ namespace Clipbox.Win32
 {
     public class ApplicationUtils
     {
-        public class InstalledAppInfo
-        {
-            public string InstallLocation { get; internal set; }
-
-            public string DisplayName { get; internal set; }
-
-            public string DisplayIconPath { get; internal set; }
-
-            public Bitmap DisplayIcon { get; internal set; }
-        }
-
         public static List<InstalledAppInfo> GetAllInstalledApplications()
         {
             List<InstalledAppInfo> installedApps = new List<InstalledAppInfo>();
@@ -49,11 +38,32 @@ namespace Clipbox.Win32
             installedApps.AddRange(CollectFromAppPaths(Registry.LocalMachine, @"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths"));
 
             return installedApps
+                // distinct the apps
                 .GroupBy(ia => ia.InstallLocation)
                 .Select(g => g.First())
+                // add the system accessories (they are all in %windir%\system32
+                // so we are adding them here, after the distinct by folder)
+                .Union(CollectFromWindowsAccessories())
                 .ToList();
         }
 
+        private static IEnumerable<InstalledAppInfo> CollectFromWindowsAccessories()
+        {
+            string[] accessories = new string[]
+            {
+                "notepad.exe",
+                "mspaint.exe"
+            };
+            
+            foreach (string tool in accessories)
+            {
+                string accessoryFullPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), tool);
+                if (File.Exists(accessoryFullPath))
+                {
+                    yield return GetAppInfoFromPath(accessoryFullPath);
+                }
+            }
+        }
 
         private static IEnumerable<InstalledAppInfo> CollectFromWindowsApps()
         {
@@ -78,7 +88,7 @@ namespace Clipbox.Win32
 
         }
 
-            private static IEnumerable<InstalledAppInfo> CollectFromAppPaths(RegistryKey root, string path)
+        private static IEnumerable<InstalledAppInfo> CollectFromAppPaths(RegistryKey root, string path)
         {
             List<InstalledAppInfo> installedApps = new List<InstalledAppInfo>();
 
@@ -244,7 +254,7 @@ namespace Clipbox.Win32
             }
 
             Bitmap iconBmp = null;
-
+            
             IntPtr[] hDummy = new IntPtr[1] { IntPtr.Zero };
             IntPtr[] hIconEx = new IntPtr[1] { IntPtr.Zero };
 
@@ -261,11 +271,16 @@ namespace Clipbox.Win32
             return iconBmp;
         }
 
-        public static Bitmap GetModernAppIcon(string exeFullPath)
+        /// <summary>
+        /// Retrieves the icon of a WinRT/UWP applications.
+        /// </summary>
+        /// <param name="exeFullPath">The fill path of the executable.</param>
+        /// <returns>The icon or null</returns>
+        public static Bitmap GetWindowsAppIcon(string exeFullPath)
         {
             // https://stackoverflow.com/questions/32122679/getting-icon-of-modern-windows-app-from-a-desktop-application
 
-            WindowsAppInfo appInfo = GetAppInfo(exeFullPath);
+            WindowsAppInfo appInfo = GetWinwodsAppInfo(exeFullPath);
             return appInfo?.Icon?.Clone() as Bitmap;
         }
 
@@ -414,6 +429,11 @@ namespace Clipbox.Win32
 
         
         private static ConcurrentBag<WindowsAppInfo> _windowsAppInfoCache;
+        /// <summary>
+        /// Caches the information for all WinRT/UWP apllications,
+        /// installed on the system, so that the future access to
+        /// this information will be much faster.
+        /// </summary>
         public static void CacheWindowsAppInfo()
         {
             var newBag = new ConcurrentBag<WindowsAppInfo>();
@@ -437,6 +457,11 @@ namespace Clipbox.Win32
             }
         }
 
+        /// <summary>
+        /// Checks if an applcation is an WinRT/UWP application.
+        /// </summary>
+        /// <param name="exeFullPath">The full path of the program.</param>
+        /// <returns>True if the app is WinRT/UWP</returns>
         public static bool CheckIsWindowsApp(string exeFullPath)
         {
             string packagesRoot = GetWindowsAppPackagesRootFolder();
@@ -483,7 +508,12 @@ namespace Clipbox.Win32
             return _packagesRootFolder;
         }
 
-        public static WindowsAppInfo GetAppInfo(string exeFullPath)
+        /// <summary>
+        /// Gets information about a WinRT/UWP application.
+        /// </summary>
+        /// <param name="exeFullPath">The full path of the exe file.</param>
+        /// <returns>True if the application is WinRT/UWP</returns>
+        public static WindowsAppInfo GetWinwodsAppInfo(string exeFullPath)
         {
             if (!CheckIsWindowsApp(exeFullPath))
             {
@@ -634,5 +664,17 @@ namespace Clipbox.Win32
                 set { _icon = value; }
             }
         }
+
+        public class InstalledAppInfo
+        {
+            public string InstallLocation { get; internal set; }
+
+            public string DisplayName { get; internal set; }
+
+            public string DisplayIconPath { get; internal set; }
+
+            public Bitmap DisplayIcon { get; internal set; }
+        }
+
     }
 }

@@ -430,7 +430,7 @@ namespace Clipbox.Win32
                 && ApplicationUtils.CheckIsWindowsApp(applicationPath))
             {
                 windowInfo.Caption = windowCaption;
-                windowInfo.Icon = ApplicationUtils.GetModernAppIcon(applicationPath);
+                windowInfo.Icon = ApplicationUtils.GetWindowsAppIcon(applicationPath);
             }
             else
             {

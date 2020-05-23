@@ -519,7 +519,7 @@ namespace Clipbox.ExtendedClipboard
             {
                 if (ApplicationUtils.CheckIsWindowsApp(path))
                 {
-                    var windowsAppInfo = ApplicationUtils.GetAppInfo(path);
+                    var windowsAppInfo = ApplicationUtils.GetWinwodsAppInfo(path);
                     return new SourceApplicationInfo
                     {
                         ApplicationPath = path,
