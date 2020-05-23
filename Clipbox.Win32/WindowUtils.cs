@@ -336,6 +336,8 @@ namespace Clipbox.Win32
 
             public Bitmap Icon { get; internal set; }
 
+            public int Pid { get; internal set; }
+
             public void Dispose()
             {
                 if (Icon != null)
@@ -363,21 +365,33 @@ namespace Clipbox.Win32
         /// <returns></returns>
         public static IntPtr GetForemostWindowHwnd()
         {
-            var info = new NativeStructures.GuiThreadInfo();
-            info.cbSize = Marshal.SizeOf(info);
-            // in apps, hosted inside an ApplicationFrameHost, we need
-            // to obtain the actual window.
-            if (!User32.GetGUIThreadInfo(0, ref info))
+            IntPtr fgWindow = User32.GetForegroundWindow();
+            
+            StringBuilder className = new StringBuilder(256);
+            //Get the window class name
+            if (User32.GetClassName(fgWindow, className, className.Capacity) > 0)
             {
-                // if GetGUIThreadInfo fails, try with GetForegroundWindow()
+                if (className.ToString() == "ApplicationFrameWindow")
+                {
+                    var info = new NativeStructures.GuiThreadInfo();
+                    info.cbSize = Marshal.SizeOf(info);
+                    // in apps, hosted inside an ApplicationFrameHost, we need
+                    // to obtain the actual window.
+                    if (!User32.GetGUIThreadInfo(0, ref info))
+                    {
+                        // if GetGUIThreadInfo fails, try with GetForegroundWindow()
 
-                // MSDN: Retrieves a handle to the foreground window 
-                // (the window with which the user is currently working).
-                // https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getforegroundwindow
-                return User32.GetForegroundWindow();
+                        // MSDN: Retrieves a handle to the foreground window 
+                        // (the window with which the user is currently working).
+                        // https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getforegroundwindow
+                        return User32.GetForegroundWindow();
+                    }
+
+                    return info.hwndFocus;
+                }
             }
 
-            return info.hwndFocus;
+            return fgWindow;
         }
 
         /// <summary>
@@ -399,7 +413,8 @@ namespace Clipbox.Win32
 
             WindowInfo windowInfo = new WindowInfo
             {
-                ApplicationPath = applicationPath
+                ApplicationPath = applicationPath,
+                Pid = applicationPid
             };
 
             if (string.IsNullOrWhiteSpace(windowCaption)

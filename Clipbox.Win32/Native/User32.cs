@@ -271,5 +271,8 @@ namespace Clipbox.Win32.Native
 
         [DllImport(ExternDll.User32, SetLastError = true)]
         internal static extern bool GetGUIThreadInfo(uint idThread, ref GuiThreadInfo lpgui);
+
+        [DllImport(ExternDll.User32, SetLastError = true, CharSet = CharSet.Auto)]
+        internal static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
     }
 }

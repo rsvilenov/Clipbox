@@ -478,9 +478,8 @@ namespace Clipbox.ExtendedClipboard
                 {
                     using (WindowUtils.WindowInfo foremostWInfo = WindowUtils.GetWindowInfo(foremostWindowHwnd))
                     {
-                        if (isSourceSvcHost)
+                        if (isSourceSvcHost || wInfo.Pid == foremostWInfo.Pid)
                         {
-                            windowInfo.Icon = foremostWInfo.Icon?.ToByteArray();
                             windowInfo.Caption = foremostWInfo.Caption;
                             windowInfo.ApplicationInfo = GetApplicationInfo(foremostWInfo.ApplicationPath);
                             windowInfo.Icon = foremostWInfo.Icon?.ToByteArray();
@@ -488,10 +487,7 @@ namespace Clipbox.ExtendedClipboard
                         else
                         {
                             // always prefer the title of the window in view
-                            windowInfo.Caption =
-                                foremostWInfo.ApplicationPath == wInfo.ApplicationPath ?
-                                foremostWInfo.Caption
-                                : wInfo.Caption;
+                            windowInfo.Caption = wInfo.Caption;
                             windowInfo.ApplicationInfo = GetApplicationInfo(wInfo.ApplicationPath);
                             windowInfo.Icon = wInfo.Icon?.ToByteArray();
                         }

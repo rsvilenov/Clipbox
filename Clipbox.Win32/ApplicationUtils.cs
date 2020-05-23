@@ -141,7 +141,9 @@ namespace Clipbox.Win32
             installedAppInfo.DisplayName = fileVersionInfo.FileDescription;
 
             string packagesRoot = GetWindowsAppPackagesRootFolder();
-            if (exePath.StartsWith(packagesRoot) && fileVersionInfo.FileDescription != fileVersionInfo.ProductName)
+            if (packagesRoot != null &&
+                exePath.StartsWith(packagesRoot) &&
+                fileVersionInfo.FileDescription != fileVersionInfo.ProductName)
             {
                 installedAppInfo.DisplayName += " (" + fileVersionInfo.ProductName + ")";
             }
@@ -438,7 +440,7 @@ namespace Clipbox.Win32
         public static bool CheckIsWindowsApp(string exeFullPath)
         {
             string packagesRoot = GetWindowsAppPackagesRootFolder();
-            return exeFullPath.StartsWith(packagesRoot);
+            return packagesRoot != null && exeFullPath.StartsWith(packagesRoot);
         }
 
         private static IEnumerable<WindowsAppInfo> GetWindowsAppsInfoForPackage(string packageName)
@@ -467,6 +469,11 @@ namespace Clipbox.Win32
         {
             if (_packagesRootFolder == null)
             {
+                if (IntPtr.Size == 4 && Environment.Is64BitOperatingSystem)
+                {
+                    throw new PlatformNotSupportedException("Please compile this program for 64 bit.");
+                }
+
                 using (var appx = Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Appx"))
                 {
                     _packagesRootFolder = appx.GetValue("PackageRoot") as string;
