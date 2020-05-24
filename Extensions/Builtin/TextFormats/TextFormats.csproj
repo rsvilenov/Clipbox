@@ -106,6 +106,9 @@
     <Compile Include="SearchSupport\UnicodeTextSearchSupport.cs" />
     <Compile Include="SettingsUIExtensions\EventArgsClasses\ExtensionSettingChangedEventArgs.cs" />
     <Compile Include="SettingsUIExtensions\ProcessCreditCardNumbersSettingsUIExtension.cs" />
+    <Compile Include="SettingsUIExtensions\SettingUIParts\IncludeTextAnnotationsSettingUIPart.xaml.cs">
+      <DependentUpon>IncludeTextAnnotationsSettingUIPart.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SettingsUIExtensions\SettingUIParts\PreferredColorSettingUIPart.xaml.cs">
       <DependentUpon>PreferredColorSettingUIPart.xaml</DependentUpon>
     </Compile>
@@ -180,6 +183,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="SettingsUIExtensions\SettingUIParts\IncludeTextAnnotationsSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="SettingsUIExtensions\SettingUIParts\PreferredColorSettingUIPart.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

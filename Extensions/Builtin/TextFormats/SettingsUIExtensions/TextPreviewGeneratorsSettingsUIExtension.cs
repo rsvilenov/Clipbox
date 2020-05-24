@@ -86,7 +86,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
             AdjustColorSelectorsProperties();
 
             builder
-
+                .Add(ExtensionSettingNames.IncludeAnnotation, new IncludeTextAnnotationsSettingUIPart())
                 .Add(ExtensionSettingNames.StretchBackgroundToFill, new StretchBackgroundSettingUIPart())
                 .Add(ExtensionSettingNames.Compactify, new CompactifySettingUIPart())
                 .Add(ExtensionSettingNames.PreserveOriginalFontProperties, new PreserveFontPropsSettingUIPart())

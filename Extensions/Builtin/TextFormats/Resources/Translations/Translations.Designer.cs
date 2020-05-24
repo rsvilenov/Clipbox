@@ -79,6 +79,15 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Include annotation to the text preview.
+        /// </summary>
+        internal static string LBL_INCLUDE_TEXT_ANNOTATIONS {
+            get {
+                return ResourceManager.GetString("LBL_INCLUDE_TEXT_ANNOTATIONS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Larger.
         /// </summary>
         internal static string LBL_LARGER {

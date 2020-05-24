@@ -205,4 +205,8 @@ the program will replace them with 'X' characters.</value>
 It may slow the program down, 
 it may mask other numbers as well, or break some formatted text...</value>
   </data>
+  <data name="LBL_INCLUDE_TEXT_ANNOTATIONS" xml:space="preserve">
+    <value>Include annotation to the text preview</value>
+    <comment> </comment>
+  </data>
 </root>

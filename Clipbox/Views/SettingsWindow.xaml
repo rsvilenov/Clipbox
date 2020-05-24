@@ -70,96 +70,99 @@
                 <infBeh:FrameworkElementDpiScalingBehavior />
             </i:Interaction.Behaviors>
         </Button>
-        <Grid
-            x:Name="mainGrid"
-            Grid.Row="1"
-            Margin="15"
-            Focusable="True">
-            <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <StackPanel Grid.Row="1" Orientation="Vertical">
-                <TextBlock HorizontalAlignment="Left" Text="Pin the tray icon to the taskbar" />
-                <StackPanel Margin="0,15,0,0" Orientation="Horizontal">
-                    <customControls:ToggleSwitch
-                        HorizontalAlignment="Left"
-                        IsChecked="{Binding IsSettingChanged, Mode=OneWayToSource}"
-                        OffText="{loc:Localize TGL_BTN_LBL_Off,
-                                               ResourceLookupMode=Everywhere}"
-                        OnText="{loc:Localize TGL_BTN_LBL_On,
-                                              ResourceLookupMode=Everywhere}" />
-                    <Image
-                        MinWidth="100"
-                        MinHeight="25"
-                        Margin="5,0,0,0"
-                        Source="/Resources/Images/Settings/DeskBand.png" />
+        <ScrollViewer Grid.Row="1">
+            <Grid
+                x:Name="mainGrid"
+                Margin="15"
+                Focusable="True">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <StackPanel Grid.Row="1" Orientation="Vertical">
+                    <TextBlock HorizontalAlignment="Left" Text="Pin the tray icon to the taskbar" />
+                    <StackPanel Margin="0,15,0,0" Orientation="Horizontal">
+                        <customControls:ToggleSwitch
+                            HorizontalAlignment="Left"
+                            IsChecked="{Binding IsSettingChanged, Mode=OneWayToSource}"
+                            OffText="{loc:Localize TGL_BTN_LBL_Off,
+                                                   ResourceLookupMode=Everywhere}"
+                            OnText="{loc:Localize TGL_BTN_LBL_On,
+                                                  ResourceLookupMode=Everywhere}" />
+                        <Image
+                            MinWidth="100"
+                            MinHeight="25"
+                            Margin="5,0,0,0"
+                            Source="/Resources/Images/Settings/DeskBand.png" />
+                    </StackPanel>
+
                 </StackPanel>
 
-            </StackPanel>
 
+                <ItemsControl
+                    x:Name="extensionsItemsControl"
+                    Grid.Row="2"
+                    ItemsSource="{Binding ExtensionUIItems}">
+                    <ItemsControl.ItemContainerStyle>
+                        <Style>
+                            <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <ItemsControl
+                                    Grid.Column="0"
+                                    Margin="0,0,25,0"
+                                    HorizontalAlignment="Left"
+                                    VerticalAlignment="Center"
+                                    ItemsSource="{Binding ExtensionUIParts}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Vertical" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
+                                    <ItemsControl.ItemContainerStyle>
+                                        <Style>
+                                            <Setter Property="FrameworkElement.Margin" Value="0,15,0,0" />
+                                        </Style>
+                                    </ItemsControl.ItemContainerStyle>
+                                </ItemsControl>
+                                <Grid
+                                    Grid.Column="1"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="20" />
+                                        <RowDefinition Height="20" />
+                                    </Grid.RowDefinitions>
+                                    <Image
+                                        Grid.Row="0"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Source="{Binding PreviewImage}"
+                                        Stretch="None" />
+                                    <TextBlock
+                                        Grid.Row="2"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Foreground="White"
+                                        Text="{Binding Description}" />
+                                </Grid>
 
-            <ItemsControl
-                x:Name="extensionsItemsControl"
-                Grid.Row="2"
-                ItemsSource="{Binding ExtensionUIItems}">
-                <ItemsControl.ItemContainerStyle>
-                    <Style>
-                        <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
-                    </Style>
-                </ItemsControl.ItemContainerStyle>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition />
-                                <RowDefinition Height="20" />
-                            </Grid.RowDefinitions>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
 
-                            <ItemsControl
-                                Grid.Row="0"
-                                Grid.Column="0"
-                                Margin="0,0,25,0"
-                                HorizontalAlignment="Left"
-                                VerticalAlignment="Center"
-                                ItemsSource="{Binding ExtensionUIParts}">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <StackPanel Orientation="Vertical" />
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
-                                <ItemsControl.ItemContainerStyle>
-                                    <Style>
-                                        <Setter Property="FrameworkElement.Margin" Value="0,15,0,0" />
-                                    </Style>
-                                </ItemsControl.ItemContainerStyle>
-                            </ItemsControl>
-                            <Image
-                                Grid.Row="0"
-                                Grid.Column="1"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Source="{Binding PreviewImage}"
-                                Stretch="None" />
-                            <TextBlock
-                                Grid.Row="1"
-                                Grid.ColumnSpan="2"
-                                HorizontalAlignment="Center"
-                                VerticalAlignment="Center"
-                                Foreground="White"
-                                Text="{Binding Description}" />
-                        </Grid>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-
-        </Grid>
-
+            </Grid>
+        </ScrollViewer>
 
     </Grid>
 </localWindows:AcryllicWindow>
