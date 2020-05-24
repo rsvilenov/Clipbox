@@ -208,4 +208,22 @@
   <data name="LBL_INCLUDE_TEXT_ANNOTATIONS" xml:space="preserve">
     <value>Добавяй анотации към текстoвите прегледи</value>
   </data>
+  <data name="LBL_SKIP_PASSWORDS" xml:space="preserve">
+    <value>Не запазвай копираните пароли (експериментално)</value>
+  </data>
+  <data name="LBL_SKIP_PASSWORDS_PATTERN1" xml:space="preserve">
+    <value>Поне една буква и една цифра.</value>
+  </data>
+  <data name="LBL_SKIP_PASSWORDS_PATTERN2" xml:space="preserve">
+    <value>Поне една буква, една цифра и един специален символ.</value>
+  </data>
+  <data name="LBL_SKIP_PASSWORDS_PATTERN3" xml:space="preserve">
+    <value>Поне една главна буква, една малка и една цифра.</value>
+  </data>
+  <data name="LBL_SKIP_PASSWORDS_PATTERN4" xml:space="preserve">
+    <value>Поне една главна буква, една малка, една цифра и един специален символ.</value>
+  </data>
+  <data name="LBL_SKIP_PASSWORDS_PATTERN_DESC" xml:space="preserve">
+    <value>Приемай за парола всяка кратка фраза, която има:</value>
+  </data>
 </root>

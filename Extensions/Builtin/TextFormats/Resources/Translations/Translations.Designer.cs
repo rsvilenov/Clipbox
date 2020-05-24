@@ -142,6 +142,60 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Do not store copied passwords (experimental).
+        /// </summary>
+        internal static string LBL_SKIP_PASSWORDS {
+            get {
+                return ResourceManager.GetString("LBL_SKIP_PASSWORDS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Match as password every short phrase that has:.
+        /// </summary>
+        internal static string LBL_SKIP_PASSWORDS_PATTERN_DESC {
+            get {
+                return ResourceManager.GetString("LBL_SKIP_PASSWORDS_PATTERN_DESC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to At least one letter and one number.
+        /// </summary>
+        internal static string LBL_SKIP_PASSWORDS_PATTERN1 {
+            get {
+                return ResourceManager.GetString("LBL_SKIP_PASSWORDS_PATTERN1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to At least one letter, one number and one special character.
+        /// </summary>
+        internal static string LBL_SKIP_PASSWORDS_PATTERN2 {
+            get {
+                return ResourceManager.GetString("LBL_SKIP_PASSWORDS_PATTERN2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to At least one uppercase letter, one lowercase letter and one number.
+        /// </summary>
+        internal static string LBL_SKIP_PASSWORDS_PATTERN3 {
+            get {
+                return ResourceManager.GetString("LBL_SKIP_PASSWORDS_PATTERN3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to At least one uppercase letter, one lowercase letter, one number and one special character.
+        /// </summary>
+        internal static string LBL_SKIP_PASSWORDS_PATTERN4 {
+            get {
+                return ResourceManager.GetString("LBL_SKIP_PASSWORDS_PATTERN4", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Do not store short words and phrases.
         /// </summary>
         internal static string LBL_SKIP_SHORT_STRINGS {

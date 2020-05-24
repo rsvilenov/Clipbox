@@ -77,7 +77,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.FlowExtensions
                     text = text.Trim();
                 }
 
-                Regex creditCardRegex = new Regex(CREDITCARD_REGEX);
+                Regex creditCardRegex = new Regex(CREDITCARD_REGEX, RegexOptions.Compiled);
 
                 processedText = creditCardRegex.Replace(text, m =>
                 {

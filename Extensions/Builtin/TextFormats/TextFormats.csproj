@@ -63,11 +63,14 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enums\PasswordMatchOptions.cs" />
     <Compile Include="Enums\TextConcatenateSeparators.cs" />
     <Compile Include="ExtensionSettingNames.cs" />
+    <Compile Include="FlowExtensions\Common\GetTextFromIntermediateFormat.cs" />
     <Compile Include="FlowExtensions\ConcatTextSelectionsFlowExtension.cs" />
     <Compile Include="FlowExtensions\RemoveFormattingFlowExtension.cs" />
     <Compile Include="FlowExtensions\ProcessCCNumbersFlowExtension.cs" />
+    <Compile Include="FlowExtensions\SkipPasswordsFlowExtension.cs" />
     <Compile Include="FlowExtensions\SkipShortStringsFlowExtension.cs" />
     <Compile Include="FlowParameters.cs" />
     <Compile Include="FormatSupport\AnsiTextFormatSupport.cs" />
@@ -109,6 +112,9 @@
     <Compile Include="SettingsUIExtensions\SettingUIParts\IncludeTextAnnotationsSettingUIPart.xaml.cs">
       <DependentUpon>IncludeTextAnnotationsSettingUIPart.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SettingsUIExtensions\SettingUIParts\PasswordPatternsSettingsUIPart.xaml.cs">
+      <DependentUpon>PasswordPatternsSettingsUIPart.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SettingsUIExtensions\SettingUIParts\PreferredColorSettingUIPart.xaml.cs">
       <DependentUpon>PreferredColorSettingUIPart.xaml</DependentUpon>
     </Compile>
@@ -127,6 +133,9 @@
     <Compile Include="SettingsUIExtensions\SettingUIParts\SaveLastSeparatorSettingUIPart.xaml.cs">
       <DependentUpon>SaveLastSeparatorSettingUIPart.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SettingsUIExtensions\SettingUIParts\SkipPasswordsSettingUIPart.xaml.cs">
+      <DependentUpon>SkipPasswordsSettingUIPart.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SettingsUIExtensions\SettingUIParts\SkipShortStringsSettingsUIPart.xaml.cs">
       <DependentUpon>SkipShortStringsSettingsUIPart.xaml</DependentUpon>
     </Compile>
@@ -136,6 +145,7 @@
     <Compile Include="SettingsUIExtensions\SettingUIParts\TextScaleSettingUIPart.xaml.cs">
       <DependentUpon>TextScaleSettingUIPart.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SettingsUIExtensions\SkipPasswordsSettingsUIExtension.cs" />
     <Compile Include="SettingsUIExtensions\TextFormattingSettingsUIExtension.cs" />
     <Compile Include="SettingsUIExtensions\TextPreProcessingSettingUIExtension.cs" />
     <Compile Include="SettingsUIExtensions\TextPreviewGeneratorsSettingsUIExtension.cs" />
@@ -183,7 +193,15 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="SettingsUIExtensions\SettingUIParts\CommonStyles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="SettingsUIExtensions\SettingUIParts\IncludeTextAnnotationsSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SettingsUIExtensions\SettingUIParts\PasswordPatternsSettingsUIPart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -208,6 +226,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SettingsUIExtensions\SettingUIParts\SaveLastSeparatorSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SettingsUIExtensions\SettingUIParts\SkipPasswordsSettingUIPart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
