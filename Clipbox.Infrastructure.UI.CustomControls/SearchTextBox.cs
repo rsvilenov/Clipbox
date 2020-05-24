@@ -239,13 +239,16 @@ namespace Clipbox.Infrastructure.UI.CustomControls
             OnSearchRequested();
         }
 
+        private string _textBeforeKeyUp = string.Empty;
         private void _textBox_KeyUp(object sender, KeyEventArgs e)
         {
             SetControlsVisibility();
 
+            _textBeforeKeyUp = Text;
             Text = _textBox.Text;
 
-            if (!string.IsNullOrWhiteSpace(Text))
+            if ((!string.IsNullOrEmpty(_textBeforeKeyUp) && string.IsNullOrWhiteSpace(Text))
+                || !string.IsNullOrWhiteSpace(Text))
             {
                 _searchSlidingTimer.Slide();
             }
