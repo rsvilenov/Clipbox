@@ -192,4 +192,17 @@
   <data name="LBL_SKIP_SHORTER_THAN_CHARS" xml:space="preserve">
     <value>символа.</value>
   </data>
+  <data name="LBL_PROCESS_CC_NUMBERS" xml:space="preserve">
+    <value>Пропускай/маскирай номерата на кредитни карти</value>
+  </data>
+  <data name="TTP_PROCESS_CC_NUMBERS_INFO" xml:space="preserve">
+    <value>Ако целият копиран текст е номер на кредитна карта, 
+програмата няма да я запази; ако текстът съдържа номера 
+на кредитни карти, програмата ще замени цифрите им с 'X'.</value>
+  </data>
+  <data name="TTP_PROCESS_CC_NUMBERS_WARNING" xml:space="preserve">
+    <value>Експериментална опция! 
+Може да забави програмата, да разпознае като кредитни карти 
+други поредици от цифри или да счупи форматирания текст...</value>
+  </data>
 </root>

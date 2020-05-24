@@ -192,4 +192,17 @@
   <data name="LBL_SKIP_SHORTER_THAN_CHARS" xml:space="preserve">
     <value>characters.</value>
   </data>
+  <data name="LBL_PROCESS_CC_NUMBERS" xml:space="preserve">
+    <value>Skip/mask credit card numbers (experimental)</value>
+  </data>
+  <data name="TTP_PROCESS_CC_NUMBERS_INFO" xml:space="preserve">
+    <value>If the whole copied string is a credit card number, 
+the program will not store it; if the text contains credit card numbers, 
+the program will replace them with 'X' characters.</value>
+  </data>
+  <data name="TTP_PROCESS_CC_NUMBERS_WARNING" xml:space="preserve">
+    <value>Experimental feature! 
+It may slow the program down, 
+it may mask other numbers as well, or break some formatted text...</value>
+  </data>
 </root>

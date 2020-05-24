@@ -21,5 +21,6 @@
 
         // extensions for on copy modifications of text formats
         public static string MinTextLengthToStore = nameof(MinTextLengthToStore);
+        public static string SkipMaskCreditCardNumbers = nameof(SkipMaskCreditCardNumbers);
     }
 }

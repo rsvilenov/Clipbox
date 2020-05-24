@@ -106,6 +106,15 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Skip/mask credit card numbers (experimental).
+        /// </summary>
+        internal static string LBL_PROCESS_CC_NUMBERS {
+            get {
+                return ResourceManager.GetString("LBL_PROCESS_CC_NUMBERS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Save the last chosen separator.
         /// </summary>
         internal static string LBL_SAVE_LAST_SEPARATOR {
@@ -264,6 +273,28 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.Resources.Translations {
         internal static string TTP_PRESERVE_ORIG_FONT_PROPS {
             get {
                 return ResourceManager.GetString("TTP_PRESERVE_ORIG_FONT_PROPS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to If the whole copied string is a credit card number, 
+        ///the program will not store it; if the text contains credit card numbers, 
+        ///the program will replace them with &apos;X&apos; characters..
+        /// </summary>
+        internal static string TTP_PROCESS_CC_NUMBERS_INFO {
+            get {
+                return ResourceManager.GetString("TTP_PROCESS_CC_NUMBERS_INFO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Experimental feature! 
+        ///It may slow the program down, 
+        ///it may mask other numbers as well, or break some formatted text....
+        /// </summary>
+        internal static string TTP_PROCESS_CC_NUMBERS_WARNING {
+            get {
+                return ResourceManager.GetString("TTP_PROCESS_CC_NUMBERS_WARNING", resourceCulture);
             }
         }
         

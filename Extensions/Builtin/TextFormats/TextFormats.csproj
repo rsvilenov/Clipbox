@@ -67,6 +67,7 @@
     <Compile Include="ExtensionSettingNames.cs" />
     <Compile Include="FlowExtensions\ConcatTextSelectionsFlowExtension.cs" />
     <Compile Include="FlowExtensions\RemoveFormattingFlowExtension.cs" />
+    <Compile Include="FlowExtensions\ProcessCCNumbersFlowExtension.cs" />
     <Compile Include="FlowExtensions\SkipShortStringsFlowExtension.cs" />
     <Compile Include="FlowParameters.cs" />
     <Compile Include="FormatSupport\AnsiTextFormatSupport.cs" />
@@ -104,6 +105,7 @@
     </Compile>
     <Compile Include="SearchSupport\UnicodeTextSearchSupport.cs" />
     <Compile Include="SettingsUIExtensions\EventArgsClasses\ExtensionSettingChangedEventArgs.cs" />
+    <Compile Include="SettingsUIExtensions\ProcessCreditCardNumbersSettingsUIExtension.cs" />
     <Compile Include="SettingsUIExtensions\SettingUIParts\PreferredColorSettingUIPart.xaml.cs">
       <DependentUpon>PreferredColorSettingUIPart.xaml</DependentUpon>
     </Compile>
@@ -115,6 +117,9 @@
     </Compile>
     <Compile Include="SettingsUIExtensions\SettingUIParts\PreserveFontPropsSettingUIPart.xaml.cs">
       <DependentUpon>PreserveFontPropsSettingUIPart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="SettingsUIExtensions\SettingUIParts\ProcessCCNumbersSettingUIPart.xaml.cs">
+      <DependentUpon>ProcessCCNumbersSettingUIPart.xaml</DependentUpon>
     </Compile>
     <Compile Include="SettingsUIExtensions\SettingUIParts\SaveLastSeparatorSettingUIPart.xaml.cs">
       <DependentUpon>SaveLastSeparatorSettingUIPart.xaml</DependentUpon>
@@ -188,6 +193,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SettingsUIExtensions\SettingUIParts\PreserveFontPropsSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SettingsUIExtensions\SettingUIParts\ProcessCCNumbersSettingUIPart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

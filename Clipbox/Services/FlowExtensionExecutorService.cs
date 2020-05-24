@@ -150,7 +150,7 @@ namespace Clipbox.Services
                     // set the out parameter to true
                     cancelPasteRequested = true;
                     // stop here
-                    return;
+                    break;
                 }
             }
         }
@@ -185,6 +185,11 @@ namespace Clipbox.Services
                      {
                          try { ext.OnItemStoring(sourceWindowInfo, originalIntermediateFormats, ref modifiedIfos, ref cancel); }
                          catch (Exception ex) { throw new ClipboxExtensionException(nameof(ext.OnItemStoring), ext.GetType(), ex); }
+
+                         if (cancel)
+                         {
+                             break;
+                         }
                      }
                  }
                  finally
@@ -323,6 +328,7 @@ namespace Clipbox.Services
                 if (cancel)
                 {
                     cancelShow = true;
+                    break;
                 }
             }
         }
@@ -340,6 +346,7 @@ namespace Clipbox.Services
                 if (cancel)
                 {
                     cancelStoreToItem = true;
+                    break;
                 }
             }
         }

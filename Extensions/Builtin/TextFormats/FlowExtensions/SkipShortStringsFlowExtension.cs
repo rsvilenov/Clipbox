@@ -18,6 +18,11 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.FlowExtensions
     [ClipboxExtension]
     public class SkipShortStringsFlowExtension : FlowExtension
     {
+        /// <summary>
+        /// Take the highest priority.
+        /// </summary>
+        public override int FlowOrder => -100;
+
         public override void OnItemStoring(IWindowInfo sourceWindowInfo, IEnumerable<IIntermediateFormat> originalIntermediateFormats, ref IList<IIntermediateFormat> modifiedIntermediateFormats, ref bool cancelStoreToItem)
         {
             int? textLength = GetTextLength(originalIntermediateFormats);
