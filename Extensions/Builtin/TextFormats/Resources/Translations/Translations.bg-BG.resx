@@ -226,4 +226,10 @@
   <data name="LBL_SKIP_PASSWORDS_PATTERN_DESC" xml:space="preserve">
     <value>Приемай за парола всяка кратка фраза, която има:</value>
   </data>
+  <data name="LBL_SKIP_PASSWORD_LEN_MAX" xml:space="preserve">
+    <value>Максимален брой символи</value>
+  </data>
+  <data name="LBL_SKIP_PASSWORD_LEN_MIN" xml:space="preserve">
+    <value>Минимален брой символи</value>
+  </data>
 </root>

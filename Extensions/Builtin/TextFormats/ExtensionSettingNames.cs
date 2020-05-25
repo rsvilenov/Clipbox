@@ -23,8 +23,7 @@
         public static string MinTextLengthToStore = nameof(MinTextLengthToStore);
         public static string SkipMaskCreditCardNumbers = nameof(SkipMaskCreditCardNumbers);
         public static string SkipPasswords = nameof(SkipPasswords);
-        public static string PasswordMinLength = nameof(PasswordMinLength);
-        public static string PasswordMaxLength = nameof(PasswordMaxLength);
+        public static string PasswordLengthPair = nameof(PasswordLengthPair);
         public static string PasswordMatchOption = nameof(PasswordMatchOption);
     }
 }

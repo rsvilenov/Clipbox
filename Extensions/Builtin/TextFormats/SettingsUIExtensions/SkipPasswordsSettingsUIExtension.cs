@@ -13,14 +13,16 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
         {
             settingsStore
                 .Add<bool, SkipPasswordsFlowExtension>(ExtensionSettingNames.SkipPasswords, false)
-                .Add<int, SkipPasswordsFlowExtension>(ExtensionSettingNames.PasswordMatchOption, (int)PasswordMatchOptions.Second);
+                .Add<int, SkipPasswordsFlowExtension>(ExtensionSettingNames.PasswordMatchOption, (int)PasswordMatchOptions.Second)
+                .Add<string, SkipPasswordsFlowExtension>(ExtensionSettingNames.PasswordLengthPair, "8:20");
         }
 
         protected override void RegisterSettingUIParts(ISettingsUIBuilder builder)
         {
             builder
                 .Add(ExtensionSettingNames.SkipPasswords, new SkipPasswordsSettingUIPart())
-                .Add(ExtensionSettingNames.PasswordMatchOption, new PasswordPatternsSettingsUIPart());
+                .Add(ExtensionSettingNames.PasswordMatchOption, new PasswordPatternsSettingsUIPart())
+                .Add(ExtensionSettingNames.PasswordLengthPair, new PasswordLengthSettingUIPart());
         }
     }
 }

@@ -142,6 +142,24 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Minimum number of characters.
+        /// </summary>
+        internal static string LBL_SKIP_PASSWORD_LEN_MAX {
+            get {
+                return ResourceManager.GetString("LBL_SKIP_PASSWORD_LEN_MAX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Minimum number of characters.
+        /// </summary>
+        internal static string LBL_SKIP_PASSWORD_LEN_MIN {
+            get {
+                return ResourceManager.GetString("LBL_SKIP_PASSWORD_LEN_MIN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Do not store copied passwords (experimental).
         /// </summary>
         internal static string LBL_SKIP_PASSWORDS {

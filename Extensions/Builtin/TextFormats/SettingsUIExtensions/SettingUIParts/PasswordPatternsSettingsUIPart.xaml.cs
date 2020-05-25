@@ -31,13 +31,10 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
 
             if ((bool)e.NewValue == true)
             {
-                self._patternOptions |= PasswordMatchOptions.First;
-            }
-            else
-            {
-                self._patternOptions &= ~PasswordMatchOptions.First;
+                self._selectedPatternOption = PasswordMatchOptions.First;
             }
 
+            self.SetToggleProperties();
             self.NotifySettingModified();
         }
 
@@ -56,13 +53,10 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
 
             if ((bool)e.NewValue == true)
             {
-                self._patternOptions |= PasswordMatchOptions.Second;
-            }
-            else
-            {
-                self._patternOptions &= ~PasswordMatchOptions.Second;
+                self._selectedPatternOption = PasswordMatchOptions.Second;
             }
 
+            self.SetToggleProperties();
             self.NotifySettingModified();
         }
 
@@ -81,13 +75,10 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
 
             if ((bool)e.NewValue == true)
             {
-                self._patternOptions |= PasswordMatchOptions.Third;
-            }
-            else
-            {
-                self._patternOptions &= ~PasswordMatchOptions.Third;
+                self._selectedPatternOption = PasswordMatchOptions.Third;
             }
 
+            self.SetToggleProperties();
             self.NotifySettingModified();
         }
 
@@ -106,31 +97,32 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
 
             if ((bool)e.NewValue == true)
             {
-                self._patternOptions |= PasswordMatchOptions.Fourth;
-            }
-            else
-            {
-                self._patternOptions &= ~PasswordMatchOptions.Fourth;
+                self._selectedPatternOption = PasswordMatchOptions.Fourth;
             }
 
+            self.SetToggleProperties();
             self.NotifySettingModified();
         }
 
-        private PasswordMatchOptions _patternOptions;
+        private PasswordMatchOptions _selectedPatternOption;
 
         public override int GetSettingValue()
         {
-            return (int)_patternOptions;
+            return (int)_selectedPatternOption;
         }
 
         public override void SetSettingValue(int value)
         {
-            _patternOptions = (PasswordMatchOptions)value;
+            _selectedPatternOption = (PasswordMatchOptions)value;
+            SetToggleProperties();
+        }
 
-            IsPasswordPattern1Toggled = _patternOptions.HasFlag(PasswordMatchOptions.First);
-            IsPasswordPattern2Toggled = _patternOptions.HasFlag(PasswordMatchOptions.Second);
-            IsPasswordPattern3Toggled = _patternOptions.HasFlag(PasswordMatchOptions.Third);
-            IsPasswordPattern4Toggled = _patternOptions.HasFlag(PasswordMatchOptions.Fourth);
+        private void SetToggleProperties()
+        {
+            IsPasswordPattern1Toggled = _selectedPatternOption == PasswordMatchOptions.First;
+            IsPasswordPattern2Toggled = _selectedPatternOption == PasswordMatchOptions.Second;
+            IsPasswordPattern3Toggled = _selectedPatternOption == PasswordMatchOptions.Third;
+            IsPasswordPattern4Toggled = _selectedPatternOption == PasswordMatchOptions.Fourth;
         }
     }
 }

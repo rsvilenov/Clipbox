@@ -112,6 +112,9 @@
     <Compile Include="SettingsUIExtensions\SettingUIParts\IncludeTextAnnotationsSettingUIPart.xaml.cs">
       <DependentUpon>IncludeTextAnnotationsSettingUIPart.xaml</DependentUpon>
     </Compile>
+    <Compile Include="SettingsUIExtensions\SettingUIParts\PasswordLengthSettingUIPart.xaml.cs">
+      <DependentUpon>PasswordLengthSettingUIPart.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SettingsUIExtensions\SettingUIParts\PasswordPatternsSettingsUIPart.xaml.cs">
       <DependentUpon>PasswordPatternsSettingsUIPart.xaml</DependentUpon>
     </Compile>
@@ -198,6 +201,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="SettingsUIExtensions\SettingUIParts\IncludeTextAnnotationsSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="SettingsUIExtensions\SettingUIParts\PasswordLengthSettingUIPart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
