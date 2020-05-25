@@ -3,6 +3,7 @@ using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Extensions.BuiltIn.TextFormats.Enums;
 using Clipbox.Extensions.BuiltIn.TextFormats.FlowExtensions.Common;
+using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
@@ -30,16 +31,16 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.FlowExtensions
         {
             // https://stackoverflow.com/questions/19605150/regex-for-password-must-contain-at-least-eight-characters-at-least-one-number-a
 
-            // Minimum eight characters, at least one letter and one number:
+            // At least one letter and one number:
             const string REGEX1 = @"^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$";
 
-            // Minimum eight characters, at least one letter, one number and one special character:
+            // At least one letter, one number and one special character:
             const string REGEX2 = @"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]+$";
 
-            // Minimum eight characters, at least one uppercase letter, one lowercase letter and one number:
+            // At least one uppercase letter, one lowercase letter and one number:
             const string REGEX3 = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]+$";
 
-            // Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character:
+            // At least one uppercase letter, one lowercase letter, one number and one special character:
             const string REGEX4 = @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$";
 
             PasswordMatchOptions option = (PasswordMatchOptions)GetSetting<int>(ExtensionSettingNames.PasswordMatchOption);
@@ -61,20 +62,18 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.FlowExtensions
 
         private int[] GetMinMaxPasswordLen()
         {
-            const int DEFAULT_MIN_PASSWORD_LEN = 8;
-            const int DEFAULT_MAX_PASSWORD_LEN = 20;
-
             string lenPair = GetSetting<string>(ExtensionSettingNames.PasswordLengthPair);
-            if (lenPair != null)
-            {
-                string[] valueParts = lenPair.Split(':');
-                if (valueParts.Length == 2)
-                {
-                    return new int[] { int.Parse(valueParts[0]), int.Parse(valueParts[1]) };
-                }
-            }
+            
+            string[] valueParts = lenPair?.Split(':');
 
-            return new int[] { DEFAULT_MIN_PASSWORD_LEN, DEFAULT_MAX_PASSWORD_LEN };
+            if (valueParts != null && valueParts.Length == 2)
+            {
+                return new int[] { int.Parse(valueParts[0]), int.Parse(valueParts[1]) };
+            }
+            else
+            {
+                throw new InvalidOperationException("Configuration error.");
+            }
         }
     }
 }

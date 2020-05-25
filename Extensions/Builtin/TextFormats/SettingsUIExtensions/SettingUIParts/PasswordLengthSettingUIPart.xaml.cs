@@ -1,4 +1,6 @@
 ﻿using Clipbox.Infrastructure.UI.Extensibility;
+using System;
+using System.ComponentModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,13 +12,26 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
     /// </summary>
     public partial class PasswordLengthSettingUIPart : SettingUIPart<string>
     {
-        const int DEFAULT_MIN_PASSWORD_LEN = 8;
-        const int DEFAULT_MAX_PASSWORD_LEN = 20;
+        private int _defaultMinPasswordLen;
+        private int _defaultMaxPasswordLen;
+        
+        public PasswordLengthSettingUIPart(int defaultMinPasswordLen, int defaultMaxPasswordLen)
+        {
+            _defaultMinPasswordLen = defaultMinPasswordLen;
+            _defaultMaxPasswordLen = defaultMaxPasswordLen;
+
+            InitializeComponent();
+            this.mainGrid.DataContext = this;
+        }
 
         public PasswordLengthSettingUIPart()
         {
+            if (!DesignerProperties.GetIsInDesignMode(this))
+            {
+                throw new InvalidOperationException("This constructorr is for the designer only!");
+            }
+
             InitializeComponent();
-            this.mainGrid.DataContext = this;
         }
 
         public int? MinPasswordLength
@@ -56,20 +71,17 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
 
         public override void SetSettingValue(string value)
         {
-            if (value != null)
-            {
-                string[] valueParts = value.Split(':');
-                if (valueParts.Length == 2)
-                {
-                    MinPasswordLength = int.Parse(valueParts[0]);
-                    MaxPasswordLength = int.Parse(valueParts[1]);
-                }
-            }
+            string[] valueParts = value?.Split(':');
 
-            if (MaxPasswordLength == 0)
+            if (valueParts != null && valueParts.Length == 2)
             {
-                MinPasswordLength = DEFAULT_MIN_PASSWORD_LEN;
-                MaxPasswordLength = DEFAULT_MAX_PASSWORD_LEN;
+                MinPasswordLength = int.Parse(valueParts[0]);
+                MaxPasswordLength = int.Parse(valueParts[1]);
+            }
+            else
+            {
+                MinPasswordLength = _defaultMinPasswordLen;
+                MaxPasswordLength = _defaultMaxPasswordLen;
             }
         }
         
