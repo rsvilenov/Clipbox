@@ -85,7 +85,7 @@ namespace Clipbox.ExtendedClipboard
             }
 
             // store the persistable item
-            _persistenceProvider.Write(clipboardItem.Id, SerializeObject(persistableClipboardItem), CACHE_PERSISTENCE_CATEGORY);
+            _persistenceProvider.Write(clipboardItem.Id, ByteArrayCompressor.Compress(SerializeObject(persistableClipboardItem)), CACHE_PERSISTENCE_CATEGORY);
         }
 
         public void RestoreShrinkedClipboardItem(ClipboardItem clipboardItem)
@@ -120,7 +120,7 @@ namespace Clipbox.ExtendedClipboard
 
             // load from storage
             byte[] clipboardItemBytes = _persistenceProvider.ReadBytes(clipboardItem.Id, CACHE_PERSISTENCE_CATEGORY);
-            PersistableClipboardItem persistableClipboardItem = DeserializeObject<PersistableClipboardItem>(clipboardItemBytes);
+            PersistableClipboardItem persistableClipboardItem = DeserializeObject<PersistableClipboardItem>(ByteArrayCompressor.Decompress(clipboardItemBytes));
             return persistableClipboardItem;
         }
 
@@ -136,7 +136,7 @@ namespace Clipbox.ExtendedClipboard
                 {
                     // load from storage
                     byte[] clipboardItemBytes = _persistenceProvider.ReadBytes(persistenceKey, CACHE_PERSISTENCE_CATEGORY);
-                    persistableClipboardItem = DeserializeObject<PersistableClipboardItem>(clipboardItemBytes);
+                    persistableClipboardItem = DeserializeObject<PersistableClipboardItem>(ByteArrayCompressor.Decompress(clipboardItemBytes));
                 }
                 catch
                 {
