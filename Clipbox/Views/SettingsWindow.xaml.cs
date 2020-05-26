@@ -59,6 +59,17 @@ namespace Clipbox.Views
             Loaded += SettingsWindow_Loaded;
             Closing += SettingsWindow_Closing;
             MouseDown += SettingsWindow_MouseDown;
+            Shown += SettingsWindow_Shown;
+        }
+
+        private void SettingsWindow_Shown(object sender, EventArgs e)
+        {
+            SizeChanged += SettingsWindow_SizeChanged;
+        }
+
+        private void SettingsWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UseInlinedPreviews = e.NewSize.Width < 1400;
         }
 
         private void OnCanMinimizeWindow(object sender, CanExecuteRoutedEventArgs e)
@@ -260,6 +271,18 @@ namespace Clipbox.Views
 
         private static readonly DependencyProperty CloudExtensionUIItemsProperty =
             DependencyProperty.Register(nameof(CloudExtensionUIItems), typeof(AsyncObservableCollection<ExtensionUIItem>), typeof(SettingsWindow), new PropertyMetadata(null));
+
+
+
+
+        public bool UseInlinedPreviews
+        {
+            get { return (bool)GetValue(UseInlinedPreviewsProperty); }
+            set { SetValue(UseInlinedPreviewsProperty, value); }
+        }
+        
+        public static readonly DependencyProperty UseInlinedPreviewsProperty =
+            DependencyProperty.Register(nameof(UseInlinedPreviews), typeof(bool), typeof(SettingsWindow), new PropertyMetadata(false));
 
 
 

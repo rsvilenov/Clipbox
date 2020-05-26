@@ -83,17 +83,99 @@
                 </Grid>
             </DataTemplate>
 
+            <DataTemplate x:Key="SettingsLvDataVerticalTemplate">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+
+                    <Grid
+                        Grid.Row="0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="20" />
+                            <RowDefinition Height="20" />
+                        </Grid.RowDefinitions>
+                        <TextBlock
+                            Grid.Row="0"
+                            Margin="0,10,0,20"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Center"
+                            FontSize="20"
+                            Foreground="White"
+                            Text="Preview">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding PreviewImage}" Value="{x:Null}">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                        <Image
+                            Grid.Row="1"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Source="{Binding PreviewImage}"
+                            Stretch="None" />
+                        <TextBlock
+                            Grid.Row="3"
+                            Margin="0,0,0,40"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Foreground="White"
+                            Text="{Binding Description}" />
+                    </Grid>
+
+                    <ItemsControl
+                        Grid.Row="1"
+                        Margin="0,0,25,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Foreground="{DynamicResource ControlHighlightForegroundBrush}"
+                        ItemsSource="{Binding ExtensionUIParts}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Vertical" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemContainerStyle>
+                            <Style>
+                                <Setter Property="FrameworkElement.Margin" Value="0,15,0,0" />
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
+                    </ItemsControl>
+
+                </Grid>
+            </DataTemplate>
+
             <Style BasedOn="{StaticResource MinimalisticScrollBarStyle}" TargetType="ScrollBar">
                 <Setter Property="Foreground" Value="White" />
                 <Setter Property="Margin" Value="0,5,10,5" />
             </Style>
 
+            <Style x:Key="extensionItemsControlStyle" TargetType="ItemsControl">
+                <Setter Property="ItemTemplate" Value="{StaticResource SettingsLvDataTemplate}" />
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding UseInlinedPreviews}" Value="True">
+                        <Setter Property="ItemTemplate" Value="{StaticResource SettingsLvDataVerticalTemplate}" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+
         </ResourceDictionary>
     </Window.Resources>
     <Window.Title>
-        <MultiBinding StringFormat="{}{0} ({1})">
+        <MultiBinding StringFormat="{}{0} {1}">
             <Binding Source="{x:Static core:ProductConstants.PRODUCT_NAME}" />
-            <Binding Source="Settings" />
+            <Binding Source="settings" />
         </MultiBinding>
     </Window.Title>
     <WindowChrome.WindowChrome>
@@ -127,7 +209,7 @@
                     Margin="0,0,15,6"
                     Foreground="#818183"
                     Template="{StaticResource SettingsIcon}" />
-                <TextBlock Foreground="#818183" Text="Settings" />
+                <TextBlock Foreground="#818183" Text="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=Title}" />
             </StackPanel>
 
             <Button
@@ -238,7 +320,15 @@
                 <TabItem.Content>
                     <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
                         <StackPanel Margin="0,0,40,0" Orientation="Vertical">
-                            <TextBlock FontSize="28" Text="General" />
+                            <!--
+                                prevent the scrollviewer from scrolling to the actual
+                                focualbe items upon tab change,
+                                by making this textblock focusable
+                            -->
+                            <TextBlock
+                                Focusable="True"
+                                FontSize="28"
+                                Text="General" />
                             <Grid
                                 x:Name="mainGrid"
                                 Margin="15"
@@ -270,8 +360,8 @@
                                 <ItemsControl
                                     x:Name="generalExtensionsItemsControl"
                                     Grid.Row="1"
-                                    ItemTemplate="{StaticResource SettingsLvDataTemplate}"
-                                    ItemsSource="{Binding GeneralExtensionUIItems}">
+                                    ItemsSource="{Binding GeneralExtensionUIItems}"
+                                    Style="{StaticResource extensionItemsControlStyle}">
                                     <ItemsControl.ItemContainerStyle>
                                         <Style>
                                             <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
@@ -297,13 +387,21 @@
                 <TabItem.Content>
                     <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
                         <StackPanel Margin="0,0,40,0" Orientation="Vertical">
-                            <TextBlock FontSize="28" Text="Previews" />
+                            <!--
+                                prevent the scrollviewer from scrolling to the actual
+                                focualbe items upon tab change,
+                                by making this textblock focusable
+                            -->
+                            <TextBlock
+                                Focusable="True"
+                                FontSize="28"
+                                Text="Previews" />
 
                             <ItemsControl
                                 x:Name="previewsExtensionsItemsControl"
                                 Grid.Row="2"
-                                ItemTemplate="{StaticResource SettingsLvDataTemplate}"
-                                ItemsSource="{Binding PreviewsExtensionUIItems}">
+                                ItemsSource="{Binding PreviewsExtensionUIItems}"
+                                Style="{StaticResource extensionItemsControlStyle}">
                                 <ItemsControl.ItemContainerStyle>
                                     <Style>
                                         <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
@@ -328,12 +426,15 @@
                 <TabItem.Content>
                     <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
                         <StackPanel Margin="0,0,40,0" Orientation="Vertical">
-                            <TextBlock FontSize="28" Text="Copying" />
+                            <TextBlock
+                                Focusable="True"
+                                FontSize="28"
+                                Text="Copying" />
                             <ItemsControl
                                 x:Name="copyingExtensionsItemsControl"
                                 Grid.Row="2"
-                                ItemTemplate="{StaticResource SettingsLvDataTemplate}"
-                                ItemsSource="{Binding CopyingExtensionUIItems}">
+                                ItemsSource="{Binding CopyingExtensionUIItems}"
+                                Style="{StaticResource extensionItemsControlStyle}">
                                 <ItemsControl.ItemContainerStyle>
                                     <Style>
                                         <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
@@ -357,12 +458,15 @@
                 <TabItem.Content>
                     <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
                         <StackPanel Orientation="Vertical">
-                            <TextBlock FontSize="28" Text="Pasting" />
+                            <TextBlock
+                                Focusable="True"
+                                FontSize="28"
+                                Text="Pasting" />
                             <ItemsControl
                                 x:Name="pastingExtensionsItemsControl"
                                 Grid.Row="2"
-                                ItemTemplate="{StaticResource SettingsLvDataTemplate}"
-                                ItemsSource="{Binding PastingExtensionUIItems}">
+                                ItemsSource="{Binding PastingExtensionUIItems}"
+                                Style="{StaticResource extensionItemsControlStyle}">
                                 <ItemsControl.ItemContainerStyle>
                                     <Style>
                                         <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
@@ -386,12 +490,15 @@
                 <TabItem.Content>
                     <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
                         <StackPanel Orientation="Vertical">
-                            <TextBlock FontSize="28" Text="Security" />
+                            <TextBlock
+                                Focusable="True"
+                                FontSize="28"
+                                Text="Security" />
                             <ItemsControl
                                 x:Name="security"
                                 Grid.Row="2"
-                                ItemTemplate="{StaticResource SettingsLvDataTemplate}"
-                                ItemsSource="{Binding SecurityExtensionUIItems}">
+                                ItemsSource="{Binding SecurityExtensionUIItems}"
+                                Style="{StaticResource extensionItemsControlStyle}">
                                 <ItemsControl.ItemContainerStyle>
                                     <Style>
                                         <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
@@ -415,12 +522,15 @@
                 <TabItem.Content>
                     <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
                         <StackPanel Orientation="Vertical">
-                            <TextBlock FontSize="28" Text="Cloud" />
+                            <TextBlock
+                                Focusable="True"
+                                FontSize="28"
+                                Text="Cloud" />
                             <ItemsControl
                                 x:Name="cloudExtensionsItemsControl"
                                 Grid.Row="2"
-                                ItemTemplate="{StaticResource SettingsLvDataTemplate}"
-                                ItemsSource="{Binding CloudExtensionUIItems}">
+                                ItemsSource="{Binding CloudExtensionUIItems}"
+                                Style="{StaticResource extensionItemsControlStyle}">
                                 <ItemsControl.ItemContainerStyle>
                                     <Style>
                                         <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
