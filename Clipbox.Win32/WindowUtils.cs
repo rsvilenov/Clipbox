@@ -409,7 +409,21 @@ namespace Clipbox.Win32
             //{
             //applicationProcess.MainModule.FileName; // this program should be 64 bit in order for this to work
             //}
-            string applicationPath = ProcessUtils.GetExecutablePath(applicationPid);
+            string applicationPath = string.Empty;
+
+            try
+            {
+                applicationPath = ProcessUtils.GetExecutablePath(applicationPid);
+            }
+            catch (Win32Exception)
+            {
+                // if we are not running elevated, assume Acess Denied...
+                // TODO: we can do better here.
+                if (!ProcessUtils.IsOurProcessRunningElevated)
+                {
+                    throw;
+                }
+            }
 
             WindowInfo windowInfo = new WindowInfo
             {

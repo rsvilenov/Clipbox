@@ -9,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Security.Principal;
 using System.Text;
 
 namespace Clipbox.Win32
@@ -366,6 +367,13 @@ namespace Clipbox.Win32
                 return uacKey.GetValue(uacRegistryValue).Equals(1);
             }
         }
-        
+
+        public static bool IsOurProcessRunningElevated
+        {
+            get
+            {
+                return new WindowsPrincipal(WindowsIdentity.GetCurrent()).IsInRole(WindowsBuiltInRole.Administrator);
+            }
+        }
     }
 }

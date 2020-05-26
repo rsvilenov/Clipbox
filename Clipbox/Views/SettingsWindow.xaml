@@ -12,7 +12,7 @@
     xmlns:localWindows="clr-namespace:Clipbox.Infrastructure.UI.Windows;assembly=Clipbox.Infrastructure.UI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sysTheme="clr-namespace:Clipbox.Infrastructure.UI.Theme;assembly=Clipbox.Infrastructure.UI"
-    Width="780"
+    Width="1450"
     Height="560"
     AllowsTransparency="True"
     Background="{DynamicResource TaskbarColorBrush}"
