@@ -21,7 +21,7 @@
     FontSize="16"
     Foreground="White"
     Icon="pack://application:,,,/Clipbox.Infrastructure.UI;component/Resources/Images/Clip-WF.ico"
-    ResizeMode="CanResizeWithGrip"
+    ResizeMode="CanResize"
     SizeToContent="Manual"
     WindowStartupLocation="CenterScreen"
     WindowStyle="None"
@@ -60,7 +60,7 @@
                     <Grid
                         Grid.Column="1"
                         HorizontalAlignment="Center"
-                        VerticalAlignment="Center">
+                        VerticalAlignment="Top">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="20" />
@@ -83,6 +83,11 @@
                 </Grid>
             </DataTemplate>
 
+            <Style BasedOn="{StaticResource MinimalisticScrollBarStyle}" TargetType="ScrollBar">
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="Margin" Value="0,5,10,5" />
+            </Style>
+
         </ResourceDictionary>
     </Window.Resources>
     <Window.Title>
@@ -92,36 +97,55 @@
         </MultiBinding>
     </Window.Title>
     <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="0" ResizeBorderThickness="5" />
+        <WindowChrome CaptionHeight="5" ResizeBorderThickness="5" />
     </WindowChrome.WindowChrome>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
-        <Border
+        <Grid
             Grid.Row="0"
-            Grid.Column="0"
             Background="Transparent"
-            MouseDown="Border_MouseDown" />
-        <Button
-            Grid.Row="0"
-            Grid.Column="1"
-            MaxWidth="25"
-            Margin="0,0,5,0"
-            HorizontalAlignment="Right"
-            VerticalAlignment="Center"
-            Click="CloseButton_Click"
-            Style="{DynamicResource BtnCloseWindow}"
-            ToolTip="Close window">
-            <i:Interaction.Behaviors>
-                <infBeh:FrameworkElementDpiScalingBehavior />
-            </i:Interaction.Behaviors>
-        </Button>
+            MouseDown="Border_MouseDown">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+
+            <StackPanel
+                Grid.Row="0"
+                Grid.Column="0"
+                Margin="20,10,0,0"
+                HorizontalAlignment="Left"
+                Panel.ZIndex="10"
+                Orientation="Horizontal">
+                <ContentControl
+                    Width="15"
+                    Margin="0,0,15,6"
+                    Foreground="#818183"
+                    Template="{StaticResource SettingsIcon}" />
+                <TextBlock Foreground="#818183" Text="Settings" />
+            </StackPanel>
+
+            <Button
+                Grid.Row="0"
+                Grid.Column="1"
+                MaxWidth="25"
+                Margin="0,0,5,0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Command="{Binding Source={x:Static SystemCommands.CloseWindowCommand}}"
+                Style="{DynamicResource BtnCloseWindow}"
+                ToolTip="Close window">
+                <i:Interaction.Behaviors>
+                    <infBeh:FrameworkElementDpiScalingBehavior />
+                </i:Interaction.Behaviors>
+            </Button>
+        </Grid>
+
 
         <TabControl
             x:Name="tabControl"
@@ -146,11 +170,11 @@
                                     <Border
                                         x:Name="HeaderPanel"
                                         Grid.Column="0"
-                                        Margin="0,-35,4,0"
+                                        Margin="0,0,4,0"
                                         Panel.ZIndex="1"
                                         Background="#1f1f1f">
                                         <TabPanel
-                                            Margin="0,30,0,0"
+                                            Margin="0,10,0,0"
                                             IsItemsHost="True"
                                             KeyboardNavigation.TabIndex="1" />
                                     </Border>
@@ -158,7 +182,7 @@
                                     <Border Name="Border" Grid.Column="1">
                                         <ContentPresenter
                                             x:Name="PART_SelectedContentHost"
-                                            Margin="20,0,0,0"
+                                            Margin="30,0,0,0"
                                             ContentSource="SelectedContent" />
                                     </Border>
                                 </Grid>
@@ -212,49 +236,51 @@
                     </DataTemplate>
                 </TabItem.HeaderTemplate>
                 <TabItem.Content>
-                    <ScrollViewer>
-                        <Grid
-                            x:Name="mainGrid"
-                            Margin="15"
-                            Focusable="True">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <StackPanel Grid.Row="0" Orientation="Vertical">
-                                <TextBlock HorizontalAlignment="Left" Text="Pin the tray icon to the taskbar" />
-                                <StackPanel Margin="0,15,0,0" Orientation="Horizontal">
-                                    <customControls:ToggleSwitch
-                                        HorizontalAlignment="Left"
-                                        IsChecked="{Binding IsSettingChanged, Mode=OneWayToSource}"
-                                        OffText="{loc:Localize TGL_BTN_LBL_Off,
-                                                               ResourceLookupMode=Everywhere}"
-                                        OnText="{loc:Localize TGL_BTN_LBL_On,
-                                                              ResourceLookupMode=Everywhere}" />
-                                    <Image
-                                        MinWidth="100"
-                                        MinHeight="25"
-                                        Margin="5,0,0,0"
-                                        Source="/Resources/Images/Settings/DeskBand.png" />
+                    <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+                        <StackPanel Margin="0,0,40,0" Orientation="Vertical">
+                            <TextBlock FontSize="28" Text="General" />
+                            <Grid
+                                x:Name="mainGrid"
+                                Margin="15"
+                                Focusable="True">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <StackPanel Grid.Row="0" Orientation="Vertical">
+                                    <TextBlock HorizontalAlignment="Left" Text="Pin the tray icon to the taskbar" />
+                                    <StackPanel Margin="0,15,0,0" Orientation="Horizontal">
+                                        <customControls:ToggleSwitch
+                                            HorizontalAlignment="Left"
+                                            IsChecked="{Binding IsSettingChanged, Mode=OneWayToSource}"
+                                            OffText="{loc:Localize TGL_BTN_LBL_Off,
+                                                                   ResourceLookupMode=Everywhere}"
+                                            OnText="{loc:Localize TGL_BTN_LBL_On,
+                                                                  ResourceLookupMode=Everywhere}" />
+                                        <Image
+                                            MinWidth="100"
+                                            MinHeight="25"
+                                            Margin="5,0,0,0"
+                                            Source="/Resources/Images/Settings/DeskBand.png" />
+                                    </StackPanel>
+
                                 </StackPanel>
 
-                            </StackPanel>
 
+                                <ItemsControl
+                                    x:Name="generalExtensionsItemsControl"
+                                    Grid.Row="1"
+                                    ItemTemplate="{StaticResource SettingsLvDataTemplate}"
+                                    ItemsSource="{Binding GeneralExtensionUIItems}">
+                                    <ItemsControl.ItemContainerStyle>
+                                        <Style>
+                                            <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
+                                        </Style>
+                                    </ItemsControl.ItemContainerStyle>
+                                </ItemsControl>
 
-                            <ItemsControl
-                                x:Name="generalExtensionsItemsControl"
-                                Grid.Row="1"
-                                ItemTemplate="{StaticResource SettingsLvDataTemplate}"
-                                ItemsSource="{Binding GeneralExtensionUIItems}">
-                                <ItemsControl.ItemContainerStyle>
-                                    <Style>
-                                        <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
-                                    </Style>
-                                </ItemsControl.ItemContainerStyle>
-                            </ItemsControl>
-
-                        </Grid>
-
+                            </Grid>
+                        </StackPanel>
                     </ScrollViewer>
                 </TabItem.Content>
             </TabItem>
@@ -269,18 +295,23 @@
                     </DataTemplate>
                 </TabItem.HeaderTemplate>
                 <TabItem.Content>
-                    <ScrollViewer>
-                        <ItemsControl
-                            x:Name="previewsExtensionsItemsControl"
-                            Grid.Row="2"
-                            ItemTemplate="{StaticResource SettingsLvDataTemplate}"
-                            ItemsSource="{Binding PreviewsExtensionUIItems}">
-                            <ItemsControl.ItemContainerStyle>
-                                <Style>
-                                    <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
-                                </Style>
-                            </ItemsControl.ItemContainerStyle>
-                        </ItemsControl>
+                    <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+                        <StackPanel Margin="0,0,40,0" Orientation="Vertical">
+                            <TextBlock FontSize="28" Text="Previews" />
+
+                            <ItemsControl
+                                x:Name="previewsExtensionsItemsControl"
+                                Grid.Row="2"
+                                ItemTemplate="{StaticResource SettingsLvDataTemplate}"
+                                ItemsSource="{Binding PreviewsExtensionUIItems}">
+                                <ItemsControl.ItemContainerStyle>
+                                    <Style>
+                                        <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
+                                    </Style>
+                                </ItemsControl.ItemContainerStyle>
+                            </ItemsControl>
+
+                        </StackPanel>
                     </ScrollViewer>
                 </TabItem.Content>
             </TabItem>
@@ -295,18 +326,21 @@
                     </DataTemplate>
                 </TabItem.HeaderTemplate>
                 <TabItem.Content>
-                    <ScrollViewer>
-                        <ItemsControl
-                            x:Name="copyingExtensionsItemsControl"
-                            Grid.Row="2"
-                            ItemTemplate="{StaticResource SettingsLvDataTemplate}"
-                            ItemsSource="{Binding CopyingExtensionUIItems}">
-                            <ItemsControl.ItemContainerStyle>
-                                <Style>
-                                    <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
-                                </Style>
-                            </ItemsControl.ItemContainerStyle>
-                        </ItemsControl>
+                    <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+                        <StackPanel Margin="0,0,40,0" Orientation="Vertical">
+                            <TextBlock FontSize="28" Text="Copying" />
+                            <ItemsControl
+                                x:Name="copyingExtensionsItemsControl"
+                                Grid.Row="2"
+                                ItemTemplate="{StaticResource SettingsLvDataTemplate}"
+                                ItemsSource="{Binding CopyingExtensionUIItems}">
+                                <ItemsControl.ItemContainerStyle>
+                                    <Style>
+                                        <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
+                                    </Style>
+                                </ItemsControl.ItemContainerStyle>
+                            </ItemsControl>
+                        </StackPanel>
                     </ScrollViewer>
                 </TabItem.Content>
             </TabItem>
@@ -314,25 +348,28 @@
             <TabItem Header="Pasting">
                 <TabItem.HeaderTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
+                        <StackPanel Margin="0,0,40,0" Orientation="Horizontal">
                             <ContentControl Template="{StaticResource SettingsPastingIcon}" />
                             <TextBlock Margin="10,0,0,0" Text="{Binding}" />
                         </StackPanel>
                     </DataTemplate>
                 </TabItem.HeaderTemplate>
                 <TabItem.Content>
-                    <ScrollViewer>
-                        <ItemsControl
-                            x:Name="pastingExtensionsItemsControl"
-                            Grid.Row="2"
-                            ItemTemplate="{StaticResource SettingsLvDataTemplate}"
-                            ItemsSource="{Binding PastingExtensionUIItems}">
-                            <ItemsControl.ItemContainerStyle>
-                                <Style>
-                                    <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
-                                </Style>
-                            </ItemsControl.ItemContainerStyle>
-                        </ItemsControl>
+                    <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock FontSize="28" Text="Pasting" />
+                            <ItemsControl
+                                x:Name="pastingExtensionsItemsControl"
+                                Grid.Row="2"
+                                ItemTemplate="{StaticResource SettingsLvDataTemplate}"
+                                ItemsSource="{Binding PastingExtensionUIItems}">
+                                <ItemsControl.ItemContainerStyle>
+                                    <Style>
+                                        <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
+                                    </Style>
+                                </ItemsControl.ItemContainerStyle>
+                            </ItemsControl>
+                        </StackPanel>
                     </ScrollViewer>
                 </TabItem.Content>
             </TabItem>
@@ -340,25 +377,28 @@
             <TabItem Header="Security">
                 <TabItem.HeaderTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
+                        <StackPanel Margin="0,0,40,0" Orientation="Horizontal">
                             <ContentControl Template="{StaticResource SettingsSecurityIcon}" />
                             <TextBlock Margin="10,0,0,0" Text="{Binding}" />
                         </StackPanel>
                     </DataTemplate>
                 </TabItem.HeaderTemplate>
                 <TabItem.Content>
-                    <ScrollViewer>
-                        <ItemsControl
-                            x:Name="security"
-                            Grid.Row="2"
-                            ItemTemplate="{StaticResource SettingsLvDataTemplate}"
-                            ItemsSource="{Binding SecurityExtensionUIItems}">
-                            <ItemsControl.ItemContainerStyle>
-                                <Style>
-                                    <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
-                                </Style>
-                            </ItemsControl.ItemContainerStyle>
-                        </ItemsControl>
+                    <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock FontSize="28" Text="Security" />
+                            <ItemsControl
+                                x:Name="security"
+                                Grid.Row="2"
+                                ItemTemplate="{StaticResource SettingsLvDataTemplate}"
+                                ItemsSource="{Binding SecurityExtensionUIItems}">
+                                <ItemsControl.ItemContainerStyle>
+                                    <Style>
+                                        <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
+                                    </Style>
+                                </ItemsControl.ItemContainerStyle>
+                            </ItemsControl>
+                        </StackPanel>
                     </ScrollViewer>
                 </TabItem.Content>
             </TabItem>
@@ -366,25 +406,28 @@
             <TabItem Header="Cloud">
                 <TabItem.HeaderTemplate>
                     <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
+                        <StackPanel Margin="0,0,40,0" Orientation="Horizontal">
                             <ContentControl Template="{StaticResource SettingsCloudIcon}" />
                             <TextBlock Margin="10,0,0,0" Text="{Binding}" />
                         </StackPanel>
                     </DataTemplate>
                 </TabItem.HeaderTemplate>
                 <TabItem.Content>
-                    <ScrollViewer>
-                        <ItemsControl
-                            x:Name="cloudExtensionsItemsControl"
-                            Grid.Row="2"
-                            ItemTemplate="{StaticResource SettingsLvDataTemplate}"
-                            ItemsSource="{Binding CloudExtensionUIItems}">
-                            <ItemsControl.ItemContainerStyle>
-                                <Style>
-                                    <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
-                                </Style>
-                            </ItemsControl.ItemContainerStyle>
-                        </ItemsControl>
+                    <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+                        <StackPanel Orientation="Vertical">
+                            <TextBlock FontSize="28" Text="Cloud" />
+                            <ItemsControl
+                                x:Name="cloudExtensionsItemsControl"
+                                Grid.Row="2"
+                                ItemTemplate="{StaticResource SettingsLvDataTemplate}"
+                                ItemsSource="{Binding CloudExtensionUIItems}">
+                                <ItemsControl.ItemContainerStyle>
+                                    <Style>
+                                        <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
+                                    </Style>
+                                </ItemsControl.ItemContainerStyle>
+                            </ItemsControl>
+                        </StackPanel>
                     </ScrollViewer>
                 </TabItem.Content>
             </TabItem>
