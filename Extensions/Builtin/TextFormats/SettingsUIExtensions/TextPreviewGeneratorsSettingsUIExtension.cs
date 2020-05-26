@@ -1,6 +1,7 @@
 ﻿using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
+using Clipbox.Core.Extensibility.Enums;
 using Clipbox.Extensions.BuiltIn.TextFormats.IntermediateFormats;
 using Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators;
 using Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIParts;
@@ -21,6 +22,8 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
         {
             _previewGenerator = new RtfPreviewGenerator();
         }
+
+        public override SettingsCategory Category => SettingsCategory.Previews;
 
         public override IPreviewData GetResultPreview(PreviewParams previewParams)
         {

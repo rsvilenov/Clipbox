@@ -3,6 +3,7 @@ using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using Clipbox.Core.Extensibility.Contracts.PreviewData;
+using Clipbox.Core.Extensibility.Enums;
 using Clipbox.Infrastructure.Extensibility.Containers;
 using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.ExtensionMethods;
@@ -37,9 +38,16 @@ namespace Clipbox.Views
             _extContainer = extContainer;
 
             InitializeComponent();
-            ExtensionUIItems = new AsyncObservableCollection<ExtensionUIItem>();
+            _allExtensionUIItems = new List<ExtensionUIItem>();
 
-            this.mainGrid.DataContext = this;
+            GeneralExtensionUIItems = new AsyncObservableCollection<ExtensionUIItem>();
+            PreviewsExtensionUIItems = new AsyncObservableCollection<ExtensionUIItem>();
+            CopyingExtensionUIItems = new AsyncObservableCollection<ExtensionUIItem>();
+            PastingExtensionUIItems = new AsyncObservableCollection<ExtensionUIItem>();
+            SecurityExtensionUIItems = new AsyncObservableCollection<ExtensionUIItem>();
+            CloudExtensionUIItems = new AsyncObservableCollection<ExtensionUIItem>();
+
+            this.tabControl.DataContext = this;
 
             SourceInitialized += SettingsWindow_SourceInitialized;
             Loaded += SettingsWindow_Loaded;
@@ -98,7 +106,33 @@ namespace Clipbox.Views
                 IEnumerable<UIElement> extUIParts = ext.GetSettingsViewParts()
                     .Cast<UIElement>();
 
-                ExtensionUIItems.Add(new ExtensionUIItem(extUIParts, ext.GetType()));
+                var uiItem = new ExtensionUIItem(extUIParts, ext.GetType());
+                switch (ext.Category)
+                {
+                    case SettingsCategory.General:
+                        GeneralExtensionUIItems.Add(uiItem);
+                        break;
+                    case SettingsCategory.Previews:
+                        PreviewsExtensionUIItems.Add(uiItem);
+                        break;
+                    case SettingsCategory.Copying:
+                        CopyingExtensionUIItems.Add(uiItem);
+                        break;
+                    case SettingsCategory.Pasting:
+                        PastingExtensionUIItems.Add(uiItem);
+                        break;
+                    case SettingsCategory.Security:
+                        SecurityExtensionUIItems.Add(uiItem);
+                        break;
+                    case SettingsCategory.Cloud:
+                        CloudExtensionUIItems.Add(uiItem);
+                        break;
+                    default:
+                        throw new InvalidOperationException("Invalid category.");
+                }
+
+                _allExtensionUIItems.Add(uiItem);
+                
                 UpdatePreview(ext);
 
                 ext.ResultPreviewInvalidated += Ext_ResultPreviewInvalidated;
@@ -124,7 +158,7 @@ namespace Clipbox.Views
             if (previewData is ImagePreviewData imgPreviewData
                 && imgPreviewData.Preview is Bitmap bmp)
             {
-                ExtensionUIItem extUIItem = ExtensionUIItems
+                ExtensionUIItem extUIItem = _allExtensionUIItems
                     .Single(e => e.ExtensionType == ext.GetType());
 
                 using (imgPreviewData)
@@ -135,14 +169,61 @@ namespace Clipbox.Views
             }
         }
 
-        private AsyncObservableCollection<ExtensionUIItem> ExtensionUIItems
+        private readonly List<ExtensionUIItem> _allExtensionUIItems;
+
+        private AsyncObservableCollection<ExtensionUIItem> GeneralExtensionUIItems
         {
-            get { return (AsyncObservableCollection<ExtensionUIItem>)GetValue(ExtensionUIItemsProperty); }
-            set { SetValue(ExtensionUIItemsProperty, value); }
+            get { return (AsyncObservableCollection<ExtensionUIItem>)GetValue(GeneralExtensionUIItemsProperty); }
+            set { SetValue(GeneralExtensionUIItemsProperty, value); }
         }
 
-        private static readonly DependencyProperty ExtensionUIItemsProperty =
-            DependencyProperty.Register(nameof(ExtensionUIItems), typeof(AsyncObservableCollection<ExtensionUIItem>), typeof(SettingsWindow), new PropertyMetadata(null));
+        private static readonly DependencyProperty GeneralExtensionUIItemsProperty =
+            DependencyProperty.Register(nameof(GeneralExtensionUIItems), typeof(AsyncObservableCollection<ExtensionUIItem>), typeof(SettingsWindow), new PropertyMetadata(null));
+
+        private AsyncObservableCollection<ExtensionUIItem> PreviewsExtensionUIItems
+        {
+            get { return (AsyncObservableCollection<ExtensionUIItem>)GetValue(PreviewsExtensionUIItemsProperty); }
+            set { SetValue(PreviewsExtensionUIItemsProperty, value); }
+        }
+
+        private static readonly DependencyProperty PreviewsExtensionUIItemsProperty =
+            DependencyProperty.Register(nameof(PreviewsExtensionUIItems), typeof(AsyncObservableCollection<ExtensionUIItem>), typeof(SettingsWindow), new PropertyMetadata(null));
+
+        private AsyncObservableCollection<ExtensionUIItem> CopyingExtensionUIItems
+        {
+            get { return (AsyncObservableCollection<ExtensionUIItem>)GetValue(CopyingExtensionUIItemsProperty); }
+            set { SetValue(CopyingExtensionUIItemsProperty, value); }
+        }
+
+        private static readonly DependencyProperty CopyingExtensionUIItemsProperty =
+            DependencyProperty.Register(nameof(CopyingExtensionUIItems), typeof(AsyncObservableCollection<ExtensionUIItem>), typeof(SettingsWindow), new PropertyMetadata(null));
+
+        private AsyncObservableCollection<ExtensionUIItem> PastingExtensionUIItems
+        {
+            get { return (AsyncObservableCollection<ExtensionUIItem>)GetValue(PastingExtensionUIItemsProperty); }
+            set { SetValue(PastingExtensionUIItemsProperty, value); }
+        }
+
+        private static readonly DependencyProperty PastingExtensionUIItemsProperty =
+            DependencyProperty.Register(nameof(PastingExtensionUIItems), typeof(AsyncObservableCollection<ExtensionUIItem>), typeof(SettingsWindow), new PropertyMetadata(null));
+
+        private AsyncObservableCollection<ExtensionUIItem> SecurityExtensionUIItems
+        {
+            get { return (AsyncObservableCollection<ExtensionUIItem>)GetValue(SecurityExtensionUIItemsProperty); }
+            set { SetValue(SecurityExtensionUIItemsProperty, value); }
+        }
+
+        private static readonly DependencyProperty SecurityExtensionUIItemsProperty =
+            DependencyProperty.Register(nameof(SecurityExtensionUIItems), typeof(AsyncObservableCollection<ExtensionUIItem>), typeof(SettingsWindow), new PropertyMetadata(null));
+
+        private AsyncObservableCollection<ExtensionUIItem> CloudExtensionUIItems
+        {
+            get { return (AsyncObservableCollection<ExtensionUIItem>)GetValue(CloudExtensionUIItemsProperty); }
+            set { SetValue(CloudExtensionUIItemsProperty, value); }
+        }
+
+        private static readonly DependencyProperty CloudExtensionUIItemsProperty =
+            DependencyProperty.Register(nameof(CloudExtensionUIItems), typeof(AsyncObservableCollection<ExtensionUIItem>), typeof(SettingsWindow), new PropertyMetadata(null));
 
 
 

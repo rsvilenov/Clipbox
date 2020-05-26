@@ -12,25 +12,77 @@
     xmlns:localWindows="clr-namespace:Clipbox.Infrastructure.UI.Windows;assembly=Clipbox.Infrastructure.UI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sysTheme="clr-namespace:Clipbox.Infrastructure.UI.Theme;assembly=Clipbox.Infrastructure.UI"
-    Width="620"
-    Height="400"
+    Width="780"
+    Height="560"
     AllowsTransparency="True"
     Background="{DynamicResource TaskbarColorBrush}"
-    BorderBrush="{DynamicResource AccentBrush}"
-    BorderThickness="1"
+    BorderBrush="#3a3a3a"
+    BorderThickness="0"
     FontSize="16"
     Foreground="White"
     Icon="pack://application:,,,/Clipbox.Infrastructure.UI;component/Resources/Images/Clip-WF.ico"
     ResizeMode="CanResizeWithGrip"
-    SizeToContent="Width"
+    SizeToContent="Manual"
     WindowStartupLocation="CenterScreen"
     WindowStyle="None"
     mc:Ignorable="d">
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/Clipbox.Infrastructure.UI;component/Resources/Styles/Style.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Clipbox.Infrastructure.UI.CustomControls;component/Styles/ToggleSwitchWindows10.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <DataTemplate x:Key="SettingsLvDataTemplate">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <ItemsControl
+                        Grid.Column="0"
+                        Margin="0,0,25,0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Foreground="{DynamicResource ControlHighlightForegroundBrush}"
+                        ItemsSource="{Binding ExtensionUIParts}">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Vertical" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemContainerStyle>
+                            <Style>
+                                <Setter Property="FrameworkElement.Margin" Value="0,15,0,0" />
+                            </Style>
+                        </ItemsControl.ItemContainerStyle>
+                    </ItemsControl>
+                    <Grid
+                        Grid.Column="1"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="20" />
+                            <RowDefinition Height="20" />
+                        </Grid.RowDefinitions>
+                        <Image
+                            Grid.Row="0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Source="{Binding PreviewImage}"
+                            Stretch="None" />
+                        <TextBlock
+                            Grid.Row="2"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Foreground="White"
+                            Text="{Binding Description}" />
+                    </Grid>
+
+                </Grid>
+            </DataTemplate>
+
         </ResourceDictionary>
     </Window.Resources>
     <Window.Title>
@@ -42,7 +94,7 @@
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="0" ResizeBorderThickness="5" />
     </WindowChrome.WindowChrome>
-    <Grid Margin="15">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
             <RowDefinition />
@@ -70,99 +122,272 @@
                 <infBeh:FrameworkElementDpiScalingBehavior />
             </i:Interaction.Behaviors>
         </Button>
-        <ScrollViewer Grid.Row="1">
-            <Grid
-                x:Name="mainGrid"
-                Margin="15"
-                Focusable="True">
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-                <StackPanel Grid.Row="1" Orientation="Vertical">
-                    <TextBlock HorizontalAlignment="Left" Text="Pin the tray icon to the taskbar" />
-                    <StackPanel Margin="0,15,0,0" Orientation="Horizontal">
-                        <customControls:ToggleSwitch
-                            HorizontalAlignment="Left"
-                            IsChecked="{Binding IsSettingChanged, Mode=OneWayToSource}"
-                            OffText="{loc:Localize TGL_BTN_LBL_Off,
-                                                   ResourceLookupMode=Everywhere}"
-                            OnText="{loc:Localize TGL_BTN_LBL_On,
-                                                  ResourceLookupMode=Everywhere}" />
-                        <Image
-                            MinWidth="100"
-                            MinHeight="25"
-                            Margin="5,0,0,0"
-                            Source="/Resources/Images/Settings/DeskBand.png" />
-                    </StackPanel>
 
-                </StackPanel>
+        <TabControl
+            x:Name="tabControl"
+            Grid.Row="1"
+            Margin="0,0,0,0"
+            Background="Transparent"
+            BorderThickness="0"
+            Foreground="Wheat"
+            TabStripPlacement="Left">
+            <TabControl.Resources>
+                <Style TargetType="{x:Type TabControl}">
+                    <Setter Property="OverridesDefaultStyle" Value="True" />
+                    <Setter Property="SnapsToDevicePixels" Value="True" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type TabControl}">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="250" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Border
+                                        x:Name="HeaderPanel"
+                                        Grid.Column="0"
+                                        Margin="0,-35,4,0"
+                                        Panel.ZIndex="1"
+                                        Background="#1f1f1f">
+                                        <TabPanel
+                                            Margin="0,30,0,0"
+                                            IsItemsHost="True"
+                                            KeyboardNavigation.TabIndex="1" />
+                                    </Border>
 
-
-                <ItemsControl
-                    x:Name="extensionsItemsControl"
-                    Grid.Row="2"
-                    ItemsSource="{Binding ExtensionUIItems}">
-                    <ItemsControl.ItemContainerStyle>
-                        <Style>
-                            <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
-                        </Style>
-                    </ItemsControl.ItemContainerStyle>
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <ItemsControl
-                                    Grid.Column="0"
-                                    Margin="0,0,25,0"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    ItemsSource="{Binding ExtensionUIParts}">
-                                    <ItemsControl.ItemsPanel>
-                                        <ItemsPanelTemplate>
-                                            <StackPanel Orientation="Vertical" />
-                                        </ItemsPanelTemplate>
-                                    </ItemsControl.ItemsPanel>
-                                    <ItemsControl.ItemContainerStyle>
-                                        <Style>
-                                            <Setter Property="FrameworkElement.Margin" Value="0,15,0,0" />
-                                        </Style>
-                                    </ItemsControl.ItemContainerStyle>
-                                </ItemsControl>
-                                <Grid
-                                    Grid.Column="1"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center">
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="20" />
-                                        <RowDefinition Height="20" />
-                                    </Grid.RowDefinitions>
-                                    <Image
-                                        Grid.Row="0"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        Source="{Binding PreviewImage}"
-                                        Stretch="None" />
-                                    <TextBlock
-                                        Grid.Row="2"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center"
-                                        Foreground="White"
-                                        Text="{Binding Description}" />
+                                    <Border Name="Border" Grid.Column="1">
+                                        <ContentPresenter
+                                            x:Name="PART_SelectedContentHost"
+                                            Margin="20,0,0,0"
+                                            ContentSource="SelectedContent" />
+                                    </Border>
                                 </Grid>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
 
-                            </Grid>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                <Style TargetType="TabItem">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="Foreground" Value="{DynamicResource ControlForegroundBrush}" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="TabItem">
+                                <Grid
+                                    Name="Panel"
+                                    Height="45"
+                                    Background="Transparent">
+                                    <Border
+                                        Name="Border"
+                                        Margin="0,10,0,10"
+                                        BorderThickness="4,0,0,0">
+                                        <ContentPresenter
+                                            x:Name="ContentSite"
+                                            Margin="10,0,0,0"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center"
+                                            ContentSource="Header" />
+                                    </Border>
+                                </Grid>
+                                <ControlTemplate.Triggers>
+                                    <Trigger SourceName="Panel" Property="IsMouseOver" Value="True">
+                                        <Setter TargetName="Panel" Property="Background" Value="#4d4d4d" />
+                                    </Trigger>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </TabControl.Resources>
+            <TabItem Header="General">
+                <TabItem.HeaderTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <ContentControl Template="{StaticResource SettingsGeneralIcon}" />
+                            <TextBlock Margin="10,0,0,0" Text="{Binding}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </TabItem.HeaderTemplate>
+                <TabItem.Content>
+                    <ScrollViewer>
+                        <Grid
+                            x:Name="mainGrid"
+                            Margin="15"
+                            Focusable="True">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <StackPanel Grid.Row="0" Orientation="Vertical">
+                                <TextBlock HorizontalAlignment="Left" Text="Pin the tray icon to the taskbar" />
+                                <StackPanel Margin="0,15,0,0" Orientation="Horizontal">
+                                    <customControls:ToggleSwitch
+                                        HorizontalAlignment="Left"
+                                        IsChecked="{Binding IsSettingChanged, Mode=OneWayToSource}"
+                                        OffText="{loc:Localize TGL_BTN_LBL_Off,
+                                                               ResourceLookupMode=Everywhere}"
+                                        OnText="{loc:Localize TGL_BTN_LBL_On,
+                                                              ResourceLookupMode=Everywhere}" />
+                                    <Image
+                                        MinWidth="100"
+                                        MinHeight="25"
+                                        Margin="5,0,0,0"
+                                        Source="/Resources/Images/Settings/DeskBand.png" />
+                                </StackPanel>
 
-            </Grid>
-        </ScrollViewer>
+                            </StackPanel>
 
+
+                            <ItemsControl
+                                x:Name="generalExtensionsItemsControl"
+                                Grid.Row="1"
+                                ItemTemplate="{StaticResource SettingsLvDataTemplate}"
+                                ItemsSource="{Binding GeneralExtensionUIItems}">
+                                <ItemsControl.ItemContainerStyle>
+                                    <Style>
+                                        <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
+                                    </Style>
+                                </ItemsControl.ItemContainerStyle>
+                            </ItemsControl>
+
+                        </Grid>
+
+                    </ScrollViewer>
+                </TabItem.Content>
+            </TabItem>
+
+            <TabItem Header="Previews">
+                <TabItem.HeaderTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <ContentControl Template="{StaticResource SettingsPreiewIcon}" />
+                            <TextBlock Margin="10,0,0,0" Text="{Binding}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </TabItem.HeaderTemplate>
+                <TabItem.Content>
+                    <ScrollViewer>
+                        <ItemsControl
+                            x:Name="previewsExtensionsItemsControl"
+                            Grid.Row="2"
+                            ItemTemplate="{StaticResource SettingsLvDataTemplate}"
+                            ItemsSource="{Binding PreviewsExtensionUIItems}">
+                            <ItemsControl.ItemContainerStyle>
+                                <Style>
+                                    <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
+                                </Style>
+                            </ItemsControl.ItemContainerStyle>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </TabItem.Content>
+            </TabItem>
+
+            <TabItem Header="Copying">
+                <TabItem.HeaderTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <ContentControl Template="{StaticResource SettingsCopyingIcon}" />
+                            <TextBlock Margin="10,0,0,0" Text="{Binding}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </TabItem.HeaderTemplate>
+                <TabItem.Content>
+                    <ScrollViewer>
+                        <ItemsControl
+                            x:Name="copyingExtensionsItemsControl"
+                            Grid.Row="2"
+                            ItemTemplate="{StaticResource SettingsLvDataTemplate}"
+                            ItemsSource="{Binding CopyingExtensionUIItems}">
+                            <ItemsControl.ItemContainerStyle>
+                                <Style>
+                                    <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
+                                </Style>
+                            </ItemsControl.ItemContainerStyle>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </TabItem.Content>
+            </TabItem>
+
+            <TabItem Header="Pasting">
+                <TabItem.HeaderTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <ContentControl Template="{StaticResource SettingsPastingIcon}" />
+                            <TextBlock Margin="10,0,0,0" Text="{Binding}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </TabItem.HeaderTemplate>
+                <TabItem.Content>
+                    <ScrollViewer>
+                        <ItemsControl
+                            x:Name="pastingExtensionsItemsControl"
+                            Grid.Row="2"
+                            ItemTemplate="{StaticResource SettingsLvDataTemplate}"
+                            ItemsSource="{Binding PastingExtensionUIItems}">
+                            <ItemsControl.ItemContainerStyle>
+                                <Style>
+                                    <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
+                                </Style>
+                            </ItemsControl.ItemContainerStyle>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </TabItem.Content>
+            </TabItem>
+
+            <TabItem Header="Security">
+                <TabItem.HeaderTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <ContentControl Template="{StaticResource SettingsSecurityIcon}" />
+                            <TextBlock Margin="10,0,0,0" Text="{Binding}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </TabItem.HeaderTemplate>
+                <TabItem.Content>
+                    <ScrollViewer>
+                        <ItemsControl
+                            x:Name="security"
+                            Grid.Row="2"
+                            ItemTemplate="{StaticResource SettingsLvDataTemplate}"
+                            ItemsSource="{Binding SecurityExtensionUIItems}">
+                            <ItemsControl.ItemContainerStyle>
+                                <Style>
+                                    <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
+                                </Style>
+                            </ItemsControl.ItemContainerStyle>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </TabItem.Content>
+            </TabItem>
+
+            <TabItem Header="Cloud">
+                <TabItem.HeaderTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal">
+                            <ContentControl Template="{StaticResource SettingsCloudIcon}" />
+                            <TextBlock Margin="10,0,0,0" Text="{Binding}" />
+                        </StackPanel>
+                    </DataTemplate>
+                </TabItem.HeaderTemplate>
+                <TabItem.Content>
+                    <ScrollViewer>
+                        <ItemsControl
+                            x:Name="cloudExtensionsItemsControl"
+                            Grid.Row="2"
+                            ItemTemplate="{StaticResource SettingsLvDataTemplate}"
+                            ItemsSource="{Binding CloudExtensionUIItems}">
+                            <ItemsControl.ItemContainerStyle>
+                                <Style>
+                                    <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
+                                </Style>
+                            </ItemsControl.ItemContainerStyle>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </TabItem.Content>
+            </TabItem>
+        </TabControl>
     </Grid>
 </localWindows:AcryllicWindow>

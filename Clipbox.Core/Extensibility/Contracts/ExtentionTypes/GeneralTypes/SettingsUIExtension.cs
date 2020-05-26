@@ -1,5 +1,6 @@
 ﻿using Clipbox.Core.Configuration;
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
+using Clipbox.Core.Extensibility.Enums;
 using Clipbox.Core.Extensibility.EventArgsClasses;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,12 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
             
             _settingKeyUIPartMapping = new Dictionary<ISettingKey, ISettingUIPart>();
         }
+
+        /// <summary>
+        /// Specifies the category, in which the setting will appear
+        /// in the settings UI.
+        /// </summary>
+        public virtual SettingsCategory Category { get; }
 
         /// <summary>
         /// The extensions override this method in order to know when

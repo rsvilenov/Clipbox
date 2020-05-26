@@ -1,5 +1,6 @@
 ﻿using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
+using Clipbox.Core.Extensibility.Enums;
 using Clipbox.Extensions.BuiltIn.TextFormats.FlowExtensions;
 using Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIParts;
 
@@ -17,5 +18,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
         {
             builder.Add(ExtensionSettingNames.MinTextLengthToStore, new SkipShortStringsSettingsUIPart());
         }
+
+        public override SettingsCategory Category => SettingsCategory.Copying;
     }
 }

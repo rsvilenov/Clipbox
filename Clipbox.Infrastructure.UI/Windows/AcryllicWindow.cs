@@ -75,10 +75,10 @@ namespace Clipbox.Infrastructure.UI.Windows
                 data.Data = accentPtr;
 
                 int retCode = Win32.Native.User32.SetWindowCompositionAttribute(this.Handle, ref data);
-                if (retCode != 0)
-                {
-                    MarshalExt.ThrowOnWin32Error();
-                }
+                //if (retCode != 0)
+                //{
+                //    MarshalExt.ThrowOnWin32Error();
+                //}
             }
             finally
             {

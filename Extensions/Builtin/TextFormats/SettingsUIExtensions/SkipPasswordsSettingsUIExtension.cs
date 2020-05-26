@@ -1,5 +1,6 @@
 ﻿using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
+using Clipbox.Core.Extensibility.Enums;
 using Clipbox.Extensions.BuiltIn.TextFormats.Enums;
 using Clipbox.Extensions.BuiltIn.TextFormats.FlowExtensions;
 using Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIParts;
@@ -11,6 +12,8 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
     {
         internal const int DEFAULT_MIN_PASSWORD_LEN = 8;
         internal const int DEFAULT_MAX_PASSWORD_LEN = 20;
+
+        public override SettingsCategory Category => SettingsCategory.Security;
 
         protected override void RegisterSettings(IRegisteredSettingStore settingsStore)
         {

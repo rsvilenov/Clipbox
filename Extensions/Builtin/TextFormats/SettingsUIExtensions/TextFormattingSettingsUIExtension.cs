@@ -4,6 +4,7 @@ using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
 using Clipbox.Extensions.BuiltIn.TextFormats.Enums;
 using Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIParts;
 using Clipbox.Extensions.BuiltIn.TextFormats.FlowUIExtensions;
+using Clipbox.Core.Extensibility.Enums;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
 {
@@ -11,7 +12,9 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
     public class TextFormattingSettingsUIExtension : SettingsUIExtension
     {
         private DefaultSeparatorSettingUIPart _defaultSeparatorUIPart;
-        
+
+        public override SettingsCategory Category => SettingsCategory.Pasting;
+
         protected override void RegisterSettings(IRegisteredSettingStore settingsStore)
         {
             settingsStore

@@ -97,6 +97,7 @@
     <Compile Include="Extensibility\Contracts\IMachineInfo.cs" />
     <Compile Include="Extensibility\Contracts\IntermediateFormatBase.cs" />
     <Compile Include="Extensibility\Contracts\ISettingsRegistrator.cs" />
+    <Compile Include="Extensibility\Enums\SettingsCategory.cs" />
     <Compile Include="Extensibility\EventArgsClasses\RequestSettingChangeEventArgs.cs" />
     <Compile Include="Search\Enums\SearchCategory.cs" />
     <Compile Include="Search\Enums\TermOccurrence.cs" />
