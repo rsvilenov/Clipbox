@@ -52,7 +52,8 @@
     <Reference Include="ICSharpCode.SharpZipLib, Version=0.86.0.518, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpZipLib.0.86.0\lib\20\ICSharpCode.SharpZipLib.dll</HintPath>
     </Reference>
-    <Reference Include="Lucene.Net, Version=3.0.3.0, Culture=neutral, PublicKeyToken=85089178b9ac3181, processorArchitecture=MSIL">
+    <Reference Include="Lucene.Net, Version=1.0.7453.1443, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Lucene.Net.3.0.3\lib\NET40\Lucene.Net.dll</HintPath>
     </Reference>
     <Reference Include="Lucene.Net.Contrib.Analyzers, Version=3.0.3.0, Culture=neutral, PublicKeyToken=85089178b9ac3181, processorArchitecture=MSIL">
@@ -96,6 +97,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ISearchProvider.cs" />
+    <Compile Include="SearchProviders\Encryption\EncrypedIndexOutput.cs" />
+    <Compile Include="SearchProviders\Encryption\EncryptedIndexInput.cs" />
+    <Compile Include="SearchProviders\Encryption\EncryptedFSDirectory.cs" />
     <Compile Include="SearchProviders\LuceneSearch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

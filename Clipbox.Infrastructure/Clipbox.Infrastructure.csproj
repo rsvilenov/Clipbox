@@ -53,6 +53,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -65,6 +66,8 @@
     <Compile Include="CLR\ClrHelpers.cs" />
     <Compile Include="CLR\TrackableObject.cs" />
     <Compile Include="Compression\ByteArrayCompressor.cs" />
+    <Compile Include="Encryption\AesEncryption.cs" />
+    <Compile Include="Encryption\DpApiEncryption.cs" />
     <Compile Include="Encryption\MD5Hash.cs" />
     <Compile Include="Extensibility\Containers\BaseExtensionContainer.cs" />
     <Compile Include="Extensibility\Containers\ClipboardFormatExtensionContainer.cs" />
