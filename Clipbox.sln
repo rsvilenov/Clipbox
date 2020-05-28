@@ -62,6 +62,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clipbox.Infrastructure.Pers
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clipbox.Infrastructure.UI.ColorPicker", "Clipbox.Infrastructure.UI.ColorPicker\Clipbox.Infrastructure.UI.ColorPicker.csproj", "{716759C8-2FB5-4178-9A7A-27EA116C1597}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clipbox.Infrastructure.Encryption", "Clipbox.Infrastructure.Encryption\Clipbox.Infrastructure.Encryption.csproj", "{833FD72B-997F-4472-B28D-AEFAB49F5C09}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clipbox.Infrastructure.Encryption.Tests", "Clipbox.Infrastructure.Encryption.Tests\Clipbox.Infrastructure.Encryption.Tests.csproj", "{802D348C-1051-4E25-BA18-10784DAABAA1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -371,6 +375,30 @@ Global
 		{716759C8-2FB5-4178-9A7A-27EA116C1597}.Release|x64.Build.0 = Release|x64
 		{716759C8-2FB5-4178-9A7A-27EA116C1597}.Release|x86.ActiveCfg = Release|Any CPU
 		{716759C8-2FB5-4178-9A7A-27EA116C1597}.Release|x86.Build.0 = Release|Any CPU
+		{833FD72B-997F-4472-B28D-AEFAB49F5C09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{833FD72B-997F-4472-B28D-AEFAB49F5C09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{833FD72B-997F-4472-B28D-AEFAB49F5C09}.Debug|x64.ActiveCfg = Debug|x64
+		{833FD72B-997F-4472-B28D-AEFAB49F5C09}.Debug|x64.Build.0 = Debug|x64
+		{833FD72B-997F-4472-B28D-AEFAB49F5C09}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{833FD72B-997F-4472-B28D-AEFAB49F5C09}.Debug|x86.Build.0 = Debug|Any CPU
+		{833FD72B-997F-4472-B28D-AEFAB49F5C09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{833FD72B-997F-4472-B28D-AEFAB49F5C09}.Release|Any CPU.Build.0 = Release|Any CPU
+		{833FD72B-997F-4472-B28D-AEFAB49F5C09}.Release|x64.ActiveCfg = Release|x64
+		{833FD72B-997F-4472-B28D-AEFAB49F5C09}.Release|x64.Build.0 = Release|x64
+		{833FD72B-997F-4472-B28D-AEFAB49F5C09}.Release|x86.ActiveCfg = Release|Any CPU
+		{833FD72B-997F-4472-B28D-AEFAB49F5C09}.Release|x86.Build.0 = Release|Any CPU
+		{802D348C-1051-4E25-BA18-10784DAABAA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{802D348C-1051-4E25-BA18-10784DAABAA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{802D348C-1051-4E25-BA18-10784DAABAA1}.Debug|x64.ActiveCfg = Debug|x64
+		{802D348C-1051-4E25-BA18-10784DAABAA1}.Debug|x64.Build.0 = Debug|x64
+		{802D348C-1051-4E25-BA18-10784DAABAA1}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{802D348C-1051-4E25-BA18-10784DAABAA1}.Debug|x86.Build.0 = Debug|Any CPU
+		{802D348C-1051-4E25-BA18-10784DAABAA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{802D348C-1051-4E25-BA18-10784DAABAA1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{802D348C-1051-4E25-BA18-10784DAABAA1}.Release|x64.ActiveCfg = Release|x64
+		{802D348C-1051-4E25-BA18-10784DAABAA1}.Release|x64.Build.0 = Release|x64
+		{802D348C-1051-4E25-BA18-10784DAABAA1}.Release|x86.ActiveCfg = Release|Any CPU
+		{802D348C-1051-4E25-BA18-10784DAABAA1}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
