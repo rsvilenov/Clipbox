@@ -67,11 +67,11 @@ namespace Clipbox.ExtendedClipboard
                 // possibility of someone modifying the object somewhere accidentally
                 // or with bad intentions in mind and then we save it here. CDOs should
                 // not be modifiable.
-                RestoreClipboardDataObjects(clipboardItem, savedClipboardItem);
+                RestoreClipboardDataObjects(clipboardItem, savedClipboardItem, decryptIfPossible: true);
             }
 
             // generate persistable clipboard item
-            PersistableClipboardItem persistableClipboardItem = GeneratePersistableClipboardItem(clipboardItem);
+            PersistableClipboardItem persistableClipboardItem = GeneratePersistableClipboardItem(clipboardItem, encryptIfPossible: true);
             
 
             // shrink the original item if necessary
@@ -96,10 +96,10 @@ namespace Clipbox.ExtendedClipboard
         public void RestoreShrinkedClipboardItem(ClipboardItem clipboardItem)
         {
             PersistableClipboardItem persistableClipboardItem = LoadPersistableClipboardItemFromStorage(clipboardItem);
-            RestoreClipboardDataObjects(clipboardItem, persistableClipboardItem);
+            RestoreClipboardDataObjects(clipboardItem, persistableClipboardItem, decryptIfPossible: true);
         }
 
-        private void RestoreClipboardDataObjects(ClipboardItem clipboardItem, PersistableClipboardItem persistableClipboardItem)
+        private void RestoreClipboardDataObjects(ClipboardItem clipboardItem, PersistableClipboardItem persistableClipboardItem, bool decryptIfPossible)
         {
             foreach (PersistableClipboardDataObject persistableCdo in persistableClipboardItem.PersistableClipboardDataObjects)
             {
@@ -107,7 +107,7 @@ namespace Clipbox.ExtendedClipboard
                 ClipboardDataObject originalCdo = (ClipboardDataObject)clipboardItem.ClipboardDataObjects.FirstOrDefault(cdo => cdo.ClipboardFormatName == persistableCdo.ClipboardFormatName);
                 if (originalCdo != null)
                 {
-                    if (TryGetCdoFromPersistableCdo(persistableCdo, out ClipboardDataObject persistedClipboardDataObject))
+                    if (TryGetCdoFromPersistableCdo(persistableCdo, out ClipboardDataObject persistedClipboardDataObject, decryptIfPossible))
                     {
                         originalCdo.IntermediateFormatObject = persistedClipboardDataObject.IntermediateFormatObject;
                     }
@@ -160,7 +160,7 @@ namespace Clipbox.ExtendedClipboard
 
                     if (unshrink)
                     {
-                        if (TryGetCdoFromPersistableCdo(persistableCdo, out ClipboardDataObject restoredCdo))
+                        if (TryGetCdoFromPersistableCdo(persistableCdo, out ClipboardDataObject restoredCdo, decryptIfPossible: true))
                         {
                             originalCdo = new ClipboardDataObject(restoredCdo.ClipboardFormatName, restoredCdo.IntermediateFormatObject);
                         }
@@ -206,7 +206,7 @@ namespace Clipbox.ExtendedClipboard
                 RestoreShrinkedClipboardItem(clipboardItem);
             }
 
-            var persistableClipboardItem = GeneratePersistableClipboardItem(clipboardItem);
+            var persistableClipboardItem = GeneratePersistableClipboardItem(clipboardItem, encryptIfPossible: false);
             if (persistableClipboardItem == null)
             {
                 // the item is not persistable
@@ -235,7 +235,7 @@ namespace Clipbox.ExtendedClipboard
         }
 
         [HandleProcessCorruptedStateExceptions]
-        private bool TryGetCdoFromPersistableCdo(PersistableClipboardDataObject persistableCdo, out ClipboardDataObject clipboardDataObject)
+        private bool TryGetCdoFromPersistableCdo(PersistableClipboardDataObject persistableCdo, out ClipboardDataObject clipboardDataObject, bool decryptIfPossible)
         {
             clipboardDataObject = null;
 
@@ -248,7 +248,7 @@ namespace Clipbox.ExtendedClipboard
             IIntermediateFormat intermediateFormatObj = null;
 
             byte[] serializedData = null;
-            if (persistenceExtension.EncryptData)
+            if (persistenceExtension.EncryptData && decryptIfPossible)
             {
                 serializedData = _encryptionProvider.Decrypt(persistableCdo.ByteArray);
             }
@@ -281,7 +281,7 @@ namespace Clipbox.ExtendedClipboard
             foreach (TransferableClipboardDataObject tdto in transferableClipboardItem.TransferableClipboardDataObjects)
             {
                 PersistableClipboardDataObject persistableCdo = GetPersistableCdoFromTransferableCdo(tdto);
-                if (TryGetCdoFromPersistableCdo(persistableCdo, out ClipboardDataObject clipboardDataObject))
+                if (TryGetCdoFromPersistableCdo(persistableCdo, out ClipboardDataObject clipboardDataObject, decryptIfPossible: false))
                 {
                     clipboardDataObjects.Add(clipboardDataObject);
                 }
@@ -324,9 +324,9 @@ namespace Clipbox.ExtendedClipboard
             }
         }
         
-        private PersistableClipboardItem GeneratePersistableClipboardItem(ClipboardItem clipboardItem)
+        private PersistableClipboardItem GeneratePersistableClipboardItem(ClipboardItem clipboardItem, bool encryptIfPossible)
         {
-            var persistableCdos = GeneratePersistableClipboardDataObjects(clipboardItem.ClipboardDataObjects.Cast<ClipboardDataObject>()).ToList();
+            var persistableCdos = GeneratePersistableClipboardDataObjects(clipboardItem.ClipboardDataObjects.Cast<ClipboardDataObject>(), encryptIfPossible).ToList();
             if (persistableCdos.Any())
             {
                 return new PersistableClipboardItem
@@ -393,7 +393,7 @@ namespace Clipbox.ExtendedClipboard
 
 
         [HandleProcessCorruptedStateExceptions]
-        private IEnumerable<PersistableClipboardDataObject> GeneratePersistableClipboardDataObjects(IEnumerable<ClipboardDataObject> clipboardDataObjects)
+        private IEnumerable<PersistableClipboardDataObject> GeneratePersistableClipboardDataObjects(IEnumerable<ClipboardDataObject> clipboardDataObjects, bool encryptIfPossible)
         {
             foreach (ClipboardDataObject cdo in clipboardDataObjects)
             {
@@ -414,7 +414,7 @@ namespace Clipbox.ExtendedClipboard
                 }
 
                 byte[] finalByteArray = null;
-                if (persistenceExtension.EncryptData)
+                if (persistenceExtension.EncryptData && encryptIfPossible)
                 {
                     finalByteArray = _encryptionProvider.Encrypt(dataBytes);
                 }

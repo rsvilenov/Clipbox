@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
@@ -371,9 +372,15 @@ namespace Clipbox.ExtendedClipboard
             
             e.CancelPropagatingToOtherClipboardListeners = _isClipboardForwardingSuspended;
 
+            var sourceWindowInfo = GetClipboardItemSourceWindowInfo();
+            if (sourceWindowInfo == null)
+            {
+                return;
+            }
+
             var source = new ClipboardItemSource
             {
-                SourceWindowInfo = GetClipboardItemSourceWindowInfo(),
+                SourceWindowInfo = sourceWindowInfo,
                 UserName = Environment.UserName,
                 SourceMachineInfo = new SourceMachineInfo
                 {
@@ -460,62 +467,108 @@ namespace Clipbox.ExtendedClipboard
         /// <returns></returns>
         private SourceWindowInfo GetClipboardItemSourceWindowInfo()
         {
-            bool isForemostWindowUsed = false;
+            WindowUtils.WindowInfo sourceAppWindowInfo = null;
 
+            List<Exception> exceptionList = new List<Exception>();
             IntPtr lastClipboardUserHwnd = _systemClipboard.GetClipboardLastUserHWnd();
-
-            IntPtr foremostWindowHwnd = WindowUtils.GetForemostWindowHwnd();
-
-            if (lastClipboardUserHwnd == IntPtr.Zero)
+            if (lastClipboardUserHwnd != IntPtr.Zero)
             {
-                isForemostWindowUsed = true;
-                lastClipboardUserHwnd = foremostWindowHwnd;
+                try
+                {
+                    sourceAppWindowInfo = WindowUtils.GetWindowInfo(lastClipboardUserHwnd);
+                }
+                catch (Exception ex)
+                {
+                    exceptionList.Add(ex);
+                }
             }
 
-            SourceWindowInfo windowInfo = new SourceWindowInfo();
+            // some apps (mainly WinRT or UWP) use a service for clipboard access
+            bool isSourceSvcHost = 
+                    sourceAppWindowInfo
+                    ?.ApplicationPath
+                    ?.EndsWith("svchost.exe") == true;
 
-            using (WindowUtils.WindowInfo wInfo = WindowUtils.GetWindowInfo(lastClipboardUserHwnd))
+
+            WindowUtils.WindowInfo foremostWInfo = null;
+
+            if (isSourceSvcHost || sourceAppWindowInfo == null)
             {
-                bool isSourceSvcHost = wInfo.ApplicationPath.EndsWith("svchost.exe");
-                if (!isForemostWindowUsed ||
-                    /* some apps may use a service for clipboard access (it looks like "Paint 3d" is doing that) */
-                    isSourceSvcHost)
+                IntPtr foremostWindowHwnd = WindowUtils.GetForemostWindowHwnd();
+                if (foremostWindowHwnd != IntPtr.Zero)
                 {
-                    using (WindowUtils.WindowInfo foremostWInfo = WindowUtils.GetWindowInfo(foremostWindowHwnd))
+                    try
                     {
-                        if (isSourceSvcHost || wInfo.Pid == foremostWInfo.Pid)
-                        {
-                            windowInfo.Caption = foremostWInfo.Caption;
-                            windowInfo.ApplicationInfo = GetApplicationInfo(foremostWInfo.ApplicationPath);
-                            windowInfo.Icon = foremostWInfo.Icon?.ToByteArray();
-                        }
-                        else
-                        {
-                            // always prefer the title of the window in view
-                            windowInfo.Caption = wInfo.Caption;
-                            windowInfo.ApplicationInfo = GetApplicationInfo(wInfo.ApplicationPath);
-                            windowInfo.Icon = wInfo.Icon?.ToByteArray();
-                        }
+                        foremostWInfo = WindowUtils.GetWindowInfo(foremostWindowHwnd);
+                    }
+                    catch (Exception ex)
+                    {
+                        exceptionList.Add(ex);
+                    }
+                }
+            }
+            
+            if (sourceAppWindowInfo != null
+                && !string.IsNullOrEmpty(sourceAppWindowInfo.ApplicationPath))
+            {
+                SourceWindowInfo windowInfo = new SourceWindowInfo();
+
+                if (foremostWInfo != null
+                    && !string.IsNullOrEmpty(foremostWInfo.ApplicationPath))
+                {
+                    windowInfo.ApplicationInfo = GetApplicationInfo(foremostWInfo.ApplicationPath);
+                    windowInfo.Icon = foremostWInfo.Icon?.ToByteArray()
+                        ?? sourceAppWindowInfo.Icon?.ToByteArray();
+
+                    if (isSourceSvcHost /* of the data comes from a scvhost */
+                        || /* or if it comes from a non-active window of the same application */
+                        sourceAppWindowInfo.Pid == foremostWInfo.Pid)
+                    {
+                        // always prefer the title of the window in view
+                        windowInfo.Caption = foremostWInfo.Caption;
+                    }
+                    else
+                    {
+                        windowInfo.Caption = sourceAppWindowInfo.Caption;
                     }
                 }
                 else
                 {
-                    windowInfo.Caption = wInfo.Caption;
-                    windowInfo.ApplicationInfo = GetApplicationInfo(wInfo.ApplicationPath);
-                    windowInfo.Icon = wInfo.Icon?.ToByteArray();
+                    windowInfo.Caption = sourceAppWindowInfo.Caption;
+                    windowInfo.ApplicationInfo = GetApplicationInfo(sourceAppWindowInfo.ApplicationPath);
+                    windowInfo.Icon = sourceAppWindowInfo.Icon?.ToByteArray();
                 }
                 
                 if (windowInfo.Icon == null)
                 {
-                    using (var icon = Icon.ExtractAssociatedIcon(wInfo.ApplicationPath))
+                    using (var icon = Icon.ExtractAssociatedIcon(sourceAppWindowInfo.ApplicationPath))
                     using (var bmp = icon.ToBitmap())
                     {
                         windowInfo.Icon = bmp.ToByteArray();
                     }
                 }
+
+                return windowInfo;
+            }
+            else if (foremostWInfo != null
+                    && !string.IsNullOrEmpty(foremostWInfo.ApplicationPath))
+            {
+                return new SourceWindowInfo
+                {
+                    Caption = foremostWInfo.Caption,
+                    ApplicationInfo = GetApplicationInfo(foremostWInfo.ApplicationPath),
+                    Icon = foremostWInfo.Icon?.ToByteArray()
+                };
             }
 
-            return windowInfo;
+            // On Access Denied and similar, do not throw; 
+            // but throw everything else
+                if (!exceptionList.All(ex => ex is IOException))
+            {
+                throw new AggregateException("Could not get retrieve the info for the source application of the clipboard item.", exceptionList);
+            }
+
+            return null;
         }
 
         private SourceApplicationInfo GetApplicationInfo(string path)

@@ -28,6 +28,10 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
 
         public LuceneSearch(IEncryptionProvider encryptionProvider)
         {
+            // Despite the fact that am telling Lucene not to store 
+            // the original items in the index, there are techniques 
+            // by which the value can be partially restored, and that's
+            // why I want to encrypt the whole index.
             _encryptionProvider = encryptionProvider;
         }
 
