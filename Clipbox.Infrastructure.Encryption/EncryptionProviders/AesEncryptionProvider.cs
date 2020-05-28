@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Clipbox.Infrastructure.Encryption.EncryptionProviders
 {
-    public class SHAEncryptionProvider : IEncryptionProvider
+    public class AesEncryptionProvider : IEncryptionProvider
     {
         private IPersistenceProvider _persistenceProvider;
 
@@ -17,7 +17,7 @@ namespace Clipbox.Infrastructure.Encryption.EncryptionProviders
 
         private const int PASSWORD_SALT_SIZE_BYTES = 8;
 
-        public SHAEncryptionProvider(IPersistenceProvider persistenceProvider)
+        public AesEncryptionProvider(IPersistenceProvider persistenceProvider)
         {
             _persistenceProvider = persistenceProvider;
 

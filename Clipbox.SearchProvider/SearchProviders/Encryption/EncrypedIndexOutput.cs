@@ -9,14 +9,14 @@ namespace Clipbox.Infrastructure.Search.SearchProviders.Encryption
     {
         private readonly string _filePath;
         private readonly MemoryStream _memoryStream;
-        private readonly AesEncryption _aes;
+        private readonly IEncryptionProvider _encryptionProvider;
 
         private bool _hasUnflashedData;
 
-        public EncrypedIndexOutput(string filePath, string key)
+        public EncrypedIndexOutput(string filePath, IEncryptionProvider encryptionProvider)
         {
             _filePath = filePath;
-            _aes = new AesEncryption(key);
+            _encryptionProvider = encryptionProvider;
             _memoryStream = new MemoryStream();
             
         }
@@ -27,17 +27,11 @@ namespace Clipbox.Infrastructure.Search.SearchProviders.Encryption
 
         public override void Flush()
         {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                using (CryptoStream cs = new CryptoStream(ms, _aes.Encryptor, CryptoStreamMode.Write))
-                {
-                    byte[] bytesToWrite = _memoryStream.ToArray();
-                    cs.Write(bytesToWrite, 0, bytesToWrite.Length);
-                }
+            byte[] bytesToWrite = _memoryStream.ToArray();
 
-                byte[] encryptedBytes = ms.ToArray();
-                File.WriteAllBytes(_filePath, encryptedBytes);
-            }
+            byte[] encryptedBytes = _encryptionProvider.Encrypt(bytesToWrite);
+            File.WriteAllBytes(_filePath, encryptedBytes);
+
             _hasUnflashedData = false;
         }
 
@@ -65,7 +59,6 @@ namespace Clipbox.Infrastructure.Search.SearchProviders.Encryption
                 Flush();
             }
             _memoryStream.Dispose();
-            _aes.Dispose();
         }
     }
 }

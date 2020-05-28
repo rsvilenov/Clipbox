@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 namespace Clipbox.Infrastructure.Encryption.Tests
 {
     [TestFixture]
-    public class SHAEncryptionProviderTests
+    public class AesEncryptionProviderTests
     {
         private IPersistenceProvider _mockPersistenceProvider;
-        private SHAEncryptionProvider _shaEncryptionProvider;
+        private AesEncryptionProvider _shaEncryptionProvider;
 
         [SetUp]
         public void SetUp()
@@ -30,7 +30,7 @@ namespace Clipbox.Infrastructure.Encryption.Tests
                 .WhenCalled(w => w.ReturnValue = generatedRandomKey)
                 .Return(generatedRandomKey);
 
-            _shaEncryptionProvider = new SHAEncryptionProvider(_mockPersistenceProvider);
+            _shaEncryptionProvider = new AesEncryptionProvider(_mockPersistenceProvider);
         }
 
         [Test]

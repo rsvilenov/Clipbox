@@ -7,6 +7,8 @@ using Clipbox.ExtendedClipboard;
 using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.CloudSupport.CloudSupportProviders;
 using Clipbox.Infrastructure.Configuration;
+using Clipbox.Infrastructure.Encryption;
+using Clipbox.Infrastructure.Encryption.EncryptionProviders;
 using Clipbox.Infrastructure.IPC;
 using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.Persistence.FilesystemAccess;
@@ -195,8 +197,9 @@ namespace Clipbox
             _cloudSyncService.IsEnabled = _settingsService.GetSetting<bool>(SettingsKeys.IsCloudSyncEnabled);
 
             _trayContextMenuService = new TrayContextMenuService(_settingsService);
-            
-            _searchService = new SearchService(_extensionLoader.SearchSupportExtensionContainer, _clipboardManager, new LuceneSearch());
+
+            IEncryptionProvider encryptionProvider = new AesEncryptionProvider(_persistenceProvider);
+            _searchService = new SearchService(_extensionLoader.SearchSupportExtensionContainer, _clipboardManager, new LuceneSearch(encryptionProvider));
             
             // this view can show a little bit slower so we will not keep its instance alive the whole time - we will create it upon request within the service
             _mainClipboardViewWindowService = new MainClipboardViewWindowService(_clipboardManager, 
@@ -411,6 +414,9 @@ namespace Clipbox
 
         private void EnsurePlatformMatch()
         {
+            // Some functions like registry access will be restricted to
+            // the WoW subsystem when we are running a 32 bit process on a 64
+            // bit OS. So, just don't allow that.
             if (Environment.Is64BitOperatingSystem
                 && IntPtr.Size == 4 /* int ptr size of 4 indicates that the program is compiled for 32 bit platform */)
             {

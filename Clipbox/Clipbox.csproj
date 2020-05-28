@@ -465,6 +465,10 @@
       <Project>{2beee363-9a18-41db-8e25-a4f7dbcfabd5}</Project>
       <Name>Clipbox.Infrastructure.Configuration</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Clipbox.Infrastructure.Encryption\Clipbox.Infrastructure.Encryption.csproj">
+      <Project>{833fd72b-997f-4472-b28d-aefab49f5c09}</Project>
+      <Name>Clipbox.Infrastructure.Encryption</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Clipbox.Infrastructure.Persistence\Clipbox.Infrastructure.Persistence.csproj">
       <Project>{95fff54a-021c-4a0e-94a8-6af68ae696a0}</Project>
       <Name>Clipbox.Infrastructure.Persistence</Name>

@@ -417,9 +417,10 @@ namespace Clipbox.Win32
             }
             catch (Win32Exception)
             {
-                // if we are not running elevated, assume Acess Denied...
+                // if we are not running elevated, assume Acess Denied and ignore the exception.
+                // Otherwise, rethrow.
                 // TODO: we can do better here.
-                if (!ProcessUtils.IsOurProcessRunningElevated)
+                if (ProcessUtils.IsOurProcessRunningElevated)
                 {
                     throw;
                 }

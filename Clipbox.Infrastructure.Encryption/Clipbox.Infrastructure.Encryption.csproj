@@ -61,7 +61,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EncryptionProviders\SHAEncryptionProvider.cs" />
+    <Compile Include="EncryptionProviders\AesEncryptionProvider.cs" />
     <Compile Include="IEncryptionProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

@@ -1,8 +1,11 @@
 ﻿using Clipbox.Core.Search;
 using Clipbox.Core.Search.IndexUnits;
 using Clipbox.Core.Search.SearchTerms;
+using Clipbox.Infrastructure.Encryption.EncryptionProviders;
+using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.Search.SearchProviders;
 using NUnit.Framework;
+using Rhino.Mocks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,11 +16,25 @@ namespace Clipbox.Infrastructure.Search.Tests
     public class LuceneSearchTests
     {
         private ISearchProvider _searchProvicer;
+        private IPersistenceProvider _mockPersistenceProvider;
+        private AesEncryptionProvider _shaEncryptionProvider;
 
         [SetUp]
         public void SetUp()
         {
-            _searchProvicer = new LuceneSearch();
+            _mockPersistenceProvider = MockRepository.GenerateMock<IPersistenceProvider>();
+
+            byte[] generatedRandomKey = null;
+
+            _mockPersistenceProvider.Stub(pp => pp.Write(Arg<string>.Is.Anything, Arg<byte[]>.Is.Anything, Arg<string>.Is.Anything))
+                .WhenCalled(w => generatedRandomKey = (byte[])w.Arguments[1]);
+
+            _mockPersistenceProvider.Stub(pp => pp.ReadBytes(Arg<string>.Is.Anything, Arg<string>.Is.Anything))
+                .WhenCalled(w => w.ReturnValue = generatedRandomKey)
+                .Return(generatedRandomKey);
+
+            _shaEncryptionProvider = new AesEncryptionProvider(_mockPersistenceProvider);
+            _searchProvicer = new LuceneSearch(_shaEncryptionProvider);
         }
 
         [Test]

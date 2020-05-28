@@ -55,6 +55,9 @@
     <Reference Include="nunit.framework, Version=3.12.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\packages\NUnit.3.12.0\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="Rhino.Mocks, Version=3.6.0.0, Culture=neutral, PublicKeyToken=0b3305902db7183f, processorArchitecture=MSIL">
+      <HintPath>..\packages\RhinoMocks.3.6.1\lib\net\Rhino.Mocks.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -75,6 +78,14 @@
     <ProjectReference Include="..\Clipbox.Core\Clipbox.Core.csproj">
       <Project>{F4BD7048-4D9F-4036-98AA-DA8232EF2AFB}</Project>
       <Name>Clipbox.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Clipbox.Infrastructure.Encryption\Clipbox.Infrastructure.Encryption.csproj">
+      <Project>{833fd72b-997f-4472-b28d-aefab49f5c09}</Project>
+      <Name>Clipbox.Infrastructure.Encryption</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Clipbox.Infrastructure.Persistence\Clipbox.Infrastructure.Persistence.csproj">
+      <Project>{95FFF54A-021C-4A0E-94A8-6AF68AE696A0}</Project>
+      <Name>Clipbox.Infrastructure.Persistence</Name>
     </ProjectReference>
     <ProjectReference Include="..\Clipbox.Infrastructure\Clipbox.Infrastructure.csproj">
       <Project>{EDD4D662-1F39-415C-9B66-718457922626}</Project>

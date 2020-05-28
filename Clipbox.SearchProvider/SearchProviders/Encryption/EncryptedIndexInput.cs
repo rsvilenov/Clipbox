@@ -8,37 +8,27 @@ namespace Clipbox.Infrastructure.Search.SearchProviders.Encryption
     internal class EncryptedIndexInput : BufferedIndexInput
     {
         private readonly MemoryStream _memoryStream;
-        private readonly AesEncryption _aes;
 
         private bool _isClone;
 
         private bool _isDisposed;
-
-        public override long FilePointer => _memoryStream.Position;
-
-        public EncryptedIndexInput(string filePath, string key)
+        
+        public EncryptedIndexInput(string filePath, IEncryptionProvider encryptionProvider)
         {
-            _aes = new AesEncryption(key);
-
             if (File.Exists(filePath))
             {
                 byte[] bytesToDecrypt = File.ReadAllBytes(filePath);
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    using (CryptoStream cs = new CryptoStream(ms, _aes.Decryptor, CryptoStreamMode.Write))
-                    {
-                        cs.Write(bytesToDecrypt, 0, bytesToDecrypt.Length);
-                    }
+                byte[] decryptedBytes = encryptionProvider.Decrypt(bytesToDecrypt);
 
-                    byte[] decryptedBytes = ms.ToArray();
-                    _memoryStream = new MemoryStream(decryptedBytes);
-                }
+                _memoryStream = new MemoryStream(decryptedBytes);
             }
             else
             {
                 _memoryStream = new MemoryStream();
             }
         }
+
+        public override long FilePointer => _memoryStream.Position;
 
         public override long Length()
         {
@@ -57,7 +47,6 @@ namespace Clipbox.Infrastructure.Search.SearchProviders.Encryption
             if (!_isDisposed && !_isClone)
             {
                 _memoryStream.Dispose();
-                _aes.Dispose();
                 _isDisposed = true;
             }
         }

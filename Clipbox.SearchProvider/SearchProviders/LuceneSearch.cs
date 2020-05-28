@@ -1,9 +1,8 @@
 ﻿using Clipbox.Core.Search;
 using Clipbox.Core.Search.Enums;
 using Clipbox.Core.Search.SearchTerms;
-using Clipbox.Infrastructure.Persistence;
+using Clipbox.Infrastructure.Encryption;
 using Clipbox.Infrastructure.Persistence.FilesystemAccess;
-using Clipbox.Infrastructure.Search;
 using Clipbox.Infrastructure.Search.SearchProviders.Encryption;
 using Contrib.Regex;
 using Lucene.Net.Analysis.Standard;
@@ -11,7 +10,6 @@ using Lucene.Net.Documents;
 using Lucene.Net.Index;
 using Lucene.Net.Search;
 using Lucene.Net.Search.Spans;
-using Lucene.Net.Store;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,6 +24,13 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
         private const int LUCENE_SEARCH_MAX_RESULT_COUNT = 10000;
         private const int LUCENE_MAX_CLAUSES_COUNT = 50000;
 
+        private readonly IEncryptionProvider _encryptionProvider;
+
+        public LuceneSearch(IEncryptionProvider encryptionProvider)
+        {
+            _encryptionProvider = encryptionProvider;
+        }
+
         public void DeleteIndexEntries(IEnumerable<string> indexEntryIds)
         {
             if (!indexEntryIds.Any())
@@ -35,7 +40,7 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
 
             DirectoryInfo dirInfo = GetIndexDirectoryInfo();
             using (var analyzer = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30))
-            using (var indexDir = new EncryptedFSDirectory(dirInfo, null))
+            using (var indexDir = new EncryptedFSDirectory(dirInfo, _encryptionProvider, null))
             {
                 using (var indexWriter = new IndexWriter(indexDir, analyzer, IndexWriter.MaxFieldLength.UNLIMITED))
                 {
@@ -64,7 +69,7 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
                 return searchUnitIds;
             }
 
-            using (var indexDir = new EncryptedFSDirectory(dirInfo, null))
+            using (var indexDir = new EncryptedFSDirectory(dirInfo, _encryptionProvider, null))
             using (var indexReader = IndexReader.Open(indexDir, true))
             using (var indexSearcher = new IndexSearcher(indexReader))
             {
@@ -215,7 +220,7 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
             DirectoryInfo dirInfo = GetIndexDirectoryInfo();
 
             using (var analyzer = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30))
-            using (var indexDir = new EncryptedFSDirectory(dirInfo, null))
+            using (var indexDir = new EncryptedFSDirectory(dirInfo, _encryptionProvider, null))
             {
                 using (var indexWriter = new IndexWriter(indexDir, analyzer, IndexWriter.MaxFieldLength.UNLIMITED))
                 {

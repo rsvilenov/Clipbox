@@ -1,4 +1,5 @@
-﻿using Lucene.Net.Store;
+﻿using Clipbox.Infrastructure.Encryption;
+using Lucene.Net.Store;
 using System.IO;
 
 namespace Clipbox.Infrastructure.Search.SearchProviders.Encryption
@@ -6,24 +7,27 @@ namespace Clipbox.Infrastructure.Search.SearchProviders.Encryption
     public class EncryptedFSDirectory : FSDirectory
     {
         private readonly DirectoryInfo _dirInfo;
-        public EncryptedFSDirectory(DirectoryInfo path, LockFactory lockFactory) : base(path, lockFactory)
+        private readonly IEncryptionProvider _encryptionProvider;
+
+        public EncryptedFSDirectory(DirectoryInfo path, IEncryptionProvider encryptionProvider, LockFactory lockFactory) : base(path, lockFactory)
         {
             _dirInfo = path;
+            _encryptionProvider = encryptionProvider;
         }
 
         public override IndexOutput CreateOutput(string name)
         {
-            return new EncrypedIndexOutput(Path.Combine(_dirInfo.FullName, name), "test");
+            return new EncrypedIndexOutput(Path.Combine(_dirInfo.FullName, name), _encryptionProvider);
         }
 
         public override IndexInput OpenInput(string name, int bufferSize)
         {
-            return new EncryptedIndexInput(Path.Combine(_dirInfo.FullName, name), "test");
+            return new EncryptedIndexInput(Path.Combine(_dirInfo.FullName, name), _encryptionProvider);
         }
 
         public override long FileLength(string name)
         {
-            using (var eii = new EncryptedIndexInput(Path.Combine(_dirInfo.FullName, name), "test"))
+            using (var eii = new EncryptedIndexInput(Path.Combine(_dirInfo.FullName, name), _encryptionProvider))
             {
                 return eii.Length();
             }
