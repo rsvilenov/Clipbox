@@ -5,5 +5,7 @@
         byte[] IntermediateFormatToByteArray(IIntermediateFormat intermediateFormat);
 
         IIntermediateFormat ByteArrayToIntermediateFormat(byte[] byteArray);
+
+        bool EncryptData { get; }
     }
 }

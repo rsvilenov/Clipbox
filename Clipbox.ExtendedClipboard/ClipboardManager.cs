@@ -5,9 +5,9 @@ using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Core.Extensibility.Exceptions;
 using Clipbox.ExtendedClipboard.ClipboardContent;
-using Clipbox.Infrastructure.Persistence;
 using Clipbox.ExtendedClipboard.EventArgs;
 using Clipbox.ExtendedClipboard.Interfaces;
+using Clipbox.Infrastructure.Encryption;
 using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
 using Clipbox.Infrastructure.ExtensionMethods;
 using Clipbox.Infrastructure.Persistence;
@@ -16,7 +16,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.ExceptionServices;
@@ -51,13 +50,15 @@ namespace Clipbox.ExtendedClipboard
 
         private string _currentItemId;
 
-        private IClipboardFormatExtensionContainer _formatExtensionContainer;
+        private readonly IClipboardFormatExtensionContainer _formatExtensionContainer;
 
-        private IPersistenceSupportExtensionContainer _persistenceExtensionContainer;
+        private readonly IPersistenceSupportExtensionContainer _persistenceExtensionContainer;
 
-        private IClipboardEventProvider _clipboardEventProvider;
+        private readonly IClipboardEventProvider _clipboardEventProvider;
 
-        private IPersistenceProvider _persistenceProvider;
+        private readonly IPersistenceProvider _persistenceProvider;
+
+        private readonly IEncryptionProvider _encryptionProvider;
 
         // TODO: this should be mock-able
         private SystemClipboard _systemClipboard;
@@ -83,18 +84,22 @@ namespace Clipbox.ExtendedClipboard
         public ClipboardManager(IClipboardEventProvider clipboardEventProvider,
             IClipboardFormatExtensionContainer formatExtensionContainer,
             IPersistenceSupportExtensionContainer persistenceExtensionContainer,
-            IPersistenceProvider persistenceProvider)
+            IPersistenceProvider persistenceProvider,
+            IEncryptionProvider encryptionProvider)
         {
             _formatExtensionContainer = formatExtensionContainer;
             _persistenceExtensionContainer = persistenceExtensionContainer;
             _clipboardEventProvider = clipboardEventProvider;
             _persistenceProvider = persistenceProvider;
+            _encryptionProvider = encryptionProvider;
 
             _clipboardItems = new List<ClipboardItem>();
             _deletedSyncedClipboardItemIds = new List<string>();
 
             _systemClipboard = new SystemClipboard();
-            _persistenceHelper = new PersistenceHelper(_persistenceExtensionContainer, _persistenceProvider);
+            _persistenceHelper = new PersistenceHelper(_persistenceExtensionContainer,
+                _persistenceProvider,
+                _encryptionProvider);
 
             LoadFromDisk();
 

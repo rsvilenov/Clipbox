@@ -134,8 +134,11 @@ namespace Clipbox
                 _persistenceProvider.Write("lastLoadedExtension.log", $"{e.ExtensionType.FullName} [{e.ExtensionType.Assembly.FullName}]");
             };
 
+            IEncryptionProvider encryptionProvider = new AesEncryptionProvider(_persistenceProvider);
+
+
             // Initialize the clipboard manager
-            _clipboardManager = new ClipboardManager(_clipboardListenerService, _extensionLoader.FormatsContainer, _extensionLoader.PersistenceSupportExtensionContainer, _persistenceProvider);
+            _clipboardManager = new ClipboardManager(_clipboardListenerService, _extensionLoader.FormatsContainer, _extensionLoader.PersistenceSupportExtensionContainer, _persistenceProvider, encryptionProvider);
 
             // Initialize the settings service
             IConfigurationProvider configurationProvider = new PersistableConfigurationProvider(_persistenceProvider);
@@ -198,7 +201,6 @@ namespace Clipbox
 
             _trayContextMenuService = new TrayContextMenuService(_settingsService);
 
-            IEncryptionProvider encryptionProvider = new AesEncryptionProvider(_persistenceProvider);
             _searchService = new SearchService(_extensionLoader.SearchSupportExtensionContainer, _clipboardManager, new LuceneSearch(encryptionProvider));
             
             // this view can show a little bit slower so we will not keep its instance alive the whole time - we will create it upon request within the service

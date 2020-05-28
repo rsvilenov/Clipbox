@@ -32,5 +32,13 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.PersistenceTypes
         }
 
         protected abstract T GetIntermediateFormat(byte[] byteArray);
+
+        /// <summary>
+        /// When set to true, indicates that the data
+        /// should be encrypted when it is stored.
+        /// </summary>
+        public bool EncryptData { get; private set; }
+        
+        protected virtual bool ShouldEncryptData { get; }
     }
 }

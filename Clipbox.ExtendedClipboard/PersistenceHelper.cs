@@ -2,6 +2,7 @@
 using Clipbox.Core.Extensibility.Exceptions;
 using Clipbox.ExtendedClipboard.ClipboardContent;
 using Clipbox.Infrastructure.Compression;
+using Clipbox.Infrastructure.Encryption;
 using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
 using Clipbox.Infrastructure.Persistence;
 using System;
@@ -22,13 +23,17 @@ namespace Clipbox.ExtendedClipboard
         /// </summary>
         private const string CACHE_PERSISTENCE_CATEGORY = "ClipboardDataCache";
 
-        private IPersistenceSupportExtensionContainer _persistenceExtensionContainer;
-        private IPersistenceProvider _persistenceProvider;
+        private readonly IPersistenceSupportExtensionContainer _persistenceExtensionContainer;
+        private readonly IPersistenceProvider _persistenceProvider;
+        private readonly IEncryptionProvider _encryptionProvider;
 
-        public PersistenceHelper(IPersistenceSupportExtensionContainer persistenceSupportExtensionContainer, IPersistenceProvider persistenceProvider)
+        public PersistenceHelper(IPersistenceSupportExtensionContainer persistenceSupportExtensionContainer, 
+            IPersistenceProvider persistenceProvider, 
+            IEncryptionProvider encryptionProvider)
         {
             _persistenceExtensionContainer = persistenceSupportExtensionContainer;
             _persistenceProvider = persistenceProvider;
+            _encryptionProvider = encryptionProvider;
 
             if (!_persistenceProvider.CheckIfCategoryExists(CACHE_PERSISTENCE_CATEGORY))
             {
@@ -242,7 +247,17 @@ namespace Clipbox.ExtendedClipboard
 
             IIntermediateFormat intermediateFormatObj = null;
 
-            try { intermediateFormatObj = persistenceExtension.ByteArrayToIntermediateFormat(persistableCdo.ByteArray); }
+            byte[] serializedData = null;
+            if (persistenceExtension.EncryptData)
+            {
+                serializedData = _encryptionProvider.Decrypt(persistableCdo.ByteArray);
+            }
+            else
+            {
+                serializedData = persistableCdo.ByteArray;
+            }
+
+            try { intermediateFormatObj = persistenceExtension.ByteArrayToIntermediateFormat(serializedData); }
             catch (Exception ex) { throw new ClipboxExtensionException(nameof(persistenceExtension.ByteArrayToIntermediateFormat), persistenceExtension.GetType(), ex); }
 
             bool deserializationSuccess = intermediateFormatObj != null;
@@ -396,6 +411,16 @@ namespace Clipbox.ExtendedClipboard
                 if (dataBytes == null)
                 {
                     continue;
+                }
+
+                byte[] finalByteArray = null;
+                if (persistenceExtension.EncryptData)
+                {
+                    finalByteArray = _encryptionProvider.Encrypt(dataBytes);
+                }
+                else
+                {
+                    finalByteArray = dataBytes;
                 }
 
                 yield return new PersistableClipboardDataObject
