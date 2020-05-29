@@ -32,14 +32,12 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
 
         public void ScaleFontSize(double scaleFactor)
         {
-            _resultRtf = Regex.Replace((_resultRtf ?? _originalRtf), @"(\\fs)(\d+)(\s*)",
-            m => m.Groups[1].Value + Math.Round(int.Parse(m.Groups[2].Value) * scaleFactor).ToString() + m.Groups[3].Value,
-            RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Multiline);
+            _resultRtf = new Regex(@"(\\fs)(\d+)(\s*)", RegexOptions.IgnoreCase | RegexOptions.Multiline).Replace((_resultRtf ?? _originalRtf),
+                m => m.Groups[1].Value + Math.Round(int.Parse(m.Groups[2].Value) * scaleFactor).ToString() + m.Groups[3].Value);
 
             // TODO: do I need the second regex?
-            _resultRtf = Regex.Replace((_resultRtf), @"(\\b)(\d+)(\s*)",
-           m => m.Groups[1].Value + Math.Round(int.Parse(m.Groups[2].Value) * scaleFactor).ToString() + m.Groups[3].Value,
-           RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Multiline);
+            _resultRtf = new Regex(@"(\\b)(\d+)(\s*)", RegexOptions.IgnoreCase | RegexOptions.Multiline)
+                .Replace((_resultRtf), m => m.Groups[1].Value + Math.Round(int.Parse(m.Groups[2].Value) * scaleFactor).ToString() + m.Groups[3].Value);
         }
 
 
@@ -126,9 +124,9 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
                     break;
             }
 
-            _resultRtf = Regex.Replace((_resultRtf ?? _originalRtf), regex,
-            m => $@"{{\cf{replacementCharColorRtfNumber}\fs{_replacementCharFontSize} {Escape(_replacementChars[spacingChar])}+}}",
-            RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Multiline);
+            Regex rg = new Regex(regex, RegexOptions.IgnoreCase | RegexOptions.Multiline);
+            _resultRtf = rg.Replace((_resultRtf ?? _originalRtf),
+                m => $@"{{\cf{replacementCharColorRtfNumber}\fs{_replacementCharFontSize} {Escape(_replacementChars[spacingChar])}+}}");
 
         }
 
@@ -140,7 +138,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
         private void AdjustRtfColorTable()
         {
             // find the color table
-            Match m = Regex.Match(_originalRtf, @"{\\colortbl\s+(.+?)(?=})");
+            Match m = new Regex(@"{\\colortbl\s+(.+?)(?=})").Match(_originalRtf);
             if (m.Success && m.Groups.Count == 2)
             {
                 int position = 0;
@@ -200,7 +198,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
                 foreach (string regex in headerPartsRegex)
                 {
 
-                    Match ftm = Regex.Match(_originalRtf, regex);
+                    Match ftm = new Regex(regex).Match(_originalRtf);
                     if (ftm.Success)
                     {
                         if (regex == headerPartsRegex[headerPartsRegex.Length - 1])

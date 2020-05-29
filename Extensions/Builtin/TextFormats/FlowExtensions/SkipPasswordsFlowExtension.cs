@@ -45,19 +45,37 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.FlowExtensions
 
             PasswordMatchOptions option = (PasswordMatchOptions)GetSetting<int>(ExtensionSettingNames.PasswordMatchOption);
 
-            switch(option)
+            // WARNING: NEVER USE THE STATIC METHODS OF THE REGEX CLASS!!!
+            // These use A LOT of memory which is never collected.
+            //
+            // The memory gets allocated the moment before our class is
+            // instantiated, as that is the moment the static stuff gets
+            // initialized by the CLR.
+            //
+            // This means that the static regex methods WILL occupy the
+            // memory regardless of whether they are actually called.
+            //
+            // Also, do not use RegexOptions.Compiled, as there are
+            // a lot of complications, coming with it, as decribed here:
+            // https://blog.codinghorror.com/to-compile-or-not-to-compile/
+            Regex rg = null;
+            switch (option)
             {
                 case PasswordMatchOptions.First:
-                    return Regex.IsMatch(str, REGEX1, RegexOptions.Compiled);
+                    rg = new Regex(REGEX1);
+                    break;
                 case PasswordMatchOptions.Second:
-                    return Regex.IsMatch(str, REGEX2, RegexOptions.Compiled);
+                    rg = new Regex(REGEX2);
+                    break;
                 case PasswordMatchOptions.Third:
-                    return Regex.IsMatch(str, REGEX3, RegexOptions.Compiled);
+                    rg = new Regex(REGEX3);
+                    break;
                 case PasswordMatchOptions.Fourth:
-                    return Regex.IsMatch(str, REGEX4, RegexOptions.Compiled);
+                    rg = new Regex(REGEX4);
+                    break;
             }
 
-            return false;
+            return rg?.IsMatch(str) ?? false;
         }
 
         private int[] GetMinMaxPasswordLen()

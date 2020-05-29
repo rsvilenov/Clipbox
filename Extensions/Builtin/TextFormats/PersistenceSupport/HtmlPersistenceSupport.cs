@@ -1,7 +1,6 @@
 ﻿using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.PersistenceTypes;
 using Clipbox.Extensions.BuiltIn.TextFormats.IntermediateFormats;
-using Clipbox.Infrastructure.Encryption;
 using System.Text;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.PersistenceSupport
@@ -12,14 +11,12 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PersistenceSupport
     {
         protected override byte[] GetByteArray(HtmlIntermediateFormat intermediateFormat)
         {
-            byte[] htmlBytes = Encoding.UTF8.GetBytes(intermediateFormat.Html);
-            return DpApiEncryption.Protect(htmlBytes);
+            return Encoding.UTF8.GetBytes(intermediateFormat.Html);
         }
 
         protected override HtmlIntermediateFormat GetIntermediateFormat(byte[] byteArray)
         {
-            byte[] decryptedBytes = DpApiEncryption.Unprotect(byteArray);
-            return new HtmlIntermediateFormat(Encoding.UTF8.GetString(decryptedBytes));
+            return new HtmlIntermediateFormat(Encoding.UTF8.GetString(byteArray));
         }
     }
 }
