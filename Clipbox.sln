@@ -66,6 +66,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clipbox.Infrastructure.Encr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clipbox.Infrastructure.Encryption.Tests", "Clipbox.Infrastructure.Encryption.Tests\Clipbox.Infrastructure.Encryption.Tests.csproj", "{802D348C-1051-4E25-BA18-10784DAABAA1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clipbox.Core.Tests", "Clipbox.Core.Tests\Clipbox.Core.Tests.csproj", "{8712A44F-4031-468D-80BE-57B1D3A01BF0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -399,6 +401,18 @@ Global
 		{802D348C-1051-4E25-BA18-10784DAABAA1}.Release|x64.Build.0 = Release|x64
 		{802D348C-1051-4E25-BA18-10784DAABAA1}.Release|x86.ActiveCfg = Release|Any CPU
 		{802D348C-1051-4E25-BA18-10784DAABAA1}.Release|x86.Build.0 = Release|Any CPU
+		{8712A44F-4031-468D-80BE-57B1D3A01BF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8712A44F-4031-468D-80BE-57B1D3A01BF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8712A44F-4031-468D-80BE-57B1D3A01BF0}.Debug|x64.ActiveCfg = Debug|x64
+		{8712A44F-4031-468D-80BE-57B1D3A01BF0}.Debug|x64.Build.0 = Debug|x64
+		{8712A44F-4031-468D-80BE-57B1D3A01BF0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8712A44F-4031-468D-80BE-57B1D3A01BF0}.Debug|x86.Build.0 = Debug|Any CPU
+		{8712A44F-4031-468D-80BE-57B1D3A01BF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8712A44F-4031-468D-80BE-57B1D3A01BF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8712A44F-4031-468D-80BE-57B1D3A01BF0}.Release|x64.ActiveCfg = Release|Any CPU
+		{8712A44F-4031-468D-80BE-57B1D3A01BF0}.Release|x64.Build.0 = Release|Any CPU
+		{8712A44F-4031-468D-80BE-57B1D3A01BF0}.Release|x86.ActiveCfg = Release|Any CPU
+		{8712A44F-4031-468D-80BE-57B1D3A01BF0}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

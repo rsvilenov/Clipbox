@@ -1,15 +1,21 @@
 ﻿using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.Core.Search.Enums;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace Clipbox.Core.Search.IndexUnits
 {
+    [Serializable]
     public class SourceApplicationNameIndexUnit : IndexUnitBase<string>
     {
         public SourceApplicationNameIndexUnit(IClipboardItem clipboardItem)
             : base(clipboardItem) { }
+
+        protected SourceApplicationNameIndexUnit(SerializationInfo info, StreamingContext context)
+           : base(info, context) { }
 
         protected override SearchCategory SearchCategory => SearchCategory.SourceApplicationName;
 

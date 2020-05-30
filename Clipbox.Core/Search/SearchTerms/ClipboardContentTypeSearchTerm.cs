@@ -1,6 +1,7 @@
 ﻿using Clipbox.Core.ClipboardContent.Enums;
 using Clipbox.Core.Search.Enums;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace Clipbox.Core.Search.SearchTerms
 {
@@ -12,6 +13,10 @@ namespace Clipbox.Core.Search.SearchTerms
 
         public ClipboardContentTypeSearchTerm()
             : base()
+        { }
+
+        protected ClipboardContentTypeSearchTerm(SerializationInfo info, StreamingContext context)
+            : base(info, context)
         { }
 
         protected override SearchCategory SearchCategory => SearchCategory.Type;

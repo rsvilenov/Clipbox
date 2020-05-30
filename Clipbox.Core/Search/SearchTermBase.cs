@@ -1,6 +1,7 @@
 ﻿using Clipbox.Core.Search.Enums;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace Clipbox.Core.Search
 {
@@ -14,6 +15,10 @@ namespace Clipbox.Core.Search
         public SearchTermBase()
         {
         }
+
+        protected SearchTermBase(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        { }
 
         public void AddValue(T value)
         {

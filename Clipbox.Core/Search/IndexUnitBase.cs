@@ -1,9 +1,13 @@
 ﻿using Clipbox.Core.ClipboardContent.Interfaces;
+using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 namespace Clipbox.Core.Search
 {
-    public abstract class IndexUnitBase<T> : SearchObjectBase<T>, IIndexUnit
+    [Serializable]
+    public abstract class IndexUnitBase<T> : SearchObjectBase<T>, 
+        IIndexUnit
     {
         public IndexUnitBase(IClipboardItem clipboardItem)
         {
@@ -16,6 +20,9 @@ namespace Clipbox.Core.Search
             AddValueRange(values);
         }
 
+        protected IndexUnitBase(SerializationInfo info, StreamingContext context)
+            : base(info, context)
+        { }
 
         protected abstract IEnumerable<T> GetTermValuesFromClipboardItem(IClipboardItem clipboardItem);
     }

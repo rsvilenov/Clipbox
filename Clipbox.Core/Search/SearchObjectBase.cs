@@ -2,11 +2,22 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 
 namespace Clipbox.Core.Search
 {
-    public abstract class SearchObjectBase<T> : ISearchObject
+    [Serializable]
+    public abstract class SearchObjectBase<T> : 
+        ISearchObject, ISerializable
     {
+        public SearchObjectBase() { }
+
+        protected SearchObjectBase(SerializationInfo info, StreamingContext context)
+        {
+            List<T> values = (List<T>)info.GetValue("values", typeof(List<T>));
+            AddValueRange(values);
+        }
+
         private List<string> _stringValues = new List<string>();
 
         public IEnumerable<string> StringValues
@@ -18,9 +29,9 @@ namespace Clipbox.Core.Search
         /// <summary>
         /// The values in that collection are expanded this way: value1 OR value2 OR value3...
         /// </summary>
-        public IEnumerable<T> Values
+        public IReadOnlyList<T> Values
         {
-            get { return _values; }
+            get { return _values.AsReadOnly(); }
         }
 
         protected void AddValueRange(IEnumerable<T> values)
@@ -70,6 +81,16 @@ namespace Clipbox.Core.Search
                 && Values.Any()
                 && StringValues.Any()
                 && StringValues.All(s => !string.IsNullOrWhiteSpace(s));
+        }
+        
+        protected virtual void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("values", new List<T>(Values), typeof(List<T>));
+        }
+
+        void ISerializable.GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            GetObjectData(info, context);
         }
     }
 }
