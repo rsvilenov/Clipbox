@@ -14,27 +14,23 @@ namespace Clipbox.Infrastructure.Tests.IPC
         private const int WAIT_TIMEOUT_MS = 15000;
         
         [NonParallelizable]
-        [TestCase("message1", "message1", true)]
-        [TestCase("message1", "message2", false)]
-        public void TestSingleClient(string sentMessage, string expectedMessage, bool shouldSucceed)
+        [TestCase("message1", "message1", "response1", "response1", true)]
+        [TestCase("message1", "message2", "response1", "response2", false)]
+        public void TestSingleClient(string sentMessage, string expectedMessage, string expectedServerResponse, string serverResponse, bool shouldSucceed)
         {
             bool recieveSuccess = false;
             Exception exception = null;
+            bool clientSuccess = false;
+            bool responseSuccess = false;
             
             using (ManualResetEvent mre = new ManualResetEvent(false))
             using (NamedPipesServer server = new NamedPipesServer(PIPE_NAME))
             {
                 server.GotMessage += (sender, args) =>
                 {
-                    if (shouldSucceed)
-                    {
-                        recieveSuccess = args.Response == expectedMessage;
-                    }
-                    else
-                    {
-                        recieveSuccess = args.Response != expectedMessage;
-                    }
-
+                    recieveSuccess = args.ReceivedMessage == expectedMessage;
+                    args.Response = serverResponse;
+                    
                     mre.Set();
                 };
 
@@ -45,12 +41,15 @@ namespace Clipbox.Infrastructure.Tests.IPC
                 };
 
                 NamedPipesClient client = new NamedPipesClient(PIPE_NAME);
-                client.SendMessage(sentMessage);
+                clientSuccess = client.SendMessage(sentMessage, out string answer);
+                
+                responseSuccess = answer == expectedServerResponse;
 
                 mre.WaitOne(WAIT_TIMEOUT_MS);
             }
             
-            Assert.IsTrue(recieveSuccess);
+            Assert.IsTrue(shouldSucceed == recieveSuccess);
+            Assert.IsTrue(shouldSucceed == responseSuccess);
             Assert.IsNull(exception);
         }
 
@@ -70,11 +69,11 @@ namespace Clipbox.Infrastructure.Tests.IPC
                 {
                     if (shouldSucceed)
                     {
-                        recieveSuccess = args.Response == expectedMessage;
+                        recieveSuccess = args.ReceivedMessage == expectedMessage;
                     }
                     else
                     {
-                        recieveSuccess = args.Response != expectedMessage;
+                        recieveSuccess = args.ReceivedMessage != expectedMessage;
                     }
 
                     if (!recieveSuccess)

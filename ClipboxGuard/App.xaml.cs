@@ -70,7 +70,7 @@ namespace ClipboxGuard
         private void _namedPipeServer_GotMessage(object sender, NamedPipesResponseEventArgs e)
         {
             int callerProcessId;
-            if (int.TryParse(e.Response, out callerProcessId))
+            if (int.TryParse(e.ReceivedMessage, out callerProcessId))
             {
                 var pids = ProcessUtils.GetProcessIdsByPathAndSessionId(Path.Combine(InstallationPath, ProductConstants.CLIENT_EXE_NAME), _mySessionId);
                 bool hasProcsWithTheSameName = pids.Any(pid => pid != callerProcessId);

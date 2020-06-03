@@ -81,19 +81,19 @@ namespace Clipbox.Infrastructure.IPC
                 NamedPipeServerStream pipeServer = (NamedPipeServerStream)ar.AsyncState;
                 pipeServer.EndWaitForConnection(ar);
 
+                var args = new NamedPipesResponseEventArgs();
+
                 using (StreamReader reader = new StreamReader(pipeServer, Encoding.ASCII, false, 512, leaveOpen: true))
                 {
-                    string line = reader.ReadLine();
+                    args.ReceivedMessage = reader.ReadLine();
 
-                    GotMessage?.Invoke(this, new NamedPipesResponseEventArgs
-                    {
-                        Response = line
-                    });
+                    GotMessage?.Invoke(this, args);
                 }
 
                 using (StreamWriter writer = new StreamWriter(pipeServer, Encoding.ASCII, 512, leaveOpen: true))
                 {
                     writer.WriteLine(SUCCESS_RESPONSE);
+                    writer.WriteLine(args.Response ?? string.Empty);
                     writer.Flush();
                 }
 

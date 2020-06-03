@@ -55,7 +55,7 @@ namespace ClipboxSvc
         private void _namedPipesServer_GotMessage(object sender, NamedPipesResponseEventArgs e)
         {
             int sessionId;
-            if (int.TryParse(e.Response, out sessionId))
+            if (int.TryParse(e.ReceivedMessage, out sessionId))
             {
                 int pid = StartClientProcess(sessionId);
                 _pidSessionIdMapping.Add(pid, sessionId);

@@ -5,12 +5,12 @@ using Clipbox.Infrastructure.Compression;
 using Clipbox.Infrastructure.Encryption;
 using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
 using Clipbox.Infrastructure.Persistence;
+using Clipbox.Infrastructure.Serialization;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.ExceptionServices;
-using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Clipbox.ExtendedClipboard
 {
@@ -90,7 +90,7 @@ namespace Clipbox.ExtendedClipboard
             }
 
             // store the persistable item
-            _persistenceProvider.Write(clipboardItem.Id, ByteArrayCompressor.Compress(SerializeObject(persistableClipboardItem)), CACHE_PERSISTENCE_CATEGORY);
+            _persistenceProvider.Write(clipboardItem.Id, ByteArrayCompressor.Compress(BinaryFormatterSerialization.SerializeObject(persistableClipboardItem)), CACHE_PERSISTENCE_CATEGORY);
         }
 
         public void RestoreShrinkedClipboardItem(ClipboardItem clipboardItem)
@@ -125,7 +125,7 @@ namespace Clipbox.ExtendedClipboard
 
             // load from storage
             byte[] clipboardItemBytes = _persistenceProvider.ReadBytes(clipboardItem.Id, CACHE_PERSISTENCE_CATEGORY);
-            PersistableClipboardItem persistableClipboardItem = DeserializeObject<PersistableClipboardItem>(ByteArrayCompressor.Decompress(clipboardItemBytes));
+            PersistableClipboardItem persistableClipboardItem = BinaryFormatterSerialization.DeserializeObject<PersistableClipboardItem>(ByteArrayCompressor.Decompress(clipboardItemBytes));
             return persistableClipboardItem;
         }
 
@@ -141,7 +141,7 @@ namespace Clipbox.ExtendedClipboard
                 {
                     // load from storage
                     byte[] clipboardItemBytes = _persistenceProvider.ReadBytes(persistenceKey, CACHE_PERSISTENCE_CATEGORY);
-                    persistableClipboardItem = DeserializeObject<PersistableClipboardItem>(ByteArrayCompressor.Decompress(clipboardItemBytes));
+                    persistableClipboardItem = BinaryFormatterSerialization.DeserializeObject<PersistableClipboardItem>(ByteArrayCompressor.Decompress(clipboardItemBytes));
                 }
                 catch
                 {
@@ -220,7 +220,7 @@ namespace Clipbox.ExtendedClipboard
                 return null;
             }
 
-            return ByteArrayCompressor.Compress(SerializeObject(transferableClipboardItem));
+            return ByteArrayCompressor.Compress(BinaryFormatterSerialization.SerializeObject(transferableClipboardItem));
         }
 
         private PersistableClipboardDataObject GetPersistableCdoFromTransferableCdo(TransferableClipboardDataObject transferableCdo)
@@ -274,7 +274,7 @@ namespace Clipbox.ExtendedClipboard
         {
             clipboardItem = null;
 
-            var transferableClipboardItem = DeserializeObject<TransferableClipboardItem>(ByteArrayCompressor.Decompress(itemData));
+            var transferableClipboardItem = BinaryFormatterSerialization.DeserializeObject<TransferableClipboardItem>(ByteArrayCompressor.Decompress(itemData));
 
             List<ClipboardDataObject> clipboardDataObjects = new List<ClipboardDataObject>();
 
@@ -302,26 +302,6 @@ namespace Clipbox.ExtendedClipboard
             }
 
             return hasSuccessfllyRestoredCdos;
-        }
-        
-        private byte[] SerializeObject(object item)
-        {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                BinaryFormatter formatter = new BinaryFormatter();
-                formatter.Serialize(ms, item);
-                ms.Flush();
-                return ms.ToArray();
-            }
-        }
-
-        private T DeserializeObject<T>(byte[] itemBytes)
-        {
-            using (MemoryStream ms = new MemoryStream(itemBytes))
-            {
-                BinaryFormatter formatter = new BinaryFormatter();
-                return (T)formatter.Deserialize(ms);
-            }
         }
         
         private PersistableClipboardItem GeneratePersistableClipboardItem(ClipboardItem clipboardItem, bool encryptIfPossible)

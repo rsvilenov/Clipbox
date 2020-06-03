@@ -76,6 +76,10 @@
       <Project>{F4BD7048-4D9F-4036-98AA-DA8232EF2AFB}</Project>
       <Name>Clipbox.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Clipbox.Infrastructure\Clipbox.Infrastructure.csproj">
+      <Project>{edd4d662-1f39-415c-9b66-718457922626}</Project>
+      <Name>Clipbox.Infrastructure</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

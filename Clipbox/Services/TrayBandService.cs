@@ -113,7 +113,7 @@ namespace Clipbox.Services
 
         private void _namedPipeServer_GotMessage(object sender, NamedPipesResponseEventArgs e)
         {
-            PipeMessage msg = PipeMessage.FromString(e.Response);
+            PipeMessage msg = PipeMessage.FromString(e.ReceivedMessage);
             switch (msg.Command)
             {
                 case CMD_LEFT_CLICK:
@@ -123,7 +123,7 @@ namespace Clipbox.Services
                     _trayContextMenuHelper.ToggleVisibility(msg.HWND);
                     break;
                 default:
-                    throw new InvalidProgramException($"Invalid pipe message: {e.Response}");
+                    throw new InvalidProgramException($"Invalid pipe message: {e.ReceivedMessage}");
             }
         }
 

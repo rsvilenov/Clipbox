@@ -103,6 +103,7 @@
     <Compile Include="IPC\NamedPipesServer.cs" />
     <Compile Include="IPC\WindowMessageIPC.cs" />
     <Compile Include="ObjectHelpers\GetHashCodeHelper.cs" />
+    <Compile Include="Serialization\BinaryFormatterSerialization.cs" />
     <Compile Include="Threading\GlobalNamedMutex.cs" />
     <Compile Include="RegistryAccess\RegistryUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

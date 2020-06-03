@@ -23,6 +23,11 @@ namespace Clipbox.Infrastructure.IPC
 
         public bool SendMessage(string msg)
         {
+            return SendMessage(msg, out _);
+        }
+
+        public bool SendMessage(string msg, out string answer)
+        {
             bool success = false;
 
             using (var client = new NamedPipeClientStream(_pipeName))
@@ -44,6 +49,8 @@ namespace Clipbox.Infrastructure.IPC
                     {
                         success = true;
                     }
+
+                    answer = reader.ReadToEnd()?.TrimEnd(new char[] { '\r', '\n' });
                 }
             }
 

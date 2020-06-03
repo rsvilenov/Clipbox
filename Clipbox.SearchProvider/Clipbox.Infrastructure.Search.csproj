@@ -100,8 +100,10 @@
     <Compile Include="SearchProviders\Encryption\EncrypedIndexOutput.cs" />
     <Compile Include="SearchProviders\Encryption\EncryptedIndexInput.cs" />
     <Compile Include="SearchProviders\Encryption\EncryptedFSDirectory.cs" />
+    <Compile Include="SearchProviders\EventArgsClasses\RemoteSearchErrorEventArgs.cs" />
     <Compile Include="SearchProviders\LuceneSearch.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SearchProviders\RemoteSearch.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Clipbox.Core\Clipbox.Core.csproj">
