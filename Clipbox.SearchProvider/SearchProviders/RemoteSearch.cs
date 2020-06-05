@@ -19,11 +19,10 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
 
         public RemoteSearch(string pipeName, 
             bool isClientMode,
-            ISearchProvider actualSerchProvider,
+            ISearchProvider actualSerchProvider = null,
             IEncryptionProvider encryptionProvider = null)
         {
             _isCliendMode = isClientMode;
-            _actualSerchProvider = actualSerchProvider;
 
             if (_isCliendMode)
             {
@@ -36,9 +35,12 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
                     throw new ArgumentNullException($"Passing a valid provider for argument '{nameof(encryptionProvider)}' is obligatory for server mode.");
                 }
 
+                _actualSerchProvider = actualSerchProvider 
+                    ?? throw new ArgumentNullException($"Passing a valid provider for argument '{nameof(actualSerchProvider)}' is obligatory for server mode.");
+
+
                 _pipeServer = new NamedPipesServer(pipeName);
 
-                _actualSerchProvider = new LuceneSearch(encryptionProvider);
                 _pipeServer.GotMessage += _pipeServer_GotMessage;
                 _pipeServer.ErrorOccurred += _pipeServer_ErrorOccurred;
             }
@@ -75,7 +77,10 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
                     searchProvider.DeleteIndexEntries(msg.IndexEntryIds);
                     break;
                 default:
-                    throw new InvalidOperationException($"Message type \"{msg.MessageType}\" is not supported.");
+                    ErrorOccurred?.Invoke(this,
+                        new RemoteSearchErrorEventArgs("Pipe server GotMessage:", 
+                        new InvalidOperationException($"Message type \"{msg.MessageType}\" is not supported.")));
+                    break;
             }
         }
 
@@ -93,7 +98,8 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
 
                 if (!_pipeClient.SendMessage(Convert.ToBase64String(serialized)))
                 {
-                    throw new IpcException("Errpr sending message to pipe server");
+                    ErrorOccurred?.Invoke(this,
+                        new RemoteSearchErrorEventArgs("Sending message to the pipe server failed."));
                 }
             }
             else
@@ -116,7 +122,8 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
 
                 if (!_pipeClient.SendMessage(Convert.ToBase64String(serialized), out string response))
                 {
-                    throw new IpcException("Errpr sending message to pipe server");
+                    ErrorOccurred?.Invoke(this,
+                        new RemoteSearchErrorEventArgs("Pipe server error."));
                 }
 
                 byte[] responseBytes = Convert.FromBase64String(response);
@@ -143,7 +150,8 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
 
                 if (!_pipeClient.SendMessage(Convert.ToBase64String(serialized)))
                 {
-                    throw new IpcException("Errpr sending message to pipe server");
+                    ErrorOccurred?.Invoke(this,
+                        new RemoteSearchErrorEventArgs("Pipe server error."));
                 }
             }
             else

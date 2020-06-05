@@ -4,7 +4,7 @@ namespace Clipbox.Infrastructure.Search.SearchProviders.EventArgsClasses
 {
     public class RemoteSearchErrorEventArgs : EventArgs
     {
-        public RemoteSearchErrorEventArgs(string message, Exception ex)
+        public RemoteSearchErrorEventArgs(string message, Exception ex = null)
         {
             Message = message;
             Exception = ex;
