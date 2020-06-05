@@ -1,10 +1,12 @@
 ﻿using Clipbox.Core.ClipboardContent.Enums;
 using Clipbox.Core.Search.Enums;
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace Clipbox.Core.Search.SearchTerms
 {
+    [Serializable]
     public class ClipboardContentTypeSearchTerm : SearchTermBase<ClipboardContentClass>
     {
         public ClipboardContentTypeSearchTerm(IEnumerable<ClipboardContentClass> contentClasses)

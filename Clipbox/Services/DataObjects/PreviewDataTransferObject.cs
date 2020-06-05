@@ -19,7 +19,7 @@ namespace Clipbox.Services.DataObjects
 
         public int NumberOfItemsWithoutPreview { get; set; }
 
-        public string GeneratorExtensionTypeName { get; set; }
+        public string GeneratorExtensionTypeAssemblyQualifiedName { get; set; }
 
         public List<PreviewItemTransferObject> PreviewItems { get; set; }
 

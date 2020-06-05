@@ -5,11 +5,6 @@ using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.Persistence.PersistenceProviders;
 using Clipbox.Infrastructure.Search;
 using Clipbox.Infrastructure.Search.SearchProviders;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ClipboxSearch
 {

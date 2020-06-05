@@ -19,8 +19,15 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators
     [PreviewPriority(100)]
     public class RtfPreviewGenerator : SinglePreviewGenerator<RichTextIntermediateFormat, ImagePreviewData>
     {
+        private const int MAX_RTF_LENGTH = 10000;
+
         protected override ImagePreviewData GetPreview(RichTextIntermediateFormat intermediateFormat, PreviewParams previewParams)
         {
+            if (intermediateFormat.Rtf.Length > MAX_RTF_LENGTH)
+            {
+                return null;
+            }
+
             var options = new TextFormatsPreviewCreator.PreviewGenerationOptions
             {
                 InclideAnnotation = GetSetting<bool>(ExtensionSettingNames.IncludeAnnotation),

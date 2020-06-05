@@ -81,7 +81,7 @@ namespace Clipbox.ViewModels
             viewItem.ContentClasses = new AsyncObservableCollection<ClipboardContentClass>(contentClasses);
             viewItem.IsPinned = clipboardItem.IsPinned;
 
-            viewItem.GeneratorExtensionTypeName = pdto.GeneratorExtensionTypeName;
+            viewItem.GeneratorExtensionTypeName = pdto.GeneratorExtensionTypeAssemblyQualifiedName;
 
             return viewItem;
         }

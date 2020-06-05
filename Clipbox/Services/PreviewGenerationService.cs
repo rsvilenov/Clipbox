@@ -299,16 +299,14 @@ namespace Clipbox.Services
                 itemRequestedHeight, 
                 itemRequestedWidth, 
                 monitorDimensions.MonitorDPI, 
-                cancellationToken,
-                out Type previewGeneratorUsed);
+                cancellationToken);
 
             // store the preview for faster access
             CacheGeneratedData(monitorDimensions, 
                 itemRequestedHeight, 
                 itemRequestedWidth, 
                 pdto, 
-                hasHeightBeenDpiScaled,
-                previewGeneratorUsed);
+                hasHeightBeenDpiScaled);
         }
 
         public PreviewDataTransferObject GetPreviewDataTransferObject(IClipboardItem clipboardItem, MonitorDimensions monitorDimensions)
@@ -466,7 +464,7 @@ namespace Clipbox.Services
             }
         }
 
-        private void CacheGeneratedData(MonitorDimensions monitorDimensions, int itemRequestedHeight, int itemRequestedWidth, PreviewDataTransferObject pdto, bool havePreviewDimensionsBeenDpiScaled, Type previewGeneratorType)
+        private void CacheGeneratedData(MonitorDimensions monitorDimensions, int itemRequestedHeight, int itemRequestedWidth, PreviewDataTransferObject pdto, bool havePreviewDimensionsBeenDpiScaled)
         {
             PreviewDimensionInfo pdInfo = GetPreviewDimensionsInfo(pdto, monitorDimensions);
             pdInfo.ArePreviewDimensionsDpiScaled = havePreviewDimensionsBeenDpiScaled;
@@ -483,13 +481,13 @@ namespace Clipbox.Services
             // update the setting checksum dictionary with the new settings checksum
 
             // construct unique persistence key for the data
-            if (!_extensionSettingChecksums.ContainsKey(previewGeneratorType.AssemblyQualifiedName))
+            if (!_extensionSettingChecksums.ContainsKey(pdto.GeneratorExtensionTypeAssemblyQualifiedName))
             {
                 // if we fail to get the setting checksum, then someone else has managed to mess up with our dictionaries
                 throw new InvalidOperationException($"Thread synchronization error.");
             }
 
-            string extensionSettingsChecksum = _extensionSettingChecksums[previewGeneratorType.AssemblyQualifiedName];
+            string extensionSettingsChecksum = _extensionSettingChecksums[pdto.GeneratorExtensionTypeAssemblyQualifiedName];
             
             string persistenceKey = $"{clipboardItemId}_{itemRequestedWidth}_{itemRequestedHeight}_{monitorDimensions.MonitorDPI}_{extensionSettingsChecksum}.pdto";
 
@@ -507,7 +505,7 @@ namespace Clipbox.Services
         }
         
 
-        private PreviewDataTransferObject GeneratePreviewDataTransferObject(IClipboardItem clipboardItem, int itemRequestedHeight, int itemRequestedWidth, double dpi, CancellationToken cancellationToken, out Type previewGeneratorUsed)
+        private PreviewDataTransferObject GeneratePreviewDataTransferObject(IClipboardItem clipboardItem, int itemRequestedHeight, int itemRequestedWidth, double dpi, CancellationToken cancellationToken)
         {
             if (clipboardItem.IsShrinked)
             {
@@ -523,51 +521,75 @@ namespace Clipbox.Services
                 throw new InvalidOperationException($"No clipboard formats found in the clipboard item with id {clipboardItem.Id}");
             }
 
-            KeyValuePair<string, IPreviewGenerator>? formatGuidPreviewGeneratorPair = _clipboardFormatPreviewExtContainer.ResolveClipboardPreviewGeneratorWithHighestPriority(formatGuids.ToArray());
+            IDictionary<string, IPreviewGenerator> previewGenerators = 
+                _clipboardFormatPreviewExtContainer.ResolveClipboardPreviewGeneratorOrderedByPriority(formatGuids.ToArray());
 
-            PreviewDataTransferObject pdto;
-
-            previewGeneratorUsed = null;
-
-            if (formatGuidPreviewGeneratorPair != null)
+            PreviewDataTransferObject pdto = null;
+            
+            if (previewGenerators.Any())
             {
-                IPreviewGenerator previewGenerator = formatGuidPreviewGeneratorPair.Value.Value;
-                previewGeneratorUsed = previewGenerator.GetType();
-
-                // load the settings
-                if (previewGenerator is IConfigurationRecipient confRecipient)
+                foreach (string formatGuid in previewGenerators.Keys)
                 {
-                    foreach (ISettingKey settingKey in _settingsService.GetSettingKeys(previewGeneratorUsed))
+                    IPreviewGenerator previewGenerator = previewGenerators[formatGuid];
+
+                    // load the settings
+                    if (previewGenerator is IConfigurationRecipient confRecipient)
                     {
-                        try { confRecipient.PutSetting(settingKey, _settingsService.GetSetting(settingKey)); }
-                        catch (Exception ex) { throw new ClipboxExtensionException(nameof(confRecipient.PutSetting), previewGeneratorUsed, ex); }
+                        Type previewGeneratorType = previewGenerator.GetType();
+
+                        foreach (ISettingKey settingKey in _settingsService.GetSettingKeys(previewGeneratorType))
+                        {
+                            try { confRecipient.PutSetting(settingKey, _settingsService.GetSetting(settingKey)); }
+                            catch (Exception ex) { throw new ClipboxExtensionException(nameof(confRecipient.PutSetting), previewGeneratorType, ex); }
+                        }
+                    }
+
+                    if (previewGenerator is ICancellablePreviewGenerator cancellableGenerator)
+                    {
+                        cancellableGenerator.CancellationToken = cancellationToken;
+                    }
+                    
+                    IClipboardDataObject cdoForPreview = clipboardItem.ClipboardDataObjects.Single(cdo => cdo.IntermediateFormatMetadata.FormatGuid == formatGuid);
+                    IIntermediateFormat intermediateFormatObjectForPreview = cdoForPreview.IntermediateFormatObject;
+
+                    if (previewGenerator is ISinglePreviewGenerator singlePreviewGenerator)
+                    {
+                        pdto = GeneratePdtoForSingleItem(itemRequestedHeight,
+                            itemRequestedWidth,
+                            dpi,
+                            singlePreviewGenerator,
+                            intermediateFormatObjectForPreview);
+                    }
+                    else if (previewGenerator is IManyPreviewGenerator manyPreviewGenerator)
+                    {
+                        int maxPreviewItemsInGroupItem = _settingsService.GetSetting<int>(SettingsKeys.MaxPreviewItemsInGroupItem);
+                        pdto = GeneratePdtoForMultiItem(itemRequestedHeight,
+                            itemRequestedWidth,
+                            dpi,
+                            manyPreviewGenerator,
+                            intermediateFormatObjectForPreview,
+                            maxPreviewItemsInGroupItem);
+                    }
+
+                    if (pdto != null)
+                    {
+                        pdto.ClipboardItemId = clipboardItem.Id;
+                        break;
                     }
                 }
 
-                IClipboardDataObject cdoForPreview = clipboardItem.ClipboardDataObjects.Single(cdo => cdo.IntermediateFormatMetadata.FormatGuid == formatGuidPreviewGeneratorPair.Value.Key);
-                IIntermediateFormat intermediateFormatObjectForPreview = cdoForPreview.IntermediateFormatObject;
-                
-                if (previewGenerator is ICancellablePreviewGenerator cancellableGenerator)
+                if (pdto == null)
                 {
-                    cancellableGenerator.CancellationToken = cancellationToken;
-                }
+                    pdto = new PreviewDataTransferObject
+                    {
+                        ClipboardItemId = clipboardItem.Id
+                    };
 
-                if (previewGenerator is ISinglePreviewGenerator singlePreviewGenerator)
-                {
-                    pdto = GeneratePdtoForSingleItem(itemRequestedHeight, itemRequestedWidth, dpi, singlePreviewGenerator, intermediateFormatObjectForPreview);
+                    pdto.PreviewItems.Add(new PreviewItemTransferObject
+                    {
+                        PreviewGenereationStatus = PreviewGenerationStatus.NoBitmapDataGenerated
+                    });
                 }
-                else if (previewGenerator is IManyPreviewGenerator manyPreviewGenerator)
-                {
-                    int maxPreviewItemsInGroupItem = _settingsService.GetSetting<int>(SettingsKeys.MaxPreviewItemsInGroupItem);
-                    pdto = GeneratePdtoForMultiItem(itemRequestedHeight, itemRequestedWidth, dpi, manyPreviewGenerator, intermediateFormatObjectForPreview, maxPreviewItemsInGroupItem);
-                }
-                else
-                {
-                    throw new InvalidOperationException($"{previewGenerator.GetType().Name} is neither {nameof(ISinglePreviewGenerator)} nor {nameof(IManyPreviewGenerator)}.");
-                }
-
-                pdto.ClipboardItemId = clipboardItem.Id;
-                pdto.GeneratorExtensionTypeName = previewGenerator.GetType().AssemblyQualifiedName;
             }
             else
             {
@@ -589,24 +611,27 @@ namespace Clipbox.Services
         public PreviewDataTransferObject GeneratePdtoForSingleItem(int itemRequestedHeight,
             int itemRequestedWidth,
             double dpi,
-            ISinglePreviewGenerator previewGenerator,
+            ISinglePreviewGenerator singlePreviewGenerator,
             IIntermediateFormat intermediateFormatObject)
         {
-            ISinglePreviewGenerator singlePreviewGenerator = previewGenerator as ISinglePreviewGenerator;
-
+            PreviewDataTransferObject pdto = null;
             IPreviewData previewData = null;
 
             try { previewData = singlePreviewGenerator.GetPreview(intermediateFormatObject, new PreviewParams(itemRequestedWidth, itemRequestedHeight, dpi, true)); } // TODO: find a way to determine the preview dimentions
             catch (Exception ex) { throw new ClipboxExtensionException(nameof(singlePreviewGenerator.GetPreview), singlePreviewGenerator.GetType(), ex); }
 
-            PreviewItemTransferObject pito = PreviewItemTransferObject.FromPreviewData(previewData);
-
-            PreviewDataTransferObject pdto = new PreviewDataTransferObject
+            if (previewData != null)
             {
-                PreviewItems = new List<PreviewItemTransferObject> { pito },
-                IsGroup = false
-            };
+                PreviewItemTransferObject pito = PreviewItemTransferObject.FromPreviewData(previewData);
 
+                pdto = new PreviewDataTransferObject
+                {
+                    PreviewItems = new List<PreviewItemTransferObject> { pito },
+                    IsGroup = false,
+                    GeneratorExtensionTypeAssemblyQualifiedName = singlePreviewGenerator.GetType().AssemblyQualifiedName
+                };
+            }
+            
             return pdto;
         }
 
@@ -614,52 +639,59 @@ namespace Clipbox.Services
         public PreviewDataTransferObject GeneratePdtoForMultiItem(int itemRequestedHeight,
             int itemRequestedWidth,
             double dpi,
-            IManyPreviewGenerator previewGenerator,
+            IManyPreviewGenerator manyPreviewGenerator,
             IIntermediateFormat intermediateFormatObject,
             int maxPreviewItemsInGroupItem)
         {
+            PreviewDataTransferObject pdto = null;
 
-            PreviewDataTransferObject pdto = new PreviewDataTransferObject
-            {
-                PreviewItems = new List<PreviewItemTransferObject>()
-            };
-
-            try { previewGenerator.SetData(intermediateFormatObject); }
-            catch (Exception ex) { throw new ClipboxExtensionException(nameof(previewGenerator.SetData), previewGenerator.GetType(), ex); }
+            try { manyPreviewGenerator.SetData(intermediateFormatObject); }
+            catch (Exception ex) { throw new ClipboxExtensionException(nameof(manyPreviewGenerator.SetData), manyPreviewGenerator.GetType(), ex); }
 
             int itemsCount = 0;
-            try { itemsCount = previewGenerator.GetItemsTotalCount(); }
-            catch (Exception ex) { throw new ClipboxExtensionException(nameof(previewGenerator.SetData), previewGenerator.GetType(), ex); }
+            try { itemsCount = manyPreviewGenerator.GetItemsTotalCount(); }
+            catch (Exception ex) { throw new ClipboxExtensionException(nameof(manyPreviewGenerator.SetData), manyPreviewGenerator.GetType(), ex); }
 
             if (itemsCount == 0)
             {
-                throw new InvalidOperationException($"{previewGenerator.GetType().Name}.{nameof(previewGenerator.GetItemsTotalCount)} returned 0 and no exception was detected. This indicates a mistake in the preview generator extension's logic.");
+                throw new InvalidOperationException($"{manyPreviewGenerator.GetType().Name}.{nameof(manyPreviewGenerator.GetItemsTotalCount)} returned 0 and no exception was detected. This indicates a mistake in the preview generator extension's logic.");
             }
 
             IEnumerable<IPreviewData> previewDataCollection = null;
-            try { previewDataCollection = previewGenerator.GetPreview(new PreviewParams(itemRequestedWidth, itemRequestedHeight, dpi, true), maxPreviewItemsInGroupItem); }
-            catch (Exception ex) { throw new ClipboxExtensionException(nameof(previewGenerator.GetPreview), previewGenerator.GetType(), ex); }
+            try { previewDataCollection = manyPreviewGenerator.GetPreview(new PreviewParams(itemRequestedWidth, itemRequestedHeight, dpi, true), maxPreviewItemsInGroupItem); }
+            catch (Exception ex) { throw new ClipboxExtensionException(nameof(manyPreviewGenerator.GetPreview), manyPreviewGenerator.GetType(), ex); }
 
-            if (itemsCount == 0)
+            if (previewDataCollection != null
+                && !previewDataCollection.Any())
             {
-                throw new InvalidOperationException($"{previewGenerator.GetType().Name}.{nameof(previewGenerator.GetPreview)} returned 0 previews and no exception was detected. This indicates a mistake in the preview generator extension's logic.");
-            }
+                if (itemsCount == 0)
+                {
+                    throw new InvalidOperationException($"{manyPreviewGenerator.GetType().Name}.{nameof(manyPreviewGenerator.GetPreview)} returned 0 previews and no exception was detected. This indicates a mistake in the preview generator extension's logic.");
+                }
 
-            foreach (IPreviewData previewData in previewDataCollection)
-            {
-                PreviewItemTransferObject pito = PreviewItemTransferObject.FromPreviewData(previewData);
-                pdto.PreviewItems.Add(pito);
-            }
+                pdto = new PreviewDataTransferObject
+                {
+                    PreviewItems = new List<PreviewItemTransferObject>()
+                };
 
-            if (itemsCount > 1)
-            {
-                int itemsWithNoPreview = itemsCount - pdto.PreviewItems.Count();
-                pdto.NumberOfItemsWithoutPreview = itemsWithNoPreview;
-                pdto.IsGroup = true;
-            }
-            else
-            {
-                pdto.IsGroup = false;
+                foreach (IPreviewData previewData in previewDataCollection)
+                {
+                    PreviewItemTransferObject pito = PreviewItemTransferObject.FromPreviewData(previewData);
+                    pdto.PreviewItems.Add(pito);
+                }
+
+                if (itemsCount > 1)
+                {
+                    int itemsWithNoPreview = itemsCount - pdto.PreviewItems.Count();
+                    pdto.NumberOfItemsWithoutPreview = itemsWithNoPreview;
+                    pdto.IsGroup = true;
+                }
+                else
+                {
+                    pdto.IsGroup = false;
+                }
+
+                pdto.GeneratorExtensionTypeAssemblyQualifiedName = manyPreviewGenerator.GetType().AssemblyQualifiedName;
             }
 
             return pdto;

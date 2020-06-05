@@ -19,8 +19,15 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators
     [IntermediateFormatSupport("{5E4E9C1F-A324-42A4-AE9E-AA64DD871CC8}")]
     public class HtmlPreviewGenerator : SinglePreviewGenerator<HtmlIntermediateFormat, HtmlPreviewData>
     {
+        private const int MAX_HTML_LENGTH = 1000;
+
         protected override HtmlPreviewData GetPreview(HtmlIntermediateFormat intermediateFormat, PreviewParams previewParams)
         {
+            if (intermediateFormat.Html.Length > MAX_HTML_LENGTH)
+            {
+                return null;
+            }
+
             Bitmap previewBmp = null;
             string html = intermediateFormat.Html;
 

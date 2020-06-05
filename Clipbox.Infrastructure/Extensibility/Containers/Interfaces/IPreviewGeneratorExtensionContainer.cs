@@ -10,6 +10,6 @@ namespace Clipbox.Infrastructure.Extensibility.Containers.Interfaces
 
         IPreviewGenerator ResolveClipboardPreviewGenerator(string intermediateFormatGuid);
 
-        KeyValuePair<string, IPreviewGenerator>? ResolveClipboardPreviewGeneratorWithHighestPriority(string[] formatGuids);
+        IDictionary<string, IPreviewGenerator> ResolveClipboardPreviewGeneratorOrderedByPriority(string[] formatGuids);
     }
 }

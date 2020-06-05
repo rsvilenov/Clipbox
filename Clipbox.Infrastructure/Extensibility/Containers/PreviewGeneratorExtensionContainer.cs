@@ -31,36 +31,20 @@ namespace Clipbox.Infrastructure.Extensibility.Containers
             return null;
         }
 
-        public KeyValuePair<string, IPreviewGenerator>? ResolveClipboardPreviewGeneratorWithHighestPriority(string[] formatGuids)
+        public IDictionary<string, IPreviewGenerator> ResolveClipboardPreviewGeneratorOrderedByPriority(string[] formatGuids)
         {
-            Type extensionType = null;
-            int highestPriority = int.MinValue;
-            string finalFormatGuid = null;
-            foreach (string formatGuid in formatGuids)
-            {
-                if (_intermediateFormatGuidExtensionMapping.ContainsKey(formatGuid))
+            return _intermediateFormatGuidExtensionMapping
+                .Where(mappingEntry => formatGuids.Contains(mappingEntry.Key))
+                .OrderBy(mappingEntry => mappingEntry.Value.Priority)
+                .Select(mappingEntry =>
                 {
-                    TypeAndPriority tp = _intermediateFormatGuidExtensionMapping[formatGuid];
-                    if (tp.Priority > highestPriority)
-                    {
-                        highestPriority = tp.Priority;
-                        extensionType = tp.Type;
-                        finalFormatGuid = formatGuid;
-                    }
-                }
-            }
-
-            if (extensionType != null)
-            {
-                var extensionInstance = Resolve(extensionType);
-                ExtensionResolved?.Invoke(this, new ExtensionEventArgs { ExtensionType = extensionType });
-                return new KeyValuePair<string, IPreviewGenerator>(finalFormatGuid, extensionInstance);
-            }
-
-            return null;
+                    Type extensionType = mappingEntry.Value.Type;
+                    IPreviewGenerator extension = base.Resolve(extensionType);
+                    ExtensionResolved?.Invoke(this, new ExtensionEventArgs { ExtensionType = extensionType });
+                    return new { formatGuid = mappingEntry.Key, previewGenerator = extension };
+                })
+                .ToDictionary(k => k.formatGuid, v => v.previewGenerator);
         }
-
-
 
         public override void RegisterExtension(Type type)
         {

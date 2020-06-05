@@ -15,8 +15,15 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators
     [IntermediateFormatSupport("{89BCFB06-B1FC-4C0D-BFE6-9643BED5A172}")]
     public class TextPreviewGenerator : SinglePreviewGenerator<TextIntermediateFormat, ImagePreviewData>
     {
+        private const int TEXT_LENGTH_CUTOFF = 500;
+
         protected override ImagePreviewData GetPreview(TextIntermediateFormat intermediateFormat, PreviewParams previewParams)
         {
+            string text =
+                intermediateFormat.Text.Length > TEXT_LENGTH_CUTOFF 
+                ? intermediateFormat.Text.Substring(TEXT_LENGTH_CUTOFF)
+                : intermediateFormat.Text;
+
             var options = new TextFormatsPreviewCreator.PreviewGenerationOptions
             {
                 InclideAnnotation = GetSetting<bool>(ExtensionSettingNames.IncludeAnnotation),
@@ -52,9 +59,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators
             }
 
             ImagePreviewData preview = null;
-
-            string text = intermediateFormat.Text;
-
+            
             using (OwnThreadDispatcher _dispatcher = new OwnThreadDispatcher())
             {
                 _dispatcher.Invoke(DispatcherPriority.Background,
