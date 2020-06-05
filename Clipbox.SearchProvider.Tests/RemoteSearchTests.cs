@@ -22,7 +22,6 @@ namespace Clipbox.Infrastructure.Search.Tests
         private const string TEST_PIPE_NAME = "testPipe";
 
         private ISearchProvider _actualSearchProvicer;
-        private IEncryptionProvider _encryptionProvider;
 
         [SetUp]
         public void SetUp()
@@ -40,23 +39,6 @@ namespace Clipbox.Infrastructure.Search.Tests
 
             _actualSearchProvicer.Stub(pp => pp.DeleteIndexEntries(Arg<IEnumerable<string>>.Is.Anything))
                 .WhenCalled(w => storedIe = null);
-
-
-            _encryptionProvider = MockRepository.GenerateMock<IEncryptionProvider>();
-
-            byte[] encryptedData = null;
-
-            _encryptionProvider.Stub(pp => pp.Encrypt(Arg<byte[]>.Is.Anything))
-                .WhenCalled(w =>
-                {
-                    encryptedData = (byte[])w.Arguments[0];
-                    w.ReturnValue = encryptedData;
-                })
-                .Return(encryptedData);
-
-            _encryptionProvider.Stub(pp => pp.Decrypt(Arg<byte[]>.Is.Anything))
-                .WhenCalled(w => w.ReturnValue = encryptedData)
-                .Return(encryptedData);
         }
 
         [Test]
@@ -64,14 +46,12 @@ namespace Clipbox.Infrastructure.Search.Tests
         {
             Assert.Throws<ArgumentNullException>(() =>
                 new RemoteSearch(TEST_PIPE_NAME, false));
-            Assert.Throws<ArgumentNullException>(() =>
-               new RemoteSearch(TEST_PIPE_NAME, false, _actualSearchProvicer));
             
             ManualResetEvent mre = new ManualResetEvent(false);
             bool hasError = false;
             Task.Run(() =>
             {
-                RemoteSearch serverRs = new RemoteSearch(TEST_PIPE_NAME, false, _actualSearchProvicer, _encryptionProvider);
+                RemoteSearch serverRs = new RemoteSearch(TEST_PIPE_NAME, false, _actualSearchProvicer);
                 serverRs.ErrorOccurred += (s, a) => hasError = true;
                 mre.WaitOne();
             });
@@ -97,7 +77,7 @@ namespace Clipbox.Infrastructure.Search.Tests
             ManualResetEvent mre = new ManualResetEvent(false);
             Task.Run(() =>
             {
-                RemoteSearch serverRs = new RemoteSearch(TEST_PIPE_NAME, false, _actualSearchProvicer, _encryptionProvider);
+                RemoteSearch serverRs = new RemoteSearch(TEST_PIPE_NAME, false, _actualSearchProvicer);
                 mre.WaitOne();
             });
 

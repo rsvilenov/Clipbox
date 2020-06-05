@@ -155,29 +155,7 @@ namespace Clipbox
             //_settingsService.SetSetting("Setting1", "set");
 
             //var newSet = _settingsService.GetSetting<string>("Setting1");
-
-            _settingsService.SetSetting(SettingsKeys.PreviewItemHeightRatio, 0.13d);
-            _settingsService.SetSetting(SettingsKeys.MaxPreviewItemsInGroupItem, 5);
-            _settingsService.SetSetting(SettingsKeys.ResizeAccordingToMonitorOrSystemDpi, true);
-            _settingsService.SetSetting(SettingsKeys.DimNonFocusedItems, false);
-            _settingsService.SetSetting(SettingsKeys.IsDeskBandEnabled, true);
-            _settingsService.SetSetting(SettingsKeys.IsTrayIconEnabled, true);
-            _settingsService.SetSetting(SettingsKeys.IsCloudSyncEnabled, false);
-            _settingsService.SetSetting(SettingsKeys.MainClipboardViewBackgroundRenderMode, (int)MainClipboardViewBackgroundRenderMode.ImageBrush);
-            _settingsService.SetSetting(SettingsKeys.IsBackgroundPreviewGenerationEnabled, true);
-            _settingsService.SetSetting(SettingsKeys.AreFadeAnimationsEnabled, true);
-            _settingsService.SetSetting(SettingsKeys.IsAutomaticCloudSyncOfPinnedItemsEnabled, true);
-            _settingsService.SetSetting(SettingsKeys.MaxNonPinnedItemsInQuickView, 5);
-
-            _settingsService.SetSetting(SettingsKeys.NumOfNotYetVisibleRowsToPreload, 0);
-
-            // changing of these requires restrat for the change to take effect
-            _settingsService.SetSetting(SettingsKeys.PreviewGenerationTimeout, 6000);
-            _settingsService.SetSetting(SettingsKeys.PreviewCacheMaxSize, 10485760);
-            _settingsService.SetSetting(SettingsKeys.MaxSimultaneousPreviewTasks, 5);
-
-            // overrides MaxSimultaneousPreviewTasks
-            _settingsService.SetSetting(SettingsKeys.AutoDetermineMaxSimultaneousPreviewTasks, false);
+            SetInitialSettings();
 
             _previewGenerationService = new PreviewGenerationService(_clipboardManager, _extensionLoader.PreviewGeneratorsContainer, _settingsService, _persistenceProvider);
             
@@ -201,7 +179,9 @@ namespace Clipbox
 
             _trayContextMenuService = new TrayContextMenuService(_settingsService);
 
-            _searchService = new SearchService(_extensionLoader.SearchSupportExtensionContainer, _clipboardManager, new LuceneSearch(encryptionProvider));
+            RemoteSearch remoteSearch = new RemoteSearch(ProductConstants.SEARCH_SERVICE_NAMED_PIPE_PREFIX, true);
+
+            _searchService = new SearchService(_extensionLoader.SearchSupportExtensionContainer, _clipboardManager, remoteSearch);
             
             // this view can show a little bit slower so we will not keep its instance alive the whole time - we will create it upon request within the service
             _mainClipboardViewWindowService = new MainClipboardViewWindowService(_clipboardManager, 
@@ -241,6 +221,33 @@ namespace Clipbox
             }
 
             ThemeManager.TransparencySettingChanged += ThemeManager_TransparencySettingChanged;
+        }
+
+
+        private void SetInitialSettings()
+        {
+            _settingsService.SetSetting(SettingsKeys.PreviewItemHeightRatio, 0.13d);
+            _settingsService.SetSetting(SettingsKeys.MaxPreviewItemsInGroupItem, 5);
+            _settingsService.SetSetting(SettingsKeys.ResizeAccordingToMonitorOrSystemDpi, true);
+            _settingsService.SetSetting(SettingsKeys.DimNonFocusedItems, false);
+            _settingsService.SetSetting(SettingsKeys.IsDeskBandEnabled, true);
+            _settingsService.SetSetting(SettingsKeys.IsTrayIconEnabled, true);
+            _settingsService.SetSetting(SettingsKeys.IsCloudSyncEnabled, false);
+            _settingsService.SetSetting(SettingsKeys.MainClipboardViewBackgroundRenderMode, (int)MainClipboardViewBackgroundRenderMode.ImageBrush);
+            _settingsService.SetSetting(SettingsKeys.IsBackgroundPreviewGenerationEnabled, true);
+            _settingsService.SetSetting(SettingsKeys.AreFadeAnimationsEnabled, true);
+            _settingsService.SetSetting(SettingsKeys.IsAutomaticCloudSyncOfPinnedItemsEnabled, true);
+            _settingsService.SetSetting(SettingsKeys.MaxNonPinnedItemsInQuickView, 5);
+
+            _settingsService.SetSetting(SettingsKeys.NumOfNotYetVisibleRowsToPreload, 0);
+
+            // changing of these requires restrat for the change to take effect
+            _settingsService.SetSetting(SettingsKeys.PreviewGenerationTimeout, 6000);
+            _settingsService.SetSetting(SettingsKeys.PreviewCacheMaxSize, 10485760);
+            _settingsService.SetSetting(SettingsKeys.MaxSimultaneousPreviewTasks, 5);
+
+            // overrides MaxSimultaneousPreviewTasks
+            _settingsService.SetSetting(SettingsKeys.AutoDetermineMaxSimultaneousPreviewTasks, false);
         }
 
         private void ThemeManager_TransparencySettingChanged(object sender, EventArgs e)

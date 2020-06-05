@@ -19,8 +19,7 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
 
         public RemoteSearch(string pipeName, 
             bool isClientMode,
-            ISearchProvider actualSerchProvider = null,
-            IEncryptionProvider encryptionProvider = null)
+            ISearchProvider actualSerchProvider = null)
         {
             _isCliendMode = isClientMode;
 
@@ -30,11 +29,6 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
             }
             else
             {
-                if (encryptionProvider == null)
-                {
-                    throw new ArgumentNullException($"Passing a valid provider for argument '{nameof(encryptionProvider)}' is obligatory for server mode.");
-                }
-
                 _actualSerchProvider = actualSerchProvider 
                     ?? throw new ArgumentNullException($"Passing a valid provider for argument '{nameof(actualSerchProvider)}' is obligatory for server mode.");
 

@@ -22,6 +22,8 @@ namespace Clipbox.Core
 
         public const string SERVICE_GUARD_NAMED_PIPE_PREFIX = "ClipboxPipe";
 
+        public const string SEARCH_SERVICE_NAMED_PIPE_PREFIX = "ClipboxSearchPipe";
+
         public const string SHELL_EXTENSION_NAMED_PIPE_PREFIX = "ClipboxShExPipe";
         
         public static readonly IReadOnlyList<byte> CLIENT_EXE_HASH = new byte[] { 0 };
