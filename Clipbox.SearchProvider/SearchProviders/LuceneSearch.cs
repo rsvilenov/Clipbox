@@ -23,6 +23,7 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
     {
         private const int LUCENE_SEARCH_MAX_RESULT_COUNT = 10000;
         private const int LUCENE_MAX_CLAUSES_COUNT = 50000;
+        private const string SEARCH_TERMINATING_ERROR_LOGFILE = "searchTerminatingError.log";
 
         private readonly IEncryptionProvider _encryptionProvider;
 
@@ -33,6 +34,20 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
             // by which the value can be partially restored, and that's
             // why I want to encrypt the whole index.
             _encryptionProvider = encryptionProvider;
+
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            if (e.ExceptionObject is Exception ex)
+            {
+                if (ex.StackTrace.Contains("Lucene.Net"))
+                {
+                    string indexDirectory = GetIndexDirectoryInfo().FullName;
+                    File.WriteAllText(Path.Combine(indexDirectory, SEARCH_TERMINATING_ERROR_LOGFILE), ex.ToString());
+                }
+            }
         }
 
         public void DeleteIndexEntries(IEnumerable<string> indexEntryIds)
@@ -299,6 +314,30 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
             }
 
             return scoreDocs ?? Enumerable.Empty<ScoreDoc>();
+        }
+
+        public void ClearIndexEntries()
+        {
+            GetIndexDirectoryInfo().Delete(recursive: true);
+        }
+
+        public IndexHealthInfo GetIndexHealth()
+        {
+            string indexDirectory = GetIndexDirectoryInfo().FullName;
+            if (Directory.Exists(indexDirectory))
+            {
+                return new IndexHealthInfo(false);
+            }
+
+            string errorFilePath = Path.Combine(indexDirectory, SEARCH_TERMINATING_ERROR_LOGFILE);
+            if (File.Exists(errorFilePath))
+            {
+                return new IndexHealthInfo(false, File.ReadAllText(errorFilePath));
+            }
+            else
+            {
+                return new IndexHealthInfo(true);
+            }
         }
     }
 }

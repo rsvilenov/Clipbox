@@ -11,5 +11,21 @@ namespace Clipbox.Services.Interfaces
         /// <param name="searchTerms"></param>
         /// <returns></returns>
         IEnumerable<string> FindClipboardItemIds(IEnumerable<ISearchTerm> searchTerms);
+
+        /// <summary>
+        /// Rebuilds the indeces
+        /// </summary>
+        void StartIndexRebuilding();
+
+        /// <summary>
+        /// Cancels the ongoing process of
+        /// rebuilding the indeces.
+        /// </summary>
+        void CancelRebuildIndices();
+
+        /// <summary>
+        /// True if the indeces are healthy and usable.
+        /// </summary>
+        bool AreIndedisHealthy { get; }
     }
 }

@@ -96,6 +96,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IndexHealthInfo.cs" />
     <Compile Include="ISearchProvider.cs" />
     <Compile Include="SearchProviders\Encryption\EncrypedIndexOutput.cs" />
     <Compile Include="SearchProviders\Encryption\EncryptedIndexInput.cs" />

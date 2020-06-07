@@ -1,5 +1,4 @@
 ﻿using Clipbox.Core.Search;
-using Clipbox.Infrastructure.Encryption;
 using Clipbox.Infrastructure.IPC;
 using Clipbox.Infrastructure.Search.SearchProviders.EventArgsClasses;
 using Clipbox.Infrastructure.Serialization;
@@ -154,6 +153,56 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
             }
         }
 
+        public void ClearIndexEntries()
+        {
+            if (_isCliendMode)
+            {
+                SearchPipeMessage msg = new SearchPipeMessage
+                {
+                    MessageType = SearchPipeMessageType.ClearIndexEntries
+                };
+
+                byte[] serialized = BinaryFormatterSerialization.SerializeObject(msg);
+
+                if (!_pipeClient.SendMessage(Convert.ToBase64String(serialized)))
+                {
+                    ErrorOccurred?.Invoke(this,
+                        new RemoteSearchErrorEventArgs("Pipe server error."));
+                }
+            }
+            else
+            {
+                _actualSerchProvider.ClearIndexEntries();
+            }
+        }
+
+        public IndexHealthInfo GetIndexHealth()
+        {
+            if (_isCliendMode)
+            {
+                SearchPipeMessage msg = new SearchPipeMessage
+                {
+                    MessageType = SearchPipeMessageType.GetIndexHealth
+                };
+
+                byte[] serialized = BinaryFormatterSerialization.SerializeObject(msg);
+
+                if (!_pipeClient.SendMessage(Convert.ToBase64String(serialized), out string response))
+                {
+                    ErrorOccurred?.Invoke(this,
+                        new RemoteSearchErrorEventArgs("Pipe server error."));
+                }
+
+                byte[] responseBytes = Convert.FromBase64String(response);
+                SearchPipeMessage deserializedResponseMsg = BinaryFormatterSerialization.DeserializeObject<SearchPipeMessage>(responseBytes);
+                return deserializedResponseMsg.IndexHealthInfo;
+            }
+            else
+            {
+                return _actualSerchProvider.GetIndexHealth();
+            }
+        }
+
         [Serializable]
         private class SearchPipeMessage
         {
@@ -164,6 +213,8 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
             public IEnumerable<ISearchTerm> SearchTerms { get; set; }
 
             public IEnumerable<string> IndexEntryIds { get; set; }
+
+            public IndexHealthInfo IndexHealthInfo { get; set; }
         }
 
         private enum SearchPipeMessageType
@@ -171,6 +222,8 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
             Store,
             Search,
             Delete,
+            GetIndexHealth,
+            ClearIndexEntries,
             Result
         }
 

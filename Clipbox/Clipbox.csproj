@@ -123,6 +123,8 @@
     <Compile Include="Services\Enums\TrayIconVisibilityPreference.cs" />
     <Compile Include="Services\EventArgsClasses\SyncEventArgs.cs" />
     <Compile Include="Services\Exceptions\PreviewGenerationException.cs" />
+    <Compile Include="Services\Interfaces\Common\EventArgsClasses\ProgressEventArgs.cs" />
+    <Compile Include="Services\Interfaces\Common\IProvideProgressInfo.cs" />
     <Compile Include="Services\Interfaces\ILocalizationService.cs" />
     <Compile Include="Services\Interfaces\ISearchService.cs" />
     <Compile Include="Services\Interfaces\ISettingsWindowService.cs" />

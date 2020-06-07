@@ -1,14 +1,14 @@
 ﻿using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
-using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
 using Clipbox.Core.Search;
 using Clipbox.Core.Search.IndexUnits;
-using Clipbox.Core.Search.SearchTerms;
 using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
 using Clipbox.Infrastructure.Search;
 using Clipbox.Infrastructure.UI;
 using Clipbox.Services.Interfaces;
+using Clipbox.Services.Interfaces.Common;
+using Clipbox.Services.Interfaces.Common.EventArgsClasses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,7 +17,9 @@ using System.Threading.Tasks;
 
 namespace Clipbox.Services
 {
-    public class SearchService : ISearchService, IDisposable
+    public class SearchService : ISearchService, 
+        IProvideProgressInfo, 
+        IDisposable
     {
         private readonly ISearchSupportExtensionContainer _extensionContainer;
         private readonly IClipboardManager _clipboardManager;
@@ -36,14 +38,18 @@ namespace Clipbox.Services
 
         private HashSet<string> _allClipboardItemIds;
 
+        public event EventHandler<ProgressEventArgs> ProgressChanged;
+
+        public bool AreIndedisHealthy { get; private set; }
+
         public SearchService(ISearchSupportExtensionContainer extensionContainer,
-            IClipboardManager clipboardManager, 
+            IClipboardManager clipboardManager,
             ISearchProvider searchProvider)
         {
             _extensionContainer = extensionContainer;
             _searchProvider = searchProvider;
             _clipboardManager = clipboardManager;
-            
+
             _clipboardItemIdsScheduledForRemoval = new List<string>();
             _clipboardItemIdsScheduledForAdd = new List<string>();
 
@@ -61,6 +67,9 @@ namespace Clipbox.Services
             _clipboardManager.ItemAdded += _clipboardManager_ItemAdded;
             _clipboardManager.ItemChanged += _clipboardManager_ItemChanged;
             _clipboardManager.ItemRemoved += _clipboardManager_ItemRemoved;
+
+            // TODO: log the non fatal error info from the search provider
+            AreIndedisHealthy = searchProvider.GetIndexHealth().IsHealthy;
         }
 
         private void _clipboardManager_ItemRemoved(object sender, ExtendedClipboard.EventArgs.ClipboardManagerEventArgs e)
@@ -146,6 +155,11 @@ namespace Clipbox.Services
                 }
 
                 _searchProvider.StoreIndexEntries(generatedIndexEntries);
+            }
+
+            if (removedIds.Any() || addedIds.Any())
+            {
+                AreIndedisHealthy = _searchProvider.GetIndexHealth().IsHealthy;
             }
         }
 
@@ -274,6 +288,44 @@ namespace Clipbox.Services
             {
                 DoLenghtySearchStoreOperations(_clipboardItemIdsScheduledForRemoval, _clipboardItemIdsScheduledForAdd);
             }
+        }
+
+        CancellationTokenSource _indexRebuildCancelTokenSrc;
+
+        public void StartIndexRebuilding()
+        {
+            _indexRebuildCancelTokenSrc = new CancellationTokenSource();
+
+            Task.Run(() =>
+            {
+                _searchProvider.ClearIndexEntries();
+
+                int total = _allClipboardItemIds.Count();
+                int current = 0;
+                foreach (string id in _allClipboardItemIds)
+                {
+                    if (_indexRebuildCancelTokenSrc.IsCancellationRequested)
+                    {
+                        _searchProvider.ClearIndexEntries();
+                        break;
+                    }
+
+                    if (TryGenerateIndexEntry(id, out IndexEntry indexEntry))
+                    {
+                        _searchProvider.StoreIndexEntries(new[] { indexEntry });
+                    }
+
+                    ProgressChanged?.Invoke(this, new ProgressEventArgs(total, ++current));
+                }
+            }, _indexRebuildCancelTokenSrc.Token);
+            
+
+            AreIndedisHealthy = _searchProvider.GetIndexHealth().IsHealthy;
+        }
+
+        public void CancelRebuildIndices()
+        {
+            _indexRebuildCancelTokenSrc.Cancel();
         }
     }
 }
