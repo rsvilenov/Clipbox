@@ -326,12 +326,26 @@ namespace Clipbox.Services
                         break;
                     }
 
-                    if (TryGenerateIndexEntry(id, out IndexEntry indexEntry))
+                    bool success = true;
+                    try
                     {
-                        _searchProvider.StoreIndexEntries(new[] { indexEntry });
+                        if (TryGenerateIndexEntry(id, out IndexEntry indexEntry))
+                        {
+                            _searchProvider.StoreIndexEntries(new[] { indexEntry });
+                            success = _searchProvider.GetIndexHealth()?.IsHealthy == true;
+                        }
+                    }
+                    catch (TimeoutException)
+                    {
+                        success = false;
                     }
 
-                    ProgressChanged?.Invoke(this, new ProgressEventArgs(total, ++current));
+                    ProgressChanged?.Invoke(this, new ProgressEventArgs(total, ++current, success, id));
+
+                    if (!success)
+                    {
+                        break;
+                    }
                 }
             }, _indexRebuildCancelTokenSrc.Token);
             

@@ -151,6 +151,7 @@
     <Compile Include="Views\ClipboardViewItemTile\TileAnimationHelper.cs" />
     <Compile Include="Views\ClipboardViewItemTile\Enums\AnimationPurpose.cs" />
     <Compile Include="Views\ClipboardViewItemTile\IAnimatableItem.cs" />
+    <Compile Include="Views\EventArgsClasses\RetryRebuildIndexEventArgs.cs" />
     <Compile Include="Views\FilterBand\ApplicationSelector.xaml.cs">
       <DependentUpon>ApplicationSelector.xaml</DependentUpon>
     </Compile>

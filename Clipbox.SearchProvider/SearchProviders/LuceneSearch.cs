@@ -262,6 +262,8 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
 
                         indexWriter.AddDocument(document);
                     }
+
+                    indexWriter.WaitForMerges();
                 }
             }
         }
@@ -323,13 +325,13 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
 
         public IndexHealthInfo GetIndexHealth()
         {
-            string indexDirectory = GetIndexDirectoryInfo().FullName;
-            if (Directory.Exists(indexDirectory))
+            string indexDirectoryPath = Path.Combine(AppDataUtils.GetAppDataDir(false), "searchIdx");
+            if (!Directory.Exists(indexDirectoryPath))
             {
                 return new IndexHealthInfo(false);
             }
 
-            string errorFilePath = Path.Combine(indexDirectory, SEARCH_TERMINATING_ERROR_LOGFILE);
+            string errorFilePath = Path.Combine(indexDirectoryPath, SEARCH_TERMINATING_ERROR_LOGFILE);
             if (File.Exists(errorFilePath))
             {
                 return new IndexHealthInfo(false, File.ReadAllText(errorFilePath));

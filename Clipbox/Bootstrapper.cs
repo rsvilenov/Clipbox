@@ -187,7 +187,7 @@ namespace Clipbox
 
             _settingsWindowService = new SettingsWindowService(_settingsService, _mainClipboardViewWindowService, _trayContextMenuService, _extensionLoader.SettingsUIExtensionContainer);
 
-            _rebuildIndexWindowService = new RebuildIndexWindowService(_searchService, _mainClipboardViewWindowService);
+            _rebuildIndexWindowService = new RebuildIndexWindowService(_searchService, _mainClipboardViewWindowService, _clipboardManager);
 
             // try to save processing time, but beware of the memory usage
             AsmAwareResxLocalizationProvider.Instance.KeepLiveResourceManagers = true;

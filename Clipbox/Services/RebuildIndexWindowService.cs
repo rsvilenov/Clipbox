@@ -1,5 +1,7 @@
-﻿using Clipbox.Services.Interfaces;
+﻿using Clipbox.ExtendedClipboard.Interfaces;
+using Clipbox.Services.Interfaces;
 using Clipbox.Views;
+using Clipbox.Views.EventArgsClasses;
 using System;
 using System.ComponentModel;
 using System.Windows;
@@ -11,15 +13,18 @@ namespace Clipbox.Services
     {
         private readonly IMainClipboardViewWindowService _mainClipboardViewWindowService;
         private readonly ISearchService _searchService;
+        private readonly IClipboardManager _clipboardManager;
 
         private bool _disposed;
         private RebuildIndicesWindow _window;
 
         public RebuildIndexWindowService(ISearchService searchService, 
-            IMainClipboardViewWindowService mainClipboardViewWindowService)
+            IMainClipboardViewWindowService mainClipboardViewWindowService,
+            IClipboardManager clipboardManager)
         {
             _searchService = searchService;
             _mainClipboardViewWindowService = mainClipboardViewWindowService;
+            _clipboardManager = clipboardManager;
 
             _mainClipboardViewWindowService.RebuildIndexRequested += _mainClipboardViewWindowService_RebuildIndexRequested;
             _mainClipboardViewWindowService.OpenMainWindowRequested += _mainClipboardViewWindowService_OpenMainWindowRequested;
@@ -30,12 +35,11 @@ namespace Clipbox.Services
             if (!_disposed && _window != null)
             {
                 var window = _window;
-                _window.Dispatcher.Invoke(() =>
+                window.Dispatcher.Invoke(() =>
                 {
                     if (window.WindowState == WindowState.Minimized)
                         window.WindowState = WindowState.Normal;
-
-                    window.Focus();
+                    window.Activate();
                 });
                 
                 e.Cancel = true;
@@ -44,6 +48,11 @@ namespace Clipbox.Services
 
         private void _mainClipboardViewWindowService_RebuildIndexRequested(object sender, EventArgs e)
         {
+            StartRebuildIndex();
+        }
+
+        private void StartRebuildIndex()
+        {
             if (!_disposed && _window == null)
             {
                 // close the main window
@@ -51,14 +60,26 @@ namespace Clipbox.Services
 
                 // indicate that the rebuilding of the indices is running
                 _window = new RebuildIndicesWindow(_searchService);
-                _window.Closed += _window_Closed;
+                _window.Unloaded += _window_Unloaded;
+                _window.RetryRequested += _window_RetryRequested;
                 _window.Show();
             }
         }
 
-        private void _window_Closed(object sender, EventArgs e)
+        private void _window_RetryRequested(object sender, RetryRebuildIndexEventArgs e)
         {
-            _window.Closed -= _window_Closed;
+            if (!string.IsNullOrEmpty(e.FailedId))
+            {
+                _clipboardManager.RemoveClipboardItem(e.FailedId);
+            }
+
+            _window?.RetryRebuild();
+        }
+
+        private void _window_Unloaded(object sender, EventArgs e)
+        {
+            _window.Closed -= _window_Unloaded;
+            _window.RetryRequested -= _window_RetryRequested;
             _window = null;
         }
 
