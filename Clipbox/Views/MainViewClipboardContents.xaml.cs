@@ -43,7 +43,9 @@ namespace Clipbox.Views
         public event EventHandler CloseMainWindowRequested;
 
         public event EventHandler SettingsWindowOpenRequested;
-        
+
+        public event EventHandler RebuildIndexRequested;
+
         public bool AreFadeAnimationsEnabled
         {
             get { return (bool)GetValue(AreFadeAnimationsEnabledProperty); }
@@ -791,6 +793,11 @@ namespace Clipbox.Views
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
         {
             SettingsWindowOpenRequested?.Invoke(this, new EventArgs());
+        }
+
+        private void RebuildIndexButton_Click(object sender, RoutedEventArgs e)
+        {
+            RebuildIndexRequested?.Invoke(this, new EventArgs());
         }
     }
 }

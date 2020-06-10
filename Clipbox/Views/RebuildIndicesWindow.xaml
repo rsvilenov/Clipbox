@@ -1,0 +1,112 @@
+﻿<localWindows:AcryllicWindow
+    x:Class="Clipbox.Views.RebuildIndicesWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:infBeh="clr-namespace:Clipbox.Infrastructure.UI.Behaviors;assembly=Clipbox.Infrastructure.UI"
+    xmlns:localWindows="clr-namespace:Clipbox.Infrastructure.UI.Windows;assembly=Clipbox.Infrastructure.UI"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Clipbox: rebuilding search index."
+    Width="600"
+    Height="250"
+    AllowsTransparency="True"
+    Background="{DynamicResource TaskbarColorBrush}"
+    BorderBrush="#3a3a3a"
+    BorderThickness="0"
+    FontSize="16"
+    Foreground="White"
+    Icon="pack://application:,,,/Clipbox.Infrastructure.UI;component/Resources/Images/Clip-WF.ico"
+    ResizeMode="NoResize"
+    SizeToContent="Manual"
+    WindowStartupLocation="CenterScreen"
+    WindowStyle="None"
+    mc:Ignorable="d">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </Window.Resources>
+    <Grid x:Name="mainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
+            <RowDefinition />
+            <RowDefinition Height="60" />
+        </Grid.RowDefinitions>
+        <Grid
+            Grid.Row="0"
+            Background="Transparent"
+            MouseDown="Grid_MouseDown">
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+
+            <StackPanel
+                Grid.Row="0"
+                Grid.Column="0"
+                Margin="20,10,0,0"
+                HorizontalAlignment="Left"
+                Panel.ZIndex="10"
+                Orientation="Horizontal">
+                <ContentControl
+                    Width="15"
+                    Margin="0,0,15,6"
+                    Foreground="#818183"
+                    Template="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=Icon}" />
+                <TextBlock Foreground="#818183" Text="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=Title}" />
+            </StackPanel>
+
+            <Button
+                Grid.Row="0"
+                Grid.Column="1"
+                MaxWidth="25"
+                Margin="0,0,5,0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Command="{Binding Source={x:Static SystemCommands.MinimizeWindowCommand}}"
+                Style="{DynamicResource BtnWindowMinimize}"
+                ToolTip="Minimize window">
+                <i:Interaction.Behaviors>
+                    <infBeh:FrameworkElementDpiScalingBehavior />
+                </i:Interaction.Behaviors>
+            </Button>
+        </Grid>
+        <Grid Grid.Row="1" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <ContentControl
+                Grid.Column="0"
+                Width="32"
+                Margin="15,0,0,0"
+                VerticalAlignment="Center"
+                Foreground="LightGray"
+                Template="{DynamicResource LoadingSolidIcon}" />
+
+            <TextBlock
+                Grid.Column="1"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+                <TextBlock.Text>
+                    <MultiBinding StringFormat="{}{0} {1} %">
+                        <Binding Source="Rebuilding indices: " />
+                        <Binding Path="ProgressPercentage" />
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
+        </Grid>
+
+        <Button
+            Grid.Row="2"
+            Width="150"
+            Height="30"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Command="{Binding Cancel}"
+            Content="Cancel"
+            Foreground="{DynamicResource ControlForegroundBrush}"
+            Style="{DynamicResource BtnCancel}" />
+    </Grid>
+</localWindows:AcryllicWindow>

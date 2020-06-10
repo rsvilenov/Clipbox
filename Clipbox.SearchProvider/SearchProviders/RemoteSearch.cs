@@ -69,6 +69,19 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
                 case SearchPipeMessageType.Delete:
                     searchProvider.DeleteIndexEntries(msg.IndexEntryIds);
                     break;
+                case SearchPipeMessageType.ClearIndexEntries:
+                    searchProvider.ClearIndexEntries();
+                    break;
+                case SearchPipeMessageType.GetIndexHealth:
+                    SearchPipeMessage healthResponseMsg = new SearchPipeMessage
+                    {
+                        MessageType = SearchPipeMessageType.GetIndexHealth
+                    };
+
+                    healthResponseMsg.IndexHealthInfo = searchProvider.GetIndexHealth();
+                    byte[] healthResponseBytes = BinaryFormatterSerialization.SerializeObject(healthResponseMsg);
+                    e.Response = Convert.ToBase64String(healthResponseBytes);
+                    break;
                 default:
                     ErrorOccurred?.Invoke(this,
                         new RemoteSearchErrorEventArgs("Pipe server GotMessage:", 

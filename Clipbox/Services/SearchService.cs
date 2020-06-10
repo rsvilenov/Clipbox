@@ -40,7 +40,7 @@ namespace Clipbox.Services
 
         public event EventHandler<ProgressEventArgs> ProgressChanged;
 
-        public bool AreIndedisHealthy { get; private set; }
+        public bool AreIndicesHealthy { get; private set; }
 
         public SearchService(ISearchSupportExtensionContainer extensionContainer,
             IClipboardManager clipboardManager,
@@ -69,7 +69,7 @@ namespace Clipbox.Services
             _clipboardManager.ItemRemoved += _clipboardManager_ItemRemoved;
 
             // TODO: log the non fatal error info from the search provider
-            AreIndedisHealthy = searchProvider.GetIndexHealth().IsHealthy;
+            AreIndicesHealthy = searchProvider.GetIndexHealth().IsHealthy;
         }
 
         private void _clipboardManager_ItemRemoved(object sender, ExtendedClipboard.EventArgs.ClipboardManagerEventArgs e)
@@ -109,6 +109,11 @@ namespace Clipbox.Services
         {
             lock (_listLockHandle)
             {
+                if (!AreIndicesHealthy)
+                {
+                    return;
+                }
+
                 var idsToRemove = _clipboardItemIdsScheduledForRemoval.ToList();
                 var idsToAdd = _clipboardItemIdsScheduledForAdd.ToList();
 
@@ -159,12 +164,17 @@ namespace Clipbox.Services
 
             if (removedIds.Any() || addedIds.Any())
             {
-                AreIndedisHealthy = _searchProvider.GetIndexHealth().IsHealthy;
+                AreIndicesHealthy = _searchProvider.GetIndexHealth().IsHealthy;
             }
         }
 
         public IEnumerable<string> FindClipboardItemIds(IEnumerable<ISearchTerm> searchTerms)
         {
+            if (!AreIndicesHealthy)
+            {
+                return Enumerable.Empty<string>();
+            }
+
             foreach (var searchTerm in searchTerms)
             { 
                 if (!searchTerm.Validate())
@@ -300,6 +310,12 @@ namespace Clipbox.Services
             {
                 _searchProvider.ClearIndexEntries();
 
+                _clipboardItemIdsScheduledForAdd.Clear();
+                _clipboardItemIdsScheduledForAdd.Clear();
+
+                // refresh this collection
+                _allClipboardItemIds = new HashSet<string>(_clipboardManager.GetAllItemIds());
+
                 int total = _allClipboardItemIds.Count();
                 int current = 0;
                 foreach (string id in _allClipboardItemIds)
@@ -320,12 +336,12 @@ namespace Clipbox.Services
             }, _indexRebuildCancelTokenSrc.Token);
             
 
-            AreIndedisHealthy = _searchProvider.GetIndexHealth().IsHealthy;
+            AreIndicesHealthy = _searchProvider.GetIndexHealth().IsHealthy;
         }
 
         public void CancelRebuildIndices()
         {
-            _indexRebuildCancelTokenSrc.Cancel();
+            _indexRebuildCancelTokenSrc?.Cancel();
         }
     }
 }

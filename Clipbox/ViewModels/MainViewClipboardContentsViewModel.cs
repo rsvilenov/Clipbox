@@ -34,6 +34,16 @@ namespace Clipbox.ViewModels
             IsCloudSyncAvailable = CheckIsCloudServiceAvailable();
 
             ClipboardItemsDataProvider = clipboardManager;
+
+            try
+            {
+                IsSearchIndexHealthy = _searchService.AreIndicesHealthy;
+            }
+            catch (Exception ex)
+            {
+                // TODO: log non fatal exception
+                IsSearchIndexHealthy = false;
+            }
         }
         
         private void _cloudSyncService_ItemSynced(object sender, Services.EventArgsClasses.SyncEventArgs e)
@@ -100,6 +110,13 @@ namespace Clipbox.ViewModels
             }
         }
 
+        private bool _isSearchIndexHealthy;
+        public bool IsSearchIndexHealthy
+        {
+            get { return _isSearchIndexHealthy; }
+            set { SetField(ref _isSearchIndexHealthy, value); }
+        }
+
         private IClipboardItemsDataProvider _clipboardItemsDataProvider;
         public IClipboardItemsDataProvider ClipboardItemsDataProvider
         {
@@ -109,6 +126,11 @@ namespace Clipbox.ViewModels
 
         public IEnumerable<string> GetClipboardItemIds(IEnumerable<ISearchTerm> searchTerms)
         {
+            if (!IsSearchIndexHealthy)
+            {
+                return Enumerable.Empty<string>();
+            }
+
             if (searchTerms != null && searchTerms.Any())
             {
                 return _searchService

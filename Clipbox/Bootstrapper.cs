@@ -40,42 +40,25 @@ namespace Clipbox
     public class Bootstrapper
     {
         FlowController _flowController;
-
         LowLevelKeyboardService _keyboardService;
-
         IClipboardManager _clipboardManager;
-
         ClipboardListenerService _clipboardListenerService;
-
         QuickClipboardViewWindowService _previewWindowService;
-
         FlowExtensionExecutorService _flowExtensionExecutorService;
-        
         TrayIconService _trayService;
-
         ISettingsService _settingsService;
-
         CloudSynchronizationService _cloudSyncService;
-
         MainClipboardViewWindowService _mainClipboardViewWindowService;
-
         TrayContextMenuService _trayContextMenuService;
-        
         TrayBandService _trayBandService;
-
         ExtensionLoader _extensionLoader;
-
         QuickViewClipboardContents _quickViewClipboardContents;
-
         PreviewGenerationService _previewGenerationService;
-
         SearchService _searchService;
-
         SettingsWindowService _settingsWindowService;
-
         LocalizationService _localizationService;
-
         IPersistenceProvider _persistenceProvider;
+        RebuildIndexWindowService _rebuildIndexWindowService;
 
         public void PerformStartupSequence()
         {
@@ -203,6 +186,8 @@ namespace Clipbox
             _trayService = new TrayIconService(_mainClipboardViewWindowService, _trayContextMenuService, _settingsService);
 
             _settingsWindowService = new SettingsWindowService(_settingsService, _mainClipboardViewWindowService, _trayContextMenuService, _extensionLoader.SettingsUIExtensionContainer);
+
+            _rebuildIndexWindowService = new RebuildIndexWindowService(_searchService, _mainClipboardViewWindowService);
 
             // try to save processing time, but beware of the memory usage
             AsmAwareResxLocalizationProvider.Instance.KeepLiveResourceManagers = true;
@@ -363,6 +348,7 @@ namespace Clipbox
             TryDisposeObject(_trayService);
             TryDisposeObject(_trayBandService);
             TryDisposeObject(_trayContextMenuService);
+            TryDisposeObject(_rebuildIndexWindowService);
             TryDisposeObject(_searchService);
         }
 

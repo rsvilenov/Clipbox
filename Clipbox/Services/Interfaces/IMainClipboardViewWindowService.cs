@@ -1,5 +1,6 @@
 ﻿using Clipbox.Services.EventArgsClasses;
 using System;
+using System.ComponentModel;
 
 namespace Clipbox.Services.Interfaces
 {
@@ -14,5 +15,9 @@ namespace Clipbox.Services.Interfaces
         event EventHandler<SetToClipboardEventArgs> SetItemsToClipboardRequested;
 
         event EventHandler SettingsWindowOpenRequested;
+
+        event EventHandler RebuildIndexRequested;
+
+        event EventHandler<CancelEventArgs> OpenMainWindowRequested;
     }
 }

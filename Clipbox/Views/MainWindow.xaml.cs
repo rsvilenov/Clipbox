@@ -62,6 +62,8 @@ namespace Clipbox.Views
 
         public event EventHandler SettingsWindowOpenRequested;
 
+        public event EventHandler RebuildIndexRequested;
+
         public bool AreFadeAnimationsEnabled
         {
             get { return (bool)GetValue(AreFadeAnimationsEnabledProperty); }
@@ -137,6 +139,7 @@ namespace Clipbox.Views
             _mainViewClipboardContents.HousekeepingRequested += _mainViewClipboardContents_HousekeepingRequested;
             _mainViewClipboardContents.CloseMainWindowRequested += _mainViewClipboardContents_CloseMainWindowRequested;
             _mainViewClipboardContents.SettingsWindowOpenRequested += _mainViewClipboardContents_SettingsWindowOpenRequested;
+            _mainViewClipboardContents.RebuildIndexRequested += _mainViewClipboardContents_RebuildIndexRequested;
 
             _backgroundRenderMode = (MainClipboardViewBackgroundRenderMode)_settingsService.GetSetting<int>(SettingsKeys.MainClipboardViewBackgroundRenderMode);
 
@@ -172,6 +175,11 @@ namespace Clipbox.Views
             KeyUp += MainWindow_KeyUp;
 
             AreFadeAnimationsEnabled = _settingsService.GetSetting<bool>(SettingsKeys.AreFadeAnimationsEnabled);
+        }
+
+        private void _mainViewClipboardContents_RebuildIndexRequested(object sender, EventArgs e)
+        {
+            RebuildIndexRequested?.Invoke(this, new EventArgs());
         }
 
         private void _mainViewClipboardContents_SettingsWindowOpenRequested(object sender, EventArgs e)

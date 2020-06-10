@@ -11,13 +11,15 @@ using Clipbox.Views.Interfaces;
 using Clipbox.Win32;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
 
 namespace Clipbox.Services
 {
-    public class MainClipboardViewWindowService : ClipboardViewWindowServiceBase, IMainClipboardViewWindowService
+    public class MainClipboardViewWindowService : ClipboardViewWindowServiceBase, 
+        IMainClipboardViewWindowService
     {
         private static readonly object _mainWindowLockHandle = new object();
 
@@ -38,6 +40,10 @@ namespace Clipbox.Services
         public event EventHandler<SetToClipboardEventArgs> SetItemsToClipboardRequested;
 
         public event EventHandler SettingsWindowOpenRequested;
+
+        public event EventHandler RebuildIndexRequested;
+
+        public event EventHandler<CancelEventArgs> OpenMainWindowRequested;
 
         public bool IsOpen
         {
@@ -86,6 +92,7 @@ namespace Clipbox.Services
                         _mainWindow.HousekeepingRequested -= _mainWindow_HousekeepingRequested;
                         _mainWindow.CloseRequested -= _mainWindow_CloseRequested;
                         _mainWindow.SettingsWindowOpenRequested -= _mainWindow_SettingsWindowOpenRequested;
+                        _mainWindow.RebuildIndexRequested -= _mainWindow_RebuildIndexRequested;
 
                         _mainWindow.Close();
                         //_mainWindow.Close();
@@ -105,6 +112,18 @@ namespace Clipbox.Services
 
         public void OpenOnMonitor(MonitorUtils.DisplayMonitor dm)
         {
+            // add the ability to cancel the openning of
+            // the main window, so that for example 
+            // another window can be open in its place.
+            // If the indexes are rebuilding, we can show
+            // the progress instead of the main window.
+            var openEventArgs = new CancelEventArgs();
+            OpenMainWindowRequested?.Invoke(this, openEventArgs);
+            if (openEventArgs.Cancel)
+            {
+                return;
+            }
+
             bool resizeToDpi = ShouldResizeToDpi();
 
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
@@ -132,7 +151,8 @@ namespace Clipbox.Services
                         _mainWindow.SetItemsToClipboardRequested += _mainWindow_SetItemsToClipboardRequested;
                         _mainWindow.HousekeepingRequested += _mainWindow_HousekeepingRequested;
                         _mainWindow.CloseRequested += _mainWindow_CloseRequested;
-                        _mainWindow.SettingsWindowOpenRequested += _mainWindow_SettingsWindowOpenRequested;  
+                        _mainWindow.SettingsWindowOpenRequested += _mainWindow_SettingsWindowOpenRequested;
+                        _mainWindow.RebuildIndexRequested += _mainWindow_RebuildIndexRequested;
 
                         mainWindow.ScaleMode = resizeToDpi ? DpiScaleMode.Custom : DpiScaleMode.None;
                         
@@ -145,6 +165,11 @@ namespace Clipbox.Services
         private void _mainWindow_SettingsWindowOpenRequested(object sender, EventArgs e)
         {
             SettingsWindowOpenRequested?.Invoke(this, new EventArgs());
+        }
+
+        private void _mainWindow_RebuildIndexRequested(object sender, EventArgs e)
+        {
+            RebuildIndexRequested?.Invoke(this, new EventArgs());
         }
 
         private void _mainWindow_CloseRequested(object sender, EventArgs e)

@@ -13,19 +13,19 @@ namespace Clipbox.Services.Interfaces
         IEnumerable<string> FindClipboardItemIds(IEnumerable<ISearchTerm> searchTerms);
 
         /// <summary>
-        /// Rebuilds the indeces
+        /// Rebuilds the indices
         /// </summary>
         void StartIndexRebuilding();
 
         /// <summary>
         /// Cancels the ongoing process of
-        /// rebuilding the indeces.
+        /// rebuilding the indices.
         /// </summary>
         void CancelRebuildIndices();
 
         /// <summary>
         /// True if the indeces are healthy and usable.
         /// </summary>
-        bool AreIndedisHealthy { get; }
+        bool AreIndicesHealthy { get; }
     }
 }
