@@ -4,6 +4,7 @@ using Clipbox.Views;
 using Clipbox.Views.EventArgsClasses;
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 
 namespace Clipbox.Services
@@ -68,11 +69,12 @@ namespace Clipbox.Services
 
         private void _window_RetryRequested(object sender, RetryRebuildIndexEventArgs e)
         {
-            if (!string.IsNullOrEmpty(e.FailedId))
+            string newestItemId = _clipboardManager.GetAllItemIds().FirstOrDefault();
+            if (string.IsNullOrEmpty(newestItemId))
             {
-                _clipboardManager.RemoveClipboardItem(e.FailedId);
+                _clipboardManager.RemoveClipboardItem(newestItemId);
             }
-
+            
             _window?.RetryRebuild();
         }
 

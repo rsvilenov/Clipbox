@@ -264,6 +264,7 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
                     }
 
                     indexWriter.WaitForMerges();
+                    indexWriter.Commit();
                 }
             }
         }

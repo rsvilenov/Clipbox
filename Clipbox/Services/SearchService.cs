@@ -347,10 +347,10 @@ namespace Clipbox.Services
                         break;
                     }
                 }
-            }, _indexRebuildCancelTokenSrc.Token);
-            
 
-            AreIndicesHealthy = _searchProvider.GetIndexHealth().IsHealthy;
+                AreIndicesHealthy = _searchProvider.GetIndexHealth().IsHealthy;
+
+            }, _indexRebuildCancelTokenSrc.Token);
         }
 
         public void CancelRebuildIndices()
