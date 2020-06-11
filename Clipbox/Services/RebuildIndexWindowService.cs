@@ -6,6 +6,7 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace Clipbox.Services
 {
@@ -36,12 +37,13 @@ namespace Clipbox.Services
             if (!_disposed && _window != null)
             {
                 var window = _window;
-                window.Dispatcher.Invoke(() =>
-                {
-                    if (window.WindowState == WindowState.Minimized)
-                        window.WindowState = WindowState.Normal;
-                    window.Activate();
-                });
+                window.Dispatcher.BeginInvoke(DispatcherPriority.Background,
+                    new Action(() =>
+                    {
+                        if (window.WindowState == WindowState.Minimized)
+                            window.WindowState = WindowState.Normal;
+                        window.Activate();
+                    }));
                 
                 e.Cancel = true;
             }

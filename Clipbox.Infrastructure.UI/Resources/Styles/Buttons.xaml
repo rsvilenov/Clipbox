@@ -763,9 +763,10 @@
                 <ControlTemplate TargetType="{x:Type Button}">
                     <Border
                         Name="btnBorder"
+                        Padding="0,7,0,0"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}">
-                        <ContentControl Template="{DynamicResource WindowMinimizeIcon}" />
+                        <ContentControl Margin="7,0,7,0" Template="{DynamicResource WindowMinimizeIcon}" />
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
@@ -773,10 +774,10 @@
 
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="{DynamicResource AlertBrush1}" />
+                <Setter Property="Background" Value="{DynamicResource ControlHighlightBackgroundBrush}" />
             </Trigger>
             <Trigger Property="IsPressed" Value="True">
-                <Setter Property="Background" Value="{DynamicResource AlertBrush2}" />
+                <Setter Property="Background" Value="{DynamicResource ControlPressedBrush}" />
             </Trigger>
         </Style.Triggers>
     </Style>
@@ -793,7 +794,7 @@
                         Name="btnBorder"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}">
-                        <ContentControl Template="{DynamicResource WindowMaximizeIcon}" />
+                        <ContentControl Margin="5" Template="{DynamicResource WindowMaximizeIcon}" />
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
@@ -801,10 +802,10 @@
 
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="{DynamicResource AlertBrush1}" />
+                <Setter Property="Background" Value="{DynamicResource ControlHighlightBackgroundBrush}" />
             </Trigger>
             <Trigger Property="IsPressed" Value="True">
-                <Setter Property="Background" Value="{DynamicResource AlertBrush2}" />
+                <Setter Property="Background" Value="{DynamicResource ControlPressedBrush}" />
             </Trigger>
         </Style.Triggers>
     </Style>
@@ -821,7 +822,7 @@
                         Name="btnBorder"
                         Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}">
-                        <ContentControl Template="{DynamicResource WindowRestoreIcon}" />
+                        <ContentControl Margin="5" Template="{DynamicResource WindowRestoreIcon}" />
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
@@ -829,10 +830,10 @@
 
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="{DynamicResource AlertBrush1}" />
+                <Setter Property="Background" Value="{DynamicResource ControlHighlightBackgroundBrush}" />
             </Trigger>
             <Trigger Property="IsPressed" Value="True">
-                <Setter Property="Background" Value="{DynamicResource AlertBrush2}" />
+                <Setter Property="Background" Value="{DynamicResource ControlPressedBrush}" />
             </Trigger>
         </Style.Triggers>
     </Style>

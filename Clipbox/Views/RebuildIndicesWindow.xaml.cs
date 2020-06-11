@@ -2,6 +2,7 @@
 using Clipbox.Infrastructure.UI.ExtensionMethods;
 using Clipbox.Infrastructure.UI.Resources;
 using Clipbox.Infrastructure.UI.Windows;
+using Clipbox.Infrastructure.UI.Windows.Enums;
 using Clipbox.Services.Interfaces;
 using Clipbox.Services.Interfaces.Common;
 using Clipbox.Services.Interfaces.Common.EventArgsClasses;
@@ -31,6 +32,8 @@ namespace Clipbox.Views
 
         public RebuildIndicesWindow(ISearchService searchService)
         {
+            ScaleMode = DpiScaleMode.Full;
+
             InitializeComponent();
 
             using (Bitmap bmpIcon = ResourceUtils.GetApplicationIcon())

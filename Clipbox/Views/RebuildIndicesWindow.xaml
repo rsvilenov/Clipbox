@@ -51,23 +51,23 @@
             <StackPanel
                 Grid.Row="0"
                 Grid.Column="0"
-                Margin="20,10,0,0"
+                Margin="10,10,0,0"
                 HorizontalAlignment="Left"
                 Panel.ZIndex="10"
                 Orientation="Horizontal">
-                <ContentControl
-                    Width="15"
-                    Margin="0,0,15,6"
-                    Foreground="#818183"
-                    Template="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=Icon}" />
+                <Image
+                    Width="17"
+                    Margin="0,0,5,5"
+                    Source="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=Icon}" />
                 <TextBlock Foreground="#818183" Text="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=Title}" />
             </StackPanel>
 
             <Button
                 Grid.Row="0"
                 Grid.Column="1"
+                Height="25"
                 MaxWidth="25"
-                Margin="0,0,5,0"
+                Margin="0,0,0,10"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
                 Command="{Binding Source={x:Static SystemCommands.MinimizeWindowCommand}}"
@@ -112,21 +112,39 @@
                 Grid.Column="1"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center">
-                <TextBlock.Text>
-                    <MultiBinding StringFormat="{}{0} {1} %">
-                        <Binding Source="Rebuilding indices: " />
-                        <Binding Path="ProgressPercentage" />
-                    </MultiBinding>
-                </TextBlock.Text>
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Text">
+                            <Setter.Value>
+                                <MultiBinding StringFormat="{}{0} {1} %">
+                                    <Binding Source="Rebuilding indices: " />
+                                    <Binding Path="ProgressPercentage" />
+                                </MultiBinding>
+                            </Setter.Value>
+                        </Setter>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding HasRebuildingFailed}" Value="True">
+                                <Setter Property="Text">
+                                    <Setter.Value>
+                                        <MultiBinding StringFormat="{}{0} {1}">
+                                            <Binding Source="Rebuilding indices: " />
+                                            <Binding Source="Failed." />
+                                        </MultiBinding>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
             </TextBlock>
 
             <TextBlock
                 Grid.Row="1"
                 Grid.Column="1"
-                Margin="0,10,0,0"
+                Margin="15,10,0,0"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                Text="Some clipborad entries cause the building of the index to fail. If you click Retry, these entries will be deleted, so that the index can be built."
+                Text="Some clipborad entries caused the building of the index to fail. If you click Retry, these entries will be deleted, so that the index can be built."
                 TextWrapping="Wrap"
                 Visibility="{Binding HasRebuildingFailed, Converter={StaticResource BooleanToVisibilityConverter}}" />
         </Grid>
