@@ -12,8 +12,10 @@
     xmlns:localWindows="clr-namespace:Clipbox.Infrastructure.UI.Windows;assembly=Clipbox.Infrastructure.UI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:sysTheme="clr-namespace:Clipbox.Infrastructure.UI.Theme;assembly=Clipbox.Infrastructure.UI"
-    Width="1450"
-    Height="560"
+    Width="Auto"
+    Height="Auto"
+    MinWidth="750"
+    MinHeight="560"
     AllowsTransparency="True"
     Background="{DynamicResource TaskbarColorBrush}"
     BorderBrush="#3a3a3a"
@@ -22,9 +24,10 @@
     Foreground="White"
     Icon="pack://application:,,,/Clipbox.Infrastructure.UI;component/Resources/Images/Clip-WF.ico"
     ResizeMode="CanResize"
-    SizeToContent="Manual"
     WindowStartupLocation="CenterScreen"
     WindowStyle="None"
+    SizeToContent="Manual"
+    WindowState="Normal"
     mc:Ignorable="d">
     <Window.Resources>
         <ResourceDictionary>
@@ -212,20 +215,80 @@
                 <TextBlock Foreground="#818183" Text="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=Title}" />
             </StackPanel>
 
-            <Button
+            <ContentControl
                 Grid.Row="0"
                 Grid.Column="1"
-                MaxWidth="25"
-                Margin="0,0,5,0"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Center"
-                Command="{Binding Source={x:Static SystemCommands.CloseWindowCommand}}"
-                Style="{DynamicResource BtnCloseWindow}"
-                ToolTip="Close window">
-                <i:Interaction.Behaviors>
-                    <infBeh:FrameworkElementDpiScalingBehavior />
-                </i:Interaction.Behaviors>
-            </Button>
+                Width="Auto"
+                Margin="0,0,5,0">
+                <ContentControl.Template>
+                    <ControlTemplate TargetType="ContentControl">
+                        <StackPanel Orientation="Horizontal">
+                            <Button
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Height="25"
+                                MaxWidth="25"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Command="{Binding Source={x:Static SystemCommands.MinimizeWindowCommand}}"
+                                Style="{DynamicResource BtnWindowMinimize}"
+                                ToolTip="Minimize window">
+                                <i:Interaction.Behaviors>
+                                    <infBeh:FrameworkElementDpiScalingBehavior />
+                                </i:Interaction.Behaviors>
+                            </Button>
+                            <Button
+                                x:Name="maximizeButton"
+                                Height="25"
+                                MaxWidth="25"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Command="{Binding Source={x:Static SystemCommands.MaximizeWindowCommand}}"
+                                Style="{DynamicResource BtnWindowMaximize}"
+                                ToolTip="Maximize window">
+                                <i:Interaction.Behaviors>
+                                    <infBeh:FrameworkElementDpiScalingBehavior />
+                                </i:Interaction.Behaviors>
+                            </Button>
+                            <Button
+                                x:Name="restoreButton"
+                                Height="25"
+                                MaxWidth="25"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Command="{Binding Source={x:Static SystemCommands.RestoreWindowCommand}}"
+                                Style="{DynamicResource BtnWindowRestore}"
+                                ToolTip="Restore window">
+                                <i:Interaction.Behaviors>
+                                    <infBeh:FrameworkElementDpiScalingBehavior />
+                                </i:Interaction.Behaviors>
+                            </Button>
+                            <Button
+                                MaxWidth="25"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Command="{Binding Source={x:Static SystemCommands.CloseWindowCommand}}"
+                                Style="{DynamicResource BtnCloseWindow}"
+                                ToolTip="Close window">
+                                <i:Interaction.Behaviors>
+                                    <infBeh:FrameworkElementDpiScalingBehavior />
+                                </i:Interaction.Behaviors>
+                            </Button>
+                        </StackPanel>
+                        <ControlTemplate.Triggers>
+                            <DataTrigger Binding="{Binding Path=WindowState, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" Value="Normal">
+                                <Setter TargetName="restoreButton" Property="Visibility" Value="Collapsed" />
+                                <Setter TargetName="maximizeButton" Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=WindowState, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" Value="Maximized">
+                                <Setter TargetName="restoreButton" Property="Visibility" Value="Visible" />
+                                <Setter TargetName="maximizeButton" Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </ContentControl.Template>
+
+            </ContentControl>
         </Grid>
 
 

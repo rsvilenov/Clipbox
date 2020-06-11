@@ -12,6 +12,7 @@ using Clipbox.Infrastructure.UI.Windows;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.Win32;
+using Clipbox.Win32.Native;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -89,7 +90,20 @@ namespace Clipbox.Views
 
         private void OnMaximizeWindow(object sender, ExecutedRoutedEventArgs e)
         {
-            SystemCommands.MaximizeWindow(this);
+            MaximizeWindow();
+        }
+
+        private void MaximizeWindow()
+        {
+            // since we have WindowStyle="None", the system command for resizing will not work
+            // and we have to resize the window manually.
+            WindowState = WindowState.Maximized;
+
+            DisplayMonitor dm = MonitorUtils.GetByWindowHandle(this.Handle);
+            WindowUtils.SetWindowsPosition(this.Handle, dm.WorkingArea.Left,
+                dm.WorkingArea.Top,
+                dm.WorkingArea.Width,
+                dm.WorkingArea.Height);
         }
 
         private void OnMinimizeWindow(object sender, ExecutedRoutedEventArgs e)
@@ -362,8 +376,8 @@ namespace Clipbox.Views
                 currentDisplayWidth *= scaleFactor;
             }
 
-            this.MaxHeight = currentDisplayHeight - 10;
-            this.MaxWidth = currentDisplayWidth - 10;
+            this.MaxHeight = currentDisplayHeight;
+            this.MaxWidth = currentDisplayWidth;
             
             _settingsService.SetSetting(SettingsKeys.LocalizationCulture, "bg-BG");
         }
@@ -377,10 +391,36 @@ namespace Clipbox.Views
             this.Close();
         }
 
-        private void Border_MouseDown(object sender, MouseButtonEventArgs e)
+        private void Border_MouseDown(object sender, MouseButtonEventArgs mouseEventArgs)
         {
-            if (e.LeftButton == MouseButtonState.Pressed)
+            if (mouseEventArgs.LeftButton == MouseButtonState.Pressed)
             {
+                if (WindowState == WindowState.Maximized)
+                {
+                    SystemCommands.RestoreWindow(this);
+
+                    EventHandler stateChangedEventHandler = null;
+
+                    stateChangedEventHandler = new EventHandler
+                        ((_, args) =>
+                        {
+                            Rectangle windowRect = WindowUtils.GetWindowRectangle(this.Handle);
+
+                            DisplayMonitor dm = MonitorUtils.GetByWindowHandle(this.Handle);
+
+                            WindowUtils.SetWindowsPosition(this.Handle,
+                                dm.WorkingArea.Left,
+                                dm.WorkingArea.Top,
+                                windowRect.Width,
+                                windowRect.Height);
+
+                            this.DragMove();
+
+                            this.StateChanged -= stateChangedEventHandler;
+                        });
+                    this.StateChanged += stateChangedEventHandler;
+                }
+
                 DragMove();
             }
         }
