@@ -1,4 +1,4 @@
-﻿<localWindows:AcryllicWindow
+﻿<customControls:WindowFrame
     x:Class="Clipbox.Views.SettingsWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -20,14 +20,16 @@
     Background="{DynamicResource TaskbarColorBrush}"
     BorderBrush="#3a3a3a"
     BorderThickness="0"
+    CaptionBackground="Transparent"
+    CaptionForeground="#818183"
     FontSize="16"
     Foreground="White"
     Icon="pack://application:,,,/Clipbox.Infrastructure.UI;component/Resources/Images/Clip-WF.ico"
     ResizeMode="CanResize"
-    WindowStartupLocation="CenterScreen"
-    WindowStyle="None"
     SizeToContent="Manual"
+    WindowStartupLocation="CenterScreen"
     WindowState="Normal"
+    WindowStyle="None"
     mc:Ignorable="d">
     <Window.Resources>
         <ResourceDictionary>
@@ -181,289 +183,138 @@
             <Binding Source="settings" />
         </MultiBinding>
     </Window.Title>
-    <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="5" ResizeBorderThickness="5" />
-    </WindowChrome.WindowChrome>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="40" />
-            <RowDefinition />
-        </Grid.RowDefinitions>
-        <Grid
-            Grid.Row="0"
-            Background="Transparent"
-            MouseDown="Border_MouseDown">
+    <TabControl
+        x:Name="tabControl"
+        Grid.Row="1"
+        Margin="0,0,0,0"
+        Background="Transparent"
+        BorderThickness="0"
+        Foreground="Wheat"
+        TabStripPlacement="Left">
+        <TabControl.Resources>
+            <Style TargetType="{x:Type TabControl}">
+                <Setter Property="OverridesDefaultStyle" Value="True" />
+                <Setter Property="SnapsToDevicePixels" Value="True" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type TabControl}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="250" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Border
+                                    x:Name="HeaderPanel"
+                                    Grid.Column="0"
+                                    Margin="0,0,4,0"
+                                    Panel.ZIndex="1"
+                                    Background="#1f1f1f">
+                                    <TabPanel
+                                        Margin="0,10,0,0"
+                                        IsItemsHost="True"
+                                        KeyboardNavigation.TabIndex="1" />
+                                </Border>
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
+                                <Border Name="Border" Grid.Column="1">
+                                    <ContentPresenter
+                                        x:Name="PART_SelectedContentHost"
+                                        Margin="30,0,0,0"
+                                        ContentSource="SelectedContent" />
+                                </Border>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
 
-
-            <StackPanel
-                Grid.Row="0"
-                Grid.Column="0"
-                Margin="20,10,0,0"
-                HorizontalAlignment="Left"
-                Panel.ZIndex="10"
-                Orientation="Horizontal">
-                <ContentControl
-                    Width="15"
-                    Margin="0,0,15,6"
-                    Foreground="#818183"
-                    Template="{StaticResource SettingsIcon}" />
-                <TextBlock Foreground="#818183" Text="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=Title}" />
-            </StackPanel>
-
-            <ContentControl
-                Grid.Row="0"
-                Grid.Column="1"
-                Width="Auto"
-                Margin="0,0,5,0">
-                <ContentControl.Template>
-                    <ControlTemplate TargetType="ContentControl">
-                        <StackPanel Orientation="Horizontal">
-                            <Button
-                                Grid.Row="0"
-                                Grid.Column="1"
-                                Height="25"
-                                MaxWidth="25"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Center"
-                                Command="{Binding Source={x:Static SystemCommands.MinimizeWindowCommand}}"
-                                Style="{DynamicResource BtnWindowMinimize}"
-                                ToolTip="Minimize window">
-                                <i:Interaction.Behaviors>
-                                    <infBeh:FrameworkElementDpiScalingBehavior />
-                                </i:Interaction.Behaviors>
-                            </Button>
-                            <Button
-                                x:Name="maximizeButton"
-                                Height="25"
-                                MaxWidth="25"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Center"
-                                Command="{Binding Source={x:Static SystemCommands.MaximizeWindowCommand}}"
-                                Style="{DynamicResource BtnWindowMaximize}"
-                                ToolTip="Maximize window">
-                                <i:Interaction.Behaviors>
-                                    <infBeh:FrameworkElementDpiScalingBehavior />
-                                </i:Interaction.Behaviors>
-                            </Button>
-                            <Button
-                                x:Name="restoreButton"
-                                Height="25"
-                                MaxWidth="25"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Center"
-                                Command="{Binding Source={x:Static SystemCommands.RestoreWindowCommand}}"
-                                Style="{DynamicResource BtnWindowRestore}"
-                                ToolTip="Restore window">
-                                <i:Interaction.Behaviors>
-                                    <infBeh:FrameworkElementDpiScalingBehavior />
-                                </i:Interaction.Behaviors>
-                            </Button>
-                            <Button
-                                MaxWidth="25"
-                                HorizontalAlignment="Right"
-                                VerticalAlignment="Center"
-                                Command="{Binding Source={x:Static SystemCommands.CloseWindowCommand}}"
-                                Style="{DynamicResource BtnCloseWindow}"
-                                ToolTip="Close window">
-                                <i:Interaction.Behaviors>
-                                    <infBeh:FrameworkElementDpiScalingBehavior />
-                                </i:Interaction.Behaviors>
-                            </Button>
-                        </StackPanel>
-                        <ControlTemplate.Triggers>
-                            <DataTrigger Binding="{Binding Path=WindowState, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" Value="Normal">
-                                <Setter TargetName="restoreButton" Property="Visibility" Value="Collapsed" />
-                                <Setter TargetName="maximizeButton" Property="Visibility" Value="Visible" />
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding Path=WindowState, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" Value="Maximized">
-                                <Setter TargetName="restoreButton" Property="Visibility" Value="Visible" />
-                                <Setter TargetName="maximizeButton" Property="Visibility" Value="Collapsed" />
-                            </DataTrigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </ContentControl.Template>
-
-            </ContentControl>
-        </Grid>
-
-
-        <TabControl
-            x:Name="tabControl"
-            Grid.Row="1"
-            Margin="0,0,0,0"
-            Background="Transparent"
-            BorderThickness="0"
-            Foreground="Wheat"
-            TabStripPlacement="Left">
-            <TabControl.Resources>
-                <Style TargetType="{x:Type TabControl}">
-                    <Setter Property="OverridesDefaultStyle" Value="True" />
-                    <Setter Property="SnapsToDevicePixels" Value="True" />
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="{x:Type TabControl}">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="250" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <Border
-                                        x:Name="HeaderPanel"
-                                        Grid.Column="0"
-                                        Margin="0,0,4,0"
-                                        Panel.ZIndex="1"
-                                        Background="#1f1f1f">
-                                        <TabPanel
-                                            Margin="0,10,0,0"
-                                            IsItemsHost="True"
-                                            KeyboardNavigation.TabIndex="1" />
-                                    </Border>
-
-                                    <Border Name="Border" Grid.Column="1">
-                                        <ContentPresenter
-                                            x:Name="PART_SelectedContentHost"
-                                            Margin="30,0,0,0"
-                                            ContentSource="SelectedContent" />
-                                    </Border>
-                                </Grid>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-
-                <Style TargetType="TabItem">
-                    <Setter Property="Background" Value="Transparent" />
-                    <Setter Property="Foreground" Value="{DynamicResource ControlForegroundBrush}" />
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="TabItem">
-                                <Grid
-                                    Name="Panel"
-                                    Height="45"
-                                    Background="Transparent">
-                                    <Border
-                                        Name="Border"
-                                        Margin="0,10,0,10"
-                                        BorderThickness="4,0,0,0">
-                                        <ContentPresenter
-                                            x:Name="ContentSite"
-                                            Margin="10,0,0,0"
-                                            HorizontalAlignment="Left"
-                                            VerticalAlignment="Center"
-                                            ContentSource="Header" />
-                                    </Border>
-                                </Grid>
-                                <ControlTemplate.Triggers>
-                                    <Trigger SourceName="Panel" Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="Panel" Property="Background" Value="#4d4d4d" />
-                                    </Trigger>
-                                    <Trigger Property="IsSelected" Value="True">
-                                        <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </TabControl.Resources>
-            <TabItem Header="General">
-                <TabItem.HeaderTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <ContentControl Template="{StaticResource SettingsGeneralIcon}" />
-                            <TextBlock Margin="10,0,0,0" Text="{Binding}" />
-                        </StackPanel>
-                    </DataTemplate>
-                </TabItem.HeaderTemplate>
-                <TabItem.Content>
-                    <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
-                        <StackPanel Margin="0,0,40,0" Orientation="Vertical">
-                            <!--
-                                prevent the scrollviewer from scrolling to the actual
-                                focualbe items upon tab change,
-                                by making this textblock focusable
-                            -->
-                            <TextBlock
-                                Focusable="True"
-                                FontSize="28"
-                                Text="General" />
+            <Style TargetType="TabItem">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Foreground" Value="{DynamicResource ControlForegroundBrush}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="TabItem">
                             <Grid
-                                x:Name="mainGrid"
-                                Margin="15"
-                                Focusable="True">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <StackPanel Grid.Row="0" Orientation="Vertical">
-                                    <TextBlock HorizontalAlignment="Left" Text="Pin the tray icon to the taskbar" />
-                                    <StackPanel Margin="0,15,0,0" Orientation="Horizontal">
-                                        <customControls:ToggleSwitch
-                                            HorizontalAlignment="Left"
-                                            IsChecked="{Binding IsSettingChanged, Mode=OneWayToSource}"
-                                            OffText="{loc:Localize TGL_BTN_LBL_Off,
-                                                                   ResourceLookupMode=Everywhere}"
-                                            OnText="{loc:Localize TGL_BTN_LBL_On,
-                                                                  ResourceLookupMode=Everywhere}" />
-                                        <Image
-                                            MinWidth="100"
-                                            MinHeight="25"
-                                            Margin="5,0,0,0"
-                                            Source="/Resources/Images/Settings/DeskBand.png" />
-                                    </StackPanel>
-
+                                Name="Panel"
+                                Height="45"
+                                Background="Transparent">
+                                <Border
+                                    Name="Border"
+                                    Margin="0,10,0,10"
+                                    BorderThickness="4,0,0,0">
+                                    <ContentPresenter
+                                        x:Name="ContentSite"
+                                        Margin="10,0,0,0"
+                                        HorizontalAlignment="Left"
+                                        VerticalAlignment="Center"
+                                        ContentSource="Header" />
+                                </Border>
+                            </Grid>
+                            <ControlTemplate.Triggers>
+                                <Trigger SourceName="Panel" Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Panel" Property="Background" Value="#4d4d4d" />
+                                </Trigger>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource AccentBrush}" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </TabControl.Resources>
+        <TabItem Header="General">
+            <TabItem.HeaderTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <ContentControl Template="{StaticResource SettingsGeneralIcon}" />
+                        <TextBlock Margin="10,0,0,0" Text="{Binding}" />
+                    </StackPanel>
+                </DataTemplate>
+            </TabItem.HeaderTemplate>
+            <TabItem.Content>
+                <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="0,0,40,0" Orientation="Vertical">
+                        <!--
+                            prevent the scrollviewer from scrolling to the actual
+                            focualbe items upon tab change,
+                            by making this textblock focusable
+                        -->
+                        <TextBlock
+                            Focusable="True"
+                            FontSize="28"
+                            Text="General" />
+                        <Grid
+                            x:Name="mainGrid"
+                            Margin="15"
+                            Focusable="True">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <StackPanel Grid.Row="0" Orientation="Vertical">
+                                <TextBlock HorizontalAlignment="Left" Text="Pin the tray icon to the taskbar" />
+                                <StackPanel Margin="0,15,0,0" Orientation="Horizontal">
+                                    <customControls:ToggleSwitch
+                                        HorizontalAlignment="Left"
+                                        IsChecked="{Binding IsSettingChanged, Mode=OneWayToSource}"
+                                        OffText="{loc:Localize TGL_BTN_LBL_Off,
+                                                               ResourceLookupMode=Everywhere}"
+                                        OnText="{loc:Localize TGL_BTN_LBL_On,
+                                                              ResourceLookupMode=Everywhere}" />
+                                    <Image
+                                        MinWidth="100"
+                                        MinHeight="25"
+                                        Margin="5,0,0,0"
+                                        Source="/Resources/Images/Settings/DeskBand.png" />
                                 </StackPanel>
 
+                            </StackPanel>
 
-                                <ItemsControl
-                                    x:Name="generalExtensionsItemsControl"
-                                    Grid.Row="1"
-                                    ItemsSource="{Binding GeneralExtensionUIItems}"
-                                    Style="{StaticResource extensionItemsControlStyle}">
-                                    <ItemsControl.ItemContainerStyle>
-                                        <Style>
-                                            <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
-                                        </Style>
-                                    </ItemsControl.ItemContainerStyle>
-                                </ItemsControl>
-
-                            </Grid>
-                        </StackPanel>
-                    </ScrollViewer>
-                </TabItem.Content>
-            </TabItem>
-
-            <TabItem Header="Previews">
-                <TabItem.HeaderTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <ContentControl Template="{StaticResource SettingsPreiewIcon}" />
-                            <TextBlock Margin="10,0,0,0" Text="{Binding}" />
-                        </StackPanel>
-                    </DataTemplate>
-                </TabItem.HeaderTemplate>
-                <TabItem.Content>
-                    <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
-                        <StackPanel Margin="0,0,40,0" Orientation="Vertical">
-                            <!--
-                                prevent the scrollviewer from scrolling to the actual
-                                focualbe items upon tab change,
-                                by making this textblock focusable
-                            -->
-                            <TextBlock
-                                Focusable="True"
-                                FontSize="28"
-                                Text="Previews" />
 
                             <ItemsControl
-                                x:Name="previewsExtensionsItemsControl"
-                                Grid.Row="2"
-                                ItemsSource="{Binding PreviewsExtensionUIItems}"
+                                x:Name="generalExtensionsItemsControl"
+                                Grid.Row="1"
+                                ItemsSource="{Binding GeneralExtensionUIItems}"
                                 Style="{StaticResource extensionItemsControlStyle}">
                                 <ItemsControl.ItemContainerStyle>
                                     <Style>
@@ -472,138 +323,177 @@
                                 </ItemsControl.ItemContainerStyle>
                             </ItemsControl>
 
-                        </StackPanel>
-                    </ScrollViewer>
-                </TabItem.Content>
-            </TabItem>
+                        </Grid>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem.Content>
+        </TabItem>
 
-            <TabItem Header="Copying">
-                <TabItem.HeaderTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <ContentControl Template="{StaticResource SettingsCopyingIcon}" />
-                            <TextBlock Margin="10,0,0,0" Text="{Binding}" />
-                        </StackPanel>
-                    </DataTemplate>
-                </TabItem.HeaderTemplate>
-                <TabItem.Content>
-                    <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
-                        <StackPanel Margin="0,0,40,0" Orientation="Vertical">
-                            <TextBlock
-                                Focusable="True"
-                                FontSize="28"
-                                Text="Copying" />
-                            <ItemsControl
-                                x:Name="copyingExtensionsItemsControl"
-                                Grid.Row="2"
-                                ItemsSource="{Binding CopyingExtensionUIItems}"
-                                Style="{StaticResource extensionItemsControlStyle}">
-                                <ItemsControl.ItemContainerStyle>
-                                    <Style>
-                                        <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
-                                    </Style>
-                                </ItemsControl.ItemContainerStyle>
-                            </ItemsControl>
-                        </StackPanel>
-                    </ScrollViewer>
-                </TabItem.Content>
-            </TabItem>
+        <TabItem Header="Previews">
+            <TabItem.HeaderTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <ContentControl Template="{StaticResource SettingsPreiewIcon}" />
+                        <TextBlock Margin="10,0,0,0" Text="{Binding}" />
+                    </StackPanel>
+                </DataTemplate>
+            </TabItem.HeaderTemplate>
+            <TabItem.Content>
+                <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="0,0,40,0" Orientation="Vertical">
+                        <!--
+                            prevent the scrollviewer from scrolling to the actual
+                            focualbe items upon tab change,
+                            by making this textblock focusable
+                        -->
+                        <TextBlock
+                            Focusable="True"
+                            FontSize="28"
+                            Text="Previews" />
 
-            <TabItem Header="Pasting">
-                <TabItem.HeaderTemplate>
-                    <DataTemplate>
-                        <StackPanel Margin="0,0,40,0" Orientation="Horizontal">
-                            <ContentControl Template="{StaticResource SettingsPastingIcon}" />
-                            <TextBlock Margin="10,0,0,0" Text="{Binding}" />
-                        </StackPanel>
-                    </DataTemplate>
-                </TabItem.HeaderTemplate>
-                <TabItem.Content>
-                    <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
-                        <StackPanel Orientation="Vertical">
-                            <TextBlock
-                                Focusable="True"
-                                FontSize="28"
-                                Text="Pasting" />
-                            <ItemsControl
-                                x:Name="pastingExtensionsItemsControl"
-                                Grid.Row="2"
-                                ItemsSource="{Binding PastingExtensionUIItems}"
-                                Style="{StaticResource extensionItemsControlStyle}">
-                                <ItemsControl.ItemContainerStyle>
-                                    <Style>
-                                        <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
-                                    </Style>
-                                </ItemsControl.ItemContainerStyle>
-                            </ItemsControl>
-                        </StackPanel>
-                    </ScrollViewer>
-                </TabItem.Content>
-            </TabItem>
+                        <ItemsControl
+                            x:Name="previewsExtensionsItemsControl"
+                            Grid.Row="2"
+                            ItemsSource="{Binding PreviewsExtensionUIItems}"
+                            Style="{StaticResource extensionItemsControlStyle}">
+                            <ItemsControl.ItemContainerStyle>
+                                <Style>
+                                    <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
+                                </Style>
+                            </ItemsControl.ItemContainerStyle>
+                        </ItemsControl>
 
-            <TabItem Header="Security">
-                <TabItem.HeaderTemplate>
-                    <DataTemplate>
-                        <StackPanel Margin="0,0,40,0" Orientation="Horizontal">
-                            <ContentControl Template="{StaticResource SettingsSecurityIcon}" />
-                            <TextBlock Margin="10,0,0,0" Text="{Binding}" />
-                        </StackPanel>
-                    </DataTemplate>
-                </TabItem.HeaderTemplate>
-                <TabItem.Content>
-                    <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
-                        <StackPanel Orientation="Vertical">
-                            <TextBlock
-                                Focusable="True"
-                                FontSize="28"
-                                Text="Security" />
-                            <ItemsControl
-                                x:Name="security"
-                                Grid.Row="2"
-                                ItemsSource="{Binding SecurityExtensionUIItems}"
-                                Style="{StaticResource extensionItemsControlStyle}">
-                                <ItemsControl.ItemContainerStyle>
-                                    <Style>
-                                        <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
-                                    </Style>
-                                </ItemsControl.ItemContainerStyle>
-                            </ItemsControl>
-                        </StackPanel>
-                    </ScrollViewer>
-                </TabItem.Content>
-            </TabItem>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem.Content>
+        </TabItem>
 
-            <TabItem Header="Cloud">
-                <TabItem.HeaderTemplate>
-                    <DataTemplate>
-                        <StackPanel Margin="0,0,40,0" Orientation="Horizontal">
-                            <ContentControl Template="{StaticResource SettingsCloudIcon}" />
-                            <TextBlock Margin="10,0,0,0" Text="{Binding}" />
-                        </StackPanel>
-                    </DataTemplate>
-                </TabItem.HeaderTemplate>
-                <TabItem.Content>
-                    <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
-                        <StackPanel Orientation="Vertical">
-                            <TextBlock
-                                Focusable="True"
-                                FontSize="28"
-                                Text="Cloud" />
-                            <ItemsControl
-                                x:Name="cloudExtensionsItemsControl"
-                                Grid.Row="2"
-                                ItemsSource="{Binding CloudExtensionUIItems}"
-                                Style="{StaticResource extensionItemsControlStyle}">
-                                <ItemsControl.ItemContainerStyle>
-                                    <Style>
-                                        <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
-                                    </Style>
-                                </ItemsControl.ItemContainerStyle>
-                            </ItemsControl>
-                        </StackPanel>
-                    </ScrollViewer>
-                </TabItem.Content>
-            </TabItem>
-        </TabControl>
-    </Grid>
-</localWindows:AcryllicWindow>
+        <TabItem Header="Copying">
+            <TabItem.HeaderTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <ContentControl Template="{StaticResource SettingsCopyingIcon}" />
+                        <TextBlock Margin="10,0,0,0" Text="{Binding}" />
+                    </StackPanel>
+                </DataTemplate>
+            </TabItem.HeaderTemplate>
+            <TabItem.Content>
+                <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="0,0,40,0" Orientation="Vertical">
+                        <TextBlock
+                            Focusable="True"
+                            FontSize="28"
+                            Text="Copying" />
+                        <ItemsControl
+                            x:Name="copyingExtensionsItemsControl"
+                            Grid.Row="2"
+                            ItemsSource="{Binding CopyingExtensionUIItems}"
+                            Style="{StaticResource extensionItemsControlStyle}">
+                            <ItemsControl.ItemContainerStyle>
+                                <Style>
+                                    <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
+                                </Style>
+                            </ItemsControl.ItemContainerStyle>
+                        </ItemsControl>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem.Content>
+        </TabItem>
+
+        <TabItem Header="Pasting">
+            <TabItem.HeaderTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="0,0,40,0" Orientation="Horizontal">
+                        <ContentControl Template="{StaticResource SettingsPastingIcon}" />
+                        <TextBlock Margin="10,0,0,0" Text="{Binding}" />
+                    </StackPanel>
+                </DataTemplate>
+            </TabItem.HeaderTemplate>
+            <TabItem.Content>
+                <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock
+                            Focusable="True"
+                            FontSize="28"
+                            Text="Pasting" />
+                        <ItemsControl
+                            x:Name="pastingExtensionsItemsControl"
+                            Grid.Row="2"
+                            ItemsSource="{Binding PastingExtensionUIItems}"
+                            Style="{StaticResource extensionItemsControlStyle}">
+                            <ItemsControl.ItemContainerStyle>
+                                <Style>
+                                    <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
+                                </Style>
+                            </ItemsControl.ItemContainerStyle>
+                        </ItemsControl>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem.Content>
+        </TabItem>
+
+        <TabItem Header="Security">
+            <TabItem.HeaderTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="0,0,40,0" Orientation="Horizontal">
+                        <ContentControl Template="{StaticResource SettingsSecurityIcon}" />
+                        <TextBlock Margin="10,0,0,0" Text="{Binding}" />
+                    </StackPanel>
+                </DataTemplate>
+            </TabItem.HeaderTemplate>
+            <TabItem.Content>
+                <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock
+                            Focusable="True"
+                            FontSize="28"
+                            Text="Security" />
+                        <ItemsControl
+                            x:Name="security"
+                            Grid.Row="2"
+                            ItemsSource="{Binding SecurityExtensionUIItems}"
+                            Style="{StaticResource extensionItemsControlStyle}">
+                            <ItemsControl.ItemContainerStyle>
+                                <Style>
+                                    <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
+                                </Style>
+                            </ItemsControl.ItemContainerStyle>
+                        </ItemsControl>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem.Content>
+        </TabItem>
+
+        <TabItem Header="Cloud">
+            <TabItem.HeaderTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="0,0,40,0" Orientation="Horizontal">
+                        <ContentControl Template="{StaticResource SettingsCloudIcon}" />
+                        <TextBlock Margin="10,0,0,0" Text="{Binding}" />
+                    </StackPanel>
+                </DataTemplate>
+            </TabItem.HeaderTemplate>
+            <TabItem.Content>
+                <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock
+                            Focusable="True"
+                            FontSize="28"
+                            Text="Cloud" />
+                        <ItemsControl
+                            x:Name="cloudExtensionsItemsControl"
+                            Grid.Row="2"
+                            ItemsSource="{Binding CloudExtensionUIItems}"
+                            Style="{StaticResource extensionItemsControlStyle}">
+                            <ItemsControl.ItemContainerStyle>
+                                <Style>
+                                    <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
+                                </Style>
+                            </ItemsControl.ItemContainerStyle>
+                        </ItemsControl>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem.Content>
+        </TabItem>
+    </TabControl>
+</customControls:WindowFrame>

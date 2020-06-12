@@ -119,7 +119,7 @@ namespace Clipbox.Infrastructure.UI.Localization.LozalizationProviders
                     managers = _resourceClasses
                     .SelectMany(k => GetResourceManagers(k.Value));
 
-                    if (KeepLiveResourceManagers)
+                    if (KeepLiveResourceManagers && asm != null)
                     {
                         _liveResourceManagers.TryAdd(asm.FullName, managers.ToList());
                     }

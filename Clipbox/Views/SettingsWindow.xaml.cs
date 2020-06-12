@@ -1,28 +1,22 @@
 ﻿using Clipbox.Core.Configuration;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
-using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using Clipbox.Core.Extensibility.Contracts.PreviewData;
 using Clipbox.Core.Extensibility.Enums;
 using Clipbox.Infrastructure.Extensibility.Containers;
 using Clipbox.Infrastructure.UI;
+using Clipbox.Infrastructure.UI.CustomControls;
 using Clipbox.Infrastructure.UI.ExtensionMethods;
-using Clipbox.Infrastructure.UI.Localization;
 using Clipbox.Infrastructure.UI.Windows;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.Win32;
-using Clipbox.Win32.Native;
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Globalization;
 using System.Linq;
-using System.Threading;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Markup;
 using System.Windows.Media.Imaging;
 using static Clipbox.Win32.MonitorUtils;
 
@@ -31,7 +25,7 @@ namespace Clipbox.Views
     /// <summary>
     /// Interaction logic for Settings.xaml
     /// </summary>
-    public partial class SettingsWindow : AcryllicWindow
+    public partial class SettingsWindow : WindowFrame
     {
         public SettingsWindow(ISettingsService settingsService, SettingsUIExtensionContainer extContainer)
         {
@@ -48,15 +42,10 @@ namespace Clipbox.Views
             SecurityExtensionUIItems = new AsyncObservableCollection<ExtensionUIItem>();
             CloudExtensionUIItems = new AsyncObservableCollection<ExtensionUIItem>();
 
-            this.CommandBindings.Add(new CommandBinding(SystemCommands.CloseWindowCommand, OnCloseWindow));
-            this.CommandBindings.Add(new CommandBinding(SystemCommands.MaximizeWindowCommand, OnMaximizeWindow, OnCanResizeWindow));
-            this.CommandBindings.Add(new CommandBinding(SystemCommands.MinimizeWindowCommand, OnMinimizeWindow, OnCanMinimizeWindow));
-            this.CommandBindings.Add(new CommandBinding(SystemCommands.RestoreWindowCommand, OnRestoreWindow, OnCanResizeWindow));
-
+            
 
             this.tabControl.DataContext = this;
-
-            SourceInitialized += SettingsWindow_SourceInitialized;
+            
             Loaded += SettingsWindow_Loaded;
             Closing += SettingsWindow_Closing;
             MouseDown += SettingsWindow_MouseDown;
@@ -73,49 +62,7 @@ namespace Clipbox.Views
             UseInlinedPreviews = e.NewSize.Width < 1400;
         }
 
-        private void OnCanMinimizeWindow(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = this.ResizeMode != ResizeMode.NoResize;
-        }
-
-        private void OnCanResizeWindow(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = this.ResizeMode == ResizeMode.CanResize || this.ResizeMode == ResizeMode.CanResizeWithGrip;
-        }
-
-        private void OnCloseWindow(object sender, ExecutedRoutedEventArgs e)
-        {
-            SystemCommands.CloseWindow(this);
-        }
-
-        private void OnMaximizeWindow(object sender, ExecutedRoutedEventArgs e)
-        {
-            MaximizeWindow();
-        }
-
-        private void MaximizeWindow()
-        {
-            // since we have WindowStyle="None", the system command for resizing will not work
-            // and we have to resize the window manually.
-            WindowState = WindowState.Maximized;
-
-            DisplayMonitor dm = MonitorUtils.GetByWindowHandle(this.Handle);
-            WindowUtils.SetWindowsPosition(this.Handle, dm.WorkingArea.Left,
-                dm.WorkingArea.Top,
-                dm.WorkingArea.Width,
-                dm.WorkingArea.Height);
-        }
-
-        private void OnMinimizeWindow(object sender, ExecutedRoutedEventArgs e)
-        {
-            SystemCommands.MinimizeWindow(this);
-        }
-
-        private void OnRestoreWindow(object sender, ExecutedRoutedEventArgs e)
-        {
-            SystemCommands.RestoreWindow(this);
-        }
-
+        
         private void SettingsWindow_MouseDown(object sender, MouseButtonEventArgs e)
         {
             // make sure that clicking outside of a conrol moves the focus away from it
@@ -360,69 +307,11 @@ namespace Clipbox.Views
             }
         }
 
-        private void SettingsWindow_SourceInitialized(object sender, EventArgs e)
-        {
-            DisplayMonitor dm = MonitorUtils.GetByWindowHandle(this.Handle);
-
-            bool resizeToDpi = _settingsService.GetSetting<bool>(SettingsKeys.ResizeAccordingToMonitorOrSystemDpi);
-
-            double currentDisplayHeight = dm.WorkingArea.Height;
-            double currentDisplayWidth = dm.WorkingArea.Width;
-
-            if (resizeToDpi)
-            {
-                double scaleFactor = dm.Dpi / 96;
-                currentDisplayHeight *= scaleFactor;
-                currentDisplayWidth *= scaleFactor;
-            }
-
-            this.MaxHeight = currentDisplayHeight;
-            this.MaxWidth = currentDisplayWidth;
-            
-            _settingsService.SetSetting(SettingsKeys.LocalizationCulture, "bg-BG");
-        }
+        
 
         private ISettingsService _settingsService;
 
         private SettingsUIExtensionContainer _extContainer;
-
-        private void CloseButton_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-        }
-
-        private void Border_MouseDown(object sender, MouseButtonEventArgs mouseEventArgs)
-        {
-            if (mouseEventArgs.LeftButton == MouseButtonState.Pressed)
-            {
-                if (WindowState == WindowState.Maximized)
-                {
-                    SystemCommands.RestoreWindow(this);
-
-                    EventHandler stateChangedEventHandler = null;
-
-                    stateChangedEventHandler = new EventHandler
-                        ((_, args) =>
-                        {
-                            Rectangle windowRect = WindowUtils.GetWindowRectangle(this.Handle);
-
-                            DisplayMonitor dm = MonitorUtils.GetByWindowHandle(this.Handle);
-
-                            WindowUtils.SetWindowsPosition(this.Handle,
-                                dm.WorkingArea.Left,
-                                dm.WorkingArea.Top,
-                                windowRect.Width,
-                                windowRect.Height);
-
-                            this.DragMove();
-
-                            this.StateChanged -= stateChangedEventHandler;
-                        });
-                    this.StateChanged += stateChangedEventHandler;
-                }
-
-                DragMove();
-            }
-        }
+        
     }
 }
