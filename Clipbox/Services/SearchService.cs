@@ -12,6 +12,7 @@ using Clipbox.Services.Interfaces.Common.EventArgsClasses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -42,6 +43,8 @@ namespace Clipbox.Services
 
         public bool AreIndicesHealthy { get; private set; }
 
+        private readonly SynchronizationContext _mainSyncContext;
+
         public SearchService(ISearchSupportExtensionContainer extensionContainer,
             IClipboardManager clipboardManager,
             ISearchProvider searchProvider)
@@ -67,6 +70,8 @@ namespace Clipbox.Services
             _clipboardManager.ItemAdded += _clipboardManager_ItemAdded;
             _clipboardManager.ItemChanged += _clipboardManager_ItemChanged;
             _clipboardManager.ItemRemoved += _clipboardManager_ItemRemoved;
+
+            _mainSyncContext = SynchronizationContext.Current;
 
             // TODO: log the non fatal error info from the search provider
             AreIndicesHealthy = searchProvider.GetIndexHealth().IsHealthy;
@@ -130,6 +135,15 @@ namespace Clipbox.Services
                     try
                     {
                         DoLenghtySearchStoreOperations(idsToRemove, idsToAdd);
+                    }
+                    catch (TimeoutException)
+                    {
+                        AreIndicesHealthy = false;
+                    }
+                    catch (Exception ex)
+                    {
+                        var edi = ExceptionDispatchInfo.Capture(ex);
+                        _mainSyncContext.Post(state => ((ExceptionDispatchInfo)state).Throw(), edi);
                     }
                     finally
                     {
@@ -308,49 +322,90 @@ namespace Clipbox.Services
 
             Task.Run(() =>
             {
-                _searchProvider.ClearIndexEntries();
-
                 _clipboardItemIdsScheduledForAdd.Clear();
                 _clipboardItemIdsScheduledForAdd.Clear();
 
-                // refresh this collection
-                _allClipboardItemIds = new HashSet<string>(_clipboardManager.GetAllItemIds());
-
-                int total = _allClipboardItemIds.Count();
-                int current = 0;
                 bool success = true;
-                foreach (string id in _allClipboardItemIds)
+                try
                 {
-                    if (_indexRebuildCancelTokenSrc.IsCancellationRequested)
-                    {
-                        _searchProvider.ClearIndexEntries();
-                        break;
-                    }
+                    _searchProvider.ClearIndexEntries();
+                }
+                catch (TimeoutException)
+                {
+                    success = false;
+                }
+                catch (Exception ex)
+                {
+                    var edi = ExceptionDispatchInfo.Capture(ex);
+                    _mainSyncContext.Post(state => ((ExceptionDispatchInfo)state).Throw(), edi);
+                    return;
+                }
 
-                    try
+                if (success)
+                {
+                    // refresh this collection
+                    _allClipboardItemIds = new HashSet<string>(_clipboardManager.GetAllItemIds());
+
+                    int total = _allClipboardItemIds.Count();
+                    int current = 0;
+                    foreach (string id in _allClipboardItemIds)
                     {
-                        if (TryGenerateIndexEntry(id, out IndexEntry indexEntry))
+                        if (_indexRebuildCancelTokenSrc.IsCancellationRequested)
                         {
-                            _searchProvider.StoreIndexEntries(new[] { indexEntry });
-                            success = _searchProvider.GetIndexHealth()?.IsHealthy == true;
+                            try
+                            {
+                                _searchProvider.ClearIndexEntries();
+                            }
+                            catch (TimeoutException)
+                            {
+                                success = false;
+                            }
+                            catch (Exception ex)
+                            {
+                                var edi = ExceptionDispatchInfo.Capture(ex);
+                                _mainSyncContext.Post(state => ((ExceptionDispatchInfo)state).Throw(), edi);
+                                return;
+                            }
+
+                            break;
                         }
-                    }
-                    catch (TimeoutException)
-                    {
-                        success = false;
-                    }
 
-                    ProgressChanged?.Invoke(this, new ProgressEventArgs(total, ++current, success, id));
+                        try
+                        {
+                            if (TryGenerateIndexEntry(id, out IndexEntry indexEntry))
+                            {
+                                _searchProvider.StoreIndexEntries(new[] { indexEntry });
+                                success = _searchProvider.GetIndexHealth()?.IsHealthy == true;
+                            }
+                        }
+                        catch (TimeoutException)
+                        {
+                            success = false;
+                        }
+                        catch (Exception ex)
+                        {
+                            var edi = ExceptionDispatchInfo.Capture(ex);
+                            _mainSyncContext.Post(state => ((ExceptionDispatchInfo)state).Throw(), edi);
+                            return;
+                        }
 
-                    if (!success)
-                    {
-                        break;
+                        ProgressChanged?.Invoke(this, new ProgressEventArgs(total, ++current, success, id));
+
+                        if (!success)
+                        {
+                            break;
+                        }
                     }
                 }
                 
                 if (success)
                 {
                     AreIndicesHealthy = _searchProvider.GetIndexHealth().IsHealthy;
+                }
+                else
+                {
+                    // signal the failure
+                    ProgressChanged?.Invoke(this, new ProgressEventArgs(0, 0, success, string.Empty));
                 }
 
             }, _indexRebuildCancelTokenSrc.Token);
