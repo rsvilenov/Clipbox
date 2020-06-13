@@ -112,9 +112,18 @@ namespace Clipbox.Infrastructure.UI.CustomControls
 
         public static readonly DependencyProperty CaptionBackgroundProperty =
             DependencyProperty.Register(nameof(CaptionBackground), typeof(Brush), typeof(WindowFrame), new PropertyMetadata(Brushes.Transparent));
+        
 
+        public UIElement CaptionIconControl
+        {
+            get { return (UIElement)GetValue(CaptionIconControlProperty); }
+            set { SetValue(CaptionIconControlProperty, value); }
+        }
 
+        public static readonly DependencyProperty CaptionIconControlProperty =
+            DependencyProperty.Register(nameof(CaptionIconControl), typeof(UIElement), typeof(WindowFrame), new PropertyMetadata(null));
 
+        
         public override void OnApplyTemplate()
         {
             if (!(this.Template.FindName("PART_Caption", this) is FrameworkElement container))
@@ -133,7 +142,7 @@ namespace Clipbox.Infrastructure.UI.CustomControls
 
         private void OnCanMinimizeWindow(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = this.ResizeMode != ResizeMode.NoResize;
+            e.CanExecute = IsMinimizeButtonVisible; //this.ResizeMode != ResizeMode.NoResize;
         }
 
         private void OnCanResizeWindow(object sender, CanExecuteRoutedEventArgs e)

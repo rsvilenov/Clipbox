@@ -118,7 +118,125 @@ namespace Clipbox.Win32
 
         [DllImport("kernel32.dll")]
         private static extern bool ProcessIdToSessionId(uint dwProcessId, out uint pSessionId);
+
+        [DllImport("advapi32.dll", EntryPoint = "DuplicateTokenEx")]
+        private static extern bool
+           DuplicateTokenEx(IntPtr hExistingToken, Int32 dwDesiredAccess,
+                            ref SECURITY_ATTRIBUTES lpThreadAttributes,
+                            Int32 ImpersonationLevel, Int32 dwTokenType,
+                            ref IntPtr phNewToken);
+
+        public const int GENERIC_ALL_ACCESS = 0x10000000;
+
+        public enum SECURITY_IMPERSONATION_LEVEL
+        {
+            SecurityAnonymous,
+            SecurityIdentification,
+            SecurityImpersonation,
+            SecurityDelegation
+        }
+
+        public enum TOKEN_TYPE
+        {
+            TokenPrimary = 1,
+            TokenImpersonation
+        }
+
+        [DllImport("shell32.dll")]
+        private static extern int SetCurrentProcessExplicitAppUserModelID([MarshalAs(UnmanagedType.LPWStr)] string AppID);
         
+
+        public static void SetProcessTaskManagerGroupName(string appId)
+        {
+            // check for Windows 7
+            Version version = Environment.OSVersion.Version;
+            if ((version.Major > 6) || (version.Major == 6 && version.Minor >= 1))
+            {
+                int result = SetCurrentProcessExplicitAppUserModelID(appId);
+                if (result != 0)
+                {
+                    throw new Win32Exception();
+                }
+            }
+            else
+            {
+                throw new PlatformNotSupportedException("Windows 7 or later is required.");
+            }
+        }
+
+        public static uint Spawn(string[] parameters, bool createNewProcessGroup = false, bool startHighPriority = false)
+        {
+            SECURITY_ATTRIBUTES sa = new SECURITY_ATTRIBUTES();
+            sa.Length = Marshal.SizeOf(sa);
+
+            IntPtr hToken = WindowsIdentity.GetCurrent().Token;
+            IntPtr hDupedToken = IntPtr.Zero;
+
+            bool result = DuplicateTokenEx(
+                      hToken,
+                      GENERIC_ALL_ACCESS,
+                      ref sa,
+                      (int)SECURITY_IMPERSONATION_LEVEL.SecurityIdentification,
+                      (int)TOKEN_TYPE.TokenPrimary,
+                      ref hDupedToken
+                   );
+
+            if (!result)
+            {
+                throw new Win32Exception();
+            }
+
+
+            STARTUPINFO si = new STARTUPINFO();
+            si.cb = Marshal.SizeOf(si);
+            si.lpDesktop = @"winsta0\default";
+
+            CreateProcessFlags dwCreationFlags = CreateProcessFlags.CREATE_NEW_CONSOLE | CreateProcessFlags.CREATE_UNICODE_ENVIRONMENT;
+
+            if (startHighPriority)
+            {
+                dwCreationFlags |= CreateProcessFlags.HIGH_PRIORITY_CLASS;
+            }
+            if (createNewProcessGroup)
+            {
+                dwCreationFlags |= CreateProcessFlags.CREATE_NEW_PROCESS_GROUP;
+            }
+
+            string applicationPath = Process.GetCurrentProcess().MainModule.FileName;// new Uri(applicationPath).LocalPath;
+            string commandLine = $"{applicationPath} {string.Join(" ", parameters)}";
+
+            var procInfo = new PROCESS_INFORMATION();
+            result = false;
+            try
+            {
+                // create a new process in the current user's logon session
+                result = CreateProcessAsUser(hToken,        // client's access token
+                                                null,                   // file to execute
+                                                commandLine,        // command line
+                                                ref sa,                 // pointer to process SECURITY_ATTRIBUTES
+                                                ref sa,                 // pointer to thread SECURITY_ATTRIBUTES
+                                                false,                  // handles are not inheritable
+                                                (uint)dwCreationFlags,        // creation flags
+                                                IntPtr.Zero,            // pointer to new environment block 
+                                                null,                   // name of current directory 
+                                                ref si,                 // pointer to STARTUPINFO structure
+                                                out procInfo            // receives information about new process
+                                                );
+
+                if (!result)
+                {
+                    throw new Win32Exception();
+                }
+            }
+            finally
+            {
+                CloseHandle(procInfo.hProcess);
+                CloseHandle(procInfo.hThread);
+            }
+
+            return procInfo.dwProcessId;
+        }
+
         /// <summary>
         /// 
         /// </summary>

@@ -6,6 +6,8 @@
     xmlns:infBeh="clr-namespace:Clipbox.Infrastructure.UI.Behaviors;assembly=Clipbox.Infrastructure.UI">
 
     <Style BasedOn="{StaticResource {x:Type Window}}" TargetType="{x:Type customControls:WindowFrame}">
+        <Setter Property="CaptionForeground" Value="White" />
+        <Setter Property="CaptionBackground" Value="Black" />
         <Setter Property="WindowChrome.WindowChrome">
             <Setter.Value>
                 <WindowChrome CaptionHeight="0" ResizeBorderThickness="5,1,5,5" />
@@ -39,12 +41,15 @@
                                     <ColumnDefinition Width="35" />
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
-                                <Image
+                                <ContentControl
                                     Grid.Column="0"
-                                    Width="25"
+                                    Width="20"
+                                    Height="20"
                                     HorizontalAlignment="Center"
                                     VerticalAlignment="Center"
-                                    Source="{TemplateBinding Icon}" />
+                                    Content="{TemplateBinding CaptionIconControl}"
+                                    Foreground="{TemplateBinding CaptionForeground}" />
+
                                 <TextBlock
                                     Grid.Column="1"
                                     Margin="7,0,0,2"
@@ -53,6 +58,12 @@
                                     FontSize="14"
                                     Foreground="{TemplateBinding CaptionForeground}"
                                     Text="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=Title}" />
+
+                                <Border
+                                    x:Name="captionOpacityOverlay"
+                                    Grid.ColumnSpan="2"
+                                    Background="Black"
+                                    Opacity="0.4" />
                             </Grid>
 
                             <StackPanel
@@ -134,6 +145,9 @@
                         </Trigger>
                         <Trigger Property="IsMinimizeButtonVisible" Value="False">
                             <Setter TargetName="minimizeWindow" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                        <Trigger Property="IsActive" Value="True">
+                            <Setter TargetName="captionOpacityOverlay" Property="Opacity" Value="0.2" />
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

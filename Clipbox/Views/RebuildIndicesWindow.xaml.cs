@@ -1,4 +1,5 @@
 ﻿using Clipbox.Infrastructure.UI;
+using Clipbox.Infrastructure.UI.CustomControls;
 using Clipbox.Infrastructure.UI.ExtensionMethods;
 using Clipbox.Infrastructure.UI.Resources;
 using Clipbox.Infrastructure.UI.Windows;
@@ -19,7 +20,7 @@ namespace Clipbox.Views
     /// <summary>
     /// Interaction logic for RebuildIndicesWindow.xaml
     /// </summary>
-    public partial class RebuildIndicesWindow : AcryllicWindow
+    public partial class RebuildIndicesWindow : WindowFrame
     {
         public ICommand Cancel { get; }
         public ICommand Retry { get; }
@@ -35,14 +36,6 @@ namespace Clipbox.Views
             ScaleMode = DpiScaleMode.Full;
 
             InitializeComponent();
-
-            using (Bitmap bmpIcon = ResourceUtils.GetApplicationIcon())
-            {
-                Icon = bmpIcon.ToBitmapSource();
-            }
-
-            this.CommandBindings.Add(new CommandBinding(SystemCommands.MinimizeWindowCommand, 
-                (s, e) => SystemCommands.MinimizeWindow(this)));
 
             Cancel = new DelegateCommand(CancelHandler);
             Retry = new DelegateCommand(RetryHandler);
@@ -146,13 +139,6 @@ namespace Clipbox.Views
         
         public static readonly DependencyProperty HasRebuildingFailedProperty =
             DependencyProperty.Register(nameof(HasRebuildingFailed), typeof(bool), typeof(RebuildIndicesWindow), new PropertyMetadata(false));
-        
-        private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.LeftButton == MouseButtonState.Pressed)
-            {
-                DragMove();
-            }
-        }
+      
     }
 }

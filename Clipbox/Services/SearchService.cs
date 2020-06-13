@@ -329,7 +329,6 @@ namespace Clipbox.Services
                     bool success = true;
                     try
                     {
-                        throw new TimeoutException();
                         if (TryGenerateIndexEntry(id, out IndexEntry indexEntry))
                         {
                             _searchProvider.StoreIndexEntries(new[] { indexEntry });

@@ -21,7 +21,7 @@
     BorderBrush="#3a3a3a"
     BorderThickness="0"
     CaptionBackground="Transparent"
-    CaptionForeground="#818183"
+    CaptionForeground="{DynamicResource ControlForegroundBrush}"
     FontSize="16"
     Foreground="White"
     Icon="pack://application:,,,/Clipbox.Infrastructure.UI;component/Resources/Images/Clip-WF.ico"
@@ -183,6 +183,9 @@
             <Binding Source="settings" />
         </MultiBinding>
     </Window.Title>
+    <customControls:WindowFrame.CaptionIconControl>
+        <ContentControl Template="{StaticResource ApplicationIcon}" />
+    </customControls:WindowFrame.CaptionIconControl>
     <TabControl
         x:Name="tabControl"
         Grid.Row="1"
