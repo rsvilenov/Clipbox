@@ -522,7 +522,7 @@ namespace Clipbox.Services
             }
 
             IDictionary<string, IPreviewGenerator> previewGenerators = 
-                _clipboardFormatPreviewExtContainer.ResolveClipboardPreviewGeneratorOrderedByPriority(formatGuids.ToArray());
+                _clipboardFormatPreviewExtContainer.ResolveOrderedByPriorityDesc(formatGuids.ToArray());
 
             PreviewDataTransferObject pdto = null;
             

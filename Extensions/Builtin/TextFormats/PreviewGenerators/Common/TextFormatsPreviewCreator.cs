@@ -58,6 +58,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
             int maxPreviewHeight,
             double dpi,
             bool areDimensionsScaledToDpi,
+            bool isTextBeyondCutoff,
             PreviewGenerationOptions options)
         {
             RichTextBox rtb = new RichTextBox
@@ -215,6 +216,11 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators.Common
                 else
                 {
                     annotation = $"{textLength} {resManager.GetString("STR_CHARACTER", Thread.CurrentThread.CurrentUICulture)}";
+                }
+
+                if (isTextBeyondCutoff)
+                {
+                    annotation = $">{annotation}";
                 }
             }
 

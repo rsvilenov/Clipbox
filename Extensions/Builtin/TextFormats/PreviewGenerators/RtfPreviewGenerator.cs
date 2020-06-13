@@ -19,7 +19,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators
     [PreviewPriority(100)]
     public class RtfPreviewGenerator : SinglePreviewGenerator<RichTextIntermediateFormat, ImagePreviewData>
     {
-        private const int MAX_RTF_LENGTH = 10000;
+        private const int MAX_RTF_LENGTH = 100000;
 
         protected override ImagePreviewData GetPreview(RichTextIntermediateFormat intermediateFormat, PreviewParams previewParams)
         {
@@ -78,6 +78,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators
                             maxPreviewHeight: previewParams.PreviewHeight, 
                             dpi: previewParams.DisplayDpi, 
                             areDimensionsScaledToDpi: previewParams.AreDimensionsScaledToDpi,
+                            isTextBeyondCutoff: false,
                             options: options);
                     }));
             }

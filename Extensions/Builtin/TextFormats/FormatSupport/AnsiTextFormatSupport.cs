@@ -11,9 +11,18 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.FormatSupport
     [ClipboardFormat("Text")]
     public class AnsiTextFormatSupport : ClipboardFormatSupport<TextIntermediateFormat>
     {
+        private const int MAX_CONTENT_SIZE = 10 * 1024 * 1024;
+
         protected override TextIntermediateFormat GetIntermediateFormat(IntPtr hClipboardData)
         {
-            IntPtr hMemLocal = MarshalExt.HGlobalMemMovableToHMem(hClipboardData);
+            int contentSize = MarshalExt.GetGlobalSize(hClipboardData);
+            if (contentSize > MAX_CONTENT_SIZE)
+            {
+                return null;
+            }
+
+            IntPtr hMemLocal = MarshalExt.HGlobalMemMovableToHMem(hClipboardData, contentSize);
+
             string str = Marshal.PtrToStringAnsi(hMemLocal);
             if (str != null)
             {

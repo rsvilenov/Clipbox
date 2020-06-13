@@ -87,9 +87,14 @@ namespace Clipbox.Win32
             return result;
         }
 
-        public static IntPtr HGlobalMemMovableToHMem(IntPtr hGlobalMovable)
+        public static int GetGlobalSize(IntPtr hGlobalMovable)
         {
-            int size = Kernel32.GlobalSize(hGlobalMovable);
+            return Kernel32.GlobalSize(hGlobalMovable);
+        }
+        
+        public static IntPtr HGlobalMemMovableToHMem(IntPtr hGlobalMovable, int? globalSize = null)
+        {
+            int size = globalSize ?? Kernel32.GlobalSize(hGlobalMovable);
             IntPtr source = Kernel32.GlobalLock(hGlobalMovable);
             if (source == IntPtr.Zero)
             {

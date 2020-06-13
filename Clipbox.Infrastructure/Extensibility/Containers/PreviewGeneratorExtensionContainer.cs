@@ -19,7 +19,7 @@ namespace Clipbox.Infrastructure.Extensibility.Containers
 
         public event EventHandler<ExtensionEventArgs> ExtensionResolved;
 
-        public IPreviewGenerator ResolveClipboardPreviewGenerator(string formatGuid)
+        public IPreviewGenerator Resolve(string formatGuid)
         {
             if (_intermediateFormatGuidExtensionMapping.ContainsKey(formatGuid))
             {
@@ -31,11 +31,11 @@ namespace Clipbox.Infrastructure.Extensibility.Containers
             return null;
         }
 
-        public IDictionary<string, IPreviewGenerator> ResolveClipboardPreviewGeneratorOrderedByPriority(string[] formatGuids)
+        public IDictionary<string, IPreviewGenerator> ResolveOrderedByPriorityDesc(string[] formatGuids)
         {
             return _intermediateFormatGuidExtensionMapping
                 .Where(mappingEntry => formatGuids.Contains(mappingEntry.Key))
-                .OrderBy(mappingEntry => mappingEntry.Value.Priority)
+                .OrderByDescending(mappingEntry => mappingEntry.Value.Priority)
                 .Select(mappingEntry =>
                 {
                     Type extensionType = mappingEntry.Value.Type;

@@ -13,6 +13,8 @@ namespace Clipbox.Extensions.BuiltIn.ImageFormats.FormatSupport
     [ClipboardFormat("CF_METAFILEPICT")]
     public class MetafilePictFormatSupport : ClipboardFormatSupport<MetafilePictIntermediateFormat>
     {
+        private const int MAX_CONTENT_SIZE = 100 * 1024 * 1024;
+
         protected override MetafilePictIntermediateFormat GetIntermediateFormat(IntPtr hClipboardData)
         {
             IntPtr hMetafilePict = Kernel32.GlobalLock(hClipboardData);
@@ -22,6 +24,11 @@ namespace Clipbox.Extensions.BuiltIn.ImageFormats.FormatSupport
                 var mfPict = (NativeStructures.METAFILEPICT)Marshal.PtrToStructure(hMetafilePict, typeof(NativeStructures.METAFILEPICT));
 
                 uint metaSize = Gdi32.GetMetaFileBitsEx(mfPict.hMF, 0, IntPtr.Zero);
+                if (metaSize > MAX_CONTENT_SIZE)
+                {
+                    return null;
+                }
+
                 IntPtr buffer = Marshal.AllocHGlobal((int)metaSize);
                 Gdi32.GetMetaFileBitsEx(mfPict.hMF, metaSize, buffer);
 

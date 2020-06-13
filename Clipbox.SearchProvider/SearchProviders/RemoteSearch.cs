@@ -130,6 +130,8 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
                 {
                     ErrorOccurred?.Invoke(this,
                         new RemoteSearchErrorEventArgs("Pipe server error."));
+
+                    return null;
                 }
 
                 byte[] responseBytes = Convert.FromBase64String(response);
@@ -204,6 +206,8 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
                 {
                     ErrorOccurred?.Invoke(this,
                         new RemoteSearchErrorEventArgs("Pipe server error."));
+
+                    return null;
                 }
 
                 byte[] responseBytes = Convert.FromBase64String(response);

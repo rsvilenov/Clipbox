@@ -11,9 +11,17 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.FormatSupport
     [ClipboardFormat("CF_UNICODETEXT")]
     public class UnicodeTextFormatSupport : ClipboardFormatSupport<UnicodeTextIntermediateFormat>
     {
+        private const int MAX_CONTENT_SIZE = 10 * 1024 * 1024;
+
         protected override UnicodeTextIntermediateFormat GetIntermediateFormat(IntPtr hClipboardData)
         {
-            IntPtr hMemLocal = MarshalExt.HGlobalMemMovableToHMem(hClipboardData);
+            int contentSize = MarshalExt.GetGlobalSize(hClipboardData);
+            if (contentSize > MAX_CONTENT_SIZE)
+            {
+                return null;
+            }
+
+            IntPtr hMemLocal = MarshalExt.HGlobalMemMovableToHMem(hClipboardData, contentSize);
             string str = Marshal.PtrToStringUni(hMemLocal);
             if (str != null)
             {

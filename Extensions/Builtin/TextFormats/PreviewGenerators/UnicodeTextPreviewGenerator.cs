@@ -13,16 +13,24 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators
 {
     [ClipboxExtension(Author = "Clipbox", Description = "", Version = 0.1)]
     [IntermediateFormatSupport("{CAF7A257-882B-46CE-A26D-679D228EA8B7}")]
+    [PreviewPriority(99)]
     public class UnicodeTextPreviewGenerator : SinglePreviewGenerator<UnicodeTextIntermediateFormat, ImagePreviewData>
     {
         private const int TEXT_LENGTH_CUTOFF = 500;
 
         protected override ImagePreviewData GetPreview(UnicodeTextIntermediateFormat intermediateFormat, PreviewParams previewParams)
         {
-            string text =
-                intermediateFormat.Text.Length > TEXT_LENGTH_CUTOFF
-                ? intermediateFormat.Text.Substring(TEXT_LENGTH_CUTOFF)
-                : intermediateFormat.Text;
+            string text = null;
+            bool isTextBeyondCutoff = false;
+            if (intermediateFormat.Text.Length > TEXT_LENGTH_CUTOFF)
+            {
+                text = intermediateFormat.Text.Substring(TEXT_LENGTH_CUTOFF);
+                isTextBeyondCutoff = true;
+            }
+            else
+            {
+                text = intermediateFormat.Text;
+            }
 
             var options = new TextFormatsPreviewCreator.PreviewGenerationOptions
             {
@@ -71,6 +79,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators
                             maxPreviewHeight: previewParams.PreviewHeight,
                             dpi: previewParams.DisplayDpi,
                             areDimensionsScaledToDpi: previewParams.AreDimensionsScaledToDpi,
+                            isTextBeyondCutoff: isTextBeyondCutoff,
                             options: options);
                     }));
             }

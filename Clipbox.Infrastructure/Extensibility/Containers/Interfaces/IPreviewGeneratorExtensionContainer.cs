@@ -8,8 +8,8 @@ namespace Clipbox.Infrastructure.Extensibility.Containers.Interfaces
     {
         IEnumerable<Type> GetRegisteredTypes();
 
-        IPreviewGenerator ResolveClipboardPreviewGenerator(string intermediateFormatGuid);
+        IPreviewGenerator Resolve(string intermediateFormatGuid);
 
-        IDictionary<string, IPreviewGenerator> ResolveClipboardPreviewGeneratorOrderedByPriority(string[] formatGuids);
+        IDictionary<string, IPreviewGenerator> ResolveOrderedByPriorityDesc(string[] formatGuids);
     }
 }

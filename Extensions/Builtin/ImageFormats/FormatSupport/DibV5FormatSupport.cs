@@ -13,6 +13,7 @@ namespace Clipbox.Extensions.BuiltIn.ImageFormats.FormatSupport
     [ClipboardFormat("CF_DIBV5")]
     public class DibV5FormatSupport : ClipboardFormatSupport<DibV5IntermediateFormat>
     {
+        private const int MAX_CONTENT_SIZE = 100 * 1024 * 1024;
 
         protected override DibV5IntermediateFormat GetIntermediateFormat(IntPtr hClipboardData)
         {
@@ -21,10 +22,16 @@ namespace Clipbox.Extensions.BuiltIn.ImageFormats.FormatSupport
                 throw new ArgumentNullException("hClipboardData");
             }
 
-            int dataSize = Kernel32.GlobalSize(hClipboardData);
+            int dataSize = MarshalExt.GetGlobalSize(hClipboardData);
             if (dataSize == 0)
             {
                 throw new InvalidOperationException("GlobalSize reports 0 bytes");
+            }
+
+            if (dataSize > MAX_CONTENT_SIZE)
+            {
+                // too large
+                return null;
             }
 
             //IntPtr hMemLocal = MarshalExt.HGlobalMemMovableToHMem(hClipboardData);

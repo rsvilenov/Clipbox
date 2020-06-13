@@ -318,6 +318,7 @@ namespace Clipbox.Services
 
                 int total = _allClipboardItemIds.Count();
                 int current = 0;
+                bool success = true;
                 foreach (string id in _allClipboardItemIds)
                 {
                     if (_indexRebuildCancelTokenSrc.IsCancellationRequested)
@@ -326,7 +327,6 @@ namespace Clipbox.Services
                         break;
                     }
 
-                    bool success = true;
                     try
                     {
                         if (TryGenerateIndexEntry(id, out IndexEntry indexEntry))
@@ -347,8 +347,11 @@ namespace Clipbox.Services
                         break;
                     }
                 }
-
-                AreIndicesHealthy = _searchProvider.GetIndexHealth().IsHealthy;
+                
+                if (success)
+                {
+                    AreIndicesHealthy = _searchProvider.GetIndexHealth().IsHealthy;
+                }
 
             }, _indexRebuildCancelTokenSrc.Token);
         }
