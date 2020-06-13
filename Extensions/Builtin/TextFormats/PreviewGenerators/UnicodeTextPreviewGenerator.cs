@@ -24,7 +24,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators
             bool isTextBeyondCutoff = false;
             if (intermediateFormat.Text.Length > TEXT_LENGTH_CUTOFF)
             {
-                text = intermediateFormat.Text.Substring(TEXT_LENGTH_CUTOFF);
+                text = intermediateFormat.Text.Substring(0, TEXT_LENGTH_CUTOFF);
                 isTextBeyondCutoff = true;
             }
             else
