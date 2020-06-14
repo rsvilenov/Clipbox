@@ -1,19 +1,29 @@
 ﻿using Clipbox.Infrastructure.Encryption;
 using Lucene.Net.Store;
 using System.IO;
-using System.Security.Cryptography;
 
 namespace Clipbox.Infrastructure.Search.SearchProviders.Encryption
 {
     internal class EncryptedIndexInput : BufferedIndexInput
     {
-        private readonly MemoryStream _memoryStream;
+        private MemoryStream _memoryStream;
 
         private bool _isClone;
 
         private bool _isDisposed;
-        
+
+        public EncryptedIndexInput(string filePath, IEncryptionProvider encryptionProvider, int bufferSize)
+            : base(bufferSize)
+        {
+            Init(filePath, encryptionProvider);
+        }
+
         public EncryptedIndexInput(string filePath, IEncryptionProvider encryptionProvider)
+        {
+            Init(filePath, encryptionProvider);
+        }
+
+        private void Init(string filePath, IEncryptionProvider encryptionProvider)
         {
             if (File.Exists(filePath))
             {
@@ -27,8 +37,6 @@ namespace Clipbox.Infrastructure.Search.SearchProviders.Encryption
                 _memoryStream = new MemoryStream();
             }
         }
-
-        public override long FilePointer => _memoryStream.Position;
 
         public override long Length()
         {
@@ -53,6 +61,11 @@ namespace Clipbox.Infrastructure.Search.SearchProviders.Encryption
 
         public override void ReadInternal(byte[] b, int offset, int length)
         {
+            if (FilePointer != _memoryStream.Position)
+            {
+                _memoryStream.Seek(FilePointer, SeekOrigin.Begin);
+            }
+
             _memoryStream.Read(b, offset, length);
         }
 

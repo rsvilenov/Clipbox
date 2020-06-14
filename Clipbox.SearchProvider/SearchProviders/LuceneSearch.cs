@@ -243,6 +243,8 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
             {
                 using (var indexWriter = new IndexWriter(indexDir, analyzer, IndexWriter.MaxFieldLength.UNLIMITED))
                 {
+                    indexWriter.SetMergeScheduler(new SerialMergeScheduler());
+
                     foreach (IndexEntry entry in indexEntries)
                     {
                         // remove older index entry
@@ -260,11 +262,8 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
                             document.Add(new Field(unit.Category.ToString(), stringToStore, Field.Store.NO, Field.Index.ANALYZED));
                         }
 
-                        indexWriter.AddDocument(document);
+                        indexWriter.AddDocument(document, analyzer);
                     }
-
-                    indexWriter.WaitForMerges();
-                    indexWriter.Commit();
                 }
             }
         }
