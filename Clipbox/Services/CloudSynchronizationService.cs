@@ -12,6 +12,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -49,6 +50,8 @@ namespace Clipbox.Services
 
         private string _appGuid;
 
+        private readonly SynchronizationContext _mainSyncContext;
+
         public CloudSynchronizationService(IClipboardManager clipboardManager, 
             ICloudSupportProvider cloudService, 
             string appGuid)
@@ -59,14 +62,32 @@ namespace Clipbox.Services
 
             _cloudFolderName = $"{ProductConstants.PRODUCT_NAME}Clipboard";
 
+            _mainSyncContext = SynchronizationContext.Current;
+
             _syncTaskCancellationTokenSource = new CancellationTokenSource();
 
             NetworkChange.NetworkAvailabilityChanged += NetworkChange_NetworkAvailabilityChanged;
-            if (NetworkInterface.GetIsNetworkAvailable())
+
+            Task.Run(() =>
             {
-                IsNetworkAvailable = true;
-                Authenticate();
-            }
+                try
+                {
+                    if (NetworkInterface.GetIsNetworkAvailable())
+                    {
+                        IsNetworkAvailable = true;
+                        Authenticate();
+                    }
+                }
+                catch (TimeoutException)
+                {
+                    IsNetworkAvailable = false;
+                }
+                catch (Exception ex)
+                {
+                    var edi = ExceptionDispatchInfo.Capture(ex);
+                    _mainSyncContext.Post(state => ((ExceptionDispatchInfo)state).Throw(), edi);
+                }
+            });
 
             StartSyncTask();
         }

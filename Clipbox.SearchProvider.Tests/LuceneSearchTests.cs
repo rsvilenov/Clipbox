@@ -34,7 +34,7 @@ namespace Clipbox.Infrastructure.Search.Tests
                 .Return(generatedRandomKey);
 
             _shaEncryptionProvider = new AesEncryptionProvider(_mockPersistenceProvider);
-            _searchProvicer = new LuceneSearch(_shaEncryptionProvider);
+            _searchProvicer = new LuceneSearch(_shaEncryptionProvider, _mockPersistenceProvider);
         }
 
         [Test]

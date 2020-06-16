@@ -4,6 +4,7 @@ using Clipbox.Infrastructure.Search.SearchProviders.EventArgsClasses;
 using Clipbox.Infrastructure.Serialization;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Clipbox.Infrastructure.Search.SearchProviders
 {
@@ -13,14 +14,18 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
         private readonly NamedPipesServer _pipeServer;
         private readonly NamedPipesClient _pipeClient;
         private readonly ISearchProvider _actualSerchProvider;
+        private readonly ManualResetEvent _modificationOperationMre;
 
         public event EventHandler<RemoteSearchErrorEventArgs> ErrorOccurred;
+        public event EventHandler QuitRequested;
 
         public RemoteSearch(string pipeName, 
             bool isClientMode,
             ISearchProvider actualSerchProvider = null)
         {
             _isCliendMode = isClientMode;
+
+            _modificationOperationMre = new ManualResetEvent(false);
 
             if (_isCliendMode)
             {
@@ -82,6 +87,10 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
                     byte[] healthResponseBytes = BinaryFormatterSerialization.SerializeObject(healthResponseMsg);
                     e.Response = Convert.ToBase64String(healthResponseBytes);
                     break;
+                case SearchPipeMessageType.Quit:
+                    _modificationOperationMre.WaitOne();
+                    QuitRequested?.Invoke(this, new EventArgs());
+                    break;
                 default:
                     ErrorOccurred?.Invoke(this,
                         new RemoteSearchErrorEventArgs("Pipe server GotMessage:", 
@@ -110,7 +119,15 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
             }
             else
             {
-                _actualSerchProvider.DeleteIndexEntries(indexEntryIds);
+                try
+                {
+                    _modificationOperationMre.Reset();
+                    _actualSerchProvider.DeleteIndexEntries(indexEntryIds);
+                }
+                finally
+                {
+                    _modificationOperationMre.Set();
+                }
             }
         }
 
@@ -164,7 +181,15 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
             }
             else
             {
-                _actualSerchProvider.StoreIndexEntries(indexEntries);
+                try
+                {
+                    _modificationOperationMre.Reset();
+                    _actualSerchProvider.StoreIndexEntries(indexEntries);
+                }
+                finally
+                {
+                    _modificationOperationMre.Reset();
+                }
             }
         }
 
@@ -187,7 +212,15 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
             }
             else
             {
-                _actualSerchProvider.ClearIndexEntries();
+                try
+                {
+                    _modificationOperationMre.Reset();
+                    _actualSerchProvider.ClearIndexEntries();
+                }
+                finally
+                {
+                    _modificationOperationMre.Set();
+                }
             }
         }
 
@@ -234,6 +267,29 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
             public IndexHealthInfo IndexHealthInfo { get; set; }
         }
 
+        public void PostServerQuitRequest()
+        {
+            if (_isCliendMode)
+            {
+                SearchPipeMessage msg = new SearchPipeMessage
+                {
+                    MessageType = SearchPipeMessageType.Quit
+                };
+
+                byte[] serialized = BinaryFormatterSerialization.SerializeObject(msg);
+
+                if (!_pipeClient.SendMessage(Convert.ToBase64String(serialized)))
+                {
+                    ErrorOccurred?.Invoke(this,
+                        new RemoteSearchErrorEventArgs("Pipe server error."));
+                }
+            }
+            else
+            {
+                throw new InvalidOperationException("Posting server quit request can only be used in client mode.");
+            }
+        }
+
         private enum SearchPipeMessageType
         {
             Store,
@@ -241,6 +297,7 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
             Delete,
             GetIndexHealth,
             ClearIndexEntries,
+            Quit,
             Result
         }
 

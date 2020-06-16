@@ -13,6 +13,7 @@ using Clipbox.Infrastructure.IPC;
 using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.Persistence.FilesystemAccess;
 using Clipbox.Infrastructure.Persistence.PersistenceProviders;
+using Clipbox.Infrastructure.Search;
 using Clipbox.Infrastructure.Search.SearchProviders;
 using Clipbox.Infrastructure.UI.Localization;
 using Clipbox.Infrastructure.UI.Localization.LozalizationProviders;
@@ -59,6 +60,7 @@ namespace Clipbox
         LocalizationService _localizationService;
         IPersistenceProvider _persistenceProvider;
         RebuildIndexWindowService _rebuildIndexWindowService;
+        ISearchProviderSelectorService _searchProviderSelectorService;
 
         public void PerformStartupSequence()
         {
@@ -162,9 +164,10 @@ namespace Clipbox
 
             _trayContextMenuService = new TrayContextMenuService(_settingsService);
 
-            RemoteSearch remoteSearch = new RemoteSearch(ProductConstants.SEARCH_SERVICE_NAMED_PIPE_PREFIX, true);
+            _searchProviderSelectorService = new SearchProviderSelectorService(_settingsService, _persistenceProvider, encryptionProvider);
+            ISearchProvider searchProvider = _searchProviderSelectorService.GetSearchProvider();
 
-            _searchService = new SearchService(_extensionLoader.SearchSupportExtensionContainer, _clipboardManager, remoteSearch);
+            _searchService = new SearchService(_extensionLoader.SearchSupportExtensionContainer, _clipboardManager, searchProvider);
             
             // this view can show a little bit slower so we will not keep its instance alive the whole time - we will create it upon request within the service
             _mainClipboardViewWindowService = new MainClipboardViewWindowService(_clipboardManager, 

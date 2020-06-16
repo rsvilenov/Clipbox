@@ -1,7 +1,9 @@
-﻿using Clipbox.Core.Search;
+﻿using Clipbox.Core;
+using Clipbox.Core.Search;
 using Clipbox.Core.Search.Enums;
 using Clipbox.Core.Search.SearchTerms;
 using Clipbox.Infrastructure.Encryption;
+using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.Persistence.FilesystemAccess;
 using Clipbox.Infrastructure.Search.SearchProviders.Encryption;
 using Contrib.Regex;
@@ -23,17 +25,24 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
     {
         private const int LUCENE_SEARCH_MAX_RESULT_COUNT = 10000;
         private const int LUCENE_MAX_CLAUSES_COUNT = 50000;
-        private const string SEARCH_TERMINATING_ERROR_LOGFILE = "searchTerminatingError.log";
 
         private readonly IEncryptionProvider _encryptionProvider;
+        private readonly IPersistenceProvider _persistenceProvider;
 
-        public LuceneSearch(IEncryptionProvider encryptionProvider)
+        public LuceneSearch(IEncryptionProvider encryptionProvider, 
+            IPersistenceProvider persistenceProvider)
         {
             // Despite the fact that am telling Lucene not to store 
             // the original items in the index, there are techniques 
             // by which the value can be partially restored, and that's
             // why I want to encrypt the whole index.
             _encryptionProvider = encryptionProvider;
+
+            // I am using this only to write the error logs.
+            // Maybe in the futire I may modify the IndexWriter/Reader
+            // classes to make them use the provider.
+            _persistenceProvider = persistenceProvider;
+
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         }
@@ -42,12 +51,36 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
         {
             if (e.ExceptionObject is Exception ex)
             {
-                if (ex.StackTrace.Contains("Lucene.Net"))
-                {
-                    string indexDirectory = GetIndexDirectoryInfo().FullName;
-                    File.WriteAllText(Path.Combine(indexDirectory, SEARCH_TERMINATING_ERROR_LOGFILE), ex.ToString());
-                }
+                ProcessIfLuceneException(ex, throwOnTooManyErrors: false);
             }
+        }
+
+        private bool ProcessIfLuceneException(Exception ex, bool throwOnTooManyErrors = true)
+        {
+            if (ex.StackTrace.Contains("Lucene.Net"))
+            {
+                IEnumerable<string> errorLogs = _persistenceProvider.ListKeys(ProductConstants.SEARCH_INDEX_ERROR_LOG_CATEGORY);
+
+                int errorLogsCount = errorLogs.Count();
+
+                _persistenceProvider.Write(ProductConstants.SEARCH_INDEX_ERROR_LOG_CATEGORY,
+                    errorLogsCount.ToString(),
+                    ex.ToString());
+
+                _persistenceProvider.Append(ProductConstants.SEARCH_INDEX_ERROR_LOG_CATEGORY,
+                    ProductConstants.SEARCH_INDEX_ERROR_LOG_AGGREGATE,
+                    ex.ToString());
+
+                if (errorLogsCount > 3
+                    && throwOnTooManyErrors)
+                {
+                    throw new InvalidOperationException("Too many subsequent errors from LuceneSearch.");
+                }
+                
+                return true;
+            }
+
+            return false;
         }
 
         public void DeleteIndexEntries(IEnumerable<string> indexEntryIds)
@@ -58,16 +91,27 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
             }
 
             DirectoryInfo dirInfo = GetIndexDirectoryInfo();
-            using (var analyzer = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30))
-            using (var indexDir = new EncryptedFSDirectory(dirInfo, _encryptionProvider, null))
+
+            try
             {
-                using (var indexWriter = new IndexWriter(indexDir, analyzer, IndexWriter.MaxFieldLength.UNLIMITED))
+                using (var analyzer = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30))
+                using (var indexDir = new EncryptedFSDirectory(dirInfo, _encryptionProvider, null))
                 {
-                    foreach (string unitId in indexEntryIds)
+                    using (var indexWriter = new IndexWriter(indexDir, analyzer, IndexWriter.MaxFieldLength.UNLIMITED))
                     {
-                        var searchQuery = new TermQuery(new Term(nameof(IndexEntry.Id), unitId));
-                        indexWriter.DeleteDocuments(searchQuery);
+                        foreach (string unitId in indexEntryIds)
+                        {
+                            var searchQuery = new TermQuery(new Term(nameof(IndexEntry.Id), unitId));
+                            indexWriter.DeleteDocuments(searchQuery);
+                        }
                     }
+                }
+            }
+            catch (Exception ex)
+            {
+                if (!ProcessIfLuceneException(ex))
+                {
+                    throw;
                 }
             }
         }
@@ -88,17 +132,27 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
                 return searchUnitIds;
             }
 
-            using (var indexDir = new EncryptedFSDirectory(dirInfo, _encryptionProvider, null))
-            using (var indexReader = IndexReader.Open(indexDir, true))
-            using (var indexSearcher = new IndexSearcher(indexReader))
+            try
             {
-                IEnumerable<ScoreDoc> scoreDocs = RunLiceneQuery(indexSearcher, 
-                    ConstructLuceneQuery(searchTerms),
-                    LUCENE_SEARCH_MAX_RESULT_COUNT);
-
-                foreach (var scoreDoc in scoreDocs)
+                using (var indexDir = new EncryptedFSDirectory(dirInfo, _encryptionProvider, null))
+                using (var indexReader = IndexReader.Open(indexDir, true))
+                using (var indexSearcher = new IndexSearcher(indexReader))
                 {
-                    searchUnitIds.Add(indexReader.Document(scoreDoc.Doc).GetField(nameof(IndexEntry.Id)).StringValue);
+                    IEnumerable<ScoreDoc> scoreDocs = RunLiceneQuery(indexSearcher,
+                        ConstructLuceneQuery(searchTerms),
+                        LUCENE_SEARCH_MAX_RESULT_COUNT);
+
+                    foreach (var scoreDoc in scoreDocs)
+                    {
+                        searchUnitIds.Add(indexReader.Document(scoreDoc.Doc).GetField(nameof(IndexEntry.Id)).StringValue);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                if (!ProcessIfLuceneException(ex))
+                {
+                    throw;
                 }
             }
 
@@ -238,32 +292,46 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
 
             DirectoryInfo dirInfo = GetIndexDirectoryInfo();
 
-            using (var analyzer = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30))
-            using (var indexDir = new EncryptedFSDirectory(dirInfo, _encryptionProvider, null))
+            try
             {
-                using (var indexWriter = new IndexWriter(indexDir, analyzer, IndexWriter.MaxFieldLength.UNLIMITED))
+                using (var analyzer = new StandardAnalyzer(Lucene.Net.Util.Version.LUCENE_30))
+                using (var indexDir = new EncryptedFSDirectory(dirInfo, _encryptionProvider, null))
                 {
-                    indexWriter.SetMergeScheduler(new SerialMergeScheduler());
-
-                    foreach (IndexEntry entry in indexEntries)
+                    using (var indexWriter = new IndexWriter(indexDir, analyzer, IndexWriter.MaxFieldLength.UNLIMITED))
                     {
-                        // remove older index entry
-                        var searchQuery = new TermQuery(new Term(nameof(IndexEntry.Id), entry.Id));
-                        indexWriter.DeleteDocuments(searchQuery);
+                        // When Lucene uses parralel merge, it creates threads and
+                        // upon merge error, it throws exceptions from these threads.
+                        // This means that when this happens, our app domain is gone...
+                        // So, we will just swith to SerialMerge instead.
+                        indexWriter.SetMergeScheduler(new SerialMergeScheduler());
 
-                        // create a Lucene document
-                        Document document = new Document();
-
-                        document.Add(new Field(nameof(IndexEntry.Id), entry.Id, Field.Store.YES, Field.Index.NOT_ANALYZED));
-
-                        foreach (IIndexUnit unit in entry.IndexUnits)
+                        foreach (IndexEntry entry in indexEntries)
                         {
-                            string stringToStore = string.Join(" ; ", unit.StringValues);
-                            document.Add(new Field(unit.Category.ToString(), stringToStore, Field.Store.NO, Field.Index.ANALYZED));
-                        }
+                            // remove older index entry
+                            var searchQuery = new TermQuery(new Term(nameof(IndexEntry.Id), entry.Id));
+                            indexWriter.DeleteDocuments(searchQuery);
 
-                        indexWriter.AddDocument(document, analyzer);
+                            // create a Lucene document
+                            Document document = new Document();
+
+                            document.Add(new Field(nameof(IndexEntry.Id), entry.Id, Field.Store.YES, Field.Index.NOT_ANALYZED));
+
+                            foreach (IIndexUnit unit in entry.IndexUnits)
+                            {
+                                string stringToStore = string.Join(" ; ", unit.StringValues);
+                                document.Add(new Field(unit.Category.ToString(), stringToStore, Field.Store.NO, Field.Index.ANALYZED));
+                            }
+
+                            indexWriter.AddDocument(document, analyzer);
+                        }
                     }
+                }
+            }
+            catch (Exception ex)
+            {
+                if (!ProcessIfLuceneException(ex))
+                {
+                    throw;
                 }
             }
         }
@@ -331,10 +399,12 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
                 return new IndexHealthInfo(false);
             }
 
-            string errorFilePath = Path.Combine(indexDirectoryPath, SEARCH_TERMINATING_ERROR_LOGFILE);
-            if (File.Exists(errorFilePath))
+            if (_persistenceProvider.CheckIfKeyExists(ProductConstants.SEARCH_INDEX_ERROR_LOG_CATEGORY, ProductConstants.SEARCH_INDEX_ERROR_LOG_AGGREGATE))
             {
-                return new IndexHealthInfo(false, File.ReadAllText(errorFilePath));
+                string aggregateErrorText = _persistenceProvider.ReadText(ProductConstants.SEARCH_INDEX_ERROR_LOG_CATEGORY, 
+                    ProductConstants.SEARCH_INDEX_ERROR_LOG_AGGREGATE);
+
+                return new IndexHealthInfo(false, aggregateErrorText);
             }
             else
             {

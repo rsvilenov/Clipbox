@@ -24,6 +24,14 @@ namespace Clipbox.Core
 
         public const string SEARCH_SERVICE_NAMED_PIPE_PREFIX = "ClipboxSearchPipe";
 
+        public const string SEARCH_USE_EXTERNAL_PROCESS_FLAG_KEY = "_useExternalSearch";
+
+        public const string SEARCH_PROCESS_EXE_NAME = "ClipboxSearch.exe";
+
+        public const string SEARCH_INDEX_ERROR_LOG_CATEGORY = "searchIdxErrors";
+
+        public const string SEARCH_INDEX_ERROR_LOG_AGGREGATE = "aggregate.log";
+
         public const string SHELL_EXTENSION_NAMED_PIPE_PREFIX = "ClipboxShExPipe";
         
         public static readonly IReadOnlyList<byte> CLIENT_EXE_HASH = new byte[] { 0 };

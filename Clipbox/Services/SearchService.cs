@@ -72,9 +72,24 @@ namespace Clipbox.Services
             _clipboardManager.ItemRemoved += _clipboardManager_ItemRemoved;
 
             _mainSyncContext = SynchronizationContext.Current;
-
-            // TODO: log the non fatal error info from the search provider
-            AreIndicesHealthy = searchProvider.GetIndexHealth().IsHealthy;
+            
+            AreIndicesHealthy = true;
+            Task.Run(() =>
+            {
+                try
+                {
+                    AreIndicesHealthy = searchProvider.GetIndexHealth().IsHealthy;
+                }
+                catch (TimeoutException)
+                {
+                    AreIndicesHealthy = false;
+                }
+                catch (Exception ex)
+                {
+                    var edi = ExceptionDispatchInfo.Capture(ex);
+                    _mainSyncContext.Post(state => ((ExceptionDispatchInfo)state).Throw(), edi);
+                }
+            });
         }
 
         private void _clipboardManager_ItemRemoved(object sender, ExtendedClipboard.EventArgs.ClipboardManagerEventArgs e)

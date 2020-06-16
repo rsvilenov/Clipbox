@@ -1,10 +1,12 @@
 ﻿using Clipbox.Core;
+using Clipbox.Core.Enums;
 using Clipbox.Infrastructure.Encryption;
 using Clipbox.Infrastructure.Encryption.EncryptionProviders;
 using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.Persistence.PersistenceProviders;
 using Clipbox.Infrastructure.Search;
 using Clipbox.Infrastructure.Search.SearchProviders;
+using System.Windows;
 
 namespace ClipboxSearch
 {
@@ -19,8 +21,15 @@ namespace ClipboxSearch
         {
             _persistenceProvider = new AppDataPersistenceProvider();
             _encryptionProvider = new AesEncryptionProvider(_persistenceProvider);
-            _searchProvider = new LuceneSearch(_encryptionProvider);
+            _searchProvider = new LuceneSearch(_encryptionProvider, _persistenceProvider);
             _remoteSearch = new RemoteSearch(ProductConstants.SEARCH_SERVICE_NAMED_PIPE_PREFIX, false, _searchProvider);
+
+            _remoteSearch.QuitRequested += _remoteSearch_QuitRequested;
+        }
+
+        private void _remoteSearch_QuitRequested(object sender, System.EventArgs e)
+        {
+            Application.Current.Shutdown((int)ProcessExitCodes.Ok);
         }
 
         public void ShutDown()
