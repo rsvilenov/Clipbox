@@ -10,13 +10,14 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 
 namespace ClipboxGuard
 {
     public class Bootstrapper
     {
-        private bool _hasShutdownSequenceBeenCalled;
+        private int _shutdownSequenceCallCount;
         private bool _isStartedFromSvc;
 
         private IPersistenceProvider _persistenceProvider;
@@ -89,14 +90,14 @@ namespace ClipboxGuard
                     newProcess.Start();
                 }
             }
+
+            Environment.Exit((int)ProcessExitCodes.Error);
         }
 
         public void PerformShutdownSequence(bool isResultOfError)
         {
-            if (!_hasShutdownSequenceBeenCalled)
+            if (Interlocked.Increment(ref _shutdownSequenceCallCount) == 1)
             {
-                _hasShutdownSequenceBeenCalled = true;
-
                 TryDisposeObject(_mainProcessKeeperService);
                 TryDisposeObject(_searchProcessKeeperService);
             }

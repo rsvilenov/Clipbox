@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows;
 
 namespace Clipbox
@@ -62,6 +63,8 @@ namespace Clipbox
         RebuildIndexWindowService _rebuildIndexWindowService;
         ISearchProviderSelectorService _searchProviderSelectorService;
         IGuardCommunicationService _guardCommunicationService;
+
+        private int _shutdownSequenceCallCount;
 
         public void PerformStartupSequence()
         {
@@ -291,22 +294,25 @@ namespace Clipbox
 
         public void PerformShutdownSequence(bool isResultOfError)
         {
-            // try to dispose of everything, regardless of the exceptions that may occur
-            TryDisposeObject(_keyboardService);
-            TryDisposeObject(_flowController);
-            TryDisposeObject(_cloudSyncService);
-            TryDisposeObject(_clipboardManager);
-            TryDisposeObject(_flowExtensionExecutorService);
-            TryDisposeObject(_previewWindowService);
-            TryDisposeObject(_quickViewClipboardContents);
-            TryDisposeObject(_previewGenerationService);
-            TryDisposeObject(_clipboardListenerService);
-            TryDisposeObject(_settingsWindowService);
-            TryDisposeObject(_trayService);
-            TryDisposeObject(_trayBandService);
-            TryDisposeObject(_trayContextMenuService);
-            TryDisposeObject(_rebuildIndexWindowService);
-            TryDisposeObject(_searchService);
+            if (Interlocked.Increment(ref _shutdownSequenceCallCount) == 1)
+            {
+                // try to dispose of everything, regardless of the exceptions that may occur
+                TryDisposeObject(_keyboardService);
+                TryDisposeObject(_flowController);
+                TryDisposeObject(_cloudSyncService);
+                TryDisposeObject(_clipboardManager);
+                TryDisposeObject(_flowExtensionExecutorService);
+                TryDisposeObject(_previewWindowService);
+                TryDisposeObject(_quickViewClipboardContents);
+                TryDisposeObject(_previewGenerationService);
+                TryDisposeObject(_clipboardListenerService);
+                TryDisposeObject(_settingsWindowService);
+                TryDisposeObject(_trayService);
+                TryDisposeObject(_trayBandService);
+                TryDisposeObject(_trayContextMenuService);
+                TryDisposeObject(_rebuildIndexWindowService);
+                TryDisposeObject(_searchService);
+            }
         }
 
         private void TryDisposeObject(IDisposable obj)
