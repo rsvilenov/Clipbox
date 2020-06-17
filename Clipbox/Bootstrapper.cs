@@ -61,6 +61,7 @@ namespace Clipbox
         IPersistenceProvider _persistenceProvider;
         RebuildIndexWindowService _rebuildIndexWindowService;
         ISearchProviderSelectorService _searchProviderSelectorService;
+        IGuardCommunicationService _guardCommunicationService;
 
         public void PerformStartupSequence()
         {
@@ -83,14 +84,6 @@ namespace Clipbox
                 return;
             }
 
-            if (!startupArgs.Any(arg => arg == ProductConstants.STARTED_FROM_SERVICE_ARG) &&
-                !startupArgs.Any(arg => arg == ProductConstants.STARTED_FROM_GUARD_ARG))
-            {
-                DemandExternalStart();
-                Application.Current.Shutdown((int)ProcessExitCodes.Ok);
-                return;
-            }
-
             // Disable WER error handling.
             // The docs for WerRegisterRuntimeExceptionModule, WerReportSetUIOption, etc... are terribly scarce and obscure,
             // so we will disable WER and roll out our own error reporting mechanism.
@@ -100,10 +93,28 @@ namespace Clipbox
             {
                 MarshalExt.ThrowOnWin32Error();
             }
-
+            
             ApplicationUtils.CacheWindowsAppInfo();
 
             _persistenceProvider = new AppDataPersistenceProvider();
+
+            // Initialize the settings service
+            IConfigurationProvider configurationProvider = new PersistableConfigurationProvider(_persistenceProvider);
+            _settingsService = new SettingsService(configurationProvider);
+            _settingsService.RegisterSettings(SettingsKeys.GetAllSettings());
+            _settingsService.SettingChanged += _settingsService_SettingChanged;
+
+            IEnumerable<SettingsUIExtension> settingsExtensions = _extensionLoader.SettingsUIExtensionContainer.ResolveAll();
+            foreach (ISettingsRegistrator ext in settingsExtensions)
+            {
+                _settingsService.RegisterSettings(ext.GetSettingKeys());
+            }
+
+            SetInitialSettings();
+
+            int sessionId = SessionUtils.GetCurrentSessionId();
+            _guardCommunicationService = new GuardCommunicationService(_persistenceProvider, _settingsService, sessionId);
+
 
             string appGuid = CreateOrGetAppGuid();
             
@@ -116,7 +127,7 @@ namespace Clipbox
             _extensionLoader.StatelessExtensionResolved += (s, e) =>
             {
                 // this may slow us down
-                _persistenceProvider.Write("lastLoadedExtension.log", $"{e.ExtensionType.FullName} [{e.ExtensionType.Assembly.FullName}]");
+                _persistenceProvider.Write(ProductConstants.LAST_LOADED_EXTENSION_PERSISTENCE_KEY, $"{e.ExtensionType.FullName} [{e.ExtensionType.Assembly.FullName}]");
             };
 
             IEncryptionProvider encryptionProvider = new AesEncryptionProvider(_persistenceProvider);
@@ -124,24 +135,7 @@ namespace Clipbox
 
             // Initialize the clipboard manager
             _clipboardManager = new ClipboardManager(_clipboardListenerService, _extensionLoader.FormatsContainer, _extensionLoader.PersistenceSupportExtensionContainer, _persistenceProvider, encryptionProvider);
-
-            // Initialize the settings service
-            IConfigurationProvider configurationProvider = new PersistableConfigurationProvider(_persistenceProvider);
-            _settingsService = new SettingsService(configurationProvider);
-            _settingsService.RegisterSettings(SettingsKeys.GetAllSettings());
-            _settingsService.SettingChanged += _settingsService_SettingChanged;
-
-            IEnumerable<SettingsUIExtension> settingsExtensions = _extensionLoader.SettingsUIExtensionContainer.ResolveAll();
-            foreach(ISettingsRegistrator ext in settingsExtensions)
-            {
-                _settingsService.RegisterSettings(ext.GetSettingKeys());
-            }
-
-            //_settingsService.SetSetting("Setting1", "set");
-
-            //var newSet = _settingsService.GetSetting<string>("Setting1");
-            SetInitialSettings();
-
+            
             _previewGenerationService = new PreviewGenerationService(_clipboardManager, _extensionLoader.PreviewGeneratorsContainer, _settingsService, _persistenceProvider);
             
             // Initialize the view model - the quick view should show as fast as possible, so we will create it beforehand
@@ -164,7 +158,7 @@ namespace Clipbox
 
             _trayContextMenuService = new TrayContextMenuService(_settingsService);
 
-            _searchProviderSelectorService = new SearchProviderSelectorService(_settingsService, _persistenceProvider, encryptionProvider);
+            _searchProviderSelectorService = new SearchProviderSelectorService(_settingsService, _persistenceProvider, encryptionProvider, sessionId);
             ISearchProvider searchProvider = _searchProviderSelectorService.GetSearchProvider();
 
             _searchService = new SearchService(_extensionLoader.SearchSupportExtensionContainer, _clipboardManager, searchProvider);
@@ -295,46 +289,6 @@ namespace Clipbox
             return appGuid;
         }
 
-        private void DemandExternalStart()
-        {
-            int mySessionId = SessionUtils.GetCurrentSessionId();
-
-            if (ProcessUtils.CheckProcessExists(Path.GetFileNameWithoutExtension(ProductConstants.SERVICE_EXE_NAME)))
-            {
-                DemandStartFromService(mySessionId);
-            }
-            else if (ProcessUtils.CheckProcessExistsInSession(Path.GetFileNameWithoutExtension(ProductConstants.GUARD_EXE_NAME), mySessionId))
-            {
-                DemandStartFromGuard(mySessionId);
-            }
-            else
-            {
-                throw new InvalidOperationException(
-                    $"Neither the service {ProductConstants.SERVICE_EXE_NAME} is running, nor {ProductConstants.GUARD_EXE_NAME} is found in session {mySessionId}");
-            }
-        }
-
-        private void DemandStartFromGuard(int mySessionId)
-        {
-            // send message to the elevated guard to start us elevated
-            NamedPipesClient npClient = new NamedPipesClient($"{ProductConstants.SERVICE_GUARD_NAMED_PIPE_PREFIX}.{mySessionId}");
-
-            // notify the guard of our existence, so that it can check whether an elevated process
-            // by our name already exists and if not, start us elevated
-            using (Process p = Process.GetCurrentProcess())
-            {
-                npClient.SendMessage(p.Id.ToString());
-            }
-        }
-
-        private void DemandStartFromService(int mySessionId)
-        {
-            const int serviceSessionId = 0;
-            // send message to the service to start us elevated
-            NamedPipesClient npClient = new NamedPipesClient($"{ProductConstants.SERVICE_GUARD_NAMED_PIPE_PREFIX}.{serviceSessionId}");
-            npClient.SendMessage(mySessionId.ToString());
-        }
-
         public void PerformShutdownSequence(bool isResultOfError)
         {
             // try to dispose of everything, regardless of the exceptions that may occur
@@ -396,8 +350,8 @@ namespace Clipbox
             
             try
             {
-                _persistenceProvider.Write("lastException.log", failureInfo.ToString());
-                _persistenceProvider.Write("lastException.xml", failureInfo.ToXml());
+                _persistenceProvider.Write(ProductConstants.LAST_EXCEPTION_PERSISTENCE_KEY, failureInfo.ToString());
+                _persistenceProvider.Write(ProductConstants.LAST_EXCEPTION_XML_PERSISTENCE_KEY, failureInfo.ToXml());
             }
             catch { }
             

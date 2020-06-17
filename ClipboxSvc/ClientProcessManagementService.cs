@@ -37,27 +37,24 @@ namespace ClipboxSvc
         {
             foreach (int sessionId in SessionUtils.GetActiveSessionIds().Where(s => s != 0))
             {
-                int pid = StartClientProcess(sessionId);
+                int pid = StartGuardProcess(sessionId);
                 _pidSessionIdMapping.Add(pid, sessionId);
             }
-
-            const int serviceSessionId = 0;
-
-            if (SessionUtils.GetCurrentSessionId() != serviceSessionId)
+            
+            if (SessionUtils.GetCurrentSessionId() != 0)
             {
                 throw new InvalidOperationException("This service must be started under session 0.");
             }
 
-            _namedPipesServer = new NamedPipesServer($"{ProductConstants.SERVICE_GUARD_NAMED_PIPE_PREFIX}.{serviceSessionId}");
+            _namedPipesServer = new NamedPipesServer(ProductConstants.SERVICE_NAMED_PIPE);
             _namedPipesServer.GotMessage += _namedPipesServer_GotMessage;
         }
 
         private void _namedPipesServer_GotMessage(object sender, NamedPipesResponseEventArgs e)
         {
-            int sessionId;
-            if (int.TryParse(e.ReceivedMessage, out sessionId))
+            if (int.TryParse(e.ReceivedMessage, out int sessionId))
             {
-                int pid = StartClientProcess(sessionId);
+                int pid = StartGuardProcess(sessionId);
                 _pidSessionIdMapping.Add(pid, sessionId);
             }
         }
@@ -76,15 +73,15 @@ namespace ClipboxSvc
 
         private void KillClientProcess(int sessionId)
         {
-            IEnumerable<int> allProcIds = ProcessUtils.GetProcessIdsByPathAndSessionId(Path.Combine(InstallationPath, ProductConstants.CLIENT_EXE_NAME), sessionId);
+            IEnumerable<int> allProcIds = ProcessUtils.GetProcessIdsByPathAndSessionId(Path.Combine(InstallationPath, ProductConstants.MAIN_PROCESS_EXE_NAME), sessionId);
 
             if (allProcIds.Any())
             {
-                using (Process clientProcessForSession = Process.GetProcessById(allProcIds.First()))
+                using (Process guardProcessForSession = Process.GetProcessById(allProcIds.First()))
                 {
-                    if (!clientProcessForSession.HasExited)
+                    if (!guardProcessForSession.HasExited)
                     {
-                        clientProcessForSession.Kill();
+                        guardProcessForSession.Kill();
                     }
                 }
             }
@@ -94,7 +91,7 @@ namespace ClipboxSvc
         {
             if (changeDescription.Reason == SessionChangeReason.SessionLogon)
             {
-                int pid = StartClientProcess(changeDescription.SessionId);
+                int pid = StartGuardProcess(changeDescription.SessionId);
                 _pidSessionIdMapping.Add(pid, changeDescription.SessionId);
             }
             
@@ -102,12 +99,12 @@ namespace ClipboxSvc
         }
         
 
-        private int StartClientProcess(int sessionId)
+        private int StartGuardProcess(int sessionId)
         {
-            string fullClientExePath = Path.Combine(InstallationPath, ProductConstants.CLIENT_EXE_NAME);
-            if (!File.Exists(fullClientExePath ))
+            string fullExePath = Path.Combine(InstallationPath, ProductConstants.GUARD_EXE_NAME);
+            if (!File.Exists(fullExePath ))
             {
-                throw new FileNotFoundException(fullClientExePath);
+                throw new FileNotFoundException(fullExePath);
             }
 
 #if RELEASE
@@ -116,7 +113,7 @@ namespace ClipboxSvc
             AssemblyUtils.AssertAssemblyHashCode(fullClientExePath, ProductConstants.CLIENT_EXE_HASH.ToArray());
 #endif
 
-            string fullStartupCmd = $"{fullClientExePath} {ProductConstants.STARTED_FROM_SERVICE_ARG}";
+            string fullStartupCmd = $"{fullExePath} {ProductConstants.STARTED_FROM_SERVICE_ARG}";
 
             uint clientPid = ProcessUtils.StartProcessWithSessionId(
                                         sessionId,
@@ -126,11 +123,11 @@ namespace ClipboxSvc
 
             Process process = Process.GetProcessById((int)clientPid);
             process.EnableRaisingEvents = true;
-            process.Exited += ClientProcess_Exited;
+            process.Exited += GuardProcess_Exited;
             return (int)clientPid;
         }
 
-        private void ClientProcess_Exited(object sender, System.EventArgs e)
+        private void GuardProcess_Exited(object sender, System.EventArgs e)
         {
             using (Process process = (Process)sender)
             {
@@ -146,44 +143,7 @@ namespace ClipboxSvc
                     StartGuardProcess(sessionId);
                 }
 
-                process.Exited -= ClientProcess_Exited;
-            }
-        }
-
-        private void StartGuardProcess(int sessionId)
-        {
-            string fullGuardExePath = Path.Combine(InstallationPath, ProductConstants.GUARD_EXE_NAME);
-
-            string fullStartupCmd = $"{fullGuardExePath} {ProductConstants.STARTED_FROM_SERVICE_ARG}";
-
-            uint guardPid = ProcessUtils.StartProcessWithSessionId(
-                                            sessionId,
-                                            fullStartupCmd,
-                                            startElevated: false,
-                                            startHighPriority: false);
-
-            _pidSessionIdMapping.Add((int)guardPid, sessionId);
-
-            Process guardProcess = Process.GetProcessById((int)guardPid);
-            guardProcess.EnableRaisingEvents = true;
-            guardProcess.Exited += GuardProcess_Exited;
-        }
-
-        private void GuardProcess_Exited(object sender, EventArgs e)
-        {
-            using (Process guardProcess = (Process)sender)
-            {
-                if (guardProcess.ExitCode == (int)ProcessExitCodes.Special)
-                {
-                    // restart the client process
-                    int sessionId = _pidSessionIdMapping[guardProcess.Id];
-                    _pidSessionIdMapping.Remove(guardProcess.Id);
-
-                    int clientPid = StartClientProcess(sessionId);
-                    _pidSessionIdMapping.Add(clientPid, sessionId);
-                }
-
-                guardProcess.Exited -= GuardProcess_Exited;
+                process.Exited -= GuardProcess_Exited;
             }
         }
 

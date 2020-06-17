@@ -6,5 +6,6 @@ namespace ClipboxGuard.Services.Interfaces
     public interface IMainProcessKeeperService
     {
         event EventHandler<RestartFatalErrorEventArgs> FatalErrorOccurred;
+        void StopSearchProcess();
     }
 }

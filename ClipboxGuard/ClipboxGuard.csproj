@@ -75,14 +75,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Bootstrapper.cs" />
     <Compile Include="Services\ErrorMessageWindowService.cs" />
     <Compile Include="Services\EventArgsClasses\RestartFatalErrorEventArgs.cs" />
     <Compile Include="Services\EventArgsClasses\FatalErrorEventArgs.cs" />
+    <Compile Include="Services\Interfaces\ISessionMonitorService.cs" />
     <Compile Include="Services\MainProcessKeeperService.cs" />
     <Compile Include="Services\Interfaces\IErrorMessageWindowService.cs" />
     <Compile Include="Services\Interfaces\IMainProcessKeeperService.cs" />
     <Compile Include="Services\Interfaces\ISearchProcessKeeperService.cs" />
     <Compile Include="Services\SearchProcessKeeperService.cs" />
+    <Compile Include="Services\SessionMonitorService.cs" />
     <Page Include="ErrorWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

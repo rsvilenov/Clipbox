@@ -128,6 +128,10 @@
       <Project>{a4cbb114-319b-4895-873c-bdbb6ea2b37d}</Project>
       <Name>Clipbox.Infrastructure.Search</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Clipbox.Win32\Clipbox.Win32.csproj">
+      <Project>{14442748-D4F5-4A60-A9DA-7E0B86D48B73}</Project>
+      <Name>Clipbox.Win32</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

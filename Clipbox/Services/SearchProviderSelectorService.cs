@@ -13,14 +13,17 @@ namespace Clipbox.Services
         private readonly ISettingsService _settingsService;
         private readonly IEncryptionProvider _encryptionProvider;
         private readonly IPersistenceProvider _persistenceProvider;
+        private readonly int _sessionId;
 
         public SearchProviderSelectorService(ISettingsService settingsService,
             IPersistenceProvider persistenceProvider,
-            IEncryptionProvider encryptionProvider)
+            IEncryptionProvider encryptionProvider,
+            int sessionId)
         {
             _settingsService = settingsService;
             _encryptionProvider = encryptionProvider;
             _persistenceProvider = persistenceProvider;
+            _sessionId = sessionId;
 
             SetOrUnsetPersistentFlagForExternalProcess();
             _settingsService.SettingChanged += _settingsService_SettingChanged;
@@ -49,7 +52,7 @@ namespace Clipbox.Services
             bool useExternalProcess = _settingsService.GetSetting<bool>(SettingsKeys.UseSearchProviderInExternalProcess);
             
             ISearchProvider searchProvider = useExternalProcess
-                ? (ISearchProvider)new RemoteSearch(ProductConstants.SEARCH_SERVICE_NAMED_PIPE_PREFIX, true)
+                ? (ISearchProvider)new RemoteSearch($"{ProductConstants.SEARCH_SERVICE_NAMED_PIPE_PREFIX}.{_sessionId}", true)
                 : new LuceneSearch(_encryptionProvider, _persistenceProvider);
 
             return searchProvider;

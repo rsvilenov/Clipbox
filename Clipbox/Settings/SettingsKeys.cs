@@ -51,7 +51,15 @@ namespace Clipbox.Settings
 
         public static SettingKey<int> OnItemStoringFlowExtensionsMaxTasks = new SettingKey<int>(nameof(OnItemStoringFlowExtensionsMaxTasks), 10);
 
+        /// <summary>
+        /// Restart is required. Remove this message when the implementation is complete.
+        /// </summary>
         public static SettingKey<bool> UseSearchProviderInExternalProcess = new SettingKey<bool>(nameof(UseSearchProviderInExternalProcess), true);
+
+        /// <summary>
+        /// Restart is required. Remove this message when the implementation is complete.
+        /// </summary>
+        public static SettingKey<bool> RunMainProcessWithHighPriority = new SettingKey<bool>(nameof(RunMainProcessWithHighPriority), false);
 
         internal static IEnumerable<ISettingKey> GetAllSettings()
         {

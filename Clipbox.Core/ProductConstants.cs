@@ -8,7 +8,7 @@ namespace Clipbox.Core
 
         public const double PRODUCT_VERSION = 0.1;
 
-        public const string CLIENT_EXE_NAME = "Clipbox.exe";
+        public const string MAIN_PROCESS_EXE_NAME = "Clipbox.exe";
 
         public const string GUARD_EXE_NAME = "ClipboxGuard.exe";
 
@@ -20,17 +20,34 @@ namespace Clipbox.Core
 
         public const string STARTED_FROM_GUARD_ARG = "guard";
 
-        public const string SERVICE_GUARD_NAMED_PIPE_PREFIX = "ClipboxPipe";
+        public const string RUN_WITH_HIGH_PRIORITY_FLAG_KEY = "_hp";
+
+        // deprecated
+        public const string SERVICE_NAMED_PIPE = "ClipboxSvcPipe";
+
+        public const string GUARD_NAMED_PIPE_PREFIX = "ClipboxGuardPipe";
+
+        public const string PIPE_QUIT_COMMAND = "Quit";
 
         public const string SEARCH_SERVICE_NAMED_PIPE_PREFIX = "ClipboxSearchPipe";
 
         public const string SEARCH_USE_EXTERNAL_PROCESS_FLAG_KEY = "_useExternalSearch";
-
+        
         public const string SEARCH_PROCESS_EXE_NAME = "ClipboxSearch.exe";
 
         public const string SEARCH_INDEX_ERROR_LOG_CATEGORY = "searchIdxErrors";
 
         public const string SEARCH_INDEX_ERROR_LOG_AGGREGATE = "aggregate.log";
+
+        public const string LAST_EXCEPTION_PERSISTENCE_KEY = "lastException.log";
+
+        public const string LAST_EXCEPTION_XML_PERSISTENCE_KEY = "lastException.xml";
+
+        public const string LAST_LOADED_EXTENSION_PERSISTENCE_KEY = "lastLoadedException.log";
+
+        // corresponds to the log file, created in DeskBand.cpp
+        // TODO: maybe set it in the registry
+        public const string DESKBAND_LOG_APPDATA_FILENAME = "deskband.log";
 
         public const string SHELL_EXTENSION_NAMED_PIPE_PREFIX = "ClipboxShExPipe";
         

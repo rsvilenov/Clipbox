@@ -19,6 +19,7 @@ namespace ClipboxGuard.Services
     public class SearchProcessKeeperService : ISearchProcessKeeperService, IDisposable
     {
         private const int WATCHER_POLL_INTERVAL_MS = 500;
+        private const int SEARCH_PROCESS_EXIT_TIMEOUT_MS = 3000;
 
         private readonly IPersistenceProvider _persistenceProvider;
         private readonly string _installationPath;
@@ -165,22 +166,29 @@ namespace ClipboxGuard.Services
                 
                 if (_flagForExternalProcessExists != flagStillExists)
                 {
-                    // if flagStillExists == false, stop the search process
-                    try
-                    {
-                        StopSearchProcess();
-                    }
-                    catch(Exception ex)
-                    {
-                        lock (_watcherMreLockHandle)
-                        {
-                            _watcherMre.Set();
-                        }
-
-                        throw new InvalidOperationException("The search process cannot be stopped.", ex);
-                    }
-
                     _flagForExternalProcessExists = flagStillExists;
+
+                    if (_flagForExternalProcessExists)
+                    {
+                        StartSearchProcess();
+                    }
+                    else
+                    {
+                        try
+                        {
+                            StopSearchProcess();
+                        }
+                        catch (Exception ex)
+                        {
+                            lock (_watcherMreLockHandle)
+                            {
+                                _watcherMre.Set();
+                            }
+
+                            throw new InvalidOperationException("The search process cannot be stopped.", ex);
+                        }
+                    }
+
                     RestartOfMainProcessRequested?.Invoke(this, new EventArgs());
                 }
 
@@ -200,8 +208,13 @@ namespace ClipboxGuard.Services
             return pids.Any();
         }
 
-        private void StopSearchProcess()
+        public void StopSearchProcess()
         {
+            if (!CheckIsSearchProcessRunning())
+            {
+                return;
+            }
+
             try
             {
                 _remoteSearchClient.PostServerQuitRequest();
@@ -210,13 +223,13 @@ namespace ClipboxGuard.Services
             {
                 if (!CheckIsSearchProcessRunning())
                 {
-                    // the process has already stopped
+                    // the has stopped in the meantime
                     return;
                 }
             }
             try
             {
-                _searchProcess.WaitForExit(3000);
+                _searchProcess.WaitForExit(SEARCH_PROCESS_EXIT_TIMEOUT_MS);
                 _searchProcess.Kill();
 
                 if (_isStdErrSubscribed)
@@ -229,12 +242,13 @@ namespace ClipboxGuard.Services
             }
             catch (InvalidOperationException)
             {
-                // the process has already exitted
+                // the process has already exitted 
+                // (see https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.process.kill?view=netcore-3.1)
             }
             catch (Win32Exception)
             {
-                // the process is still terminating
-                Thread.Sleep(3000);
+                // the process is probably still terminating
+                Thread.Sleep(SEARCH_PROCESS_EXIT_TIMEOUT_MS);
                 if (CheckIsSearchProcessRunning())
                 {
                     throw new InvalidOperationException("Search process could not be stopped.");

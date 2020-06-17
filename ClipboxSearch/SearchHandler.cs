@@ -6,6 +6,7 @@ using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.Persistence.PersistenceProviders;
 using Clipbox.Infrastructure.Search;
 using Clipbox.Infrastructure.Search.SearchProviders;
+using Clipbox.Win32;
 using System.Windows;
 
 namespace ClipboxSearch
@@ -22,7 +23,9 @@ namespace ClipboxSearch
             _persistenceProvider = new AppDataPersistenceProvider();
             _encryptionProvider = new AesEncryptionProvider(_persistenceProvider);
             _searchProvider = new LuceneSearch(_encryptionProvider, _persistenceProvider);
-            _remoteSearch = new RemoteSearch(ProductConstants.SEARCH_SERVICE_NAMED_PIPE_PREFIX, false, _searchProvider);
+
+            int sessionId = SessionUtils.GetCurrentSessionId();
+            _remoteSearch = new RemoteSearch($"{ProductConstants.SEARCH_SERVICE_NAMED_PIPE_PREFIX}.{sessionId}", false, _searchProvider);
 
             _remoteSearch.QuitRequested += _remoteSearch_QuitRequested;
         }

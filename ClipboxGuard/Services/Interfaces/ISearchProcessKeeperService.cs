@@ -7,5 +7,6 @@ namespace ClipboxGuard.Services.Interfaces
     {
         event EventHandler RestartOfMainProcessRequested;
         event EventHandler<FatalErrorEventArgs> FatalErrorOccurred;
+        void StopSearchProcess();
     }
 }
