@@ -7,6 +7,7 @@ using Clipbox.Win32;
 using ClipboxGuard.Services;
 using ClipboxGuard.Services.Interfaces;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -15,19 +16,24 @@ namespace ClipboxGuard
 {
     public class Bootstrapper
     {
-        private bool _stopping;
+        private bool _hasShutdownSequenceBeenCalled;
+        private bool _isStartedFromSvc;
+
         private IPersistenceProvider _persistenceProvider;
         private MainProcessKeeperService _mainProcessKeeperService;
         private SearchProcessKeeperService _searchProcessKeeperService;
         private IErrorMessageWindowService _errorMessageWindowService;
         private ISessionMonitorService _sessionMonitorService;
 
+
         public void PerformStartupSequence()
         {
             string[] startupArgs = Environment.GetCommandLineArgs();
-            bool isStartedFromService = startupArgs.Any(arg => arg == ProductConstants.STARTED_FROM_SERVICE_ARG);
+            _isStartedFromSvc = startupArgs.Any(arg => arg == ProductConstants.STARTED_FROM_SERVICE_ARG);
             bool isStartedFromWindowsScheduler = startupArgs.Any(arg => arg == ProductConstants.STARTED_FROM_SCHEDULER_ARG);
-            if (!isStartedFromService && !isStartedFromWindowsScheduler)
+            bool isStartedFromGuard = startupArgs.Any(arg => arg == ProductConstants.STARTED_FROM_GUARD_ARG);
+
+            if (!_isStartedFromSvc && !isStartedFromWindowsScheduler && !isStartedFromGuard)
             {
                 int mySessionId = SessionUtils.GetCurrentSessionId();
 
@@ -44,6 +50,8 @@ namespace ClipboxGuard
                 return;
             }
 
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+
             string installationPath = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().GetName().CodeBase);
             installationPath = new Uri(installationPath).LocalPath;
             _persistenceProvider = new AppDataPersistenceProvider();
@@ -52,17 +60,46 @@ namespace ClipboxGuard
 
             _searchProcessKeeperService = new SearchProcessKeeperService(_persistenceProvider, installationPath, sessionId);
             _mainProcessKeeperService = new MainProcessKeeperService(_searchProcessKeeperService, _persistenceProvider, installationPath, sessionId);
-            _errorMessageWindowService = new ErrorMessageWindowService(_mainProcessKeeperService, _searchProcessKeeperService);
+            _errorMessageWindowService = new ErrorMessageWindowService(_mainProcessKeeperService, _searchProcessKeeperService, _isStartedFromSvc);
             _sessionMonitorService = new SessionMonitorService(_mainProcessKeeperService, _searchProcessKeeperService);
+        }
 
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            bool isRestartRequested = false;
+            try
+            {
+                if (e.ExceptionObject is Exception ex)
+                {
+                    _persistenceProvider.Write(ProductConstants.LAST_GUARD_EXCEPTION_PERSISTENCE_KEY, ex.ToString());
+                }
+
+                _errorMessageWindowService?.ShowErrorMessageWindow(out isRestartRequested);
+            }
+            catch { }
+
+            PerformShutdownSequence(isResultOfError: true);
+
+            if (isRestartRequested && !_isStartedFromSvc)
+            {
+                using (Process currentProcess = Process.GetCurrentProcess())
+                using (Process newProcess = new Process())
+                {
+                    newProcess.StartInfo = new ProcessStartInfo(currentProcess.MainModule.FileName, ProductConstants.STARTED_FROM_GUARD_ARG);
+                    newProcess.Start();
+                }
+            }
         }
 
         public void PerformShutdownSequence(bool isResultOfError)
         {
-            _stopping = true;
+            if (!_hasShutdownSequenceBeenCalled)
+            {
+                _hasShutdownSequenceBeenCalled = true;
 
-            TryDisposeObject(_mainProcessKeeperService);
-            TryDisposeObject(_searchProcessKeeperService);
+                TryDisposeObject(_mainProcessKeeperService);
+                TryDisposeObject(_searchProcessKeeperService);
+            }
         }
 
         private void DemandStartFromService(int mySessionId)

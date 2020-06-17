@@ -8,12 +8,15 @@ namespace ClipboxGuard.Services
     {
         private readonly IMainProcessKeeperService _mainProcessKeeperService;
         private readonly ISearchProcessKeeperService _searchProcessKeeperService;
+        private readonly bool _isStartedFromSvc;
 
         public ErrorMessageWindowService(IMainProcessKeeperService mainProcessKeeperService,
-            ISearchProcessKeeperService searchProcessKeeperService)
+            ISearchProcessKeeperService searchProcessKeeperService,
+            bool isStartedFromSvc)
         {
             _mainProcessKeeperService = mainProcessKeeperService;
             _searchProcessKeeperService = searchProcessKeeperService;
+            _isStartedFromSvc = isStartedFromSvc;
 
             _mainProcessKeeperService.FatalErrorOccurred += _mainProcessKeeperService_FatalErrorOccurred;
             _searchProcessKeeperService.FatalErrorOccurred += _searchProcessKeeperService_FatalErrorOccurred;
@@ -21,10 +24,18 @@ namespace ClipboxGuard.Services
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         }
 
+        public void ShowErrorMessageWindow(out bool isRestartRequested)
+        {
+            isRestartRequested = true;
+        }
+
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             // Show the error dialog and when the user clicks ok, let the process die by itself.
             // The windows service (ClipboxSvc) should restart the process. 
+            // If the service is not available, start the process anew here.
+            // If the user unchecks the "restart" checkbox, exit this process with code 0,
+            // so that the service will know that it should not restart it.
         }
 
         private void _mainProcessKeeperService_FatalErrorOccurred(object sender, RestartFatalErrorEventArgs e)

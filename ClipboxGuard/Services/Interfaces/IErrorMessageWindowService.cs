@@ -2,5 +2,6 @@
 {
     public interface IErrorMessageWindowService
     {
+        void ShowErrorMessageWindow(out bool isRestartRequested);
     }
 }
