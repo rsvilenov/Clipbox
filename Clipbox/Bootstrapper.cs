@@ -96,7 +96,7 @@ namespace Clipbox
             {
                 MarshalExt.ThrowOnWin32Error();
             }
-            
+
             ApplicationUtils.CacheWindowsAppInfo();
 
             _persistenceProvider = new AppDataPersistenceProvider();
@@ -120,7 +120,7 @@ namespace Clipbox
 
 
             string appGuid = CreateOrGetAppGuid();
-            
+
             // Initialize the clipboard listener
             _clipboardListenerService = new ClipboardListenerService();
 
@@ -137,7 +137,10 @@ namespace Clipbox
 
 
             // Initialize the clipboard manager
-            _clipboardManager = new ClipboardManager(_clipboardListenerService, _extensionLoader.FormatsContainer, _extensionLoader.PersistenceSupportExtensionContainer, _persistenceProvider, encryptionProvider);
+            _clipboardManager = new ClipboardManager(_clipboardListenerService, _extensionLoader.FormatsContainer, _extensionLoader.PersistenceSupportExtensionContainer, _persistenceProvider, encryptionProvider)
+            {
+                IsClipboardTrackingEnabled = _settingsService.GetSetting(SettingsKeys.IsClipboardTrackingEnabled)
+            };
             
             _previewGenerationService = new PreviewGenerationService(_clipboardManager, _extensionLoader.PreviewGeneratorsContainer, _settingsService, _persistenceProvider);
             
@@ -256,11 +259,12 @@ namespace Clipbox
                 if ((bool)e.Value)
                 {
                     File.Delete(disabledFileName);
+                    _clipboardManager.IsClipboardTrackingEnabled = true;
                 }
                 else
                 {
                     // disable the clipboard manager as well
-
+                    _clipboardManager.IsClipboardTrackingEnabled = false;
                     File.Create(disabledFileName).Dispose();
                 }
             }

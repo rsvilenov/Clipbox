@@ -11,6 +11,8 @@ namespace Clipbox.ExtendedClipboard.Interfaces
     {
         // TODO: interface segregation principle...
 
+        bool IsClipboardTrackingEnabled { get; set; }
+
         void EnableDisableSyncOfItem(string clipboardItemId, bool enable);
 
         void PinUnpinItemItem(string clipboardItemId, bool pin);

@@ -110,7 +110,11 @@ namespace Clipbox.ExtendedClipboard
                 _isClipboardListeningSuspended = false;
 
             _clipboardEventProvider.ClipboardContentChanged += _interceptor_ClipboardContentChanged;
+
+            IsClipboardTrackingEnabled = true;
         }
+
+        public bool IsClipboardTrackingEnabled { get; set; }
 
         private void LoadFromDisk()
         {
@@ -365,7 +369,7 @@ namespace Clipbox.ExtendedClipboard
         
         private void _interceptor_ClipboardContentChanged(object sender, ClipboardEventArgs e)
         {
-            if (_isClipboardListeningSuspended)
+            if (_isClipboardListeningSuspended || !IsClipboardTrackingEnabled)
             {
                 return;
             }
