@@ -46,6 +46,10 @@ namespace Clipbox.Core
         public const string LAST_LOADED_EXTENSION_PERSISTENCE_KEY = "lastLoadedEtension.log";
 
         public const string LAST_GUARD_EXCEPTION_PERSISTENCE_KEY = "lastGuardException.log";
+        
+        public const string MAIN_CRASHFILE_PERSISTENCE_KEY = "mainCrash.log";
+
+        public const string SEARCH_CRASHFILE_PERSISTENCE_KEY = "searchCrash.log";
 
         // corresponds to the log file, created in DeskBand.cpp
         // TODO: maybe set it in the registry

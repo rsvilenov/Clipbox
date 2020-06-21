@@ -9,12 +9,10 @@ using Clipbox.Infrastructure.CloudSupport.CloudSupportProviders;
 using Clipbox.Infrastructure.Configuration;
 using Clipbox.Infrastructure.Encryption;
 using Clipbox.Infrastructure.Encryption.EncryptionProviders;
-using Clipbox.Infrastructure.IPC;
 using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.Persistence.FilesystemAccess;
 using Clipbox.Infrastructure.Persistence.PersistenceProviders;
 using Clipbox.Infrastructure.Search;
-using Clipbox.Infrastructure.Search.SearchProviders;
 using Clipbox.Infrastructure.UI.Localization;
 using Clipbox.Infrastructure.UI.Localization.LozalizationProviders;
 using Clipbox.Infrastructure.UI.Theme;
@@ -68,11 +66,24 @@ namespace Clipbox
 
         public void PerformStartupSequence()
         {
+            try
+            {
+                _persistenceProvider = new AppDataPersistenceProvider();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error initializing Persistence provider:{ex.Message}");
+                Application.Current.Shutdown((int)ProcessExitCodes.Error);
+                return;
+            }
+
             AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
             {
                 // ignore args.IsTerminating - we will "fail fast"
                 ProcessUnhandledException(args.ExceptionObject);
             };
+
+            ClearLastExceptionInfo();
 
             // some functions such as registry access cannot work properly
             // if the program is not compiled for the appropriate platform
@@ -83,6 +94,12 @@ namespace Clipbox
             if (startupArgs.Any(arg => arg == "ShowBrushes"))
             {
                 (new ThemePreview()).ShowDialog();
+                Application.Current.Shutdown((int)ProcessExitCodes.Ok);
+                return;
+            }
+            else if (!startupArgs.Any(arg => arg == ProductConstants.STARTED_FROM_GUARD_ARG))
+            {
+                MessageBox.Show("This program is not meant to be started manually.");
                 Application.Current.Shutdown((int)ProcessExitCodes.Ok);
                 return;
             }
@@ -99,7 +116,14 @@ namespace Clipbox
 
             ApplicationUtils.CacheWindowsAppInfo();
 
-            _persistenceProvider = new AppDataPersistenceProvider();
+            // Load extension containers
+            _extensionLoader = new ExtensionLoader();
+            _extensionLoader.LoadContainers();
+            _extensionLoader.StatelessExtensionResolved += (s, e) =>
+            {
+                // this may slow us down
+                _persistenceProvider.Write(ProductConstants.LAST_LOADED_EXTENSION_PERSISTENCE_KEY, $"{e.ExtensionType.FullName} [{e.ExtensionType.Assembly.FullName}]");
+            };
 
             // Initialize the settings service
             IConfigurationProvider configurationProvider = new PersistableConfigurationProvider(_persistenceProvider);
@@ -124,15 +148,6 @@ namespace Clipbox
             // Initialize the clipboard listener
             _clipboardListenerService = new ClipboardListenerService();
 
-            // Load extension containers
-            _extensionLoader = new ExtensionLoader();
-            _extensionLoader.LoadContainers();
-            _extensionLoader.StatelessExtensionResolved += (s, e) =>
-            {
-                // this may slow us down
-                _persistenceProvider.Write(ProductConstants.LAST_LOADED_EXTENSION_PERSISTENCE_KEY, $"{e.ExtensionType.FullName} [{e.ExtensionType.Assembly.FullName}]");
-            };
-
             IEncryptionProvider encryptionProvider = new AesEncryptionProvider(_persistenceProvider);
 
 
@@ -141,9 +156,9 @@ namespace Clipbox
             {
                 IsClipboardTrackingEnabled = _settingsService.GetSetting(SettingsKeys.IsClipboardTrackingEnabled)
             };
-            
+
             _previewGenerationService = new PreviewGenerationService(_clipboardManager, _extensionLoader.PreviewGeneratorsContainer, _settingsService, _persistenceProvider);
-            
+
             // Initialize the view model - the quick view should show as fast as possible, so we will create it beforehand
             var viewModel = new QuickViewkClipboardContentsViewModel(_clipboardManager, _previewGenerationService, _settingsService);
 
@@ -168,11 +183,11 @@ namespace Clipbox
             ISearchProvider searchProvider = _searchProviderSelectorService.GetSearchProvider();
 
             _searchService = new SearchService(_extensionLoader.SearchSupportExtensionContainer, _clipboardManager, searchProvider);
-            
+
             // this view can show a little bit slower so we will not keep its instance alive the whole time - we will create it upon request within the service
-            _mainClipboardViewWindowService = new MainClipboardViewWindowService(_clipboardManager, 
-                _previewGenerationService, 
-                _extensionLoader.UIExtensionContainer, 
+            _mainClipboardViewWindowService = new MainClipboardViewWindowService(_clipboardManager,
+                _previewGenerationService,
+                _extensionLoader.UIExtensionContainer,
                 _settingsService,
                 _searchService,
                 _cloudSyncService);
@@ -211,6 +226,23 @@ namespace Clipbox
             ThemeManager.TransparencySettingChanged += ThemeManager_TransparencySettingChanged;
         }
 
+        private void ClearLastExceptionInfo()
+        {
+            if (_persistenceProvider.CheckIfKeyExists(ProductConstants.LAST_EXCEPTION_PERSISTENCE_KEY))
+            {
+                _persistenceProvider.Delete(ProductConstants.LAST_EXCEPTION_PERSISTENCE_KEY);
+            }
+
+            if (_persistenceProvider.CheckIfKeyExists(ProductConstants.LAST_EXCEPTION_XML_PERSISTENCE_KEY))
+            {
+                _persistenceProvider.Delete(ProductConstants.LAST_EXCEPTION_XML_PERSISTENCE_KEY);
+            }
+
+            if (_persistenceProvider.CheckIfKeyExists(ProductConstants.MAIN_CRASHFILE_PERSISTENCE_KEY))
+            {
+                _persistenceProvider.Delete(ProductConstants.MAIN_CRASHFILE_PERSISTENCE_KEY);
+            }
+        }
 
         private void SetInitialSettings()
         {
@@ -330,7 +362,7 @@ namespace Clipbox
         private void ProcessUnhandledException(object exceptionObject)
         {
             FailureInfo failureInfo = FailureInfo.CreateWithSystemSnapshot();
-
+            
             if (exceptionObject != null)
             {
                 failureInfo.LoadExceptionObject(exceptionObject);

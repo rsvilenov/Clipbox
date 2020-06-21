@@ -11,7 +11,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace ClipboxGuard.Services
@@ -27,8 +26,6 @@ namespace ClipboxGuard.Services
         private readonly NamedPipesClient _pipeClient;
         
         private Process _mainProcess;
-        private StringBuilder _processStdErrStrBuilder;
-        private bool _isStdErrSubscribed;
 
         public event EventHandler<RestartFatalErrorEventArgs> FatalErrorOccurred;
 
@@ -45,8 +42,11 @@ namespace ClipboxGuard.Services
             _pipeClient = new NamedPipesClient($"{ProductConstants.GUARD_NAMED_PIPE_PREFIX}.{sessionId}");
             
             _searchProcessKeeperService.RestartOfMainProcessRequested += _searchProcessKeeperService_RestartOfMainProcessRequested;
+        }
 
-            StartMainProcess();
+        public void StartExternalProcessManagement()
+        {
+            StartMainProcess(stopFirstIfRunning: true);
         }
 
         private void _searchProcessKeeperService_RestartOfMainProcessRequested(object sender, EventArgs e)
@@ -56,10 +56,10 @@ namespace ClipboxGuard.Services
                 throw new InvalidOperationException("The main process should have stopped by itself by now. It is still running. It is not planned to stop it from the guard.");
             }
 
-            StartMainProcess();
+            StartMainProcess(stopFirstIfRunning: false);
         }
 
-        private void StartMainProcess()
+        private void StartMainProcess(bool stopFirstIfRunning)
         {
             string mainProcessPath = Path.Combine(_installationPath, ProductConstants.MAIN_PROCESS_EXE_NAME);
             if (!File.Exists(mainProcessPath))
@@ -69,60 +69,47 @@ namespace ClipboxGuard.Services
 
             if (CheckIsMainProcessRunning())
             {
-                throw new InvalidOperationException($"Main process is already started in the current session. (session id: {_sessionId})");
+                if (stopFirstIfRunning)
+                {
+                    StopMainProcess();
+                }
+                else
+                {
+                    throw new InvalidOperationException($"Main process is already started in the current session. (session id: {_sessionId})");
+                }
             }
 
             bool runWithHighPriority = _persistenceProvider
                 .CheckIfKeyExists(ProductConstants.RUN_WITH_HIGH_PRIORITY_FLAG_KEY);
-
-            _processStdErrStrBuilder = new StringBuilder();
-
+            
             _mainProcess = new Process
             {
                 StartInfo = new ProcessStartInfo
                 {
                     FileName = mainProcessPath,
+                    Arguments = ProductConstants.STARTED_FROM_GUARD_ARG,
                     RedirectStandardError = true,
                     UseShellExecute = false
-                },
-                EnableRaisingEvents = true,
-                PriorityClass = runWithHighPriority ?
-                    ProcessPriorityClass.High
-                    : ProcessPriorityClass.Normal
+                }
             };
 
             _mainProcess.Exited += _mainProcess_Exited;
-            _mainProcess.ErrorDataReceived += _mainProcess_ErrorDataReceived;
             _mainProcess.Start();
-            // begin async read
-            _mainProcess.BeginErrorReadLine();
-            _isStdErrSubscribed = true;
-        }
-
-        private void _mainProcess_ErrorDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            if (e.Data == null)
-            {
-                _mainProcess.ErrorDataReceived -= _mainProcess_ErrorDataReceived;
-                _isStdErrSubscribed = false;
-            }
-            else
-            {
-                _processStdErrStrBuilder.AppendLine(e.Data);
-            }
+            _mainProcess.EnableRaisingEvents = true;
+            _mainProcess.PriorityClass = runWithHighPriority ?
+                    ProcessPriorityClass.High
+                    : ProcessPriorityClass.Normal;
         }
 
         private void _mainProcess_Exited(object sender, EventArgs e)
         {
             _mainProcess.Exited -= _mainProcess_Exited;
-
-            if (_isStdErrSubscribed)
-            {
-                _mainProcess.ErrorDataReceived -= _mainProcess_ErrorDataReceived;
-                _isStdErrSubscribed = false;
-            }
-
+            
             int exitCode = _mainProcess.ExitCode;
+            string stdErr = _mainProcess.StandardError.ReadToEnd();
+
+            try { _persistenceProvider.Write(ProductConstants.MAIN_CRASHFILE_PERSISTENCE_KEY, stdErr); }
+            catch { }
 
             _mainProcess.Dispose();
 
@@ -135,12 +122,12 @@ namespace ClipboxGuard.Services
                 }
                 catch { }
 
-                var args = new RestartFatalErrorEventArgs(_processStdErrStrBuilder.ToString());
+                var args = new RestartFatalErrorEventArgs(stdErr);
                 FatalErrorOccurred?.Invoke(this, args);
 
                 if (args.RestartProcess)
                 {
-                    StartMainProcess();
+                    StartMainProcess(stopFirstIfRunning: false);
                 }
             }
         }
@@ -152,7 +139,7 @@ namespace ClipboxGuard.Services
             return pids.Any();
         }
 
-        public void StopSearchProcess()
+        public void StopMainProcess()
         {
             if (!CheckIsMainProcessRunning())
             {
@@ -163,7 +150,7 @@ namespace ClipboxGuard.Services
             {
                 _pipeClient.SendMessage(ProductConstants.PIPE_QUIT_COMMAND);
             }
-            catch (TimeoutException)
+            catch (Exception ex) when (ex is TimeoutException || ex is IOException)
             {
                 if (!CheckIsMainProcessRunning())
                 {
@@ -175,12 +162,6 @@ namespace ClipboxGuard.Services
             {
                 _mainProcess.WaitForExit(MAIN_PROCESS_EXIT_TIMEOUT_MS);
                 _mainProcess.Kill();
-
-                if (_isStdErrSubscribed)
-                {
-                    _mainProcess.ErrorDataReceived -= _mainProcess_ErrorDataReceived;
-                    _isStdErrSubscribed = false;
-                }
 
                 _mainProcess.Dispose();
             }
@@ -229,13 +210,7 @@ namespace ClipboxGuard.Services
         {
             try
             {
-                StopSearchProcess();
-
-                if (_isStdErrSubscribed)
-                {
-                    _mainProcess.ErrorDataReceived -= _mainProcess_ErrorDataReceived;
-                    _isStdErrSubscribed = false;
-                }
+                StopMainProcess();
             }
             catch { }
         }

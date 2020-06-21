@@ -21,7 +21,7 @@ namespace ClipboxGuard.Services
         private void Current_SessionEnding(object sender, SessionEndingCancelEventArgs e)
         {
             // stop the main process first, because it depends on the search process
-            _mainProcessKeeperService.StopSearchProcess();
+            _mainProcessKeeperService.StopMainProcess();
             _searchProcessKeeperService.StopSearchProcess();
             // now stop the guard
             Application.Current.Shutdown((int)ProcessExitCodes.Ok);

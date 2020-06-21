@@ -10,7 +10,9 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.ExceptionServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace ClipboxGuard
@@ -44,7 +46,7 @@ namespace ClipboxGuard
                 }
                 else
                 {
-                    MessageBox.Show("This executable is not meant to be started by the user."); 
+                    MessageBox.Show("This executable is not meant to be started by the user.");
                 }
 
                 Application.Current.Shutdown((int)ProcessExitCodes.Ok);
@@ -53,16 +55,57 @@ namespace ClipboxGuard
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
-            string installationPath = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().GetName().CodeBase);
-            installationPath = new Uri(installationPath).LocalPath;
-            _persistenceProvider = new AppDataPersistenceProvider();
+            SynchronizationContext mainSyncContext = SynchronizationContext.Current;
+            TaskScheduler.UnobservedTaskException += (sender, args) =>
+            {
+                var edi = ExceptionDispatchInfo.Capture(args.Exception);
+                mainSyncContext.Post(state => ((ExceptionDispatchInfo)state).Throw(), edi);
+            };
 
-            int sessionId = SessionUtils.GetCurrentSessionId();
+            try
+            {
+                _persistenceProvider = new AppDataPersistenceProvider();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"The persistence provider cannot be initialized: {ex.Message}");
+                Application.Current.Shutdown((int)ProcessExitCodes.Error);
+                return;
+            }
 
-            _searchProcessKeeperService = new SearchProcessKeeperService(_persistenceProvider, installationPath, sessionId);
-            _mainProcessKeeperService = new MainProcessKeeperService(_searchProcessKeeperService, _persistenceProvider, installationPath, sessionId);
-            _errorMessageWindowService = new ErrorMessageWindowService(_mainProcessKeeperService, _searchProcessKeeperService, _isStartedFromSvc);
-            _sessionMonitorService = new SessionMonitorService(_mainProcessKeeperService, _searchProcessKeeperService);
+            try
+            {
+                ClearLastExceptionInfo();
+
+                string installationPath = Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().GetName().CodeBase);
+                installationPath = new Uri(installationPath).LocalPath;
+
+                int sessionId = SessionUtils.GetCurrentSessionId();
+
+                _searchProcessKeeperService = new SearchProcessKeeperService(_persistenceProvider, installationPath, sessionId);
+                _mainProcessKeeperService = new MainProcessKeeperService(_searchProcessKeeperService, _persistenceProvider, installationPath, sessionId);
+                _errorMessageWindowService = new ErrorMessageWindowService(_mainProcessKeeperService, _searchProcessKeeperService, _persistenceProvider, _isStartedFromSvc);
+                _sessionMonitorService = new SessionMonitorService(_mainProcessKeeperService, _searchProcessKeeperService);
+
+                // start the external processes after the error message window service
+                // has been started, so that if they crash immediately after starting,
+                // their errors will be shown in the error window
+                _searchProcessKeeperService.StartExternalProcessManagement();
+                _mainProcessKeeperService.StartExternalProcessManagement();
+            }
+            catch
+            {
+                _errorMessageWindowService = new ErrorMessageWindowService(_persistenceProvider, _isStartedFromSvc);
+                throw;
+            }
+        }
+
+        private void ClearLastExceptionInfo()
+        {
+            if (_persistenceProvider.CheckIfKeyExists(ProductConstants.LAST_GUARD_EXCEPTION_PERSISTENCE_KEY))
+            {
+                _persistenceProvider.Delete(ProductConstants.LAST_GUARD_EXCEPTION_PERSISTENCE_KEY);
+            }
         }
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
@@ -91,7 +134,9 @@ namespace ClipboxGuard
                 }
             }
 
-            Environment.Exit((int)ProcessExitCodes.Error);
+            // if we exit with Special, the service will restart us.
+            Environment.Exit(isRestartRequested ? 
+                (int)ProcessExitCodes.Special : (int)ProcessExitCodes.Error);
         }
 
         public void PerformShutdownSequence(bool isResultOfError)
@@ -108,36 +153,6 @@ namespace ClipboxGuard
             // send message to the service to start us elevated
             NamedPipesClient npClient = new NamedPipesClient(ProductConstants.SERVICE_NAMED_PIPE);
             npClient.SendMessage(mySessionId.ToString());
-        }
-
-        private void ShowErrorWindow()
-        {
-            //string lastException = _persistenceProvider.ReadText(ProductConstants.LAST_EXCEPTION_PERSISTENCE_KEY);
-
-            //Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, (Action)(() =>
-            //{
-            //    var errorWindow = new ErrorWindow(lastException);
-            //    errorWindow.Closed += ErrorWinow_Closed;
-            //}));
-        }
-
-        private void ErrorWinow_Closed(object sender, EventArgs e)
-        {
-            //_persistenceProvider.Write(ProductConstants.LAST_EXCEPTION_PERSISTENCE_KEY, new byte[0]);
-
-            //var errorWindow = (ErrorWindow)sender;
-            //if (_isStartedFromService)
-            //{
-            //    Shutdown
-            //        (
-            //            // if the 'restart' checkbox is checked,
-            //            // tell the service that it should start the client process
-            //            // by exitting with 'Special' exit code
-            //            errorWindow.IsRestartClientProcessCbChecked ?
-            //                (int)ProcessExitCodes.Special :
-            //                (int)ProcessExitCodes.Ok
-            //        );
-            //}
         }
         
         private void TryDisposeObject(IDisposable obj)

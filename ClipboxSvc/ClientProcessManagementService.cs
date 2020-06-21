@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.ServiceProcess;
+using System.Threading;
 
 namespace ClipboxSvc
 {
@@ -28,22 +29,22 @@ namespace ClipboxSvc
         public void OnDebug()
         {
             OnStart(null);
-            Console.ReadKey();
+            new ManualResetEvent(false).WaitOne();
             //System.Threading.Thread.Sleep(20000);
             //OnStop();
         }
 
         protected override void OnStart(string[] args)
         {
+            if (SessionUtils.GetCurrentSessionId() != 0)
+            {
+                throw new InvalidOperationException("This service must be started under session 0.");
+            }
+
             foreach (int sessionId in SessionUtils.GetActiveSessionIds().Where(s => s != 0))
             {
                 int pid = StartGuardProcess(sessionId);
                 _pidSessionIdMapping.Add(pid, sessionId);
-            }
-            
-            if (SessionUtils.GetCurrentSessionId() != 0)
-            {
-                throw new InvalidOperationException("This service must be started under session 0.");
             }
 
             _namedPipesServer = new NamedPipesServer(ProductConstants.SERVICE_NAMED_PIPE);
@@ -134,7 +135,7 @@ namespace ClipboxSvc
                 // the exit code of a process, terminated by Process.Kill() is less than,
                 // or equal to 0.
                 // https://stackoverflow.com/questions/2455232/exit-code-of-a-process-terminated-with-process-kill-in-c-sharp
-                if (process.ExitCode != (int)ProcessExitCodes.Ok && !_stopping)
+                if (process.ExitCode == (int)ProcessExitCodes.Special && !_stopping)
                 {
                     // restart the process
                     int sessionId = _pidSessionIdMapping[process.Id];

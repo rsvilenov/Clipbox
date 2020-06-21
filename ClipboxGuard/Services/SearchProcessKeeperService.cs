@@ -13,6 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace ClipboxGuard.Services
 {
@@ -30,8 +31,6 @@ namespace ClipboxGuard.Services
         private ManualResetEvent _watcherMre;
         private readonly object _watcherMreLockHandle;
         private Process _searchProcess;
-        private StringBuilder _processStdErrStrBuilder;
-        private bool _isStdErrSubscribed;
         private RemoteSearch _remoteSearchClient;
 
         public event EventHandler RestartOfMainProcessRequested;
@@ -49,6 +48,11 @@ namespace ClipboxGuard.Services
             _watcherMre = new ManualResetEvent(false);
             _watcherMreLockHandle = new object();
             _remoteSearchClient = new RemoteSearch(ProductConstants.SEARCH_SERVICE_NAMED_PIPE_PREFIX, true);
+        }
+
+        public void StartExternalProcessManagement()
+        {
+            StartFlagWatcher();
 
             if (_flagForExternalProcessExists)
             {
@@ -68,9 +72,7 @@ namespace ClipboxGuard.Services
             {
                 throw new InvalidOperationException($"Search process is already started in the current session. (session id: {_sessionId})");
             }
-
-            _processStdErrStrBuilder = new StringBuilder();
-
+            
             _searchProcess = new Process
             {
                 StartInfo = new ProcessStartInfo
@@ -78,43 +80,24 @@ namespace ClipboxGuard.Services
                     FileName = searchProcessPath,
                     RedirectStandardError = true,
                     UseShellExecute = false
-                },
-                EnableRaisingEvents = true,
-                PriorityClass = ProcessPriorityClass.Normal
+                }
             };
 
             _searchProcess.Exited += _searchProcess_Exited;
-            _searchProcess.ErrorDataReceived += _searchProcess_ErrorDataReceived;
             _searchProcess.Start();
-            // begin async read
-            _searchProcess.BeginErrorReadLine();
-            _isStdErrSubscribed = true;
-        }
-
-        private void _searchProcess_ErrorDataReceived(object sender, DataReceivedEventArgs e)
-        {
-            if (e.Data == null)
-            {
-                _searchProcess.ErrorDataReceived -= _searchProcess_ErrorDataReceived;
-                _isStdErrSubscribed = false;
-            }
-            else
-            {
-                _processStdErrStrBuilder.AppendLine(e.Data);
-            }
+            _searchProcess.EnableRaisingEvents = true;
+            _searchProcess.PriorityClass = ProcessPriorityClass.Normal;
         }
 
         private void _searchProcess_Exited(object sender, EventArgs e)
         {
             _searchProcess.Exited -= _searchProcess_Exited;
 
-            if (_isStdErrSubscribed)
-            {
-                _searchProcess.ErrorDataReceived -= _searchProcess_ErrorDataReceived;
-                _isStdErrSubscribed = false;
-            }
-
             int exitCode = _searchProcess.ExitCode;
+            string stdErr = _searchProcess.StandardError.ReadToEnd();
+
+            try { _persistenceProvider.Write(ProductConstants.SEARCH_CRASHFILE_PERSISTENCE_KEY, stdErr); }
+            catch { }
 
             _searchProcess.Dispose();
 
@@ -123,82 +106,92 @@ namespace ClipboxGuard.Services
                 return;
             }
 
+            int indexErrorCount = 0;
             if (_persistenceProvider.CheckIfCategoryExists(ProductConstants.SEARCH_INDEX_ERROR_LOG_CATEGORY))
             {
-                IEnumerable<string> errorLogs = _persistenceProvider.ListKeys(ProductConstants.SEARCH_INDEX_ERROR_LOG_CATEGORY);
+                IEnumerable<string> indexErrorLogs = _persistenceProvider.ListKeys(ProductConstants.SEARCH_INDEX_ERROR_LOG_CATEGORY);
+                indexErrorCount = indexErrorLogs?.Count() ?? 0;
+            }
 
-                int errorLogsCount = errorLogs.Count();
-                if (errorLogsCount == 0)
-                {
-                    string processStdErr = _processStdErrStrBuilder.ToString();
-                    FatalErrorOccurred?.Invoke(this, new FatalErrorEventArgs(processStdErr));
-                    return;
-                }
-                
-                if (errorLogsCount > 3)
-                {
-                    if (!_persistenceProvider.CheckIfKeyExists(ProductConstants.SEARCH_INDEX_ERROR_LOG_CATEGORY, ProductConstants.SEARCH_INDEX_ERROR_LOG_AGGREGATE))
-                    {
-                        throw new InvalidOperationException("No aggregate error key was found. Please check the logging code of the search provider.");
-                    }
+            if (indexErrorCount == 0)
+            {
+                FatalErrorOccurred?.Invoke(this, new FatalErrorEventArgs(stdErr));
+                return;
+            }
 
-                    string aggregateErrorText = _persistenceProvider.ReadText(ProductConstants.SEARCH_INDEX_ERROR_LOG_CATEGORY, ProductConstants.SEARCH_INDEX_ERROR_LOG_AGGREGATE);
-                    FatalErrorOccurred?.Invoke(this, new FatalErrorEventArgs(aggregateErrorText));
-                    return;
+            if (indexErrorCount > 3)
+            {
+                if (!_persistenceProvider.CheckIfKeyExists(ProductConstants.SEARCH_INDEX_ERROR_LOG_CATEGORY, ProductConstants.SEARCH_INDEX_ERROR_LOG_AGGREGATE))
+                {
+                    throw new InvalidOperationException("No aggregate error key was found. Please check the logging code of the search provider.");
                 }
 
-                if (_flagForExternalProcessExists)
-                {
-                    StartSearchProcess();
-                }
+                string aggregateErrorText = _persistenceProvider.ReadText(ProductConstants.SEARCH_INDEX_ERROR_LOG_CATEGORY, ProductConstants.SEARCH_INDEX_ERROR_LOG_AGGREGATE);
+                FatalErrorOccurred?.Invoke(this, new FatalErrorEventArgs(aggregateErrorText));
+                return;
+            }
+
+            if (indexErrorCount > 0
+                && indexErrorCount <= 3
+                && _flagForExternalProcessExists)
+            {
+                StartSearchProcess();
             }
         }
 
-        private void SetUpFlagWatcher()
+        private void StartFlagWatcher()
         {
             // we can't use FileSystemWatcher, because our persistence layer
             // is abstracted behind an interface and we don't know whether
             // the actual storage media is a filesystem.
             _isFlagWatcherActive = true;
-            while (_isFlagWatcherActive)
+            Task.Run(() =>
             {
-                bool flagStillExists = _persistenceProvider.CheckIfKeyExists(ProductConstants.SEARCH_USE_EXTERNAL_PROCESS_FLAG_KEY);
-                
-                if (_flagForExternalProcessExists != flagStillExists)
+                try
                 {
-                    _flagForExternalProcessExists = flagStillExists;
+                    while (_isFlagWatcherActive)
+                    {
+                        bool flagStillExists = _persistenceProvider.CheckIfKeyExists(ProductConstants.SEARCH_USE_EXTERNAL_PROCESS_FLAG_KEY);
 
-                    if (_flagForExternalProcessExists)
-                    {
-                        StartSearchProcess();
-                    }
-                    else
-                    {
-                        try
+                        if (_flagForExternalProcessExists != flagStillExists)
                         {
-                            StopSearchProcess();
-                        }
-                        catch (Exception ex)
-                        {
-                            lock (_watcherMreLockHandle)
+                            _flagForExternalProcessExists = flagStillExists;
+
+                            if (_flagForExternalProcessExists)
                             {
-                                _watcherMre.Set();
+                                StartSearchProcess();
+                            }
+                            else
+                            {
+                                try
+                                {
+                                    StopSearchProcess();
+                                }
+                                catch (Exception ex)
+                                {
+                                    lock (_watcherMreLockHandle)
+                                    {
+                                        _watcherMre.Set();
+                                    }
+
+                                    throw new InvalidOperationException("The search process cannot be stopped.", ex);
+                                }
                             }
 
-                            throw new InvalidOperationException("The search process cannot be stopped.", ex);
+                            RestartOfMainProcessRequested?.Invoke(this, new EventArgs());
                         }
+
+                        Thread.Sleep(WATCHER_POLL_INTERVAL_MS);
                     }
-
-                    RestartOfMainProcessRequested?.Invoke(this, new EventArgs());
                 }
-
-                Thread.Sleep(WATCHER_POLL_INTERVAL_MS);
-
-                lock (_watcherMreLockHandle)
+                finally
                 {
-                    _watcherMre.Set();
+                    lock (_watcherMreLockHandle)
+                    {
+                        _watcherMre.Set();
+                    }
                 }
-            }
+            });
         }
 
         private bool CheckIsSearchProcessRunning()
@@ -219,7 +212,7 @@ namespace ClipboxGuard.Services
             {
                 _remoteSearchClient.PostServerQuitRequest();
             }
-            catch (TimeoutException)
+            catch (Exception ex) when (ex is TimeoutException || ex is IOException)
             {
                 if (!CheckIsSearchProcessRunning())
                 {
@@ -231,12 +224,6 @@ namespace ClipboxGuard.Services
             {
                 _searchProcess.WaitForExit(SEARCH_PROCESS_EXIT_TIMEOUT_MS);
                 _searchProcess.Kill();
-
-                if (_isStdErrSubscribed)
-                {
-                    _searchProcess.ErrorDataReceived -= _searchProcess_ErrorDataReceived;
-                    _isStdErrSubscribed = false;
-                }
 
                 _searchProcess.Dispose();
             }
@@ -263,12 +250,6 @@ namespace ClipboxGuard.Services
             try
             {
                 StopSearchProcess();
-
-                if (_isStdErrSubscribed)
-                {
-                    _searchProcess.ErrorDataReceived -= _searchProcess_ErrorDataReceived;
-                    _isStdErrSubscribed = false;
-                }
 
                 lock (_watcherMreLockHandle)
                 {

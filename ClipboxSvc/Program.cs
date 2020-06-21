@@ -17,17 +17,17 @@ namespace ClipboxSvc
         /// </summary>
         static void Main()
         {
-//#if DEBUG
-//            _svc = new ClientProcessManagementService();
-//            _svc.OnDebug();
-//#else
+#if DEBUG
+            _svc = new ClientProcessManagementService();
+            _svc.OnDebug();
+#else
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[]
             {
                 new ClientProcessManagementService()
             };
             ServiceBase.Run(ServicesToRun);
-//#endif
+#endif
         }
     }
 }

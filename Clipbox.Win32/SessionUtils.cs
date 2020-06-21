@@ -21,7 +21,9 @@ namespace Clipbox.Win32
             int returnedValue = WtsApi32.WTSEnumerateSessions(WTS_CURRENT_SERVER_HANDLE, 0, 1, ref sessionInfoPtr, ref count);
             int dataSize = Marshal.SizeOf(typeof(NativeStructures.WTS_SESSION_INFO));
 
-            int current = sessionInfoPtr.ToInt32();
+            Int64 current = IntPtr.Size == 4 ?
+                sessionInfoPtr.ToInt32()
+                : sessionInfoPtr.ToInt64(); // we will never run on a system with more than 2^32-1 sessions, so the cast is safe...
 
             if (returnedValue != 0)
             {
