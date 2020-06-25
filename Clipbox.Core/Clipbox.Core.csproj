@@ -72,6 +72,10 @@
     <Compile Include="Configuration\ISettingKey.cs" />
     <Compile Include="Configuration\SettingKey.cs" />
     <Compile Include="Configuration\SettingObject.cs" />
+    <Compile Include="Diagnostics\DiagnosticsReport.cs" />
+    <Compile Include="Diagnostics\ExtensionInfo.cs" />
+    <Compile Include="Diagnostics\FailureInfo.cs" />
+    <Compile Include="Diagnostics\SystemInfo.cs" />
     <Compile Include="DisposableObject.cs" />
     <Compile Include="ClipboardContent\Enums\ClipboardContentClass.cs" />
     <Compile Include="Extensibility\Attributes\IntermediateFormatSupportAttribute.cs" />

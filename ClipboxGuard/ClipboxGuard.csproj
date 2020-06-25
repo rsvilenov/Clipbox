@@ -76,14 +76,26 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Bootstrapper.cs" />
-    <Compile Include="Services\ErrorMessageWindowService.cs" />
+    <Compile Include="Enums\ErrorOrigin.cs" />
+    <Compile Include="Enums\ReportSendState.cs" />
+    <Compile Include="Resources\Translations\Translations.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Translations.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Services\Common\ReportAnalysis.cs" />
+    <Compile Include="Services\ErrorWindowService.cs" />
+    <Compile Include="Services\EventArgsClasses\ReportStateEventArgs.cs" />
     <Compile Include="Services\EventArgsClasses\RestartFatalErrorEventArgs.cs" />
     <Compile Include="Services\EventArgsClasses\FatalErrorEventArgs.cs" />
+    <Compile Include="Services\Interfaces\IReportAnalysisService.cs" />
+    <Compile Include="Services\Interfaces\IReportSenderService.cs" />
     <Compile Include="Services\Interfaces\ISessionMonitorService.cs" />
     <Compile Include="Services\MainProcessKeeperService.cs" />
-    <Compile Include="Services\Interfaces\IErrorMessageWindowService.cs" />
+    <Compile Include="Services\Interfaces\IErrorWindowService.cs" />
     <Compile Include="Services\Interfaces\IMainProcessKeeperService.cs" />
     <Compile Include="Services\Interfaces\ISearchProcessKeeperService.cs" />
+    <Compile Include="Services\ReportAnalysisService.cs" />
     <Compile Include="Services\SearchProcessKeeperService.cs" />
     <Compile Include="Services\SessionMonitorService.cs" />
     <Page Include="ErrorWindow.xaml">
@@ -118,6 +130,11 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Translations\Translations.bg-BG.resx" />
+    <EmbeddedResource Include="Resources\Translations\Translations.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Translations.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -143,6 +160,10 @@
     <ProjectReference Include="..\Clipbox.Infrastructure\Clipbox.Infrastructure.csproj">
       <Project>{EDD4D662-1F39-415C-9B66-718457922626}</Project>
       <Name>Clipbox.Infrastructure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Clipbox.Localization\Clipbox.Infrastructure.UI.Localization.csproj">
+      <Project>{c19e1a93-8a1f-4a5e-82ec-848f8c535aa7}</Project>
+      <Name>Clipbox.Infrastructure.UI.Localization</Name>
     </ProjectReference>
     <ProjectReference Include="..\Clipbox.SearchProvider\Clipbox.Infrastructure.Search.csproj">
       <Project>{A4CBB114-319B-4895-873C-BDBB6EA2B37D}</Project>

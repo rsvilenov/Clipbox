@@ -66,6 +66,9 @@
     <Compile Include="CLR\ClrHelpers.cs" />
     <Compile Include="CLR\TrackableObject.cs" />
     <Compile Include="Compression\ByteArrayCompressor.cs" />
+    <Compile Include="Diagnostics\DiagnosticsReportGenerator.cs" />
+    <Compile Include="Diagnostics\ManagementObject.cs" />
+    <Compile Include="Diagnostics\ManagementObjectSearcher.cs" />
     <Compile Include="Encryption\MD5Hash.cs" />
     <Compile Include="Extensibility\Containers\BaseExtensionContainer.cs" />
     <Compile Include="Extensibility\Containers\ClipboardFormatExtensionContainer.cs" />
@@ -86,6 +89,7 @@
     <Compile Include="Extensibility\EventArgsClasses\ExtensionTypeEventArgs.cs" />
     <Compile Include="Extensibility\Invocation\ExtensionInvoker.cs" />
     <Compile Include="ExtensionMethods\BitmapExtensions.cs" />
+    <Compile Include="ExtensionMethods\EnumExtensions.cs" />
     <Compile Include="ExtensionMethods\ImageExtensions.cs" />
     <Compile Include="ExtensionMethods\MetafileExtensions.cs" />
     <Compile Include="ExtensionMethods\StringExtensions.cs" />
@@ -102,6 +106,7 @@
     <Compile Include="IPC\WindowMessageIPC.cs" />
     <Compile Include="ObjectHelpers\GetHashCodeHelper.cs" />
     <Compile Include="Serialization\BinaryFormatterSerialization.cs" />
+    <Compile Include="Serialization\XmlSerialization.cs" />
     <Compile Include="Threading\GlobalNamedMutex.cs" />
     <Compile Include="RegistryAccess\RegistryUtils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -1,10 +1,17 @@
 ﻿using Clipbox.Core;
+using Clipbox.Core.Diagnostics;
 using Clipbox.Core.Enums;
+using Clipbox.Infrastructure.Diagnostics;
 using Clipbox.Infrastructure.IPC;
 using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.Persistence.PersistenceProviders;
+using Clipbox.Infrastructure.Serialization;
+using Clipbox.Infrastructure.UI.Localization;
+using Clipbox.Infrastructure.UI.Localization.LozalizationProviders;
 using Clipbox.Win32;
+using ClipboxGuard.Enums;
 using ClipboxGuard.Services;
+using ClipboxGuard.Services.Common;
 using ClipboxGuard.Services.Interfaces;
 using System;
 using System.Diagnostics;
@@ -25,9 +32,9 @@ namespace ClipboxGuard
         private IPersistenceProvider _persistenceProvider;
         private MainProcessKeeperService _mainProcessKeeperService;
         private SearchProcessKeeperService _searchProcessKeeperService;
-        private IErrorMessageWindowService _errorMessageWindowService;
+        private IErrorWindowService _errorMessageWindowService;
         private ISessionMonitorService _sessionMonitorService;
-
+        private IReportAnalysisService _reportAnalysisService;
 
         public void PerformStartupSequence()
         {
@@ -52,6 +59,10 @@ namespace ClipboxGuard
                 Application.Current.Shutdown((int)ProcessExitCodes.Ok);
                 return;
             }
+
+            ILocalizationProvider localizationProvider = AsmAwareResxLocalizationProvider.Instance;
+
+            TranslationSourcePool.InitTranslationSourcePool(localizationProvider);
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
@@ -84,7 +95,8 @@ namespace ClipboxGuard
 
                 _searchProcessKeeperService = new SearchProcessKeeperService(_persistenceProvider, installationPath, sessionId);
                 _mainProcessKeeperService = new MainProcessKeeperService(_searchProcessKeeperService, _persistenceProvider, installationPath, sessionId);
-                _errorMessageWindowService = new ErrorMessageWindowService(_mainProcessKeeperService, _searchProcessKeeperService, _persistenceProvider, _isStartedFromSvc);
+                _reportAnalysisService = new ReportAnalysisService(_persistenceProvider);
+                _errorMessageWindowService = new ErrorWindowService(_mainProcessKeeperService, _searchProcessKeeperService, _reportAnalysisService, _persistenceProvider, _isStartedFromSvc);
                 _sessionMonitorService = new SessionMonitorService(_mainProcessKeeperService, _searchProcessKeeperService);
 
                 // start the external processes after the error message window service
@@ -95,30 +107,43 @@ namespace ClipboxGuard
             }
             catch
             {
-                _errorMessageWindowService = new ErrorMessageWindowService(_persistenceProvider, _isStartedFromSvc);
+                _errorMessageWindowService = new ErrorWindowService(_persistenceProvider, _isStartedFromSvc);
                 throw;
             }
         }
 
         private void ClearLastExceptionInfo()
         {
-            if (_persistenceProvider.CheckIfKeyExists(ProductConstants.LAST_GUARD_EXCEPTION_PERSISTENCE_KEY))
+            if (_persistenceProvider.CheckIfKeyExists(ProductConstants.GUARD_FAILURE_XML_PERSISTENCE_KEY))
             {
-                _persistenceProvider.Delete(ProductConstants.LAST_GUARD_EXCEPTION_PERSISTENCE_KEY);
+                _persistenceProvider.Delete(ProductConstants.GUARD_FAILURE_XML_PERSISTENCE_KEY);
             }
         }
 
+        private int _numOfUnhandledExceptions;
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
+            if (Interlocked.Increment(ref _numOfUnhandledExceptions) > 1)
+            {
+                return;
+            }
+
             bool isRestartRequested = false;
             try
             {
-                if (e.ExceptionObject is Exception ex)
-                {
-                    _persistenceProvider.Write(ProductConstants.LAST_GUARD_EXCEPTION_PERSISTENCE_KEY, ex.ToString());
-                }
+                Exception exception = (Exception)e.ExceptionObject;
 
-                _errorMessageWindowService?.ShowErrorMessageWindow(out isRestartRequested);
+                DiagnosticsReport dr = DiagnosticsReportGenerator
+                    .Generate(exception, includeExtensionInfo: false);
+                string reportXml = XmlSerialization.Serialize(dr);
+                
+                try
+                {
+                    _persistenceProvider.Write(ProductConstants.GUARD_FAILURE_XML_PERSISTENCE_KEY, reportXml);
+                }
+                catch { }
+                
+                _errorMessageWindowService?.ShowErrorWindow(out isRestartRequested, new ReportAnalysis(ErrorOrigin.Unknown, exception.ToString()));
             }
             catch { }
 
@@ -159,6 +184,7 @@ namespace ClipboxGuard
         {
             if (obj != null)
             {
+                // Dispose() should never throw, but anyways...
                 try { obj.Dispose(); } catch { }
             }
         }

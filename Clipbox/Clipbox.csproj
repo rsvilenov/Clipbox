@@ -104,7 +104,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>ApplicationSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="FailureInfo.cs" />
     <Compile Include="GlobalConstants.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Resources\Translations\Translations.Designer.cs">

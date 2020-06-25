@@ -1,24 +1,162 @@
-﻿<Window x:Class="ClipboxGuard.ErrorWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ClipboxGuard"
-        mc:Ignorable="d"
-        Title="Clipbox Guard" Height="350" Width="525" Visibility="Visible" ShowInTaskbar="True" Topmost="True" WindowStyle="ToolWindow">
-    <Grid x:Name="mainGrid">
+﻿<Window
+    x:Class="ClipboxGuard.ErrorWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:core="clr-namespace:Clipbox.Core;assembly=Clipbox.Core"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:loc="clr-namespace:Clipbox.Infrastructure.UI.Localization;assembly=Clipbox.Infrastructure.UI.Localization"
+    xmlns:local="clr-namespace:ClipboxGuard"
+    xmlns:localEnums="clr-namespace:ClipboxGuard.Enums"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="Clipbox Guard"
+    Width="525"
+    Height="350"
+    Background="White"
+    Foreground="Black"
+    ShowInTaskbar="True"
+    Topmost="True"
+    Visibility="Visible"
+    WindowStyle="ToolWindow"
+    mc:Ignorable="d">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    </Window.Resources>
+    <Grid x:Name="mainGrid" Margin="10,0,10,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="30" />
             <RowDefinition />
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="50" />
         </Grid.RowDefinitions>
-        <TextBlock Text="Fatal error occurred" HorizontalAlignment="Center" FontSize="18" FontWeight="Bold" Foreground="Red"  Grid.Row="0" />
-        <TextBlock x:Name="exceptionTb" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.Row="1" />
-        <DockPanel Grid.Row="2">
-            <Button DockPanel.Dock="Right" Width="100" Content="Send" ></Button>
-            <CheckBox IsChecked="{Binding IsRestartClientProcessCbChecked}" />
-            <Button HorizontalAlignment="Left" Width="100" Content="Close" Click="Button_Click" ></Button>
-        </DockPanel>
-        
+
+        <StackPanel
+            Grid.Row="0"
+            HorizontalAlignment="Center"
+            Orientation="Horizontal">
+            <TextBlock
+                FontSize="18"
+                FontWeight="Bold"
+                Foreground="Red">
+                <Run Text="{x:Static core:ProductConstants.PRODUCT_NAME}" /><Run Text=":" />
+                <Run Text="{loc:Localize LBL_FATAL_ERROR, ResourceLookupMode=CurrentAssembly}" />
+            </TextBlock>
+        </StackPanel>
+
+        <StackPanel
+            Grid.Row="1"
+            Margin="0,10,0,0"
+            Orientation="Vertical">
+            <TextBlock FontWeight="Bold" Text="{loc:Localize LBL_FAILED_COMPONENT, ResourceLookupMode=CurrentAssembly}" />
+            <TextBlock Text="{Binding ErrorOriginLabel}" TextWrapping="Wrap" />
+        </StackPanel>
+
+        <Grid
+            Grid.Row="2"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBlock
+                Grid.Row="0"
+                FontWeight="Bold"
+                Text="{loc:Localize Key=LBL_ERROR_DETAILS,
+                                    ResourceLookupMode=CurrentAssembly}"
+                TextWrapping="Wrap" />
+            <Border
+                Grid.Row="1"
+                Margin="0,3,0,0"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                BorderBrush="Black"
+                BorderThickness="1">
+
+                <ScrollViewer
+                    Margin="5,0,0,0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    HorizontalScrollBarVisibility="Disabled"
+                    VerticalScrollBarVisibility="Visible">
+                    <TextBlock Text="{Binding ErrorText}" TextWrapping="Wrap" />
+                </ScrollViewer>
+
+            </Border>
+        </Grid>
+
+        <CheckBox
+            Grid.Row="3"
+            Margin="0,15,5,5"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            IsChecked="{Binding IsRestartRequested}"
+            Visibility="{Binding ShowRestartOption, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <TextBlock Text="{loc:Localize CB_REQUEST_RESTART, ResourceLookupMode=CurrentAssembly}" />
+        </CheckBox>
+        <CheckBox
+            Grid.Row="4"
+            Margin="0,5,5,5"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center"
+            IsChecked="{Binding IsReportErrorRequested}">
+            <TextBlock Text="{loc:Localize CB_SEND_ERROR, ResourceLookupMode=CurrentAssembly}" />
+        </CheckBox>
+        <ContentControl Grid.Row="5" Margin="10,5,5,5">
+            <ContentControl.Template>
+                <ControlTemplate TargetType="ContentControl">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="3*" />
+                            <ColumnDefinition Width="4*" />
+                        </Grid.ColumnDefinitions>
+                        <ProgressBar
+                            x:Name="progressBar"
+                            Grid.Column="0"
+                            Height="20"
+                            IsIndeterminate="True" />
+                        <TextBlock x:Name="statusTextBox" Grid.Column="1" />
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <DataTrigger Binding="{Binding StateOfReportSending}" Value="{x:Static localEnums:ReportSendState.Requested}">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding StateOfReportSending}" Value="{x:Static localEnums:ReportSendState.Connecting}">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Setter TargetName="progressBar" Property="IsIndeterminate" Value="True" />
+                            <Setter TargetName="statusTextBox" Property="Text" Value="{loc:Localize LBL_STATUS_CONNECTING, ResourceLookupMode=CurrentAssembly}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding StateOfReportSending}" Value="{x:Static localEnums:ReportSendState.Sending}">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Setter TargetName="progressBar" Property="IsIndeterminate" Value="True" />
+                            <Setter TargetName="statusTextBox" Property="Text" Value="{loc:Localize LBL_STATUS_SENDING, ResourceLookupMode=CurrentAssembly}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding StateOfReportSending}" Value="{x:Static localEnums:ReportSendState.Done}">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Setter TargetName="progressBar" Property="IsIndeterminate" Value="False" />
+                            <Setter TargetName="progressBar" Property="Value" Value="100" />
+                            <Setter TargetName="statusTextBox" Property="Text" Value="{loc:Localize LBL_STATUS_SENT, ResourceLookupMode=CurrentAssembly}" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding StateOfReportSending}" Value="{x:Static localEnums:ReportSendState.Error}">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Setter TargetName="progressBar" Property="IsIndeterminate" Value="False" />
+                            <Setter TargetName="progressBar" Property="Value" Value="100" />
+                            <Setter TargetName="statusTextBox" Property="Text" Value="{loc:Localize LBL_STATUS_SEND_ERROR, ResourceLookupMode=CurrentAssembly}" />
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </ContentControl.Template>
+
+        </ContentControl>
+        <Button
+            Grid.Row="6"
+            Width="100"
+            Margin="10"
+            HorizontalAlignment="Center"
+            Click="Button_Click"
+            Content="OK" />
+
     </Grid>
 </Window>

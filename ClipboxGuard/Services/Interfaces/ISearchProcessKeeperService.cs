@@ -6,7 +6,8 @@ namespace ClipboxGuard.Services.Interfaces
     public interface ISearchProcessKeeperService
     {
         event EventHandler RestartOfMainProcessRequested;
-        event EventHandler<FatalErrorEventArgs> FatalErrorOccurred;
+        event EventHandler<RestartFatalErrorEventArgs> FatalErrorOccurred;
+        event EventHandler<FatalErrorEventArgs> IndexFatalErrorOccurred;
         void StartExternalProcessManagement();
         void StopSearchProcess();
     }

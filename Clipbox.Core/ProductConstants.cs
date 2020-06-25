@@ -38,15 +38,13 @@ namespace Clipbox.Core
         public const string SEARCH_INDEX_ERROR_LOG_CATEGORY = "searchIdxErrors";
 
         public const string SEARCH_INDEX_ERROR_LOG_AGGREGATE = "aggregate.log";
-
-        public const string LAST_EXCEPTION_PERSISTENCE_KEY = "lastException.log";
-
-        public const string LAST_EXCEPTION_XML_PERSISTENCE_KEY = "lastException.xml";
-
-        public const string LAST_LOADED_EXTENSION_PERSISTENCE_KEY = "lastLoadedEtension.log";
-
-        public const string LAST_GUARD_EXCEPTION_PERSISTENCE_KEY = "lastGuardException.log";
         
+        public const string MAIN_PROCESS_FAILURE_XML_PERSISTENCE_KEY = "lastException.xml";
+        
+        public const string GUARD_FAILURE_XML_PERSISTENCE_KEY = "lastGuardException.xml";
+
+        public const string SEARCH_PROCESS_FAILURE_XML_PERSISTENCE_KEY = "lastSearchException.xml";
+
         public const string MAIN_CRASHFILE_PERSISTENCE_KEY = "mainCrash.log";
 
         public const string SEARCH_CRASHFILE_PERSISTENCE_KEY = "searchCrash.log";

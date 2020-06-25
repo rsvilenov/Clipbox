@@ -1,4 +1,5 @@
 ﻿using Clipbox.Core;
+using Clipbox.Core.Diagnostics;
 using Clipbox.Core.Enums;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
@@ -7,12 +8,14 @@ using Clipbox.ExtendedClipboard;
 using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.CloudSupport.CloudSupportProviders;
 using Clipbox.Infrastructure.Configuration;
+using Clipbox.Infrastructure.Diagnostics;
 using Clipbox.Infrastructure.Encryption;
 using Clipbox.Infrastructure.Encryption.EncryptionProviders;
 using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.Persistence.FilesystemAccess;
 using Clipbox.Infrastructure.Persistence.PersistenceProviders;
 using Clipbox.Infrastructure.Search;
+using Clipbox.Infrastructure.Serialization;
 using Clipbox.Infrastructure.UI.Localization;
 using Clipbox.Infrastructure.UI.Localization.LozalizationProviders;
 using Clipbox.Infrastructure.UI.Theme;
@@ -119,11 +122,6 @@ namespace Clipbox
             // Load extension containers
             _extensionLoader = new ExtensionLoader();
             _extensionLoader.LoadContainers();
-            _extensionLoader.StatelessExtensionResolved += (s, e) =>
-            {
-                // this may slow us down
-                _persistenceProvider.Write(ProductConstants.LAST_LOADED_EXTENSION_PERSISTENCE_KEY, $"{e.ExtensionType.FullName} [{e.ExtensionType.Assembly.FullName}]");
-            };
 
             // Initialize the settings service
             IConfigurationProvider configurationProvider = new PersistableConfigurationProvider(_persistenceProvider);
@@ -228,14 +226,9 @@ namespace Clipbox
 
         private void ClearLastExceptionInfo()
         {
-            if (_persistenceProvider.CheckIfKeyExists(ProductConstants.LAST_EXCEPTION_PERSISTENCE_KEY))
+            if (_persistenceProvider.CheckIfKeyExists(ProductConstants.MAIN_PROCESS_FAILURE_XML_PERSISTENCE_KEY))
             {
-                _persistenceProvider.Delete(ProductConstants.LAST_EXCEPTION_PERSISTENCE_KEY);
-            }
-
-            if (_persistenceProvider.CheckIfKeyExists(ProductConstants.LAST_EXCEPTION_XML_PERSISTENCE_KEY))
-            {
-                _persistenceProvider.Delete(ProductConstants.LAST_EXCEPTION_XML_PERSISTENCE_KEY);
+                _persistenceProvider.Delete(ProductConstants.MAIN_PROCESS_FAILURE_XML_PERSISTENCE_KEY);
             }
 
             if (_persistenceProvider.CheckIfKeyExists(ProductConstants.MAIN_CRASHFILE_PERSISTENCE_KEY))
@@ -361,41 +354,21 @@ namespace Clipbox
 
         private void ProcessUnhandledException(object exceptionObject)
         {
-            FailureInfo failureInfo = FailureInfo.CreateWithSystemSnapshot();
-            
-            if (exceptionObject != null)
-            {
-                failureInfo.LoadExceptionObject(exceptionObject);
-            }
+            Exception exception = (Exception)exceptionObject;
 
-            if (_extensionLoader != null && _extensionLoader.LoadedTypes != null)
-            {
-                failureInfo.LoadedExtensions = _extensionLoader.LoadedTypes.
-                    Select(t => t.FullName).
-                    ToList();
-            }
-            
             try
             {
-                if (exceptionObject is ClipboxExtensionException)
-                {
-                    var extensionException = (ClipboxExtensionException)exceptionObject;
+                DiagnosticsReport dr = DiagnosticsReportGenerator
+                    .Generate(exception, includeExtensionInfo: true);
+                string reportXml = XmlSerialization.Serialize(dr);
 
-                    Type failedExtensionType = extensionException.ExtensionType;
-                    if (failedExtensionType != null)
-                    {
-                        failureInfo.LoadFailedExtensionInfo(failedExtensionType);
-                    }
-                }
+                _persistenceProvider.Write(ProductConstants.MAIN_PROCESS_FAILURE_XML_PERSISTENCE_KEY, reportXml);
             }
-            catch { }
-            
-            try
+            catch (Exception ex)
             {
-                _persistenceProvider.Write(ProductConstants.LAST_EXCEPTION_PERSISTENCE_KEY, failureInfo.ToString());
-                _persistenceProvider.Write(ProductConstants.LAST_EXCEPTION_XML_PERSISTENCE_KEY, failureInfo.ToXml());
+                // this will go to the stderr and will be captured by the guard
+                throw new AggregateException(exception, ex);
             }
-            catch { }
             
             try
             {

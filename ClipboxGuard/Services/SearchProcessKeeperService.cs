@@ -34,8 +34,9 @@ namespace ClipboxGuard.Services
         private RemoteSearch _remoteSearchClient;
 
         public event EventHandler RestartOfMainProcessRequested;
-        public event EventHandler<FatalErrorEventArgs> FatalErrorOccurred;
-        
+        public event EventHandler<RestartFatalErrorEventArgs> FatalErrorOccurred;
+        public event EventHandler<FatalErrorEventArgs> IndexFatalErrorOccurred;
+
         public SearchProcessKeeperService(IPersistenceProvider persistenceProvider,
             string installationPath,
             int sessionId)
@@ -115,7 +116,14 @@ namespace ClipboxGuard.Services
 
             if (indexErrorCount == 0)
             {
-                FatalErrorOccurred?.Invoke(this, new FatalErrorEventArgs(stdErr));
+                var args = new RestartFatalErrorEventArgs(stdErr);
+                FatalErrorOccurred?.Invoke(this, args);
+
+                if (args.RestartProcess)
+                {
+                    StartSearchProcess();
+                }
+
                 return;
             }
 
@@ -127,7 +135,7 @@ namespace ClipboxGuard.Services
                 }
 
                 string aggregateErrorText = _persistenceProvider.ReadText(ProductConstants.SEARCH_INDEX_ERROR_LOG_CATEGORY, ProductConstants.SEARCH_INDEX_ERROR_LOG_AGGREGATE);
-                FatalErrorOccurred?.Invoke(this, new FatalErrorEventArgs(aggregateErrorText));
+                IndexFatalErrorOccurred?.Invoke(this, new FatalErrorEventArgs(aggregateErrorText));
                 return;
             }
 

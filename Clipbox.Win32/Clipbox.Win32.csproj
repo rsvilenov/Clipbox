@@ -65,6 +65,7 @@
   <ItemGroup>
     <Compile Include="ApplicationUtils.cs" />
     <Compile Include="AssemblyUtils.cs" />
+    <Compile Include="CpuUtils.cs" />
     <Compile Include="DeskbandUtils.cs" />
     <Compile Include="DesktopUtils.cs" />
     <Compile Include="DpiUtils.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="Native\NativeEnums.cs" />
     <Compile Include="Native\NativeStructures.cs" />
     <Compile Include="Native\Ole32.cs" />
+    <Compile Include="Native\PsApi.cs" />
     <Compile Include="Native\SHCore.cs" />
     <Compile Include="Native\Shell32.cs" />
     <Compile Include="Native\ShlwApi.cs" />
@@ -92,6 +94,7 @@
     <Compile Include="Native\UxTheme.cs" />
     <Compile Include="Native\Wer.cs" />
     <Compile Include="Native\WtsApi32.cs" />
+    <Compile Include="PerformanceUtils.cs" />
     <Compile Include="ProcessUtils.cs" />
     <Compile Include="SessionUtils.cs" />
     <Compile Include="SessionUtils2.cs" />

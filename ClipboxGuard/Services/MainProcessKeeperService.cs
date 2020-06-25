@@ -134,9 +134,15 @@ namespace ClipboxGuard.Services
 
         private bool CheckIsMainProcessRunning()
         {
+            IEnumerable<int> pids = GetMainProcessPids();
+            return pids.Any();
+        }
+
+        private IEnumerable<int> GetMainProcessPids()
+        {
             string mainProcessPath = Path.Combine(_installationPath, ProductConstants.MAIN_PROCESS_EXE_NAME);
             IEnumerable<int> pids = ProcessUtils.GetProcessIdsByPathAndSessionId(mainProcessPath, _sessionId);
-            return pids.Any();
+            return pids;
         }
 
         public void StopMainProcess()
@@ -160,10 +166,28 @@ namespace ClipboxGuard.Services
             }
             try
             {
-                _mainProcess.WaitForExit(MAIN_PROCESS_EXIT_TIMEOUT_MS);
-                _mainProcess.Kill();
+                if (_mainProcess == null)
+                {
+                    // there can be more than one main process due to
+                    // some previous exception in the guard. Kill them all.
+                    foreach (int pid in GetMainProcessPids())
+                    {
+                        using (Process mp = Process.GetProcessById(pid))
+                        {
+                            // they may have received QUIT message from the named pipe call above.
+                            mp.WaitForExit(MAIN_PROCESS_EXIT_TIMEOUT_MS);
+                            // if they fail to quit in a timely manner, kill them.
+                            mp.Kill();
+                        }
+                    }
+                }
+                else
+                {
+                    _mainProcess.WaitForExit(MAIN_PROCESS_EXIT_TIMEOUT_MS);
+                    _mainProcess.Kill();
 
-                _mainProcess.Dispose();
+                    _mainProcess.Dispose();
+                }
             }
             catch (InvalidOperationException)
             {
@@ -179,7 +203,7 @@ namespace ClipboxGuard.Services
                     throw new InvalidOperationException("Main process could not be stopped.");
                 }
 
-                _mainProcess.Dispose();
+                _mainProcess?.Dispose();
             }
         }
 
