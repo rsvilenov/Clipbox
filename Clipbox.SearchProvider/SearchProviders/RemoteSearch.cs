@@ -25,7 +25,7 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
         {
             _isCliendMode = isClientMode;
 
-            _modificationOperationMre = new ManualResetEvent(false);
+            _modificationOperationMre = new ManualResetEvent(true);
 
             if (_isCliendMode)
             {
@@ -267,7 +267,7 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
             public IndexHealthInfo IndexHealthInfo { get; set; }
         }
 
-        public void PostServerQuitRequest()
+        public void PostQuitRequest()
         {
             if (_isCliendMode)
             {

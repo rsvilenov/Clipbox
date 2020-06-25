@@ -31,8 +31,8 @@ namespace ClipboxGuard.Services
         private ManualResetEvent _watcherMre;
         private readonly object _watcherMreLockHandle;
         private Process _searchProcess;
-        private RemoteSearch _remoteSearchClient;
-        private NamedPipesClient _pipeClient;
+        private RemoteSearch _remoteSearchPipeClient;
+        private NamedPipesClient _mainProcessPipeClient;
 
         public event EventHandler RestartOfMainProcessRequested;
         public event EventHandler<RestartFatalErrorEventArgs> FatalErrorOccurred;
@@ -46,12 +46,12 @@ namespace ClipboxGuard.Services
             _installationPath = installationPath;
             _sessionId = sessionId;
 
-            _pipeClient = new NamedPipesClient($"{ProductConstants.GUARD_NAMED_PIPE_PREFIX}.{sessionId}");
+            _mainProcessPipeClient = new NamedPipesClient($"{ProductConstants.MAINPROC_GUARD_COMM_NAMED_PIPE_PREFIX}.{sessionId}");
 
             _flagForExternalProcessExists = _persistenceProvider.CheckIfKeyExists(ProductConstants.SEARCH_USE_EXTERNAL_PROCESS_FLAG_KEY);
             _watcherMre = new ManualResetEvent(false);
             _watcherMreLockHandle = new object();
-            _remoteSearchClient = new RemoteSearch(ProductConstants.SEARCH_SERVICE_NAMED_PIPE_PREFIX, true);
+            _remoteSearchPipeClient = new RemoteSearch($"{ProductConstants.SEARCH_SERVICE_NAMED_PIPE_PREFIX}.{sessionId}", true);
         }
 
         public void StartExternalProcessManagement()
@@ -161,7 +161,7 @@ namespace ClipboxGuard.Services
         {
             try
             {
-                _pipeClient.SendMessage(ProductConstants.PIPE_COMMAND_DISABLE_SEARCH);
+                _mainProcessPipeClient.SendMessage(ProductConstants.PIPE_COMMAND_DISABLE_SEARCH);
             }
             // TODO: demand restart of the main process here
             catch (TimeoutException)
@@ -241,7 +241,7 @@ namespace ClipboxGuard.Services
 
             try
             {
-                _remoteSearchClient.PostServerQuitRequest();
+                _remoteSearchPipeClient.PostQuitRequest();
             }
             catch (Exception ex) when (ex is TimeoutException || ex is IOException)
             {
@@ -255,8 +255,6 @@ namespace ClipboxGuard.Services
             {
                 _searchProcess.WaitForExit(SEARCH_PROCESS_EXIT_TIMEOUT_MS);
                 _searchProcess.Kill();
-
-                _searchProcess.Dispose();
             }
             catch (InvalidOperationException)
             {
@@ -271,7 +269,9 @@ namespace ClipboxGuard.Services
                 {
                     throw new InvalidOperationException("Search process could not be stopped.");
                 }
-
+            }
+            finally
+            {
                 _searchProcess.Dispose();
             }
         }

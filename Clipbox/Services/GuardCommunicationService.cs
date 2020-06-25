@@ -25,7 +25,7 @@ namespace Clipbox.Services
             SetOrUnsetPersistentFlagForHighPriority();
             _settingsService.SettingChanged += _settingsService_SettingChanged;
 
-            _pipeServer = new NamedPipesServer($"{ProductConstants.GUARD_NAMED_PIPE_PREFIX}.{sessionId}");
+            _pipeServer = new NamedPipesServer($"{ProductConstants.MAINPROC_GUARD_COMM_NAMED_PIPE_PREFIX}.{sessionId}");
             _pipeServer.GotMessage += _pipeServer_GotMessage;
         }
 

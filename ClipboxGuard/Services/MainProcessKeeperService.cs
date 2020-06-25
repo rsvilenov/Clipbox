@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Windows;
 
 namespace ClipboxGuard.Services
 {
@@ -39,7 +40,7 @@ namespace ClipboxGuard.Services
             _installationPath = installationPath;
             _sessionId = sessionId;
 
-            _pipeClient = new NamedPipesClient($"{ProductConstants.GUARD_NAMED_PIPE_PREFIX}.{sessionId}");
+            _pipeClient = new NamedPipesClient($"{ProductConstants.MAINPROC_GUARD_COMM_NAMED_PIPE_PREFIX}.{sessionId}");
             
             _searchProcessKeeperService.RestartOfMainProcessRequested += _searchProcessKeeperService_RestartOfMainProcessRequested;
         }
@@ -107,18 +108,35 @@ namespace ClipboxGuard.Services
             
             int exitCode = _mainProcess.ExitCode;
             string stdErr = _mainProcess.StandardError.ReadToEnd();
-
-            try { _persistenceProvider.Write(ProductConstants.MAIN_CRASHFILE_PERSISTENCE_KEY, stdErr); }
-            catch { }
-
+            
             _mainProcess.Dispose();
 
-            if (exitCode != (int)ProcessExitCodes.Ok)
+            if (exitCode == (int)ProcessExitCodes.Ok)
             {
                 try
                 {
-                    ReleaseKeys();
                     HideDeskBand();
+                }
+                catch { }
+
+                // the user wants the app to quit, so we
+                // need to shut the guard down as well.
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    Application.Current.Shutdown
+                      (
+                               (int)ProcessExitCodes.Ok
+                      );
+                });
+            }
+            else
+            {
+                try { _persistenceProvider.Write(ProductConstants.MAIN_CRASHFILE_PERSISTENCE_KEY, stdErr); }
+                catch { }
+
+                try
+                {
+                    ReleaseKeys();
                 }
                 catch { }
 
@@ -128,6 +146,14 @@ namespace ClipboxGuard.Services
                 if (args.RestartProcess)
                 {
                     StartMainProcess(stopFirstIfRunning: false);
+                }
+                else
+                {
+                    try
+                    {
+                        HideDeskBand();
+                    }
+                    catch { }
                 }
             }
         }
@@ -168,8 +194,11 @@ namespace ClipboxGuard.Services
             {
                 if (_mainProcess == null)
                 {
+                    // if this instance has not started the main process,
+                    // this indicates that something has gone wrong and 
                     // there can be more than one main process due to
-                    // some previous exception in the guard. Kill them all.
+                    // some previous exception in the guard.
+                    // We should kill all these processed.
                     foreach (int pid in GetMainProcessPids())
                     {
                         using (Process mp = Process.GetProcessById(pid))
@@ -202,7 +231,9 @@ namespace ClipboxGuard.Services
                 {
                     throw new InvalidOperationException("Main process could not be stopped.");
                 }
-
+            }
+            finally
+            {
                 _mainProcess?.Dispose();
             }
         }

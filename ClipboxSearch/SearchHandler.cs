@@ -12,6 +12,7 @@ using Clipbox.Infrastructure.Serialization;
 using Clipbox.Win32;
 using System;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace ClipboxSearch
 {
@@ -29,7 +30,7 @@ namespace ClipboxSearch
             _persistenceProvider = new AppDataPersistenceProvider();
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            throw new Exception();
+
             _encryptionProvider = new AesEncryptionProvider(_persistenceProvider);
             _searchProvider = new LuceneSearch(_encryptionProvider, _persistenceProvider);
 
@@ -62,7 +63,8 @@ namespace ClipboxSearch
 
         private void _remoteSearch_QuitRequested(object sender, System.EventArgs e)
         {
-            Application.Current.Shutdown((int)ProcessExitCodes.Ok);
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.Background,
+                new Action(() => Application.Current.Shutdown((int)ProcessExitCodes.Ok)));
         }
 
         public void ShutDown()

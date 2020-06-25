@@ -25,7 +25,7 @@ namespace Clipbox.Core
         // deprecated
         public const string SERVICE_NAMED_PIPE = "ClipboxSvcPipe";
 
-        public const string GUARD_NAMED_PIPE_PREFIX = "ClipboxGuardPipe";
+        public const string MAINPROC_GUARD_COMM_NAMED_PIPE_PREFIX = "ClipboxMainProcGuardCommPipe";
 
         public const string PIPE_COMMAND_QUIT = "Quit";
 

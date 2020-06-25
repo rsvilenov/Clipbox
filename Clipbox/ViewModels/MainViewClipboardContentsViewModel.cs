@@ -3,7 +3,9 @@ using Clipbox.Core.Search;
 using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.UI.DataObjects;
+using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Interfaces;
+using Clipbox.Settings;
 using Clipbox.ViewModels.Enums;
 using System;
 using System.Collections.Generic;
@@ -14,6 +16,7 @@ namespace Clipbox.ViewModels
 {
     public class MainViewClipboardContentsViewModel : ClipboardContentsViewModelBase
     {
+        private readonly ISettingsService _settingsService;
         private readonly ISearchService _searchService;
         private readonly ICloudSynchronizationService _cloudSyncService;
 
@@ -25,15 +28,19 @@ namespace Clipbox.ViewModels
             ICloudSynchronizationService cloudSyncService) 
                 : base(clipboardManager, previewGenerationService, settingsService)
         {
+            _settingsService = settingsService;
             _searchService = searchService;
             _cloudSyncService = cloudSyncService;
 
+            _settingsService.SettingChanged += _settingsService_SettingChanged;
             _cloudSyncService.AuthenticationStateChanged += _cloudSyncService_AuthenticationStateChanged;
             _cloudSyncService.ItemSynced += _cloudSyncService_ItemSynced;
 
             IsCloudSyncAvailable = CheckIsCloudServiceAvailable();
 
             ClipboardItemsDataProvider = clipboardManager;
+
+            IsSearchEnabled = settingsService.GetSetting<bool>(SettingsKeys.IsSearchEnabled);
 
             try
             {
@@ -45,7 +52,15 @@ namespace Clipbox.ViewModels
                 IsSearchIndexHealthy = false;
             }
         }
-        
+
+        private void _settingsService_SettingChanged(object sender, SettingsEventArgs e)
+        {
+            if (e.Key == SettingsKeys.IsSearchEnabled)
+            {
+                IsSearchEnabled = _settingsService.GetSetting<bool>(SettingsKeys.IsSearchEnabled);
+            }
+        }
+
         private void _cloudSyncService_ItemSynced(object sender, Services.EventArgsClasses.SyncEventArgs e)
         {
             var wrapper = ClipboardViewItemWrappers.FirstOrDefault(w => w.Id == e.ClipboardItemId);
@@ -117,6 +132,13 @@ namespace Clipbox.ViewModels
             set { SetField(ref _isSearchIndexHealthy, value); }
         }
 
+        private bool _isSearchEnabled;
+        public bool IsSearchEnabled
+        {
+            get { return _isSearchEnabled; }
+            set { SetField(ref _isSearchEnabled, value); }
+        }
+
         private IClipboardItemsDataProvider _clipboardItemsDataProvider;
         public IClipboardItemsDataProvider ClipboardItemsDataProvider
         {
@@ -126,7 +148,7 @@ namespace Clipbox.ViewModels
 
         public IEnumerable<string> GetClipboardItemIds(IEnumerable<ISearchTerm> searchTerms)
         {
-            if (!IsSearchIndexHealthy)
+            if (!IsSearchIndexHealthy && IsSearchEnabled)
             {
                 return Enumerable.Empty<string>();
             }
