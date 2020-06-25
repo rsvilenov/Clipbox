@@ -154,7 +154,7 @@ namespace ClipboxGuard.Services
 
             try
             {
-                _pipeClient.SendMessage(ProductConstants.PIPE_QUIT_COMMAND);
+                _pipeClient.SendMessage(ProductConstants.PIPE_COMMAND_QUIT);
             }
             catch (Exception ex) when (ex is TimeoutException || ex is IOException)
             {

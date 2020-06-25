@@ -2,10 +2,11 @@
 using Clipbox.Core.Enums;
 using Clipbox.Infrastructure.IPC;
 using Clipbox.Infrastructure.Persistence;
+using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using System.Windows;
 
-namespace Clipbox.Services.Interfaces
+namespace Clipbox.Services
 {
     public class GuardCommunicationService : IGuardCommunicationService
     {
@@ -35,9 +36,13 @@ namespace Clipbox.Services.Interfaces
 
         private void _pipeServer_GotMessage(object sender, NamedPipesResponseEventArgs e)
         {
-            if (e.ReceivedMessage == ProductConstants.PIPE_QUIT_COMMAND)
+            if (e.ReceivedMessage == ProductConstants.PIPE_COMMAND_QUIT)
             {
                 Application.Current.Shutdown((int)ProcessExitCodes.Ok);
+            }
+            else if (e.ReceivedMessage == ProductConstants.PIPE_COMMAND_DISABLE_SEARCH)
+            {
+                _settingsService.SetSetting(SettingsKeys.IsSearchEnabled, false);
             }
         }
 

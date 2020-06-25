@@ -61,6 +61,8 @@ namespace Clipbox.Settings
         /// </summary>
         public static SettingKey<bool> RunMainProcessWithHighPriority = new SettingKey<bool>(nameof(RunMainProcessWithHighPriority), false);
 
+        public static SettingKey<bool> IsSearchEnabled = new SettingKey<bool>(nameof(IsSearchEnabled), false);
+
         internal static IEnumerable<ISettingKey> GetAllSettings()
         {
             return typeof(SettingsKeys)

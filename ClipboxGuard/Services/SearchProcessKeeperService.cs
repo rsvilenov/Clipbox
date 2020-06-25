@@ -1,5 +1,6 @@
 ﻿using Clipbox.Core;
 using Clipbox.Core.Enums;
+using Clipbox.Infrastructure.IPC;
 using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.Search.SearchProviders;
 using Clipbox.Win32;
@@ -11,7 +12,6 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -32,6 +32,7 @@ namespace ClipboxGuard.Services
         private readonly object _watcherMreLockHandle;
         private Process _searchProcess;
         private RemoteSearch _remoteSearchClient;
+        private NamedPipesClient _pipeClient;
 
         public event EventHandler RestartOfMainProcessRequested;
         public event EventHandler<RestartFatalErrorEventArgs> FatalErrorOccurred;
@@ -44,6 +45,8 @@ namespace ClipboxGuard.Services
             _persistenceProvider = persistenceProvider;
             _installationPath = installationPath;
             _sessionId = sessionId;
+
+            _pipeClient = new NamedPipesClient($"{ProductConstants.GUARD_NAMED_PIPE_PREFIX}.{sessionId}");
 
             _flagForExternalProcessExists = _persistenceProvider.CheckIfKeyExists(ProductConstants.SEARCH_USE_EXTERNAL_PROCESS_FLAG_KEY);
             _watcherMre = new ManualResetEvent(false);
@@ -123,6 +126,10 @@ namespace ClipboxGuard.Services
                 {
                     StartSearchProcess();
                 }
+                else
+                {
+                    DisableSearchInMainProcess();
+                }
 
                 return;
             }
@@ -136,6 +143,9 @@ namespace ClipboxGuard.Services
 
                 string aggregateErrorText = _persistenceProvider.ReadText(ProductConstants.SEARCH_INDEX_ERROR_LOG_CATEGORY, ProductConstants.SEARCH_INDEX_ERROR_LOG_AGGREGATE);
                 IndexFatalErrorOccurred?.Invoke(this, new FatalErrorEventArgs(aggregateErrorText));
+
+                DisableSearchInMainProcess();
+
                 return;
             }
 
@@ -145,6 +155,19 @@ namespace ClipboxGuard.Services
             {
                 StartSearchProcess();
             }
+        }
+
+        private void DisableSearchInMainProcess()
+        {
+            try
+            {
+                _pipeClient.SendMessage(ProductConstants.PIPE_COMMAND_DISABLE_SEARCH);
+            }
+            // TODO: demand restart of the main process here
+            catch (TimeoutException)
+            { }
+            catch (IOException)
+            { }
         }
 
         private void StartFlagWatcher()

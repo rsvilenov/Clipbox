@@ -27,7 +27,9 @@ namespace Clipbox.Core
 
         public const string GUARD_NAMED_PIPE_PREFIX = "ClipboxGuardPipe";
 
-        public const string PIPE_QUIT_COMMAND = "Quit";
+        public const string PIPE_COMMAND_QUIT = "Quit";
+
+        public const string PIPE_COMMAND_DISABLE_SEARCH = "DisableSearch";
 
         public const string SEARCH_SERVICE_NAMED_PIPE_PREFIX = "ClipboxSearchPipe";
 
