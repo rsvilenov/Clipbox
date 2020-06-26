@@ -335,12 +335,16 @@
                     <views:ExpandableSearchBox.Style>
                         <Style TargetType="{x:Type views:ExpandableSearchBox}">
                             <Setter Property="IsEnabled" Value="True" />
+                            <Setter Property="ToolTip" Value="{x:Null}" />
+                            <Setter Property="ToolTipService.ShowOnDisabled" Value="True" />
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding IsSearchIndexHealthy}" Value="False">
                                     <Setter Property="IsEnabled" Value="False" />
+                                    <Setter Property="ToolTip" Value="The search box is disabled due to search index errors." />
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding IsSearchEnabled}" Value="False">
                                     <Setter Property="IsEnabled" Value="False" />
+                                    <Setter Property="ToolTip" Value="The search functionality is disabled." />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
@@ -395,12 +399,16 @@
                 <filterBand:FilterBand.Style>
                     <Style TargetType="{x:Type filterBand:FilterBand}">
                         <Setter Property="IsEnabled" Value="True" />
+                        <Setter Property="ToolTip" Value="{x:Null}" />
+                        <Setter Property="ToolTipService.ShowOnDisabled" Value="True" />
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding IsSearchIndexHealthy}" Value="False">
                                 <Setter Property="IsEnabled" Value="False" />
+                                <Setter Property="ToolTip" Value="The filters are disabled due to search index errors." />
                             </DataTrigger>
                             <DataTrigger Binding="{Binding IsSearchEnabled}" Value="False">
                                 <Setter Property="IsEnabled" Value="False" />
+                                <Setter Property="ToolTip" Value="The filters are disabled." />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
