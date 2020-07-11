@@ -98,7 +98,7 @@ namespace Clipbox.Views.Settings
         private void SettingsWindow_Loaded(object sender, RoutedEventArgs e)
         {
 
-            IEnumerable<ISettingsUIExtension> builtInSettingExtensions = new List<ISettingsUIExtension>
+            IEnumerable<ISettingsUIComponent> builtInSettingExtensions = new List<ISettingsUIComponent>
             {
                 new GeneralBuiltInSettingsUIExtension()
             };
@@ -109,8 +109,8 @@ namespace Clipbox.Views.Settings
             LoadSettingUIExtensions(externalExtensions);
         }
 
-        private List<ISettingsUIExtension> _settingUIExtensions = new List<ISettingsUIExtension>();
-        private void LoadSettingUIExtensions(IEnumerable<ISettingsUIExtension> extensions)
+        private List<ISettingsUIComponent> _settingUIExtensions = new List<ISettingsUIComponent>();
+        private void LoadSettingUIExtensions(IEnumerable<ISettingsUIComponent> extensions)
         {
             foreach (var ext in extensions)
             {
@@ -171,7 +171,7 @@ namespace Clipbox.Views.Settings
                 new Action(() => UpdatePreview((SettingsUIExtension)sender)));
         }
 
-        private void UpdatePreview(ISettingsUIExtension ext)
+        private void UpdatePreview(ISettingsUIComponent ext)
         {
             PerMonitorDpiWindow wnd = (PerMonitorDpiWindow)Window.GetWindow(this);
             DisplayMonitor monitor = MonitorUtils.GetByWindowHandle(wnd.Handle);

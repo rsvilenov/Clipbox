@@ -93,6 +93,7 @@
     <Compile Include="Extensibility\Contracts\ExtentionTypes\ISearchSupport.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\PersistenceTypes\PersistenceSupportExtension.cs" />
     <Compile Include="Extensibility\Contracts\ISettingChangeRequestor.cs" />
+    <Compile Include="Extensibility\Contracts\ISettingsUIComponent.cs" />
     <Compile Include="Extensibility\Contracts\PreviewParams.cs" />
     <Compile Include="Extensibility\Contracts\IApplicationInfo.cs" />
     <Compile Include="Extensibility\Contracts\IConfigurationRecipient.cs" />

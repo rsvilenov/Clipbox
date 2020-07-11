@@ -1,6 +1,5 @@
 ﻿using Clipbox.Core.Configuration;
 using Clipbox.Core.Extensibility.Contracts;
-using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using Clipbox.Core.Extensibility.Enums;
 using Clipbox.Core.Extensibility.EventArgsClasses;
@@ -10,10 +9,8 @@ using System.Linq;
 
 namespace Clipbox.Views.Settings
 {
-    public abstract class BuiltInSettingsUIExtension : ISettingsUIExtension, ISettingChangeRequestor, IConfigurationRecipient, ISettingsRegistrator
+    public abstract class BuiltInSettingsUIExtension : ISettingsUIComponent, ISettingChangeRequestor, IConfigurationRecipient, ISettingsRegistrator
     {
-        public event EventHandler ResultPreviewInvalidated;
-
         private readonly Dictionary<ISettingKey, ISettingUIPart> _settingKeyUIPartMapping;
 
         public BuiltInSettingsUIExtension()
@@ -25,12 +22,6 @@ namespace Clipbox.Views.Settings
         }
 
         /// <summary>
-        /// Specifies the category, in which the setting will appear
-        /// in the settings UI.
-        /// </summary>
-        public virtual SettingsCategory Category { get; }
-
-        /// <summary>
         /// The extensions override this method in order to know when
         /// the request made by calling of the method <see cref="RequestSettingChange"/> 
         /// has been fulfilled.
@@ -38,34 +29,6 @@ namespace Clipbox.Views.Settings
         /// <param name="settingName">The name of the setting.</param>
         /// <param name="targetType">The extension type, for which the value is registered.</param>
         protected virtual void OnSettingUpdated(string settingName, Type targetType) { }
-
-        /// <summary>
-        /// Returns the parts of the Settings view,
-        /// corresponding to the settings for an extension.
-        /// The parts are all set up and ready.
-        /// </summary>
-        /// <returns>The ui part to show in the settings windpw</returns>
-        public IEnumerable<ISettingUIPart> GetSettingsViewParts()
-        {
-            foreach (ISettingKey settingKey in _settingKeyUIPartMapping.Keys)
-            {
-                ISettingUIPart settingUIPart = _settingKeyUIPartMapping[settingKey];
-
-                SetUpUpSettingUIPart(settingKey, settingUIPart);
-
-                yield return settingUIPart;
-            }
-        }
-
-        /// <summary>
-        /// Create and return the part of the Settings view,
-        /// which shows a preview of how the settings will
-        /// affect the functionning of their extensions.
-        /// </summary>
-        /// <param name="previewParams">The parameters passed to the preview generators</param>
-        /// <returns>The preview (IPeviewData object) of the settings, which will be shown in the settings window</returns>
-        public virtual IPreviewData GetResultPreview(PreviewParams previewParams)
-        { return null; }
 
         /// <summary>
         /// Registers the UI elements which will control our settings.
@@ -99,6 +62,7 @@ namespace Clipbox.Views.Settings
             }
         }
 
+        #region ISettingChangeRequestor
         private event EventHandler<RequestSettingChangeEventArgs> _requestSettingChange;
         /// <summary>
         /// <see cref="ISettingChangeRequestor.RequestSettingChange"/>
@@ -116,6 +80,7 @@ namespace Clipbox.Views.Settings
                 _requestSettingChange -= value;
             }
         }
+        #endregion
 
         #region IConfigurationRecipient
         /// <summary>
@@ -144,11 +109,51 @@ namespace Clipbox.Views.Settings
         }
         #endregion
 
+        #region ISettingsUIComponent
+        public event EventHandler ResultPreviewInvalidated;
+
+        /// <summary>
+        /// Specifies the category, in which the setting will appear
+        /// in the settings UI.
+        /// </summary>
+        public virtual SettingsCategory Category { get; }
+
+        /// <summary>
+        /// Returns the parts of the Settings view,
+        /// corresponding to the settings for an extension.
+        /// The parts are all set up and ready.
+        /// </summary>
+        /// <returns>The ui part to show in the settings windpw</returns>
+        public IEnumerable<ISettingUIPart> GetSettingsViewParts()
+        {
+            foreach (ISettingKey settingKey in _settingKeyUIPartMapping.Keys)
+            {
+                ISettingUIPart settingUIPart = _settingKeyUIPartMapping[settingKey];
+
+                SetUpUpSettingUIPart(settingKey, settingUIPart);
+
+                yield return settingUIPart;
+            }
+        }
+
+        /// <summary>
+        /// Create and return the part of the Settings view,
+        /// which shows a preview of how the settings will
+        /// affect the functionning of their extensions.
+        /// </summary>
+        /// <param name="previewParams">The parameters passed to the preview generators</param>
+        /// <returns>The preview (IPeviewData object) of the settings, which will be shown in the settings window</returns>
+        public virtual IPreviewData GetResultPreview(PreviewParams previewParams)
+        { return null; }
+
+        #endregion
+
+        #region ISettingsRegistrator
         public IEnumerable<ISettingKey> GetSettingKeys()
         {
             return _settingKeyUIPartMapping.Keys;
         }
-
+        #endregion
 
         protected void InvalidateResultPreview()
         {

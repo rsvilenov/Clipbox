@@ -7,7 +7,7 @@ namespace Clipbox.Core.Extensibility.Contracts
         /// <summary>
         /// This method is called by the system in order to
         /// set or update a setting in the extension. When
-        /// <see cref="IConfigurationRecipient.RequestSettingChange"/>
+        /// <see cref="ISettingChangeRequestor.RequestSettingChange"/>
         /// is raised, this method gets called to update the setting
         /// in the extension after it has been saved by the system.
         /// </summary>
