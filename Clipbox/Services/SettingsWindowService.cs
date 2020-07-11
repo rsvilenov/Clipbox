@@ -47,6 +47,7 @@ namespace Clipbox.Services
 
         private void OpenSettingsWindow()
         {
+            // TODO: memory leak - the window never frees its memory
             _settingsWindow = new SettingsWindow(_settingsService, _extContainer);
             _settingsWindow.Show();
         }

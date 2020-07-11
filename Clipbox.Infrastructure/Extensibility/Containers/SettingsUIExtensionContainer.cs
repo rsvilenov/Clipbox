@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace Clipbox.Infrastructure.Extensibility.Containers
 {
     public class SettingsUIExtensionContainer :
-        BaseExtensionContainer<SettingsUIExtension, WeakFactory>
+        BaseExtensionContainer<SettingsUIExtension, RegularFactory>
     {
         public IEnumerable<SettingsUIExtension> ResolveAll()
         {

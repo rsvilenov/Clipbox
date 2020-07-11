@@ -88,16 +88,21 @@ namespace Clipbox.Views.Settings
 
         private void SettingsWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            foreach (ISettingChangeRequestor ext in _settingUIExtensions
-                .Where(ext => ext is ISettingChangeRequestor))
+            foreach (ISettingsUIComponent ext in _settingUIExtensions)
             {
-                ext.RequestSettingChange -= SettingChangeRequestor_RequestSettingChange;
+                if (ext is ISettingChangeRequestor settingChangeRequestor)
+                {
+                    settingChangeRequestor.RequestSettingChange -= SettingChangeRequestor_RequestSettingChange;
+                }
+
+                ext.ResultPreviewInvalidated -= Ext_ResultPreviewInvalidated;
             }
+
+            _settingUIExtensions.Clear();
         }
 
         private void SettingsWindow_Loaded(object sender, RoutedEventArgs e)
         {
-
             IEnumerable<ISettingsUIComponent> builtInSettingExtensions = new List<ISettingsUIComponent>
             {
                 new GeneralBuiltInSettingsUIExtension()
@@ -325,9 +330,9 @@ namespace Clipbox.Views.Settings
 
         
 
-        private ISettingsService _settingsService;
+        private readonly ISettingsService _settingsService;
 
-        private SettingsUIExtensionContainer _extContainer;
+        private readonly SettingsUIExtensionContainer _extContainer;
         
     }
 }
