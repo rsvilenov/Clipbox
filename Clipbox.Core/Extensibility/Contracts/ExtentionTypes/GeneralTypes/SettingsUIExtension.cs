@@ -9,10 +9,21 @@ using System.Windows;
 
 namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
 {
+    public interface ISettingsUIExtension : IClipboxExtension
+    {
+        IEnumerable<ISettingUIPart> GetSettingsViewParts();
+
+        SettingsCategory Category { get; }
+
+        IPreviewData GetResultPreview(PreviewParams previewParams);
+
+        event EventHandler ResultPreviewInvalidated;
+    }
+
     /// <summary>
     /// Settings view extension
     /// </summary>
-    public abstract class SettingsUIExtension : IClipboxExtension, ISettingsRegistrator, IConfigurationRecipient, ISettingChangeRequestor
+    public abstract class SettingsUIExtension : ISettingsUIExtension, ISettingsRegistrator, IConfigurationRecipient, ISettingChangeRequestor
     {
         public event EventHandler ResultPreviewInvalidated;
 

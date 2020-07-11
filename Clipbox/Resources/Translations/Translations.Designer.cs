@@ -19,7 +19,7 @@ namespace Clipbox.Resources.Translations {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Translations {
@@ -66,6 +66,15 @@ namespace Clipbox.Resources.Translations {
         internal static string BTN_LBL_Ok {
             get {
                 return ResourceManager.GetString("BTN_LBL_Ok", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable system clipboard tracking.
+        /// </summary>
+        internal static string LBL_SETTINGS_CLIPBOARD_TRACKING {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_CLIPBOARD_TRACKING", resourceCulture);
             }
         }
         

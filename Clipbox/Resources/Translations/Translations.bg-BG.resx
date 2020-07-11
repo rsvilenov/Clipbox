@@ -120,6 +120,9 @@
   <data name="BTN_LBL_Ok" xml:space="preserve">
     <value>OK</value>
   </data>
+  <data name="LBL_SETTINGS_CLIPBOARD_TRACKING" xml:space="preserve">
+    <value>Следене на системния клипборд</value>
+  </data>
   <data name="TGL_BTN_LBL_Off" xml:space="preserve">
     <value>Изключено</value>
   </data>

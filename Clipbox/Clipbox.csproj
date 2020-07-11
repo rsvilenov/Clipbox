@@ -273,9 +273,6 @@
     <Compile Include="Views\RebuildIndicesWindow.xaml.cs">
       <DependentUpon>RebuildIndicesWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\SettingsWindow.xaml.cs">
-      <DependentUpon>SettingsWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="ExtensionLoader.cs" />
     <Compile Include="FlowController.cs" />
     <Compile Include="Technical\Converters\ObjectTypeStringConverter.cs" />
@@ -287,6 +284,16 @@
     <Compile Include="Technical\Converters\BitmapToBitmapImageConverter.cs" />
     <Compile Include="ViewModels\BindableObjects\ClipboardViewItemGroup.cs" />
     <Compile Include="ViewModels\QuickViewkClipboardContentsViewModel.cs" />
+    <Compile Include="Views\Settings\BuiltInExtensions\GeneralBuiltInSettingsUIExtension.cs" />
+    <Compile Include="Views\Settings\BuiltInSettingsUIExtension.cs" />
+    <Compile Include="Views\Settings\EventArgsClasses\SettingChangeRequestedEventArgs.cs" />
+    <Compile Include="Views\Settings\SettingsWindowUIPart.cs" />
+    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\ClipboardTrackingSettingUIPart.xaml.cs">
+      <DependentUpon>ClipboardTrackingSettingUIPart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsWindow.xaml.cs">
+      <DependentUpon>SettingsWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\ThemePreview.xaml.cs">
       <DependentUpon>ThemePreview.xaml</DependentUpon>
     </Compile>
@@ -402,15 +409,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Settings\BuiltInExtensions\UIParts\ClipboardTrackingSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\SettingsWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Views\Styles\ToggleButtonBaseStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ClipboardListView\VerticalScrollBarEx.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\SettingsWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -549,7 +560,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Resource Include="Resources\Images\Settings\DeskBand.png" />
   </ItemGroup>

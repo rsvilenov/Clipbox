@@ -10,6 +10,7 @@ using Clipbox.Infrastructure.UI.ExtensionMethods;
 using Clipbox.Infrastructure.UI.Windows;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
+using Clipbox.Views.Settings.BuiltInExtensions;
 using Clipbox.Win32;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,7 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using static Clipbox.Win32.MonitorUtils;
 
-namespace Clipbox.Views
+namespace Clipbox.Views.Settings
 {
     /// <summary>
     /// Interaction logic for Settings.xaml
@@ -66,7 +67,7 @@ namespace Clipbox.Views
         private void SettingsWindow_MouseDown(object sender, MouseButtonEventArgs e)
         {
             // make sure that clicking outside of a conrol moves the focus away from it
-            mainGrid.Focus();
+            tabControl.Focus();
         }
 
         private double GetThumbnailMaxHeight(DisplayMonitor monitor, out bool hasHeightBeenDpiScaled)
@@ -94,23 +95,38 @@ namespace Clipbox.Views
             }
         }
 
-        private List<IConfigurationRecipient> _settingUIExtensions = new List<IConfigurationRecipient>();
         private void SettingsWindow_Loaded(object sender, RoutedEventArgs e)
         {
-            IEnumerable<SettingsUIExtension> extensions = _extContainer.ResolveAll();
+
+            IEnumerable<ISettingsUIExtension> builtInSettingExtensions = new List<ISettingsUIExtension>
+            {
+                new GeneralBuiltInSettingsUIExtension()
+            };
+
+            LoadSettingUIExtensions(builtInSettingExtensions);
+
+            IEnumerable<SettingsUIExtension> externalExtensions = _extContainer.ResolveAll();
+            LoadSettingUIExtensions(externalExtensions);
+        }
+
+        private List<ISettingsUIExtension> _settingUIExtensions = new List<ISettingsUIExtension>();
+        private void LoadSettingUIExtensions(IEnumerable<ISettingsUIExtension> extensions)
+        {
             foreach (var ext in extensions)
             {
-
                 var configurationRecipient = (IConfigurationRecipient)ext;
                 var settingChangeRequestor = (ISettingChangeRequestor)ext;
-                
-                IEnumerable<ISettingKey> allRegisteredKeys = ((ISettingsRegistrator)ext).GetSettingKeys();
-                foreach (ISettingKey key in allRegisteredKeys)
+
+                _settingUIExtensions.Add(ext);
+
+                if (ext is ISettingsRegistrator settingsRegistrator)
                 {
-                    configurationRecipient.PutSetting(key, _settingsService.GetSetting(key));
-                    _settingUIExtensions.Add(configurationRecipient);
+                    foreach (ISettingKey key in settingsRegistrator.GetSettingKeys())
+                    {
+                        configurationRecipient.PutSetting(key, _settingsService.GetSetting(key));
+                    }
                 }
-                
+
                 IEnumerable<UIElement> extUIParts = ext.GetSettingsViewParts()
                     .Cast<UIElement>();
 
@@ -140,7 +156,7 @@ namespace Clipbox.Views
                 }
 
                 _allExtensionUIItems.Add(uiItem);
-                
+
                 UpdatePreview(ext);
 
                 ext.ResultPreviewInvalidated += Ext_ResultPreviewInvalidated;
@@ -155,7 +171,7 @@ namespace Clipbox.Views
                 new Action(() => UpdatePreview((SettingsUIExtension)sender)));
         }
 
-        private void UpdatePreview(SettingsUIExtension ext)
+        private void UpdatePreview(ISettingsUIExtension ext)
         {
             PerMonitorDpiWindow wnd = (PerMonitorDpiWindow)Window.GetWindow(this);
             DisplayMonitor monitor = MonitorUtils.GetByWindowHandle(wnd.Handle);

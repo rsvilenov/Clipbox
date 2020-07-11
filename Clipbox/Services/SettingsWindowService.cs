@@ -1,6 +1,7 @@
 ﻿using Clipbox.Infrastructure.Extensibility.Containers;
 using Clipbox.Services.Interfaces;
 using Clipbox.Views;
+using Clipbox.Views.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
