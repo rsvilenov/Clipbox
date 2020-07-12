@@ -42,8 +42,7 @@ namespace Clipbox.Views.Settings
             PastingExtensionUIItems = new AsyncObservableCollection<ExtensionUIItem>();
             SecurityExtensionUIItems = new AsyncObservableCollection<ExtensionUIItem>();
             CloudExtensionUIItems = new AsyncObservableCollection<ExtensionUIItem>();
-
-            
+            AdvancedExtensionUIItems = new AsyncObservableCollection<ExtensionUIItem>();
 
             this.tabControl.DataContext = this;
             
@@ -156,6 +155,9 @@ namespace Clipbox.Views.Settings
                     case SettingsCategory.Cloud:
                         CloudExtensionUIItems.Add(uiItem);
                         break;
+                    case SettingsCategory.Advanced:
+                        AdvancedExtensionUIItems.Add(uiItem);
+                        break;
                     default:
                         throw new InvalidOperationException("Invalid category.");
                 }
@@ -254,7 +256,14 @@ namespace Clipbox.Views.Settings
         private static readonly DependencyProperty CloudExtensionUIItemsProperty =
             DependencyProperty.Register(nameof(CloudExtensionUIItems), typeof(AsyncObservableCollection<ExtensionUIItem>), typeof(SettingsWindow), new PropertyMetadata(null));
 
+        private AsyncObservableCollection<ExtensionUIItem> AdvancedExtensionUIItems
+        {
+            get { return (AsyncObservableCollection<ExtensionUIItem>)GetValue(AdvancedExtensionUIItemsProperty); }
+            set { SetValue(AdvancedExtensionUIItemsProperty, value); }
+        }
 
+        private static readonly DependencyProperty AdvancedExtensionUIItemsProperty =
+            DependencyProperty.Register(nameof(AdvancedExtensionUIItems), typeof(AsyncObservableCollection<ExtensionUIItem>), typeof(SettingsWindow), new PropertyMetadata(null));
 
 
         public bool UseInlinedPreviews
@@ -328,11 +337,23 @@ namespace Clipbox.Views.Settings
             }
         }
 
-        
+        public bool IsAdvancedTabEnabled
+        {
+            get { return (bool)GetValue(IsAdvancedTabEnabledProperty); }
+            set { SetValue(IsAdvancedTabEnabledProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsAdvancedTabEnabledProperty =
+            DependencyProperty.Register(nameof(IsAdvancedTabEnabled), typeof(bool), typeof(SettingsWindow), new PropertyMetadata(false));
+
 
         private readonly ISettingsService _settingsService;
 
         private readonly SettingsUIExtensionContainer _extContainer;
-        
+
+        private void BtnEnableAdvanced_Click(object sender, RoutedEventArgs e)
+        {
+            IsAdvancedTabEnabled = true;
+        }
     }
 }

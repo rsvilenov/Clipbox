@@ -37,7 +37,9 @@
                 <ResourceDictionary Source="pack://application:,,,/Clipbox.Infrastructure.UI;component/Resources/Styles/Style.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Clipbox.Infrastructure.UI.CustomControls;component/Styles/ToggleSwitchWindows10.xaml" />
             </ResourceDictionary.MergedDictionaries>
-
+            
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            
             <DataTemplate x:Key="SettingsLvDataTemplate">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -65,7 +67,8 @@
                     <Grid
                         Grid.Column="1"
                         HorizontalAlignment="Center"
-                        VerticalAlignment="Top">
+                        VerticalAlignment="Top"
+                        Margin="5,0,25,0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="20" />
@@ -502,6 +505,66 @@
                             </ItemsControl.ItemContainerStyle>
                         </ItemsControl>
                     </StackPanel>
+                </ScrollViewer>
+            </TabItem.Content>
+        </TabItem>
+
+        <TabItem Header="Advanced">
+            <TabItem.HeaderTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="0,0,40,0" Orientation="Horizontal">
+                        <ContentControl Template="{StaticResource SettingsAdvancedIcon}" />
+                        <TextBlock Margin="10,0,0,0" Text="{Binding}" />
+                    </StackPanel>
+                </DataTemplate>
+            </TabItem.HeaderTemplate>
+            <TabItem.Content>
+                <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0"
+                            Focusable="True"
+                            FontSize="28"
+                            Text="Advanced" />
+                            <StackPanel VerticalAlignment="Center" Orientation="Vertical"  Grid.Row="1" Grid.RowSpan="3">
+                                <TextBlock HorizontalAlignment="Center" Text="Modifying these settings may cause the program to stop working properly." TextWrapping="Wrap" />
+                                <Button
+                                    Click="BtnEnableAdvanced_Click"
+                                    Width="160"
+                                    Height="30"
+                                    Margin="30"
+                                    HorizontalAlignment="Center"
+                                    Content="Show settings"
+                                    Foreground="White"
+                                    Style="{DynamicResource BtnShowSettings}" />
+                                <StackPanel.Style>
+                                    <Style TargetType="StackPanel">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsAdvancedTabEnabled}" Value="True">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </StackPanel.Style>
+                            </StackPanel>
+                        <ItemsControl
+                            x:Name="advancedExtensionsItemsControl"
+                            Grid.Row="1"
+                            Visibility="{Binding IsAdvancedTabEnabled, Converter={StaticResource BooleanToVisibilityConverter}}"
+                            ItemsSource="{Binding AdvancedExtensionUIItems}"
+                            Style="{StaticResource extensionItemsControlStyle}">
+                            <ItemsControl.ItemContainerStyle>
+                                <Style>
+                                    <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
+                                </Style>
+                            </ItemsControl.ItemContainerStyle>
+                        </ItemsControl>
+                    </Grid>
                 </ScrollViewer>
             </TabItem.Content>
         </TabItem>

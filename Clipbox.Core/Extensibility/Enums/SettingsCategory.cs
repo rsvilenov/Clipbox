@@ -29,6 +29,10 @@
         /// <summary>
         /// Settings for operations during paste
         /// </summary>
-        Pasting
+        Pasting,
+        /// <summary>
+        /// Advanced settings
+        /// </summary>
+        Advanced
     }
 }
