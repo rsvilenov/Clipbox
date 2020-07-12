@@ -38,6 +38,17 @@ namespace Clipbox.Views.Settings
         protected abstract void RegisterSettingUIParts(IBuiltInSettingsUIBuilder builder);
 
         /// <summary>
+        /// This give the extensions the ability to request a change of settings
+        /// directly from the SettingUIExtension, rather than from the UI Part.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="newValue"></param>
+        protected void RequestSettingChange(ISettingKey key, object newValue)
+        {
+            _requestSettingChange?.Invoke(this, new RequestSettingChangeEventArgs(key, newValue));
+        }
+
+        /// <summary>
         /// Gets the value of a setting.
         /// </summary>
         /// <typeparam name="TValueType">The type of the setting value.</typeparam>

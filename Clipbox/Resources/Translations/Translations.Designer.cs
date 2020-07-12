@@ -115,6 +115,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Pin the tray icon to the taskbar, so that it never hides.
+        /// </summary>
+        internal static string LBL_SETTINGS_PIN_TASKBAR_ICON {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_PIN_TASKBAR_ICON", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enable the search functionality.
         /// </summary>
         internal static string LBL_SETTINGS_SEARCH_ENABLED {

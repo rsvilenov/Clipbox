@@ -135,6 +135,9 @@
   <data name="LBL_SETTINGS_MAIN_PROCESS_PRIORITY" xml:space="preserve">
     <value>Изпълнявай основният процес на програмата с висок приоритет</value>
   </data>
+  <data name="LBL_SETTINGS_PIN_TASKBAR_ICON" xml:space="preserve">
+    <value>Прикачи трей иконката към таскбара, за да не се крие никога</value>
+  </data>
   <data name="LBL_SETTINGS_SEARCH_ENABLED" xml:space="preserve">
     <value>Позволи функционалностите за търсене</value>
   </data>

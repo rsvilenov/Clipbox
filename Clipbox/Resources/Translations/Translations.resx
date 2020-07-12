@@ -135,6 +135,9 @@
   <data name="LBL_SETTINGS_MAIN_PROCESS_PRIORITY" xml:space="preserve">
     <value>Run main process with high priority</value>
   </data>
+  <data name="LBL_SETTINGS_PIN_TASKBAR_ICON" xml:space="preserve">
+    <value>Pin the tray icon to the taskbar, so that it never hides</value>
+  </data>
   <data name="LBL_SETTINGS_SEARCH_ENABLED" xml:space="preserve">
     <value>Enable the search functionality</value>
   </data>

@@ -10,6 +10,7 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
         private ExternalSearchProcessSettingUIPart _extenralSearchProcessSettingUIPart;
 
         public override SettingsCategory Category => SettingsCategory.Advanced;
+
         protected override void OnSettingUpdated(ISettingKey settingKey)
         {
             if (settingKey == SettingsKeys.IsSearchEnabled)

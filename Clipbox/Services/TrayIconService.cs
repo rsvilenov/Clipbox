@@ -88,7 +88,7 @@ namespace Clipbox.Services
 
         private void _settingsService_SettingChanged(object sender, SettingsEventArgs e)
         {
-            if (e.Key == SettingsKeys.IsDeskBandEnabled)
+            if (e.Key == SettingsKeys.IsTrayIconEnabled)
             {
                 if ((bool)e.Value)
                 {
