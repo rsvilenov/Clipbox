@@ -284,7 +284,17 @@
     <Compile Include="Technical\Converters\BitmapToBitmapImageConverter.cs" />
     <Compile Include="ViewModels\BindableObjects\ClipboardViewItemGroup.cs" />
     <Compile Include="ViewModels\QuickViewkClipboardContentsViewModel.cs" />
+    <Compile Include="Views\Settings\BuiltInExtensions\AdvancedBuiltInSettingsUIExtension.cs" />
     <Compile Include="Views\Settings\BuiltInExtensions\GeneralBuiltInSettingsUIExtension.cs" />
+    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\BackgroundPreviewGenerationSettingUIPart.xaml.cs">
+      <DependentUpon>BackgroundPreviewGenerationSettingUIPart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\FadeAnimationsSettingUIPart.xaml.cs">
+      <DependentUpon>FadeAnimationsSettingUIPart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\SizeToDpiSettingUIPart.xaml.cs">
+      <DependentUpon>SizeToDpiSettingUIPart.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\BuiltInSettingsUIExtension.cs" />
     <Compile Include="Views\Settings\EventArgsClasses\SettingChangeRequestedEventArgs.cs" />
     <Compile Include="Views\Settings\SettingsWindowUIPart.cs" />
@@ -409,7 +419,19 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Settings\BuiltInExtensions\UIParts\BackgroundPreviewGenerationSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Settings\BuiltInExtensions\UIParts\ClipboardTrackingSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\BuiltInExtensions\UIParts\FadeAnimationsSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\BuiltInExtensions\UIParts\SizeToDpiSettingUIPart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

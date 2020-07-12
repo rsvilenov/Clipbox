@@ -70,11 +70,38 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enable background preview generation.
+        /// </summary>
+        internal static string LBL_SETTINGS_BACKGROUND_PREVIEW_GENERATION {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_BACKGROUND_PREVIEW_GENERATION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enable system clipboard tracking.
         /// </summary>
         internal static string LBL_SETTINGS_CLIPBOARD_TRACKING {
             get {
                 return ResourceManager.GetString("LBL_SETTINGS_CLIPBOARD_TRACKING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable fade animations.
+        /// </summary>
+        internal static string LBL_SETTINGS_FADE_ANIMATIONS {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_FADE_ANIMATIONS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Automatically resize previews, buttons and text accorting to system scaling (DPI) settings.
+        /// </summary>
+        internal static string LBL_SETTINGS_SIZE_TO_DPI {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_SIZE_TO_DPI", resourceCulture);
             }
         }
         

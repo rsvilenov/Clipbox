@@ -104,7 +104,8 @@ namespace Clipbox.Views.Settings
         {
             IEnumerable<ISettingsUIComponent> builtInSettingExtensions = new List<ISettingsUIComponent>
             {
-                new GeneralBuiltInSettingsUIExtension()
+                new GeneralBuiltInSettingsUIExtension(),
+                new AdvancedBuiltInSettingsUIExtension()
             };
 
             LoadSettingUIExtensions(builtInSettingExtensions);

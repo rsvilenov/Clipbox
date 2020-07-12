@@ -120,8 +120,17 @@
   <data name="BTN_LBL_Ok" xml:space="preserve">
     <value>OK</value>
   </data>
+  <data name="LBL_SETTINGS_BACKGROUND_PREVIEW_GENERATION" xml:space="preserve">
+    <value>Enable background preview generation</value>
+  </data>
   <data name="LBL_SETTINGS_CLIPBOARD_TRACKING" xml:space="preserve">
     <value>Enable system clipboard tracking</value>
+  </data>
+  <data name="LBL_SETTINGS_FADE_ANIMATIONS" xml:space="preserve">
+    <value>Enable fade animations</value>
+  </data>
+  <data name="LBL_SETTINGS_SIZE_TO_DPI" xml:space="preserve">
+    <value>Automatically resize previews, buttons and text accorting to system scaling (DPI) settings</value>
   </data>
   <data name="TGL_BTN_LBL_Off" xml:space="preserve">
     <value>Off</value>
