@@ -126,8 +126,17 @@
   <data name="LBL_SETTINGS_CLIPBOARD_TRACKING" xml:space="preserve">
     <value>Следене на системния клипборд</value>
   </data>
+  <data name="LBL_SETTINGS_EXTERNAL_SEARCH_PROCESS" xml:space="preserve">
+    <value>Изпълнявай заявките за търсене в отделен процес</value>
+  </data>
   <data name="LBL_SETTINGS_FADE_ANIMATIONS" xml:space="preserve">
     <value>Избледняващи/затъмняващи анимации</value>
+  </data>
+  <data name="LBL_SETTINGS_MAIN_PROCESS_PRIORITY" xml:space="preserve">
+    <value>Изпълнявай основният процес на програмата с висок приоритет</value>
+  </data>
+  <data name="LBL_SETTINGS_SEARCH_ENABLED" xml:space="preserve">
+    <value>Позволи функционалностите за търсене</value>
   </data>
   <data name="LBL_SETTINGS_SIZE_TO_DPI" xml:space="preserve">
     <value>Автоматично настройване на размера на прегледи, бутони и текс според DPI настройките на системата</value>

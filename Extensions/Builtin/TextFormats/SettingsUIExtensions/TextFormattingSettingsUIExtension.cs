@@ -26,11 +26,14 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
 
         protected override void OnSettingUpdated(string settingName, Type targetType)
         {
-            bool shouldDefaultSeparatorUIBeVisible = 
-                !(settingName == ExtensionSettingNames.SaveSelectedSeparatorAsDefault
-                && GetSetting<bool, MultipleTextSelectionsAlignmentFlowUIExtension>(ExtensionSettingNames.SaveSelectedSeparatorAsDefault));
-            
-            _defaultSeparatorUIPart?.SetIsVisible(shouldDefaultSeparatorUIBeVisible);
+            if (settingName == ExtensionSettingNames.SaveSelectedSeparatorAsDefault)
+            {
+                bool shouldDefaultSeparatorUIBeVisible = 
+                    !GetSetting<bool, MultipleTextSelectionsAlignmentFlowUIExtension>
+                        (ExtensionSettingNames.SaveSelectedSeparatorAsDefault);
+
+                _defaultSeparatorUIPart?.SetIsVisible(shouldDefaultSeparatorUIBeVisible);
+            }
         }
 
         protected override void RegisterSettingUIParts(ISettingsUIBuilder builder)

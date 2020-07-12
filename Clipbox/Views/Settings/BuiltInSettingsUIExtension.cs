@@ -26,9 +26,8 @@ namespace Clipbox.Views.Settings
         /// the request made by calling of the method <see cref="RequestSettingChange"/> 
         /// has been fulfilled.
         /// </summary>
-        /// <param name="settingName">The name of the setting.</param>
-        /// <param name="targetType">The extension type, for which the value is registered.</param>
-        protected virtual void OnSettingUpdated(string settingName, Type targetType) { }
+        /// <param name="settingKey">The key of the setting.</param>
+        protected virtual void OnSettingUpdated(ISettingKey settingKey) { }
 
         /// <summary>
         /// Registers the UI elements which will control our settings.
@@ -42,22 +41,19 @@ namespace Clipbox.Views.Settings
         /// Gets the value of a setting.
         /// </summary>
         /// <typeparam name="TValueType">The type of the setting value.</typeparam>
-        /// <typeparam name="TExtensionType">The extension type, for which the value is registered.</typeparam>
-        /// <param name="settingName">The name of the setting</param>
+        /// <param name="settingKey">The key of the setting</param>
         /// <returns>The value of the setting.</returns>
-        protected TValueType GetSetting<TValueType, TExtensionType>(string settingName)
+        protected TValueType GetSetting<TValueType>(ISettingKey settingKey)
         {
             lock (_lockObject)
             {
-                if (!(_settings.Any(s => s.Key.Name == settingName
-                    && s.Key.TargetComponentType == typeof(TExtensionType))))
+                if (!_settings.Any(s => s.Key == settingKey))
                 {
-                    throw new ArgumentException($"Setting with name '{settingName}' is not registered for extention type {typeof(TExtensionType).Name}.");
+                    throw new ArgumentException($"Setting with name '{settingKey.Name}' is not used by this extension.");
                 }
 
                 return (TValueType)_settings
-                    .Single(s => s.Key.Name == settingName
-                        && s.Key.TargetComponentType == typeof(TExtensionType))
+                    .Single(s => s.Key == settingKey)
                     .Value;
             }
         }
@@ -98,7 +94,7 @@ namespace Clipbox.Views.Settings
 
                     if (oldValue != settingValue)
                     {
-                        OnSettingUpdated(settingKey.Name, settingKey.TargetComponentType);
+                        OnSettingUpdated(settingKey);
                     }
                 }
                 else

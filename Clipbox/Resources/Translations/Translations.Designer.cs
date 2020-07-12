@@ -88,11 +88,38 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Run the search queries in an external process.
+        /// </summary>
+        internal static string LBL_SETTINGS_EXTERNAL_SEARCH_PROCESS {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_EXTERNAL_SEARCH_PROCESS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enable fade animations.
         /// </summary>
         internal static string LBL_SETTINGS_FADE_ANIMATIONS {
             get {
                 return ResourceManager.GetString("LBL_SETTINGS_FADE_ANIMATIONS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Run main process with high priority.
+        /// </summary>
+        internal static string LBL_SETTINGS_MAIN_PROCESS_PRIORITY {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_MAIN_PROCESS_PRIORITY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable the search functionality.
+        /// </summary>
+        internal static string LBL_SETTINGS_SEARCH_ENABLED {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_SEARCH_ENABLED", resourceCulture);
             }
         }
         
