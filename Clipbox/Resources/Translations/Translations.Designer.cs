@@ -88,6 +88,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enable cloud sychronization of the clipboard contents.
+        /// </summary>
+        internal static string LBL_SETTINGS_CLOUD_ENABLED {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_CLOUD_ENABLED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Run the search queries in an external process.
         /// </summary>
         internal static string LBL_SETTINGS_EXTERNAL_SEARCH_PROCESS {

@@ -126,6 +126,9 @@
   <data name="LBL_SETTINGS_CLIPBOARD_TRACKING" xml:space="preserve">
     <value>Enable system clipboard tracking</value>
   </data>
+  <data name="LBL_SETTINGS_CLOUD_ENABLED" xml:space="preserve">
+    <value>Enable cloud sychronization of the clipboard contents</value>
+  </data>
   <data name="LBL_SETTINGS_EXTERNAL_SEARCH_PROCESS" xml:space="preserve">
     <value>Run the search queries in an external process</value>
   </data>

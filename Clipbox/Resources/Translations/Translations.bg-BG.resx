@@ -126,6 +126,9 @@
   <data name="LBL_SETTINGS_CLIPBOARD_TRACKING" xml:space="preserve">
     <value>Следене на системния клипборд</value>
   </data>
+  <data name="LBL_SETTINGS_CLOUD_ENABLED" xml:space="preserve">
+    <value>Облачна синхронизация на съдържанието на клипбоарда</value>
+  </data>
   <data name="LBL_SETTINGS_EXTERNAL_SEARCH_PROCESS" xml:space="preserve">
     <value>Изпълнявай заявките за търсене в отделен процес</value>
   </data>
