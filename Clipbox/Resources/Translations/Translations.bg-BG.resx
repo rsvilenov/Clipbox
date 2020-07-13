@@ -120,6 +120,9 @@
   <data name="BTN_LBL_Ok" xml:space="preserve">
     <value>OK</value>
   </data>
+  <data name="LBL_SETTINGS_AUTO_CLOUD_SYNC_PINNED_ITEMS" xml:space="preserve">
+    <value>Автоматично го синхронизирай с облака всеки клипбоард елемент, щом бъде отбелязан като "закачен"</value>
+  </data>
   <data name="LBL_SETTINGS_BACKGROUND_PREVIEW_GENERATION" xml:space="preserve">
     <value>Генериране на прегледите във фонов режим</value>
   </data>

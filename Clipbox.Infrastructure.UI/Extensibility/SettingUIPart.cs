@@ -1,5 +1,6 @@
 ﻿using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using System;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Clipbox.Infrastructure.UI.Extensibility
@@ -46,6 +47,11 @@ namespace Clipbox.Infrastructure.UI.Extensibility
         Type ISettingUIPart.GetSettingValueType()
         {
             return typeof(TSettingValue);
+        }
+
+        public void SetIsVisible(bool isVisible)
+        {
+            Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
         }
     }
 }

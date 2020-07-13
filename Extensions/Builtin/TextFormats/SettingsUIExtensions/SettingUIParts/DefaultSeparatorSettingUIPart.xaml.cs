@@ -36,10 +36,5 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
             mtsaUiExt.SetSeparatorType(seprator);
             _currentSeparator = seprator;
         }
-
-        public void SetIsVisible(bool isVisible)
-        {
-            Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
-        }
     }
 }

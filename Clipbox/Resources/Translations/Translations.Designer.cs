@@ -70,6 +70,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Automatically sync an item with the cloud the moment it gets pinned.
+        /// </summary>
+        internal static string LBL_SETTINGS_AUTO_CLOUD_SYNC_PINNED_ITEMS {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_AUTO_CLOUD_SYNC_PINNED_ITEMS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enable background preview generation.
         /// </summary>
         internal static string LBL_SETTINGS_BACKGROUND_PREVIEW_GENERATION {

@@ -38,10 +38,5 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
         {
             ExternalSearchProcessEnabled = value;
         }
-
-        public void SetIsVisible(bool isVisible)
-        {
-            Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
-        }
     }
 }

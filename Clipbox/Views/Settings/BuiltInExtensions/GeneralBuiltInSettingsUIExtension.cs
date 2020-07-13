@@ -17,6 +17,7 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
                 RequestSettingChange(SettingsKeys.IsTrayIconEnabled, !GetSetting<bool>(SettingsKeys.IsDeskBandEnabled));
             }
         }
+
         protected override void RegisterSettingUIParts(IBuiltInSettingsUIBuilder builder)
         {
             builder

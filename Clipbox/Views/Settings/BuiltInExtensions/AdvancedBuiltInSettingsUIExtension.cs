@@ -13,16 +13,18 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
 
         protected override void OnSettingUpdated(ISettingKey settingKey)
         {
-            if (settingKey == SettingsKeys.IsSearchEnabled)
-            {
-                _extenralSearchProcessSettingUIPart?.SetIsVisible(GetSetting<bool>(SettingsKeys.IsSearchEnabled));
-            }
+            ManageUIPartsVisibility(settingKey);
         }
 
+        protected override void OnInitialSettingReceived(ISettingKey settingKey)
+        {
+            ManageUIPartsVisibility(settingKey);
+        }
+        
         protected override void RegisterSettingUIParts(IBuiltInSettingsUIBuilder builder)
         {
             _extenralSearchProcessSettingUIPart = new ExternalSearchProcessSettingUIPart();
-
+           
             builder
                 .Add(SettingsKeys.AreFadeAnimationsEnabled, new FadeAnimationsSettingUIPart())
                 .Add(SettingsKeys.IsBackgroundPreviewGenerationEnabled, new BackgroundPreviewGenerationSettingUIPart())
@@ -30,6 +32,14 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
                 .Add(SettingsKeys.IsSearchEnabled, new EnableSearchSettingUIPart())
                 .Add(SettingsKeys.UseSearchProviderInExternalProcess, _extenralSearchProcessSettingUIPart)
                 .Add(SettingsKeys.RunMainProcessWithHighPriority, new MainProcessPrioritySettingUIPart());
+        }
+
+        private void ManageUIPartsVisibility(ISettingKey settingKey)
+        {
+            if (settingKey == SettingsKeys.IsSearchEnabled)
+            {
+                _extenralSearchProcessSettingUIPart?.SetIsVisible(GetSetting<bool>(SettingsKeys.IsSearchEnabled));
+            }
         }
     }
 }

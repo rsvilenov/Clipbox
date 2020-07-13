@@ -38,6 +38,12 @@ namespace Clipbox.Views.Settings
         protected abstract void RegisterSettingUIParts(IBuiltInSettingsUIBuilder builder);
 
         /// <summary>
+        /// Called when the extension receives a setting from the system during the initialization
+        /// </summary>
+        protected virtual void OnInitialSettingReceived(ISettingKey settingKey) { }
+
+
+        /// <summary>
         /// This give the extensions the ability to request a change of settings
         /// directly from the SettingUIExtension, rather than from the UI Part.
         /// </summary>
@@ -111,6 +117,8 @@ namespace Clipbox.Views.Settings
                 else
                 {
                     _settings.Add(settingKey, settingValue);
+
+                    OnInitialSettingReceived(settingKey);
                 }
             }
         }
