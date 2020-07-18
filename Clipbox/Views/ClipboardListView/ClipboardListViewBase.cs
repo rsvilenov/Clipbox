@@ -203,7 +203,7 @@ namespace Clipbox.Views.ClipboardListView
         {
             // wait for the togglebutton's state to change and then fire the event.
             Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => 
-                ItemPinUnpinRequested?.Invoke(this, new ClipboardItemManipulationEventArgs(parameter.ClipboardItemId)));
+                ItemPinUnpinRequested?.Invoke(this, new ClipboardItemManipulationEventArgs(parameter.ClipboardItemId))));
         }
 
         private void DeleteClipboardEntryHandler(ClipboardViewItem parameter)

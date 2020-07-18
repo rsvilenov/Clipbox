@@ -214,7 +214,6 @@ namespace Clipbox.ViewModels
 
             ClipboardManager.PinUnpinItemItem(clipboardItemId, !wrapper.ViewItem.IsPinned);
 
-            Debug.WriteLine("wrapper.ViewItem.IsPinned set to : " + wrapper.ViewItem.IsPinned);
             wrapper.ViewItem.IsPinned = !wrapper.ViewItem.IsPinned;
 
             if (wrapper.ViewItem.IsPinned
