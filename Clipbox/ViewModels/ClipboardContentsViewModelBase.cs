@@ -10,6 +10,7 @@ using Clipbox.ViewModels.BindableObjects;
 using Clipbox.ViewModels.Enums;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Clipbox.ViewModels
@@ -211,7 +212,10 @@ namespace Clipbox.ViewModels
                 throw new InvalidOperationException($"The view item for {clipboardItemId} is not loaded. Please load it first.");
             }
 
-            ClipboardManager.PinUnpinItemItem(clipboardItemId, wrapper.ViewItem.IsPinned);
+            ClipboardManager.PinUnpinItemItem(clipboardItemId, !wrapper.ViewItem.IsPinned);
+
+            Debug.WriteLine("wrapper.ViewItem.IsPinned set to : " + wrapper.ViewItem.IsPinned);
+            wrapper.ViewItem.IsPinned = !wrapper.ViewItem.IsPinned;
 
             if (wrapper.ViewItem.IsPinned
                 && SettingsService.GetSetting<bool>(SettingsKeys.IsAutomaticCloudSyncOfPinnedItemsEnabled))
@@ -220,6 +224,17 @@ namespace Clipbox.ViewModels
             }
 
             OnClipboardEntryPinnedUnpinned(clipboardItemId);
+        }
+
+        public bool CanPinUnpinItem(string clipboardItemId)
+        {
+            IEnumerable<string> pinnedItems = ClipboardViewItemWrappers
+                .Where(w => w.ViewItem?.IsPinned == true)
+                .Select(w => w.ClipboardItem.Id);
+
+            return pinnedItems.Any(id => id == clipboardItemId)
+                || (pinnedItems.All(id => id != clipboardItemId)
+                    && pinnedItems.Count() < SettingsService.GetSetting<int>(SettingsKeys.MaxPinnedItems));
         }
 
         public void DeleteClipboardEntry(string clipboardItemId)

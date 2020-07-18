@@ -168,6 +168,7 @@
                 CombinabilityCheckRequested="MainListView_CombinabilityCheckRequested"
                 DimNonFocusedItems="{Binding Path=DimNonFocusedItems, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}}"
                 ItemPinUnpinRequested="MainListView_ItemPinUnpinRequested"
+                ItemCanPinRequested="MainListView_ItemCanPinRequested"
                 ItemRemovalRequested="MainListView_ItemRemovalRequested"
                 ItemsSource="{Binding ClipboardViewItemWrappers}"
                 ScrollDownButton="{Binding ElementName=BtnScrollDown}"

@@ -236,6 +236,11 @@ namespace Clipbox.Views
             _viewModel.PinUnpinClipboardEntry(e.ClipboardItemId);
         }
 
+        private void MainListView_ItemCanPinRequested(object sender, ClipboardItemManipulationCancelEventArgs e)
+        {
+            e.Cancel = !_viewModel.CanPinUnpinItem(e.ClipboardItemId);
+        }
+
         private void MainListView_ItemRemovalRequested(object sender, EventArgsClasses.ClipboardItemManipulationEventArgs e)
         {
             _viewModel.RemoveClipboardItemWrappers(new string[] { e.ClipboardItemId });

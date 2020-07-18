@@ -192,33 +192,45 @@
                                                                         Source="{Binding SourceWindowIcon}" ToolTip="{Binding SourceWindowDescription}" Tag="{x:Static infWindows:PerMonitorDpiWindow.SCALE_ELEMENT_TAG}" />-->
 
 
-
-                                                        <ToggleButton
-                                                            Grid.Column="2"
+                                                        <Grid Grid.Column="2">
+                                                            <ToggleButton
                                                             MaxWidth="25"
                                                             Margin="0,0,5,0"
+                                                            Name="tglBtn"
                                                             Command="{Binding Path=ActionButtonsDataContext.PinUnpinClipboardEntry, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
                                                             CommandParameter="{Binding}"
-                                                            IsChecked="{Binding IsPinned}"
+                                                            IsChecked="{Binding IsPinned, Mode=OneWay}"
                                                             Style="{DynamicResource ToggleBtnPin}">
-                                                            <i:Interaction.Behaviors>
-                                                                <infBeh:FrameworkElementDpiScalingBehavior />
-                                                                <localBeh:ToggleButtonToolTipBehavior CheckedToolTipText="Unpin item" UncheckedToolTipText="Pin item" />
-                                                            </i:Interaction.Behaviors>
+                                                                <i:Interaction.Behaviors>
+                                                                    <infBeh:FrameworkElementDpiScalingBehavior />
+                                                                    <localBeh:ToggleButtonToolTipBehavior CheckedToolTipText="Unpin item" UncheckedToolTipText="Pin item" />
+                                                                </i:Interaction.Behaviors>
+                                                            </ToggleButton>
+                                                            
                                                             <!--  Visible only if the ListViewItem is highlighted or selected (IsManipulationEnabled = true) OR the toggle button is checked  -->
-                                                            <ToggleButton.IsEnabled>
+                                                            <Grid.IsEnabled>
                                                                 <MultiBinding Converter="{StaticResource OrMultiValueConverter}">
                                                                     <Binding Path="IsManipulationEnabled" RelativeSource="{RelativeSource AncestorType={x:Type Border}}" />
-                                                                    <Binding Path="IsChecked" RelativeSource="{RelativeSource Self}" />
+                                                                    <Binding Path="IsPinned"/>
                                                                 </MultiBinding>
-                                                            </ToggleButton.IsEnabled>
-                                                            <ToggleButton.Visibility>
+                                                            </Grid.IsEnabled>
+                                                            <Grid.Visibility>
                                                                 <Binding
                                                                     Converter="{StaticResource BooleanToVisibilityHiddenConverter}"
                                                                     Path="IsEnabled"
                                                                     RelativeSource="{RelativeSource Self}" />
-                                                            </ToggleButton.Visibility>
-                                                        </ToggleButton>
+                                                            </Grid.Visibility>
+                                                            <Grid.Style>
+                                                                <Style TargetType="Grid">
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding ElementName=tglBtn, Path=IsEnabled}" Value="False">
+                                                                            <Setter Property="ToolTip" Value="Max pinned item limit is reached" />
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Grid.Style>
+                                                        </Grid>
+                                                        
 
                                                         <ContentControl Grid.Column="3">
                                                             <ContentControl.Style>

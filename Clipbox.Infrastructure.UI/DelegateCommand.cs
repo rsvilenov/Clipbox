@@ -101,12 +101,20 @@ namespace Clipbox.Infrastructure.UI
 
         public bool CanExecute(T parameter)
         {
-            if (_canExecute == null)
+            if (_canExecute != null)
             {
-                return true;
+                if (_dispatcherPriority.HasValue)
+                {
+                    return (bool)Dispatcher.CurrentDispatcher.Invoke(_dispatcherPriority.Value,
+                        new Func<bool>(() => _canExecute(parameter)));
+                }
+                else
+                {
+                    return _canExecute(parameter);
+                }
             }
 
-            return _canExecute(parameter);
+            return true;
         }
 
         public void Execute(T parameter)

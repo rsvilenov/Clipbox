@@ -44,6 +44,8 @@ namespace Clipbox.Views.ClipboardListView
 
         public event EventHandler<ClipboardItemManipulationEventArgs> ItemEnableDisableSyncRequested;
 
+        public event EventHandler<ClipboardItemManipulationCancelEventArgs> ItemCanPinRequested;
+
         /// <summary>
         /// Contains the command for the Close and Pin buttons.
         /// We do not want these commands to be publicly accessible, but we cannot make the 
@@ -145,16 +147,26 @@ namespace Clipbox.Views.ClipboardListView
                 RemoveClipboardEntry = new DelegateCommand<ClipboardViewItem>(RemoveClipboardEntryHandler,
                 (item) => item?.GetHashCode() != _hashCodeOfItemUndergoingDeletionOrRemoval),
 
-                // wait for the binding operations to complete,
-                // so we can get the changed value of the IsPinned property
                 PinUnpinClipboardEntry = new DelegateCommand<ClipboardViewItem>(PinUnpinClipboardEntryHandler,
-                dispatcherPriority: DispatcherPriority.ContextIdle),
+                    PinUnpinClipboardEntryCanExecuteHandler),
 
                 EnableDisableSyncOfClipboardEntry = new DelegateCommand<ClipboardViewItem>(EnableDisableSyncOfClipboardEntryHandler,
-                dispatcherPriority: DispatcherPriority.ContextIdle)
+                    dispatcherPriority: DispatcherPriority.ContextIdle)
             };
         }
-        
+
+        private bool PinUnpinClipboardEntryCanExecuteHandler(ClipboardViewItem cvi)
+        {
+            if (cvi == null)
+            {
+                return true;
+            }
+
+            var args = new ClipboardItemManipulationCancelEventArgs(cvi.ClipboardItemId);
+            ItemCanPinRequested?.Invoke(this, args);
+            return !args.Cancel;
+        }
+
         private void ClipboardListViewBase_MouseDown(object sender, MouseButtonEventArgs e)
         {
             // deselect the selected item on click on the blank space between them
@@ -189,7 +201,9 @@ namespace Clipbox.Views.ClipboardListView
         
         private void PinUnpinClipboardEntryHandler(ClipboardViewItem parameter)
         {
-            ItemPinUnpinRequested?.Invoke(this, new ClipboardItemManipulationEventArgs(parameter.ClipboardItemId));
+            // wait for the togglebutton's state to change and then fire the event.
+            Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => 
+                ItemPinUnpinRequested?.Invoke(this, new ClipboardItemManipulationEventArgs(parameter.ClipboardItemId)));
         }
 
         private void DeleteClipboardEntryHandler(ClipboardViewItem parameter)

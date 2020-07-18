@@ -33,6 +33,8 @@ namespace Clipbox.Settings
 
         public static SettingKey<int> MaxNonPinnedItemsInQuickView = new SettingKey<int>(nameof(MaxNonPinnedItemsInQuickView), 5);
 
+        public static SettingKey<int> MaxPinnedItems = new SettingKey<int>(nameof(MaxPinnedItems), 10);
+
         public static SettingKey<int> PreviewGenerationTimeout = new SettingKey<int>(nameof(PreviewGenerationTimeout), 6000);
 
         public static SettingKey<int> PreviewCacheMaxSize = new SettingKey<int>(nameof(PreviewCacheMaxSize), 10485760);

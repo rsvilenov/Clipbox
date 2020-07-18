@@ -118,6 +118,10 @@
                         <Trigger Property="ToggleButton.IsChecked" Value="True">
                             <Setter TargetName="content" Property="Template" Value="{DynamicResource UnpinIcon}" />
                         </Trigger>
+                        <Trigger Property="ToggleButton.IsEnabled" Value="False">
+                            <Setter TargetName="content" Property="Template" Value="{DynamicResource PinIconDisabled}" />
+                            <Setter Property="Foreground" Value="Gray" />
+                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
