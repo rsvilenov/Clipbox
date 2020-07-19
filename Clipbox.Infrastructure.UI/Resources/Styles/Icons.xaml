@@ -1640,4 +1640,39 @@
             </Grid>
         </Viewbox>
     </ControlTemplate>
+
+    <ControlTemplate x:Key="PlusIcon">
+        <Viewbox>
+            <Grid Width="128" Height="128" Visibility="Visible">
+                <Path Data="M12.126984,0L19.872009,0 19.872009,12.128 32,12.128 32,19.872999 19.872009,19.872999 19.872009,31.999 12.126984,31.999 12.126984,19.872999 0,19.872999 0,12.128 12.126984,12.128z" Stretch="Uniform" Fill="{TemplateBinding Foreground}" Width="90" Height="90" Margin="0,0,0,0" RenderTransformOrigin="0.5,0.5">
+                    <Path.RenderTransform>
+                        <TransformGroup>
+                            <TransformGroup.Children>
+                                <RotateTransform Angle="0" />
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                            </TransformGroup.Children>
+                        </TransformGroup>
+                    </Path.RenderTransform>
+                </Path>
+            </Grid>
+        </Viewbox>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="MinusIcon">
+        <Viewbox>
+            <Grid Width="128" Height="128" Visibility="Visible">
+                <Path Data="M0,0L32,0 32,5.3 0,5.3z" Stretch="Uniform" Fill="{TemplateBinding Foreground}" Width="90" Height="90" Margin="0,0,0,0" RenderTransformOrigin="0.5,0.5">
+                    <Path.RenderTransform>
+                        <TransformGroup>
+                            <TransformGroup.Children>
+                                <RotateTransform Angle="0" />
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                            </TransformGroup.Children>
+                        </TransformGroup>
+                    </Path.RenderTransform>
+                </Path>
+            </Grid>
+        </Viewbox>
+    </ControlTemplate>
+    
 </ResourceDictionary>

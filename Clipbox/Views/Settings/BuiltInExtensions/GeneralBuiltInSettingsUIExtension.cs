@@ -2,6 +2,7 @@
 using Clipbox.Core.Extensibility.Enums;
 using Clipbox.Settings;
 using Clipbox.Views.Settings.BuiltInExtensions.UIParts;
+using System.Runtime.InteropServices;
 
 namespace Clipbox.Views.Settings.BuiltInExtensions
 {
@@ -22,7 +23,8 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
         {
             builder
                 .Add(SettingsKeys.IsClipboardTrackingEnabled, new ClipboardTrackingSettingUIPart())
-                .Add(SettingsKeys.IsDeskBandEnabled, new PinTaskbarIconSettingUIPart());
+                .Add(SettingsKeys.IsDeskBandEnabled, new PinTaskbarIconSettingUIPart())
+                .Add(SettingsKeys.MaxPinnedItems, new MaxPinnedItemsSettingUIPart());
         }
     }
 }

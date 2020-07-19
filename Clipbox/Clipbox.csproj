@@ -309,6 +309,9 @@
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\ExternalSearchProcessSettingUIPart.xaml.cs">
       <DependentUpon>ExternalSearchProcessSettingUIPart.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\MaxPinnedItemsSettingUIPart.xaml.cs">
+      <DependentUpon>MaxPinnedItemsSettingUIPart.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\PinTaskbarIconSettingUIPart.xaml.cs">
       <DependentUpon>PinTaskbarIconSettingUIPart.xaml</DependentUpon>
     </Compile>
@@ -467,6 +470,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\BuiltInExtensions\UIParts\ExternalSearchProcessSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\BuiltInExtensions\UIParts\MaxPinnedItemsSettingUIPart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

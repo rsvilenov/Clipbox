@@ -133,6 +133,25 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Maximum number of pinned entries:
+        ///.
+        /// </summary>
+        internal static string LBL_SETTINGS_MAX_PINNED_ENTRIES {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_MAX_PINNED_ENTRIES", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Note: when the number is decreased, the older of the pinned entries will be unpinned to match the maxumum count..
+        /// </summary>
+        internal static string LBL_SETTINGS_MAX_PINNED_ENTRIES_WRN {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_MAX_PINNED_ENTRIES_WRN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Pin the tray icon to the taskbar, so that it never hides.
         /// </summary>
         internal static string LBL_SETTINGS_PIN_TASKBAR_ICON {
