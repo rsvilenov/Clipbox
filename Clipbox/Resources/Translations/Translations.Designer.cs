@@ -133,6 +133,24 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Max non pinned clipboard entries in the Quick View.
+        /// </summary>
+        internal static string LBL_SETTINGS_MAX_NON_PINNED_ENTRIES_IN_QV {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_MAX_NON_PINNED_ENTRIES_IN_QV", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Note: when the number is decreased, the oldest entries will be removed from the Quick View to match the maxumum count..
+        /// </summary>
+        internal static string LBL_SETTINGS_MAX_NON_PINNED_ENTRIES_IN_QV_WRN {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_MAX_NON_PINNED_ENTRIES_IN_QV_WRN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Maximum number of pinned clipboard entries:
         ///.
         /// </summary>

@@ -24,7 +24,8 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
             builder
                 .Add(SettingsKeys.IsClipboardTrackingEnabled, new ClipboardTrackingSettingUIPart())
                 .Add(SettingsKeys.IsDeskBandEnabled, new PinTaskbarIconSettingUIPart())
-                .Add(SettingsKeys.MaxPinnedItems, new MaxPinnedItemsSettingUIPart());
+                .Add(SettingsKeys.MaxPinnedItems, new MaxPinnedItemsSettingUIPart())
+                .Add(SettingsKeys.MaxNonPinnedItemsInQuickView, new MaxNonPinnedItemsInQVSettingUIPart());
         }
     }
 }

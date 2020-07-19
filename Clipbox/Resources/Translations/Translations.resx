@@ -141,6 +141,12 @@
   <data name="LBL_SETTINGS_MAIN_PROCESS_PRIORITY" xml:space="preserve">
     <value>Run main process with high priority</value>
   </data>
+  <data name="LBL_SETTINGS_MAX_NON_PINNED_ENTRIES_IN_QV" xml:space="preserve">
+    <value>Max non pinned clipboard entries in the Quick View</value>
+  </data>
+  <data name="LBL_SETTINGS_MAX_NON_PINNED_ENTRIES_IN_QV_WRN" xml:space="preserve">
+    <value>Note: when the number is decreased, the oldest entries will be removed from the Quick View to match the maxumum count.</value>
+  </data>
   <data name="LBL_SETTINGS_MAX_PINNED_ENTRIES" xml:space="preserve">
     <value>Maximum number of pinned clipboard entries:
 </value>

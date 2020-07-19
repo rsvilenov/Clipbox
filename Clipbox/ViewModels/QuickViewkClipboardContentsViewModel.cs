@@ -81,7 +81,12 @@ namespace Clipbox.ViewModels
             // unpin the items that exceed the max limit. Unpin the items that were pinned the furthest back in time.
             if (e.Key == SettingsKeys.MaxPinnedItems)
             {
-                UnpinOldPinnedItems((int)e.Value);
+                int maxPinnedItemsToKeep = (int)e.Value;
+                UnpinOldPinnedItems(maxPinnedItemsToKeep);
+            }
+            else if (e.Key == SettingsKeys.MaxNonPinnedItemsInQuickView)
+            {
+                RemoveOldItemWrappersExceedingLimit();
             }
             else
             {

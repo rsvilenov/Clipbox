@@ -141,6 +141,12 @@
   <data name="LBL_SETTINGS_MAIN_PROCESS_PRIORITY" xml:space="preserve">
     <value>Изпълнявай основният процес на програмата с висок приоритет</value>
   </data>
+  <data name="LBL_SETTINGS_MAX_NON_PINNED_ENTRIES_IN_QV" xml:space="preserve">
+    <value>Максимален брой клипбоард елементи в Бързия преглед</value>
+  </data>
+  <data name="LBL_SETTINGS_MAX_NON_PINNED_ENTRIES_IN_QV_WRN" xml:space="preserve">
+    <value>Внимание: При намаляне на броя, най-старите елементи ще бъдеат премахнати от Бързия преглед</value>
+  </data>
   <data name="LBL_SETTINGS_MAX_PINNED_ENTRIES" xml:space="preserve">
     <value>Максимален брой закачени клиборд елементи:
 </value>
