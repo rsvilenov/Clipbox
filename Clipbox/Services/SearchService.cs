@@ -103,15 +103,18 @@ namespace Clipbox.Services
             _clipboardItemsChangeSlidingTimer.Slide();
         }
 
-        private void _clipboardManager_ItemChanged(object sender, ExtendedClipboard.EventArgs.ClipboardManagerEventArgs e)
+        private void _clipboardManager_ItemChanged(object sender, ExtendedClipboard.EventArgs.ItemChangedEventArgs e)
         {
-            lock (_listLockHandle)
+            if (e.TypeOfChange == ExtendedClipboard.Enums.TypeOfItemChange.RemoveCDOs)
             {
-                _clipboardItemIdsScheduledForRemoval.Add(e.ItemId);
-                _clipboardItemIdsScheduledForAdd.Add(e.ItemId);
-            }
+                lock (_listLockHandle)
+                {
+                    _clipboardItemIdsScheduledForRemoval.Add(e.ItemId);
+                    _clipboardItemIdsScheduledForAdd.Add(e.ItemId);
+                }
 
-            _clipboardItemsChangeSlidingTimer.Slide();
+                _clipboardItemsChangeSlidingTimer.Slide();
+            }
         }
 
         private void _clipboardManager_ItemAdded(object sender, ExtendedClipboard.EventArgs.ClipboardManagerEventArgs e)

@@ -73,6 +73,8 @@
     <Compile Include="ClipboardContent\TimestampInfo.cs" />
     <Compile Include="ClipboardContent\TransferableClipboardDataObject.cs" />
     <Compile Include="ClipboardContent\TransferableClipboardItem.cs" />
+    <Compile Include="Enums\TypeOfItemChange.cs" />
+    <Compile Include="EventArgs\ItemChangedEventArgs.cs" />
     <Compile Include="EventArgs\ItemFetchingEventArgs.cs" />
     <Compile Include="EventArgs\ItemStoringEventArgs.cs" />
     <Compile Include="GlobalSuppressions.cs" />

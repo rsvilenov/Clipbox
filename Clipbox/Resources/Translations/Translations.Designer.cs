@@ -133,7 +133,7 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Maximum number of pinned entries:
+        ///   Looks up a localized string similar to Maximum number of pinned clipboard entries:
         ///.
         /// </summary>
         internal static string LBL_SETTINGS_MAX_PINNED_ENTRIES {

@@ -68,6 +68,6 @@ namespace Clipbox.ExtendedClipboard.Interfaces
 
         event EventHandler<ClipboardManagerEventArgs> ItemRemoved;
 
-        event EventHandler<ClipboardManagerEventArgs> ItemChanged;
+        event EventHandler<ItemChangedEventArgs> ItemChanged;
     }
 }

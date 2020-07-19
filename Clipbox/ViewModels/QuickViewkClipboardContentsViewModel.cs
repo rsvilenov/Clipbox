@@ -3,6 +3,7 @@ using Clipbox.ExtendedClipboard.EventArgs;
 using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.DataObjects;
+using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.ViewModels.BindableObjects;
@@ -77,13 +78,40 @@ namespace Clipbox.ViewModels
 
         private void SettingsService_SettingChanged(object sender, Services.EventArgsClasses.SettingsEventArgs e)
         {
-            Type extType = e.Key.TargetComponentType;
+            // unpin the items that exceed the max limit. Unpin the items that were pinned the furthest back in time.
+            if (e.Key == SettingsKeys.MaxPinnedItems)
+            {
+                UnpinOldPinnedItems((int)e.Value);
+            }
+            else
+            {
+                Type extType = e.Key.TargetComponentType;
 
-            // reload the items, whose generator extensions have some settings changed
+                // reload the items, whose generator extensions have some settings changed
+                base.ClipboardViewItemWrappers
+                    .Where(w => w.IsViewItemLoaded && w.ViewItem.GeneratorExtensionTypeName == extType?.AssemblyQualifiedName)
+                    .ToList()
+                    .ForEach(w => LoadViewItem(w.Id, _lastUsedMonitorDimensions));
+            }
+        }
+
+        /// <summary>
+        /// Unpin the items that were pinned the furthest back in time.
+        /// </summary>
+        /// <param name="maxPinnedItemsToRemain"></param>
+        private void UnpinOldPinnedItems(int maxPinnedItemsToRemain)
+        {
             base.ClipboardViewItemWrappers
-                .Where(w => w.IsViewItemLoaded && w.ViewItem.GeneratorExtensionTypeName == extType?.AssemblyQualifiedName)
+                // the view item's IsPinned does not necessarry correspond to ClipboardItem.IsPinned.
+                // This is because the UI does not refresh the items when they become pinned. It only
+                // changes the value of ViewItem.IsPinned. But ClipboardItem.IsPinned is read only
+                // and cannot be changed, so it remains the same.
+                // TODO: think of a way to fix this.
+                .Where(w => w.ViewItem?.IsPinned == true)
+                .OrderByDescending(w => w.ClipboardItem.TimestampInfo.ModifiedDateUtcTicks)
+                .Skip(maxPinnedItemsToRemain)
                 .ToList()
-                .ForEach(w => LoadViewItem(w.Id, _lastUsedMonitorDimensions));
+                .ForEach(w => ClipboardManager.PinUnpinItemItem(w.Id, pin: false));
         }
 
         private void ClearAllClipboardEntriesHandler()
@@ -91,11 +119,30 @@ namespace Clipbox.ViewModels
             base.RemoveClipboardItemWrappers(GetNonPinnedItems());
         }
 
-        private void ClipboardManager_ItemChanged(object sender, ClipboardManagerEventArgs e)
+        private void ClipboardManager_ItemChanged(object sender, ItemChangedEventArgs e)
         {
-            if (RemoveItemWrapper(e.ItemId))
+            if (e.TypeOfChange == ExtendedClipboard.Enums.TypeOfItemChange.Unpin)
             {
-                ScheduleLoadingOfNewItem(e.ItemId);
+                // the unpin may be automatic (due to change in MaxPinnedItems setting),
+                // so we have to make sure that the corresponding IsPinned property in 
+                // the wrapper is syncronized.
+                var viewItem = ClipboardViewItemWrappers
+                    .SingleOrDefault(w => w.Id == e.ItemId)
+                    ?.ViewItem;
+
+                if (viewItem != null)
+                {
+                    viewItem.IsPinned = false;
+                }
+
+                return;
+            }
+            else if (e.TypeOfChange == ExtendedClipboard.Enums.TypeOfItemChange.RemoveCDOs)
+            {
+                if (RemoveItemWrapper(e.ItemId))
+                {
+                    ScheduleLoadingOfNewItem(e.ItemId);
+                }
             }
         }
 

@@ -196,13 +196,16 @@ namespace Clipbox.Services
             DeleteStoredPreviewDataTransferObject(e.ItemId);
         }
 
-        private void _clipboardManager_ItemChanged(object sender, ExtendedClipboard.EventArgs.ClipboardManagerEventArgs e)
+        private void _clipboardManager_ItemChanged(object sender, ExtendedClipboard.EventArgs.ItemChangedEventArgs e)
         {
-            // redraw the preview data
-            if (_settingsService.GetSetting<bool>(SettingsKeys.IsBackgroundPreviewGenerationEnabled))
+            if (e.TypeOfChange == ExtendedClipboard.Enums.TypeOfItemChange.RemoveCDOs)
             {
-                // spawn threads here
-                TryEnqueuePreviewGenerationTask(e.ItemId);
+                // redraw the preview data
+                if (_settingsService.GetSetting<bool>(SettingsKeys.IsBackgroundPreviewGenerationEnabled))
+                {
+                    // spawn threads here
+                    TryEnqueuePreviewGenerationTask(e.ItemId);
+                }
             }
         }
 

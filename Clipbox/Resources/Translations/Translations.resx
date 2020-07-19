@@ -142,7 +142,7 @@
     <value>Run main process with high priority</value>
   </data>
   <data name="LBL_SETTINGS_MAX_PINNED_ENTRIES" xml:space="preserve">
-    <value>Maximum number of pinned entries:
+    <value>Maximum number of pinned clipboard entries:
 </value>
   </data>
   <data name="LBL_SETTINGS_MAX_PINNED_ENTRIES_WRN" xml:space="preserve">

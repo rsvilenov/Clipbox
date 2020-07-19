@@ -74,7 +74,7 @@ namespace Clipbox.ExtendedClipboard
 
         public event EventHandler<ClipboardManagerEventArgs> ItemRemoved;
 
-        public event EventHandler<ClipboardManagerEventArgs> ItemChanged;
+        public event EventHandler<ItemChangedEventArgs> ItemChanged;
 
         private readonly object _ioLockHandle = new object();
 
@@ -861,6 +861,9 @@ namespace Clipbox.ExtendedClipboard
 
                 _persistenceHelper.StoreAndShrinkClipboardItem(item);
             }
+
+            ItemChanged?.Invoke(this, new ItemChangedEventArgs(clipboardItemId, 
+                enable ? Enums.TypeOfItemChange.EnableSync : Enums.TypeOfItemChange.DisableSync));
         }
 
         public void PinUnpinItemItem(string clipboardItemId, bool pin)
@@ -884,6 +887,9 @@ namespace Clipbox.ExtendedClipboard
 
                 _persistenceHelper.StoreAndShrinkClipboardItem(item);
             }
+
+            ItemChanged?.Invoke(this, new ItemChangedEventArgs(clipboardItemId, 
+                pin ? Enums.TypeOfItemChange.Pin : Enums.TypeOfItemChange.Unpin));
         }
 
         public void RemoveClipbpardDataObjects(string clipboardItemId, int[] clipboardDataObjectIndices, bool beSilend = false)
@@ -928,7 +934,7 @@ namespace Clipbox.ExtendedClipboard
 
             if (!beSilend)
             {
-                ItemChanged?.Invoke(this, new ClipboardManagerEventArgs(clipboardItemId));
+                ItemChanged?.Invoke(this, new ItemChangedEventArgs(clipboardItemId, Enums.TypeOfItemChange.RemoveCDOs));
             }
         }
 
