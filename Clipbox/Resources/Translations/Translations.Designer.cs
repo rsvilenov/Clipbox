@@ -213,5 +213,41 @@ namespace Clipbox.Resources.Translations {
                 return ResourceManager.GetString("TGL_BTN_LBL_On", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close.
+        /// </summary>
+        internal static string TLP_WINDOW_CLOSE {
+            get {
+                return ResourceManager.GetString("TLP_WINDOW_CLOSE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Maximize.
+        /// </summary>
+        internal static string TLP_WINDOW_MAXIMIZE {
+            get {
+                return ResourceManager.GetString("TLP_WINDOW_MAXIMIZE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Minimize.
+        /// </summary>
+        internal static string TLP_WINDOW_MINIMIZE {
+            get {
+                return ResourceManager.GetString("TLP_WINDOW_MINIMIZE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Restore.
+        /// </summary>
+        internal static string TLP_WINDOW_RESTORE {
+            get {
+                return ResourceManager.GetString("TLP_WINDOW_RESTORE", resourceCulture);
+            }
+        }
     }
 }

@@ -169,4 +169,16 @@
   <data name="TGL_BTN_LBL_On" xml:space="preserve">
     <value>On</value>
   </data>
+  <data name="TLP_WINDOW_CLOSE" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="TLP_WINDOW_MAXIMIZE" xml:space="preserve">
+    <value>Maximize</value>
+  </data>
+  <data name="TLP_WINDOW_MINIMIZE" xml:space="preserve">
+    <value>Minimize</value>
+  </data>
+  <data name="TLP_WINDOW_RESTORE" xml:space="preserve">
+    <value>Restore</value>
+  </data>
 </root>

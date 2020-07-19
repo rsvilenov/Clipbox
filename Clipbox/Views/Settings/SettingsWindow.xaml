@@ -30,6 +30,10 @@
     WindowStartupLocation="CenterScreen"
     WindowState="Normal"
     WindowStyle="None"
+    MinimizeBtnToolTip="{loc:Localize TLP_WINDOW_MINIMIZE, ResourceLookupMode=CurrentAssembly}"
+    MaximizeBtnToolTip="{loc:Localize TLP_WINDOW_MAXIMIZE, ResourceLookupMode=CurrentAssembly}"
+    RestoreBtnToolTip="{loc:Localize TLP_WINDOW_RESTORE, ResourceLookupMode=CurrentAssembly}"
+    CloseBtnToolTip="{loc:Localize TLP_WINDOW_CLOSE, ResourceLookupMode=CurrentAssembly}"
     mc:Ignorable="d">
     <Window.Resources>
         <ResourceDictionary>
