@@ -3,5 +3,6 @@
         <ResourceDictionary Source="/Clipbox.Infrastructure.UI.CustomControls;component/Themes/ToggleSwitch.xaml" />
         <ResourceDictionary Source="/Clipbox.Infrastructure.UI.CustomControls;component/Themes/SearchTextBox.xaml" />
         <ResourceDictionary Source="/Clipbox.Infrastructure.UI.CustomControls;component/Themes/WindowFrame.xaml" />
+        <ResourceDictionary Source="/Clipbox.Infrastructure.UI.CustomControls;component/Themes/IntUpDown.xaml" />
     </ResourceDictionary.MergedDictionaries>
 </ResourceDictionary>

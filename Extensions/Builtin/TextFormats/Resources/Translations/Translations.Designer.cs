@@ -19,7 +19,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.Resources.Translations {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Translations {
@@ -142,7 +142,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Minimum number of characters.
+        ///   Looks up a localized string similar to Maximum number of characters.
         /// </summary>
         internal static string LBL_SKIP_PASSWORD_LEN_MAX {
             get {

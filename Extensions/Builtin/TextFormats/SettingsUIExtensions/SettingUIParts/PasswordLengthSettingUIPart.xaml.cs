@@ -1,9 +1,7 @@
 ﻿using Clipbox.Infrastructure.UI.Extensibility;
 using System;
 using System.ComponentModel;
-using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIParts
 {
@@ -82,31 +80,6 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
             {
                 MinPasswordLength = _defaultMinPasswordLen;
                 MaxPasswordLength = _defaultMaxPasswordLen;
-            }
-        }
-        
-        private void TextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
-        {
-            if (MinPasswordLength == null)
-            {
-                MinPasswordLength = 0;
-            }
-
-            if (MaxPasswordLength == null)
-            {
-                MaxPasswordLength = 0;
-            }
-        }
-
-        private void TextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
-        {
-            TextBox tb = (TextBox)sender;
-
-            if (e.Text != null
-                && (e.Text.All(c => char.IsNumber(c)) == false
-                    || (tb.Text != null && tb.Text.Length + e.Text.Length > 2) /* 99 letters max */))
-            {
-                e.Handled = true;
             }
         }
     }

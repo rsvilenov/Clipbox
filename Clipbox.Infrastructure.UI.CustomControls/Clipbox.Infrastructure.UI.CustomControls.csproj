@@ -70,6 +70,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IntUpDown.cs" />
     <Compile Include="SearchTextBox.cs" />
     <Compile Include="ToggleSwitch.cs" />
     <Compile Include="WindowFrame.cs" />
@@ -106,6 +107,10 @@
     <Page Include="Themes\Generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\IntUpDown.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\SearchTextBox.xaml">
       <SubType>Designer</SubType>

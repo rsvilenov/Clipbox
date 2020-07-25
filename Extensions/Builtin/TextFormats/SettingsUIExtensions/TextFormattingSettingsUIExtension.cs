@@ -28,11 +28,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
         {
             if (settingName == ExtensionSettingNames.SaveSelectedSeparatorAsDefault)
             {
-                bool shouldDefaultSeparatorUIBeVisible = 
-                    !GetSetting<bool, MultipleTextSelectionsAlignmentFlowUIExtension>
-                        (ExtensionSettingNames.SaveSelectedSeparatorAsDefault);
-
-                _defaultSeparatorUIPart?.SetIsVisible(shouldDefaultSeparatorUIBeVisible);
+                AdjustUIPartsVisibility();
             }
         }
 
@@ -41,9 +37,19 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
             _defaultSeparatorUIPart = new DefaultSeparatorSettingUIPart();
             _defaultSeparatorUIPart.SetIsVisible(!GetSetting<bool, MultipleTextSelectionsAlignmentFlowUIExtension>(ExtensionSettingNames.SaveSelectedSeparatorAsDefault));
 
+            AdjustUIPartsVisibility();
+
             builder
                 .Add(ExtensionSettingNames.SaveSelectedSeparatorAsDefault, new SaveLastSeparatorSettingUIPart())
                 .Add(ExtensionSettingNames.DefaultSeparator, _defaultSeparatorUIPart);
+        }
+        private void AdjustUIPartsVisibility()
+        {
+            bool shouldDefaultSeparatorUIBeVisible =
+                                !GetSetting<bool, MultipleTextSelectionsAlignmentFlowUIExtension>
+                                    (ExtensionSettingNames.SaveSelectedSeparatorAsDefault);
+
+            _defaultSeparatorUIPart?.SetIsVisible(shouldDefaultSeparatorUIBeVisible);
         }
     }
 }

@@ -227,7 +227,7 @@ it may mask other numbers as well, or break some formatted text...</value>
     <value>Match as password every short phrase that has:</value>
   </data>
   <data name="LBL_SKIP_PASSWORD_LEN_MAX" xml:space="preserve">
-    <value>Minimum number of characters</value>
+    <value>Maximum number of characters</value>
   </data>
   <data name="LBL_SKIP_PASSWORD_LEN_MIN" xml:space="preserve">
     <value>Minimum number of characters</value>
