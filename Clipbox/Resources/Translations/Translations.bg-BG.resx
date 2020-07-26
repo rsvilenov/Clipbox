@@ -148,11 +148,13 @@
     <value>Внимание: При намаляне на броя, най-старите елементи ще бъдеат премахнати от Бързия преглед</value>
   </data>
   <data name="LBL_SETTINGS_MAX_PINNED_ENTRIES" xml:space="preserve">
-    <value>Максимален брой закачени клиборд елементи:
-</value>
+    <value>Максимален брой закачени клиборд елементи</value>
   </data>
   <data name="LBL_SETTINGS_MAX_PINNED_ENTRIES_WRN" xml:space="preserve">
     <value>Внимание: При намаляне на броя, най-старите закачени елементи ще бъдеат откачени.</value>
+  </data>
+  <data name="LBL_SETTINGS_MAX_PREVIEW_ITEMS_IN_GROUP" xml:space="preserve">
+    <value>Максимален брой прегледи в група (например при файлове, копирани наведнъж)</value>
   </data>
   <data name="LBL_SETTINGS_PIN_TASKBAR_ICON" xml:space="preserve">
     <value>Прикачи трей иконката към таскбара, за да не се крие никога</value>

@@ -148,11 +148,13 @@
     <value>Note: when the number is decreased, the oldest entries will be removed from the Quick View to match the maxumum count.</value>
   </data>
   <data name="LBL_SETTINGS_MAX_PINNED_ENTRIES" xml:space="preserve">
-    <value>Maximum number of pinned clipboard entries:
-</value>
+    <value>Maximum number of pinned clipboard entries</value>
   </data>
   <data name="LBL_SETTINGS_MAX_PINNED_ENTRIES_WRN" xml:space="preserve">
     <value>Note: when the number is decreased, the older of the pinned entries will be unpinned to match the maxumum count.</value>
+  </data>
+  <data name="LBL_SETTINGS_MAX_PREVIEW_ITEMS_IN_GROUP" xml:space="preserve">
+    <value>Maximum number of preview items in a group (i.e. for files, copied at once)</value>
   </data>
   <data name="LBL_SETTINGS_PIN_TASKBAR_ICON" xml:space="preserve">
     <value>Pin the tray icon to the taskbar, so that it never hides</value>

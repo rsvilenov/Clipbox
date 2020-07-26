@@ -151,8 +151,7 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Maximum number of pinned clipboard entries:
-        ///.
+        ///   Looks up a localized string similar to Maximum number of pinned clipboard entries.
         /// </summary>
         internal static string LBL_SETTINGS_MAX_PINNED_ENTRIES {
             get {
@@ -166,6 +165,15 @@ namespace Clipbox.Resources.Translations {
         internal static string LBL_SETTINGS_MAX_PINNED_ENTRIES_WRN {
             get {
                 return ResourceManager.GetString("LBL_SETTINGS_MAX_PINNED_ENTRIES_WRN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Maximum number of preview items in a group (i.e. for files, copied at once).
+        /// </summary>
+        internal static string LBL_SETTINGS_MAX_PREVIEW_ITEMS_IN_GROUP {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_MAX_PREVIEW_ITEMS_IN_GROUP", resourceCulture);
             }
         }
         

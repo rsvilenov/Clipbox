@@ -27,55 +27,51 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition />
-            <RowDefinition  />
+            <RowDefinition Height="50" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" Grid.Row="0"
+        <TextBlock
+            Grid.Row="0"
             Grid.ColumnSpan="3"
             VerticalAlignment="Center"
-            Grid.Column="0">
-            <TextBlock
-            Text="{loc:Localize LBL_SETTINGS_MAX_NON_PINNED_ENTRIES_IN_QV,
-                                ResourceLookupMode=CurrentAssembly}"
-            TextWrapping="Wrap" />
-            <TextBlock
-            Margin="15, 0, 0, 0"
-            FontWeight="Bold"
-            Text="{Binding MaxNonPinnedPinnedItemsInQV}" />
-        </StackPanel>
+            TextWrapping="Wrap">
+            <Run Text="{loc:Localize LBL_SETTINGS_MAX_NON_PINNED_ENTRIES_IN_QV, ResourceLookupMode=CurrentAssembly}" /><Run Text=": " />
+            <Run FontWeight="Bold" Text="{Binding MaxNonPinnedPinnedItemsInQV}" />
+        </TextBlock>
 
-        <Button Style="{DynamicResource IconButton}"
+        <Button
             Grid.Row="1"
             Grid.Column="0"
             Width="20"
             Height="20"
-            VerticalAlignment="Center" 
-            Command="{Binding Decrease}">
+            VerticalAlignment="Center"
+            Command="{Binding Decrease}"
+            Style="{DynamicResource IconButton}">
             <ContentControl Template="{StaticResource MinusIcon}" />
         </Button>
-        <Button Style="{DynamicResource IconButton}"
+        <Button
             Grid.Row="1"
             Grid.Column="2"
             Width="20"
             Height="20"
             HorizontalAlignment="Right"
-            VerticalAlignment="Center" 
-            Command="{Binding Increase}">
+            VerticalAlignment="Center"
+            Command="{Binding Increase}"
+            Style="{DynamicResource IconButton}">
             <ContentControl Template="{StaticResource PlusIcon}" />
         </Button>
         <Slider
-            Grid.Row="1"
-            VerticalAlignment="Center"
             x:Name="slider"
+            Grid.Row="1"
             Grid.Column="1"
             Margin="10,0,10,0"
+            VerticalAlignment="Center"
             Maximum="10"
             Minimum="0"
             Template="{StaticResource MinimalisticSlider}"
             TickFrequency="1"
             Value="{Binding MaxNonPinnedPinnedItemsInQV}" />
         <TextBlock
-            Margin="0,10,0,0"
             Grid.Row="2"
             Grid.ColumnSpan="3"
             Text="{loc:Localize LBL_SETTINGS_MAX_NON_PINNED_ENTRIES_IN_QV_WRN,

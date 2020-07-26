@@ -288,6 +288,7 @@
     <Compile Include="Views\Settings\BuiltInExtensions\AdvancedBuiltInSettingsUIExtension.cs" />
     <Compile Include="Views\Settings\BuiltInExtensions\CloudBuiltInSettingsUIExtension.cs" />
     <Compile Include="Views\Settings\BuiltInExtensions\GeneralBuiltInSettingsUIExtension.cs" />
+    <Compile Include="Views\Settings\BuiltInExtensions\PreviewsBuiltInSettingsUIExtension.cs" />
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\AutoCloudSyncPinnedItemsSettingUIPart.xaml.cs">
       <DependentUpon>AutoCloudSyncPinnedItemsSettingUIPart.xaml</DependentUpon>
     </Compile>
@@ -314,6 +315,9 @@
     </Compile>
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\MaxPinnedItemsSettingUIPart.xaml.cs">
       <DependentUpon>MaxPinnedItemsSettingUIPart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\MaxPreviewItemsInGroupSettingUIPart.xaml.cs">
+      <DependentUpon>MaxPreviewItemsInGroupSettingUIPart.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\PinTaskbarIconSettingUIPart.xaml.cs">
       <DependentUpon>PinTaskbarIconSettingUIPart.xaml</DependentUpon>
@@ -481,6 +485,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\BuiltInExtensions\UIParts\MaxPinnedItemsSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\BuiltInExtensions\UIParts\MaxPreviewItemsInGroupSettingUIPart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

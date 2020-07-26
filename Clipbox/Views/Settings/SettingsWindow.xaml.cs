@@ -106,7 +106,8 @@ namespace Clipbox.Views.Settings
             {
                 new GeneralBuiltInSettingsUIExtension(),
                 new AdvancedBuiltInSettingsUIExtension(),
-                new CloudBuiltInSettingsUIExtension()
+                new CloudBuiltInSettingsUIExtension(),
+                new PreviewsBuiltInSettingsUIExtension()
             };
 
             LoadSettingUIExtensions(builtInSettingExtensions);
