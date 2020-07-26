@@ -53,10 +53,11 @@
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
-                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
                     </Grid.ColumnDefinitions>
                     <ItemsControl
                         Grid.Column="0"
+                        MaxWidth="600"
                         Margin="0,0,25,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"
@@ -109,6 +110,7 @@
 
                     <ItemsControl
                         Grid.Row="0"
+                        MaxWidth="600"
                         Margin="0,0,25,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"

@@ -13,6 +13,7 @@
                     <Border
                         Width="{TemplateBinding Width}"
                         Height="{TemplateBinding Height}"
+                        Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}">
                         <Path
                             Name="BtnPath"

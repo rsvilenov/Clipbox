@@ -36,7 +36,8 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
                 .Add(SettingsKeys.ResizeAccordingToMonitorOrSystemDpi, new SizeToDpiSettingUIPart())
                 .Add(SettingsKeys.IsSearchEnabled, new EnableSearchSettingUIPart())
                 .Add(SettingsKeys.UseSearchProviderInExternalProcess, _extenralSearchProcessSettingUIPart)
-                .Add(SettingsKeys.RunMainProcessWithHighPriority, new MainProcessPrioritySettingUIPart());
+                .Add(SettingsKeys.RunMainProcessWithHighPriority, new MainProcessPrioritySettingUIPart())
+                .Add(SettingsKeys.PreviewGenerationTimeout, new PreviewGenerationTimeoutSettingUIPart());
         }
 
         private void ManageUIPartsVisibility(ISettingKey settingKey)

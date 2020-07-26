@@ -70,6 +70,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Timeout in milliseconds for generating the clipboard item thumbnail image.
+        /// </summary>
+        internal static string LBL_PREVIEW_GENERATION_TIMEOUT {
+            get {
+                return ResourceManager.GetString("LBL_PREVIEW_GENERATION_TIMEOUT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This setting will not take effect until the next start of the application. Do you want to restart it now?.
         /// </summary>
         internal static string LBL_RESTART_REQUIRED_CONFIRMATION {
