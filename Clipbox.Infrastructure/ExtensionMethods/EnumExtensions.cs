@@ -8,7 +8,7 @@ namespace Clipbox.Infrastructure.ExtensionMethods
 {
     public static class EnumExtensions
     {
-        public static string GetDescription<T>(this T source)
+        public static string GetDescription<T>(this T source) where T : IConvertible
         {
             FieldInfo fi = source
                 .GetType()

@@ -3,13 +3,19 @@ using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using Clipbox.Core.Extensibility.Enums;
 using Clipbox.Core.Extensibility.EventArgsClasses;
+using Clipbox.Views.Settings.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Clipbox.Views.Settings
 {
-    public abstract class BuiltInSettingsUIExtension : ISettingsUIComponent, ISettingChangeRequestor, IConfigurationRecipient, ISettingsRegistrator
+    public abstract class BuiltInSettingsUIExtension : 
+        ISettingsUIComponent, 
+        ISettingChangeRequestor, 
+        IConfigurationRecipient, 
+        ISettingsRegistrator,
+        ICanRequestAppRestart
     {
         private readonly Dictionary<ISettingKey, ISettingUIPart> _settingKeyUIPartMapping;
 
@@ -42,6 +48,14 @@ namespace Clipbox.Views.Settings
         /// </summary>
         protected virtual void OnInitialSettingReceived(ISettingKey settingKey) { }
 
+        /// <summary>
+        /// This goves the extensions the ability to request a restart of the app
+        /// after a setting,which requires a restart, has been changed.
+        /// </summary>
+        protected void RequestAppRestart()
+        {
+            _restartAppRequested?.Invoke(this, new EventArgs());
+        }
 
         /// <summary>
         /// This give the extensions the ability to request a change of settings
@@ -167,6 +181,26 @@ namespace Clipbox.Views.Settings
         public IEnumerable<ISettingKey> GetSettingKeys()
         {
             return _settingKeyUIPartMapping.Keys;
+        }
+        #endregion
+
+        #region ICanRequestAppRestart
+        private event EventHandler _restartAppRequested;
+        /// <summary>
+        /// <see cref="ICanRequestAppRestart.RestartAppRequested"/>
+        /// </summary>
+        event EventHandler ICanRequestAppRestart.RestartAppRequested
+        {
+            add
+            {
+                _restartAppRequested -= value;
+                _restartAppRequested += value;
+            }
+
+            remove
+            {
+                _restartAppRequested -= value;
+            }
         }
         #endregion
 

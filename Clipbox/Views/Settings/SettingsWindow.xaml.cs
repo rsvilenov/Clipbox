@@ -1,16 +1,22 @@
 ﻿using Clipbox.Core.Configuration;
+using Clipbox.Core.Enums;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
 using Clipbox.Core.Extensibility.Contracts.PreviewData;
 using Clipbox.Core.Extensibility.Enums;
 using Clipbox.Infrastructure.Extensibility.Containers;
+using Clipbox.Infrastructure.ExtensionMethods;
 using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.CustomControls;
 using Clipbox.Infrastructure.UI.ExtensionMethods;
 using Clipbox.Infrastructure.UI.Windows;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
+using Clipbox.Views.Dialog;
+using Clipbox.Views.Dialog.Enums;
+using Clipbox.Views.Dialog.EventArgsClasses;
 using Clipbox.Views.Settings.BuiltInExtensions;
+using Clipbox.Views.Settings.Interfaces;
 using Clipbox.Win32;
 using System;
 using System.Collections.Generic;
@@ -134,6 +140,11 @@ namespace Clipbox.Views.Settings
                     }
                 }
 
+                if (ext is ICanRequestAppRestart appRestartRequestor)
+                {
+                    appRestartRequestor.RestartAppRequested += Ext_AppRestartRequestor_RestartAppRequested;
+                }
+
                 IEnumerable<UIElement> extUIParts = ext.GetSettingsViewParts()
                     .Cast<UIElement>();
 
@@ -172,6 +183,23 @@ namespace Clipbox.Views.Settings
                 ext.ResultPreviewInvalidated += Ext_ResultPreviewInvalidated;
                 settingChangeRequestor.RequestSettingChange += SettingChangeRequestor_RequestSettingChange;
 
+            }
+        }
+
+        private void Ext_AppRestartRequestor_RestartAppRequested(object sender, EventArgs e)
+        {
+            restartConfirmationPopup.IsOpen = true;
+            tabControl.IsEnabled = false;
+        }
+
+        private void RestartConfirmationPopup_DialogAnswered(object sender, DialogAnswerEventArgs e)
+        {
+            tabControl.IsEnabled = true;
+
+            if (e.SelectedButton == DialogButtons.Yes)
+            {
+                // if we exit with exit code Special, the Guard will restart us.
+                Application.Current.Shutdown((int)ProcessExitCodes.Special); 
             }
         }
 

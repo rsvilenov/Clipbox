@@ -14,6 +14,11 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
         protected override void OnSettingUpdated(ISettingKey settingKey)
         {
             ManageUIPartsVisibility(settingKey);
+
+            if (settingKey == SettingsKeys.RunMainProcessWithHighPriority)
+            {
+                RequestAppRestart();
+            }
         }
 
         protected override void OnInitialSettingReceived(ISettingKey settingKey)
