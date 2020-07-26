@@ -70,6 +70,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This setting will not take effect until the next start of the application. Do you want to restart it now?.
+        /// </summary>
+        internal static string LBL_RESTART_REQUIRED_CONFIRMATION {
+            get {
+                return ResourceManager.GetString("LBL_RESTART_REQUIRED_CONFIRMATION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Automatically sync an item with the cloud the moment it gets pinned.
         /// </summary>
         internal static string LBL_SETTINGS_AUTO_CLOUD_SYNC_PINNED_ITEMS {

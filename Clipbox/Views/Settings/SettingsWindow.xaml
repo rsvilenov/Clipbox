@@ -593,7 +593,8 @@
             MaxWidth="350"
             DefaultButton="No"
             DialogAnswered="RestartConfirmationPopup_DialogAnswered"
-            DialogText="This setting will not take effect until the next start of the application. Do you want to restart it now?"
+            DialogText="{loc:Localize LBL_RESTART_REQUIRED_CONFIRMATION,
+                                      ResourceLookupMode=CurrentAssembly}"
             DialogueType="YesNo"
             IsOpen="False"
             Placement="Center"

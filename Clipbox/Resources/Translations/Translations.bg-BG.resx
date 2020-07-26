@@ -120,6 +120,9 @@
   <data name="BTN_LBL_Ok" xml:space="preserve">
     <value>OK</value>
   </data>
+  <data name="LBL_RESTART_REQUIRED_CONFIRMATION" xml:space="preserve">
+    <value>Тази настройка ще влезе в действие при следващия старт на приложението. Искате ли да го рестартирате сега?</value>
+  </data>
   <data name="LBL_SETTINGS_AUTO_CLOUD_SYNC_PINNED_ITEMS" xml:space="preserve">
     <value>Автоматично го синхронизирай с облака всеки клипбоард елемент, щом бъде отбелязан като "закачен"</value>
   </data>
