@@ -313,6 +313,9 @@
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\ExternalSearchProcessSettingUIPart.xaml.cs">
       <DependentUpon>ExternalSearchProcessSettingUIPart.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\NumItemsOnPageSettingUIPart.xaml.cs">
+      <DependentUpon>NumItemsOnPageSettingUIPart.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\MaxNonPinnedItemsInQVSettingUIPart.xaml.cs">
       <DependentUpon>MaxNonPinnedItemsInQVSettingUIPart.xaml</DependentUpon>
     </Compile>
@@ -324,6 +327,9 @@
     </Compile>
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\MaxPreviewTasksSettingUIPart.xaml.cs">
       <DependentUpon>MaxPreviewTasksSettingUIPart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\NumOfRowsToPreloadSettingUIPart.xaml.cs">
+      <DependentUpon>NumOfRowsToPreloadSettingUIPart.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\PinTaskbarIconSettingUIPart.xaml.cs">
       <DependentUpon>PinTaskbarIconSettingUIPart.xaml</DependentUpon>
@@ -497,6 +503,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Settings\BuiltInExtensions\UIParts\NumItemsOnPageSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Settings\BuiltInExtensions\UIParts\MaxNonPinnedItemsInQVSettingUIPart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -510,6 +520,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\BuiltInExtensions\UIParts\MaxPreviewTasksSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\BuiltInExtensions\UIParts\NumOfRowsToPreloadSettingUIPart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

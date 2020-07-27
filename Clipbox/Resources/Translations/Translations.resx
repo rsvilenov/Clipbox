@@ -165,6 +165,14 @@
   <data name="LBL_SETTINGS_MAX_PREVIEW_TASKS" xml:space="preserve">
     <value>Maximum number of simultaneous preview generation tasks</value>
   </data>
+  <data name="LBL_SETTINGS_NUM_ITEMS_ON_PAGE" xml:space="preserve">
+    <value>Number of items to load on a single page in the fullscreen window (the main window).
+Warning: more items means more RAM usage!</value>
+  </data>
+  <data name="LBL_SETTINGS_NUM_ROWS_TO_PRELOAD" xml:space="preserve">
+    <value>Number of not yet visible rows to preload in the fullscreen window (the main window).
+Warning: more rows means more RAM usage!</value>
+  </data>
   <data name="LBL_SETTINGS_PIN_TASKBAR_ICON" xml:space="preserve">
     <value>Pin the tray icon to the taskbar, so that it never hides</value>
   </data>

@@ -165,6 +165,14 @@
   <data name="LBL_SETTINGS_MAX_PREVIEW_TASKS" xml:space="preserve">
     <value>Максимален брой на едновременните задачи за генериране на прегледи</value>
   </data>
+  <data name="LBL_SETTINGS_NUM_ITEMS_ON_PAGE" xml:space="preserve">
+    <value>Брой на клипбоард елементите, които се зареждат на една страница при преглед на цял екран (основния прозорец).
+Внимание: повече елементи означава повече използвана оперативна памет.</value>
+  </data>
+  <data name="LBL_SETTINGS_NUM_ROWS_TO_PRELOAD" xml:space="preserve">
+    <value>Брой на редовете, които ще се заредят, още преди да са станали видими при преглед на цял екран (основния прозорец).
+Внимание: повече редове означава повече използвана оперативна памет.</value>
+  </data>
   <data name="LBL_SETTINGS_PIN_TASKBAR_ICON" xml:space="preserve">
     <value>Прикачи трей иконката към таскбара, за да не се крие никога</value>
   </data>

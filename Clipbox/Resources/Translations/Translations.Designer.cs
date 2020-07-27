@@ -205,6 +205,26 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Number of items to load on a single page in the fullscreen window (the main window).
+        ///Warning: more items means more RAM usage!.
+        /// </summary>
+        internal static string LBL_SETTINGS_NUM_ITEMS_ON_PAGE {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_NUM_ITEMS_ON_PAGE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Number of not yet visible rows to preload in the fullscreen window (the main window).
+        ///Warning: more rows means more RAM usage!.
+        /// </summary>
+        internal static string LBL_SETTINGS_NUM_ROWS_TO_PRELOAD {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_NUM_ROWS_TO_PRELOAD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Pin the tray icon to the taskbar, so that it never hides.
         /// </summary>
         internal static string LBL_SETTINGS_PIN_TASKBAR_ICON {
