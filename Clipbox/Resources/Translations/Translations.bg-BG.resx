@@ -120,14 +120,14 @@
   <data name="BTN_LBL_Ok" xml:space="preserve">
     <value>OK</value>
   </data>
-  <data name="LBL_PREVIEW_GENERATION_TIMEOUT" xml:space="preserve">
-    <value>Таймаут за генериране на преглед на клипборд елемент</value>
-  </data>
   <data name="LBL_RESTART_REQUIRED_CONFIRMATION" xml:space="preserve">
     <value>Тази настройка ще влезе в действие при следващия старт на приложението. Искате ли да го рестартирате сега?</value>
   </data>
   <data name="LBL_SETTINGS_AUTO_CLOUD_SYNC_PINNED_ITEMS" xml:space="preserve">
     <value>Автоматично го синхронизирай с облака всеки клипбоард елемент, щом бъде отбелязан като "закачен"</value>
+  </data>
+  <data name="LBL_SETTINGS_AUTO_DETERMINE_MAX_PREVIEW_TASKS" xml:space="preserve">
+    <value>Автоматично определяй максималния брой на едновременните задачи за генериране на прегледи</value>
   </data>
   <data name="LBL_SETTINGS_BACKGROUND_PREVIEW_GENERATION" xml:space="preserve">
     <value>Генериране на прегледите във фонов режим</value>
@@ -162,8 +162,17 @@
   <data name="LBL_SETTINGS_MAX_PREVIEW_ITEMS_IN_GROUP" xml:space="preserve">
     <value>Максимален брой прегледи в група (например при файлове, копирани наведнъж)</value>
   </data>
+  <data name="LBL_SETTINGS_MAX_PREVIEW_TASKS" xml:space="preserve">
+    <value>Максимален брой на едновременните задачи за генериране на прегледи</value>
+  </data>
   <data name="LBL_SETTINGS_PIN_TASKBAR_ICON" xml:space="preserve">
     <value>Прикачи трей иконката към таскбара, за да не се крие никога</value>
+  </data>
+  <data name="LBL_SETTINGS_PREVIEW_CACHE_MAX_SIZE" xml:space="preserve">
+    <value>Максимален размер в мегабайти на кеша на генерирани прегледи на клипборд елементи</value>
+  </data>
+  <data name="LBL_SETTINGS_PREVIEW_GENERATION_TIMEOUT" xml:space="preserve">
+    <value>Таймаут за генериране на преглед на клипборд елемент</value>
   </data>
   <data name="LBL_SETTINGS_SEARCH_ENABLED" xml:space="preserve">
     <value>Позволи функционалностите за търсене</value>

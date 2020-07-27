@@ -70,15 +70,6 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Timeout in milliseconds for generating the clipboard item thumbnail image.
-        /// </summary>
-        internal static string LBL_PREVIEW_GENERATION_TIMEOUT {
-            get {
-                return ResourceManager.GetString("LBL_PREVIEW_GENERATION_TIMEOUT", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to This setting will not take effect until the next start of the application. Do you want to restart it now?.
         /// </summary>
         internal static string LBL_RESTART_REQUIRED_CONFIRMATION {
@@ -93,6 +84,15 @@ namespace Clipbox.Resources.Translations {
         internal static string LBL_SETTINGS_AUTO_CLOUD_SYNC_PINNED_ITEMS {
             get {
                 return ResourceManager.GetString("LBL_SETTINGS_AUTO_CLOUD_SYNC_PINNED_ITEMS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Automatically determine the maximum number of simultaneous preview generation tasks.
+        /// </summary>
+        internal static string LBL_SETTINGS_AUTO_DETERMINE_MAX_PREVIEW_TASKS {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_AUTO_DETERMINE_MAX_PREVIEW_TASKS", resourceCulture);
             }
         }
         
@@ -196,11 +196,38 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Maximum number of simultaneous preview generation tasks.
+        /// </summary>
+        internal static string LBL_SETTINGS_MAX_PREVIEW_TASKS {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_MAX_PREVIEW_TASKS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Pin the tray icon to the taskbar, so that it never hides.
         /// </summary>
         internal static string LBL_SETTINGS_PIN_TASKBAR_ICON {
             get {
                 return ResourceManager.GetString("LBL_SETTINGS_PIN_TASKBAR_ICON", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Maximum size of the in-memory preview cache in MB.
+        /// </summary>
+        internal static string LBL_SETTINGS_PREVIEW_CACHE_MAX_SIZE {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_PREVIEW_CACHE_MAX_SIZE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Timeout in milliseconds for generating the clipboard item thumbnail image.
+        /// </summary>
+        internal static string LBL_SETTINGS_PREVIEW_GENERATION_TIMEOUT {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_PREVIEW_GENERATION_TIMEOUT", resourceCulture);
             }
         }
         

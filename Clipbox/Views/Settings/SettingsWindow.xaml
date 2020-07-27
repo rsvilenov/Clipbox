@@ -343,6 +343,11 @@
                                 x:Name="generalExtensionsItemsControl"
                                 ItemsSource="{Binding GeneralExtensionUIItems}"
                                 Style="{StaticResource extensionItemsControlStyle}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Margin="0,0,0,30" Orientation="Vertical" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemContainerStyle>
                                     <Style>
                                         <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
@@ -382,6 +387,11 @@
                                 Grid.Row="2"
                                 ItemsSource="{Binding PreviewsExtensionUIItems}"
                                 Style="{StaticResource extensionItemsControlStyle}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Margin="0,0,0,30" Orientation="Vertical" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemContainerStyle>
                                     <Style>
                                         <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
@@ -415,6 +425,11 @@
                                 Grid.Row="2"
                                 ItemsSource="{Binding CopyingExtensionUIItems}"
                                 Style="{StaticResource extensionItemsControlStyle}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Margin="0,0,0,30" Orientation="Vertical" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemContainerStyle>
                                     <Style>
                                         <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
@@ -447,6 +462,11 @@
                                 Grid.Row="2"
                                 ItemsSource="{Binding PastingExtensionUIItems}"
                                 Style="{StaticResource extensionItemsControlStyle}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Margin="0,0,0,30" Orientation="Vertical" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemContainerStyle>
                                     <Style>
                                         <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
@@ -479,6 +499,11 @@
                                 Grid.Row="2"
                                 ItemsSource="{Binding SecurityExtensionUIItems}"
                                 Style="{StaticResource extensionItemsControlStyle}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Margin="0,0,0,30" Orientation="Vertical" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemContainerStyle>
                                     <Style>
                                         <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
@@ -511,6 +536,11 @@
                                 Grid.Row="2"
                                 ItemsSource="{Binding CloudExtensionUIItems}"
                                 Style="{StaticResource extensionItemsControlStyle}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Margin="0,0,0,30" Orientation="Vertical" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemContainerStyle>
                                     <Style>
                                         <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />
@@ -579,6 +609,11 @@
                                 ItemsSource="{Binding AdvancedExtensionUIItems}"
                                 Style="{StaticResource extensionItemsControlStyle}"
                                 Visibility="{Binding IsAdvancedTabEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Margin="0,0,0,30" Orientation="Vertical" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemContainerStyle>
                                     <Style>
                                         <Setter Property="FrameworkElement.Margin" Value="0,25,0,0" />

@@ -292,6 +292,9 @@
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\AutoCloudSyncPinnedItemsSettingUIPart.xaml.cs">
       <DependentUpon>AutoCloudSyncPinnedItemsSettingUIPart.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\AutoDetermineMaxPreviewTasksSettingUIPart.xaml.cs">
+      <DependentUpon>AutoDetermineMaxPreviewTasksSettingUIPart.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\BackgroundPreviewGenerationSettingUIPart.xaml.cs">
       <DependentUpon>BackgroundPreviewGenerationSettingUIPart.xaml</DependentUpon>
     </Compile>
@@ -319,8 +322,14 @@
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\MaxPreviewItemsInGroupSettingUIPart.xaml.cs">
       <DependentUpon>MaxPreviewItemsInGroupSettingUIPart.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\MaxPreviewTasksSettingUIPart.xaml.cs">
+      <DependentUpon>MaxPreviewTasksSettingUIPart.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\PinTaskbarIconSettingUIPart.xaml.cs">
       <DependentUpon>PinTaskbarIconSettingUIPart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\PreviewCacheMaxSizeSettingUIPart.xaml.cs">
+      <DependentUpon>PreviewCacheMaxSizeSettingUIPart.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\PreviewGenerationTimeoutSettingUIPart.xaml.cs">
       <DependentUpon>PreviewGenerationTimeoutSettingUIPart.xaml</DependentUpon>
@@ -456,6 +465,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Settings\BuiltInExtensions\UIParts\AutoDetermineMaxPreviewTasksSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Settings\BuiltInExtensions\UIParts\BackgroundPreviewGenerationSettingUIPart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -496,7 +509,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Settings\BuiltInExtensions\UIParts\MaxPreviewTasksSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Settings\BuiltInExtensions\UIParts\PinTaskbarIconSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\BuiltInExtensions\UIParts\PreviewCacheMaxSizeSettingUIPart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

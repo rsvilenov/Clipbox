@@ -120,14 +120,14 @@
   <data name="BTN_LBL_Ok" xml:space="preserve">
     <value>OK</value>
   </data>
-  <data name="LBL_PREVIEW_GENERATION_TIMEOUT" xml:space="preserve">
-    <value>Timeout in milliseconds for generating the clipboard item thumbnail image</value>
-  </data>
   <data name="LBL_RESTART_REQUIRED_CONFIRMATION" xml:space="preserve">
     <value>This setting will not take effect until the next start of the application. Do you want to restart it now?</value>
   </data>
   <data name="LBL_SETTINGS_AUTO_CLOUD_SYNC_PINNED_ITEMS" xml:space="preserve">
     <value>Automatically sync an item with the cloud the moment it gets pinned</value>
+  </data>
+  <data name="LBL_SETTINGS_AUTO_DETERMINE_MAX_PREVIEW_TASKS" xml:space="preserve">
+    <value>Automatically determine the maximum number of simultaneous preview generation tasks</value>
   </data>
   <data name="LBL_SETTINGS_BACKGROUND_PREVIEW_GENERATION" xml:space="preserve">
     <value>Enable background preview generation</value>
@@ -162,8 +162,17 @@
   <data name="LBL_SETTINGS_MAX_PREVIEW_ITEMS_IN_GROUP" xml:space="preserve">
     <value>Maximum number of preview items in a group (i.e. for files, copied at once)</value>
   </data>
+  <data name="LBL_SETTINGS_MAX_PREVIEW_TASKS" xml:space="preserve">
+    <value>Maximum number of simultaneous preview generation tasks</value>
+  </data>
   <data name="LBL_SETTINGS_PIN_TASKBAR_ICON" xml:space="preserve">
     <value>Pin the tray icon to the taskbar, so that it never hides</value>
+  </data>
+  <data name="LBL_SETTINGS_PREVIEW_CACHE_MAX_SIZE" xml:space="preserve">
+    <value>Maximum size of the in-memory preview cache in MB</value>
+  </data>
+  <data name="LBL_SETTINGS_PREVIEW_GENERATION_TIMEOUT" xml:space="preserve">
+    <value>Timeout in milliseconds for generating the clipboard item thumbnail image</value>
   </data>
   <data name="LBL_SETTINGS_SEARCH_ENABLED" xml:space="preserve">
     <value>Enable the search functionality</value>

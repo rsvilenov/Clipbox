@@ -20,7 +20,7 @@
         <TextBlock
             Grid.Row="0"
             VerticalAlignment="Center"
-            Text="{loc:Localize LBL_PREVIEW_GENERATION_TIMEOUT,
+            Text="{loc:Localize LBL_SETTINGS_PREVIEW_GENERATION_TIMEOUT,
                                 ResourceLookupMode=CurrentAssembly}"
             TextWrapping="Wrap" />
         <customControls:IntUpDown
