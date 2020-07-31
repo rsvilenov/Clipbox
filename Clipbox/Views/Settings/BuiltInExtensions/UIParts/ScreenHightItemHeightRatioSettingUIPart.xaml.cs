@@ -18,8 +18,8 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
         {
             InitializeComponent();
 
-            Increase = new DelegateCommand(() => slider.Value++, () => slider.Value < slider.Maximum);
-            Decrease = new DelegateCommand(() => slider.Value--, () => slider.Value > slider.Minimum);
+            Increase = new DelegateCommand(() => slider.Value += slider.TickFrequency, () => slider.Value < slider.Maximum);
+            Decrease = new DelegateCommand(() => slider.Value -= slider.TickFrequency, () => slider.Value > slider.Minimum);
 
             this.mainGrid.DataContext = this;
         }

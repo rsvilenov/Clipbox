@@ -36,7 +36,7 @@
             Grid.ColumnSpan="3"
             TextWrapping="Wrap">
             <Run Text="{loc:Localize LBL_SETTINGS_SCREEN_HEIGHT_ITEM_HEIGT_RATIO, ResourceLookupMode=CurrentAssembly}" /><Run Text=": " />
-            <Run FontWeight="Bold" Text="{Binding ItemHeightRatio}" />
+            <Run FontWeight="Bold" Text="{Binding ItemHeightRatio, StringFormat=N2}" />
         </TextBlock>
 
         <Button
@@ -66,10 +66,10 @@
             Grid.Column="1"
             Margin="10,0,10,0"
             VerticalAlignment="Center"
-            Maximum="10"
-            Minimum="2"
+            Maximum="0.4"
+            Minimum="0.05"
             Template="{StaticResource MinimalisticSlider}"
-            TickFrequency="1"
+            TickFrequency="0.01"
             Value="{Binding ItemHeightRatio}" />
 
     </Grid>
