@@ -252,6 +252,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ratio between screen height and preview item height.
+        /// </summary>
+        internal static string LBL_SETTINGS_SCREEN_HEIGHT_ITEM_HEIGT_RATIO {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_SCREEN_HEIGHT_ITEM_HEIGT_RATIO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enable the search functionality.
         /// </summary>
         internal static string LBL_SETTINGS_SEARCH_ENABLED {

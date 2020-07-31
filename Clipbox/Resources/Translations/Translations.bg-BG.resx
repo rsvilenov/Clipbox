@@ -182,6 +182,9 @@
   <data name="LBL_SETTINGS_PREVIEW_GENERATION_TIMEOUT" xml:space="preserve">
     <value>Таймаут за генериране на преглед на клипборд елемент</value>
   </data>
+  <data name="LBL_SETTINGS_SCREEN_HEIGHT_ITEM_HEIGT_RATIO" xml:space="preserve">
+    <value>Съотношение между височината на екрана и височината на прегледите на клипборд елементи</value>
+  </data>
   <data name="LBL_SETTINGS_SEARCH_ENABLED" xml:space="preserve">
     <value>Позволи функционалностите за търсене</value>
   </data>

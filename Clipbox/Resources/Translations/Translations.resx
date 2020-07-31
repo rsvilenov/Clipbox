@@ -182,6 +182,9 @@ Warning: more rows means more RAM usage!</value>
   <data name="LBL_SETTINGS_PREVIEW_GENERATION_TIMEOUT" xml:space="preserve">
     <value>Timeout in milliseconds for generating the clipboard item thumbnail image</value>
   </data>
+  <data name="LBL_SETTINGS_SCREEN_HEIGHT_ITEM_HEIGT_RATIO" xml:space="preserve">
+    <value>Ratio between screen height and preview item height</value>
+  </data>
   <data name="LBL_SETTINGS_SEARCH_ENABLED" xml:space="preserve">
     <value>Enable the search functionality</value>
   </data>

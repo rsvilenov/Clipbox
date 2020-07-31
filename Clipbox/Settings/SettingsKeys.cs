@@ -7,9 +7,9 @@ namespace Clipbox.Settings
 {
     public static class SettingsKeys
     {
-        public static SettingKey<double> PreviewItemHeightRatio = new SettingKey<double>(nameof(PreviewItemHeightRatio), 0.2);
+        public static SettingKey<double> PreviewItemHeightRatio = new SettingKey<double>(nameof(PreviewItemHeightRatio), 0.13d);
 
-        public static SettingKey<int> MaxPreviewItemsInGroupItem = new SettingKey<int>(nameof(MaxPreviewItemsInGroupItem), 3);
+        public static SettingKey<int> MaxPreviewItemsInGroupItem = new SettingKey<int>(nameof(MaxPreviewItemsInGroupItem), 5);
 
         public static SettingKey<bool> ResizeAccordingToMonitorOrSystemDpi = new SettingKey<bool>(nameof(ResizeAccordingToMonitorOrSystemDpi), true);
 
@@ -41,7 +41,7 @@ namespace Clipbox.Settings
 
         public static SettingKey<int> MaxSimultaneousPreviewTasks = new SettingKey<int>(nameof(MaxSimultaneousPreviewTasks), 5);
 
-        public static SettingKey<bool> AutoDetermineMaxSimultaneousPreviewTasks = new SettingKey<bool>(nameof(AutoDetermineMaxSimultaneousPreviewTasks), true);
+        public static SettingKey<bool> AutoDetermineMaxSimultaneousPreviewTasks = new SettingKey<bool>(nameof(AutoDetermineMaxSimultaneousPreviewTasks), false);
 
         public static SettingKey<int> NumOfNotYetVisibleRowsToPreload = new SettingKey<int>(nameof(NumOfNotYetVisibleRowsToPreload), 3);
 
