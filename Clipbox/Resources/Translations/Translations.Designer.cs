@@ -270,6 +270,24 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Timeout for storing of a clipboard item (milliseconds).
+        /// </summary>
+        internal static string LBL_SETTINGS_STORE_ITEM_TIMEOUT {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_STORE_ITEM_TIMEOUT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Maximum number simultaneous of store tasks.
+        /// </summary>
+        internal static string LBL_SETTINGS_STORE_MAX_TASKS_TIMEOUT {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_STORE_MAX_TASKS_TIMEOUT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Off.
         /// </summary>
         internal static string TGL_BTN_LBL_Off {

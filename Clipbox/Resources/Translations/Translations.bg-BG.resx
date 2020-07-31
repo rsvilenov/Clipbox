@@ -188,6 +188,12 @@
   <data name="LBL_SETTINGS_SIZE_TO_DPI" xml:space="preserve">
     <value>Автоматично настройване на размера на прегледи, бутони и текс според DPI настройките на системата</value>
   </data>
+  <data name="LBL_SETTINGS_STORE_ITEM_TIMEOUT" xml:space="preserve">
+    <value>Таймаут при запазване на копиран в клипборда елемент</value>
+  </data>
+  <data name="LBL_SETTINGS_STORE_MAX_TASKS_TIMEOUT" xml:space="preserve">
+    <value>Максимален брой едновременни процеси за запазване на клипборд елемент</value>
+  </data>
   <data name="TGL_BTN_LBL_Off" xml:space="preserve">
     <value>Изключено</value>
   </data>

@@ -188,6 +188,12 @@ Warning: more rows means more RAM usage!</value>
   <data name="LBL_SETTINGS_SIZE_TO_DPI" xml:space="preserve">
     <value>Automatically resize previews, buttons and text accorting to system scaling (DPI) settings</value>
   </data>
+  <data name="LBL_SETTINGS_STORE_ITEM_TIMEOUT" xml:space="preserve">
+    <value>Timeout for storing of a clipboard item (milliseconds)</value>
+  </data>
+  <data name="LBL_SETTINGS_STORE_MAX_TASKS_TIMEOUT" xml:space="preserve">
+    <value>Maximum number simultaneous of store tasks</value>
+  </data>
   <data name="TGL_BTN_LBL_Off" xml:space="preserve">
     <value>Off</value>
   </data>

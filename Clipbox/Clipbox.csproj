@@ -343,6 +343,12 @@
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\SizeToDpiSettingUIPart.xaml.cs">
       <DependentUpon>SizeToDpiSettingUIPart.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\StoreItemTimeoutSettingUIPart.xaml.cs">
+      <DependentUpon>StoreItemTimeoutSettingUIPart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\StoreMaxTasksSettingUIPart.xaml.cs">
+      <DependentUpon>StoreMaxTasksSettingUIPart.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\BuiltInSettingsUIExtension.cs" />
     <Compile Include="Views\Settings\EventArgsClasses\SettingChangeRequestedEventArgs.cs" />
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\ClipboardTrackingSettingUIPart.xaml.cs">
@@ -540,6 +546,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\BuiltInExtensions\UIParts\SizeToDpiSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\BuiltInExtensions\UIParts\StoreItemTimeoutSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\BuiltInExtensions\UIParts\StoreMaxTasksSettingUIPart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

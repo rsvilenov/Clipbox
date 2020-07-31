@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace Clipbox.Infrastructure.UI.CustomControls
 {
@@ -48,6 +49,7 @@ namespace Clipbox.Infrastructure.UI.CustomControls
             DependencyProperty.Register(nameof(Value), typeof(int?), typeof(IntUpDown), new PropertyMetadata(0, (s, args) =>
             {
                 IntUpDown tb = (IntUpDown)s;
+                tb.SetUpDownButtonsEnabledDisabledStatus();
                 tb.RaiseValueChangedEvent(args);
             }));
 
@@ -86,6 +88,8 @@ namespace Clipbox.Infrastructure.UI.CustomControls
             _textBox.TextChanged += _textBox_TextChanged;
             _textBox.PreviewTextInput += _textBox_PreviewTextInput;
             _textBox.MouseWheel += _textBox_MouseWheel;
+
+            SetUpDownButtonsEnabledDisabledStatus();
         }
 
         private void _textBox_MouseWheel(object sender, MouseWheelEventArgs e)
@@ -160,9 +164,19 @@ namespace Clipbox.Infrastructure.UI.CustomControls
             {
                 Value = Minimum;
             }
+        }
 
-            _btnDown.IsEnabled = Value > Minimum;
-            _btnUp.IsEnabled = Value < Maximum;
+        private void SetUpDownButtonsEnabledDisabledStatus()
+        {
+            if (_btnDown != null)
+            {
+                _btnDown.IsEnabled = Value > Minimum;
+            }
+
+            if (_btnUp != null)
+            {
+                _btnUp.IsEnabled = Value < Maximum;
+            }
         }
 
         private void _btnUp_Click(object sender, RoutedEventArgs e)

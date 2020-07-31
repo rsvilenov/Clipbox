@@ -44,7 +44,9 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
                 .Add(SettingsKeys.AutoDetermineMaxSimultaneousPreviewTasks, new AutoDetermineMaxPreviewTasksSettingUIPart())
                 .Add(SettingsKeys.MaxSimultaneousPreviewTasks, _maxPreviewTasksSettingUIPart)
                 .Add(SettingsKeys.NumOfNotYetVisibleRowsToPreload, new NumOfRowsToPreloadSettingUIPart())
-                .Add(SettingsKeys.MaxNumOfItemToLoadAtOnce, new NumItemsOnPageSettingUIPart());
+                .Add(SettingsKeys.MaxNumOfItemToLoadAtOnce, new NumItemsOnPageSettingUIPart())
+                .Add(SettingsKeys.OnItemStoringFlowExtensionsTimeoutMs, new StoreItemTimeoutSettingUIPart())
+                .Add(SettingsKeys.OnItemStoringFlowExtensionsMaxTasks, new StoreMaxTasksSettingUIPart());
         }
 
         private void ManageUIPartsVisibility(ISettingKey settingKey)
