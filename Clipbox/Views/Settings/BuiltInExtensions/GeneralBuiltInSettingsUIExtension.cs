@@ -22,6 +22,7 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
         protected override void RegisterSettingUIParts(IBuiltInSettingsUIBuilder builder)
         {
             builder
+                .Add(SettingsKeys.LocalizationCulture, new LanguageSettingUIPart())
                 .Add(SettingsKeys.IsClipboardTrackingEnabled, new ClipboardTrackingSettingUIPart())
                 .Add(SettingsKeys.IsDeskBandEnabled, new PinTaskbarIconSettingUIPart())
                 .Add(SettingsKeys.MaxPinnedItems, new MaxPinnedItemsSettingUIPart())

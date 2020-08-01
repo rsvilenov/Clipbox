@@ -117,8 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="bg-BG" xml:space="preserve">
+    <value>Bulgarian</value>
+  </data>
   <data name="BTN_LBL_Ok" xml:space="preserve">
     <value>OK</value>
+  </data>
+  <data name="en-US" xml:space="preserve">
+    <value>English</value>
   </data>
   <data name="LBL_RESTART_REQUIRED_CONFIRMATION" xml:space="preserve">
     <value>This setting will not take effect until the next start of the application. Do you want to restart it now?</value>
@@ -143,6 +149,9 @@
   </data>
   <data name="LBL_SETTINGS_FADE_ANIMATIONS" xml:space="preserve">
     <value>Enable fade animations</value>
+  </data>
+  <data name="LBL_SETTINGS_LANGUAGE" xml:space="preserve">
+    <value>Language</value>
   </data>
   <data name="LBL_SETTINGS_MAIN_PROCESS_PRIORITY" xml:space="preserve">
     <value>Run main process with high priority</value>

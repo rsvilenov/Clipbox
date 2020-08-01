@@ -307,6 +307,9 @@
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\IsCloudEnabledSettingUIPart.xaml.cs">
       <DependentUpon>IsCloudEnabledSettingUIPart.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\LanguageSettingUIPart.xaml.cs">
+      <DependentUpon>LanguageSettingUIPart.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\MainProcessPrioritySettingUIPart.xaml.cs">
       <DependentUpon>MainProcessPrioritySettingUIPart.xaml</DependentUpon>
     </Compile>
@@ -501,6 +504,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\BuiltInExtensions\UIParts\IsCloudEnabledSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\BuiltInExtensions\UIParts\LanguageSettingUIPart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

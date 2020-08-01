@@ -61,11 +61,29 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Bulgarian.
+        /// </summary>
+        internal static string bg_BG {
+            get {
+                return ResourceManager.GetString("bg-BG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to OK.
         /// </summary>
         internal static string BTN_LBL_Ok {
             get {
                 return ResourceManager.GetString("BTN_LBL_Ok", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to English.
+        /// </summary>
+        internal static string en_US {
+            get {
+                return ResourceManager.GetString("en-US", resourceCulture);
             }
         }
         
@@ -138,6 +156,15 @@ namespace Clipbox.Resources.Translations {
         internal static string LBL_SETTINGS_FADE_ANIMATIONS {
             get {
                 return ResourceManager.GetString("LBL_SETTINGS_FADE_ANIMATIONS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Language.
+        /// </summary>
+        internal static string LBL_SETTINGS_LANGUAGE {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_LANGUAGE", resourceCulture);
             }
         }
         
