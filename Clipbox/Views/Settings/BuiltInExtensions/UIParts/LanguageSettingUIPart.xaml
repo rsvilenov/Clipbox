@@ -16,7 +16,7 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/Clipbox.Infrastructure.UI;component/Resources/Styles/Style.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/Clipbox.Infrastructure.UI;component/Resources/Styles/ComboBox.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
@@ -43,7 +43,7 @@
             ItemsSource="{Binding AvailableCultures}"
             SelectedValue="{Binding SelectedCulture}"
             SelectedValuePath="Code"
-            Style="{DynamicResource FlatComboBoxStyle}">
+            Style="{StaticResource FlatComboBoxStyle}">
             <ComboBox.ItemTemplate>
                 <ItemContainerTemplate>
                     <StackPanel>

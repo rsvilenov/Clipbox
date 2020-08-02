@@ -59,7 +59,7 @@
                             Template="{StaticResource ComboBoxToggleButton}" />
                         <ContentPresenter
                             Name="ContentSite"
-                            Margin="3,3,23,3"
+                            Margin="5,3,23,3"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             Content="{TemplateBinding SelectionBoxItem}"
@@ -68,7 +68,7 @@
                             IsHitTestVisible="False" />
                         <TextBox
                             x:Name="PART_EditableTextBox"
-                            Margin="3,3,23,3"
+                            Margin="5,3,23,3"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             Background="{TemplateBinding Background}"
