@@ -10,8 +10,7 @@ namespace Clipbox.Infrastructure.Extensibility.Containers
     public class PersistenceSupportExtensionContainer :
         BaseExtensionContainer<IPersistenceSupport, WeakFactory>,
         IPersistenceSupportExtensionContainer,
-        INotifyExtensionResolved,
-        IExtensionInfoProvider
+        INotifyExtensionResolved
     {
         private ConcurrentDictionary<string, Type> _intermediateFormatGuidExtensionMapping =
             new ConcurrentDictionary<string, Type>();

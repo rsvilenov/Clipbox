@@ -1,13 +1,14 @@
 ﻿using Clipbox.Core.Extensibility.Contracts;
 using System;
 using System.Linq;
+using System.Reflection;
 
 namespace Clipbox.Core.Extensibility.Attributes
 {
     /// <summary>
     /// An attribute, indicating that a class is a Clipbox extension.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple =false)]
     public class ClipboxExtensionAttribute : Attribute
     {
         /// <summary>
@@ -32,15 +33,12 @@ namespace Clipbox.Core.Extensibility.Attributes
 
         public static bool IsDefinedFor(Type type)
         {
-            var formatAttributes = (ClipboxExtensionAttribute[])type.GetCustomAttributes(typeof(ClipboxExtensionAttribute), true);
-            return formatAttributes.Any();
+            return GetCustomAttributeData(type) != null;
         }
 
         public static IExtensionInfo GetExtensionInfo(Type type)
         {
-            var extensionAttribute = (ClipboxExtensionAttribute)type.
-                GetCustomAttributes(typeof(ClipboxExtensionAttribute), true).
-                FirstOrDefault();
+            CustomAttributeData extensionAttribute = GetCustomAttributeData(type);
 
             if (extensionAttribute == null)
             {
@@ -49,15 +47,39 @@ namespace Clipbox.Core.Extensibility.Attributes
 
             return new ExtensionInfo
             {
-                Author = extensionAttribute.Author,
-                Description = extensionAttribute.Description,
-                Version = extensionAttribute.Version,
-                MinHostVersion = extensionAttribute.MinHostVersion
+                ExtensionObjectType = type,
+                Author = GetNamedArgumentValue<string>(extensionAttribute, nameof(Author)),
+                Description = GetNamedArgumentValue<string>(extensionAttribute, nameof(Description)),
+                Version = GetNamedArgumentValue<double>(extensionAttribute, nameof(Version)),
+                MinHostVersion = GetNamedArgumentValue<double>(extensionAttribute, nameof(MinHostVersion))
             };
+        }
+
+        private static CustomAttributeData GetCustomAttributeData(Type type)
+        {
+            return CustomAttributeData
+                            .GetCustomAttributes(type)
+                            .Where(cad => cad.AttributeType.AssemblyQualifiedName == typeof(ClipboxExtensionAttribute).AssemblyQualifiedName)
+                            .FirstOrDefault();
+        }
+
+        private static T GetNamedArgumentValue<T>(CustomAttributeData attrData, string argumentName)
+        {
+            foreach (CustomAttributeNamedArgument arg in attrData.NamedArguments)
+            {
+                if (arg.MemberInfo?.Name == argumentName && arg.MemberInfo.ReflectedType == typeof(T))
+                {
+                    return (T)arg.TypedValue.Value;
+                }
+            }
+
+            return default(T);
         }
 
         private class ExtensionInfo : IExtensionInfo
         {
+            public Type ExtensionObjectType { get; set; }
+
             public double Version { get; set; }
 
             public string Author { get; set; }

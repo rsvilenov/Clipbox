@@ -1,7 +1,10 @@
-﻿using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
+﻿using Clipbox.Core;
+using Clipbox.Core.Extensibility.Contracts;
+using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using Clipbox.Infrastructure.Extensibility.Containers;
+using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
 using Clipbox.Infrastructure.Extensibility.Discovery;
 using System;
 using System.Collections.Generic;
@@ -31,9 +34,12 @@ namespace Clipbox
 
         public EventHandler<ExtensionEventArgs> StatelessExtensionResolved;
 
+        public List<IExtensionInfo> LoadedExtensions { get; private set; }
+
         public void LoadContainers()
         {
             LoadedTypes = new List<Type>();
+            LoadedExtensions = new List<IExtensionInfo>();
 
             FormatsContainer = new ClipboardFormatExtensionContainer();
             PreviewGeneratorsContainer = new PreviewGeneratorExtensionContainer();
@@ -67,7 +73,11 @@ namespace Clipbox
             // Load the extension assemblies
             string assemblyDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             string[] assemblyPaths = Directory.GetFiles(assemblyDir, "Clipbox.Extensions.*.dll", SearchOption.AllDirectories);
-            
+
+            // TODO: filter assemblies according to the "EnabledExtensions" setting
+
+            AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += AppDomain_ReflectionOnlyAssemblyResolve;
+
             foreach (string assemblyPath in assemblyPaths)
             {
                 if (ClipboxBaseAssemblies.Contains(Path.GetFileName(assemblyPath)))
@@ -75,88 +85,116 @@ namespace Clipbox
                     continue;
                 }
 
-                var assebmly = Assembly.LoadFrom(assemblyPath);
-                AssemblyWalker walker = AssemblyWalker.FromAssembly(assebmly);
-
                 // find all extensions of type IClipboardFormatSupport
-                var cfsExtensions = walker.FindExtensions<IClipboardFormatSupport>();
-                foreach (var ext in cfsExtensions)
-                {
-                    if (FormatsContainer.IsExtensionCompatible(ext))
-                    {
-                        FormatsContainer.RegisterExtension(ext);
-                        LoadedTypes.Add(ext);
-                    }
-                }
-
+                LoadAndRegisterExtensions<IClipboardFormatSupport>(FormatsContainer, assemblyPath);
+              
                 // find all extensions of type IPreviewHandler
-                var previewExtensions = walker.FindExtensions<IPreviewGenerator>();
-                foreach (var ext in previewExtensions)
-                {
-                    if (PreviewGeneratorsContainer.IsExtensionCompatible(ext))
-                    {
-                        PreviewGeneratorsContainer.RegisterExtension(ext);
-                        LoadedTypes.Add(ext);
-                    }
-                }
-
+                LoadAndRegisterExtensions<IPreviewGenerator>(PreviewGeneratorsContainer, assemblyPath);
+                
                 // find all extensions of type ISearchSupport
-                var searchSupportExtensionExtensions = walker.FindExtensions<ISearchSupport>();
-                foreach (var ext in searchSupportExtensionExtensions)
-                {
-                    if (SearchSupportExtensionContainer.IsExtensionCompatible(ext))
-                    {
-                        SearchSupportExtensionContainer.RegisterExtension(ext);
-                        LoadedTypes.Add(ext);
-                    }
-                }
+                LoadAndRegisterExtensions<ISearchSupport>(SearchSupportExtensionContainer, assemblyPath);
 
                 // find all extensions of type IPersistenceSupport
-                var persistenceExtensions = walker.FindExtensions<IPersistenceSupport>();
-                foreach (var ext in persistenceExtensions)
-                {
-                    if (PersistenceSupportExtensionContainer.IsExtensionCompatible(ext))
-                    {
-                        PersistenceSupportExtensionContainer.RegisterExtension(ext);
-                        LoadedTypes.Add(ext);
-                    }
-                }
+                LoadAndRegisterExtensions<IPersistenceSupport>(PersistenceSupportExtensionContainer, assemblyPath);
 
                 // find all extensions of type FlowExtension
-                var flowExtensions = walker.FindExtensions<FlowExtension>();
-                foreach (var ext in flowExtensions)
-                {
-                    if (FlowExtensionContainer.IsExtensionCompatible(ext))
-                    {
-                        FlowExtensionContainer.RegisterExtension(ext);
-                        LoadedTypes.Add(ext);
-                    }
-                }
+                LoadAndRegisterExtensions<FlowExtension>(FlowExtensionContainer, assemblyPath);
 
                 // find all extensions of type UIExtension
-                var uiExtensions = walker.FindExtensions<IFlowUIExtension>();
-                foreach (var ext in uiExtensions)
-                {
-                    if (UIExtensionContainer.IsExtensionCompatible(ext))
-                    {
-                        UIExtensionContainer.RegisterExtension(ext);
-                        LoadedTypes.Add(ext);
-                    }
-                }
-
+                LoadAndRegisterExtensions<IFlowUIExtension>(UIExtensionContainer, assemblyPath);
+                
                 // find all extensions of type SettingsUIExtension
-                var settingsUiExtensions = walker.FindExtensions<SettingsUIExtension>();
-                foreach (var ext in settingsUiExtensions)
+                LoadAndRegisterExtensions<SettingsUIExtension>(SettingsUIExtensionContainer, assemblyPath);
+            }
+        }
+
+        private Dictionary<string, AssemblyWalker> _fullWalkersForAssemblyPath = new Dictionary<string, AssemblyWalker>();
+        private Dictionary<string, AssemblyWalker> _reflectionOnlyWalkersForAssemblyPath = new Dictionary<string, AssemblyWalker>();
+
+        private void LoadAndRegisterExtensions<TExtensionBaseType>(IExtensionRegistrator extRegistrator, string assemblyPath)
+            where TExtensionBaseType : IClipboxExtension
+        {
+            // if the assembly does not contain compatible and enabled extensions, the method below returns null
+            AssemblyWalker fullWalker = GetFullWalkerForCompatibleAndEnabledAssembly(assemblyPath);
+
+            if (fullWalker != null)
+            {
+                var extInfos = fullWalker.FindExtensions<TExtensionBaseType>();
+                foreach (var extInfo in extInfos)
                 {
-                    if (SettingsUIExtensionContainer.IsExtensionCompatible(ext))
+                    if (IsExtensionVersionCompatible(extInfo) && IsExtensionEnabled(extInfo))
                     {
-                        SettingsUIExtensionContainer.RegisterExtension(ext);
-                        LoadedTypes.Add(ext);
+                        extRegistrator.RegisterExtension(extInfo.ExtensionObjectType);
+                        LoadedExtensions.Add(extInfo);
                     }
                 }
             }
         }
-        
+
+        private AssemblyWalker GetFullWalkerForCompatibleAndEnabledAssembly(string assemblyPath)
+        {
+            // check whether the assembly has been fully loaded already
+            AssemblyWalker fullWalker = _fullWalkersForAssemblyPath
+                .Where(w => w.Key == assemblyPath)
+                .Select(w => w.Value)
+                .FirstOrDefault();
+
+            // if not, load it in a reflection-only context
+            if (fullWalker == null)
+            {
+                AssemblyWalker reflectionOnlyWalker = _reflectionOnlyWalkersForAssemblyPath
+                    .Where(w => w.Key == assemblyPath)
+                    .Select(w => w.Value)
+                    .FirstOrDefault();
+
+                if (reflectionOnlyWalker == null)
+                {
+                    var eflectionOnlyAssembly = Assembly.ReflectionOnlyLoadFrom(assemblyPath);
+                    reflectionOnlyWalker = AssemblyWalker.FromAssembly(eflectionOnlyAssembly);
+                    _reflectionOnlyWalkersForAssemblyPath.Add(assemblyPath, reflectionOnlyWalker);
+                }
+
+                // check whether there are any compatible and enabled extensions in this assembly
+                var extInfos = reflectionOnlyWalker.FindExtensions<IClipboxExtension>();
+                foreach (var extInfo in extInfos)
+                {
+                    if (IsExtensionVersionCompatible(extInfo) && IsExtensionEnabled(extInfo))
+                    {
+                        // if there are compatible extensions, load the assembly fully and cache its assembly walker
+                        var fullyLoadedAssembly = Assembly.LoadFrom(extInfo.ExtensionObjectType.Assembly.Location);
+                        fullWalker = AssemblyWalker.FromAssembly(fullyLoadedAssembly);
+                        _fullWalkersForAssemblyPath.Add(assemblyPath, fullWalker);
+                        break;
+                    }
+                }
+            }
+
+            return fullWalker;
+        }
+
+        private bool IsExtensionVersionCompatible(IExtensionInfo extInfo)
+        {
+            return extInfo.Version <= ProductConstants.PRODUCT_VERSION;
+        }
+
+        private bool IsExtensionEnabled(IExtensionInfo extInfo)
+        {
+            return true;
+        }
+
+        private Assembly AppDomain_ReflectionOnlyAssemblyResolve(object sender, ResolveEventArgs args)
+        {
+            try
+            {
+                return Assembly.ReflectionOnlyLoad(args.Name);
+            }
+            catch(FileNotFoundException)
+            {
+                string asmPath = Path.Combine(Path.GetDirectoryName(args.RequestingAssembly.Location), args.Name);
+                return Assembly.ReflectionOnlyLoad(args.Name);
+            }
+        }
+
         private void Container_ExtensionResolved(object sender, ExtensionEventArgs e)
         {
             StatelessExtensionResolved?.Invoke(this, e);

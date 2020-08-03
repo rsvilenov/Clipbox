@@ -10,8 +10,7 @@ namespace Clipbox.Infrastructure.Extensibility.Containers
     public class SearchSupportExtensionContainer :
         BaseExtensionContainer<ISearchSupport, WeakFactory>,
         ISearchSupportExtensionContainer,
-        INotifyExtensionResolved,
-        IExtensionInfoProvider
+        INotifyExtensionResolved
     {
         private ConcurrentDictionary<string, Type> _intermediateFormatGuidExtensionMapping =
             new ConcurrentDictionary<string, Type>();

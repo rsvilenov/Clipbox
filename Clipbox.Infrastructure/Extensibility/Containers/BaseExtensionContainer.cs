@@ -1,6 +1,7 @@
 ﻿using Clipbox.Core;
 using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts;
+using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
 using Clipbox.Infrastructure.Factories;
 using System;
 using System.Collections.Concurrent;
@@ -9,7 +10,7 @@ using System.Linq;
 
 namespace Clipbox.Infrastructure.Extensibility.Containers
 {
-    public abstract class BaseExtensionContainer<TExtensionBaseType, TFactory>
+    public abstract class BaseExtensionContainer<TExtensionBaseType, TFactory> : IExtensionRegistrator
         where TExtensionBaseType : class
         where TFactory : class, IFactory, new()
     {
@@ -31,33 +32,6 @@ namespace Clipbox.Infrastructure.Extensibility.Containers
         {
             _factory = Activator.CreateInstance<TFactory>();
             _registeredExtensions = new ConcurrentDictionary<Type, IExtensionInfo>();
-        }
-
-        public bool IsExtensionCompatible<TExtensionType>()
-            where TExtensionType : class, TExtensionBaseType, new()
-        {
-            return IsExtensionCompatible(typeof(TExtensionBaseType));
-        }
-
-        public virtual bool IsExtensionCompatible(Type type)
-        {
-            if (_registeredExtensions.ContainsKey(type))
-            {
-                throw new ArgumentException($"Type {type.Name} has already been added.");
-            }
-
-            if (!ClipboxExtensionAttribute.IsDefinedFor(type))
-            {
-                throw new ArgumentException($"{type.Name} is not decorated with {nameof(ClipboxExtensionAttribute)}");
-            }
-
-            if (!type.GetInterfaces().Contains(typeof(TExtensionBaseType)) && !type.IsSubclassOf(typeof(TExtensionBaseType)))
-            {
-                throw new InvalidCastException($"{type.Name} does not implement {typeof(TExtensionBaseType).FullName}");
-            }
-
-            IExtensionInfo extensionInfo = ClipboxExtensionAttribute.GetExtensionInfo(type);
-            return extensionInfo.MinHostVersion <= ProductConstants.PRODUCT_VERSION;
         }
 
         public void RegisterExtension<TExtensionType>()
@@ -114,19 +88,6 @@ namespace Clipbox.Infrastructure.Extensibility.Containers
             }
 
             return (TExtensionBaseType)_factory.GetInstance(type);
-        }
-
-        public IExtensionInfo GetExtensionInfo(IClipboxExtension extension)
-        {
-            IExtensionInfo extInfo = null;
-            Type type = extension.GetType();
-
-            if (!_registeredExtensions.TryGetValue(type, out extInfo))
-            {
-                throw new KeyNotFoundException($"There is no registered extension of type {type.Name}");
-            }
-
-            return extInfo;
         }
     }
 }

@@ -65,6 +65,9 @@ namespace Clipbox.Settings
 
         public static SettingKey<bool> IsSearchEnabled = new SettingKey<bool>(nameof(IsSearchEnabled), true);
 
+        public static SettingKey<string> EnabledExtensions = new SettingKey<string>(nameof(EnabledExtensions), string.Empty);
+
+
         internal static IEnumerable<ISettingKey> GetAllSettings()
         {
             return typeof(SettingsKeys)

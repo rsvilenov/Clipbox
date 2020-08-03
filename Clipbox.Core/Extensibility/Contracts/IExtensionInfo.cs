@@ -1,10 +1,17 @@
-﻿namespace Clipbox.Core.Extensibility.Contracts
+﻿using System;
+
+namespace Clipbox.Core.Extensibility.Contracts
 {
     /// <summary>
     /// Represents the metadata for an extension
     /// </summary>
     public interface IExtensionInfo
     {
+        /// <summary>
+        /// The System.Type of the extension
+        /// </summary>
+        Type ExtensionObjectType { get; }
+
         /// <summary>
         /// The version of the extension
         /// </summary>

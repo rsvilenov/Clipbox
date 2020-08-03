@@ -1,5 +1,7 @@
-﻿using Clipbox.Core.Extensibility.Attributes;
+﻿using Clipbox.Core;
+using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts;
+using Clipbox.Infrastructure.ExtensionMethods;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,11 +14,11 @@ namespace Clipbox.Infrastructure.Extensibility.Discovery
     /// </summary>
     public class AssemblyWalker
     {
-        List<Type> _allExtensionTypes;
+        private readonly List<IExtensionInfo> _allExtensionTypes;
 
         private AssemblyWalker()
         {
-            _allExtensionTypes = new List<Type>();
+            _allExtensionTypes = new List<IExtensionInfo>();
         }
 
         public static AssemblyWalker FromAssembly(Assembly assembly)
@@ -27,34 +29,39 @@ namespace Clipbox.Infrastructure.Extensibility.Discovery
             return instance;
         }
 
-
         private void LoadAllExtensions(Assembly assembly)
         {
-            var extensionTypes = assembly.GetTypes().Where(t => t.GetInterfaces().Contains(typeof(IClipboxExtension)));
+            var extensionTypes = assembly.GetTypes()
+                .Where(t => t.GetInterfaces()
+                    // matching by type in Reflection-Only Context is not possible
+                    .Select(i => i.AssemblyQualifiedName)
+                    .Contains(typeof(IClipboxExtension).AssemblyQualifiedName));
+
             foreach (var type in extensionTypes)
             {
-                var extensionAttributes = (ClipboxExtensionAttribute[])type.GetCustomAttributes(typeof(ClipboxExtensionAttribute), true);
-                if (!extensionAttributes.Any())
+                if (!ClipboxExtensionAttribute.IsDefinedFor(type))
                 {
                     throw new NotSupportedException($"Type {type.FullName} which implements IClipboxExtension should also have ClipboxExtension attribute.");
                 }
-                _allExtensionTypes.Add(type);
+
+                IExtensionInfo extInfo = ClipboxExtensionAttribute.GetExtensionInfo(type);
+                
+                _allExtensionTypes.Add(extInfo);
             }
         }
 
         /// <summary>
-        /// Find types, which implement IClipboxExtension and have ClipboxExtension attribute
+        /// Find extensions, which implement IClipboxExtension and have ClipboxExtension attribute
         /// </summary>
         /// <typeparam name="T">A derivative type of IClipboxExtension</typeparam>
-        /// <returns>A list of all types</returns>
-        public IEnumerable<Type> FindExtensions<T>()
+        /// <returns>A list of <see cref="IExtensionInfo" /></returns>
+        public IEnumerable<IExtensionInfo> FindExtensions<T>()
             where T : IClipboxExtension
         {
             Type typeToSearch = typeof(T);
             return _allExtensionTypes.
-                Where(t => t == typeToSearch // exact matches
-                    || t.GetInterfaces().Contains(typeToSearch) // interface implementations
-                    || t.IsSubclassOf(typeToSearch)); // virtual/abstract class subclasses
+                Where(extInfo => extInfo.ExtensionObjectType.AssemblyQualifiedName == typeToSearch.AssemblyQualifiedName // exact matches
+                    || extInfo.ExtensionObjectType.GetBaseClassesAndInterfaces().Any(ts => ts.AssemblyQualifiedName == typeToSearch.AssemblyQualifiedName)); // interfaces or virtual/abstract base classes
         }
     }
 }

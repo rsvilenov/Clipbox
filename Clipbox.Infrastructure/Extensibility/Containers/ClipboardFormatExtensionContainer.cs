@@ -10,8 +10,7 @@ namespace Clipbox.Infrastructure.Extensibility.Containers
     public class ClipboardFormatExtensionContainer : 
         BaseExtensionContainer<IClipboardFormatSupport, RegularFactory>, 
         IClipboardFormatExtensionContainer, 
-        INotifyExtensionResolved,
-        IExtensionInfoProvider
+        INotifyExtensionResolved
     {
         private ConcurrentDictionary<string, Type> _clipboardFormatExtensionMapping = 
             new ConcurrentDictionary<string, Type>();
