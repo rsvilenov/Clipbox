@@ -274,7 +274,6 @@
     <Compile Include="Views\RebuildIndicesWindow.xaml.cs">
       <DependentUpon>RebuildIndicesWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ExtensionLoader.cs" />
     <Compile Include="FlowController.cs" />
     <Compile Include="Technical\Converters\ObjectTypeStringConverter.cs" />
     <Compile Include="ViewModels\BindableObjects\ClipboardPreviewItem.cs" />

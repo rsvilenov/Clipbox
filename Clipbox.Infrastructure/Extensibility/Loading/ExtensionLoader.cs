@@ -12,34 +12,49 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace Clipbox
+namespace Clipbox.Infrastructure.Extensibility.Loading
 {
     public class ExtensionLoader
     {
         public ClipboardFormatExtensionContainer FormatsContainer { get; private set; }
-
         public PreviewGeneratorExtensionContainer PreviewGeneratorsContainer { get; private set; }
-
         public SearchSupportExtensionContainer SearchSupportExtensionContainer { get; private set; }
-
         public FlowExtensionContainer FlowExtensionContainer { get; private set; }
-
         public UIExtensionContainer UIExtensionContainer { get; private set; }
-
         public SettingsUIExtensionContainer SettingsUIExtensionContainer { get; private set; }
-
         public PersistenceSupportExtensionContainer PersistenceSupportExtensionContainer { get; private set; }
-
+        
         public List<Type> LoadedTypes { get; private set; }
+        public List<IExtensionInfo> LoadedExtensions { get; private set; }
+        private List<PersistableExtensionInfo> EnabledExtensions { get; set; }
 
         public EventHandler<ExtensionEventArgs> StatelessExtensionResolved;
 
-        public List<IExtensionInfo> LoadedExtensions { get; private set; }
+        public ExtensionLoader()
+        {
+            AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += AppDomain_ReflectionOnlyAssemblyResolve;
+
+            LoadedTypes = new List<Type>();
+            LoadedExtensions = new List<IExtensionInfo>();
+            EnabledExtensions = new List<PersistableExtensionInfo>();
+        }
+
+        public void SetEnabledExtensions(IEnumerable<PersistableExtensionInfo> enabledExtensionInfo)
+        {
+            EnabledExtensions.AddRange(enabledExtensionInfo);
+        }
 
         public void LoadContainers()
         {
-            LoadedTypes = new List<Type>();
-            LoadedExtensions = new List<IExtensionInfo>();
+            if (!EnabledExtensions.Any())
+            {
+                throw new InvalidOperationException($"No extensions has been enabled yet. Call {nameof(SetEnabledExtensions)} first.");
+            }
+
+            if (LoadedExtensions.Any())
+            {
+                throw new InvalidOperationException("There are already loaded extensions in the containers.");
+            }
 
             FormatsContainer = new ClipboardFormatExtensionContainer();
             PreviewGeneratorsContainer = new PreviewGeneratorExtensionContainer();
@@ -57,34 +72,13 @@ namespace Clipbox
             UIExtensionContainer = new UIExtensionContainer();
             SettingsUIExtensionContainer = new SettingsUIExtensionContainer();
             
-            // do not search for extensions in these assemblies
-            string[] ClipboxBaseAssemblies =
-            {
-                "Clipbox.Infrastructure.dll",
-                "Clipbox.Infrastructure.UI.dll",
-                "Clipbox.Infrastructure.UI.CustomControls.dll",
-                "Clipbox.Win32.dll",
-                "Clipbox.ExtendedClipboard.dll",
-                "Clipbox.Core.dll",
-                "Clipbox.SearchProvider.dll",
-                "Clipbox.CloudServices.dll"
-            };
-
             // Load the extension assemblies
-            string assemblyDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            string[] assemblyPaths = Directory.GetFiles(assemblyDir, "Clipbox.Extensions.*.dll", SearchOption.AllDirectories);
+            string[] assemblyPaths = GetAllExtensionAssemblyPaths();
 
             // TODO: filter assemblies according to the "EnabledExtensions" setting
 
-            AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += AppDomain_ReflectionOnlyAssemblyResolve;
-
             foreach (string assemblyPath in assemblyPaths)
             {
-                if (ClipboxBaseAssemblies.Contains(Path.GetFileName(assemblyPath)))
-                {
-                    continue;
-                }
-
                 // find all extensions of type IClipboardFormatSupport
                 LoadAndRegisterExtensions<IClipboardFormatSupport>(FormatsContainer, assemblyPath);
               
@@ -134,25 +128,18 @@ namespace Clipbox
         private AssemblyWalker GetFullWalkerForCompatibleAndEnabledAssembly(string assemblyPath)
         {
             // check whether the assembly has been fully loaded already
-            AssemblyWalker fullWalker = _fullWalkersForAssemblyPath
-                .Where(w => w.Key == assemblyPath)
-                .Select(w => w.Value)
-                .FirstOrDefault();
+            AssemblyWalker fullWalker = null;
+            if (_fullWalkersForAssemblyPath.ContainsKey(assemblyPath))
+            {
+                fullWalker = _fullWalkersForAssemblyPath[assemblyPath];
+            }
 
-            // if not, load it in a reflection-only context
+            // if not, load it in a reflection-only context, in order to prevent any (potentially mallicious) code
+            // in a module initializer from running. We will fully load only assemblies containing at least one
+            // enabled extension.
             if (fullWalker == null)
             {
-                AssemblyWalker reflectionOnlyWalker = _reflectionOnlyWalkersForAssemblyPath
-                    .Where(w => w.Key == assemblyPath)
-                    .Select(w => w.Value)
-                    .FirstOrDefault();
-
-                if (reflectionOnlyWalker == null)
-                {
-                    var eflectionOnlyAssembly = Assembly.ReflectionOnlyLoadFrom(assemblyPath);
-                    reflectionOnlyWalker = AssemblyWalker.FromAssembly(eflectionOnlyAssembly);
-                    _reflectionOnlyWalkersForAssemblyPath.Add(assemblyPath, reflectionOnlyWalker);
-                }
+                AssemblyWalker reflectionOnlyWalker = GetRefletionOnlyAssemblyWalker(assemblyPath);
 
                 // check whether there are any compatible and enabled extensions in this assembly
                 var extInfos = reflectionOnlyWalker.FindExtensions<IClipboxExtension>();
@@ -172,6 +159,61 @@ namespace Clipbox
             return fullWalker;
         }
 
+        public IEnumerable<PersistableExtensionInfo> GetAllAvailableExtensions()
+        {
+            string[] assemblyPaths = GetAllExtensionAssemblyPaths();
+
+            foreach (string assemblyPath in assemblyPaths)
+            {
+                AssemblyWalker reflectionOnlyWalker = GetRefletionOnlyAssemblyWalker(assemblyPath);
+
+                // check whether there are any compatible and enabled extensions in this assembly
+                var extInfos = reflectionOnlyWalker.FindExtensions<IClipboxExtension>();
+                foreach (var extInfo in extInfos)
+                {
+                    if (IsExtensionVersionCompatible(extInfo))
+                    {
+                        Assembly assembly = reflectionOnlyWalker.GetAssembly();
+
+                        yield return new PersistableExtensionInfo
+                        {
+                            AssemblyFullName = assembly.FullName,
+                            AssemblyLocation = assembly.Location,
+                            Author = extInfo.Author,
+                            Description = extInfo.Description,
+                            ExtensionObjectTypeFullName = extInfo.ExtensionObjectType.FullName,
+                            Version = extInfo.Version,
+                            MinHostVersion = extInfo.MinHostVersion
+                        };
+                    }
+                }
+            }
+        }
+
+        private static string[] GetAllExtensionAssemblyPaths()
+        {
+            string assemblyDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            return Directory.GetFiles(assemblyDir, "Clipbox.Extensions.*.dll", SearchOption.AllDirectories);
+        }
+
+        private AssemblyWalker GetRefletionOnlyAssemblyWalker(string assemblyPath)
+        {
+            AssemblyWalker reflectionOnlyWalker = null;
+            if (_reflectionOnlyWalkersForAssemblyPath.ContainsKey(assemblyPath))
+            {
+                reflectionOnlyWalker = _reflectionOnlyWalkersForAssemblyPath[assemblyPath];
+            }
+
+            if (reflectionOnlyWalker == null)
+            {
+                var reflectionOnlyAssembly = Assembly.ReflectionOnlyLoadFrom(assemblyPath);
+                reflectionOnlyWalker = AssemblyWalker.FromAssembly(reflectionOnlyAssembly);
+                _reflectionOnlyWalkersForAssemblyPath.Add(assemblyPath, reflectionOnlyWalker);
+            }
+
+            return reflectionOnlyWalker;
+        }
+
         private bool IsExtensionVersionCompatible(IExtensionInfo extInfo)
         {
             return extInfo.Version <= ProductConstants.PRODUCT_VERSION;
@@ -179,7 +221,8 @@ namespace Clipbox
 
         private bool IsExtensionEnabled(IExtensionInfo extInfo)
         {
-            return true;
+            return EnabledExtensions.Any(pei => pei.ExtensionObjectTypeFullName == extInfo.ExtensionObjectType.FullName
+                                            && pei.AssemblyFullName == pei.AssemblyFullName);
         }
 
         private Assembly AppDomain_ReflectionOnlyAssemblyResolve(object sender, ResolveEventArgs args)
@@ -191,7 +234,7 @@ namespace Clipbox
             catch(FileNotFoundException)
             {
                 string asmPath = Path.Combine(Path.GetDirectoryName(args.RequestingAssembly.Location), args.Name);
-                return Assembly.ReflectionOnlyLoad(args.Name);
+                return Assembly.ReflectionOnlyLoadFrom(asmPath);
             }
         }
 

@@ -15,7 +15,7 @@ namespace Clipbox.Infrastructure.Extensibility.Discovery
     public class AssemblyWalker
     {
         private readonly List<IExtensionInfo> _allExtensionTypes;
-
+        private Assembly _assembly;
         private AssemblyWalker()
         {
             _allExtensionTypes = new List<IExtensionInfo>();
@@ -24,9 +24,15 @@ namespace Clipbox.Infrastructure.Extensibility.Discovery
         public static AssemblyWalker FromAssembly(Assembly assembly)
         {
             var instance = new AssemblyWalker();
+            instance._assembly = assembly;
             instance.LoadAllExtensions(assembly);
 
             return instance;
+        }
+
+        public Assembly GetAssembly()
+        {
+            return _assembly;
         }
 
         private void LoadAllExtensions(Assembly assembly)

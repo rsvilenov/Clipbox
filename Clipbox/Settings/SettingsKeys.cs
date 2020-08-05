@@ -67,6 +67,10 @@ namespace Clipbox.Settings
 
         public static SettingKey<string> EnabledExtensions = new SettingKey<string>(nameof(EnabledExtensions), string.Empty);
 
+        /// <summary>
+        /// This is a special key - it is false only upon the first start of the application. It should not be resettable by the user.
+        /// </summary>
+        public static SettingKey<bool> IsInitialConfigurationDone = new SettingKey<bool>(nameof(IsInitialConfigurationDone), false);
 
         internal static IEnumerable<ISettingKey> GetAllSettings()
         {

@@ -11,6 +11,7 @@ using Clipbox.Infrastructure.Configuration;
 using Clipbox.Infrastructure.Diagnostics;
 using Clipbox.Infrastructure.Encryption;
 using Clipbox.Infrastructure.Encryption.EncryptionProviders;
+using Clipbox.Infrastructure.Extensibility.Loading;
 using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.Persistence.FilesystemAccess;
 using Clipbox.Infrastructure.Persistence.PersistenceProviders;
@@ -119,15 +120,20 @@ namespace Clipbox
 
             ApplicationUtils.CacheWindowsAppInfo();
 
-            // Load extension containers
-            _extensionLoader = new ExtensionLoader();
-            _extensionLoader.LoadContainers();
-
             // Initialize the settings service
             IConfigurationProvider configurationProvider = new PersistableConfigurationProvider(_persistenceProvider);
             _settingsService = new SettingsService(configurationProvider);
             _settingsService.RegisterSettings(SettingsKeys.GetAllSettings());
             _settingsService.SettingChanged += _settingsService_SettingChanged;
+
+            SetInitialSettings();
+
+
+            // Load extension containers
+            _extensionLoader = new ExtensionLoader();
+            _extensionLoader.SetEnabledExtensions(GetEnabledExtensions());
+            _extensionLoader.LoadContainers();
+
 
             IEnumerable<SettingsUIExtension> settingsExtensions = _extensionLoader.SettingsUIExtensionContainer.ResolveAll();
             foreach (ISettingsRegistrator ext in settingsExtensions)
@@ -135,7 +141,6 @@ namespace Clipbox
                 _settingsService.RegisterSettings(ext.GetSettingKeys());
             }
 
-            SetInitialSettings();
 
             int sessionId = SessionUtils.GetCurrentSessionId();
             _guardCommunicationService = new GuardCommunicationService(_persistenceProvider, _settingsService, sessionId);
@@ -222,6 +227,25 @@ namespace Clipbox
             }
 
             ThemeManager.TransparencySettingChanged += ThemeManager_TransparencySettingChanged;
+        }
+
+        private List<PersistableExtensionInfo> GetEnabledExtensions()
+        {
+            List<PersistableExtensionInfo> enabledExtensionInfo;
+            if (!_settingsService.GetSetting<bool>(SettingsKeys.IsInitialConfigurationDone))
+            {
+                enabledExtensionInfo = _extensionLoader.GetAllAvailableExtensions().ToList();
+                string xml = XmlSerialization.Serialize(enabledExtensionInfo);
+                _settingsService.SetSetting(SettingsKeys.EnabledExtensions, xml);
+                _settingsService.SetSetting(SettingsKeys.IsInitialConfigurationDone, true);
+            }
+            else
+            {
+                string xml = _settingsService.GetSetting<string>(SettingsKeys.EnabledExtensions);
+                enabledExtensionInfo = XmlSerialization.Deserialize<List<PersistableExtensionInfo>>(xml);
+            }
+
+            return enabledExtensionInfo;
         }
 
         private void ClearLastExceptionInfo()

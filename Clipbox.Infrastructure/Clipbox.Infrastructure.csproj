@@ -89,6 +89,8 @@
     <Compile Include="Extensibility\Discovery\AssemblyWalker.cs" />
     <Compile Include="Extensibility\EventArgsClasses\ExtensionTypeEventArgs.cs" />
     <Compile Include="Extensibility\Invocation\ExtensionInvoker.cs" />
+    <Compile Include="Extensibility\Loading\ExtensionLoader.cs" />
+    <Compile Include="Extensibility\Loading\PersistableExtensionInfo.cs" />
     <Compile Include="ExtensionMethods\BitmapExtensions.cs" />
     <Compile Include="ExtensionMethods\EnumExtensions.cs" />
     <Compile Include="ExtensionMethods\ImageExtensions.cs" />
