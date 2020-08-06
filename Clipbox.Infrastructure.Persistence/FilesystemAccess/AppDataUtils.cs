@@ -108,7 +108,7 @@ namespace Clipbox.Infrastructure.Persistence.FilesystemAccess
         public static bool CheckSubDirExists(string relativeSubDirPath)
         {
             string fullFilePath = Path.Combine(GetAppDataDir(throwIfNotExists: true), relativeSubDirPath);
-            return Directory.Exists(relativeSubDirPath);
+            return Directory.Exists(fullFilePath);
         }
 
         public static void DeleteFile(string relativeFilePath)

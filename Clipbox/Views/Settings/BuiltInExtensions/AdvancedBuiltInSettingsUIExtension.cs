@@ -16,7 +16,8 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
         {
             ManageUIPartsVisibility(settingKey);
 
-            if (settingKey == SettingsKeys.RunMainProcessWithHighPriority)
+            if (settingKey == SettingsKeys.RunMainProcessWithHighPriority
+                || settingKey == SettingsKeys.UseSearchProviderInExternalProcess)
             {
                 RequestAppRestart();
             }

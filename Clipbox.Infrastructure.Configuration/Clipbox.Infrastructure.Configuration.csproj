@@ -59,6 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfigurationProviders\EncryptedPersistableConfigurationProvider.cs" />
     <Compile Include="IConfigurationProvider.cs" />
     <Compile Include="ConfigurationProviders\PersistableConfigurationProvider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -67,6 +68,10 @@
     <ProjectReference Include="..\Clipbox.Core\Clipbox.Core.csproj">
       <Project>{F4BD7048-4D9F-4036-98AA-DA8232EF2AFB}</Project>
       <Name>Clipbox.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Clipbox.Infrastructure.Encryption\Clipbox.Infrastructure.Encryption.csproj">
+      <Project>{833fd72b-997f-4472-b28d-aefab49f5c09}</Project>
+      <Name>Clipbox.Infrastructure.Encryption</Name>
     </ProjectReference>
     <ProjectReference Include="..\Clipbox.Infrastructure.Persistence\Clipbox.Infrastructure.Persistence.csproj">
       <Project>{95FFF54A-021C-4A0E-94A8-6AF68AE696A0}</Project>

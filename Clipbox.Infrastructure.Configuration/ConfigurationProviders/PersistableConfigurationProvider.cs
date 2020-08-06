@@ -1,10 +1,10 @@
 ﻿using Clipbox.Core.Configuration;
 using Clipbox.Infrastructure.Encryption;
 using Clipbox.Infrastructure.Persistence;
+using Clipbox.Infrastructure.Serialization;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
+using System.Linq;
 
 namespace Clipbox.Infrastructure.Configuration
 {
@@ -27,13 +27,18 @@ namespace Clipbox.Infrastructure.Configuration
                 _persistenceProvider.CreateCategory(SETTINGS_PERSISTENCE_CATEGORY);
             }
 
-            _settings = FetchAllSettings();
+            _settings = new Dictionary<string, SettingObject>();
         }
         
         public void RegisterSetting(ISettingKey settingKey)
         {
             lock (_lockHandle)
             {
+                if (!_settings.Any())
+                {
+                    LoadAllSettings();
+                }
+
                 string keyId = GetKeyStableHash(settingKey);
                 if (_settings.ContainsKey(keyId))
                 {
@@ -47,13 +52,26 @@ namespace Clipbox.Infrastructure.Configuration
 
         public bool IsSettingRegistered(ISettingKey settingKey)
         {
-            return _settings.ContainsKey(GetKeyStableHash(settingKey));
+            lock (_lockHandle)
+            {
+                if (!_settings.Any())
+                {
+                    LoadAllSettings();
+                }
+
+                return _settings.ContainsKey(GetKeyStableHash(settingKey));
+            }
         }
 
         public void SetSetting(ISettingKey settingKey, object value)
         {
             lock (_lockHandle)
             {
+                if (!_settings.Any())
+                {
+                    LoadAllSettings();
+                }
+
                 string keyId = GetKeyStableHash(settingKey);
                 if (!_settings.ContainsKey(keyId))
                 {
@@ -69,6 +87,11 @@ namespace Clipbox.Infrastructure.Configuration
         {
             lock (_lockHandle)
             {
+                if (!_settings.Any())
+                {
+                    LoadAllSettings();
+                }
+
                 string keyId = GetKeyStableHash(settingKey);
                 if (!_settings.ContainsKey(keyId))
                 {
@@ -79,50 +102,46 @@ namespace Clipbox.Infrastructure.Configuration
             }
         }
 
-        private Dictionary<string, SettingObject> FetchAllSettings()
+        private void LoadAllSettings()
         {
-            var settings = new Dictionary<string, SettingObject>();
-
             foreach (string storedSetting in _persistenceProvider.ListKeys(SETTINGS_PERSISTENCE_CATEGORY))
             {
-                SettingObject settingObject = DeserializeSettingObject(_persistenceProvider.ReadBytes(storedSetting, SETTINGS_PERSISTENCE_CATEGORY));
-                settings.Add(settingObject.KeyId, settingObject);
+                SettingObject settingObject = Deserialize(_persistenceProvider.ReadBytes(storedSetting, SETTINGS_PERSISTENCE_CATEGORY));
+                _settings.Add(settingObject.KeyId, settingObject);
             }
-
-            return settings;
         }
 
         private void StoreSetting(SettingObject settingObject)
         {
-            _persistenceProvider.Write(settingObject.KeyId, SerializeObject(settingObject), SETTINGS_PERSISTENCE_CATEGORY);
+            _persistenceProvider.Write(settingObject.KeyId, Serialize(settingObject), SETTINGS_PERSISTENCE_CATEGORY);
         }
 
         /// <summary>
         /// Generate a unique and stable key string from the ISettingKey
         /// </summary>
-        private string GetKeyStableHash(ISettingKey key)
+        protected virtual string GetKeyStableHash(ISettingKey key)
         {
             return MD5Hash.Create(string.Concat(key.Name, key.TargetComponentType?.FullName ?? string.Empty));
         }
 
-        private byte[] SerializeObject(SettingObject settingObject)
+        /// <summary>
+        /// Creates a byte array out of a setting object
+        /// </summary>
+        /// <param name="settingObject"></param>
+        /// <returns></returns>
+        protected virtual byte[] Serialize(SettingObject settingObject)
         {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                BinaryFormatter formatter = new BinaryFormatter();
-                formatter.Serialize(ms, settingObject);
-                ms.Flush();
-                return ms.ToArray();
-            }
+            return BinaryFormatterSerialization.SerializeObject(settingObject);
         }
 
-        private SettingObject DeserializeSettingObject(byte[] bytes)
+        /// <summary>
+        /// Creates a setting object out of a serialized byte array
+        /// </summary>
+        /// <param name="serialized"></param>
+        /// <returns></returns>
+        protected virtual SettingObject Deserialize(byte[] serialized)
         {
-            using (MemoryStream ms = new MemoryStream(bytes))
-            {
-                BinaryFormatter formatter = new BinaryFormatter();
-                return (SettingObject)formatter.Deserialize(ms);
-            }
+            return BinaryFormatterSerialization.DeserializeObject<SettingObject>(serialized);
         }
     }
 }

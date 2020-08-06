@@ -120,14 +120,16 @@ namespace Clipbox
 
             ApplicationUtils.CacheWindowsAppInfo();
 
+
+            IEncryptionProvider encryptionProvider = new AesEncryptionProvider(_persistenceProvider);
+
             // Initialize the settings service
-            IConfigurationProvider configurationProvider = new PersistableConfigurationProvider(_persistenceProvider);
+            IConfigurationProvider configurationProvider = new EncryptedPersistableConfigurationProvider(_persistenceProvider, encryptionProvider);
             _settingsService = new SettingsService(configurationProvider);
             _settingsService.RegisterSettings(SettingsKeys.GetAllSettings());
             _settingsService.SettingChanged += _settingsService_SettingChanged;
 
             SetInitialSettings();
-
 
             // Load extension containers
             _extensionLoader = new ExtensionLoader();
@@ -150,9 +152,6 @@ namespace Clipbox
 
             // Initialize the clipboard listener
             _clipboardListenerService = new ClipboardListenerService();
-
-            IEncryptionProvider encryptionProvider = new AesEncryptionProvider(_persistenceProvider);
-
 
             // Initialize the clipboard manager
             _clipboardManager = new ClipboardManager(_clipboardListenerService, _extensionLoader.FormatsContainer, _extensionLoader.PersistenceSupportExtensionContainer, _persistenceProvider, encryptionProvider)

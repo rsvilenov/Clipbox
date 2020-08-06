@@ -5,7 +5,6 @@ using System;
 using System.Globalization;
 using System.Threading;
 using System.Windows;
-using System.Windows.Threading;
 
 namespace Clipbox.Services
 {
@@ -20,16 +19,24 @@ namespace Clipbox.Services
             _settingsService = settingsService;
 
             _settingsService.SettingChanged += _settingsService_SettingChanged;
+
+            string cultureCode = _settingsService.GetSetting<string>(SettingsKeys.LocalizationCulture);
+            SetCulture(cultureCode);
         }
 
         private void _settingsService_SettingChanged(object sender, EventArgsClasses.SettingsEventArgs e)
         {
             if (e.Key == SettingsKeys.LocalizationCulture)
             {
-                var newCulture = new CultureInfo((string)e.Value);
-                UpdateCurrentUICulture(newCulture);
-                _translationProvider.CurrentCulture = newCulture;
+                SetCulture((string)e.Value);
             }
+        }
+
+        private void SetCulture(string cultureCode)
+        {
+            var newCulture = new CultureInfo(cultureCode);
+            UpdateCurrentUICulture(newCulture);
+            _translationProvider.CurrentCulture = newCulture;
         }
 
         private void UpdateCurrentUICulture(CultureInfo culture)
