@@ -297,6 +297,12 @@
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\BackgroundPreviewGenerationSettingUIPart.xaml.cs">
       <DependentUpon>BackgroundPreviewGenerationSettingUIPart.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\EnabledExtensionsSelector.xaml.cs">
+      <DependentUpon>EnabledExtensionsSelector.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\EnabledExtensionsSettingUIPart.xaml.cs">
+      <DependentUpon>EnabledExtensionsSettingUIPart.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\EnableSearchSettingUIPart.xaml.cs">
       <DependentUpon>EnableSearchSettingUIPart.xaml</DependentUpon>
     </Compile>
@@ -355,6 +361,7 @@
       <DependentUpon>StoreMaxTasksSettingUIPart.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\BuiltInSettingsUIExtension.cs" />
+    <Compile Include="Views\Settings\EventArgsClasses\EnabledExtensionsEventArgs.cs" />
     <Compile Include="Views\Settings\EventArgsClasses\SettingChangeRequestedEventArgs.cs" />
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\ClipboardTrackingSettingUIPart.xaml.cs">
       <DependentUpon>ClipboardTrackingSettingUIPart.xaml</DependentUpon>
@@ -491,6 +498,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\BuiltInExtensions\UIParts\ClipboardTrackingSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\BuiltInExtensions\UIParts\EnabledExtensionsSelector.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\BuiltInExtensions\UIParts\EnabledExtensionsSettingUIPart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
