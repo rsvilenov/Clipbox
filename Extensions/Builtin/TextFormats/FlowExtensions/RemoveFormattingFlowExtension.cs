@@ -1,4 +1,5 @@
-﻿using Clipbox.Core.ClipboardContent.Interfaces;
+﻿using Clipbox.Core;
+using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Extensions.BuiltIn.TextFormats.IntermediateFormats;
@@ -14,7 +15,12 @@ using System.Windows.Documents;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.FlowExtensions
 {
-    [ClipboxExtension]
+    [ClipboxExtension(
+    description: "Removes the formatting from formatted text",
+    author: ProductConstants.PRODUCT_NAME,
+    version: 1.0,
+    MinHostVersion = 1.0
+    )]
     public class RemoveFormattingFlowExtension : FlowExtension
     {
         public override bool OnQueryModify(IEnumerable<IClipboardItem> items)

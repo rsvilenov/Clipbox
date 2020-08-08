@@ -1,4 +1,5 @@
-﻿using Clipbox.Core.Extensibility.Attributes;
+﻿using Clipbox.Core;
+using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
 using Clipbox.Core.Extensibility.Enums;
 using Clipbox.Extensions.BuiltIn.General.FlowExtensions;
@@ -6,7 +7,12 @@ using Clipbox.Extensions.BuiltIn.General.SettingsUIExtensions.SettingUIParts;
 
 namespace Clipbox.Extensions.BuiltIn.General.SettingsUIExtensions
 {
-    [ClipboxExtension]
+    [ClipboxExtension(
+        description: "Settings UI for the app blacklist",
+        author: ProductConstants.PRODUCT_NAME,
+        version: 1.0,
+        MinHostVersion = 1.0
+        )]
     public class BlacklistedAppsSettingsUIExtension : SettingsUIExtension
     {
         public override SettingsCategory Category => SettingsCategory.Copying;

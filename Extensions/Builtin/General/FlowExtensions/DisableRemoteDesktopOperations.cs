@@ -1,11 +1,17 @@
-﻿using Clipbox.Core.Extensibility.Attributes;
+﻿using Clipbox.Core;
+using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using System.IO;
 
 namespace Clipbox.Extensions.BuiltIn.General.FlowExtensions
 {
-    [ClipboxExtension]
+    [ClipboxExtension(
+        description: "Disable copy/paste operations in remote desktop sessions",
+        author: ProductConstants.PRODUCT_NAME,
+        version: 1.0,
+        MinHostVersion = 1.0
+        )]
     public class DisableRemoteDesktopOperations : FlowExtension
     {
         private const string REMOTE_DESKTOP_EXE_NAME = "mstsc.exe";

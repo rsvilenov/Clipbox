@@ -1,4 +1,5 @@
-﻿using Clipbox.Core.Extensibility.Attributes;
+﻿using Clipbox.Core;
+using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Extensions.BuiltIn.TextFormats.IntermediateFormats;
 using Clipbox.Win32;
@@ -7,7 +8,12 @@ using System.Runtime.InteropServices;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.FormatSupport
 {
-    [ClipboxExtension(Author = "Clipbox", Description = "ANSI text formats", Version = 0.1)]
+    [ClipboxExtension(
+    description: "Copy/paste support for RTF (Rich text format)",
+    author: ProductConstants.PRODUCT_NAME,
+    version: 1.0,
+    MinHostVersion = 1.0
+    )]
     // the original Rtf is ANSI, and it seems that everything
     // that is sent to the clipboard as Rtf is ANSI
     [ClipboardFormat("Rich Text Format")]

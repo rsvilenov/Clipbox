@@ -1,4 +1,5 @@
-﻿using Clipbox.Core.Extensibility.Attributes;
+﻿using Clipbox.Core;
+using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
 using Clipbox.Core.Extensibility.Enums;
 using Clipbox.Extensions.BuiltIn.TextFormats.FlowExtensions;
@@ -6,7 +7,12 @@ using Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIParts
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
 {
-    [ClipboxExtension]
+    [ClipboxExtension(
+    description: "Setting UI extension for credit card number masking",
+    author: ProductConstants.PRODUCT_NAME,
+    version: 1.0,
+    MinHostVersion = 1.0
+    )]
     public class ProcessCreditCardNumbersSettingsUIExtension : SettingsUIExtension
     {
         public override SettingsCategory Category => SettingsCategory.Security;

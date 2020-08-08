@@ -1,4 +1,5 @@
-﻿using Clipbox.Core.Extensibility.Attributes;
+﻿using Clipbox.Core;
+using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Extensions.BuiltIn.TextFormats.IntermediateFormats;
@@ -8,7 +9,12 @@ using System.Text.RegularExpressions;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.FlowExtensions
 {
-    [ClipboxExtension]
+    [ClipboxExtension(
+    description: "Masks/hides credit card numbers from the copied text",
+    author: ProductConstants.PRODUCT_NAME,
+    version: 1.0,
+    MinHostVersion = 1.0
+    )]
     public class ProcessCCNumbersFlowExtension : FlowExtension
     {
         public override void OnItemStoring(IWindowInfo sourceWindowInfo, IEnumerable<IIntermediateFormat> originalIntermediateFormats, ref IList<IIntermediateFormat> modifiedIntermediateFormats, ref bool cancelStoreToItem)

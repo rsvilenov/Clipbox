@@ -1,4 +1,5 @@
-﻿using Clipbox.Core.Extensibility.Attributes;
+﻿using Clipbox.Core;
+using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
 using Clipbox.Extensions.BuiltIn.TextFormats.IntermediateFormats;
 using Clipbox.Infrastructure.UI.Utils;
@@ -11,7 +12,12 @@ using System.Windows.Threading;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.SearchSupport
 {
-    [ClipboxExtension(Author = "Clipbox", Description = "", Version = 0.1)]
+    [ClipboxExtension(
+    description: "Search support for copied RTF content",
+    author: ProductConstants.PRODUCT_NAME,
+    version: 1.0,
+    MinHostVersion = 1.0
+    )]
     [IntermediateFormatSupport("{D8F8C369-7F81-4138-9718-4F34EB1BD669}")]
     public class RtfSearchSupport : SearchSupportExtension<RichTextIntermediateFormat>
     {

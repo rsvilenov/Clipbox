@@ -1,4 +1,5 @@
-﻿using Clipbox.Core.Extensibility.Attributes;
+﻿using Clipbox.Core;
+using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Extensions.BuiltIn.ImageFormats.IntermediateFormats;
 using Clipbox.Win32;
@@ -9,7 +10,12 @@ using System.Runtime.InteropServices;
 namespace Clipbox.Extensions.BuiltIn.ImageFormats.FormatSupport
 {
 
-    [ClipboxExtension(Author = "Clipbox", Description = "", Version = 0.1)]
+    [ClipboxExtension(
+    description: "Support for copying/pasting of metafile images",
+    author: ProductConstants.PRODUCT_NAME,
+    version: 1.0,
+    MinHostVersion = 1.0
+    )]
     [ClipboardFormat("CF_METAFILEPICT")]
     public class MetafilePictFormatSupport : ClipboardFormatSupport<MetafilePictIntermediateFormat>
     {

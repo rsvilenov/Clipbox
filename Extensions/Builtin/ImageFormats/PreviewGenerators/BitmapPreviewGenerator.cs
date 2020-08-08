@@ -1,4 +1,5 @@
-﻿using Clipbox.Core.Extensibility.Attributes;
+﻿using Clipbox.Core;
+using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Core.Extensibility.Contracts.PreviewData;
@@ -8,7 +9,12 @@ using System.Drawing;
 
 namespace Clipbox.Extensions.BuiltIn.ImageFormats.FormatSupport
 {
-    [ClipboxExtension(Author = "Clipbox", Description = "", Version = 0.1)]
+    [ClipboxExtension(
+    description: "Preview generation support for bitmap images (generates the thumbnail of the copied image)",
+    author: ProductConstants.PRODUCT_NAME,
+    version: 1.0,
+    MinHostVersion = 1.0
+    )]
     [IntermediateFormatSupport("{4422E0FD-3DD7-4B10-B167-DB63BB97D6E1}")]
     public class ImagePreviewGenerator : SinglePreviewGenerator<BitmapIntermediateFormat, ImagePreviewData>
     {

@@ -1,4 +1,5 @@
-﻿using Clipbox.Core.Extensibility.Attributes;
+﻿using Clipbox.Core;
+using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Core.Extensibility.Contracts.PreviewData;
@@ -11,7 +12,12 @@ using System.Linq;
 
 namespace Clipbox.Extensions.BuiltIn.HdropFormat.PreviewGenerators
 {
-    [ClipboxExtension(Author = "Clipbox", Description = "", Version = 0.1)]
+    [ClipboxExtension(
+        description: "Preview generation support for copied files/folders",
+        author: ProductConstants.PRODUCT_NAME,
+        version: 1.0,
+        MinHostVersion = 1.0
+        )]
     [IntermediateFormatSupport("{3D2C252F-7838-49C2-9D5D-C6B4C92320D3}")]
     public class FilesystemPathsPreviewGenerator : ManyPreviewGenerator<FilesystemPathsIntermediateFormat, FilePreviewData>
     {

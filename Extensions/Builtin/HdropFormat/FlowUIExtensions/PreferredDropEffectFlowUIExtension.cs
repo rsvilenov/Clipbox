@@ -1,4 +1,5 @@
-﻿using Clipbox.Core.ClipboardContent.Interfaces;
+﻿using Clipbox.Core;
+using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Extensions.BuiltIn.HdropFormat.FlowUIExtensions.UIControls;
@@ -8,7 +9,12 @@ using System.Linq;
 
 namespace Clipbox.Extensions.BuiltIn.HdropFormat.FlowUIExtensions
 {
-    [ClipboxExtension]
+    [ClipboxExtension(
+        description: "UI part (buttons) for changing the preferred drop effect of files before pasting them",
+        author: ProductConstants.PRODUCT_NAME,
+        version: 1.0,
+        MinHostVersion = 1.0
+        )]
     public class PreferredDropEffectFlowUIExtension : FlowUIExtension<PreferredDropEffect>
     {
         public override bool OnShouldShow(IEnumerable<IClipboardItem> concatinatedItems)

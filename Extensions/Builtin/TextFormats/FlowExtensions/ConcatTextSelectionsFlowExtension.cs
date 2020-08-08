@@ -13,10 +13,16 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using Clipbox.Extensions.BuiltIn.TextFormats.IntermediateFormats;
+using Clipbox.Core;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.FlowExtensions
 {
-    [ClipboxExtension]
+    [ClipboxExtension(
+    description: "Concatinates two or more text entries when they are being pasted together",
+    author: ProductConstants.PRODUCT_NAME,
+    version: 1.0,
+    MinHostVersion = 1.0
+    )]
     public class ConcatTextSelectionsFlowExtension : FlowExtension
     {
         public override bool OnQueryModify(IEnumerable<IClipboardItem> items)

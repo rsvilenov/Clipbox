@@ -1,4 +1,5 @@
-﻿using Clipbox.Core.ClipboardContent.Interfaces;
+﻿using Clipbox.Core;
+using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Extensions.BuiltIn.TextFormats.Enums;
@@ -9,7 +10,12 @@ using System.Linq;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.FlowUIExtensions
 {
-    [ClipboxExtension]
+    [ClipboxExtension(
+    description: "Setting UI controls for text concatination (when more text entries are stored together)",
+    author: ProductConstants.PRODUCT_NAME,
+    version: 1.0,
+    MinHostVersion = 1.0
+    )]
     public class MultipleTextSelectionsAlignmentFlowUIExtension : FlowUIExtension<MultipleTextSelectionsAlignment>
     {
         public override bool OnShouldShow(IEnumerable<IClipboardItem> concatinatedItems)

@@ -1,4 +1,5 @@
-﻿using Clipbox.Core.Extensibility.Attributes;
+﻿using Clipbox.Core;
+using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Core.Extensibility.Contracts.PreviewData;
@@ -9,7 +10,12 @@ using System.Drawing.Imaging;
 
 namespace Clipbox.Extensions.BuiltIn.ImageFormats.PreviewGenerators
 {
-    [ClipboxExtension(Author = "Clipbox", Description = "", Version = 0.1)]
+    [ClipboxExtension(
+    description: "Preview generation support for enhanced metafile images (generates the thumbnail of the copied image)",
+    author: ProductConstants.PRODUCT_NAME,
+    version: 1.0,
+    MinHostVersion = 1.0
+    )]
     [IntermediateFormatSupport("{69BD2743-DADE-4B24-B3A1-5B6D73BDAE32}")]
     public class MetafilePreviewGenerator : SinglePreviewGenerator<MetafileIntermediateFormat, ImagePreviewData>
     {

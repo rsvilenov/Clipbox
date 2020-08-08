@@ -1,4 +1,5 @@
-﻿using Clipbox.Core.ClipboardContent.Interfaces;
+﻿using Clipbox.Core;
+using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Extensions.BuiltIn.HdropFormat.Enums;
@@ -8,7 +9,12 @@ using System.Linq;
 
 namespace Clipbox.Extensions.BuiltIn.HdropFormat.FlowExtensions
 {
-    [ClipboxExtension]
+    [ClipboxExtension(
+        description: "Change the prefered drop effect when pasting files",
+        author: ProductConstants.PRODUCT_NAME,
+        version: 1.0,
+        MinHostVersion = 1.0
+        )]
     public class ProcessModifyHdropTargets : FlowExtension
     {
         public override bool OnQueryModify(IEnumerable<IClipboardItem> items)

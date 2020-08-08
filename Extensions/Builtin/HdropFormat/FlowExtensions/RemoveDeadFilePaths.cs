@@ -1,4 +1,5 @@
-﻿using Clipbox.Core.ClipboardContent.Interfaces;
+﻿using Clipbox.Core;
+using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
@@ -10,7 +11,12 @@ using System.Linq;
 
 namespace Clipbox.Extensions.BuiltIn.HdropFormat.FlowExtensions
 {
-    [ClipboxExtension]
+    [ClipboxExtension(
+        description: "Remove clipboard entries for files which does not exist anymore",
+        author: ProductConstants.PRODUCT_NAME,
+        version: 1.0,
+        MinHostVersion = 1.0
+        )]
     public class RemoveDeadFilePaths : FlowExtension
     {
         public override IHouseKeepingTask RegisterHousekeepingTask()

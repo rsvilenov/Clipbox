@@ -1,4 +1,5 @@
-﻿using Clipbox.Core.Extensibility.Attributes;
+﻿using Clipbox.Core;
+using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Core.Extensibility.Contracts.PreviewData;
@@ -11,7 +12,12 @@ using System.Windows.Threading;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators
 {
-    [ClipboxExtension(Author = "Clipbox", Description = "", Version = 0.1)]
+    [ClipboxExtension(
+    description: "Preview generation support for RTF textt (generates a thumbnail of the text, rendered with its formatting)",
+    author: ProductConstants.PRODUCT_NAME,
+    version: 1.0,
+    MinHostVersion = 1.0
+    )]
     [IntermediateFormatSupport("{D8F8C369-7F81-4138-9718-4F34EB1BD669}")]
     // set the priority of this preview generator to a high value,
     // so it takes priority over the generators of the other text formats,

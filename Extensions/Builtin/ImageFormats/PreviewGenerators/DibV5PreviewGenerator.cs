@@ -1,4 +1,5 @@
-﻿using Clipbox.Core.Extensibility.Attributes;
+﻿using Clipbox.Core;
+using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Core.Extensibility.Contracts.PreviewData;
@@ -11,7 +12,12 @@ using System.Runtime.InteropServices;
 
 namespace Clipbox.Extensions.BuiltIn.ImageFormats.FormatSupport
 {
-    [ClipboxExtension(Author = "Clipbox", Description = "", Version = 0.1)]
+    [ClipboxExtension(
+    description: "Preview generation support for Dib V5 images (generates the thumbnail of the copied image)",
+    author: ProductConstants.PRODUCT_NAME,
+    version: 1.0,
+    MinHostVersion = 1.0
+    )]
     [IntermediateFormatSupport("{CFCA3819-C2EF-4F94-B9B7-49D402CA0652}")]
     public class DibV5PreviewGenerator : SinglePreviewGenerator<DibV5IntermediateFormat, ImagePreviewData>
     {

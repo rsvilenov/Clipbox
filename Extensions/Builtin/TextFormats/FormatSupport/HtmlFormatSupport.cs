@@ -1,4 +1,5 @@
-﻿using Clipbox.Core.Extensibility.Attributes;
+﻿using Clipbox.Core;
+using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Extensions.BuiltIn.TextFormats.IntermediateFormats;
 using Clipbox.Win32;
@@ -8,7 +9,12 @@ using System.Text;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.FormatSupport
 {
-    [ClipboxExtension(Author = "Clipbox", Description = "Html format", Version = 0.1)]
+    [ClipboxExtension(
+    description: "Copy/paste support for HTML data",
+    author: ProductConstants.PRODUCT_NAME,
+    version: 1.0,
+    MinHostVersion = 1.0
+    )]
     [ClipboardFormat("CF_HTML")]
     public class HtmlFormatSupport : ClipboardFormatSupport<TextIntermediateFormat>
     {

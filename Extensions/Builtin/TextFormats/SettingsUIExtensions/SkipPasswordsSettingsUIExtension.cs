@@ -1,4 +1,5 @@
-﻿using Clipbox.Core.Extensibility.Attributes;
+﻿using Clipbox.Core;
+using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
 using Clipbox.Core.Extensibility.Enums;
 using Clipbox.Extensions.BuiltIn.TextFormats.Enums;
@@ -8,7 +9,12 @@ using System;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
 {
-    [ClipboxExtension]
+    [ClipboxExtension(
+    description: "Setting UI extension for password skipping",
+    author: ProductConstants.PRODUCT_NAME,
+    version: 1.0,
+    MinHostVersion = 1.0
+    )]
     public class SkipPasswordsSettingsUIExtension : SettingsUIExtension
     {
         internal const int DEFAULT_MIN_PASSWORD_LEN = 8;

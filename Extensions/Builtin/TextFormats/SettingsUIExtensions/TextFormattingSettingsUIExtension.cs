@@ -5,10 +5,16 @@ using Clipbox.Extensions.BuiltIn.TextFormats.Enums;
 using Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIParts;
 using Clipbox.Extensions.BuiltIn.TextFormats.FlowUIExtensions;
 using Clipbox.Core.Extensibility.Enums;
+using Clipbox.Core;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
 {
-    [ClipboxExtension]
+    [ClipboxExtension(
+    description: "Setting UI extension for extensions, having to do with text formatting",
+    author: ProductConstants.PRODUCT_NAME,
+    version: 1.0,
+    MinHostVersion = 1.0
+    )]
     public class TextFormattingSettingsUIExtension : SettingsUIExtension
     {
         private DefaultSeparatorSettingUIPart _defaultSeparatorUIPart;

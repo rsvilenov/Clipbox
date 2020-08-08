@@ -1,16 +1,21 @@
-﻿using Clipbox.Core.Extensibility.Attributes;
+﻿using Clipbox.Core;
+using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
-using Clipbox.Core.ClipboardContent.Enums;
+using Clipbox.Extensions.BuiltIn.HdropFormat.Enums;
+using Clipbox.Extensions.BuiltIn.HdropFormat.IntermediateFormats;
 using Clipbox.Win32;
 using Clipbox.Win32.Native;
 using System;
 using System.Runtime.InteropServices;
-using Clipbox.Extensions.BuiltIn.HdropFormat.IntermediateFormats;
-using Clipbox.Extensions.BuiltIn.HdropFormat.Enums;
 
 namespace Clipbox.Extensions.BuiltIn.HdropFormat.FormatSupport
 {
-    [ClipboxExtension(Author = "Clipbox", Description = "Paste explorer action: Cut, copy or copy shortcut", Version = 0.1)]
+    [ClipboxExtension(
+        description: "Storing the paste action when copying files from Windows Explorer. (The preferred drop effect, which can be either Cut, Copy or Copy shortcut)",
+        author: ProductConstants.PRODUCT_NAME,
+        version: 1.0,
+        MinHostVersion = 1.0
+        )]
     [ClipboardFormat("Preferred DropEffect")]
     public class PreferredDropEffectFormatSupport : ClipboardFormatSupport<PreferredDropEffectIntermediateFormat>
     {

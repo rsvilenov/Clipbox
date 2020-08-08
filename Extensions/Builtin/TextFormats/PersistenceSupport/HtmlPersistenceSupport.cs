@@ -1,11 +1,17 @@
-﻿using Clipbox.Core.Extensibility.Attributes;
+﻿using Clipbox.Core;
+using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.PersistenceTypes;
 using Clipbox.Extensions.BuiltIn.TextFormats.IntermediateFormats;
 using System.Text;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.PersistenceSupport
 {
-    [ClipboxExtension(Author = "Clipbox", Description = "", Version = 0.1)]
+    [ClipboxExtension(
+    description: "Persistence support for HTML data",
+    author: ProductConstants.PRODUCT_NAME,
+    version: 1.0,
+    MinHostVersion = 1.0
+    )]
     [IntermediateFormatSupport("{5E4E9C1F-A324-42A4-AE9E-AA64DD871CC8}")]
     public class HtmlPersistenceSupport : PersistenceSupportExtension<HtmlIntermediateFormat>
     {

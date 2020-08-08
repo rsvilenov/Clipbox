@@ -6,7 +6,7 @@ namespace Clipbox.Core
     {
         public const string PRODUCT_NAME = "Clipbox";
 
-        public const double PRODUCT_VERSION = 0.1;
+        public const double PRODUCT_VERSION = 1.0;
 
         public const string MAIN_PROCESS_EXE_NAME = "Clipbox.exe";
 

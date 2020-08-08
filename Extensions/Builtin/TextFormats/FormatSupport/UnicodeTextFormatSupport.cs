@@ -1,4 +1,5 @@
-﻿using Clipbox.Core.Extensibility.Attributes;
+﻿using Clipbox.Core;
+using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Extensions.BuiltIn.TextFormats.IntermediateFormats;
 using Clipbox.Win32;
@@ -7,7 +8,12 @@ using System.Runtime.InteropServices;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.FormatSupport
 {
-    [ClipboxExtension(Author = "Clipbox", Description = "Unicode text formats", Version = 0.1)]
+    [ClipboxExtension(
+    description: "Copy/paste support for Unicode text",
+    author: ProductConstants.PRODUCT_NAME,
+    version: 1.0,
+    MinHostVersion = 1.0
+    )]
     [ClipboardFormat("CF_UNICODETEXT")]
     public class UnicodeTextFormatSupport : ClipboardFormatSupport<UnicodeTextIntermediateFormat>
     {

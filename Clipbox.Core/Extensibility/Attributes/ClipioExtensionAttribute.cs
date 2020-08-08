@@ -12,24 +12,21 @@ namespace Clipbox.Core.Extensibility.Attributes
     public class ClipboxExtensionAttribute : Attribute
     {
         /// <summary>
-        /// The version of the extension
-        /// </summary>
-        public string Description { get; set; }
-
-        /// <summary>
-        /// Who wrote the extension
-        /// </summary>
-        public string Author { get; set; }
-
-        /// <summary>
-        /// The version of the extension
-        /// </summary>
-        public double Version { get; set; }
-
-        /// <summary>
         /// The minimum version of Clipbox on which this extension can run
         /// </summary>
         public double MinHostVersion { get; set; }
+
+        private readonly string _description;
+        private readonly string _author;
+        private readonly double _version;
+
+
+        public ClipboxExtensionAttribute(string description, string author, double version)
+        {
+            _description = description;
+            _author = author;
+            _version = version;
+        }
 
         public static bool IsDefinedFor(Type type)
         {
@@ -48,9 +45,9 @@ namespace Clipbox.Core.Extensibility.Attributes
             return new ExtensionInfo
             {
                 ExtensionObjectType = type,
-                Author = GetNamedArgumentValue<string>(extensionAttribute, nameof(Author)),
-                Description = GetNamedArgumentValue<string>(extensionAttribute, nameof(Description)),
-                Version = GetNamedArgumentValue<double>(extensionAttribute, nameof(Version)),
+                Description = extensionAttribute.ConstructorArguments[0].Value as string,
+                Author = extensionAttribute.ConstructorArguments[1].Value as string,
+                Version = (double)extensionAttribute.ConstructorArguments[2].Value,
                 MinHostVersion = GetNamedArgumentValue<double>(extensionAttribute, nameof(MinHostVersion))
             };
         }
@@ -73,7 +70,7 @@ namespace Clipbox.Core.Extensibility.Attributes
                 }
             }
 
-            return default(T);
+            return default;
         }
 
         private class ExtensionInfo : IExtensionInfo

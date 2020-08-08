@@ -1,4 +1,5 @@
-﻿using Clipbox.Core.Extensibility.Attributes;
+﻿using Clipbox.Core;
+using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Core.Extensibility.Contracts.PreviewData;
@@ -11,7 +12,12 @@ using System.Windows.Threading;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators
 {
-    [ClipboxExtension(Author = "Clipbox", Description = "", Version = 0.1)]
+    [ClipboxExtension(
+    description: "Preview generation support for Unicode textt (generates a thumbnail of the text)",
+    author: ProductConstants.PRODUCT_NAME,
+    version: 1.0,
+    MinHostVersion = 1.0
+    )]
     [IntermediateFormatSupport("{CAF7A257-882B-46CE-A26D-679D228EA8B7}")]
     [PreviewPriority(99)]
     public class UnicodeTextPreviewGenerator : SinglePreviewGenerator<UnicodeTextIntermediateFormat, ImagePreviewData>

@@ -1,4 +1,5 @@
-﻿using Clipbox.Core.Extensibility.Attributes;
+﻿using Clipbox.Core;
+using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Extensions.BuiltIn.TextFormats.FlowExtensions.Common;
@@ -6,7 +7,12 @@ using System.Collections.Generic;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.FlowExtensions
 {
-    [ClipboxExtension]
+    [ClipboxExtension(
+    description: "Skips storing words shorted than N characters.",
+    author: ProductConstants.PRODUCT_NAME,
+    version: 1.0,
+    MinHostVersion = 1.0
+    )]
     public class SkipShortStringsFlowExtension : FlowExtension
     {
         /// <summary>

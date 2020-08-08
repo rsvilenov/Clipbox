@@ -1,4 +1,5 @@
-﻿using Clipbox.Core.Extensibility.Attributes;
+﻿using Clipbox.Core;
+using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Extensions.BuiltIn.TextFormats.Enums;
@@ -9,7 +10,12 @@ using System.Text.RegularExpressions;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.FlowExtensions
 {
-    [ClipboxExtension]
+    [ClipboxExtension(
+    description: "Skips storing of copied words that are highly likely to be passwords (if the word is not part of some text, of course)",
+    author: ProductConstants.PRODUCT_NAME,
+    version: 1.0,
+    MinHostVersion = 1.0
+    )]
     public class SkipPasswordsFlowExtension :  FlowExtension
     {
         public override void OnItemStoring(IWindowInfo sourceWindowInfo, IEnumerable<IIntermediateFormat> originalIntermediateFormats, ref IList<IIntermediateFormat> modifiedIntermediateFormats, ref bool cancelStoreToItem)

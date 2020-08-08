@@ -1,4 +1,5 @@
-﻿using Clipbox.Core.Extensibility.Attributes;
+﻿using Clipbox.Core;
+using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using System;
@@ -6,7 +7,12 @@ using System.Linq;
 
 namespace Clipbox.Extensions.BuiltIn.General.FlowExtensions
 {
-    [ClipboxExtension]
+    [ClipboxExtension(
+        description: "Cancel copying from blacklisted apps",
+        author: ProductConstants.PRODUCT_NAME,
+        version: 1.0, 
+        MinHostVersion = 1.0
+        )]
     public class CancelCopyOfBlacklistedAppsFlowExtension : FlowExtension
     {
         public override void OnCopyRequested(IWindowInfo sourceWindowInfo, ref bool cancelStoreToItemList)
