@@ -194,7 +194,8 @@
                                         </TextBlock>
                                         <ContentControl
                                             Grid.Column="1"
-                                            MaxWidth="15"
+                                            MaxWidth="20"
+                                            Margin="0,0,10,0"
                                             HorizontalAlignment="Right"
                                             VerticalAlignment="Center"
                                             Background="Transparent"
@@ -205,7 +206,7 @@
                                         <Button
                                             Grid.Column="2"
                                             MaxWidth="15"
-                                            HorizontalAlignment="Right"
+                                            HorizontalAlignment="Center"
                                             VerticalAlignment="Center"
                                             Command="{Binding DataContext.DisableExtension, ElementName=mainBorder}"
                                             CommandParameter="{Binding}"
@@ -291,7 +292,8 @@
                                     </TextBlock>
                                     <ContentControl
                                         Grid.Column="1"
-                                        MaxWidth="15"
+                                        MaxWidth="20"
+                                        Margin="0,0,10,0"
                                         HorizontalAlignment="Right"
                                         VerticalAlignment="Center"
                                         Background="Transparent"
@@ -303,7 +305,7 @@
                                     <Button
                                         Grid.Column="2"
                                         MaxWidth="15"
-                                        HorizontalAlignment="Right"
+                                        HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
                                         Command="{Binding DataContext.EnableExtension, ElementName=mainBorder}"
                                         CommandParameter="{Binding}"
@@ -327,7 +329,7 @@
                 Margin="10"
                 VerticalAlignment="Center"
                 Command="{Binding OkClicked}"
-                Content="OK"
+                Content="{loc:Localize BTN_LBL_Ok}"
                 Foreground="White"
                 IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBooleanConverter}}"
                 Style="{DynamicResource BtnOk}" />
@@ -341,7 +343,7 @@
                 Margin="10"
                 VerticalAlignment="Center"
                 Command="{Binding CancelClicked}"
-                Content="Cancel"
+                Content="{loc:Localize BTN_LBL_Cancel}"
                 Foreground="White"
                 Style="{DynamicResource BtnCancel}" />
         </Grid>

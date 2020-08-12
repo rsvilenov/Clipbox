@@ -32,6 +32,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Windows;
 
@@ -233,7 +234,31 @@ namespace Clipbox
             List<PersistableExtensionInfo> enabledExtensionInfo;
             if (!_settingsService.GetSetting<bool>(SettingsKeys.IsInitialConfigurationDone))
             {
-                enabledExtensionInfo = _extensionLoader.GetAllAvailableExtensions().ToList();
+#if RELEASE
+                MessageBox.Show("Put the strong names!!!");
+                List<string> buildInExtensionAssemblyFullNames = new List<string>
+                {
+                    // in the release version put the strong names here...
+                    "Clipbox.Extensions.BuiltIn.General, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                    "Clipbox.Extensions.BuiltIn.HdropFormats, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                    "Clipbox.Extensions.BuiltIn.ImageFormats, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                    "Clipbox.Extensions.BuiltIn.TextFormats, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+                };
+#endif
+                enabledExtensionInfo = new List<PersistableExtensionInfo>();
+
+                foreach (PersistableExtensionInfo availableExtension  in  _extensionLoader
+                    .GetAllAvailableExtensions()
+                    .ToList())
+                {
+#if RELEASE
+                    if (buildInExtensionAssemblyFullNames.Contains(availableExtension.AssemblyFullName))
+#endif
+                    {
+                        enabledExtensionInfo.Add(availableExtension);
+                    }
+                }
+
                 string xml = XmlSerialization.Serialize(enabledExtensionInfo);
                 _settingsService.SetSetting(SettingsKeys.EnabledExtensions, xml);
                 _settingsService.SetSetting(SettingsKeys.IsInitialConfigurationDone, true);

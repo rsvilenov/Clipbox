@@ -193,7 +193,8 @@
             Foreground="{DynamicResource ControlForegroundBrush}"
             Template="{StaticResource HelpIcon}"
             ToolTip="{loc:Localize LBL_BLACKLISTED_APPS_HELP,
-                                   ResourceLookupMode=CurrentAssembly}" />
+                                   ResourceLookupMode=CurrentAssembly}"
+            ToolTipService.ShowDuration="300000" />
         <Button
             Grid.Row="1"
             Grid.Column="0"

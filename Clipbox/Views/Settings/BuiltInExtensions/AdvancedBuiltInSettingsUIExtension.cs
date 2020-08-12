@@ -34,7 +34,7 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
             _maxPreviewTasksSettingUIPart = new MaxPreviewTasksSettingUIPart();
 
             builder
-                .Add(SettingsKeys.AreFadeAnimationsEnabled, new FadeAnimationsSettingUIPart())
+                .Add(SettingsKeys.EnabledExtensions, new EnabledExtensionsSettingUIPart())
                 .Add(SettingsKeys.PreviewItemHeightRatio, new ScreenHightItemHeightRatioSettingUIPart())
                 .Add(SettingsKeys.IsBackgroundPreviewGenerationEnabled, new BackgroundPreviewGenerationSettingUIPart())
                 .Add(SettingsKeys.PreviewGenerationTimeout, new PreviewGenerationTimeoutSettingUIPart())
@@ -48,7 +48,8 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
                 .Add(SettingsKeys.UseSearchProviderInExternalProcess, _extenralSearchProcessSettingUIPart)
                 .Add(SettingsKeys.RunMainProcessWithHighPriority, new MainProcessPrioritySettingUIPart())
                 .Add(SettingsKeys.OnItemStoringFlowExtensionsTimeoutMs, new StoreItemTimeoutSettingUIPart())
-                .Add(SettingsKeys.OnItemStoringFlowExtensionsMaxTasks, new StoreMaxTasksSettingUIPart());
+                .Add(SettingsKeys.OnItemStoringFlowExtensionsMaxTasks, new StoreMaxTasksSettingUIPart())
+                .Add(SettingsKeys.AreFadeAnimationsEnabled, new FadeAnimationsSettingUIPart());
         }
 
         private void ManageUIPartsVisibility(ISettingKey settingKey)

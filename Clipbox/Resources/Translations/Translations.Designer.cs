@@ -70,11 +70,29 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        internal static string BTN_LBL_Cancel {
+            get {
+                return ResourceManager.GetString("BTN_LBL_Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to OK.
         /// </summary>
         internal static string BTN_LBL_Ok {
             get {
                 return ResourceManager.GetString("BTN_LBL_Ok", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Manage.
+        /// </summary>
+        internal static string BTN_SETTINGS_MANAGE_EXTENSIONS {
+            get {
+                return ResourceManager.GetString("BTN_SETTINGS_MANAGE_EXTENSIONS", resourceCulture);
             }
         }
         
@@ -156,6 +174,24 @@ namespace Clipbox.Resources.Translations {
         internal static string LBL_SETTINGS_ENABLED_EXTENSION_SELECTOR_TITLE {
             get {
                 return ResourceManager.GetString("LBL_SETTINGS_ENABLED_EXTENSION_SELECTOR_TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable/disable extensions.
+        /// </summary>
+        internal static string LBL_SETTINGS_ENABLED_EXTENSIONS {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_ENABLED_EXTENSIONS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Many functions of this program are implemented as extensions. You can enable or disable them here..
+        /// </summary>
+        internal static string LBL_SETTINGS_ENABLED_EXTENSIONS_HELP {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_ENABLED_EXTENSIONS_HELP", resourceCulture);
             }
         }
         

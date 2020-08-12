@@ -368,7 +368,7 @@
                 Margin="10"
                 VerticalAlignment="Center"
                 Command="{Binding OkClicked}"
-                Content="OK"
+                Content="{loc:Localize BTN_LBL_Ok}"
                 Foreground="White"
                 IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBooleanConverter}}"
                 Style="{DynamicResource BtnOk}" />
@@ -382,7 +382,7 @@
                 Margin="10"
                 VerticalAlignment="Center"
                 Command="{Binding CancelClicked}"
-                Content="Cancel"
+                Content="{loc:Localize BTN_LBL_Cancel}"
                 Foreground="White"
                 Style="{DynamicResource BtnCancel}" />
         </Grid>

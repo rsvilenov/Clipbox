@@ -120,8 +120,14 @@
   <data name="bg-BG" xml:space="preserve">
     <value>Bulgarian</value>
   </data>
+  <data name="BTN_LBL_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
   <data name="BTN_LBL_Ok" xml:space="preserve">
     <value>OK</value>
+  </data>
+  <data name="BTN_SETTINGS_MANAGE_EXTENSIONS" xml:space="preserve">
+    <value>Manage</value>
   </data>
   <data name="en-US" xml:space="preserve">
     <value>English</value>
@@ -146,6 +152,12 @@
   </data>
   <data name="LBL_SETTINGS_DISABLED_EXTENSIONS_LIST" xml:space="preserve">
     <value>Disabled extensions</value>
+  </data>
+  <data name="LBL_SETTINGS_ENABLED_EXTENSIONS" xml:space="preserve">
+    <value>Enable/disable extensions</value>
+  </data>
+  <data name="LBL_SETTINGS_ENABLED_EXTENSIONS_HELP" xml:space="preserve">
+    <value>Many functions of this program are implemented as extensions. You can enable or disable them here.</value>
   </data>
   <data name="LBL_SETTINGS_ENABLED_EXTENSIONS_LIST" xml:space="preserve">
     <value>Enabled extensions</value>
