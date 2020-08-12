@@ -1,21 +1,15 @@
 ﻿using Clipbox.Infrastructure.Extensibility.Loading;
+using Clipbox.Infrastructure.ObjectHelpers;
 using Clipbox.Infrastructure.UI;
-using Clipbox.Infrastructure.UI.ExtensionMethods;
-using Clipbox.Infrastructure.UI.Utils;
 using Clipbox.Views.Settings.EventArgsClasses;
-using Clipbox.Win32;
-using Clipbox.Win32.Native;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Interop;
-using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
 namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
@@ -26,39 +20,32 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
     public partial class EnabledExtensionsSelector : UserControl
     {
         public ICommand EnableExtension { get; }
-        public ICommand DisableExtensions { get; }
+        public ICommand DisableExtension { get; }
         public ICommand OkClicked { get; }
         public ICommand CancelClicked { get; }
 
         public event EventHandler<EnabledExtensionsEventArgs> EnabledExtensionsChanged;
 
-        private IEnumerable<PersistableExtensionInfo> _enabledExtensions;
+        private readonly List<ExtensionDisplayInfo> _enabledExtensionsInternalList;
         public EnabledExtensionsSelector(IEnumerable<PersistableExtensionInfo> enabledExtensions)
         {
             InitializeComponent();
 
-            _enabledExtensions = enabledExtensions;
+            _enabledExtensionsInternalList = enabledExtensions.
+                Select(ee => new ExtensionDisplayInfo(ee))
+                .ToList();
 
             EnabledExtensions = new AsyncObservableCollection<ExtensionDisplayInfo>();
             _allExtensionsCollection = new List<ExtensionDisplayInfo>();
 
             EnableExtension = new DelegateCommand<ExtensionDisplayInfo>(EnableExtensionHandler);
-            DisableExtensions = new DelegateCommand<ExtensionDisplayInfo>(DisableExtensionHandler);
+            DisableExtension = new DelegateCommand<ExtensionDisplayInfo>(DisableExtensionHandler);
             OkClicked = new DelegateCommand(OkButtonHandler);
             CancelClicked = new DelegateCommand(CancelButtonHandler);
 
             this.mainBorder.DataContext = this;
             Loaded += InstalledApplicationSelector_Loaded;
 
-        }
-
-        private void SetEnabledExtensions()
-        {
-            EnabledExtensions.AddRange(_allExtensionsCollection
-                .Where(edi => _enabledExtensions.Any(ee => edi.PersistableExtensionInfo.ExtensionObjectTypeFullName == ee.ExtensionObjectTypeFullName 
-                && edi.PersistableExtensionInfo.AssemblyFullName == ee.AssemblyFullName
-                && edi.PersistableExtensionInfo.AssemblyLocation == ee.AssemblyLocation))
-                .ToList());
         }
 
         private void InstalledApplicationSelector_Loaded(object sender, System.Windows.RoutedEventArgs e)
@@ -82,28 +69,30 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
         private void DisableExtensionHandler(ExtensionDisplayInfo obj)
         {
             EnabledExtensions.Remove(obj);
+            _enabledExtensionsInternalList.Remove(obj);
             if (_allExtensionsCollection.Contains(obj))
             {
-                AllExtensions.Add(obj);
+                DisabledExtensions.Add(obj);
             }
         }
 
         private void EnableExtensionHandler(ExtensionDisplayInfo obj)
         {
+            _enabledExtensionsInternalList.Add(obj);
             EnabledExtensions.Add(obj);
-            AllExtensions.Remove(obj);
+            DisabledExtensions.Remove(obj);
         }
 
         private List<ExtensionDisplayInfo> _allExtensionsCollection;
 
-        public AsyncObservableCollection<ExtensionDisplayInfo> AllExtensions
+        public AsyncObservableCollection<ExtensionDisplayInfo> DisabledExtensions
         {
-            get { return (AsyncObservableCollection<ExtensionDisplayInfo>)GetValue(AllExtensionsProperty); }
-            set { SetValue(AllExtensionsProperty, value); }
+            get { return (AsyncObservableCollection<ExtensionDisplayInfo>)GetValue(DisabledExtensionsProperty); }
+            set { SetValue(DisabledExtensionsProperty, value); }
         }
 
-        public static readonly DependencyProperty AllExtensionsProperty =
-            DependencyProperty.Register(nameof(AllExtensions), typeof(AsyncObservableCollection<ExtensionDisplayInfo>), typeof(EnabledExtensionsSelector), new PropertyMetadata(null));
+        public static readonly DependencyProperty DisabledExtensionsProperty =
+            DependencyProperty.Register(nameof(DisabledExtensions), typeof(AsyncObservableCollection<ExtensionDisplayInfo>), typeof(EnabledExtensionsSelector), new PropertyMetadata(null));
 
         public AsyncObservableCollection<ExtensionDisplayInfo> EnabledExtensions
         {
@@ -137,13 +126,21 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
 
         private void OnLoadDataComplete()
         {
-            AllExtensions = new AsyncObservableCollection<ExtensionDisplayInfo>(_allExtensionsCollection);
-            SetEnabledExtensions();
+            LoadEnabledExtensions();
+
+            DisabledExtensions = new AsyncObservableCollection<ExtensionDisplayInfo>(_allExtensionsCollection.Except(EnabledExtensions));
+        }
+
+        private void LoadEnabledExtensions()
+        {
+            EnabledExtensions.AddRange(_allExtensionsCollection
+                            .Where(edi => _enabledExtensionsInternalList.Contains(edi))
+                            .ToList());
         }
 
         private void OkButtonHandler()
         {
-            EnabledExtensionsChanged?.Invoke(this, new EnabledExtensionsEventArgs(EnabledExtensions
+            EnabledExtensionsChanged?.Invoke(this, new EnabledExtensionsEventArgs(_enabledExtensionsInternalList
                 .Select(ee => ee.PersistableExtensionInfo)));
         }
 
@@ -154,20 +151,23 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
 
         private void SearchTextBox_SearchRequested(object sender, RoutedEventArgs e)
         {
-            AllExtensions.Clear();
+            DisabledExtensions.Clear();
             IsLoading = true;
             string searchText = searchTextBox.Text;
-            List<ExtensionDisplayInfo> selectedApps = EnabledExtensions.ToList();
 
             Task.Run(() =>
             {
-                IList<ExtensionDisplayInfo> filteredAppList = _allExtensionsCollection
-                .Where(sai => sai.Description.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) > -1)
-                .Where(sai => !selectedApps.Contains(sai))
+                IList<ExtensionDisplayInfo> filteredExtList = _enabledExtensionsInternalList
+                .Where(edi => edi.Description.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) > -1
+                    || edi.ExtensionName.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) > -1)
                 .ToList();
 
                 Dispatcher
-                .BeginInvoke(DispatcherPriority.Background, new Action(() => AllExtensions.AddRange(filteredAppList)))
+                .BeginInvoke(DispatcherPriority.Background, new Action(() =>
+                    {
+                        EnabledExtensions.Clear();
+                        EnabledExtensions.AddRange(filteredExtList);
+                    }))
                 .Task.ContinueWith((t) => Dispatcher.Invoke(() => IsLoading = false));
             });
 
@@ -181,10 +181,20 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
             public ExtensionDisplayInfo(PersistableExtensionInfo persistableExtensionInfo)
             {
                 PersistableExtensionInfo = persistableExtensionInfo;
-
+                ExtensionName = Regex.Replace(persistableExtensionInfo.TypeNameOfExtension, @"((?<=[a-z])[A-Z]|[A-Z](?=[a-z]))", " $1");
                 Version = persistableExtensionInfo.Version;
                 Author = persistableExtensionInfo.Author;
                 Description = persistableExtensionInfo.Description;
+            }
+
+            /// <summary>
+            /// The name of the extension
+            /// </summary>
+            private string _extensionName;
+            public string ExtensionName
+            {
+                get { return _extensionName; }
+                set { SetField(ref _extensionName, value); }
             }
 
             /// <summary>
@@ -215,6 +225,21 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
             {
                 get { return _description; }
                 set { SetField(ref _description, value); }
+            }
+
+            public override int GetHashCode()
+            {
+                return GetHashCodeHelper
+                    .Start
+                    .Append(ExtensionName)
+                    .Append(Description)
+                    .Append(Version)
+                    .Append(PersistableExtensionInfo.AssemblyLocation);
+            }
+
+            public override bool Equals(object obj)
+            {
+                return obj.GetHashCode() == this.GetHashCode();
             }
         }
 

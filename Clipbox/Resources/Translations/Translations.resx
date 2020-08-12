@@ -144,6 +144,15 @@
   <data name="LBL_SETTINGS_CLOUD_ENABLED" xml:space="preserve">
     <value>Enable cloud sychronization of the clipboard contents</value>
   </data>
+  <data name="LBL_SETTINGS_DISABLED_EXTENSIONS_LIST" xml:space="preserve">
+    <value>Disabled extensions</value>
+  </data>
+  <data name="LBL_SETTINGS_ENABLED_EXTENSIONS_LIST" xml:space="preserve">
+    <value>Enabled extensions</value>
+  </data>
+  <data name="LBL_SETTINGS_ENABLED_EXTENSION_SELECTOR_TITLE" xml:space="preserve">
+    <value>Enable or disable extensions</value>
+  </data>
   <data name="LBL_SETTINGS_EXTERNAL_SEARCH_PROCESS" xml:space="preserve">
     <value>Run the search queries in an external process</value>
   </data>
@@ -223,5 +232,11 @@ Warning: more rows means more RAM usage!</value>
   </data>
   <data name="TLP_WINDOW_RESTORE" xml:space="preserve">
     <value>Restore</value>
+  </data>
+  <data name="TTP_SETTINGS_DISABLE_EXTENSION" xml:space="preserve">
+    <value>Disable the extension</value>
+  </data>
+  <data name="TTP_SETTINGS_ENABLE_EXTENSION" xml:space="preserve">
+    <value>Enable the extension</value>
   </data>
 </root>

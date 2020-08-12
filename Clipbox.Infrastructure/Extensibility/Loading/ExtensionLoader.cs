@@ -182,6 +182,7 @@ namespace Clipbox.Infrastructure.Extensibility.Loading
                             Author = extInfo.Author,
                             Description = extInfo.Description,
                             ExtensionObjectTypeFullName = extInfo.ExtensionObjectType.FullName,
+                            TypeNameOfExtension = extInfo.ExtensionObjectType.Name,
                             Version = extInfo.Version,
                             MinHostVersion = extInfo.MinHostVersion
                         };

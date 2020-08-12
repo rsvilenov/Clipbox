@@ -24,33 +24,6 @@
                 <Setter Property="Foreground" Value="White" />
                 <Setter Property="Margin" Value="0,5,2,5" />
             </Style>
-
-            <ControlTemplate x:Key="BrowseIcon">
-                <Viewbox>
-                    <Grid
-                        Width="128"
-                        Height="128"
-                        Visibility="Visible">
-                        <Path
-                            Width="92"
-                            Height="92"
-                            Margin="0,0,0,0"
-                            Data="M0.9370065,0L13.389938,0C13.620893,1.9479558E-07,13.843915,0.085998713,14.015911,0.2390138L16.510893,2.4770197C16.894861,2.8220209 16.927881,3.4129938 16.581875,3.7990109 16.235868,4.1870111 15.645906,4.2160028 15.259923,3.8699943L13.031908,1.8730159 1.872975,1.8730159 1.872975,22.477016 27.112821,22.477016 29.922802,8.3500046 8.2189473,8.3350204 6.65493,14.111996C6.524926,14.61401 6.0219382,14.916012 5.5139454,14.786007 5.0129717,14.656002 4.7129858,14.145016 4.8409756,13.644009L6.5849231,7.165007C6.6919783,6.7510055,7.0649622,6.4620041,7.4929379,6.4620041L31.063787,6.4770187C31.345829,6.4770187 31.610781,6.6029953 31.787783,6.8189987 31.96582,7.0370163 32.036802,7.3220199 31.981811,7.5960067L28.798847,23.597009C28.712849,24.03399,28.326803,24.35,27.880821,24.35L0.9370065,24.35C0.41900396,24.35,0,23.930993,0,23.413995L0,0.93600464C0,0.41900644,0.41900396,1.9479558E-07,0.9370065,0z"
-                            Fill="{TemplateBinding Foreground}"
-                            RenderTransformOrigin="0.5,0.5"
-                            Stretch="Uniform">
-                            <Path.RenderTransform>
-                                <TransformGroup>
-                                    <TransformGroup.Children>
-                                        <RotateTransform Angle="0" />
-                                        <ScaleTransform ScaleX="1" ScaleY="1" />
-                                    </TransformGroup.Children>
-                                </TransformGroup>
-                            </Path.RenderTransform>
-                        </Path>
-                    </Grid>
-                </Viewbox>
-            </ControlTemplate>
         </ResourceDictionary>
     </UserControl.Resources>
     <Border
@@ -89,7 +62,7 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Foreground="LightGray"
-                    Template="{DynamicResource SourceWindowsIcon}">
+                    Template="{DynamicResource PluginIcon}">
                     <ContentControl.Style>
                         <Style TargetType="ContentControl">
                             <Setter Property="Visibility" Value="Collapsed" />
@@ -128,7 +101,7 @@
                     <TextBlock
                         FontSize="18"
                         Foreground="{DynamicResource ControlForegroundBrush}"
-                        Text="{loc:Localize LBL_INSTALLED_APP_SELECTOR_TITLE,
+                        Text="{loc:Localize LBL_SETTINGS_ENABLED_EXTENSION_SELECTOR_TITLE,
                                             ResourceLookupMode=CurrentAssembly}" />
                 </StackPanel>
 
@@ -144,97 +117,7 @@
                 BorderThickness="0.3"
                 Foreground="{DynamicResource ControlForegroundBrush}">
                 <GroupBox.Header>
-                    <TextBlock Text="{loc:Localize LBL_BLACKLISTED_APPS_LIST, ResourceLookupMode=CurrentAssembly}">
-                        <i:Interaction.Behaviors>
-                            <infBeh:FrameworkElementDpiScalingBehavior MaxScaleFactor="1.5" />
-                        </i:Interaction.Behaviors>
-                    </TextBlock>
-                </GroupBox.Header>
-
-                <ListView
-                    VerticalAlignment="Stretch"
-                    Background="{DynamicResource ControlBackgroundBrush}"
-                    BorderBrush="{DynamicResource ControlBorderBrush}"
-                    BorderThickness="1"
-                    ItemsSource="{Binding EnabledExtensions}"
-                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                    ScrollViewer.VerticalScrollBarVisibility="Auto">
-                    <ListView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <StackPanel Margin="10" Orientation="Vertical" />
-                        </ItemsPanelTemplate>
-                    </ListView.ItemsPanel>
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="{x:Type ListViewItem}">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type ListViewItem}">
-                                        <ContentPresenter
-                                            Margin="5,0,0,5"
-                                            HorizontalAlignment="Stretch"
-                                            VerticalAlignment="Stretch"
-                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </ListView.ItemContainerStyle>
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Border
-                                BorderBrush="DarkGray"
-                                BorderThickness="1"
-                                CornerRadius="1">
-                                <Grid Margin="5,3,3,5" Background="Transparent">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="40" />
-                                        <ColumnDefinition Width="40" />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock
-                                        Grid.Column="0"
-                                        VerticalAlignment="Center"
-                                        Foreground="White"
-                                        Text="{Binding Description}">
-                                        <i:Interaction.Behaviors>
-                                            <infBeh:FrameworkElementDpiScalingBehavior MaxScaleFactor="1.5" />
-                                        </i:Interaction.Behaviors>
-                                    </TextBlock>
-                                    <TextBlock
-                                        Grid.Column="1"
-                                        VerticalAlignment="Center"
-                                        Foreground="White"
-                                        Text="{Binding Version}">
-                                        <i:Interaction.Behaviors>
-                                            <infBeh:FrameworkElementDpiScalingBehavior MaxScaleFactor="1.5" />
-                                        </i:Interaction.Behaviors>
-                                    </TextBlock>
-                                    <Button
-                                        Grid.Column="2"
-                                        MaxWidth="15"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        Command="{Binding DataContext.DisableExtension, ElementName=mainBorder}"
-                                        CommandParameter="{Binding}"
-                                        Style="{DynamicResource BtnRemove}"
-                                        ToolTip="{loc:Localize TTP_BLACKLISTED_APPS_REMOVE,
-                                                               ResourceLookupMode=CurrentAssembly}" />
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </GroupBox>
-            <GroupBox
-                Grid.Row="2"
-                Grid.ColumnSpan="2"
-                Padding="15"
-                VerticalAlignment="Stretch"
-                BorderBrush="DarkGray"
-                BorderThickness="0.3"
-                Foreground="{DynamicResource ControlForegroundBrush}">
-                <GroupBox.Header>
-                    <TextBlock Text="{loc:Localize LBL_BLACKLISTED_APPS_INSTALLED_LIST, ResourceLookupMode=CurrentAssembly}">
+                    <TextBlock Text="{loc:Localize LBL_SETTINGS_ENABLED_EXTENSIONS_LIST, ResourceLookupMode=CurrentAssembly}">
                         <i:Interaction.Behaviors>
                             <infBeh:FrameworkElementDpiScalingBehavior MaxScaleFactor="1.5" />
                         </i:Interaction.Behaviors>
@@ -259,18 +142,14 @@
 
 
                     <ListView
-                        x:Name="availableExtensionsView"
                         Grid.Row="1"
-                        HorizontalAlignment="Stretch"
                         VerticalAlignment="Stretch"
                         Background="{DynamicResource ControlBackgroundBrush}"
                         BorderBrush="{DynamicResource ControlBorderBrush}"
                         BorderThickness="1"
-                        IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBooleanConverter}}"
-                        ItemsSource="{Binding AllExtensions}"
+                        ItemsSource="{Binding EnabledExtensions}"
                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                         ScrollViewer.VerticalScrollBarVisibility="Auto">
-
                         <ListView.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Margin="10" Orientation="Vertical" />
@@ -299,37 +178,39 @@
                                     CornerRadius="1">
                                     <Grid Margin="5,3,3,5" Background="Transparent">
                                         <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
                                             <ColumnDefinition Width="*" />
-                                            <ColumnDefinition Width="40" />
                                             <ColumnDefinition Width="40" />
                                         </Grid.ColumnDefinitions>
                                         <TextBlock
                                             Grid.Column="0"
                                             VerticalAlignment="Center"
-                                            Foreground="White"
-                                            Text="{Binding Description}">
+                                            Foreground="White">
+                                            <Run Text="{Binding ExtensionName}" />
+                                            <Run Text="{Binding Version, StringFormat={} (v. {0})}" />
                                             <i:Interaction.Behaviors>
                                                 <infBeh:FrameworkElementDpiScalingBehavior MaxScaleFactor="1.5" />
                                             </i:Interaction.Behaviors>
                                         </TextBlock>
-                                        <TextBlock
+                                        <ContentControl
                                             Grid.Column="1"
+                                            MaxWidth="15"
+                                            HorizontalAlignment="Right"
                                             VerticalAlignment="Center"
+                                            Background="Transparent"
                                             Foreground="White"
-                                            Text="{Binding Version}">
-                                            <i:Interaction.Behaviors>
-                                                <infBeh:FrameworkElementDpiScalingBehavior MaxScaleFactor="1.5" />
-                                            </i:Interaction.Behaviors>
-                                        </TextBlock>
+                                            Template="{DynamicResource InfoIcon}"
+                                            ToolTip="{Binding Description}"
+                                            ToolTipService.ShowDuration="300000" />
                                         <Button
                                             Grid.Column="2"
                                             MaxWidth="15"
                                             HorizontalAlignment="Right"
                                             VerticalAlignment="Center"
-                                            Command="{Binding DataContext.EnableExtension, ElementName=mainBorder}"
+                                            Command="{Binding DataContext.DisableExtension, ElementName=mainBorder}"
                                             CommandParameter="{Binding}"
-                                            Style="{DynamicResource BtnAdd}"
-                                            ToolTip="{loc:Localize TTP_BLACKLISTED_APPS_ADD,
+                                            Style="{DynamicResource BtnRemove}"
+                                            ToolTip="{loc:Localize TTP_SETTINGS_DISABLE_EXTENSION,
                                                                    ResourceLookupMode=CurrentAssembly}" />
                                     </Grid>
                                 </Border>
@@ -337,6 +218,103 @@
                         </ListView.ItemTemplate>
                     </ListView>
                 </Grid>
+            </GroupBox>
+            <GroupBox
+                Grid.Row="2"
+                Grid.ColumnSpan="2"
+                Padding="15"
+                VerticalAlignment="Stretch"
+                BorderBrush="DarkGray"
+                BorderThickness="0.3"
+                Foreground="{DynamicResource ControlForegroundBrush}">
+                <GroupBox.Header>
+                    <TextBlock Text="{loc:Localize LBL_SETTINGS_DISABLED_EXTENSIONS_LIST, ResourceLookupMode=CurrentAssembly}">
+                        <i:Interaction.Behaviors>
+                            <infBeh:FrameworkElementDpiScalingBehavior MaxScaleFactor="1.5" />
+                        </i:Interaction.Behaviors>
+                    </TextBlock>
+                </GroupBox.Header>
+
+                <ListView
+                    x:Name="availableExtensionsView"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Stretch"
+                    Background="{DynamicResource ControlBackgroundBrush}"
+                    BorderBrush="{DynamicResource ControlBorderBrush}"
+                    BorderThickness="1"
+                    IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBooleanConverter}}"
+                    ItemsSource="{Binding DisabledExtensions}"
+                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                    ScrollViewer.VerticalScrollBarVisibility="Auto">
+
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Margin="10" Orientation="Vertical" />
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListViewItem}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                        <ContentPresenter
+                                            Margin="5,0,0,5"
+                                            HorizontalAlignment="Stretch"
+                                            VerticalAlignment="Stretch"
+                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Border
+                                BorderBrush="DarkGray"
+                                BorderThickness="1"
+                                CornerRadius="1">
+                                <Grid Margin="5,3,3,5" Background="Transparent">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="40" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock
+                                        Grid.Column="0"
+                                        VerticalAlignment="Center"
+                                        Foreground="White">
+                                        <Run Text="{Binding ExtensionName}" />
+                                        <Run Text="{Binding Version, StringFormat={} (v. {0})}" />
+                                        <i:Interaction.Behaviors>
+                                            <infBeh:FrameworkElementDpiScalingBehavior MaxScaleFactor="1.5" />
+                                        </i:Interaction.Behaviors>
+                                    </TextBlock>
+                                    <ContentControl
+                                        Grid.Column="1"
+                                        MaxWidth="15"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        Background="Transparent"
+                                        Foreground="White"
+                                        Template="{DynamicResource InfoIcon}"
+                                        ToolTip="{Binding Description}"
+                                        ToolTipService.ShowDuration="300000" />
+
+                                    <Button
+                                        Grid.Column="2"
+                                        MaxWidth="15"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        Command="{Binding DataContext.EnableExtension, ElementName=mainBorder}"
+                                        CommandParameter="{Binding}"
+                                        Style="{DynamicResource BtnAdd}"
+                                        ToolTip="{loc:Localize TTP_SETTINGS_ENABLE_EXTENSION,
+                                                               ResourceLookupMode=CurrentAssembly}" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
             </GroupBox>
 
 

@@ -142,6 +142,33 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Disabled extensions.
+        /// </summary>
+        internal static string LBL_SETTINGS_DISABLED_EXTENSIONS_LIST {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_DISABLED_EXTENSIONS_LIST", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable or disable extensions.
+        /// </summary>
+        internal static string LBL_SETTINGS_ENABLED_EXTENSION_SELECTOR_TITLE {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_ENABLED_EXTENSION_SELECTOR_TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enabled extensions.
+        /// </summary>
+        internal static string LBL_SETTINGS_ENABLED_EXTENSIONS_LIST {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_ENABLED_EXTENSIONS_LIST", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Run the search queries in an external process.
         /// </summary>
         internal static string LBL_SETTINGS_EXTERNAL_SEARCH_PROCESS {
@@ -374,6 +401,24 @@ namespace Clipbox.Resources.Translations {
         internal static string TLP_WINDOW_RESTORE {
             get {
                 return ResourceManager.GetString("TLP_WINDOW_RESTORE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disable the extension.
+        /// </summary>
+        internal static string TTP_SETTINGS_DISABLE_EXTENSION {
+            get {
+                return ResourceManager.GetString("TTP_SETTINGS_DISABLE_EXTENSION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable the extension.
+        /// </summary>
+        internal static string TTP_SETTINGS_ENABLE_EXTENSION {
+            get {
+                return ResourceManager.GetString("TTP_SETTINGS_ENABLE_EXTENSION", resourceCulture);
             }
         }
     }

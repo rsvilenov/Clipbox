@@ -144,6 +144,15 @@
   <data name="LBL_SETTINGS_CLOUD_ENABLED" xml:space="preserve">
     <value>Облачна синхронизация на съдържанието на клипбоарда</value>
   </data>
+  <data name="LBL_SETTINGS_DISABLED_EXTENSIONS_LIST" xml:space="preserve">
+    <value>Забранени разширения</value>
+  </data>
+  <data name="LBL_SETTINGS_ENABLED_EXTENSIONS_LIST" xml:space="preserve">
+    <value>Позволени разширения</value>
+  </data>
+  <data name="LBL_SETTINGS_ENABLED_EXTENSION_SELECTOR_TITLE" xml:space="preserve">
+    <value>Позволяване и забраняване на разширения</value>
+  </data>
   <data name="LBL_SETTINGS_EXTERNAL_SEARCH_PROCESS" xml:space="preserve">
     <value>Изпълнявай заявките за търсене в отделен процес</value>
   </data>
@@ -223,5 +232,11 @@
   </data>
   <data name="TLP_WINDOW_RESTORE" xml:space="preserve">
     <value>Възстанови</value>
+  </data>
+  <data name="TTP_SETTINGS_DISABLE_EXTENSION" xml:space="preserve">
+    <value>Забрани това разширение</value>
+  </data>
+  <data name="TTP_SETTINGS_ENABLE_EXTENSION" xml:space="preserve">
+    <value>Позволи това разширение</value>
   </data>
 </root>

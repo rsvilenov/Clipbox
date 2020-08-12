@@ -6,9 +6,14 @@ namespace Clipbox.Infrastructure.Extensibility.Loading
     public class PersistableExtensionInfo
     {
         /// <summary>
-        /// The string representation of the System.Type of the extension
+        /// The string representation of the full info for System.Type of the extension
         /// </summary>
         public string ExtensionObjectTypeFullName { get; set; }
+
+        /// <summary>
+        /// The string representation of the System.Type of the extension
+        /// </summary>
+        public string TypeNameOfExtension { get; set; }
 
         /// <summary>
         /// The full name of the assembly
