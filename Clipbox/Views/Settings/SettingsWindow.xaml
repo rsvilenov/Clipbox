@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:infBeh="clr-namespace:Clipbox.Infrastructure.UI.Behaviors;assembly=Clipbox.Infrastructure.UI"
+    xmlns:infConv="clr-namespace:Clipbox.Infrastructure.UI.Converters;assembly=Clipbox.Infrastructure.UI"
     xmlns:loc="clr-namespace:Clipbox.Infrastructure.UI.Localization;assembly=Clipbox.Infrastructure.UI.Localization"
     xmlns:local="clr-namespace:Clipbox.Views"
     xmlns:localDialog="clr-namespace:Clipbox.Views.Dialog"
@@ -602,5 +603,23 @@
             Placement="Center"
             PlacementTarget="{Binding ElementName=mainGrid}"
             ReturnFocusTo="{Binding ElementName=tabControl}" />
+
+        <!--  disable the window contents when the window's IsEnabled=False  -->
+        <Border
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Background="Black"
+            Opacity="0.5">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Visibility" Value="Visible" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" Value="True">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+        </Border>
     </Grid>
 </customControls:WindowFrame>
