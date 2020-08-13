@@ -22,9 +22,9 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
         }
 
         public static readonly DependencyProperty StoreMaxTasksProperty =
-            DependencyProperty.Register(nameof(StoreMaxTasksTimeout), typeof(int), typeof(StoreMaxTasksSettingUIPart), new PropertyMetadata(10, PreviewGenerationTimeout_PropertyChanged));
+            DependencyProperty.Register(nameof(StoreMaxTasksTimeout), typeof(int), typeof(StoreMaxTasksSettingUIPart), new PropertyMetadata(10, StoreMaxTasksTimeout_PropertyChanged));
 
-        private static void PreviewGenerationTimeout_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void StoreMaxTasksTimeout_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var self = (StoreMaxTasksSettingUIPart)d;
             self.NotifySettingModified();

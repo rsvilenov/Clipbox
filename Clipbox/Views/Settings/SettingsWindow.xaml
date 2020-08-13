@@ -50,7 +50,7 @@
 
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
-            <DataTemplate x:Key="SettingsLvDataTemplate">
+            <DataTemplate x:Key="SettingsLvHorizontalItemTemplate">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
@@ -102,7 +102,7 @@
                 </Grid>
             </DataTemplate>
 
-            <DataTemplate x:Key="SettingsLvDataVerticalTemplate">
+            <DataTemplate x:Key="SettingsLvDataVerticalItemTemplate">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -181,10 +181,10 @@
             </Style>
 
             <Style x:Key="extensionItemsControlStyle" TargetType="ItemsControl">
-                <Setter Property="ItemTemplate" Value="{StaticResource SettingsLvDataTemplate}" />
+                <Setter Property="ItemTemplate" Value="{StaticResource SettingsLvHorizontalItemTemplate}" />
                 <Style.Triggers>
                     <DataTrigger Binding="{Binding UseInlinedPreviews}" Value="True">
-                        <Setter Property="ItemTemplate" Value="{StaticResource SettingsLvDataVerticalTemplate}" />
+                        <Setter Property="ItemTemplate" Value="{StaticResource SettingsLvDataVerticalItemTemplate}" />
                     </DataTrigger>
                 </Style.Triggers>
             </Style>

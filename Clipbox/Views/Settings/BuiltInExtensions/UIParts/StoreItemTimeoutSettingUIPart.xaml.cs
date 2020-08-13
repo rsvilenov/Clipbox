@@ -22,9 +22,9 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
         }
 
         public static readonly DependencyProperty StoreItemTimeoutProperty =
-            DependencyProperty.Register(nameof(StoreItemTimeout), typeof(int), typeof(StoreItemTimeoutSettingUIPart), new PropertyMetadata(10, PreviewGenerationTimeout_PropertyChanged));
+            DependencyProperty.Register(nameof(StoreItemTimeout), typeof(int), typeof(StoreItemTimeoutSettingUIPart), new PropertyMetadata(10, StoreItemTimeoutProperty_PropertyChanged));
 
-        private static void PreviewGenerationTimeout_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        private static void StoreItemTimeoutProperty_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             var self = (StoreItemTimeoutSettingUIPart)d;
             self.NotifySettingModified();

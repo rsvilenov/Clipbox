@@ -101,6 +101,7 @@ namespace Clipbox.Views.Settings
                 _selectedTabItemHorizontalTemplateWidth = tabItemContents.ActualWidth;
             }
 
+            // use the vertical template if the content width exceeds the available space
             UseInlinedPreviews = _selectedTabItemHorizontalTemplateWidth > tabItemContainer.ActualWidth;
         }
 
@@ -333,6 +334,11 @@ namespace Clipbox.Views.Settings
             DependencyProperty.Register(nameof(AdvancedExtensionUIItems), typeof(AsyncObservableCollection<ExtensionUIItem>), typeof(SettingsWindow), new PropertyMetadata(null));
 
 
+        /// <summary>
+        /// Determines whether to use the vertical item template in the items control
+        /// with the setting ui items. If true, the previews are shown inlined (below the setting).
+        /// If false, the preview is shown next to the setting (on the right).
+        /// </summary>
         public bool UseInlinedPreviews
         {
             get { return (bool)GetValue(UseInlinedPreviewsProperty); }
