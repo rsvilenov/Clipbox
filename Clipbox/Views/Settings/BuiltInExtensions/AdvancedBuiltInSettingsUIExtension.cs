@@ -1,5 +1,6 @@
 ﻿using Clipbox.Core.Configuration;
 using Clipbox.Core.Extensibility.Enums;
+using Clipbox.Infrastructure.UI;
 using Clipbox.Settings;
 using Clipbox.Views.Settings.BuiltInExtensions.UIParts;
 
@@ -12,14 +13,44 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
 
         public override SettingsCategory Category => SettingsCategory.Advanced;
 
+        private readonly SlidingTimer _restartAppDialogSlidingTimer;
+
+        public AdvancedBuiltInSettingsUIExtension()
+        {
+            _restartAppDialogSlidingTimer = new SlidingTimer
+            {
+                IntervalMs = 1000
+            };
+
+            _restartAppDialogSlidingTimer.Elapsed += _restartAppDialogSlidingTimer_Elapsed;
+        }
+
+        private void _restartAppDialogSlidingTimer_Elapsed(object sender, System.EventArgs e)
+        {
+            RequestAppRestart();
+        }
+
         protected override void OnSettingUpdated(ISettingKey settingKey)
         {
             ManageUIPartsVisibility(settingKey);
 
             if (settingKey == SettingsKeys.RunMainProcessWithHighPriority
-                || settingKey == SettingsKeys.UseSearchProviderInExternalProcess)
+                || settingKey == SettingsKeys.UseSearchProviderInExternalProcess
+                || settingKey == SettingsKeys.EnabledExtensions
+                || settingKey == SettingsKeys.ResizeAccordingToMonitorOrSystemDpi
+                || settingKey == SettingsKeys.AutoDetermineMaxSimultaneousPreviewTasks)
             {
                 RequestAppRestart();
+            }
+
+            // for integer values (with the IntUpDown control) delay the restart request dialog
+            if (settingKey == SettingsKeys.PreviewGenerationTimeout
+                || settingKey == SettingsKeys.PreviewCacheMaxSize
+                || settingKey == SettingsKeys.MaxSimultaneousPreviewTasks
+                || settingKey == SettingsKeys.OnItemStoringFlowExtensionsTimeoutMs
+                || settingKey == SettingsKeys.OnItemStoringFlowExtensionsMaxTasks)
+            {
+                _restartAppDialogSlidingTimer.Slide();
             }
         }
 

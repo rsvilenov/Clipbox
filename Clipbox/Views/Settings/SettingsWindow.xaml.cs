@@ -211,12 +211,12 @@ namespace Clipbox.Views.Settings
         private void Ext_AppRestartRequestor_RestartAppRequested(object sender, EventArgs e)
         {
             restartConfirmationPopup.IsOpen = true;
-            tabControl.IsEnabled = false;
+            this.IsEnabled = false;
         }
 
         private void RestartConfirmationPopup_DialogAnswered(object sender, DialogAnswerEventArgs e)
         {
-            tabControl.IsEnabled = true;
+            this.IsEnabled = true;
 
             if (e.SelectedButton == DialogButtons.Yes)
             {

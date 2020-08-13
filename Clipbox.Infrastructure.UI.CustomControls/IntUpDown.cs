@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Threading;
 
@@ -46,12 +47,18 @@ namespace Clipbox.Infrastructure.UI.CustomControls
         }
 
         public readonly static DependencyProperty ValueProperty =
-            DependencyProperty.Register(nameof(Value), typeof(int?), typeof(IntUpDown), new PropertyMetadata(0, (s, args) =>
+            DependencyProperty.Register(nameof(Value), typeof(int?), typeof(IntUpDown), new FrameworkPropertyMetadata
             {
-                IntUpDown tb = (IntUpDown)s;
-                tb.SetUpDownButtonsEnabledDisabledStatus();
-                tb.RaiseValueChangedEvent(args);
-            }));
+                DefaultValue = 0,
+                BindsTwoWayByDefault = true,
+                DefaultUpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                PropertyChangedCallback = (s, args) =>
+                {
+                    IntUpDown tb = (IntUpDown)s;
+                    tb.SetUpDownButtonsEnabledDisabledStatus();
+                    tb.RaiseValueChangedEvent(args);
+                }
+            });
 
         public event EventHandler<DependencyPropertyChangedEventArgs> ValueChanged;
         private void RaiseValueChangedEvent(DependencyPropertyChangedEventArgs e)

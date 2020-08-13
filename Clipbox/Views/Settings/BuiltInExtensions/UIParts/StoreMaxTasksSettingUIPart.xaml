@@ -32,8 +32,8 @@
             VerticalAlignment="Center"
             Background="Transparent"
             Foreground="White"
-            Maximum="20000"
-            Minimum="1000"
+            Maximum="100"
+            Minimum="1"
             Value="{Binding StoreMaxTasksTimeout}" />
     </Grid>
 
