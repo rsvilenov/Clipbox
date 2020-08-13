@@ -11,7 +11,9 @@ using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.CustomControls;
 using Clipbox.Infrastructure.UI.ExtensionMethods;
 using Clipbox.Infrastructure.UI.Localization;
+using Clipbox.Infrastructure.UI.Utils;
 using Clipbox.Infrastructure.UI.Windows;
+using Clipbox.Infrastructure.UI.Windows.Enums;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.Views.Dialog;
@@ -26,6 +28,7 @@ using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
 using static Clipbox.Win32.MonitorUtils;
@@ -43,6 +46,8 @@ namespace Clipbox.Views.Settings
             _extContainer = extContainer;
 
             InitializeComponent();
+
+            ScaleMode = DpiScaleMode.Full;
 
             SetWindowTitle();
             
@@ -85,9 +90,18 @@ namespace Clipbox.Views.Settings
             SizeChanged += SettingsWindow_SizeChanged;
         }
 
+        double _selectedTabItemHorizontalTemplateWidth;
         private void SettingsWindow_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            UseInlinedPreviews = e.NewSize.Width < 1400;
+            var tabItemContainer = (tabControl.SelectedItem as TabItem).Content as ScrollViewer;
+            var tabItemContents = tabItemContainer.Content as FrameworkElement;
+
+            if (!UseInlinedPreviews)
+            {
+                _selectedTabItemHorizontalTemplateWidth = tabItemContents.ActualWidth;
+            }
+
+            UseInlinedPreviews = _selectedTabItemHorizontalTemplateWidth > tabItemContainer.ActualWidth;
         }
 
         
