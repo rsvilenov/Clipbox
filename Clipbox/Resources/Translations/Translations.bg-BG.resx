@@ -144,6 +144,27 @@
   <data name="LBL_SETTINGS_BACKGROUND_PREVIEW_GENERATION" xml:space="preserve">
     <value>Генериране на прегледите във фонов режим</value>
   </data>
+  <data name="LBL_SETTINGS_CATEGORY_ADVANCED" xml:space="preserve">
+    <value>Фини</value>
+  </data>
+  <data name="LBL_SETTINGS_CATEGORY_CLOUD" xml:space="preserve">
+    <value>Облак</value>
+  </data>
+  <data name="LBL_SETTINGS_CATEGORY_COPYING" xml:space="preserve">
+    <value>Копиране</value>
+  </data>
+  <data name="LBL_SETTINGS_CATEGORY_GENERAL" xml:space="preserve">
+    <value>Общи</value>
+  </data>
+  <data name="LBL_SETTINGS_CATEGORY_PASTING" xml:space="preserve">
+    <value>Пействане</value>
+  </data>
+  <data name="LBL_SETTINGS_CATEGORY_PREVIEWS" xml:space="preserve">
+    <value>Прегледи</value>
+  </data>
+  <data name="LBL_SETTINGS_CATEGORY_SECURITY" xml:space="preserve">
+    <value>Сигурност</value>
+  </data>
   <data name="LBL_SETTINGS_CLIPBOARD_TRACKING" xml:space="preserve">
     <value>Следене на системния клипборд</value>
   </data>
@@ -226,6 +247,9 @@
   </data>
   <data name="LBL_SETTINGS_STORE_MAX_TASKS_TIMEOUT" xml:space="preserve">
     <value>Максимален брой едновременни процеси за запазване на клипборд елемент</value>
+  </data>
+  <data name="LBL_SETTINGS_WINDOW_TITLE_SETTINGS_PART" xml:space="preserve">
+    <value>настройки</value>
   </data>
   <data name="TGL_BTN_LBL_Off" xml:space="preserve">
     <value>Изключено</value>

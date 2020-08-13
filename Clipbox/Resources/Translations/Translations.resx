@@ -144,6 +144,27 @@
   <data name="LBL_SETTINGS_BACKGROUND_PREVIEW_GENERATION" xml:space="preserve">
     <value>Enable background preview generation</value>
   </data>
+  <data name="LBL_SETTINGS_CATEGORY_ADVANCED" xml:space="preserve">
+    <value>Advanced</value>
+  </data>
+  <data name="LBL_SETTINGS_CATEGORY_CLOUD" xml:space="preserve">
+    <value>Cloud</value>
+  </data>
+  <data name="LBL_SETTINGS_CATEGORY_COPYING" xml:space="preserve">
+    <value>Copying</value>
+  </data>
+  <data name="LBL_SETTINGS_CATEGORY_GENERAL" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="LBL_SETTINGS_CATEGORY_PASTING" xml:space="preserve">
+    <value>Pasting</value>
+  </data>
+  <data name="LBL_SETTINGS_CATEGORY_PREVIEWS" xml:space="preserve">
+    <value>Previews</value>
+  </data>
+  <data name="LBL_SETTINGS_CATEGORY_SECURITY" xml:space="preserve">
+    <value>Security</value>
+  </data>
   <data name="LBL_SETTINGS_CLIPBOARD_TRACKING" xml:space="preserve">
     <value>Enable system clipboard tracking</value>
   </data>
@@ -226,6 +247,9 @@ Warning: more rows means more RAM usage!</value>
   </data>
   <data name="LBL_SETTINGS_STORE_MAX_TASKS_TIMEOUT" xml:space="preserve">
     <value>Maximum number simultaneous of store tasks</value>
+  </data>
+  <data name="LBL_SETTINGS_WINDOW_TITLE_SETTINGS_PART" xml:space="preserve">
+    <value>settings</value>
   </data>
   <data name="TGL_BTN_LBL_Off" xml:space="preserve">
     <value>Off</value>

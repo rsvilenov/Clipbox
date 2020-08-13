@@ -142,6 +142,69 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Advanced.
+        /// </summary>
+        internal static string LBL_SETTINGS_CATEGORY_ADVANCED {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_CATEGORY_ADVANCED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cloud.
+        /// </summary>
+        internal static string LBL_SETTINGS_CATEGORY_CLOUD {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_CATEGORY_CLOUD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Copying.
+        /// </summary>
+        internal static string LBL_SETTINGS_CATEGORY_COPYING {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_CATEGORY_COPYING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to General.
+        /// </summary>
+        internal static string LBL_SETTINGS_CATEGORY_GENERAL {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_CATEGORY_GENERAL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pasting.
+        /// </summary>
+        internal static string LBL_SETTINGS_CATEGORY_PASTING {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_CATEGORY_PASTING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Previews.
+        /// </summary>
+        internal static string LBL_SETTINGS_CATEGORY_PREVIEWS {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_CATEGORY_PREVIEWS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Security.
+        /// </summary>
+        internal static string LBL_SETTINGS_CATEGORY_SECURITY {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_CATEGORY_SECURITY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enable system clipboard tracking.
         /// </summary>
         internal static string LBL_SETTINGS_CLIPBOARD_TRACKING {
@@ -383,6 +446,15 @@ namespace Clipbox.Resources.Translations {
         internal static string LBL_SETTINGS_STORE_MAX_TASKS_TIMEOUT {
             get {
                 return ResourceManager.GetString("LBL_SETTINGS_STORE_MAX_TASKS_TIMEOUT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to settings.
+        /// </summary>
+        internal static string LBL_SETTINGS_WINDOW_TITLE_SETTINGS_PART {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_WINDOW_TITLE_SETTINGS_PART", resourceCulture);
             }
         }
         

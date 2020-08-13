@@ -1,4 +1,5 @@
-﻿using Clipbox.Core.Configuration;
+﻿using Clipbox.Core;
+using Clipbox.Core.Configuration;
 using Clipbox.Core.Enums;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
@@ -9,6 +10,7 @@ using Clipbox.Infrastructure.ExtensionMethods;
 using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.CustomControls;
 using Clipbox.Infrastructure.UI.ExtensionMethods;
+using Clipbox.Infrastructure.UI.Localization;
 using Clipbox.Infrastructure.UI.Windows;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
@@ -22,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
@@ -40,6 +43,9 @@ namespace Clipbox.Views.Settings
             _extContainer = extContainer;
 
             InitializeComponent();
+
+            SetWindowTitle();
+            
             _allExtensionUIItems = new List<ExtensionUIItem>();
 
             GeneralExtensionUIItems = new AsyncObservableCollection<ExtensionUIItem>();
@@ -56,6 +62,22 @@ namespace Clipbox.Views.Settings
             Closing += SettingsWindow_Closing;
             MouseDown += SettingsWindow_MouseDown;
             Shown += SettingsWindow_Shown;
+
+            _settingsService.SettingChanged += _settingsService_SettingChanged;
+        }
+
+        private void _settingsService_SettingChanged(object sender, Services.EventArgsClasses.SettingsEventArgs e)
+        {
+            if (e.Key == SettingsKeys.LocalizationCulture)
+            {
+                SetWindowTitle();
+            }
+        }
+
+        private void SetWindowTitle()
+        {
+            TranslationSource translationSource = TranslationSourcePool.Instance.GetSource(Assembly.GetExecutingAssembly());
+            Title = $"{ProductConstants.PRODUCT_NAME} {translationSource.GetTranslation("LBL_SETTINGS_WINDOW_TITLE_SETTINGS_PART")}";
         }
 
         private void SettingsWindow_Shown(object sender, EventArgs e)

@@ -190,12 +190,6 @@
 
         </ResourceDictionary>
     </Window.Resources>
-    <Window.Title>
-        <MultiBinding StringFormat="{}{0} {1}">
-            <Binding Source="{x:Static core:ProductConstants.PRODUCT_NAME}" />
-            <Binding Source="settings" />
-        </MultiBinding>
-    </Window.Title>
     <customControls:WindowFrame.CaptionIconControl>
         <ContentControl Template="{StaticResource ApplicationIcon}" />
     </customControls:WindowFrame.CaptionIconControl>
@@ -279,7 +273,7 @@
                     </Setter>
                 </Style>
             </TabControl.Resources>
-            <TabItem Header="General">
+            <TabItem Header="{loc:Localize LBL_SETTINGS_CATEGORY_GENERAL, ResourceLookupMode=CurrentAssembly}">
                 <TabItem.HeaderTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
@@ -337,7 +331,8 @@
                             <TextBlock
                                 Focusable="True"
                                 FontSize="28"
-                                Text="General" />
+                                Text="{loc:Localize LBL_SETTINGS_CATEGORY_GENERAL,
+                                                    ResourceLookupMode=CurrentAssembly}" />
 
                             <ItemsControl
                                 x:Name="generalExtensionsItemsControl"
@@ -360,7 +355,7 @@
                 </TabItem.Content>
             </TabItem>
 
-            <TabItem Header="Previews">
+            <TabItem Header="{loc:Localize LBL_SETTINGS_CATEGORY_PREVIEWS, ResourceLookupMode=CurrentAssembly}">
                 <TabItem.HeaderTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
@@ -380,7 +375,8 @@
                             <TextBlock
                                 Focusable="True"
                                 FontSize="28"
-                                Text="Previews" />
+                                Text="{loc:Localize LBL_SETTINGS_CATEGORY_PREVIEWS,
+                                                    ResourceLookupMode=CurrentAssembly}" />
 
                             <ItemsControl
                                 x:Name="previewsExtensionsItemsControl"
@@ -404,7 +400,7 @@
                 </TabItem.Content>
             </TabItem>
 
-            <TabItem Header="Copying">
+            <TabItem Header="{loc:Localize LBL_SETTINGS_CATEGORY_COPYING, ResourceLookupMode=CurrentAssembly}">
                 <TabItem.HeaderTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Horizontal">
@@ -419,7 +415,8 @@
                             <TextBlock
                                 Focusable="True"
                                 FontSize="28"
-                                Text="Copying" />
+                                Text="{loc:Localize LBL_SETTINGS_CATEGORY_COPYING,
+                                                    ResourceLookupMode=CurrentAssembly}" />
                             <ItemsControl
                                 x:Name="copyingExtensionsItemsControl"
                                 Grid.Row="2"
@@ -441,7 +438,7 @@
                 </TabItem.Content>
             </TabItem>
 
-            <TabItem Header="Pasting">
+            <TabItem Header="{loc:Localize LBL_SETTINGS_CATEGORY_PASTING, ResourceLookupMode=CurrentAssembly}">
                 <TabItem.HeaderTemplate>
                     <DataTemplate>
                         <StackPanel Margin="0,0,40,0" Orientation="Horizontal">
@@ -456,7 +453,8 @@
                             <TextBlock
                                 Focusable="True"
                                 FontSize="28"
-                                Text="Pasting" />
+                                Text="{loc:Localize LBL_SETTINGS_CATEGORY_PASTING,
+                                                    ResourceLookupMode=CurrentAssembly}" />
                             <ItemsControl
                                 x:Name="pastingExtensionsItemsControl"
                                 Grid.Row="2"
@@ -478,7 +476,7 @@
                 </TabItem.Content>
             </TabItem>
 
-            <TabItem Header="Security">
+            <TabItem Header="{loc:Localize LBL_SETTINGS_CATEGORY_SECURITY, ResourceLookupMode=CurrentAssembly}">
                 <TabItem.HeaderTemplate>
                     <DataTemplate>
                         <StackPanel Margin="0,0,40,0" Orientation="Horizontal">
@@ -493,7 +491,8 @@
                             <TextBlock
                                 Focusable="True"
                                 FontSize="28"
-                                Text="Security" />
+                                Text="{loc:Localize LBL_SETTINGS_CATEGORY_SECURITY,
+                                                    ResourceLookupMode=CurrentAssembly}" />
                             <ItemsControl
                                 x:Name="security"
                                 Grid.Row="2"
@@ -515,7 +514,7 @@
                 </TabItem.Content>
             </TabItem>
 
-            <TabItem Header="Cloud">
+            <TabItem Header="{loc:Localize LBL_SETTINGS_CATEGORY_CLOUD, ResourceLookupMode=CurrentAssembly}">
                 <TabItem.HeaderTemplate>
                     <DataTemplate>
                         <StackPanel Margin="0,0,40,0" Orientation="Horizontal">
@@ -530,7 +529,8 @@
                             <TextBlock
                                 Focusable="True"
                                 FontSize="28"
-                                Text="Cloud" />
+                                Text="{loc:Localize LBL_SETTINGS_CATEGORY_CLOUD,
+                                                    ResourceLookupMode=CurrentAssembly}" />
                             <ItemsControl
                                 x:Name="cloudExtensionsItemsControl"
                                 Grid.Row="2"
@@ -552,7 +552,7 @@
                 </TabItem.Content>
             </TabItem>
 
-            <TabItem Header="Advanced">
+            <TabItem Header="{loc:Localize LBL_SETTINGS_CATEGORY_ADVANCED, ResourceLookupMode=CurrentAssembly}">
                 <TabItem.HeaderTemplate>
                     <DataTemplate>
                         <StackPanel Margin="0,0,40,0" Orientation="Horizontal">
@@ -573,7 +573,8 @@
                                 Grid.Row="0"
                                 Focusable="True"
                                 FontSize="28"
-                                Text="Advanced" />
+                                Text="{loc:Localize LBL_SETTINGS_CATEGORY_ADVANCED,
+                                                    ResourceLookupMode=CurrentAssembly}" />
                             <StackPanel
                                 Grid.Row="1"
                                 Grid.RowSpan="3"
