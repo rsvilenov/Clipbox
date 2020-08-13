@@ -37,7 +37,9 @@
             Margin="0,10,0,0"
             HorizontalAlignment="Left"
             IsChecked="{Binding IsCompactifyToggled, Mode=TwoWay}"
-            OffText="Off"
-            OnText="On" />
+            OffText="{loc:Localize TGL_BTN_LBL_Off,
+                                   ResourceLookupMode=CurrentAssembly}"
+            OnText="{loc:Localize TGL_BTN_LBL_On,
+                                  ResourceLookupMode=CurrentAssembly}" />
     </Grid>
 </infUI:SettingUIPart>

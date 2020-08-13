@@ -97,6 +97,33 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to New line.
+        /// </summary>
+        internal static string LBL_PASTE_SEPARATOR_NEWLINE {
+            get {
+                return ResourceManager.GetString("LBL_PASTE_SEPARATOR_NEWLINE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No space.
+        /// </summary>
+        internal static string LBL_PASTE_SEPARATOR_NOSPACE {
+            get {
+                return ResourceManager.GetString("LBL_PASTE_SEPARATOR_NOSPACE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Space.
+        /// </summary>
+        internal static string LBL_PASTE_SEPARATOR_SPACE {
+            get {
+                return ResourceManager.GetString("LBL_PASTE_SEPARATOR_SPACE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Preferred background for text previews.
         /// </summary>
         internal static string LBL_PREFERRED_BACKGROUND {
@@ -291,6 +318,24 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.Resources.Translations {
         internal static string STR_WORDS {
             get {
                 return ResourceManager.GetString("STR_WORDS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Off.
+        /// </summary>
+        internal static string TGL_BTN_LBL_Off {
+            get {
+                return ResourceManager.GetString("TGL_BTN_LBL_Off", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to On.
+        /// </summary>
+        internal static string TGL_BTN_LBL_On {
+            get {
+                return ResourceManager.GetString("TGL_BTN_LBL_On", resourceCulture);
             }
         }
         

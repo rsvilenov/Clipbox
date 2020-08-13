@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="BTN_LBL_Cancel" xml:space="preserve">
+    <value>Отмени</value>
+  </data>
+  <data name="BTN_LBL_Ok" xml:space="preserve">
+    <value>OK</value>
+  </data>
   <data name="BTN_MANAGE_BLACKLISTED_APPS" xml:space="preserve">
     <value>Промени</value>
   </data>
@@ -134,6 +140,9 @@
   </data>
   <data name="LBL_BLACKLISTED_APPS_NONE" xml:space="preserve">
     <value>Няма</value>
+  </data>
+  <data name="LBL_BLACKLIST_SEARCH_OVERLAY" xml:space="preserve">
+    <value>Пишете тук, за да търсите</value>
   </data>
   <data name="LBL_INSTALLED_APP_SELECTOR_TITLE" xml:space="preserve">
     <value>Приложения в черния списък</value>

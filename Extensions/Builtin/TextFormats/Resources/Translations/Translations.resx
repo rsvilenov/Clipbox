@@ -232,4 +232,19 @@ it may mask other numbers as well, or break some formatted text...</value>
   <data name="LBL_SKIP_PASSWORD_LEN_MIN" xml:space="preserve">
     <value>Minimum number of characters</value>
   </data>
+  <data name="LBL_PASTE_SEPARATOR_NEWLINE" xml:space="preserve">
+    <value>New line</value>
+  </data>
+  <data name="LBL_PASTE_SEPARATOR_NOSPACE" xml:space="preserve">
+    <value>No space</value>
+  </data>
+  <data name="LBL_PASTE_SEPARATOR_SPACE" xml:space="preserve">
+    <value>Space</value>
+  </data>
+  <data name="TGL_BTN_LBL_Off" xml:space="preserve">
+    <value>Off</value>
+  </data>
+  <data name="TGL_BTN_LBL_On" xml:space="preserve">
+    <value>On</value>
+  </data>
 </root>

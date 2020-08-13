@@ -137,7 +137,7 @@
                         VerticalAlignment="Center"
                         HorizontalContentAlignment="Left"
                         VerticalContentAlignment="Center"
-                        OverlayText="Type here to search"
+                        OverlayText="{loc:Localize LBL_SETTINGS_ENABLED_EXTENSIONS_SEARCH_OVERLAY}"
                         SearchRequested="SearchTextBox_SearchRequested" />
 
 
@@ -223,6 +223,7 @@
             <GroupBox
                 Grid.Row="2"
                 Grid.ColumnSpan="2"
+                Margin="0,15,0,0"
                 Padding="15"
                 VerticalAlignment="Stretch"
                 BorderBrush="DarkGray"

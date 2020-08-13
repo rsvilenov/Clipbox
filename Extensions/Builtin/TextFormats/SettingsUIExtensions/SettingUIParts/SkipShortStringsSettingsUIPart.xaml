@@ -42,8 +42,10 @@
             Margin="0,10,0,0"
             HorizontalAlignment="Left"
             IsChecked="{Binding IsShipShortStringsToggled, Mode=TwoWay}"
-            OffText="Off"
-            OnText="On" />
+            OffText="{loc:Localize TGL_BTN_LBL_Off,
+                                   ResourceLookupMode=CurrentAssembly}"
+            OnText="{loc:Localize TGL_BTN_LBL_On,
+                                  ResourceLookupMode=CurrentAssembly}" />
 
         <StackPanel
             Grid.Row="2"

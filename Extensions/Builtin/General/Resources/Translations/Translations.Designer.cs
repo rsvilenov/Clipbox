@@ -19,7 +19,7 @@ namespace Clipbox.Extensions.BuiltIn.General.Resources.Translations {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Translations {
@@ -61,11 +61,38 @@ namespace Clipbox.Extensions.BuiltIn.General.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        internal static string BTN_LBL_Cancel {
+            get {
+                return ResourceManager.GetString("BTN_LBL_Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OK.
+        /// </summary>
+        internal static string BTN_LBL_Ok {
+            get {
+                return ResourceManager.GetString("BTN_LBL_Ok", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Manage.
         /// </summary>
         internal static string BTN_MANAGE_BLACKLISTED_APPS {
             get {
                 return ResourceManager.GetString("BTN_MANAGE_BLACKLISTED_APPS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type here to search.
+        /// </summary>
+        internal static string LBL_BLACKLIST_SEARCH_OVERLAY {
+            get {
+                return ResourceManager.GetString("LBL_BLACKLIST_SEARCH_OVERLAY", resourceCulture);
             }
         }
         

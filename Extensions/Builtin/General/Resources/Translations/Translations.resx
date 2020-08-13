@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="BTN_LBL_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="BTN_LBL_Ok" xml:space="preserve">
+    <value>OK</value>
+  </data>
   <data name="BTN_MANAGE_BLACKLISTED_APPS" xml:space="preserve">
     <value>Manage</value>
   </data>
@@ -134,6 +140,9 @@
   </data>
   <data name="LBL_BLACKLISTED_APPS_NONE" xml:space="preserve">
     <value>None</value>
+  </data>
+  <data name="LBL_BLACKLIST_SEARCH_OVERLAY" xml:space="preserve">
+    <value>Type here to search</value>
   </data>
   <data name="LBL_INSTALLED_APP_SELECTOR_TITLE" xml:space="preserve">
     <value>Blacklisted applications</value>

@@ -115,6 +115,24 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Modifying these settings may cause the program to stop working properly..
+        /// </summary>
+        internal static string LBL_SETTINGS_ADVANCED_MODIFY_WARNING {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_ADVANCED_MODIFY_WARNING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show settings.
+        /// </summary>
+        internal static string LBL_SETTINGS_ADVANCED_SHOW_SETTINGS {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_ADVANCED_SHOW_SETTINGS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Automatically sync an item with the cloud the moment it gets pinned.
         /// </summary>
         internal static string LBL_SETTINGS_AUTO_CLOUD_SYNC_PINNED_ITEMS {
@@ -264,6 +282,15 @@ namespace Clipbox.Resources.Translations {
         internal static string LBL_SETTINGS_ENABLED_EXTENSIONS_LIST {
             get {
                 return ResourceManager.GetString("LBL_SETTINGS_ENABLED_EXTENSIONS_LIST", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type here to search.
+        /// </summary>
+        internal static string LBL_SETTINGS_ENABLED_EXTENSIONS_SEARCH_OVERLAY {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_ENABLED_EXTENSIONS_SEARCH_OVERLAY", resourceCulture);
             }
         }
         

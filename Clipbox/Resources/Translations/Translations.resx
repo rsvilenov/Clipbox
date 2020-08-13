@@ -135,6 +135,12 @@
   <data name="LBL_RESTART_REQUIRED_CONFIRMATION" xml:space="preserve">
     <value>This setting will not take effect until the next start of the application. Do you want to restart it now?</value>
   </data>
+  <data name="LBL_SETTINGS_ADVANCED_MODIFY_WARNING" xml:space="preserve">
+    <value>Modifying these settings may cause the program to stop working properly.</value>
+  </data>
+  <data name="LBL_SETTINGS_ADVANCED_SHOW_SETTINGS" xml:space="preserve">
+    <value>Show settings</value>
+  </data>
   <data name="LBL_SETTINGS_AUTO_CLOUD_SYNC_PINNED_ITEMS" xml:space="preserve">
     <value>Automatically sync an item with the cloud the moment it gets pinned</value>
   </data>
@@ -182,6 +188,9 @@
   </data>
   <data name="LBL_SETTINGS_ENABLED_EXTENSIONS_LIST" xml:space="preserve">
     <value>Enabled extensions</value>
+  </data>
+  <data name="LBL_SETTINGS_ENABLED_EXTENSIONS_SEARCH_OVERLAY" xml:space="preserve">
+    <value>Type here to search</value>
   </data>
   <data name="LBL_SETTINGS_ENABLED_EXTENSION_SELECTOR_TITLE" xml:space="preserve">
     <value>Enable or disable extensions</value>

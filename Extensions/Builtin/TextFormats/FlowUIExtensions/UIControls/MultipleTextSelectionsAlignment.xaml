@@ -204,19 +204,19 @@
                 Grid.Row="1"
                 Grid.Column="0"
                 Margin="5,0,0,0"
-                Text="No space"
+                Text="{loc:Localize LBL_PASTE_SEPARATOR_NOSPACE}"
                 Visibility="{Binding ElementName=TgNoSeparator, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}" />
             <TextBlock
                 Grid.Row="1"
                 Grid.Column="1"
                 Margin="5,0,0,0"
-                Text="Space"
+                Text="{loc:Localize LBL_PASTE_SEPARATOR_SPACE}"
                 Visibility="{Binding ElementName=TgSpace, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}" />
             <TextBlock
                 Grid.Row="1"
                 Grid.Column="2"
                 Margin="5,0,0,0"
-                Text="New line"
+                Text="{loc:Localize LBL_PASTE_SEPARATOR_NEWLINE}"
                 Visibility="{Binding ElementName=TgNewLine, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}" />
         </Grid>
     </Grid>

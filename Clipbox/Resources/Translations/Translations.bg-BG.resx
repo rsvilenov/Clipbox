@@ -135,6 +135,12 @@
   <data name="LBL_RESTART_REQUIRED_CONFIRMATION" xml:space="preserve">
     <value>Тази настройка ще влезе в действие при следващия старт на приложението. Искате ли да го рестартирате сега?</value>
   </data>
+  <data name="LBL_SETTINGS_ADVANCED_MODIFY_WARNING" xml:space="preserve">
+    <value>Промяната на тези настройки може да попречи на нормалната работа на приложението.</value>
+  </data>
+  <data name="LBL_SETTINGS_ADVANCED_SHOW_SETTINGS" xml:space="preserve">
+    <value>Покажи настройките</value>
+  </data>
   <data name="LBL_SETTINGS_AUTO_CLOUD_SYNC_PINNED_ITEMS" xml:space="preserve">
     <value>Автоматично го синхронизирай с облака всеки клипбоард елемент, щом бъде отбелязан като "закачен"</value>
   </data>
@@ -182,6 +188,9 @@
   </data>
   <data name="LBL_SETTINGS_ENABLED_EXTENSIONS_LIST" xml:space="preserve">
     <value>Позволени разширения</value>
+  </data>
+  <data name="LBL_SETTINGS_ENABLED_EXTENSIONS_SEARCH_OVERLAY" xml:space="preserve">
+    <value>Пишете тук, за да търсите</value>
   </data>
   <data name="LBL_SETTINGS_ENABLED_EXTENSION_SELECTOR_TITLE" xml:space="preserve">
     <value>Позволяване и забраняване на разширения</value>

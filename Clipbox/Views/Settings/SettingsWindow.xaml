@@ -284,44 +284,6 @@
                 </TabItem.HeaderTemplate>
                 <TabItem.Content>
                     <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
-                        <!--<StackPanel Margin="0,0,40,0" Orientation="Vertical">
-                        -->
-                        <!--
-                            prevent the scrollviewer from scrolling to the actual
-                            focualbe items upon tab change,
-                            by making this textblock focusable
-                        -->
-                        <!--
-                        <TextBlock
-                            Focusable="True"
-                            FontSize="28"
-                            Text="General" />
-                        <Grid
-                            x:Name="mainGrid"
-                            Margin="15"
-                            Focusable="True">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <StackPanel Grid.Row="0" Orientation="Vertical">
-                                <TextBlock HorizontalAlignment="Left" Text="Pin the tray icon to the taskbar" />
-                                <StackPanel Margin="0,15,0,0" Orientation="Horizontal">
-                                    <customControls:ToggleSwitch
-                                        HorizontalAlignment="Left"
-                                        IsChecked="{Binding IsSettingChanged, Mode=OneWayToSource}"
-                                        OffText="{loc:Localize TGL_BTN_LBL_Off,
-                                                               ResourceLookupMode=Everywhere}"
-                                        OnText="{loc:Localize TGL_BTN_LBL_On,
-                                                              ResourceLookupMode=Everywhere}" />
-                                    <Image
-                                        MinWidth="100"
-                                        MinHeight="25"
-                                        Margin="5,0,0,0"
-                                        Source="/Resources/Images/Settings/DeskBand.png" />
-                                </StackPanel>
-
-                            </StackPanel>-->
                         <StackPanel Margin="0,0,40,0" Orientation="Vertical">
                             <!--
                                 prevent the scrollviewer from scrolling to the actual
@@ -582,15 +544,17 @@
                                 Orientation="Vertical">
                                 <TextBlock
                                     HorizontalAlignment="Center"
-                                    Text="Modifying these settings may cause the program to stop working properly."
+                                    Text="{loc:Localize LBL_SETTINGS_ADVANCED_MODIFY_WARNING,
+                                                        ResourceLookupMode=CurrentAssembly}"
                                     TextWrapping="Wrap" />
                                 <Button
-                                    Width="160"
+                                    Width="Auto"
                                     Height="30"
                                     Margin="30"
                                     HorizontalAlignment="Center"
                                     Click="BtnEnableAdvanced_Click"
-                                    Content="Show settings"
+                                    Content="{loc:Localize LBL_SETTINGS_ADVANCED_SHOW_SETTINGS,
+                                                           ResourceLookupMode=CurrentAssembly}"
                                     Foreground="White"
                                     Style="{DynamicResource BtnShowSettings}" />
                                 <StackPanel.Style>
