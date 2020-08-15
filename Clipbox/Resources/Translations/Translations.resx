@@ -177,6 +177,12 @@
   <data name="LBL_SETTINGS_CLOUD_ENABLED" xml:space="preserve">
     <value>Enable cloud sychronization of the clipboard contents</value>
   </data>
+  <data name="LBL_SETTINGS_CONFIRM_DISABLE_DEPENDENT_EXTENSION" xml:space="preserve">
+    <value>Disabling this extension will disable the following extensions, which depend on it:</value>
+  </data>
+  <data name="LBL_SETTINGS_CONFIRM_ENABLE_DEPENDENT_EXTENSION" xml:space="preserve">
+    <value>Enabling this extension will enable the following extensions, which depend on it:</value>
+  </data>
   <data name="LBL_SETTINGS_DISABLED_EXTENSIONS_LIST" xml:space="preserve">
     <value>Disabled extensions</value>
   </data>

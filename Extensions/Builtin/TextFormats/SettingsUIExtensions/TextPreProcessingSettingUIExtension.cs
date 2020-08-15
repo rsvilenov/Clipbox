@@ -25,6 +25,6 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
             builder.Add(ExtensionSettingNames.MinTextLengthToStore, new SkipShortStringsSettingsUIPart());
         }
 
-        public override SettingsCategory Category => SettingsCategory.Copying;
+        protected override SettingsCategory Category => SettingsCategory.Copying;
     }
 }

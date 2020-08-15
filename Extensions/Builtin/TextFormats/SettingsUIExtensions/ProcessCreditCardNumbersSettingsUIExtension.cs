@@ -15,7 +15,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
     )]
     public class ProcessCreditCardNumbersSettingsUIExtension : SettingsUIExtension
     {
-        public override SettingsCategory Category => SettingsCategory.Security;
+        protected override SettingsCategory Category => SettingsCategory.Security;
 
         protected override void RegisterSettings(IRegisteredSettingStore settingsStore)
         {

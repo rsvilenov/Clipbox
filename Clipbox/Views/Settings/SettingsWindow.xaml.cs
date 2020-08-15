@@ -3,6 +3,7 @@ using Clipbox.Core.Configuration;
 using Clipbox.Core.Enums;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
+using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using Clipbox.Core.Extensibility.Contracts.PreviewData;
 using Clipbox.Core.Extensibility.Enums;
 using Clipbox.Infrastructure.Extensibility.Containers;
@@ -38,7 +39,7 @@ namespace Clipbox.Views.Settings
     /// <summary>
     /// Interaction logic for Settings.xaml
     /// </summary>
-    public partial class SettingsWindow : WindowFrame
+    public partial class SettingsWindow : WindowFrame, ICanResolveDependentExtensions
     {
         public SettingsWindow(ISettingsService settingsService, SettingsUIExtensionContainer extContainer)
         {
@@ -160,6 +161,8 @@ namespace Clipbox.Views.Settings
         }
 
         private List<ISettingsUIComponent> _settingUIExtensions = new List<ISettingsUIComponent>();
+        private Dictionary<Type, Type> _configurableExtensionSettingUIExtMapping = new Dictionary<Type, Type>();
+        
         private void LoadSettingUIExtensions(IEnumerable<ISettingsUIComponent> extensions)
         {
             foreach (var ext in extensions)
@@ -182,11 +185,20 @@ namespace Clipbox.Views.Settings
                     appRestartRequestor.RestartAppRequested += Ext_AppRestartRequestor_RestartAppRequested;
                 }
 
-                IEnumerable<UIElement> extUIParts = ext.GetSettingsViewParts()
-                    .Cast<UIElement>();
+                ext.SetUpSettingUIParts();
+                IReadOnlyDictionary<ISettingKey, ISettingUIPart> extUIParts = ext.GetSettingsViewParts();
 
-                var uiItem = new ExtensionUIItem(extUIParts, ext.GetType());
-                switch (ext.Category)
+                foreach (ISettingKey settingKey in extUIParts.Keys)
+                {
+                    if (settingKey.TargetComponentType != null 
+                        && !_configurableExtensionSettingUIExtMapping.ContainsKey(settingKey.TargetComponentType))
+                    {
+                        _configurableExtensionSettingUIExtMapping.Add(settingKey.TargetComponentType, ext.GetType());
+                    }
+                }
+
+                var uiItem = new ExtensionUIItem(extUIParts.Select(d => d.Value).Cast<UIElement>(), ext.GetType());
+                switch (ext.GetCategory())
                 {
                     case SettingsCategory.General:
                         GeneralExtensionUIItems.Add(uiItem);
@@ -252,7 +264,7 @@ namespace Clipbox.Views.Settings
             DisplayMonitor monitor = MonitorUtils.GetByWindowHandle(wnd.Handle);
 
             double maxPreviewHeight = GetThumbnailMaxHeight(monitor, out bool isScaled);
-            IPreviewData previewData = ext.GetResultPreview(new PreviewParams((int)maxPreviewHeight, (int)maxPreviewHeight, monitor.Dpi, isScaled));
+            IPreviewData previewData = ext.GetResultPreviewData(new PreviewParams((int)maxPreviewHeight, (int)maxPreviewHeight, monitor.Dpi, isScaled));
 
             if (previewData is ImagePreviewData imgPreviewData
                 && imgPreviewData.Preview is Bitmap bmp)
@@ -265,6 +277,25 @@ namespace Clipbox.Views.Settings
                     extUIItem.PreviewImage = bmp.ToBitmapSource();
                     extUIItem.Description = imgPreviewData.Annotation;
                 }
+            }
+        }
+
+        public IEnumerable<Type> GetDependentExtensions(string extensionTypeFullName)
+        {
+            ISettingsRegistrator settingsRegistrator = _settingUIExtensions
+                .FirstOrDefault(ext => ext.GetType().FullName == extensionTypeFullName) as ISettingsRegistrator;
+
+            if (settingsRegistrator != null)
+            {
+                return settingsRegistrator
+                       .GetSettingKeys()
+                       .Select(key => key.TargetComponentType);
+            }
+            else
+            {
+                return _configurableExtensionSettingUIExtMapping
+                    .Where(m => m.Key.FullName == extensionTypeFullName)
+                    .Select(m => m.Value);
             }
         }
 

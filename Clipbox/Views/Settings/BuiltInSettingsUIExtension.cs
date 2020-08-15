@@ -6,6 +6,7 @@ using Clipbox.Core.Extensibility.EventArgsClasses;
 using Clipbox.Views.Settings.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace Clipbox.Views.Settings
@@ -47,6 +48,31 @@ namespace Clipbox.Views.Settings
         /// Called when the extension receives a setting from the system during the initialization
         /// </summary>
         protected virtual void OnInitialSettingReceived(ISettingKey settingKey) { }
+
+        /// <summary>
+        /// Specifies the category, in which the setting will appear
+        /// in the settings UI.
+        /// </summary>
+        protected abstract SettingsCategory Category { get; }
+
+        /// <summary>
+        /// Create and return the part of the Settings view,
+        /// which shows a preview of how the settings will
+        /// affect the functionning of their extensions.
+        /// </summary>
+        /// <param name="previewParams">The parameters passed to the preview generators</param>
+        /// <returns>The preview (IPeviewData object) of the settings, which will be shown in the settings window</returns>
+        protected virtual IPreviewData GetResultPreview(PreviewParams previewParams)
+        { return null; }
+
+        /// <summary>
+        /// Force the preview to redraw. This will case the system to call
+        /// <see cref="ISettingsUIComponent.GetResultPreviewData()"/> again.
+        /// </summary>
+        protected void InvalidateResultPreview()
+        {
+            _resultPreviewInvalidated?.Invoke(this, new EventArgs());
+        }
 
         /// <summary>
         /// This goves the extensions the ability to request a restart of the app
@@ -139,13 +165,38 @@ namespace Clipbox.Views.Settings
         #endregion
 
         #region ISettingsUIComponent
-        public event EventHandler ResultPreviewInvalidated;
-
+        private event EventHandler _resultPreviewInvalidated;
         /// <summary>
-        /// Specifies the category, in which the setting will appear
-        /// in the settings UI.
+        /// <see cref="ISettingsUIComponent.ResultPreviewInvalidated"/>
         /// </summary>
-        public virtual SettingsCategory Category { get; }
+        event EventHandler ISettingsUIComponent.ResultPreviewInvalidated
+        {
+            add
+            {
+                _resultPreviewInvalidated -= value;
+                _resultPreviewInvalidated += value;
+            }
+
+            remove
+            {
+                _resultPreviewInvalidated -= value;
+            }
+        }
+
+        SettingsCategory ISettingsUIComponent.GetCategory()
+        {
+            return Category;
+        }
+
+        void ISettingsUIComponent.SetUpSettingUIParts()
+        {
+            foreach (ISettingKey settingKey in _settingKeyUIPartMapping.Keys)
+            {
+                ISettingUIPart settingUIPart = _settingKeyUIPartMapping[settingKey];
+
+                SetUpUpSettingUIPart(settingKey, settingUIPart);
+            }
+        }
 
         /// <summary>
         /// Returns the parts of the Settings view,
@@ -153,28 +204,15 @@ namespace Clipbox.Views.Settings
         /// The parts are all set up and ready.
         /// </summary>
         /// <returns>The ui part to show in the settings windpw</returns>
-        public IEnumerable<ISettingUIPart> GetSettingsViewParts()
+        IReadOnlyDictionary<ISettingKey, ISettingUIPart> ISettingsUIComponent.GetSettingsViewParts()
         {
-            foreach (ISettingKey settingKey in _settingKeyUIPartMapping.Keys)
-            {
-                ISettingUIPart settingUIPart = _settingKeyUIPartMapping[settingKey];
-
-                SetUpUpSettingUIPart(settingKey, settingUIPart);
-
-                yield return settingUIPart;
-            }
+            return new ReadOnlyDictionary<ISettingKey, ISettingUIPart>(_settingKeyUIPartMapping);
         }
 
-        /// <summary>
-        /// Create and return the part of the Settings view,
-        /// which shows a preview of how the settings will
-        /// affect the functionning of their extensions.
-        /// </summary>
-        /// <param name="previewParams">The parameters passed to the preview generators</param>
-        /// <returns>The preview (IPeviewData object) of the settings, which will be shown in the settings window</returns>
-        public virtual IPreviewData GetResultPreview(PreviewParams previewParams)
-        { return null; }
-
+        IPreviewData ISettingsUIComponent.GetResultPreviewData(PreviewParams previewParams)
+        {
+            return GetResultPreview(previewParams);
+        }
         #endregion
 
         #region ISettingsRegistrator
@@ -203,11 +241,6 @@ namespace Clipbox.Views.Settings
             }
         }
         #endregion
-
-        protected void InvalidateResultPreview()
-        {
-            ResultPreviewInvalidated?.Invoke(this, new EventArgs());
-        }
 
         private void SetUpUpSettingUIPart(ISettingKey settingKey, ISettingUIPart settingUIPart)
         {

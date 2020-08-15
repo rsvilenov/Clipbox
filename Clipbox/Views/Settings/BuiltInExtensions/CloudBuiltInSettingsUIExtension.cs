@@ -8,7 +8,7 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
     public class CloudBuiltInSettingsUIExtension : BuiltInSettingsUIExtension
     {
         private AutoCloudSyncPinnedItemsSettingUIPart _autoCloudSyncPinnedItemsSettingUIPart;
-        public override SettingsCategory Category => SettingsCategory.Cloud;
+        protected override SettingsCategory Category => SettingsCategory.Cloud;
 
         protected override void OnSettingUpdated(ISettingKey settingKey)
         {

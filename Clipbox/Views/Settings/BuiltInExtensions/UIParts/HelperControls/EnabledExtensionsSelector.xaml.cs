@@ -1,7 +1,9 @@
 ﻿using Clipbox.Infrastructure.Extensibility.Loading;
 using Clipbox.Infrastructure.ObjectHelpers;
 using Clipbox.Infrastructure.UI;
+using Clipbox.Views.Settings.BuiltInExtensions.UIParts.HelperControls.BindableObjects;
 using Clipbox.Views.Settings.EventArgsClasses;
+using Clipbox.Views.Settings.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +11,11 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Threading;
 
-namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
+namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts.HelperControls
 {
     /// <summary>
     /// Interaction logic for EnabledExtensionsSelector.xaml
@@ -66,22 +69,68 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
         }
 
 
-        private void DisableExtensionHandler(ExtensionDisplayInfo obj)
+        private void DisableExtensionHandler(ExtensionDisplayInfo extDisplayInfo)
         {
-            EnabledExtensions.Remove(obj);
-            _enabledExtensionsInternalList.Remove(obj);
-            if (_allExtensionsCollection.Contains(obj))
+            IEnumerable<ExtensionDisplayInfo> dependentExtensions =  CollectDependentExtensions(extDisplayInfo);
+            if (dependentExtensions.Any())
             {
-                DisabledExtensions.Add(obj);
+                OpenConfirmationDialog(extDisplayInfo, dependentExtensions, isDisable: true);
+            }
+            else
+            {
+                EnableOrDisableExtension(extDisplayInfo, isDisable: true);
+            }
+        }
+        private void EnableExtensionHandler(ExtensionDisplayInfo extDisplayInfo)
+        {
+            IEnumerable<ExtensionDisplayInfo> dependentExtensions = CollectDependentExtensions(extDisplayInfo);
+            if (dependentExtensions.Any())
+            {
+                OpenConfirmationDialog(extDisplayInfo, dependentExtensions, isDisable: false);
+            }
+            else
+            {
+                EnableOrDisableExtension(extDisplayInfo, isDisable: false);
             }
         }
 
-        private void EnableExtensionHandler(ExtensionDisplayInfo obj)
+        private void EnableOrDisableExtension(ExtensionDisplayInfo edi, bool isDisable)
         {
-            _enabledExtensionsInternalList.Add(obj);
-            EnabledExtensions.Add(obj);
-            DisabledExtensions.Remove(obj);
+            if (isDisable)
+            {
+                EnabledExtensions.Remove(edi);
+                _enabledExtensionsInternalList.Remove(edi);
+                if (_allExtensionsCollection.Contains(edi))
+                {
+                    DisabledExtensions.Add(edi);
+                }
+            }
+            else
+            {
+                _enabledExtensionsInternalList.Add(edi);
+                EnabledExtensions.Add(edi);
+                DisabledExtensions.Remove(edi);
+            }
         }
+
+        private IEnumerable<ExtensionDisplayInfo> CollectDependentExtensions(ExtensionDisplayInfo extDisplayInfo)
+        {
+            SettingsWindow settingsWindow = (SettingsWindow)Window.GetWindow(this);
+            if (settingsWindow is ICanResolveDependentExtensions dependencyResolver)
+            {
+                IEnumerable<Type> dependentTypes = dependencyResolver.
+                    GetDependentExtensions(extDisplayInfo.PersistableExtensionInfo.ExtensionObjectTypeFullName);
+                return _allExtensionsCollection
+                    .Where(edi => dependentTypes
+                        .Any(dt => dt.FullName == edi.PersistableExtensionInfo.ExtensionObjectTypeFullName));
+            }
+            else
+            {
+                throw new InvalidOperationException($"{nameof(SettingsWindow)} does not implement {nameof(ICanResolveDependentExtensions)}.");
+            }
+        }
+
+
 
         private List<ExtensionDisplayInfo> _allExtensionsCollection;
 
@@ -173,75 +222,52 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
 
         }
 
-
-        public class ExtensionDisplayInfo : BindableObject
+        private void OpenConfirmationDialog(ExtensionDisplayInfo mainExtDisplayInfo, IEnumerable<ExtensionDisplayInfo> dependentExtensions, bool isDisable)
         {
-            public PersistableExtensionInfo PersistableExtensionInfo { get; }
-
-            public ExtensionDisplayInfo(PersistableExtensionInfo persistableExtensionInfo)
+            Popup popup = new Popup
             {
-                PersistableExtensionInfo = persistableExtensionInfo;
-                ExtensionName = Regex.Replace(persistableExtensionInfo.TypeNameOfExtension, @"((?<=[a-z])[A-Z]|[A-Z](?=[a-z]))", " $1");
-                Version = persistableExtensionInfo.Version;
-                Author = persistableExtensionInfo.Author;
-                Description = persistableExtensionInfo.Description;
-            }
+                PlacementTarget = Window.GetWindow(this),
+                Placement = PlacementMode.Center,
+                MinWidth = 450,
+                MinHeight = 200
+            };
 
-            /// <summary>
-            /// The name of the extension
-            /// </summary>
-            private string _extensionName;
-            public string ExtensionName
-            {
-                get { return _extensionName; }
-                set { SetField(ref _extensionName, value); }
-            }
 
-            /// <summary>
-            /// The version of the extension
-            /// </summary>
-            private double _version;
-            public double Version
-            {
-                get { return _version; }
-                set { SetField(ref _version, value); }
-            }
+            DepencentExtensionConfirmation confirmDialog = 
+                new DepencentExtensionConfirmation(dependentExtensions, isDisablingConfirmation: isDisable);
 
-            /// <summary>
-            /// Who wrote the extension
-            /// </summary>
-            private string _author;
-            public string Author
-            {
-                get { return _author; }
-                set { SetField(ref _author, value); }
-            }
+            popup.Child = confirmDialog;
 
-            /// <summary>
-            /// The description of the extension
-            /// </summary>
-            private string _description;
-            public string Description
-            {
-                get { return _description; }
-                set { SetField(ref _description, value); }
-            }
 
-            public override int GetHashCode()
-            {
-                return GetHashCodeHelper
-                    .Start
-                    .Append(ExtensionName)
-                    .Append(Description)
-                    .Append(Version)
-                    .Append(PersistableExtensionInfo.AssemblyLocation);
-            }
+            EventHandler<ConfirmationEventArgs> confirmDialogAnsweredEventHandler = null;
 
-            public override bool Equals(object obj)
-            {
-                return obj.GetHashCode() == this.GetHashCode();
-            }
+            confirmDialogAnsweredEventHandler = new EventHandler<ConfirmationEventArgs>
+                ((_, dialogArgs) =>
+                {
+                    // re-enable the main popup (this)
+                    this.IsEnabled = true;
+
+                    popup.IsOpen = false;
+                    confirmDialog.DialogAnswered -= confirmDialogAnsweredEventHandler;
+
+                    if (dialogArgs.IsConfirmed)
+                    {
+                        foreach(ExtensionDisplayInfo edi in dependentExtensions)
+                        {
+                            EnableOrDisableExtension(edi, isDisable);
+                        }
+
+                        EnableOrDisableExtension(mainExtDisplayInfo, isDisable);
+                    }
+
+                });
+
+            confirmDialog.DialogAnswered += confirmDialogAnsweredEventHandler;
+
+            popup.IsOpen = true;
+
+            // disable the main popup (this) while the confirmation popup is open
+            this.IsEnabled = false;
         }
-
     }
 }

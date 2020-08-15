@@ -1,5 +1,5 @@
 ﻿<UserControl
-    x:Class="Clipbox.Views.Settings.BuiltInExtensions.UIParts.EnabledExtensionsSelector"
+    x:Class="Clipbox.Views.Settings.BuiltInExtensions.UIParts.HelperControls.EnabledExtensionsSelector"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:Clipbox.Infrastructure.UI.CustomControls;assembly=Clipbox.Infrastructure.UI.CustomControls"
@@ -150,6 +150,7 @@
                         ItemsSource="{Binding EnabledExtensions}"
                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                         ScrollViewer.VerticalScrollBarVisibility="Auto">
+
                         <ListView.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Margin="10" Orientation="Vertical" />
@@ -347,6 +348,26 @@
                 Content="{loc:Localize BTN_LBL_Cancel}"
                 Foreground="White"
                 Style="{DynamicResource BtnCancel}" />
+
+            <!--  disable the contents when the control's IsEnabled=False  -->
+            <Border
+                Grid.RowSpan="3"
+                Grid.ColumnSpan="2"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch"
+                Background="Black"
+                Opacity="0.5">
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Visibility" Value="Visible" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsEnabled}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+            </Border>
         </Grid>
     </Border>
 </UserControl>

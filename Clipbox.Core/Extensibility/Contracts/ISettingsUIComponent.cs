@@ -1,4 +1,5 @@
-﻿using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
+﻿using Clipbox.Core.Configuration;
+using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using Clipbox.Core.Extensibility.Enums;
 using System;
 using System.Collections.Generic;
@@ -7,11 +8,13 @@ namespace Clipbox.Core.Extensibility.Contracts
 {
     public interface ISettingsUIComponent
     {
-        IEnumerable<ISettingUIPart> GetSettingsViewParts();
+        IReadOnlyDictionary<ISettingKey, ISettingUIPart> GetSettingsViewParts();
 
-        SettingsCategory Category { get; }
+        void SetUpSettingUIParts();
 
-        IPreviewData GetResultPreview(PreviewParams previewParams);
+        SettingsCategory GetCategory();
+
+        IPreviewData GetResultPreviewData(PreviewParams previewParams);
 
         event EventHandler ResultPreviewInvalidated;
     }

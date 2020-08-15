@@ -15,7 +15,7 @@ namespace Clipbox.Extensions.BuiltIn.General.SettingsUIExtensions
         )]
     public class BlacklistedAppsSettingsUIExtension : SettingsUIExtension
     {
-        public override SettingsCategory Category => SettingsCategory.Copying;
+        protected override SettingsCategory Category => SettingsCategory.Copying;
 
         protected override void RegisterSettings(IRegisteredSettingStore settingsStore)
         {

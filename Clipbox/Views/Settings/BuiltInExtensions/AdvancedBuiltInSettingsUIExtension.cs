@@ -11,7 +11,7 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
         private ExternalSearchProcessSettingUIPart _extenralSearchProcessSettingUIPart;
         private MaxPreviewTasksSettingUIPart _maxPreviewTasksSettingUIPart;
 
-        public override SettingsCategory Category => SettingsCategory.Advanced;
+        protected override SettingsCategory Category => SettingsCategory.Advanced;
 
         private readonly SlidingTimer _restartAppDialogSlidingTimer;
 

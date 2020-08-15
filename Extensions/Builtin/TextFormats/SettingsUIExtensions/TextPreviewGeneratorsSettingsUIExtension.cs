@@ -29,9 +29,9 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
             _previewGenerator = new RtfPreviewGenerator();
         }
 
-        public override SettingsCategory Category => SettingsCategory.Previews;
+        protected override SettingsCategory Category => SettingsCategory.Previews;
 
-        public override IPreviewData GetResultPreview(PreviewParams previewParams)
+        protected override IPreviewData GetResultPreview(PreviewParams previewParams)
         {
             string sampleRtf = Resources.SampleData.RtfForSamplePreview;
 

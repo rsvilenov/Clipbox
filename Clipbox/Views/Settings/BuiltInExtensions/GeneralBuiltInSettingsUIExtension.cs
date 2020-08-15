@@ -8,7 +8,7 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
 {
     public class GeneralBuiltInSettingsUIExtension : BuiltInSettingsUIExtension
     {
-        public override SettingsCategory Category => SettingsCategory.General;
+        protected override SettingsCategory Category => SettingsCategory.General;
 
         protected override void OnSettingUpdated(ISettingKey settingKey)
         {

@@ -6,7 +6,7 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
 {
     public class PreviewsBuiltInSettingsUIExtension : BuiltInSettingsUIExtension
     {
-        public override SettingsCategory Category => SettingsCategory.Previews;
+        protected override SettingsCategory Category => SettingsCategory.Previews;
 
         protected override void RegisterSettingUIParts(IBuiltInSettingsUIBuilder builder)
         {

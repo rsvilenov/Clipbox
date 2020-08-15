@@ -19,7 +19,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
     {
         private DefaultSeparatorSettingUIPart _defaultSeparatorUIPart;
 
-        public override SettingsCategory Category => SettingsCategory.Pasting;
+        protected override SettingsCategory Category => SettingsCategory.Pasting;
 
         protected override void RegisterSettings(IRegisteredSettingStore settingsStore)
         {

@@ -1,6 +1,7 @@
 ﻿using Clipbox.Infrastructure.Extensibility.Loading;
 using Clipbox.Infrastructure.Serialization;
 using Clipbox.Infrastructure.UI.Extensibility;
+using Clipbox.Views.Settings.BuiltInExtensions.UIParts.HelperControls;
 using System;
 using System.Collections.Generic;
 using System.Linq;

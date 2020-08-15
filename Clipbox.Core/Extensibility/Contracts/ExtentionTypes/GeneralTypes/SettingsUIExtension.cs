@@ -4,6 +4,7 @@ using Clipbox.Core.Extensibility.Enums;
 using Clipbox.Core.Extensibility.EventArgsClasses;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
@@ -11,7 +12,12 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
     /// <summary>
     /// Settings view extension
     /// </summary>
-    public abstract class SettingsUIExtension : IClipboxExtension, ISettingsUIComponent, ISettingsRegistrator, IConfigurationRecipient, ISettingChangeRequestor
+    public abstract class SettingsUIExtension : 
+        IClipboxExtension, 
+        ISettingsUIComponent, 
+        ISettingsRegistrator, 
+        IConfigurationRecipient, 
+        ISettingChangeRequestor
     {
         private readonly Dictionary<ISettingKey, ISettingUIPart> _settingKeyUIPartMapping;
 
@@ -50,6 +56,24 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
         /// Call <see cref="ISettingsUIBuilder.Add(ISettingKey, ISettingUIPart)"/> 
         /// to register a UI part.</param>
         protected abstract void RegisterSettingUIParts(ISettingsUIBuilder builder);
+
+
+        /// <summary>
+        /// Specifies the category, in which the setting will appear
+        /// in the settings UI.
+        /// </summary>
+        protected abstract SettingsCategory Category { get; }
+
+        /// <summary>
+        /// Create and return the part of the Settings view,
+        /// which shows a preview of how the settings will
+        /// affect the functionning of their extensions.
+        /// </summary>
+        /// <param name="previewParams">The parameters passed to the preview generators</param>
+        /// <returns>The preview (IPeviewData object) of the settings, which will be shown in the settings window</returns>
+        protected virtual IPreviewData GetResultPreview(PreviewParams previewParams)
+        { return null; }
+
 
         /// <summary>
         /// Gets the value of a setting.
@@ -113,7 +137,7 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
 
         protected void InvalidateResultPreview()
         {
-            ResultPreviewInvalidated?.Invoke(this, new EventArgs());
+            _resultPreviewInvalidated?.Invoke(this, new EventArgs());
         }
 
         private void SetUpUpSettingUIPart(ISettingKey settingKey, ISettingUIPart settingUIPart)
@@ -152,25 +176,39 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
         #endregion
 
         #region ISettingsUIComponent
-        public event EventHandler ResultPreviewInvalidated;
-
+        private event EventHandler _resultPreviewInvalidated;
         /// <summary>
-        /// Specifies the category, in which the setting will appear
-        /// in the settings UI.
+        /// <see cref="ISettingsUIComponent.ResultPreviewInvalidated"/>
         /// </summary>
-        public virtual SettingsCategory Category { get; }
+        event EventHandler ISettingsUIComponent.ResultPreviewInvalidated
+        {
+            add
+            {
+                _resultPreviewInvalidated -= value;
+                _resultPreviewInvalidated += value;
+            }
 
-        /// <summary>
-        /// Returns the parts of the Settings view,
-        /// corresponding to the settings for an extension.
-        /// The parts are all set up and ready.
-        /// </summary>
-        /// <returns>The ui part to show in the settings windpw</returns>
-        public IEnumerable<ISettingUIPart> GetSettingsViewParts()
+            remove
+            {
+                _resultPreviewInvalidated -= value;
+            }
+        }
+
+        SettingsCategory ISettingsUIComponent.GetCategory()
+        {
+            return Category;
+        }
+
+        void ISettingsUIComponent.SetUpSettingUIParts()
         {
             SettingsUIBuilder builder = new SettingsUIBuilder(_settings);
             RegisterSettingUIParts(builder);
             Dictionary<ISettingKey, ISettingUIPart> mapping = builder.GetSettingKeyUIPartMapping();
+
+            if (_settingKeyUIPartMapping.Any())
+            {
+                throw new InvalidOperationException("This method should only be called once");
+            }
 
             foreach (ISettingKey settingKey in mapping.Keys)
             {
@@ -184,21 +222,29 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
                 SetUpUpSettingUIPart(settingKey, settingUIPart);
 
                 _settingKeyUIPartMapping.Add(settingKey, settingUIPart);
-
-                yield return settingUIPart;
             }
         }
 
         /// <summary>
-        /// Create and return the part of the Settings view,
-        /// which shows a preview of how the settings will
-        /// affect the functionning of their extensions.
+        /// Returns the parts of the Settings view,
+        /// corresponding to the settings for an extension.
+        /// The parts are all set up and ready.
         /// </summary>
-        /// <param name="previewParams">The parameters passed to the preview generators</param>
-        /// <returns>The preview (IPeviewData object) of the settings, which will be shown in the settings window</returns>
-        public virtual IPreviewData GetResultPreview(PreviewParams previewParams)
-        { return null; }
+        /// <returns>The ui part to show in the settings windpw</returns>
+        IReadOnlyDictionary<ISettingKey, ISettingUIPart> ISettingsUIComponent.GetSettingsViewParts()
+        {
+            if (!_settingKeyUIPartMapping.Any())
+            {
+                throw new InvalidOperationException($"No extensions of type {nameof(ISettingUIPart)} has been registered yet. Did you forget to call {nameof(ISettingsUIComponent.SetUpSettingUIParts)}?");
+            }
 
+            return new ReadOnlyDictionary<ISettingKey, ISettingUIPart>(_settingKeyUIPartMapping);
+        }
+
+        IPreviewData ISettingsUIComponent.GetResultPreviewData(PreviewParams previewParams)
+        {
+            return GetResultPreview(previewParams);
+        }
         #endregion
 
         #region IConfigurationRecipient

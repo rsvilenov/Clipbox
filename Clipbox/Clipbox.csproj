@@ -297,7 +297,11 @@
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\BackgroundPreviewGenerationSettingUIPart.xaml.cs">
       <DependentUpon>BackgroundPreviewGenerationSettingUIPart.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\EnabledExtensionsSelector.xaml.cs">
+    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\HelperControls\BindableObjects\ExtensionDisplayInfo.cs" />
+    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\HelperControls\DepencentExtensionsConfirmation.xaml.cs">
+      <DependentUpon>DepencentExtensionsConfirmation.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\HelperControls\EnabledExtensionsSelector.xaml.cs">
       <DependentUpon>EnabledExtensionsSelector.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\EnabledExtensionsSettingUIPart.xaml.cs">
@@ -361,12 +365,14 @@
       <DependentUpon>StoreMaxTasksSettingUIPart.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\BuiltInSettingsUIExtension.cs" />
+    <Compile Include="Views\Settings\EventArgsClasses\ConfirmationEventArgs.cs" />
     <Compile Include="Views\Settings\EventArgsClasses\EnabledExtensionsEventArgs.cs" />
     <Compile Include="Views\Settings\EventArgsClasses\SettingChangeRequestedEventArgs.cs" />
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\ClipboardTrackingSettingUIPart.xaml.cs">
       <DependentUpon>ClipboardTrackingSettingUIPart.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\Interfaces\ICanRequestAppRestart.cs" />
+    <Compile Include="Views\Settings\Interfaces\ICanResolveDependentExtensions.cs" />
     <Compile Include="Views\Settings\SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
@@ -501,7 +507,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Settings\BuiltInExtensions\UIParts\EnabledExtensionsSelector.xaml">
+    <Page Include="Views\Settings\BuiltInExtensions\UIParts\HelperControls\DepencentExtensionsConfirmation.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\BuiltInExtensions\UIParts\HelperControls\EnabledExtensionsSelector.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -241,6 +241,24 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Disabling this extension will disable the following extensions, which depend on it:.
+        /// </summary>
+        internal static string LBL_SETTINGS_CONFIRM_DISABLE_DEPENDENT_EXTENSION {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_CONFIRM_DISABLE_DEPENDENT_EXTENSION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enabling this extension will enable the following extensions, which depend on it:.
+        /// </summary>
+        internal static string LBL_SETTINGS_CONFIRM_ENABLE_DEPENDENT_EXTENSION {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_CONFIRM_ENABLE_DEPENDENT_EXTENSION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Disabled extensions.
         /// </summary>
         internal static string LBL_SETTINGS_DISABLED_EXTENSIONS_LIST {

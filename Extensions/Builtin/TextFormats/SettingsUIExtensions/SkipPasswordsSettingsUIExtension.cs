@@ -20,7 +20,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
         internal const int DEFAULT_MIN_PASSWORD_LEN = 8;
         internal const int DEFAULT_MAX_PASSWORD_LEN = 20;
 
-        public override SettingsCategory Category => SettingsCategory.Security;
+        protected override SettingsCategory Category => SettingsCategory.Security;
 
         private PasswordPatternsSettingsUIPart _patternUI;
         private PasswordLengthSettingUIPart _lengthUI;
