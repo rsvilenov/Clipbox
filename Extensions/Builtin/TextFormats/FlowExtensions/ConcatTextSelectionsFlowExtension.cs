@@ -29,9 +29,9 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.FlowExtensions
         {
             return items.Count() > 1
                 && items.All(item => item.ClipboardDataObjects
-                    .Any(cdo => cdo.IntermediateFormatObject is RichTextIntermediateFormat
-                    || cdo.IntermediateFormatObject is UnicodeTextIntermediateFormat 
-                    || cdo.IntermediateFormatObject is TextIntermediateFormat));
+                    .Any(cdo => cdo.IntermediateFormatMetadata.FormatGuid == "{D8F8C369-7F81-4138-9718-4F34EB1BD669}" // RichTextIntermediateFormat
+                    || cdo.IntermediateFormatMetadata.FormatGuid == "{CAF7A257-882B-46CE-A26D-679D228EA8B7}" // UnicodeTextIntermediateFormat 
+                    || cdo.IntermediateFormatMetadata.FormatGuid == "{89BCFB06-B1FC-4C0D-BFE6-9643BED5A172}")); // TextIntermediateFormat
         }
 
         public override IGeneratedClipboardItem OnPerformModifyRequested(IEnumerable<IClipboardItem> items)

@@ -28,7 +28,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.FlowExtensions
             return items.Count() == 1 
                 && IsParameterSet(FlowParameters.RemoveFormatting, true)
                 && items.Single().ClipboardDataObjects.
-                    Any(cdo => cdo.IntermediateFormatObject is RichTextIntermediateFormat);
+                    Any(cdo => cdo.IntermediateFormatMetadata.FormatGuid == "{D8F8C369-7F81-4138-9718-4F34EB1BD669}"); // RichTextIntermediateFormat
         }
 
         public override IGeneratedClipboardItem OnPerformModifyRequested(IEnumerable<IClipboardItem> items)

@@ -44,7 +44,12 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes
         }
 
         /// <summary>
-        /// Check whether modification of the items is needed
+        /// Check whether modification of the items is needed.
+        /// Note: the items here may be shrinked, so there is no guarantee that
+        /// <see cref="IIHaveIntermediateFormat.IntermediateFormatObject"/>
+        /// will be populated. For checks of the data type, rely on
+        /// <see cref="IIHaveIntermediateFormat.IntermediateFormatMetadata"/>
+        /// instead. It should be always present.
         /// </summary>
         /// <param name="items">A collection of items to combine</param>
         /// <returns>'True' if the items should be modified. If this method returns 'true', there should be
@@ -58,6 +63,9 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes
         /// Allows implementing custom logic for modifying clipboard entries before they are pasted.
         /// Since IClipboardItem is not modifiable, this method generates an object of type IGeneratedClipboardItem,
         /// which contains the modified data.
+        /// The items here are guaranteed not to be shrinked, so
+        /// <see cref="IIHaveIntermediateFormat.IntermediateFormatObject"/>
+        /// will be present.
         /// </summary>
         /// <param name="items"></param>
         /// <returns></returns>

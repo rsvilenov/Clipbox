@@ -178,13 +178,14 @@
                             </Grid.ColumnDefinitions>
                             <StackPanel
                                 Grid.Column="0"
-                                Height="35"
+                                Height="40"
                                 Orientation="Horizontal">
                                 <i:Interaction.Behaviors>
                                     <infBeh:FrameworkElementDpiScalingBehavior />
                                 </i:Interaction.Behaviors>
                                 <WrapPanel
                                     x:Name="uiExtensionContainer"
+                                    Margin="0,5,0,0"
                                     VerticalAlignment="Center"
                                     Panel.ZIndex="99"
                                     Visibility="{Binding Path=AreAnyUIExtensionsLoaded, RelativeSource={RelativeSource AncestorType={x:Type local:ClipboardViewControlBase}}, Converter={StaticResource BooleanToVisibilityConverter}}" />

@@ -20,7 +20,8 @@ namespace Clipbox.Extensions.BuiltIn.HdropFormat.FlowExtensions
         public override bool OnQueryModify(IEnumerable<IClipboardItem> items)
         {
             // if all items have a FilesystemPathsIntermediateFormat in them, we can combine the targets...
-            bool canCombine = items.All(item => item.ClipboardDataObjects.Any(cdo => cdo.IntermediateFormatObject is FilesystemPathsIntermediateFormat));
+            bool canCombine = items.All(item => item.ClipboardDataObjects
+                .Any(cdo => cdo.IntermediateFormatMetadata.FormatGuid == "{3D2C252F-7838-49C2-9D5D-C6B4C92320D3}")); // FilesystemPathsIntermediateFormat
             return canCombine;
         }
 

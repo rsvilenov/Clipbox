@@ -24,8 +24,9 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.FlowUIExtensions
 
         public override bool OnShouldShow(IEnumerable<IClipboardItem> concatinatedItems)
         {
-            return concatinatedItems.Count() >= 1 
-                && concatinatedItems.All(item => item.ClipboardDataObjects.Any(obj => obj.IntermediateFormatObject is RichTextIntermediateFormat));
+            return concatinatedItems.Count() == 1
+                && concatinatedItems.Single().ClipboardDataObjects.
+                    Any(cdo => cdo.IntermediateFormatMetadata.FormatGuid == "{D8F8C369-7F81-4138-9718-4F34EB1BD669}"); // RichTextIntermediateFormat
         }
 
         private void _extensionUI_RemoveFormattingChanged(object sender, RemoveFormatting.RemoveFormattingEventArgs e)
