@@ -351,7 +351,7 @@
 
             <!--  disable the contents when the control's IsEnabled=False  -->
             <Border
-                Grid.RowSpan="3"
+                Grid.RowSpan="4"
                 Grid.ColumnSpan="2"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
@@ -361,7 +361,7 @@
                     <Style TargetType="Border">
                         <Setter Property="Visibility" Value="Visible" />
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsEnabled}" Value="True">
+                            <DataTrigger Binding="{Binding IsControlEnabled}" Value="True">
                                 <Setter Property="Visibility" Value="Collapsed" />
                             </DataTrigger>
                         </Style.Triggers>

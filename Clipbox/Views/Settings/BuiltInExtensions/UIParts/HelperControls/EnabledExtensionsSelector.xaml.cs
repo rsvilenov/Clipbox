@@ -166,6 +166,23 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts.HelperControls
             DependencyProperty.Register(nameof(IsLoading), typeof(bool), typeof(EnabledExtensionsSelector), new PropertyMetadata(false));
 
 
+
+        /// <summary>
+        /// Used instead of the default IsEnabled, in order to avoid the "disabled" effects from the
+        /// default control templates. I don't want to override the templates in order to get rid of
+        /// the effects. I just want a semi-transparent black viel on top of everything. :)
+        /// </summary>
+        public bool IsControlEnabled
+        {
+            get { return (bool)GetValue(IsControlEnabledProperty); }
+            set { SetValue(IsControlEnabledProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsControlEnabledProperty =
+            DependencyProperty.Register(nameof(IsControlEnabled), typeof(bool), typeof(EnabledExtensionsSelector), new PropertyMetadata(true));
+
+
+
         private void LoadData()
         {
             ExtensionLoader extensionLoader = new ExtensionLoader();
@@ -245,7 +262,7 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts.HelperControls
                 ((_, dialogArgs) =>
                 {
                     // re-enable the main popup (this)
-                    this.IsEnabled = true;
+                    this.IsControlEnabled = true;
 
                     popup.IsOpen = false;
                     confirmDialog.DialogAnswered -= confirmDialogAnsweredEventHandler;
@@ -267,7 +284,7 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts.HelperControls
             popup.IsOpen = true;
 
             // disable the main popup (this) while the confirmation popup is open
-            this.IsEnabled = false;
+            this.IsControlEnabled = false;
         }
     }
 }
