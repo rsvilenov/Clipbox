@@ -162,14 +162,13 @@ namespace Clipbox.Services
             {
                 if (!_trayContextMenuService.IsContextMenuOpen)
                 {
+                    // we do not have to dpi-callibrate these coordinates
                     var deskbandRect = WindowUtils.GetWindowRectangle(_lastDeskbandHwnd);
-                    var monitor = MonitorUtils.GetByWindowHandle(_lastDeskbandHwnd);
-                    var scaleFactor = monitor.Dpi / 96;
 
                     _trayContextMenuService.ShowContextMenuAtPoint(new Point
                     {
-                        X = deskbandRect.X / scaleFactor,
-                        Y = deskbandRect.Y / scaleFactor
+                        X = deskbandRect.X,
+                        Y = deskbandRect.Y
                     });
                 }
             }
