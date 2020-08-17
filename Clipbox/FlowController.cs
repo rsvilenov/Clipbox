@@ -331,7 +331,7 @@ namespace Clipbox
 
             if (removeItemFromClipboardItemsRequested || currentItem.IsTemporary)
             {
-                _clipboardManager.RemoveClipboardItem(currentItem.Id, beSilent: true, removeFromSystemClipboard: true);
+                _clipboardManager.RemoveClipboardItem(currentItem.Id, beSilent: true, removeFromSystemClipboard: false);
             }
 
             PerformHouseKeeping(new List<string> { currentItem.Id },
