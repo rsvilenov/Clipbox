@@ -349,7 +349,31 @@ namespace Clipbox.ExtendedClipboard
                 return clonned;
             }
         }
-        
+
+        public bool TryGetClipboardItem(string id, out IClipboardItem clipboardItem, bool restoreShrinked = false)
+        {
+            clipboardItem = null;
+
+            lock (_ioLockHandle)
+            {
+                ClipboardItem internalItem = _clipboardItems.FirstOrDefault(item => item.Id == id);
+                if (internalItem == null)
+                {
+                    return false;
+                }
+
+                var clonned = internalItem.ShallowClone();
+                if (restoreShrinked && internalItem.IsShrinked)
+                {
+                    _persistenceHelper.RestoreShrinkedClipboardItem(clonned);
+                }
+
+                clipboardItem = clonned;
+
+                return true;
+            }
+        }
+
         public void Clear()
         {
             lock (_ioLockHandle)

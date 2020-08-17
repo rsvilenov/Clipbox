@@ -295,23 +295,24 @@ namespace Clipbox.Services
             int itemRequestedWidth = itemRequestedHeight;
 
             // get the clipboard item with its full contents
-            IClipboardItem clipboardItem = _clipboardManager.GetClipboardItem(clipboardItemId, restoreShrinked: true);
-
-            // generate the preview
-            PreviewDataTransferObject pdto = GeneratePreviewDataTransferObject(clipboardItem, 
-                itemRequestedHeight, 
-                itemRequestedWidth, 
-                monitorDimensions.MonitorDPI, 
-                cancellationToken);
-
-            // store the preview for faster access
-            if (pdto.PreviewItems.All(pi => pi.PreviewDimensions != null))
+            if (_clipboardManager.TryGetClipboardItem(clipboardItemId, out IClipboardItem clipboardItem, restoreShrinked: true))
             {
-                CacheGeneratedData(monitorDimensions,
+                // generate the preview
+                PreviewDataTransferObject pdto = GeneratePreviewDataTransferObject(clipboardItem,
                     itemRequestedHeight,
                     itemRequestedWidth,
-                    pdto,
-                    hasHeightBeenDpiScaled);
+                    monitorDimensions.MonitorDPI,
+                    cancellationToken);
+
+                // store the preview for faster access
+                if (pdto.PreviewItems.All(pi => pi.PreviewDimensions != null))
+                {
+                    CacheGeneratedData(monitorDimensions,
+                        itemRequestedHeight,
+                        itemRequestedWidth,
+                        pdto,
+                        hasHeightBeenDpiScaled);
+                }
             }
         }
 
@@ -428,17 +429,28 @@ namespace Clipbox.Services
 
                     // wait for the abandon timeout of the task to pass
                     ExecutionStage stage = threadExecutor.WaitUntilTimeoutReached();
-                    
+
                     // check if the task has actually completed
                     if (stage == ExecutionStage.Completed)
                     {
                         // if the task is completed, then there should be saved preview data; get it
-                        if (!TryGetStoredPreviewDataTransferObject(clipboardItemId, monitorDimensions, out PreviewDataTransferObject savedPdto))
+                        if (TryGetStoredPreviewDataTransferObject(clipboardItemId, monitorDimensions, out PreviewDataTransferObject savedPdto))
                         {
-                            throw new InvalidOperationException("The preview generation task has finished, but there is no preview saved.");
+                            pdto = savedPdto;
                         }
+                        else
+                        {
+                            pdto = new PreviewDataTransferObject
+                            {
+                                ClipboardItemId = clipboardItemId
+                            };
 
-                        pdto = savedPdto;
+                            pdto.PreviewItems.Add(new PreviewItemTransferObject
+                            {
+                                // TODO: be more precise here
+                                PreviewGenereationStatus = PreviewGenerationStatus.Unknown
+                            });
+                        }
                     }
                     else if (stage == ExecutionStage.Error)
                     {

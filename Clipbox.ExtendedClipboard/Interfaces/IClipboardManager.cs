@@ -41,6 +41,19 @@ namespace Clipbox.ExtendedClipboard.Interfaces
         /// <exception cref="ArgumentException">The id does not exist.</exception>
         IClipboardItem GetClipboardItem(string id, bool restoreShrinked = false);
 
+        /// <summary>
+        /// Tries to get a clipboard item by id
+        /// </summary>
+        /// <param name="id">The clipboard item id</param>
+        /// <param name="clipboardItem">The clipboard item</param>
+        /// <param name="restoreShrinked">Restore the shrinked parts of the item,
+        /// such as the raw data. Default: false.</param>
+        /// <returns>True if the item is fetched successfully</returns>
+        bool TryGetClipboardItem(string id, out IClipboardItem clipboardItem, bool restoreShrinked = false);
+
+        /// <summary>
+        /// Removes all the clipboard items and clears the system clipboard
+        /// </summary>
         void Clear();
         
         /// <summary>

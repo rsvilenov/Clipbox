@@ -223,16 +223,11 @@ namespace Clipbox.Services
 
         private bool TryGenerateIndexEntry(string clipboardItemId, out IndexEntry indexEntry)
         {
-            IClipboardItem clipboardItem = null;
             indexEntry = null;
 
             // since we are running some time after the clipboardItemId has been last
             // checked to exist, we may encounter an item which may not exist anymore.
-            try
-            {
-                clipboardItem = _clipboardManager.GetClipboardItem(clipboardItemId, restoreShrinked: true);
-            }
-            catch (ArgumentException)
+            if (!_clipboardManager.TryGetClipboardItem(clipboardItemId, out IClipboardItem clipboardItem, restoreShrinked: true))
             {
                 return false;
             }

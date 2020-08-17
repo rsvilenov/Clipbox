@@ -94,7 +94,15 @@ namespace Clipbox
         private void _clipboardViewWindowService_CombinabilityCheckRequested(object sender, CombinabilityEventArgs e)
         {
             IEnumerable<string> allSelectedItemIds = e.SelectedItemIds.Union(e.SelectedMultiItemIds.Keys);
-            IEnumerable <IClipboardItem> allSelectedItems = allSelectedItemIds.Select(id => _clipboardManager.GetClipboardItem(id, restoreShrinked: false));
+
+            List<IClipboardItem> allSelectedItems = new List<IClipboardItem>();
+            foreach (string id in allSelectedItemIds)
+            {
+                if (_clipboardManager.TryGetClipboardItem(id, out IClipboardItem clipboardItem, restoreShrinked: false))
+                {
+                    allSelectedItems.Add(clipboardItem);
+                }
+            }
 
             // can we modify or combine the items?
             if (allSelectedItems.Count() > 1)
@@ -146,7 +154,10 @@ namespace Clipbox
 
                 foreach (string clipboardItemId in matchingClipboardItemIds)
                 {
-                    IClipboardItem item = _clipboardManager.GetClipboardItem(clipboardItemId, restoreShrinked: hkTask.RequiresRestoredState);
+                    if (!_clipboardManager.TryGetClipboardItem(clipboardItemId, out IClipboardItem item, restoreShrinked: false))
+                    {
+                        continue;
+                    }
 
                     IHouseKeepingResult result = _flowExtensionExecutorService.RunOnHousekeepingPerformedMethods(hkTask, item);
                     if (result != null)
@@ -347,12 +358,26 @@ namespace Clipbox
 
            _flowExtensionExecutorService.ClearParameters();
 
-            IEnumerable<IClipboardItem> selectedItems = selectedItemIds.Select(id => _clipboardManager.GetClipboardItem(id, restoreShrinked: true));
+            List<IClipboardItem> selectedItems = new List<IClipboardItem>();
+            foreach (string id in selectedItemIds)
+            {
+                if (_clipboardManager.TryGetClipboardItem(id, out IClipboardItem clipboardItem, restoreShrinked: true))
+                {
+                    selectedItems.Add(clipboardItem);
+                }
+            }
 
             if (selectedMultiItemIds.Any())
             {
-                IEnumerable<IClipboardItem> selecteMultiItems = selectedMultiItemIds.Keys.Select(id => _clipboardManager.GetClipboardItem(id, restoreShrinked: true));
-                selectedItems = selectedItems.Concat(selecteMultiItems);
+                List<IClipboardItem> selecteMultiItems = new List<IClipboardItem>();
+                foreach (string id in selectedMultiItemIds.Keys)
+                {
+                    if (_clipboardManager.TryGetClipboardItem(id, out IClipboardItem clipboardItem, restoreShrinked: true))
+                    {
+                        selecteMultiItems.Add(clipboardItem);
+                        selectedItems.Add(clipboardItem);
+                    }
+                }
 
                 var multiItemSelectionParamDictionary = new Dictionary<string, int[]>();
                 foreach (IClipboardItem multiItem in selecteMultiItems)
