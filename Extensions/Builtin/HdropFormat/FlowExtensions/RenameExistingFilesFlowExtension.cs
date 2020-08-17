@@ -17,6 +17,7 @@ namespace Clipbox.Extensions.BuiltIn.HdropFormat.FlowExtensions
         public override void OnManagedPasteRequested(IClipboardItem clipboardItems, IWindowInfo targetWindowInfo, ref bool cancelPaste)
         {
             // resolve current explorer's address and if the folder contains files with names such as those awaiting paste, do what?
+            // Currently, ProcessModifyHdropTargets distincts the paths by filename, so only the first file of a group with the same filename will be pasted.
         }
     }
 }

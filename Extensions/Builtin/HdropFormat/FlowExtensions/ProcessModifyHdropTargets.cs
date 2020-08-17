@@ -5,6 +5,7 @@ using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Extensions.BuiltIn.HdropFormat.Enums;
 using Clipbox.Extensions.BuiltIn.HdropFormat.IntermediateFormats;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Clipbox.Extensions.BuiltIn.HdropFormat.FlowExtensions
@@ -64,7 +65,13 @@ namespace Clipbox.Extensions.BuiltIn.HdropFormat.FlowExtensions
                 ToList();
 
             selectedPaths.AddRange(singleItemsSelectedPaths);
-            
+
+            // do not allow more than one file with the same filename
+            selectedPaths = selectedPaths
+                .GroupBy(path => Path.GetFileName(path))
+                .Select(g => g.First()).ToList();
+
+
             DropEffects? requestedDropEffect = GetParameter<DropEffects?>(FlowParameters.PreferredDropEffect);
             DropEffects dropEffectToSet = DropEffects.DROPEFFECT_COPY;
             if (requestedDropEffect != null)
