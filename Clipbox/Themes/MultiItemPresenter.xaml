@@ -205,7 +205,6 @@
                                                 <Setter.Value>
                                                     <ControlTemplate>
                                                         <Grid Background="{StaticResource GridBackgroundBrush}">
-
                                                             <Grid.RowDefinitions>
                                                                 <RowDefinition Height="*" />
                                                                 <RowDefinition Height="30" />

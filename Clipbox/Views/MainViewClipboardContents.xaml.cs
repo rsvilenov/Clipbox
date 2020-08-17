@@ -452,9 +452,8 @@ namespace Clipbox.Views
 
         private void MainListView_ClipboardItemContentControl_MouseDoubleClickDetection_DoubleClickDetected(object sender, EventArgs e)
         {
-            if (MainListView.AreSelectedItemsCombinable
-                && MainListView.GetSelectedItemIds().Count == 1
-                && MainListView.GetSelectedMultiItemsIds().Count == 0)
+            if ((MainListView.AreAnyItemsSelected || MainListView.AreAnySubItemsSelected)
+                        && MainListView.AreSelectedItemsCombinable)
             {
                 SetSelectedItemsToClipboard();
             }
@@ -477,7 +476,7 @@ namespace Clipbox.Views
                 {
                     IsShowingOfPostSelectionToolboxEnabled = true;
                     base.ClearLoadedUIExtensions();
-                    if ((MainListView.AreAnyItemsSelected || MainListView.AreAnyItemsSelected)
+                    if ((MainListView.AreAnyItemsSelected || MainListView.AreAnySubItemsSelected)
                         && MainListView.AreSelectedItemsCombinable)
                     {
                         base.LoadUIExtensions(MainListView);

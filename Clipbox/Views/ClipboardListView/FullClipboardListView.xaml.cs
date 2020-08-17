@@ -262,12 +262,29 @@ namespace Clipbox.Views.ClipboardListView
                 // if the item has been previously selected, the first click will unselect it,
                 // so that we need to re-select it on the second click in order for it to be in
                 // the list with selected items.
-                var contentControl = (ContentControl)sender;
-                var itemWrapper = (ClipboardViewItemWrapper)contentControl.DataContext;
-                if (!itemWrapper.IsSelected)
+
+                FrameworkElement clickOriginalSourceElement = e.OriginalSource as FrameworkElement;
+                if (clickOriginalSourceElement != null)
                 {
-                    itemWrapper.IsSelected = true;
-                    this.SelectedItems.Add(itemWrapper);
+                    Clipbox.Views.ClipboardViewItemTile.MultiItemPresenter mip = Traversing.FindParent<Clipbox.Views.ClipboardViewItemTile.MultiItemPresenter>(clickOriginalSourceElement);
+                   if (mip != null)
+                    {
+                        ListViewItem subLvi = Traversing.FindParent<ListViewItem>(clickOriginalSourceElement);
+                        if (subLvi != null)
+                        {
+                            subLvi.IsSelected = true;
+                        }
+                    }
+                }
+                else
+                {
+                    var contentControl = (ContentControl)sender;
+                    var itemWrapper = (ClipboardViewItemWrapper)contentControl.DataContext;
+                    if (!itemWrapper.IsSelected)
+                    {
+                        itemWrapper.IsSelected = true;
+                        this.SelectedItems.Add(itemWrapper);
+                    }
                 }
 
                 // cancel the second click in a doubleclick so that it won't deselect the item

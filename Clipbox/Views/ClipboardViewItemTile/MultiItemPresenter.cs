@@ -2,11 +2,14 @@
 using Clipbox.Infrastructure.UI;
 using Clipbox.ViewModels.BindableObjects;
 using Clipbox.Views.Enums.ClipboardViewItemTile;
+using Clipbox.Win32;
+using Clipbox.Win32.Native;
 using System;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Interactivity;
 
 namespace Clipbox.Views.ClipboardViewItemTile
@@ -20,6 +23,23 @@ namespace Clipbox.Views.ClipboardViewItemTile
             DefaultStyleKeyProperty.OverrideMetadata(typeof(MultiItemPresenter), new FrameworkPropertyMetadata(typeof(MultiItemPresenter)));
 
             EventManager.RegisterClassHandler(typeof(ListView), ListView.SelectionChangedEvent, new SelectionChangedEventHandler(SubListView_SelectionChanged));
+            EventManager.RegisterClassHandler(typeof(ListViewItem), ListView.PreviewMouseLeftButtonDownEvent, new MouseButtonEventHandler(SubListView_PreviewMouseLeftButtonDownEvent));
+        }
+
+        private static void SubListView_PreviewMouseLeftButtonDownEvent(object sender, MouseButtonEventArgs e)
+        {
+            if (!KeyboardUtils.IsKeyPressed(Win32.Native.NativeEnums.Keys.LeftControl)
+                && !KeyboardUtils.IsKeyPressed(Win32.Native.NativeEnums.Keys.RightContol)
+                && (e.Source as ContentPresenter)?.Content?.GetType() == typeof(ClipboardViewSubItem))
+            {
+
+                var listViewItem = (ListViewItem)sender;
+                if (listViewItem.IsSelected)
+                {
+                    listViewItem.IsSelected = false;
+                    //e.Handled = true;
+                }
+            }
         }
 
         public ClipboardViewItemInfo ViewItemInfo

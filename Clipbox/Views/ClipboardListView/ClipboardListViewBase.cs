@@ -352,6 +352,10 @@ namespace Clipbox.Views.ClipboardListView
 
             IEnumerable<ClipboardViewSubItemBase> selectedItems = multiItemListView.SelectedItems.Cast<ClipboardViewSubItemBase>();
             IEnumerable<int> selectedIndices = selectedItems.Select(item => multiItemListView.Items.IndexOf(item));
+            //if (!selectedIndices.Any())
+            //{
+            //    return;
+            //}
 
             SelectedMultiItemsIds.Remove(mainViewItem.ClipboardItemId);
             if (selectedItems.Any())
@@ -418,6 +422,21 @@ namespace Clipbox.Views.ClipboardListView
                 && selectedItems.Any())
             {
                 this.UnselectAll();
+            }
+
+            // if we are not holding ctrl, unselect all previously selected subitems
+            if (!KeyboardUtils.IsKeyPressed(Win32.Native.NativeEnums.Keys.LeftControl)
+                && !KeyboardUtils.IsKeyPressed(Win32.Native.NativeEnums.Keys.RightContol)
+                && e.RemovedItems.Count > 0)
+            {
+                foreach (MultiItemPresenter mp in _loadedMultiItemPresenters)
+                {
+                    if (mp.GetSubItemsListView()?.SelectedItems.Count > 0 
+                        && mp.ViewItemWrapper != mainViewItemWrapper)
+                    {
+                        mp.GetSubItemsListView().UnselectAll();
+                    }
+                }
             }
 
             UpdateAreAnyItemsSelected();

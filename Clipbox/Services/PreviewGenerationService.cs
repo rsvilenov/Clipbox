@@ -305,11 +305,14 @@ namespace Clipbox.Services
                 cancellationToken);
 
             // store the preview for faster access
-            CacheGeneratedData(monitorDimensions, 
-                itemRequestedHeight, 
-                itemRequestedWidth, 
-                pdto, 
-                hasHeightBeenDpiScaled);
+            if (pdto.PreviewItems.All(pi => pi.PreviewDimensions != null))
+            {
+                CacheGeneratedData(monitorDimensions,
+                    itemRequestedHeight,
+                    itemRequestedWidth,
+                    pdto,
+                    hasHeightBeenDpiScaled);
+            }
         }
 
         public PreviewDataTransferObject GetPreviewDataTransferObject(IClipboardItem clipboardItem, MonitorDimensions monitorDimensions)
@@ -665,7 +668,7 @@ namespace Clipbox.Services
             catch (Exception ex) { throw new ClipboxExtensionException(nameof(manyPreviewGenerator.GetPreview), manyPreviewGenerator.GetType(), ex); }
 
             if (previewDataCollection != null
-                && !previewDataCollection.Any())
+                && previewDataCollection.Any())
             {
                 if (itemsCount == 0)
                 {
