@@ -7,7 +7,14 @@
 #include "Logger.h"
 #include "NamedPipeClient.h"
 #include "shlwapi.h"
+
+// GetDpiForMonitor 
+#include "shellscalingapi.h"
+
 #pragma comment(lib, "shlwapi.lib")
+
+// for shellscalingapi.h
+#pragma comment(lib, "shcore.lib")
 
 #define RECTWIDTH(x)   ((x).right - (x).left)
 #define RECTHEIGHT(x)  ((x).bottom - (x).top)
@@ -41,6 +48,8 @@ TOOLINFOW g_ToolInfo;
 
 ToolTip g_toolTip;
 Logger* g_Logger;
+
+UINT g_dpi = 96;
 
 
 CDeskBand::CDeskBand() :
@@ -404,13 +413,14 @@ void CDeskBand::OnFocus(const BOOL fFocus)
 void CDeskBand::DrawIcons(const HDC hdc, const RECT area)
 {
 	// center the icon
-	int iconWidth = 26;
-	int iconHeight = 26;
+	double scaleFactor = g_dpi / 96.0;
+	int iconWidth = (int)(26 * scaleFactor);
+	int iconHeight = (int)(26 * scaleFactor);
 	int iconX = (RECTWIDTH(area) - iconWidth) / 2;
 	int iconY = (RECTHEIGHT(area) - iconHeight) / 2;
 
-	// drow the main icon
-	HICON hIcon = (HICON) ::LoadImage(g_hInst, MAKEINTRESOURCE(IDI_ICON1), IMAGE_ICON, 26, 26, LR_SHARED | LR_LOADTRANSPARENT);
+	// draw the main icon
+	HICON hIcon = (HICON) ::LoadImage(g_hInst, MAKEINTRESOURCE(IDI_ICON1), IMAGE_ICON, iconWidth, iconHeight, LR_SHARED | LR_LOADTRANSPARENT);
 	if (!hIcon)
 	{
 		g_Logger->LogLastWin32Error();
@@ -428,7 +438,7 @@ void CDeskBand::DrawIcons(const HDC hdc, const RECT area)
 		// draw the slash icon if the program is disabled
 		if (g_isClipboxDisabled)
 		{
-			HICON hSlashIcon = (HICON) ::LoadImage(g_hInst, MAKEINTRESOURCE(IDI_ICON2), IMAGE_ICON, 26, 26, LR_SHARED | LR_LOADTRANSPARENT);
+			HICON hSlashIcon = (HICON) ::LoadImage(g_hInst, MAKEINTRESOURCE(IDI_ICON2), IMAGE_ICON, iconWidth, iconHeight, LR_SHARED | LR_LOADTRANSPARENT);
 			if (!hSlashIcon)
 			{
 				if (g_Logger)
@@ -518,6 +528,9 @@ LRESULT CALLBACK CDeskBand::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 	NamedPipeClient npClient;
 	BOOL previousDisabledState = g_isClipboxDisabled;
 
+	HMONITOR mon;
+	UINT dpiX, dpiY;
+
     CDeskBand *pDeskBand = reinterpret_cast<CDeskBand *>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
     switch (uMsg)
     {
@@ -525,6 +538,13 @@ LRESULT CALLBACK CDeskBand::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
         pDeskBand = reinterpret_cast<CDeskBand *>(reinterpret_cast<CREATESTRUCT *>(lParam)->lpCreateParams);
         pDeskBand->m_hwnd = hwnd;
         SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pDeskBand));
+
+		mon = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
+		
+		if (GetDpiForMonitor(mon, MDT_EFFECTIVE_DPI, &dpiX, &dpiY) == S_OK)
+		{
+			g_dpi = dpiY;
+		}
 
 		g_toolTip.Initialize(hwnd, TOOLTIP_TEXT);
 
@@ -645,6 +665,24 @@ LRESULT CALLBACK CDeskBand::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 		// hide the tooltip and stop the tooltip timer
 		g_toolTip.Hide();
 		KillTimer(hwnd, g_ToolTipDelayTimerID);
+		break;
+
+	// the deskband never receives this message...
+	//case WM_DPICHANGED:
+	//	g_dpi = HIWORD(wParam);
+
+	// so in odrer to detect a DPI change,
+	// I will have to use the general purpose message WM_SETTINGCHANGE
+	case WM_SETTINGCHANGE:
+		mon = MonitorFromWindow(hwnd, MONITOR_DEFAULTTONEAREST);
+
+		if (GetDpiForMonitor(mon, MDT_EFFECTIVE_DPI, &dpiX, &dpiY) == S_OK
+			&& g_dpi != dpiY)
+		{
+			g_dpi = dpiY;
+			RedrawWindow(hwnd, NULL, NULL, RDW_INVALIDATE);
+		}
+		
 		break;
     }
 
