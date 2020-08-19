@@ -443,16 +443,6 @@ namespace Clipbox.Win32
                 ApplicationPath = applicationPath,
                 Pid = applicationPid
             };
-
-            //if (string.IsNullOrWhiteSpace(windowCaption)
-            //    && !string.IsNullOrWhiteSpace(applicationPath)
-            //    && applicationPath.All(c => !Path.GetInvalidPathChars().Contains(c))
-            //    && Path.GetFileNameWithoutExtension(applicationPath).Equals("explorer", StringComparison.OrdinalIgnoreCase))
-            //{
-            //    windowInfo.Caption = "Desktop";
-            //    windowInfo.Icon = GetSmallIconFromDirectoryPath(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory));
-            //}
-            //else
             
             if (!string.IsNullOrWhiteSpace(applicationPath)
                 && applicationPath.All(c => !Path.GetInvalidPathChars().Contains(c))
@@ -461,7 +451,7 @@ namespace Clipbox.Win32
                 windowInfo.Caption = windowCaption;
                 windowInfo.Icon = ApplicationUtils.GetWindowsAppIcon(applicationPath);
             }
-            else //CLIPBRDWNDCLASS
+            else
             {
                 IntPtr hIcon = IntPtr.Zero;
                 IntPtr currentHwnd = hwnd;
@@ -479,7 +469,7 @@ namespace Clipbox.Win32
                     {
                         currentHwnd = GetForemostWindowHwnd();
                         
-                        // the Desktop window still has the old 3.1 style Program Manager's name (Progman) for some reason
+                        // the Desktop window still has the old 3.1 style Program Manager's class name (Progman) for some reason
                         StringBuilder foreWndClassName = new StringBuilder(256);
                         if (User32.GetClassName(currentHwnd, foreWndClassName, foreWndClassName.Capacity) > 0
                             && className.ToString() == "Progman")
@@ -540,39 +530,6 @@ namespace Clipbox.Win32
             
             return windowInfo;
         }
-
-        private static IntPtr GetMainExplorerWindow(IntPtr hWnd, int explorerPid)
-        {
-            IntPtr currentHwnd = hWnd;
-            while (currentHwnd != IntPtr.Zero)
-            {
-                StringBuilder className = new StringBuilder(256);
-                //Get the window class name
-                if (User32.GetClassName(currentHwnd, className, className.Capacity) > 0)
-                {
-                    if (className.ToString() == "CabinetWClass")
-                    {
-                        return currentHwnd;
-                    }
-                    else
-                    {
-                        IntPtr parentHwnd = GetParentWindow(currentHwnd);
-                        if (GetPidByHWnd(parentHwnd) == explorerPid && parentHwnd != currentHwnd)
-                        {
-                            currentHwnd = parentHwnd;
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                }
-            }
-
-            return currentHwnd;
-        }
-
-        
 
         /// <summary>
         /// Gets the screen position of the caret

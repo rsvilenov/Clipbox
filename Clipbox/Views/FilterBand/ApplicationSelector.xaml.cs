@@ -95,7 +95,9 @@ namespace Clipbox.Views.FilterBand
         private BitmapSource GetApplicationIcon(IApplicationInfo appInfo, byte[] iconByteArray)
         {
             string explorerPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "explorer.exe");
-            if (Path.Equals(appInfo.ApplicationPath, explorerPath))
+            
+            // Path.Equals is case sensitive...
+            if (string.Equals(appInfo.ApplicationPath, explorerPath, StringComparison.OrdinalIgnoreCase))
             {
                 if (_explorerIcon == null)
                 {
