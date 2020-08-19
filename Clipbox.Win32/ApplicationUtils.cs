@@ -241,7 +241,7 @@ namespace Clipbox.Win32
             }
         }
 
-        private static Bitmap ExtractIconFromModule(string path, int iconIndex = 0)
+        public static Bitmap ExtractIconFromModule(string path, int iconIndex = 0)
         {
             if (path == null)
             {

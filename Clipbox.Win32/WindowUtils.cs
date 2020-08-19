@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Xml.Linq;
@@ -52,6 +53,23 @@ namespace Clipbox.Win32
             return (int)processId;
         }
 
+        public static IntPtr GetParentWindow(IntPtr hWnd)
+        {
+            IntPtr hParent;
+
+            hParent = User32.GetAncestor(hWnd, NativeEnums.GetAncestorFlags.GetParent);
+            if (hParent == IntPtr.Zero || hParent == User32.GetDesktopWindow())
+            {
+                hParent = User32.GetParent(hWnd);
+                if (hParent == IntPtr.Zero || hParent == User32.GetDesktopWindow())
+                {
+                    hParent = hWnd;
+                }
+            }
+
+            return hParent;
+        }
+
         public static string GetWindowCaptionText(IntPtr hWnd)
         {
             // Allocate correct string length first
@@ -75,7 +93,7 @@ namespace Clipbox.Win32
                 return User32.GetClassLong64(hWnd, nIndex);
         }
         
-        public static Bitmap GetSmallWindowIcon(IntPtr hWnd)
+        public static IntPtr GetSmallWindowIconHwnd(IntPtr hWnd)
         {
             try
             {
@@ -91,18 +109,12 @@ namespace Clipbox.Win32
                 if (hIcon == IntPtr.Zero)
                     hIcon = User32.SendMessage(hWnd, NativeConstants.WmConstants.WM_GETICON, new IntPtr((int)NativeEnums.GET_ICON_TYPE.ICON_SMALL2), IntPtr.Zero);
 
-                // failed? try LoadIcon
-                if (hIcon == IntPtr.Zero)
-                    hIcon = User32.LoadIcon(IntPtr.Zero, (IntPtr)0x7F00/*IDI_APPLICATION*/);
 
-                if (hIcon != IntPtr.Zero)
-                    return new Bitmap(Icon.FromHandle(hIcon).ToBitmap(), 16, 16);
-                else
-                    return null;
+                return hIcon;
             }
             catch (Exception)
             {
-                return null;
+                return IntPtr.Zero;
             }
         }
 
@@ -432,28 +444,132 @@ namespace Clipbox.Win32
                 Pid = applicationPid
             };
 
-            if (string.IsNullOrWhiteSpace(windowCaption)
-                && !string.IsNullOrWhiteSpace(applicationPath)
-                && applicationPath.All(c => !Path.GetInvalidPathChars().Contains(c))
-                && Path.GetFileNameWithoutExtension(applicationPath).Equals("explorer", StringComparison.OrdinalIgnoreCase))
-            {
-                windowInfo.Caption = "Desktop";
-                windowInfo.Icon = GetSmallIconFromDirectoryPath(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory));
-            }
-            else if (!string.IsNullOrWhiteSpace(applicationPath)
+            //if (string.IsNullOrWhiteSpace(windowCaption)
+            //    && !string.IsNullOrWhiteSpace(applicationPath)
+            //    && applicationPath.All(c => !Path.GetInvalidPathChars().Contains(c))
+            //    && Path.GetFileNameWithoutExtension(applicationPath).Equals("explorer", StringComparison.OrdinalIgnoreCase))
+            //{
+            //    windowInfo.Caption = "Desktop";
+            //    windowInfo.Icon = GetSmallIconFromDirectoryPath(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory));
+            //}
+            //else
+            
+            if (!string.IsNullOrWhiteSpace(applicationPath)
                 && applicationPath.All(c => !Path.GetInvalidPathChars().Contains(c))
                 && ApplicationUtils.CheckIsWindowsApp(applicationPath))
             {
                 windowInfo.Caption = windowCaption;
                 windowInfo.Icon = ApplicationUtils.GetWindowsAppIcon(applicationPath);
             }
-            else
+            else //CLIPBRDWNDCLASS
             {
+                IntPtr hIcon = IntPtr.Zero;
+                IntPtr currentHwnd = hwnd;
+
+                StringBuilder className = new StringBuilder(256);
+                //Get the window class name
+                if (User32.GetClassName(currentHwnd, className, className.Capacity) > 0)
+                {
+                    // some applications (like windows explorer) utilize
+                    // a special window for setting items into the clipboard.
+                    // This window is not a child of the actually visible window,
+                    // but is created by csrss.exe instead. So we have to get the
+                    // actual window, which is (fingers crossed!) the one at the foreground.
+                    if (className.ToString() == "CLIPBRDWNDCLASS")
+                    {
+                        currentHwnd = GetForemostWindowHwnd();
+                        
+                        // the Desktop window still has the old 3.1 style Program Manager's name (Progman) for some reason
+                        StringBuilder foreWndClassName = new StringBuilder(256);
+                        if (User32.GetClassName(currentHwnd, foreWndClassName, foreWndClassName.Capacity) > 0
+                            && className.ToString() == "Progman")
+                        {
+                            windowInfo.Caption = "Desktop";
+                            windowInfo.Icon = GetSmallIconFromDirectoryPath(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory));
+                            return windowInfo;
+                        }
+                    }
+                }
+
+                while (hIcon == IntPtr.Zero && currentHwnd != IntPtr.Zero)
+                {
+                    hIcon = GetSmallWindowIconHwnd(currentHwnd);
+
+                    if (hIcon == IntPtr.Zero)
+                    {
+                        IntPtr parentHwnd = GetParentWindow(currentHwnd);
+                        if (GetPidByHWnd(parentHwnd) == applicationPid && parentHwnd != currentHwnd)
+                        {
+                            currentHwnd = parentHwnd;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
+                
+
+                if (currentHwnd != hwnd)
+                {
+                    windowCaption = GetWindowCaptionText(currentHwnd);
+                }
+
                 windowInfo.Caption = windowCaption;
-                windowInfo.Icon = GetSmallWindowIcon(hwnd);
+
+                if (hIcon != IntPtr.Zero)
+                {
+                    windowInfo.Icon = new Bitmap(Icon.FromHandle(hIcon).ToBitmap(), 16, 16);
+                }
+                else
+                {
+                    // failed? try extracting the icon from the exe
+                    windowInfo.Icon = ApplicationUtils.ExtractIconFromModule(applicationPath);
+
+                    // failed? try LoadIcon
+                    if (windowInfo.Icon == null)
+                    {
+                        hIcon = User32.LoadIcon(IntPtr.Zero, (IntPtr)0x7F00/*IDI_APPLICATION*/);
+                        if (hIcon != IntPtr.Zero)
+                        {
+                            windowInfo.Icon = new Bitmap(Icon.FromHandle(hIcon).ToBitmap(), 16, 16);
+                        }
+                    }
+                }
             }
             
             return windowInfo;
+        }
+
+        private static IntPtr GetMainExplorerWindow(IntPtr hWnd, int explorerPid)
+        {
+            IntPtr currentHwnd = hWnd;
+            while (currentHwnd != IntPtr.Zero)
+            {
+                StringBuilder className = new StringBuilder(256);
+                //Get the window class name
+                if (User32.GetClassName(currentHwnd, className, className.Capacity) > 0)
+                {
+                    if (className.ToString() == "CabinetWClass")
+                    {
+                        return currentHwnd;
+                    }
+                    else
+                    {
+                        IntPtr parentHwnd = GetParentWindow(currentHwnd);
+                        if (GetPidByHWnd(parentHwnd) == explorerPid && parentHwnd != currentHwnd)
+                        {
+                            currentHwnd = parentHwnd;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+
+            return currentHwnd;
         }
 
         

@@ -274,5 +274,15 @@ namespace Clipbox.Win32.Native
 
         [DllImport(ExternDll.User32, SetLastError = true, CharSet = CharSet.Auto)]
         internal static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
+
+        [DllImport(ExternDll.User32, ExactSpelling = true, CharSet = CharSet.Auto)]
+        internal static extern IntPtr GetParent(IntPtr hWnd);
+
+        [DllImport(ExternDll.User32, ExactSpelling = true)]
+        internal static extern IntPtr GetAncestor(IntPtr hwnd, GetAncestorFlags flags);
+
+        [DllImport(ExternDll.User32, SetLastError = false)]
+        internal static extern IntPtr GetDesktopWindow();
+
     }
 }
