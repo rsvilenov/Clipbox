@@ -645,7 +645,21 @@
                                                         PreviewContainerBackgroundColor="{DynamicResource TaskbarColor}"
                                                         ThumbnailAreaMaxHeight="{Binding Path=ClipboardViewItemMaxHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type lv:ClipboardListViewBase}}}"
                                                         ThumbnailAreaMinHeight="{Binding Path=ThumbnailAreaMaxHeight, RelativeSource={RelativeSource Mode=Self}}"
-                                                        ViewItemWrapper="{Binding Mode=OneTime, RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}, Path=DataContext}" />
+                                                        ViewItemWrapper="{Binding Mode=OneTime, RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}, Path=DataContext}">
+                                                        <tile:SingleItemPresenter.IsDimmed>
+                                                            <MultiBinding Converter="{StaticResource AndMultiValueConverter}">
+                                                                <Binding
+                                                                    Converter="{StaticResource InverseBooleanConverter}"
+                                                                    Path="IsManipulationEnabled"
+                                                                    RelativeSource="{RelativeSource AncestorType={x:Type Border}}" />
+                                                                <Binding Path="DimNonFocusedItems" RelativeSource="{RelativeSource AncestorType={x:Type lv:ClipboardListViewBase}}" />
+                                                                <Binding
+                                                                    Converter="{StaticResource InverseBooleanConverter}"
+                                                                    Path="DataContext.IsSelected"
+                                                                    RelativeSource="{RelativeSource AncestorType={x:Type ListViewItem}}" />
+                                                            </MultiBinding>
+                                                        </tile:SingleItemPresenter.IsDimmed>
+                                                    </tile:SingleItemPresenter>
                                                 </DataTemplate>
                                             </Setter.Value>
                                         </Setter>
@@ -675,6 +689,19 @@
                                                                 </Binding>
                                                             </MultiBinding>
                                                         </tile:MultiItemPresenter.Height>
+                                                        <tile:MultiItemPresenter.IsDimmed>
+                                                            <MultiBinding Converter="{StaticResource AndMultiValueConverter}">
+                                                                <Binding
+                                                                    Converter="{StaticResource InverseBooleanConverter}"
+                                                                    Path="IsManipulationEnabled"
+                                                                    RelativeSource="{RelativeSource AncestorType={x:Type Border}}" />
+                                                                <Binding Path="DimNonFocusedItems" RelativeSource="{RelativeSource AncestorType={x:Type lv:ClipboardListViewBase}}" />
+                                                                <Binding
+                                                                    Converter="{StaticResource InverseBooleanConverter}"
+                                                                    Path="DataContext.IsSelected"
+                                                                    RelativeSource="{RelativeSource AncestorType={x:Type ListViewItem}}" />
+                                                            </MultiBinding>
+                                                        </tile:MultiItemPresenter.IsDimmed>
                                                         <tile:MultiItemPresenter.Style>
                                                             <Style BasedOn="{StaticResource MultiItemPresenterStyleForSubItems_EventTriggersStyle}" TargetType="{x:Type tile:MultiItemPresenter}">
                                                                 <Setter Property="PreviewContainerBackgroundColor" Value="{DynamicResource TaskbarColor}" />

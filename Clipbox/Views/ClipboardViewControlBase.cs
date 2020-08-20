@@ -54,7 +54,16 @@ namespace Clipbox.Views
         public static readonly DependencyProperty ClipboardViewItemHeightProperty =
             DependencyProperty.Register(nameof(ClipboardViewItemMaxHeight), typeof(double), typeof(ClipboardViewControlBase), new PropertyMetadata(0d));
 
-        
+        public bool DimNonFocusedItems
+        {
+            get { return (bool)GetValue(DimNonFocusedItemsProperty); }
+            set { SetValue(DimNonFocusedItemsProperty, value); }
+        }
+
+        public static readonly DependencyProperty DimNonFocusedItemsProperty =
+            DependencyProperty.Register(nameof(DimNonFocusedItems), typeof(bool), typeof(ClipboardViewControlBase), new PropertyMetadata(false));
+
+
         /// <summary>
         /// Indicates whether we have ui extensions loaded. We cannot bind to uiExtensionContainer.Childern.Count because the
         /// collection does not raise change notifications. Therefore we need this property.
@@ -88,7 +97,7 @@ namespace Clipbox.Views
             _container = container;
             _settingsService = settingsService;
             _loadedExtensions = new List<IFlowUIExtension>();
-            
+
             Loaded += ClipboardViewControlBase_Loaded;
         }
 

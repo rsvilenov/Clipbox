@@ -140,7 +140,20 @@ namespace Clipbox.Views
                 throw new InvalidOperationException($"Setting {nameof(SettingsKeys.MaxNumOfItemToLoadAtOnce)} should be equal to 0 or greater than 0.");
             }
 
+            settingsService.SettingChanged += SettingsService_SettingChanged;
+
+            DimNonFocusedItems = settingsService.GetSetting<bool>(SettingsKeys.DimNonFocusedItemsInMainView);
+
             _searchTerms = new List<ISearchTerm>();
+        }
+
+        private void SettingsService_SettingChanged(object sender, SettingsEventArgs e)
+        {
+            ISettingsService settingsService = (ISettingsService)sender;
+            Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, (Action)(() =>
+            {
+                DimNonFocusedItems = settingsService.GetSetting<bool>(SettingsKeys.DimNonFocusedItemsInMainView);
+            }));
         }
 
         private void MainViewClipboardContents_Loaded(object sender, RoutedEventArgs e)

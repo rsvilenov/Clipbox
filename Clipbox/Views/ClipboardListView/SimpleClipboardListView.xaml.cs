@@ -12,21 +12,6 @@ namespace Clipbox.Views.ClipboardListView
     {
         public event EventHandler<UncombinableItemsEventArgs> UncombinableItemsSelected;
 
-        /// <summary>
-        /// Place a semi-transparent veil over the item when it is not focused
-        /// </summary>
-        public bool DimNonFocusedItems
-        {
-            get { return (bool)GetValue(DimNonFocusedItemsProperty); }
-            set { SetValue(DimNonFocusedItemsProperty, value); }
-        }
-
-        public static readonly DependencyProperty DimNonFocusedItemsProperty =
-            DependencyProperty.Register(nameof(DimNonFocusedItems), typeof(bool), typeof(SimpleClipboardListView), new PropertyMetadata(false));
-
-
-
-
         public Button ScrollUpButton
         {
             get { return (Button)GetValue(ScrollUpButtonProperty); }

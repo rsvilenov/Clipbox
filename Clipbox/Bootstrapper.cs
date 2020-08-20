@@ -290,7 +290,8 @@ namespace Clipbox
             _settingsService.SetSetting(SettingsKeys.PreviewItemHeightRatio, 0.13d);
             _settingsService.SetSetting(SettingsKeys.MaxPreviewItemsInGroupItem, 5);
             _settingsService.SetSetting(SettingsKeys.ResizeAccordingToMonitorOrSystemDpi, true);
-            _settingsService.SetSetting(SettingsKeys.DimNonFocusedItems, false);
+            _settingsService.SetSetting(SettingsKeys.DimNonFocusedItemsInQuickView, true);
+            _settingsService.SetSetting(SettingsKeys.DimNonFocusedItemsInMainView, false);
             _settingsService.SetSetting(SettingsKeys.IsDeskBandEnabled, true);
             _settingsService.SetSetting(SettingsKeys.IsTrayIconEnabled, true);
             _settingsService.SetSetting(SettingsKeys.IsCloudSyncEnabled, false);

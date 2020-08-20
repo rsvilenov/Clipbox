@@ -13,7 +13,9 @@ namespace Clipbox.Settings
 
         public static SettingKey<bool> ResizeAccordingToMonitorOrSystemDpi = new SettingKey<bool>(nameof(ResizeAccordingToMonitorOrSystemDpi), true);
 
-        public static SettingKey<bool> DimNonFocusedItems = new SettingKey<bool>(nameof(DimNonFocusedItems), false);
+        public static SettingKey<bool> DimNonFocusedItemsInQuickView = new SettingKey<bool>(nameof(DimNonFocusedItemsInQuickView), false);
+
+        public static SettingKey<bool> DimNonFocusedItemsInMainView = new SettingKey<bool>(nameof(DimNonFocusedItemsInMainView), false);
 
         public static SettingKey<bool> IsClipboardTrackingEnabled = new SettingKey<bool>(nameof(IsClipboardTrackingEnabled), true);
 

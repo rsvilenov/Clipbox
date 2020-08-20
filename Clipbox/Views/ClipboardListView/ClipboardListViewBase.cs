@@ -47,6 +47,18 @@ namespace Clipbox.Views.ClipboardListView
         public event EventHandler<ClipboardItemManipulationCancelEventArgs> ItemCanPinRequested;
 
         /// <summary>
+        /// Place a semi-transparent veil over the item when it is not focused
+        /// </summary>
+        public bool DimNonFocusedItems
+        {
+            get { return (bool)GetValue(DimNonFocusedItemsProperty); }
+            set { SetValue(DimNonFocusedItemsProperty, value); }
+        }
+
+        public static readonly DependencyProperty DimNonFocusedItemsProperty =
+            DependencyProperty.Register(nameof(DimNonFocusedItems), typeof(bool), typeof(ClipboardListViewBase), new PropertyMetadata(false));
+
+        /// <summary>
         /// Contains the command for the Close and Pin buttons.
         /// We do not want these commands to be publicly accessible, but we cannot make the 
         /// ICommand properties protected as they should be public or they will not work, yet we do not want to 

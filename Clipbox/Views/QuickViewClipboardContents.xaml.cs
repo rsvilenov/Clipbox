@@ -31,15 +31,6 @@ namespace Clipbox.Views
 
         private ISettingsService _settingsService;
 
-        public bool DimNonFocusedItems
-        {
-            get { return (bool)GetValue(DimNonFocusedItemsProperty); }
-            set { SetValue(DimNonFocusedItemsProperty, value); }
-        }
-        
-        public static readonly DependencyProperty DimNonFocusedItemsProperty =
-            DependencyProperty.Register(nameof(DimNonFocusedItems), typeof(bool), typeof(QuickViewClipboardContents), new PropertyMetadata(false));
-
         private bool _isDisposing;
 
         public QuickViewClipboardContents(QuickViewkClipboardContentsViewModel vm, UIExtensionContainer container, ISettingsService settingsService)
@@ -52,12 +43,21 @@ namespace Clipbox.Views
 
             _settingsService = settingsService;
 
-            _settingsService.SettingChanged += _settingsService_SettingChanged;
-            DimNonFocusedItems = _settingsService.GetSetting<bool>(SettingsKeys.DimNonFocusedItems);
-            
             IsVisibleChanged += QuickViewClipboardContents_IsVisibleChanged;
 
+            _settingsService.SettingChanged += _settingsService_SettingChanged;
+
+            DimNonFocusedItems = settingsService.GetSetting<bool>(SettingsKeys.DimNonFocusedItemsInQuickView);
+
             MainListView.UncombinableItemsSelected += MainListView_UncombinableItemsSelected;
+        }
+
+        private void _settingsService_SettingChanged(object sender, SettingsEventArgs e)
+        {
+            Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, (Action)(() =>
+            {
+                DimNonFocusedItems = _settingsService.GetSetting<bool>(SettingsKeys.DimNonFocusedItemsInQuickView);
+            }));
         }
 
         private void MainListView_UncombinableItemsSelected(object sender, UncombinableItemsEventArgs e)
@@ -148,16 +148,6 @@ namespace Clipbox.Views
                     });
                 }));
             }
-        }
-
-        
-
-        private void _settingsService_SettingChanged(object sender, SettingsEventArgs e)
-        {
-            Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, (Action)(() =>
-            {
-                DimNonFocusedItems = _settingsService.GetSetting<bool>(SettingsKeys.DimNonFocusedItems);
-            }));
         }
 
         private void LoadViewItems()
