@@ -259,6 +259,24 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Dim the previews in the Main View (the fullscreen window) when they are not in focus.
+        /// </summary>
+        internal static string LBL_SETTINGS_DIM_NON_FOCUSED_ITEMS_IN_MV {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_DIM_NON_FOCUSED_ITEMS_IN_MV", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dim the previews in the Quick View when they are not in focus.
+        /// </summary>
+        internal static string LBL_SETTINGS_DIM_NON_FOCUSED_ITEMS_IN_QV {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_DIM_NON_FOCUSED_ITEMS_IN_QV", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Disabled extensions.
         /// </summary>
         internal static string LBL_SETTINGS_DISABLED_EXTENSIONS_LIST {

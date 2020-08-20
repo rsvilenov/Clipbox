@@ -151,7 +151,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Save the last chosen separator.
+        ///   Looks up a localized string similar to When pasting two or more text items together, save the last chosen separator.
         /// </summary>
         internal static string LBL_SAVE_LAST_SEPARATOR {
             get {

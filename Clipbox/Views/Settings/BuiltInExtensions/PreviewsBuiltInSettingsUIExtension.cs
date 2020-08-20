@@ -11,7 +11,9 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
         protected override void RegisterSettingUIParts(IBuiltInSettingsUIBuilder builder)
         {
             builder
-                .Add(SettingsKeys.MaxPreviewItemsInGroupItem, new MaxPreviewItemsInGroupSettingUIPart());
+                .Add(SettingsKeys.MaxPreviewItemsInGroupItem, new MaxPreviewItemsInGroupSettingUIPart())
+                .Add(SettingsKeys.DimNonFocusedItemsInQuickView, new DimNonFocusedItemsInQVSettingUIPart())
+                .Add(SettingsKeys.DimNonFocusedItemsInMainView, new DimNonFocusedItemsInMVSettingUIPart());
         }
     }
 }

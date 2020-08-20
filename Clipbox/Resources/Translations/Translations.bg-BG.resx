@@ -183,6 +183,12 @@
   <data name="LBL_SETTINGS_CONFIRM_ENABLE_DEPENDENT_EXTENSION" xml:space="preserve">
     <value>Позволяването на това разширение ще позволи и следните зависими от него разширения:</value>
   </data>
+  <data name="LBL_SETTINGS_DIM_NON_FOCUSED_ITEMS_IN_MV" xml:space="preserve">
+    <value>Затъмнявай прегледите в Основния преглед (прозорецът на цял екран), когато не са на фокус</value>
+  </data>
+  <data name="LBL_SETTINGS_DIM_NON_FOCUSED_ITEMS_IN_QV" xml:space="preserve">
+    <value>Затъмнявай прегледите в Бързия преглед, когато не са на фокус</value>
+  </data>
   <data name="LBL_SETTINGS_DISABLED_EXTENSIONS_LIST" xml:space="preserve">
     <value>Забранени разширения</value>
   </data>

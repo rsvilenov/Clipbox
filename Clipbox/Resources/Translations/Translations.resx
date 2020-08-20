@@ -183,6 +183,12 @@
   <data name="LBL_SETTINGS_CONFIRM_ENABLE_DEPENDENT_EXTENSION" xml:space="preserve">
     <value>Enabling this extension will enable the following extensions, which depend on it:</value>
   </data>
+  <data name="LBL_SETTINGS_DIM_NON_FOCUSED_ITEMS_IN_MV" xml:space="preserve">
+    <value>Dim the previews in the Main View (the fullscreen window) when they are not in focus</value>
+  </data>
+  <data name="LBL_SETTINGS_DIM_NON_FOCUSED_ITEMS_IN_QV" xml:space="preserve">
+    <value>Dim the previews in the Quick View when they are not in focus</value>
+  </data>
   <data name="LBL_SETTINGS_DISABLED_EXTENSIONS_LIST" xml:space="preserve">
     <value>Disabled extensions</value>
   </data>

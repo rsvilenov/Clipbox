@@ -130,7 +130,7 @@
     <value>Paste with a space between items</value>
   </data>
   <data name="LBL_SAVE_LAST_SEPARATOR" xml:space="preserve">
-    <value>Save the last chosen separator</value>
+    <value>When pasting two or more text items together, save the last chosen separator</value>
   </data>
   <data name="STR_CHARACTER" xml:space="preserve">
     <value>character</value>

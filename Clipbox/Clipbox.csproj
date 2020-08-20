@@ -297,6 +297,12 @@
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\BackgroundPreviewGenerationSettingUIPart.xaml.cs">
       <DependentUpon>BackgroundPreviewGenerationSettingUIPart.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\DimNonFocusedItemsInMVSettingUIPart.xaml.cs">
+      <DependentUpon>DimNonFocusedItemsInMVSettingUIPart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\DimNonFocusedItemsInQVSettingUIPart.xaml.cs">
+      <DependentUpon>DimNonFocusedItemsInQVSettingUIPart.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\HelperControls\BindableObjects\ExtensionDisplayInfo.cs" />
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\HelperControls\DepencentExtensionsConfirmation.xaml.cs">
       <DependentUpon>DepencentExtensionsConfirmation.xaml</DependentUpon>
@@ -504,6 +510,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\BuiltInExtensions\UIParts\ClipboardTrackingSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\BuiltInExtensions\UIParts\DimNonFocusedItemsInMVSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\BuiltInExtensions\UIParts\DimNonFocusedItemsInQVSettingUIPart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
