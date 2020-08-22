@@ -83,6 +83,13 @@ namespace Clipbox.Services
                 ShowTrayIcon();
             }
 
+            // manage the files, signalling the state to the deskband:
+            // when we start, the paused state is impossible, so delete any leftover file from previous state signalling
+            SetTrayBandSignalFileForPauseStateChanged(false);
+            // get the "enabled" state and delete/create the signalling file accordingly
+            bool isClipboardTrackingEnabled = _settingsService.GetSetting<bool>(SettingsKeys.IsClipboardTrackingEnabled);
+            SetTrayBandFileForEnabledStateChanged(isClipboardTrackingEnabled);
+
             _settingsService.SettingChanged += _settingsService_SettingChanged;
             _pauseService.PauseStateChanged += _pauseService_PauseStateChanged;
         }
@@ -127,6 +134,23 @@ namespace Clipbox.Services
             if (e.IsPaused && e.PauseIntervalMs != -1)
             {
                 _isClipboardTrackingPaused = true;
+                SetTrayBandSignalFileForPauseStateChanged(true);
+            }
+            else if (File.Exists(disabledFileName))
+            {
+                _isClipboardTrackingPaused = false;
+                SetTrayBandSignalFileForPauseStateChanged(false);
+            }
+
+            SetTrayIconImage();
+        }
+
+        private void SetTrayBandSignalFileForPauseStateChanged(bool isPaused)
+        {
+            string disabledFileName = Path.Combine(AppDataUtils.GetAppDataDir(false), "paused");
+            if (isPaused)
+            {
+                _isClipboardTrackingPaused = true;
                 File.Create(disabledFileName).Dispose();
             }
             else if (File.Exists(disabledFileName))
@@ -134,8 +158,6 @@ namespace Clipbox.Services
                 _isClipboardTrackingPaused = false;
                 File.Delete(disabledFileName);
             }
-
-            SetTrayIconImage();
         }
 
         private void _settingsService_SettingChanged(object sender, SettingsEventArgs e)
@@ -153,22 +175,34 @@ namespace Clipbox.Services
             }
             else if (e.Key == SettingsKeys.IsClipboardTrackingEnabled)
             {
-                // create this file in AppData so that the deskband can find it. 
-                // IMPORTANT: Do not use IPersistenceProvider here, because its implementation may change,
-                // and we want to store the filename precisely in %APPDATA%\Clipbox, so that the
-                // deskband Shell extension, which is written in c++, can read it.
-                string disabledFileName = Path.Combine(AppDataUtils.GetAppDataDir(false), "disabled");
                 if ((bool)e.Value)
                 {
-                    File.Delete(disabledFileName);
                     _isClipboardTrackingPaused = false;
+                    SetTrayBandFileForEnabledStateChanged(true);
                 }
                 else
                 {
-                    File.Create(disabledFileName).Dispose();
+                    SetTrayBandFileForEnabledStateChanged(false);
                 }
 
                 SetTrayIconImage();
+            }
+        }
+
+        private void SetTrayBandFileForEnabledStateChanged(bool isEnabled)
+        {
+            // create this file in AppData so that the deskband can find it. 
+            // IMPORTANT: Do not use IPersistenceProvider here, because its implementation may change,
+            // and we want to store the filename precisely in %APPDATA%\Clipbox, so that the
+            // deskband Shell extension, which is written in c++, can read it.
+            string disabledFileName = Path.Combine(AppDataUtils.GetAppDataDir(false), "disabled");
+            if (isEnabled)
+            {
+                File.Delete(disabledFileName);
+            }
+            else
+            {
+                File.Create(disabledFileName).Dispose();
             }
         }
 
