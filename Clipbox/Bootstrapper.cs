@@ -55,6 +55,7 @@ namespace Clipbox
         CloudSynchronizationService _cloudSyncService;
         MainClipboardViewWindowService _mainClipboardViewWindowService;
         TrayContextMenuService _trayContextMenuService;
+        PauseService _pauseService;
         TrayBandService _trayBandService;
         ExtensionLoader _extensionLoader;
         QuickViewClipboardContents _quickViewClipboardContents;
@@ -180,7 +181,8 @@ namespace Clipbox
             _cloudSyncService = new CloudSynchronizationService(_clipboardManager, new GoogleDriveCloudSupportProvider(), appGuid);
             _cloudSyncService.IsEnabled = _settingsService.GetSetting<bool>(SettingsKeys.IsCloudSyncEnabled);
 
-            _trayContextMenuService = new TrayContextMenuService(_settingsService);
+            _pauseService = new PauseService(_settingsService);
+            _trayContextMenuService = new TrayContextMenuService(_settingsService, _pauseService);
 
             _searchProviderSelectorService = new SearchProviderSelectorService(_settingsService, _persistenceProvider, encryptionProvider, sessionId);
             ISearchProvider searchProvider = _searchProviderSelectorService.GetSearchProvider();
@@ -375,6 +377,7 @@ namespace Clipbox
             if (Interlocked.Increment(ref _shutdownSequenceCallCount) == 1)
             {
                 // try to dispose of everything, regardless of the exceptions that may occur
+                TryDisposeObject(_pauseService);
                 TryDisposeObject(_keyboardService);
                 TryDisposeObject(_flowController);
                 TryDisposeObject(_cloudSyncService);

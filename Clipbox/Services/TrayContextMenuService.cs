@@ -26,11 +26,11 @@ namespace Clipbox.Services
 
         public event EventHandler SettingsWindowOpenRequested;
 
-        public TrayContextMenuService(ISettingsService settingsService)
+        public TrayContextMenuService(ISettingsService settingsService, IPauseService pauseService)
         {
             _settingsService = settingsService;
 
-            _trayContextMenuViewModel = new TrayContextMenuViewModel(_settingsService);
+            _trayContextMenuViewModel = new TrayContextMenuViewModel(_settingsService, pauseService);
             _trayContextMenuViewModel.SettingsWindowOpenRequested += _trayContextMenuViewModel_SettingsWindowOpenRequested;
 
             _mouseHook = new MouseLLHook();

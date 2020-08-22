@@ -10,15 +10,19 @@ namespace Clipbox.ViewModels
 {
     public class TrayContextMenuViewModel : BindableObject
     {
-        private ISettingsService _settingsService;
-        
+        private readonly ISettingsService _settingsService;
+        private readonly IPauseService _pauseService;
+
+
         public event EventHandler ToggleMainWindowOpenRequested;
 
         public event EventHandler SettingsWindowOpenRequested;
 
         public ICommand ToggleCloudSyncEnabled { get; }
 
-        public ICommand TogglePaused { get; }
+        public ICommand Pause { get; }
+
+        public ICommand Resume { get; }
 
         public ICommand Quit { get; }
 
@@ -47,19 +51,35 @@ namespace Clipbox.ViewModels
             set { SetField(ref _isMainWindowOpen, value); }
         }
 
-        public TrayContextMenuViewModel(ISettingsService settingsService)
+        public TrayContextMenuViewModel(ISettingsService settingsService, IPauseService pauseService)
         {
             _settingsService = settingsService;
+            _pauseService = pauseService;
 
             IsCloudSyncEnabled = _settingsService.GetSetting<bool>(SettingsKeys.IsCloudSyncEnabled);
-            IsPaused = _settingsService.GetSetting<bool>(SettingsKeys.IsClipboardTrackingEnabled);
+            IsPaused = !_settingsService.GetSetting<bool>(SettingsKeys.IsClipboardTrackingEnabled);
 
             ToggleCloudSyncEnabled = new DelegateCommand(ToggleCloudSyncEnabledHandler);
-            TogglePaused = new DelegateCommand(TogglePausedHandler);
+            Pause = new DelegateCommand<object>(PauseHandler);
+            Resume = new DelegateCommand(ResumeHandler);
             ToggleMainWindowOpen = new DelegateCommand(ToggleMainWindowOpenHandler);
 
             Quit = new DelegateCommand(QuitHandler);
             OpenSettingsWindow = new DelegateCommand(() => SettingsWindowOpenRequested?.Invoke(this, new EventArgs()));
+        }
+
+        private void ResumeHandler()
+        {
+            if (_pauseService.IsClipboardTrackingPaused)
+            {
+                _pauseService.ResumeClipboardTracking();
+            }
+            else
+            {
+                _settingsService.SetSetting(SettingsKeys.IsClipboardTrackingEnabled, true);
+            }
+
+            IsPaused = false;
         }
 
         private void QuitHandler()
@@ -73,17 +93,24 @@ namespace Clipbox.ViewModels
             IsMainWindowOpen = !IsMainWindowOpen;
         }
 
-        private void TogglePausedHandler()
+        private void PauseHandler(object intervalObj)
         {
-            if (_settingsService.GetSetting<bool>(SettingsKeys.IsClipboardTrackingEnabled))
+            if (long.TryParse(intervalObj?.ToString(), out long interval))
             {
-                _settingsService.SetSetting(SettingsKeys.IsClipboardTrackingEnabled, false);
+                if (interval == -1)
+                {
+                    _settingsService.SetSetting(SettingsKeys.IsClipboardTrackingEnabled, false);
+                }
+                else
+                {
+                    _pauseService.PauseClipboardTrackingFor(interval);
+                }
+
                 IsPaused = true;
             }
             else
             {
-                _settingsService.SetSetting(SettingsKeys.IsClipboardTrackingEnabled, true);
-                IsPaused = false;
+                throw new InvalidOperationException("Please provide a command parameter for the 'pause' options, which can be handled by long.Parse()");
             }
         }
 
