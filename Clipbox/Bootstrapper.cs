@@ -206,7 +206,7 @@ namespace Clipbox
 
             _trayBandService = new TrayBandService(_mainClipboardViewWindowService, _trayContextMenuService, _settingsService);
 
-            _trayService = new TrayIconService(_mainClipboardViewWindowService, _trayContextMenuService, _settingsService);
+            _trayService = new TrayIconService(_mainClipboardViewWindowService, _trayContextMenuService, _settingsService, _pauseService);
 
             _settingsWindowService = new SettingsWindowService(_settingsService, _mainClipboardViewWindowService, _trayContextMenuService, _extensionLoader.SettingsUIExtensionContainer);
 
@@ -327,21 +327,13 @@ namespace Clipbox
         {
             if (e.Key == SettingsKeys.IsClipboardTrackingEnabled)
             {
-                // create this file in AppData so that the deskband can find it. 
-                // IMPORTANT: Do not use IPersistenceProvider here, because its implementation may change,
-                // and we want to store the filename precisely in %APPDATA%\Clipbox, so that the
-                // deskband Shell extension, which is written in c++, can read it.
-                string disabledFileName = Path.Combine(AppDataUtils.GetAppDataDir(false), "disabled");
                 if ((bool)e.Value)
                 {
-                    File.Delete(disabledFileName);
                     _clipboardManager.IsClipboardTrackingEnabled = true;
                 }
                 else
                 {
-                    // disable the clipboard manager as well
                     _clipboardManager.IsClipboardTrackingEnabled = false;
-                    File.Create(disabledFileName).Dispose();
                 }
             }
             else if (e.Key == SettingsKeys.IsCloudSyncEnabled)

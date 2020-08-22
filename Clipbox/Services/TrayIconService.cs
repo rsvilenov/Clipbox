@@ -19,6 +19,8 @@ using System.Windows;
 using System.Windows.Interop;
 using Clipbox.Services.EventArgsClasses;
 using Clipbox.Infrastructure.UI.Resources;
+using System.IO;
+using Clipbox.Infrastructure.Persistence.FilesystemAccess;
 
 namespace Clipbox.Services
 {
@@ -36,21 +38,20 @@ namespace Clipbox.Services
 
         private uint _taskbarCreatedMessageId;
         
-        private IMainClipboardViewWindowService _mainClipboardViewWindowService;
-
-        private ITrayContextMenuService _trayContextMenuService;
-
-        private ISettingsService _settingsService;
+        private readonly IMainClipboardViewWindowService _mainClipboardViewWindowService;
+        private readonly ITrayContextMenuService _trayContextMenuService;
+        private readonly ISettingsService _settingsService;
+        private readonly IPauseService _pauseService;
 
         public TrayIconService(IMainClipboardViewWindowService mainClipboardViewWindowService, 
             ITrayContextMenuService trayContextMenuService,
-            ISettingsService settingsService)
+            ISettingsService settingsService,
+            IPauseService pauseService)
         {
             _mainClipboardViewWindowService = mainClipboardViewWindowService;
-            
             _trayContextMenuService = trayContextMenuService;
-
             _settingsService = settingsService;
+            _pauseService = pauseService;
 
             _taskbarIcon = new TaskbarIcon
             {
@@ -84,6 +85,20 @@ namespace Clipbox.Services
             }
 
             _settingsService.SettingChanged += _settingsService_SettingChanged;
+            _pauseService.PauseStateChanged += _pauseService_PauseStateChanged;
+        }
+
+        private void _pauseService_PauseStateChanged(object sender, PauseEventArgs e)
+        {
+            string disabledFileName = Path.Combine(AppDataUtils.GetAppDataDir(false), "paused");
+            if (e.IsPaused && e.PauseIntervalMs != -1)
+            {
+                File.Create(disabledFileName).Dispose();
+            }
+            else if (File.Exists(disabledFileName))
+            {
+                File.Delete(disabledFileName);
+            }
         }
 
         private void _settingsService_SettingChanged(object sender, SettingsEventArgs e)
@@ -97,6 +112,22 @@ namespace Clipbox.Services
                 else
                 {
                     HideTrayIcon();
+                }
+            }
+            else if (e.Key == SettingsKeys.IsClipboardTrackingEnabled)
+            {
+                // create this file in AppData so that the deskband can find it. 
+                // IMPORTANT: Do not use IPersistenceProvider here, because its implementation may change,
+                // and we want to store the filename precisely in %APPDATA%\Clipbox, so that the
+                // deskband Shell extension, which is written in c++, can read it.
+                string disabledFileName = Path.Combine(AppDataUtils.GetAppDataDir(false), "disabled");
+                if ((bool)e.Value)
+                {
+                    File.Delete(disabledFileName);
+                }
+                else
+                {
+                    File.Create(disabledFileName).Dispose();
                 }
             }
         }

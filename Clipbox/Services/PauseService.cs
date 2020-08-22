@@ -1,4 +1,5 @@
-﻿using Clipbox.Services.Interfaces;
+﻿using Clipbox.Services.EventArgsClasses;
+using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using System;
 using System.Timers;
@@ -9,6 +10,8 @@ namespace Clipbox.Services
     {
         private readonly ISettingsService _settingsService;
         private Timer _pauseTimer;
+
+        public event EventHandler<PauseEventArgs> PauseStateChanged;
 
         public PauseService(ISettingsService settingsService)
         {
@@ -29,6 +32,7 @@ namespace Clipbox.Services
             {
                 _pauseTimer.Stop();
                 IsClipboardTrackingPaused = false;
+                PauseStateChanged?.Invoke(this, new PauseEventArgs(false, 0));
             }
         }
 
@@ -36,6 +40,7 @@ namespace Clipbox.Services
         {
             _settingsService.SetSetting(SettingsKeys.IsClipboardTrackingEnabled, true);
             IsClipboardTrackingPaused = false;
+            PauseStateChanged?.Invoke(this, new PauseEventArgs(false, 0));
         }
 
         public void PauseClipboardTrackingFor(long milliseconds)
@@ -49,6 +54,7 @@ namespace Clipbox.Services
             _settingsService.SetSetting(SettingsKeys.IsClipboardTrackingEnabled, false);
             _pauseTimer.Interval = milliseconds;
             _pauseTimer.Start();
+            PauseStateChanged?.Invoke(this, new PauseEventArgs(true, milliseconds));
         }
 
         public void ResumeClipboardTracking()
@@ -58,6 +64,7 @@ namespace Clipbox.Services
                 _pauseTimer.Stop();
                 _settingsService.SetSetting(SettingsKeys.IsClipboardTrackingEnabled, true);
                 IsClipboardTrackingPaused = false;
+                PauseStateChanged?.Invoke(this, new PauseEventArgs(false, 0));
             }
         }
 

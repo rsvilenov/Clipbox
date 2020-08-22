@@ -42,6 +42,7 @@ LPCWSTR TOOLTIP_TEXT = L"Clipbox";
 BOOL g_mouseOver = false;
 BOOL g_fMouseTracking = false;
 BOOL g_isClipboxDisabled = false;
+BOOL g_isClipboxPaused = false;
 
 HWND g_ToolTipHwnd;
 TOOLINFOW g_ToolInfo;
@@ -435,9 +436,29 @@ void CDeskBand::DrawIcons(const HDC hdc, const RECT area)
 
 		DestroyIcon(hIcon);
 
-		// draw the slash icon if the program is disabled
-		if (g_isClipboxDisabled)
+		if (g_isClipboxPaused)
 		{
+			// draw the pause icon if the program is disabled
+			HICON hPauseIcon = (HICON) ::LoadImage(g_hInst, MAKEINTRESOURCE(IDI_ICON3), IMAGE_ICON, iconWidth, iconHeight, LR_SHARED | LR_LOADTRANSPARENT);
+			if (!hPauseIcon)
+			{
+				if (g_Logger)
+					g_Logger->LogLastWin32Error();
+			}
+			else
+			{
+				if (!DrawIconEx(hdc, iconX + iconWidth / 2, iconY + iconHeight / 2, hPauseIcon, iconWidth / 2, iconHeight / 2, 0, NULL, DI_NORMAL))
+				{
+					if (g_Logger)
+						g_Logger->LogLastWin32Error();
+				}
+
+				DestroyIcon(hPauseIcon);
+			}
+		}
+		else if (g_isClipboxDisabled)
+		{
+			// draw the slash icon if the program is disabled
 			HICON hSlashIcon = (HICON) ::LoadImage(g_hInst, MAKEINTRESOURCE(IDI_ICON2), IMAGE_ICON, iconWidth, iconHeight, LR_SHARED | LR_LOADTRANSPARENT);
 			if (!hSlashIcon)
 			{
@@ -505,19 +526,29 @@ void CDeskBand::InitializeLogger()
 	}
 }
 
-void CDeskBand::RefreshClipboxDisabledState()
+void CDeskBand::RefreshClipboxDisabledOrPausedState()
 {
+	g_isClipboxDisabled = CheckIfAppDataFileExists(L"disabled");
+	g_isClipboxPaused = CheckIfAppDataFileExists(L"paused");
+}
+
+bool CDeskBand::CheckIfAppDataFileExists(LPCWSTR fileName)
+{
+	bool exists = false;
 	WCHAR szAppData[MAX_PATH];
+
 	HRESULT hr = SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, szAppData);
 	if (SUCCEEDED(hr))
 	{
 		PathAppendW(szAppData, APPDATA_SUBFOLDER);
-		PathAppendW(szAppData, L"disabled");
+		PathAppendW(szAppData, fileName);
 		DWORD dwAttrib = GetFileAttributes(szAppData);
 		// if the file exists, Clipbox is disabled
-		g_isClipboxDisabled = ((dwAttrib != INVALID_FILE_ATTRIBUTES &&
+		exists = ((dwAttrib != INVALID_FILE_ATTRIBUTES &&
 			!(dwAttrib & FILE_ATTRIBUTE_DIRECTORY)));
 	}
+
+	return exists;
 }
 
 LRESULT CALLBACK CDeskBand::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -527,6 +558,7 @@ LRESULT CALLBACK CDeskBand::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 	TRACKMOUSEEVENT tme;
 	NamedPipeClient npClient;
 	BOOL previousDisabledState = g_isClipboxDisabled;
+	BOOL previousPausedState = g_isClipboxPaused;
 
 	HMONITOR mon;
 	UINT dpiX, dpiY;
@@ -558,8 +590,9 @@ LRESULT CALLBACK CDeskBand::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 	case WM_TIMER:
 		if (wParam == g_TickTimerID)
 		{
-			pDeskBand->RefreshClipboxDisabledState();
-			if (previousDisabledState != g_isClipboxDisabled)
+			pDeskBand->RefreshClipboxDisabledOrPausedState();
+			if (previousDisabledState != g_isClipboxDisabled
+				|| previousPausedState != g_isClipboxPaused)
 			{
 				RedrawWindow(hwnd, NULL, NULL, RDW_INVALIDATE);
 			}

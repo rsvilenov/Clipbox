@@ -61,7 +61,8 @@ private:
 
 	void DrawIcons(const HDC hdc, const RECT area);
 	void InitializeLogger();
-	void RefreshClipboxDisabledState();
+	void RefreshClipboxDisabledOrPausedState();
+	bool CheckIfAppDataFileExists(LPCWSTR fileName);
 	HRESULT SendFormatedPipeMessage(IN const char* command, HWND hWnd);
 
     LONG                m_cRef;                 // ref count of deskband
