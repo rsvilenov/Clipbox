@@ -20,7 +20,6 @@
         Width="50"
         HorizontalAlignment="Center"
         VerticalAlignment="Center"
-        Foreground="Gray"
         Opacity="0"
         Template="{DynamicResource MainLoadingIcon}" />
 

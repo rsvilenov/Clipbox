@@ -358,47 +358,51 @@ namespace Clipbox.Views
 
         private void DeleteConfirmationPopup_DialogAnswered(object sender, Dialog.EventArgsClasses.DialogAnswerEventArgs e)
         {
-            try
+            if (e.SelectedButton == Dialog.Enums.DialogButtons.Yes)
             {
-                if (e.SelectedButton == Dialog.Enums.DialogButtons.Yes)
+                IReadOnlyCollection<string> selectedItemIds = MainListView.GetSelectedItemIds();
+
+                //MainListViewContainer.Visibility = Visibility.Hidden;
+
+                // disable the post-selection logic and the compatibility checks, 
+                // as the items in the item collection will change during deletion,
+                // and compatibility checks normally will be requested.
+                MainListView.SuppressCustomSelectionProcessing = true;
+
+                LoadingPopupGovernor.OpenPopup(this, Brushes.White);
+
+                Task.Run(() =>
                 {
-                    IReadOnlyCollection<string> selectedItemIds = MainListView.GetSelectedItemIds();
-
-                    MainListViewContainer.Visibility = Visibility.Hidden;
-                    // disable the post-selection logic and the compatibility checks, 
-                    // as the items in the item collection will change during deletion,
-                    // and compatibility checks normally will be requested.
-                    MainListView.SuppressCustomSelectionProcessing = true;
-
-                    Task.Run(() =>
+                    try
                     {
-                        try
-                        {
-                            PerformDisposeSafeOperation
-                            (
-                                () => _viewModel.DeleteItems(selectedItemIds)
-                            );
+                        System.Threading.Thread.Sleep(3000);
 
-                            Dispatcher.Invoke(() =>
-                            {
+                        PerformDisposeSafeOperation
+                        (
+                            () => _viewModel.DeleteItems(selectedItemIds)
+                        );
+
+                        Dispatcher.Invoke(() =>
+                        {
                                 // decrease the total number of items to load in all pages
                                 // by the number of the deleted items.
                                 AllPagesItemsCount -= selectedItemIds.Count();
-                            });
-                        }
-                        finally
+                        });
+                    }
+                    finally
+                    {
+                        Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
                         {
-                            Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
-                            {
                                 // re-enable the post-selection logic and the compatibility checks
                                 MainListView.SuppressCustomSelectionProcessing = false;
-                                MainListViewContainer.Visibility = Visibility.Visible;
-                            }));
-                        }
-                    });
-                }
+                                //MainListViewContainer.Visibility = Visibility.Visible;
+                                this.IsEnabled = true;
+                            LoadingPopupGovernor.ClosePopup();
+                        }));
+                    }
+                });
             }
-            finally
+            else
             {
                 this.IsEnabled = true;
             }
@@ -610,22 +614,40 @@ namespace Clipbox.Views
             // our stack frame and is such that we can unsubscribe it from the event later.
             EventHandler<DialogAnswerEventArgs> answerHandler = (s, args) =>
             {
-                dialogMre.Set();
                 if (args.SelectedButton == Dialog.Enums.DialogButtons.Yes)
                 {
-                    List<string> itsToDelete = _viewModel
-                        .ClipboardViewItemWrappers
-                        .Where(w => w.DateCreated.Date == e.Day)
-                        .Select(w => w.Id)
-                        .ToList(); // DeleteClipboardEntry operates on the same collection (ClipboardViewItemWrappers), so we need to create a new collection for our items for deletion
-
-                    foreach (string id in itsToDelete)
+                    LoadingPopupGovernor.OpenPopup(this, Brushes.White);
+                    Task.Run(() =>
                     {
-                        _viewModel.DeleteClipboardEntry(id);
-                    }
+                        try
+                        {
+                            List<string> itsToDelete = _viewModel
+                                .ClipboardViewItemWrappers
+                                .Where(w => w.DateCreated.Date == e.Day)
+                                .Select(w => w.Id)
+                                .ToList();
 
-                    // decrease the total number of items to load in all pages by the count of the deleted items
-                    AllPagesItemsCount -= itsToDelete.Count;
+                            PerformDisposeSafeOperation
+                            (
+                                () => _viewModel.DeleteItems(itsToDelete)
+                            );
+
+                            // decrease the total number of items to load in all pages by the count of the deleted items
+                            Dispatcher.Invoke(() => AllPagesItemsCount -= itsToDelete.Count);
+                        }
+                        finally
+                        {
+                            try { LoadingPopupGovernor.ClosePopup(); }
+                            finally
+                            {
+                                dialogMre.Set();
+                            }
+                        }
+                    });
+                }
+                else
+                {
+                    dialogMre.Set();
                 }
             };
 

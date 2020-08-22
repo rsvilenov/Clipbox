@@ -4,6 +4,7 @@ using System;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Interop;
+using System.Windows.Media;
 
 namespace Clipbox.Views
 {
@@ -32,8 +33,12 @@ namespace Clipbox.Views
             _parentHwnd = new WindowInteropHelper(Window.GetWindow(Parent)).Handle;
             Parent.IsVisibleChanged += Parent_IsVisibleChanged;
         }
-
         public static void OpenPopup(FrameworkElement parent)
+        {
+            OpenPopup(parent, Brushes.Gray);
+        }
+
+        public static void OpenPopup(FrameworkElement parent, Brush foreground)
         {
             if (parent == null)
             {
@@ -70,7 +75,10 @@ namespace Clipbox.Views
                                 return;
                             }
 
-                            _popup = new LoadingIndicatorPopup();
+                            _popup = new LoadingIndicatorPopup
+                            {
+                                Foreground = foreground
+                            };
 
                             _popup.Closed += _popup_Closed;
                             _popup.SourceInitialized += _popup_SourceInitialized;
