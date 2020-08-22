@@ -38,6 +38,8 @@ namespace Clipbox.Views.ClipboardListView
 
         public event EventHandler<ClipboardItemManipulationEventArgs> ItemDeletionRequested;
 
+        public event EventHandler<ClipboardItemGroupManipulationEventArgs> ItemGroupDeletionRequested;
+
         public event EventHandler<ClipboardItemManipulationEventArgs> ItemRemovalRequested;
 
         public event EventHandler<ClipboardItemManipulationEventArgs> ItemPinUnpinRequested;
@@ -156,6 +158,9 @@ namespace Clipbox.Views.ClipboardListView
                  * and prevent the possibility of the user to click on the button twice in a row) */
                 (item) => item?.GetHashCode() != _hashCodeOfItemUndergoingDeletionOrRemoval),
 
+                DeleteClipboardEntryGroup = new DelegateCommand<ClipboardViewItem>(DeleteClipboardEntryGroupHandler,
+                (item) => item?.GetHashCode() != _hashCodeOfItemUndergoingDeletionOrRemoval),
+
                 RemoveClipboardEntry = new DelegateCommand<ClipboardViewItem>(RemoveClipboardEntryHandler,
                 (item) => item?.GetHashCode() != _hashCodeOfItemUndergoingDeletionOrRemoval),
 
@@ -165,6 +170,18 @@ namespace Clipbox.Views.ClipboardListView
                 EnableDisableSyncOfClipboardEntry = new DelegateCommand<ClipboardViewItem>(EnableDisableSyncOfClipboardEntryHandler,
                     dispatcherPriority: DispatcherPriority.ContextIdle)
             };
+        }
+
+        private void DeleteClipboardEntryGroupHandler(ClipboardViewItem parameter)
+        {
+            if (parameter != null)
+            {
+                // block consequent executions of the command until the event handlers are executed
+                _hashCodeOfItemUndergoingDeletionOrRemoval = parameter.GetHashCode();
+                ItemGroupDeletionRequested?.Invoke(this, new ClipboardItemGroupManipulationEventArgs(parameter.DateCreated.Date));
+                // unblock the CanExecute of the command
+                _hashCodeOfItemUndergoingDeletionOrRemoval = 0;
+            }
         }
 
         private bool PinUnpinClipboardEntryCanExecuteHandler(ClipboardViewItem cvi)
@@ -566,6 +583,8 @@ namespace Clipbox.Views.ClipboardListView
         protected class ActionButtonsDataContextClass
         {
             public ICommand DeleteClipboardEntry { get; set; }
+
+            public ICommand DeleteClipboardEntryGroup { get; set; }
 
             public ICommand RemoveClipboardEntry { get; set; }
 

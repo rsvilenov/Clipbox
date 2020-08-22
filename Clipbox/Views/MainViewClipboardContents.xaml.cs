@@ -553,6 +553,112 @@ namespace Clipbox.Views
 
 
 
+        public string GroupNameUndergoingDeletion
+        {
+            get { return (string)GetValue(GroupNameUndergoingDeletionProperty); }
+            set { SetValue(GroupNameUndergoingDeletionProperty, value); }
+        }
+
+        public static readonly DependencyProperty GroupNameUndergoingDeletionProperty =
+            DependencyProperty.Register(nameof(GroupNameUndergoingDeletion), typeof(string), typeof(MainViewClipboardContents), new PropertyMetadata(string.Empty));
+
+
+
+        private void MainListView_ItemGroupDeletionRequested(object sender, EventArgsClasses.ClipboardItemGroupManipulationEventArgs e)
+        {
+            // find the selected list view item by the ClipboardItemId
+            var wrapper = _viewModel.ClipboardViewItemWrappers
+                .OrderByDescending(w => w.DateCreated)
+                .FirstOrDefault(w => w.DateCreated.Date == e.Day);
+
+            if (wrapper == null)
+            {
+                throw new ArgumentException($"{nameof(_viewModel.ClipboardViewItemWrappers)} does not contain an item from {e.Day}.");
+            }
+
+            if (!(MainListView.ItemContainerGenerator.ContainerFromItem(wrapper) is ListViewItem selectedListViewItem))
+            {
+                throw new ArgumentException($"The list view does not contain an item with id {wrapper.Id}.");
+            }
+
+            //GroupItem itemGroupItem = Traversing.FindParent<GroupItem>(selectedListViewItem);
+            GroupNameUndergoingDeletion = wrapper.DateCreatedFriendly;
+
+            // unselet all selected items, including the one that we are going to delete
+            MainListView.UnselectAll();
+            MainListView.UnselectMultiItemSubItems();
+
+            // disable the entire control
+            this.IsEnabled = false;
+
+            // store the original border brush of the group
+            //Brush oldBorderBrush = itemGroupItem.BorderBrush;
+
+            // set the popup location to that of the selected listview item
+            deleteGroupConfirmationPopup.PlacementTarget = selectedListViewItem;
+
+            // try to place the popup at the bottom of the item
+            deleteGroupConfirmationPopup.Placement = PlacementMode.Bottom;
+
+            // open the popup
+            deleteGroupConfirmationPopup.IsOpen = true;
+
+            // we are going to wait for the answer of the popup
+            AutoResetEvent dialogMre = new AutoResetEvent(false);
+
+            // declare an event handler which can access the variables in
+            // our stack frame and is such that we can unsubscribe it from the event later.
+            EventHandler<DialogAnswerEventArgs> answerHandler = (s, args) =>
+            {
+                dialogMre.Set();
+                if (args.SelectedButton == Dialog.Enums.DialogButtons.Yes)
+                {
+                    List<string> itsToDelete = _viewModel
+                        .ClipboardViewItemWrappers
+                        .Where(w => w.DateCreated.Date == e.Day)
+                        .Select(w => w.Id)
+                        .ToList(); // DeleteClipboardEntry operates on the same collection (ClipboardViewItemWrappers), so we need to create a new collection for our items for deletion
+
+                    foreach (string id in itsToDelete)
+                    {
+                        _viewModel.DeleteClipboardEntry(id);
+                    }
+
+                    // decrease the total number of items to load in all pages by the count of the deleted items
+                    AllPagesItemsCount -= itsToDelete.Count;
+                }
+            };
+
+            deleteGroupConfirmationPopup.DialogAnswered += answerHandler;
+
+            // declare an event handler that will set the reset event upon closing the view,
+            // so that we can still execute the cleanup code if the user closes the view
+            // while the popup is still open.
+            DependencyPropertyChangedEventHandler visHandler = (s, args) => dialogMre.Set();
+
+            this.IsVisibleChanged += visHandler;
+
+            // wait for the reset event in another task, so we do not block the ui thread 
+            Task.Run(() =>
+            {
+                dialogMre.WaitOne();
+                dialogMre.Dispose();
+
+                // unsubscribe from the event handlers
+                deleteGroupConfirmationPopup.DialogAnswered -= answerHandler;
+                this.IsVisibleChanged -= visHandler;
+
+                // if the view is still visible (if it is not being closed and we
+                // are not coming here from the event handler of IsVisibleChanged),
+                // then re-enable the entire control.
+                if (this.IsVisible)
+                {
+                    Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle,
+                        new Action(() => this.IsEnabled = true));
+                }
+            });
+        }
+
         /// <summary>
         /// This method contains some really questionable code, but these days I am out of shape.
         /// </summary>

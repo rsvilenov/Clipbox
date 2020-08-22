@@ -296,6 +296,23 @@
                                     Style="{DynamicResource BtnTrash}" />
 
                                 <localDialog:DialogPopup
+                                    x:Name="deleteGroupConfirmationPopup"
+                                    MaxWidth="350"
+                                    DefaultButton="No"
+                                    DialogueType="YesNo"
+                                    IsOpen="False"
+                                    Placement="Bottom"
+                                    PlacementTarget="{Binding ElementName=trashBtn}"
+                                    ReturnFocusTo="{Binding ElementName=MainListView}">
+                                    <localDialog:DialogPopup.DialogText>
+                                        <MultiBinding StringFormat="{}{0} {1}?">
+                                            <Binding Source="Are you sure you want to delete all the items from" />
+                                            <Binding Path="GroupNameUndergoingDeletion" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type views:ClipboardViewControlBase}}" />
+                                        </MultiBinding>
+                                    </localDialog:DialogPopup.DialogText>
+                                </localDialog:DialogPopup>
+
+                                <localDialog:DialogPopup
                                     x:Name="deleteConfirmationPopup"
                                     MaxWidth="350"
                                     DefaultButton="No"
@@ -420,8 +437,8 @@
                 Grid.Row="1"
                 VerticalAlignment="Bottom"
                 VerticalContentAlignment="Center"
-                BorderBrush="Transparent"
-                Click="SettingsButton_Click">
+                Click="SettingsButton_Click"
+                Style="{DynamicResource IconButton}">
                 <ContentControl Margin="15" Template="{DynamicResource SettingsIcon}" />
             </Button>
 
@@ -567,6 +584,7 @@
                 IsInnerGroupingEnabled="False"
                 ItemDeletionRequested="MainListView_ItemDeletionRequested"
                 ItemEnableDisableSyncRequested="MainListView_ItemEnableDisableSyncRequested"
+                ItemGroupDeletionRequested="MainListView_ItemGroupDeletionRequested"
                 ItemPinUnpinRequested="MainListView_ItemPinUnpinRequested"
                 ItemsSource="{Binding Source={StaticResource ListViewSource}}"
                 LoadMoreItemsRequested="MainListView_LoadMoreItemsRequested"
