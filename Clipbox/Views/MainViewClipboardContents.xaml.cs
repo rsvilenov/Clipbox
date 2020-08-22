@@ -375,8 +375,6 @@ namespace Clipbox.Views
                 {
                     try
                     {
-                        System.Threading.Thread.Sleep(3000);
-
                         PerformDisposeSafeOperation
                         (
                             () => _viewModel.DeleteItems(selectedItemIds)
