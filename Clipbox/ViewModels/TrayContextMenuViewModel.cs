@@ -66,6 +66,16 @@ namespace Clipbox.ViewModels
 
             Quit = new DelegateCommand(QuitHandler);
             OpenSettingsWindow = new DelegateCommand(() => SettingsWindowOpenRequested?.Invoke(this, new EventArgs()));
+
+            _settingsService.SettingChanged += _settingsService_SettingChanged;
+        }
+
+        private void _settingsService_SettingChanged(object sender, Services.EventArgsClasses.SettingsEventArgs e)
+        {
+            if (e.Key == SettingsKeys.IsClipboardTrackingEnabled)
+            {
+                IsPaused = !_settingsService.GetSetting<bool>(SettingsKeys.IsClipboardTrackingEnabled);
+            }
         }
 
         private void ResumeHandler()

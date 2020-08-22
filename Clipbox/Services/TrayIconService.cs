@@ -37,6 +37,8 @@ namespace Clipbox.Services
         private HwndSource _msgOnlyWindow;
 
         private uint _taskbarCreatedMessageId;
+
+        private bool _isClipboardTrackingPaused;
         
         private readonly IMainClipboardViewWindowService _mainClipboardViewWindowService;
         private readonly ITrayContextMenuService _trayContextMenuService;
@@ -59,11 +61,8 @@ namespace Clipbox.Services
                 ToolTipText = ProductConstants.PRODUCT_NAME
             };
 
-            using (Bitmap bmpIcon = ResourceUtils.GetApplicationIcon())
-            {
-                _taskbarIcon.Icon = bmpIcon.ToIcon();
-            }
-            
+            SetTrayIconImage();
+
             using (Process p = Process.GetCurrentProcess())
             {
                 _currentProcessName = p.ProcessName;
@@ -71,14 +70,14 @@ namespace Clipbox.Services
 
             _taskbarIcon.TrayLeftMouseUp += _taskbarIcon_TrayLeftMouseUp;
             _taskbarIcon.TrayRightMouseUp += _taskbarIcon_TrayRightMouseUp;
-            
+
             _msgOnlyWindow = new HwndSource(0, 0, 0, 0, 0, 0, 0, null, IntPtr.Zero);
             _msgOnlyWindow.AddHook(new HwndSourceHook(WndProc));
 
             _taskbarCreatedMessageId = Win32.Native.User32.RegisterWindowMessage("TaskbarCreated");
 
             UnfilterTaskbarCreatedMessage();
-            
+
             if (_settingsService.GetSetting<bool>(SettingsKeys.IsTrayIconEnabled))
             {
                 ShowTrayIcon();
@@ -88,17 +87,55 @@ namespace Clipbox.Services
             _pauseService.PauseStateChanged += _pauseService_PauseStateChanged;
         }
 
+        private void SetTrayIconImage()
+        {
+            using (Bitmap bmpIcon = ResourceUtils.GetApplicationIcon())
+            using (Bitmap result = new Bitmap(Math.Max(bmpIcon.Width, bmpIcon.Width),
+                         Math.Max(bmpIcon.Height, bmpIcon.Height)))
+            using (Graphics g = Graphics.FromImage(result))
+            {
+                g.DrawImage(bmpIcon, System.Drawing.Point.Empty);
+
+
+                if (_isClipboardTrackingPaused)
+                {
+                    using (var iconStream = Assembly.GetAssembly(this.GetType())
+                            .GetManifestResourceStream("Clipbox.Resources.Images.TrayIcon.Pause.png"))
+                    using (var pauseBmp = (Bitmap)Image.FromStream(iconStream))
+                    {
+                        g.DrawImage(pauseBmp, bmpIcon.Width / 2, bmpIcon.Height / 2, (int)(bmpIcon.Width / 1.5), (int)(bmpIcon.Height / 1.5));
+                    }
+                }
+                else if (!_settingsService.GetSetting<bool>(SettingsKeys.IsClipboardTrackingEnabled))
+                {
+                    using (var iconStream = Assembly.GetAssembly(this.GetType())
+                            .GetManifestResourceStream("Clipbox.Resources.Images.TrayIcon.Slash.png"))
+                    using (var slashBmp = (Bitmap)Image.FromStream(iconStream))
+                    {
+                        g.DrawImage(slashBmp, 0, 0, bmpIcon.Width, bmpIcon.Height);
+                    }
+                }
+
+                _taskbarIcon.Icon = result.ToIcon();
+            }
+
+        }
+
         private void _pauseService_PauseStateChanged(object sender, PauseEventArgs e)
         {
             string disabledFileName = Path.Combine(AppDataUtils.GetAppDataDir(false), "paused");
             if (e.IsPaused && e.PauseIntervalMs != -1)
             {
+                _isClipboardTrackingPaused = true;
                 File.Create(disabledFileName).Dispose();
             }
             else if (File.Exists(disabledFileName))
             {
+                _isClipboardTrackingPaused = false;
                 File.Delete(disabledFileName);
             }
+
+            SetTrayIconImage();
         }
 
         private void _settingsService_SettingChanged(object sender, SettingsEventArgs e)
@@ -124,11 +161,14 @@ namespace Clipbox.Services
                 if ((bool)e.Value)
                 {
                     File.Delete(disabledFileName);
+                    _isClipboardTrackingPaused = false;
                 }
                 else
                 {
                     File.Create(disabledFileName).Dispose();
                 }
+
+                SetTrayIconImage();
             }
         }
 
