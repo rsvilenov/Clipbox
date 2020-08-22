@@ -142,6 +142,15 @@ namespace Clipbox.Extensions.BuiltIn.General.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Select apps from the list below.
+        /// </summary>
+        internal static string LBL_BLACKLISTED_APPS_SELECT_APPS_MSG {
+            get {
+                return ResourceManager.GetString("LBL_BLACKLISTED_APPS_SELECT_APPS_MSG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Blacklisted applications.
         /// </summary>
         internal static string LBL_INSTALLED_APP_SELECTOR_TITLE {

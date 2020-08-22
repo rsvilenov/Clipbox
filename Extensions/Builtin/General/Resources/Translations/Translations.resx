@@ -141,6 +141,9 @@
   <data name="LBL_BLACKLISTED_APPS_NONE" xml:space="preserve">
     <value>None</value>
   </data>
+  <data name="LBL_BLACKLISTED_APPS_SELECT_APPS_MSG" xml:space="preserve">
+    <value>Select apps from the list below</value>
+  </data>
   <data name="LBL_BLACKLIST_SEARCH_OVERLAY" xml:space="preserve">
     <value>Type here to search</value>
   </data>

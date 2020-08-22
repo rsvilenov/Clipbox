@@ -151,79 +151,103 @@
                     </TextBlock>
                 </GroupBox.Header>
 
-                <ListView
-                    VerticalAlignment="Stretch"
-                    Background="{DynamicResource ControlBackgroundBrush}"
-                    BorderBrush="{DynamicResource ControlBorderBrush}"
-                    BorderThickness="1"
-                    ItemsSource="{Binding SelectedApps}"
-                    ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                    ScrollViewer.VerticalScrollBarVisibility="Auto">
-                    <ListView.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <WrapPanel Margin="10" />
-                        </ItemsPanelTemplate>
-                    </ListView.ItemsPanel>
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="{x:Type ListViewItem}">
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type ListViewItem}">
-                                        <ContentPresenter
-                                            Margin="5,0,0,5"
-                                            HorizontalAlignment="Stretch"
-                                            VerticalAlignment="Stretch"
-                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </ListView.ItemContainerStyle>
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <Border
-                                BorderBrush="DarkGray"
-                                BorderThickness="1"
-                                CornerRadius="1">
-                                <Grid Margin="5,3,3,5" Background="Transparent">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="40" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="40" />
-                                    </Grid.ColumnDefinitions>
-                                    <Image
-                                        Grid.Column="0"
-                                        MaxHeight="20"
-                                        Margin="5,0,0,0"
-                                        HorizontalAlignment="Left"
-                                        VerticalAlignment="Center"
-                                        Source="{Binding Path=Icon}"
-                                        ToolTip="{Binding Path=ProductName}" />
-                                    <TextBlock
-                                        Grid.Column="1"
-                                        VerticalAlignment="Center"
-                                        Foreground="White"
-                                        Text="{Binding ProductName}">
-                                        <i:Interaction.Behaviors>
-                                            <infBeh:FrameworkElementDpiScalingBehavior MaxScaleFactor="1.5" />
-                                        </i:Interaction.Behaviors>
-                                    </TextBlock>
-                                    <Button
-                                        Grid.Column="2"
-                                        MaxWidth="15"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        Command="{Binding DataContext.RemoveApplication, ElementName=mainBorder}"
-                                        CommandParameter="{Binding}"
-                                        Style="{DynamicResource BtnRemove}"
-                                        ToolTip="{loc:Localize TTP_BLACKLISTED_APPS_REMOVE,
-                                                               ResourceLookupMode=CurrentAssembly}" />
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
+                <Grid>
+                    <ListView
+                        VerticalAlignment="Stretch"
+                        Background="{DynamicResource ControlBackgroundBrush}"
+                        BorderBrush="{DynamicResource ControlBorderBrush}"
+                        BorderThickness="1"
+                        ItemsSource="{Binding SelectedApps}"
+                        ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                        ScrollViewer.VerticalScrollBarVisibility="Auto">
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapPanel Margin="10" />
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="{x:Type ListViewItem}">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type ListViewItem}">
+                                            <ContentPresenter
+                                                Margin="5,0,0,5"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Stretch"
+                                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Border
+                                    BorderBrush="DarkGray"
+                                    BorderThickness="1"
+                                    CornerRadius="1">
+                                    <Grid Margin="5,3,3,5" Background="Transparent">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="40" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="40" />
+                                        </Grid.ColumnDefinitions>
+                                        <Image
+                                            Grid.Column="0"
+                                            MaxHeight="20"
+                                            Margin="5,0,0,0"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center"
+                                            Source="{Binding Path=Icon}"
+                                            ToolTip="{Binding Path=ProductName}" />
+                                        <TextBlock
+                                            Grid.Column="1"
+                                            VerticalAlignment="Center"
+                                            Foreground="White"
+                                            Text="{Binding ProductName}">
+                                            <i:Interaction.Behaviors>
+                                                <infBeh:FrameworkElementDpiScalingBehavior MaxScaleFactor="1.5" />
+                                            </i:Interaction.Behaviors>
+                                        </TextBlock>
+                                        <Button
+                                            Grid.Column="2"
+                                            MaxWidth="15"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            Command="{Binding DataContext.RemoveApplication, ElementName=mainBorder}"
+                                            CommandParameter="{Binding}"
+                                            Style="{DynamicResource BtnRemove}"
+                                            ToolTip="{loc:Localize TTP_BLACKLISTED_APPS_REMOVE,
+                                                                   ResourceLookupMode=CurrentAssembly}" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="16"
+                        FontWeight="Bold"
+                        Foreground="{DynamicResource ControlForegroundBrush}"
+                        Text="{loc:Localize LBL_BLACKLISTED_APPS_SELECT_APPS_MSG,
+                                            ResourceLookupMode=CurrentAssembly}">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding Path=SelectedApps.Count}" Value="0">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </Grid>
             </GroupBox>
+
+
             <GroupBox
                 Grid.Row="2"
                 Grid.ColumnSpan="2"
