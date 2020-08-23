@@ -549,6 +549,33 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to items.
+        /// </summary>
+        internal static string LBL_TILE_MULTIITEM_PRESENTER_N_ITEMS {
+            get {
+                return ResourceManager.GetString("LBL_TILE_MULTIITEM_PRESENTER_N_ITEMS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to of.
+        /// </summary>
+        internal static string LBL_TILE_MULTIITEM_PRESENTER_N_OF_N {
+            get {
+                return ResourceManager.GetString("LBL_TILE_MULTIITEM_PRESENTER_N_OF_N", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to selected.
+        /// </summary>
+        internal static string LBL_TILE_MULTIITEM_PRESENTER_N_SELECTED {
+            get {
+                return ResourceManager.GetString("LBL_TILE_MULTIITEM_PRESENTER_N_SELECTED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Off.
         /// </summary>
         internal static string TGL_BTN_LBL_Off {
@@ -680,6 +707,33 @@ namespace Clipbox.Resources.Translations {
         internal static string TTP_TILE_CONTENT_TYPE_TEXT {
             get {
                 return ResourceManager.GetString("TTP_TILE_CONTENT_TYPE_TEXT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to doesn&apos;t know how to generate a preview for this item..
+        /// </summary>
+        internal static string TTP_TILE_ITEM_PRESENTER_NO_GENERATOR_FOUND_SUFFIX {
+            get {
+                return ResourceManager.GetString("TTP_TILE_ITEM_PRESENTER_NO_GENERATOR_FOUND_SUFFIX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Something went wrong..
+        /// </summary>
+        internal static string TTP_TILE_ITEM_PRESENTER_SOMETHING_WRONG {
+            get {
+                return ResourceManager.GetString("TTP_TILE_ITEM_PRESENTER_SOMETHING_WRONG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The preview generation for this item took too long..
+        /// </summary>
+        internal static string TTP_TILE_ITEM_PRESENTER_TIMEOUT {
+            get {
+                return ResourceManager.GetString("TTP_TILE_ITEM_PRESENTER_TIMEOUT", resourceCulture);
             }
         }
     }

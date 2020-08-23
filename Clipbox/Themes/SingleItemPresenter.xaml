@@ -4,6 +4,7 @@
     xmlns:core="clr-namespace:Clipbox.Core;assembly=Clipbox.Core"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:infBeh="clr-namespace:Clipbox.Infrastructure.UI.Behaviors;assembly=Clipbox.Infrastructure.UI"
+    xmlns:loc="clr-namespace:Clipbox.Infrastructure.UI.Localization;assembly=Clipbox.Infrastructure.UI.Localization"
     xmlns:local="clr-namespace:Clipbox.Views.ClipboardViewItemTile"
     xmlns:servicesEnums="clr-namespace:Clipbox.Services.Enums">
 
@@ -220,7 +221,7 @@
 
                             <Setter Property="ToolTip">
                                 <Setter.Value>
-                                    <TextBlock Text="Something went wrong.">
+                                    <TextBlock Text="{loc:Localize TTP_TILE_ITEM_PRESENTER_SOMETHING_WRONG}">
                                         <i:Interaction.Behaviors>
                                             <infBeh:FrameworkElementDpiScalingBehavior />
                                         </i:Interaction.Behaviors>
@@ -245,7 +246,7 @@
                                         <Setter.Value>
                                             <TextBlock>
                                                 <Run Text="{x:Static core:ProductConstants.PRODUCT_NAME}" />
-                                                <Run Text="doesn't know how to generate a preview for this item." />
+                                                <Run Text="{loc:Localize TTP_TILE_ITEM_PRESENTER_NO_GENERATOR_FOUND_SUFFIX}" />
                                                 <i:Interaction.Behaviors>
                                                     <infBeh:FrameworkElementDpiScalingBehavior />
                                                 </i:Interaction.Behaviors>
@@ -267,7 +268,7 @@
                                     </Setter>
                                     <Setter Property="ToolTip">
                                         <Setter.Value>
-                                            <TextBlock Text="The preview generation for this item took too long.">
+                                            <TextBlock Text="{loc:Localize TTP_TILE_ITEM_PRESENTER_TIMEOUT}">
                                                 <i:Interaction.Behaviors>
                                                     <infBeh:FrameworkElementDpiScalingBehavior />
                                                 </i:Interaction.Behaviors>

@@ -281,6 +281,15 @@ Warning: more rows means more RAM usage!</value>
   <data name="LBL_SETTINGS_WINDOW_TITLE_SETTINGS_PART" xml:space="preserve">
     <value>settings</value>
   </data>
+  <data name="LBL_TILE_MULTIITEM_PRESENTER_N_ITEMS" xml:space="preserve">
+    <value>items</value>
+  </data>
+  <data name="LBL_TILE_MULTIITEM_PRESENTER_N_OF_N" xml:space="preserve">
+    <value>of</value>
+  </data>
+  <data name="LBL_TILE_MULTIITEM_PRESENTER_N_SELECTED" xml:space="preserve">
+    <value>selected</value>
+  </data>
   <data name="TGL_BTN_LBL_Off" xml:space="preserve">
     <value>Off</value>
   </data>
@@ -325,5 +334,14 @@ Warning: more rows means more RAM usage!</value>
   </data>
   <data name="TTP_TILE_CONTENT_TYPE_TEXT" xml:space="preserve">
     <value>Text</value>
+  </data>
+  <data name="TTP_TILE_ITEM_PRESENTER_NO_GENERATOR_FOUND_SUFFIX" xml:space="preserve">
+    <value>doesn't know how to generate a preview for this item.</value>
+  </data>
+  <data name="TTP_TILE_ITEM_PRESENTER_SOMETHING_WRONG" xml:space="preserve">
+    <value>Something went wrong.</value>
+  </data>
+  <data name="TTP_TILE_ITEM_PRESENTER_TIMEOUT" xml:space="preserve">
+    <value>The preview generation for this item took too long.</value>
   </data>
 </root>

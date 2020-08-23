@@ -139,7 +139,7 @@
     <value>Несъвместими елементи.</value>
   </data>
   <data name="LBL_QV_NO_CLIPBOARD_ITEMS" xml:space="preserve">
-    <value>Няма клипбоард елементи за показване.</value>
+    <value>Няма клипборд елементи за показване.</value>
   </data>
   <data name="LBL_RESTART_REQUIRED_CONFIRMATION" xml:space="preserve">
     <value>Тази настройка ще влезе в действие при следващия старт на приложението. Искате ли да го рестартирате сега?</value>
@@ -281,6 +281,15 @@
   <data name="LBL_SETTINGS_WINDOW_TITLE_SETTINGS_PART" xml:space="preserve">
     <value>настройки</value>
   </data>
+  <data name="LBL_TILE_MULTIITEM_PRESENTER_N_ITEMS" xml:space="preserve">
+    <value>елемента</value>
+  </data>
+  <data name="LBL_TILE_MULTIITEM_PRESENTER_N_OF_N" xml:space="preserve">
+    <value>от</value>
+  </data>
+  <data name="LBL_TILE_MULTIITEM_PRESENTER_N_SELECTED" xml:space="preserve">
+    <value>избрани</value>
+  </data>
   <data name="TGL_BTN_LBL_Off" xml:space="preserve">
     <value>Изключено</value>
   </data>
@@ -325,5 +334,14 @@
   </data>
   <data name="TTP_TILE_CONTENT_TYPE_TEXT" xml:space="preserve">
     <value>Текст</value>
+  </data>
+  <data name="TTP_TILE_ITEM_PRESENTER_NO_GENERATOR_FOUND_SUFFIX" xml:space="preserve">
+    <value>не знае как да генерира преглед за този клипборд елемент.</value>
+  </data>
+  <data name="TTP_TILE_ITEM_PRESENTER_SOMETHING_WRONG" xml:space="preserve">
+    <value>Нещо се обърка.</value>
+  </data>
+  <data name="TTP_TILE_ITEM_PRESENTER_TIMEOUT" xml:space="preserve">
+    <value>Генерирането на преглед за този елемент отне твърде много време.</value>
   </data>
 </root>

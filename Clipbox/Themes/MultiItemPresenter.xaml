@@ -7,6 +7,7 @@
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:infBeh="clr-namespace:Clipbox.Infrastructure.UI.Behaviors;assembly=Clipbox.Infrastructure.UI"
     xmlns:infPropAp="clr-namespace:Clipbox.Infrastructure.UI.AttachedProperties;assembly=Clipbox.Infrastructure.UI"
+    xmlns:loc="clr-namespace:Clipbox.Infrastructure.UI.Localization;assembly=Clipbox.Infrastructure.UI.Localization"
     xmlns:local="clr-namespace:Clipbox.Views.ClipboardViewItemTile"
     xmlns:localBeh="clr-namespace:Clipbox.Behaviors"
     xmlns:localConv="clr-namespace:Clipbox.Technical.Converters"
@@ -125,8 +126,9 @@
                 Height="25"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                Foreground="White"
-                Text="{Binding TotalClipboardItemsCount, StringFormat={}{0} items}">
+                Foreground="White">
+                <Run Text="{Binding Path=TotalClipboardItemsCount}" />
+                <Run Text="{loc:Localize LBL_TILE_MULTIITEM_PRESENTER_N_ITEMS}" />
                 <i:Interaction.Behaviors>
                     <infBeh:FrameworkElementDpiScalingBehavior />
                 </i:Interaction.Behaviors>
@@ -376,12 +378,10 @@
                 <i:Interaction.Behaviors>
                     <infBeh:FrameworkElementDpiScalingBehavior />
                 </i:Interaction.Behaviors>
-                <TextBlock.Text>
-                    <MultiBinding StringFormat="{}{0} of {1} selected">
-                        <Binding ElementName="PART_SubItemsListView" Path="SelectedItems.Count" />
-                        <Binding Path="ViewItem.TotalClipboardItemsCount" />
-                    </MultiBinding>
-                </TextBlock.Text>
+                <Run Text="{Binding ElementName=PART_SubItemsListView, Path=SelectedItems.Count, Mode=OneWay}" />
+                <Run Text="{loc:Localize LBL_TILE_MULTIITEM_PRESENTER_N_OF_N}" />
+                <Run Text="{Binding ViewItem.TotalClipboardItemsCount}" />
+                <Run Text="{loc:Localize LBL_TILE_MULTIITEM_PRESENTER_N_SELECTED}" />
                 <TextBlock.Style>
                     <Style TargetType="TextBlock">
                         <Setter Property="Visibility" Value="Visible" />
@@ -399,8 +399,9 @@
                 Height="25"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                Foreground="White"
-                Text="{Binding Path=ViewItem.TotalClipboardItemsCount, StringFormat={}{0} items}">
+                Foreground="White">
+                <Run Text="{Binding Path=ViewItem.TotalClipboardItemsCount}" />
+                <Run Text="{loc:Localize LBL_TILE_MULTIITEM_PRESENTER_N_ITEMS}" />
                 <i:Interaction.Behaviors>
                     <infBeh:FrameworkElementDpiScalingBehavior />
                 </i:Interaction.Behaviors>
@@ -593,7 +594,7 @@
                                                                         </Setter>
                                                                         <Setter Property="ToolTip">
                                                                             <Setter.Value>
-                                                                                <TextBlock Text="Something went wrong.">
+                                                                                <TextBlock Text="{loc:Localize TTP_TILE_ITEM_PRESENTER_SOMETHING_WRONG}">
                                                                                     <i:Interaction.Behaviors>
                                                                                         <infBeh:FrameworkElementDpiScalingBehavior />
                                                                                     </i:Interaction.Behaviors>
@@ -616,7 +617,7 @@
                                                                                     <Setter.Value>
                                                                                         <TextBlock>
                                                                                             <Run Text="{x:Static core:ProductConstants.PRODUCT_NAME}" />
-                                                                                            <Run Text="doesn't know how to generate a preview for this item." />
+                                                                                            <Run Text="{loc:Localize TTP_TILE_ITEM_PRESENTER_NO_GENERATOR_FOUND_SUFFIX}" />
                                                                                             <i:Interaction.Behaviors>
                                                                                                 <infBeh:FrameworkElementDpiScalingBehavior />
                                                                                             </i:Interaction.Behaviors>
@@ -636,7 +637,7 @@
                                                                                 </Setter>
                                                                                 <Setter Property="ToolTip">
                                                                                     <Setter.Value>
-                                                                                        <TextBlock Text="The preview generation for this item took too long.">
+                                                                                        <TextBlock Text="{loc:Localize TTP_TILE_ITEM_PRESENTER_TIMEOUT}">
                                                                                             <i:Interaction.Behaviors>
                                                                                                 <infBeh:FrameworkElementDpiScalingBehavior />
                                                                                             </i:Interaction.Behaviors>
