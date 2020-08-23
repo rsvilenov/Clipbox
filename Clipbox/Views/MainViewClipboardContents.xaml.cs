@@ -37,6 +37,8 @@ namespace Clipbox.Views
     public partial class MainViewClipboardContents : ClipboardViewControlBase, IDisposable
     {
         private MainViewClipboardContentsViewModel _viewModel;
+        
+        private readonly ISettingsService _settingsService;
 
         public event EventHandler<SetToClipboardEventArgs> SetItemsToClipboardRequested;
 
@@ -108,6 +110,8 @@ namespace Clipbox.Views
             _viewModel = vm;
             DataContext = _viewModel;
 
+            _settingsService = settingsService;
+
             _cancellableTaskManager = new CancellableTaskManager();
 
             _uiExtensionGenerationSlidingTimer = new SlidingTimer
@@ -140,13 +144,12 @@ namespace Clipbox.Views
                 throw new InvalidOperationException($"Setting {nameof(SettingsKeys.MaxNumOfItemToLoadAtOnce)} should be equal to 0 or greater than 0.");
             }
 
-            settingsService.SettingChanged += SettingsService_SettingChanged;
-
             DimNonFocusedItems = settingsService.GetSetting<bool>(SettingsKeys.DimNonFocusedItemsInMainView);
 
             _searchTerms = new List<ISearchTerm>();
 
             _viewModel.RequestCloseOfMainWindow += _viewModel_RequestCloseOfMainWindow;
+            _settingsService.SettingChanged += SettingsService_SettingChanged;
         }
 
         private void _viewModel_RequestCloseOfMainWindow(object sender, EventArgs e)
@@ -327,6 +330,7 @@ namespace Clipbox.Views
             _isDisposing = true;
 
             _viewModel.RequestCloseOfMainWindow -= _viewModel_RequestCloseOfMainWindow;
+            _settingsService.SettingChanged -= SettingsService_SettingChanged;
 
             _uiExtensionGenerationSlidingTimer.Dispose();
 
