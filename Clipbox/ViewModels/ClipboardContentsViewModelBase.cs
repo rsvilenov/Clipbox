@@ -96,7 +96,7 @@ namespace Clipbox.ViewModels
             List<IClipboardItem> clipboardItems = new List<IClipboardItem>();
             foreach (string clipboardItemId in clipboardItemIds)
             {
-                if (ClipboardManager.TryGetClipboardItem(clipboardItemId, out IClipboardItem clipboardItem, restoreShrinked: true))
+                if (ClipboardManager.TryGetClipboardItem(clipboardItemId, out IClipboardItem clipboardItem, restoreShrinked: false))
                 {
                     clipboardItems.Add(clipboardItem);
                 }
