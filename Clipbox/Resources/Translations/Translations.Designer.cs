@@ -88,6 +88,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Hide all copied clipboard entries from this window..
+        /// </summary>
+        internal static string BTN_QV_WIPE {
+            get {
+                return ResourceManager.GetString("BTN_QV_WIPE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Manage.
         /// </summary>
         internal static string BTN_SETTINGS_MANAGE_EXTENSIONS {
@@ -102,6 +111,24 @@ namespace Clipbox.Resources.Translations {
         internal static string en_US {
             get {
                 return ResourceManager.GetString("en-US", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Incompatible items..
+        /// </summary>
+        internal static string LBL_QV_INCOMPATIBLE_ITEMS {
+            get {
+                return ResourceManager.GetString("LBL_QV_INCOMPATIBLE_ITEMS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No clipboard items to show..
+        /// </summary>
+        internal static string LBL_QV_NO_CLIPBOARD_ITEMS {
+            get {
+                return ResourceManager.GetString("LBL_QV_NO_CLIPBOARD_ITEMS", resourceCulture);
             }
         }
         

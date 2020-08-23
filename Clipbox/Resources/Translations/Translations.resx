@@ -126,11 +126,20 @@
   <data name="BTN_LBL_Ok" xml:space="preserve">
     <value>OK</value>
   </data>
+  <data name="BTN_QV_WIPE" xml:space="preserve">
+    <value>Hide all copied clipboard entries from this window.</value>
+  </data>
   <data name="BTN_SETTINGS_MANAGE_EXTENSIONS" xml:space="preserve">
     <value>Manage</value>
   </data>
   <data name="en-US" xml:space="preserve">
     <value>English</value>
+  </data>
+  <data name="LBL_QV_INCOMPATIBLE_ITEMS" xml:space="preserve">
+    <value>Incompatible items.</value>
+  </data>
+  <data name="LBL_QV_NO_CLIPBOARD_ITEMS" xml:space="preserve">
+    <value>No clipboard items to show.</value>
   </data>
   <data name="LBL_RESTART_REQUIRED_CONFIRMATION" xml:space="preserve">
     <value>This setting will not take effect until the next start of the application. Do you want to restart it now?</value>

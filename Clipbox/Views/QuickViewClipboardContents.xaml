@@ -11,6 +11,7 @@
     xmlns:infEnums="clr-namespace:Clipbox.Core.Enums;assembly=Clipbox.Core"
     xmlns:infPropAp="clr-namespace:Clipbox.Infrastructure.UI.AttachedProperties;assembly=Clipbox.Infrastructure.UI"
     xmlns:infWindows="clr-namespace:Clipbox.Infrastructure.UI.Windows;assembly=Clipbox.Infrastructure.UI"
+    xmlns:loc="clr-namespace:Clipbox.Infrastructure.UI.Localization;assembly=Clipbox.Infrastructure.UI.Localization"
     xmlns:local="clr-namespace:Clipbox.Views"
     xmlns:localBeh="clr-namespace:Clipbox.Behaviors"
     xmlns:localBindableObjects="clr-namespace:Clipbox.ViewModels.BindableObjects"
@@ -87,7 +88,7 @@
             Background="Transparent"
             FontSize="16"
             Foreground="White"
-            Text="No clipboard items to show."
+            Text="{loc:Localize LBL_QV_NO_CLIPBOARD_ITEMS}"
             TextWrapping="WrapWithOverflow">
             <TextBlock.Style>
                 <Style TargetType="TextBlock">
@@ -167,8 +168,8 @@
                 ClipboardViewItemMaxHeight="{Binding Path=ClipboardViewItemMaxHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}}"
                 CombinabilityCheckRequested="MainListView_CombinabilityCheckRequested"
                 DimNonFocusedItems="{Binding Path=DimNonFocusedItems, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}}"
-                ItemPinUnpinRequested="MainListView_ItemPinUnpinRequested"
                 ItemCanPinRequested="MainListView_ItemCanPinRequested"
+                ItemPinUnpinRequested="MainListView_ItemPinUnpinRequested"
                 ItemRemovalRequested="MainListView_ItemRemovalRequested"
                 ItemsSource="{Binding ClipboardViewItemWrappers}"
                 ScrollDownButton="{Binding ElementName=BtnScrollDown}"
@@ -216,6 +217,7 @@
                 Background="Transparent"
                 FontSize="16"
                 Foreground="White"
+                Text="{loc:Localize LBL_QV_INCOMPATIBLE_ITEMS}"
                 Visibility="Collapsed">
                 <i:Interaction.Behaviors>
                     <infBeh:FrameworkElementDpiScalingBehavior />
@@ -232,7 +234,8 @@
                 Click="ButtonClearItems_Click"
                 Command="{Binding ClearClipboardEntries}"
                 IsEnabled="{Binding Path=AreAnyItemsSelected, ElementName=MainListView, Converter={StaticResource InverseBooleanConverter}}"
-                Style="{DynamicResource BtnWipe}">
+                Style="{DynamicResource BtnWipe}"
+                ToolTip="{loc:Localize BTN_QV_WIPE}">
                 <i:Interaction.Behaviors>
                     <infBeh:FrameworkElementDpiScalingBehavior />
                 </i:Interaction.Behaviors>

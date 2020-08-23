@@ -146,6 +146,25 @@ namespace Clipbox
             }
 
 
+
+            // try to save processing time, but beware of the memory usage
+            AsmAwareResxLocalizationProvider.Instance.KeepLiveResourceManagers = true;
+            // the singleton instance will be our localization provider
+            ILocalizationProvider localizationProvider = AsmAwareResxLocalizationProvider.Instance;
+            // Set the translation provider to the TranslationSourcePool
+            TranslationSourcePool.InitTranslationSourcePool(localizationProvider);
+            // than pass it to the localization service. It must be the same instance,
+            // so that changing the culture from within the service will affect the culture
+            // of the TranslationSource.
+            _localizationService = new LocalizationService(localizationProvider, _settingsService);
+
+            if (!ThemeManager.IsLoaded)
+            {
+                ThemeManager.LoadThemeFromSystemTheme();
+            }
+
+
+
             int sessionId = SessionUtils.GetCurrentSessionId();
             _guardCommunicationService = new GuardCommunicationService(_persistenceProvider, _settingsService, sessionId);
 
@@ -211,22 +230,6 @@ namespace Clipbox
             _settingsWindowService = new SettingsWindowService(_settingsService, _mainClipboardViewWindowService, _trayContextMenuService, _extensionLoader.SettingsUIExtensionContainer);
 
             _rebuildIndexWindowService = new RebuildIndexWindowService(_searchService, _mainClipboardViewWindowService, _clipboardManager);
-
-            // try to save processing time, but beware of the memory usage
-            AsmAwareResxLocalizationProvider.Instance.KeepLiveResourceManagers = true;
-            // the singleton instance will be our localization provider
-            ILocalizationProvider localizationProvider = AsmAwareResxLocalizationProvider.Instance;
-            // Set the translation provider to the TranslationSourcePool
-            TranslationSourcePool.InitTranslationSourcePool(localizationProvider);
-            // than pass it to the localization service. It must be the same instance,
-            // so that changing the culture from within the service will affect the culture
-            // of the TranslationSource.
-            _localizationService = new LocalizationService(localizationProvider, _settingsService);
-
-            if (!ThemeManager.IsLoaded)
-            {
-                ThemeManager.LoadThemeFromSystemTheme();
-            }
 
             ThemeManager.TransparencySettingChanged += ThemeManager_TransparencySettingChanged;
         }

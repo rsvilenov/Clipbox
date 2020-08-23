@@ -126,11 +126,20 @@
   <data name="BTN_LBL_Ok" xml:space="preserve">
     <value>OK</value>
   </data>
+  <data name="BTN_QV_WIPE" xml:space="preserve">
+    <value>Скрий всички копирани клипборд елементи от този прозорец.</value>
+  </data>
   <data name="BTN_SETTINGS_MANAGE_EXTENSIONS" xml:space="preserve">
     <value>Управляване</value>
   </data>
   <data name="en-US" xml:space="preserve">
     <value>Английски</value>
+  </data>
+  <data name="LBL_QV_INCOMPATIBLE_ITEMS" xml:space="preserve">
+    <value>Несъвместими елементи.</value>
+  </data>
+  <data name="LBL_QV_NO_CLIPBOARD_ITEMS" xml:space="preserve">
+    <value>Няма клипбоард елементи за показване.</value>
   </data>
   <data name="LBL_RESTART_REQUIRED_CONFIRMATION" xml:space="preserve">
     <value>Тази настройка ще влезе в действие при следващия старт на приложението. Искате ли да го рестартирате сега?</value>

@@ -85,7 +85,7 @@ namespace Clipbox.Views
             animatableItem.RunNotificationAnimation(AnimationPurpose.Error);
 
             int errorTextDurationMs = TileAnimationHelper.COLOR_ANIMATION_DURATION_MS + 700;
-            ShowErrorTextTemporarily("Incompatible items.", errorTextDurationMs);
+            ShowIncompatibilityErrorTextTemporarily(errorTextDurationMs);
         }
 
         private void QuickViewClipboardContents_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -177,16 +177,14 @@ namespace Clipbox.Views
             _viewModel.SelectedClipboardViewItemWrappers.Clear();
         }
 
-        private void ShowErrorTextTemporarily(string text, int visibleMilliseconds)
+        private void ShowIncompatibilityErrorTextTemporarily(int visibleMilliseconds)
         {
             uiExtensionContainer.Visibility = Visibility.Collapsed;
             ErrorTextBlock.Visibility = Visibility.Visible;
-            ErrorTextBlock.Text = text;
             Task.Delay(visibleMilliseconds).ContinueWith(t =>
             {
                 Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, (Action)(() =>
                 {
-                    ErrorTextBlock.Text = string.Empty;
                     ErrorTextBlock.Visibility = Visibility.Collapsed;
                     uiExtensionContainer.Visibility = Visibility.Visible;
                 }));
