@@ -602,9 +602,23 @@
                                     <Setter Property="Visibility" Value="Hidden" />
                                     <Style.Triggers>
                                         <!--  when the item is loaded, show the close button  -->
-                                        <DataTrigger Binding="{Binding Path=IsViewItemLoaded}" Value="True">
+                                        <!--<DataTrigger Binding="{Binding Path=IsViewItemLoaded}" Value="True">
                                             <Setter Property="Visibility" Value="Visible" />
-                                        </DataTrigger>
+                                        </DataTrigger>-->
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding Path=IsViewItemLoaded}" Value="True" />
+                                                <Condition Binding="{Binding Path=SelectedItems.Count, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListView}}}" Value="0" />
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </MultiDataTrigger>
+                                        <MultiDataTrigger>
+                                            <MultiDataTrigger.Conditions>
+                                                <Condition Binding="{Binding Path=IsViewItemLoaded}" Value="True" />
+                                                <Condition Binding="{Binding Path=SelectedItems.Count, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListView}}}" Value="1" />
+                                            </MultiDataTrigger.Conditions>
+                                            <Setter Property="Visibility" Value="Visible" />
+                                        </MultiDataTrigger>
                                     </Style.Triggers>
                                 </Style>
                             </ContentControl.Style>
