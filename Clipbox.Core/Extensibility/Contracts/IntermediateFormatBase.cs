@@ -15,11 +15,15 @@ namespace Clipbox.Core.Extensibility.Contracts
 
         protected class IntermediateFormatMetadata : IIntermediateFormatMetadata
         {
-            public IntermediateFormatMetadata(string formatGuid, ClipboardContentClass contentClass, bool isTransferable)
+            public IntermediateFormatMetadata(string formatGuid, 
+                ClipboardContentClass contentClass, 
+                bool isTransferable,
+                bool isAuxiliary = false)
             {
                 FormatGuid = formatGuid;
                 ContentClass = contentClass;
                 IsTransferable = isTransferable;
+                IsAuxiliary = isAuxiliary;
             }
 
             public string FormatGuid { get; }
@@ -27,7 +31,9 @@ namespace Clipbox.Core.Extensibility.Contracts
             public ClipboardContentClass ContentClass { get; }
 
             public bool IsTransferable { get; }
-            
+
+            public bool IsAuxiliary { get; }
+
             public IIntermediateFormatMetadata ShallowClone()
             {
                 return (IIntermediateFormatMetadata)MemberwiseClone();

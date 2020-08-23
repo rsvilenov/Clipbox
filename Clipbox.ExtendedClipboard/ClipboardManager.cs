@@ -431,7 +431,9 @@ namespace Clipbox.ExtendedClipboard
             
             // for some reason I receive WM_DRAWCLIPBOARD on pasting a file which has been cut the moment before
             // and GetAvailableFormats() returns zero items...
-            if (!originalClipboardDataObjects.Any())
+            if (!originalClipboardDataObjects
+                /* if there are no cdos, or all fetched formats are auxiliary, do not do anything */
+                .Any(ocdo => !ocdo.IntermediateFormatMetadata.IsAuxiliary))
             {
                 return;
             }

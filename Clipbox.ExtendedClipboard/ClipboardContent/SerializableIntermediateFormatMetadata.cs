@@ -14,6 +14,7 @@ namespace Clipbox.ExtendedClipboard.ClipboardContent
             FormatGuid = originalMetadata.FormatGuid;
             ContentClass = originalMetadata.ContentClass;
             IsTransferable = originalMetadata.IsTransferable;
+            IsAuxiliary = originalMetadata.IsAuxiliary;
         }
 
         public string FormatGuid { get; set; }
@@ -21,6 +22,8 @@ namespace Clipbox.ExtendedClipboard.ClipboardContent
         public ClipboardContentClass ContentClass { get; set; }
 
         public bool IsTransferable { get; set; }
+
+        public bool IsAuxiliary { get; set; }
 
         public IIntermediateFormatMetadata ShallowClone()
         {

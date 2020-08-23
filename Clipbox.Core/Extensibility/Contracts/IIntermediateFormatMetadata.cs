@@ -18,6 +18,12 @@ namespace Clipbox.Core.Extensibility.Contracts
         bool IsTransferable { get; }
 
         /// <summary>
+        /// Indicates whether the data can be used independently or it is auxiliary
+        /// to some other data, held in some other IntermediateFormat object.
+        /// </summary>
+        bool IsAuxiliary { get; }
+
+        /// <summary>
         /// Override this to change the class of the contents
         /// </summary>
         ClipboardContentClass ContentClass { get; }
