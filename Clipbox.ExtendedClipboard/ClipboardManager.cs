@@ -838,6 +838,11 @@ namespace Clipbox.ExtendedClipboard
                 newClipboardDataObjects.Add(cdo);
             }
 
+            if (newClipboardDataObjects.All(cdo => cdo.IntermediateFormatMetadata.IsAuxiliary))
+            {
+                throw new InvalidCastException("All provided clipboard formats are auxiliary.");
+            }
+
             var newItem = new ClipboardItem(source, newClipboardDataObjects);
             
             lock (_ioLockHandle)

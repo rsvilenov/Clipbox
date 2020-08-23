@@ -54,6 +54,7 @@ namespace Clipbox.Extensions.BuiltIn.HdropFormat.PreviewGenerators
                 }
             }
             catch (FileNotFoundException) { }
+            catch (IOException) { }
 
             return thumbnail;
         }
@@ -75,22 +76,25 @@ namespace Clipbox.Extensions.BuiltIn.HdropFormat.PreviewGenerators
 
                 Bitmap thumbnail = GetFileThumbnail(previewParams.PreviewWidth, previewParams.PreviewHeight, path);
 
-                if (thumbnail != null)
+                // if one of the previews fails to be generated, fail the whole task.
+                if (thumbnail == null)
                 {
-                    if (thumbnail.Width == previewParams.PreviewWidth && thumbnail.Height == previewParams.PreviewHeight)
-                    {
-                        preview = thumbnail;
-                    }
-                    else if (thumbnail.Width > previewParams.PreviewWidth && thumbnail.Height > previewParams.PreviewHeight)
-                    {
-                        using (thumbnail)
-                            preview = thumbnail.GetScaled(previewParams.PreviewWidth, previewParams.PreviewHeight);
-                    }
-                    else
-                    {
-                        using (thumbnail)
-                            preview = thumbnail.GetCenteredOverTransparentCanvas(previewParams.PreviewWidth, previewParams.PreviewHeight);
-                    }
+                    return null;
+                }
+
+                if (thumbnail.Width == previewParams.PreviewWidth && thumbnail.Height == previewParams.PreviewHeight)
+                {
+                    preview = thumbnail;
+                }
+                else if (thumbnail.Width > previewParams.PreviewWidth && thumbnail.Height > previewParams.PreviewHeight)
+                {
+                    using (thumbnail)
+                        preview = thumbnail.GetScaled(previewParams.PreviewWidth, previewParams.PreviewHeight);
+                }
+                else
+                {
+                    using (thumbnail)
+                        preview = thumbnail.GetCenteredOverTransparentCanvas(previewParams.PreviewWidth, previewParams.PreviewHeight);
                 }
 
 

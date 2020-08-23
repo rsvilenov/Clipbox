@@ -138,38 +138,56 @@ namespace Clipbox.Services
                         GetExtensionSettingsChecksum(extType, 
                             _settingsService.GetSettingKeys(extType)));
             }
+
+            // add a random checksum of the servie itself
+            // (to be used for storing failed previews)
+            _extensionSettingChecksums.Add(this.GetType().AssemblyQualifiedName,
+                MD5Hash.Create(DateTime.Now.Millisecond.ToString()));
         }
 
         private void _settingsService_SettingChanged(object sender, EventArgsClasses.SettingsEventArgs e)
         {
             Type extType = e.Key.TargetComponentType;
 
-            if (extType != null
-                && extType.GetInterface(nameof(IPreviewGenerator)) != null
+            if (extType == null)
+            {
+                // If the setting is not for a particular extension, but it is a general one,
+                // then update the random checksum, used as part of the persistence key for
+                // those previews, which has failed for some reason (other than a timeout).
+                // When such a setting changes or the app is restarted, this service will 
+                // try to generate the failed previews again.
+                string checkSum = MD5Hash.Create(DateTime.Now.Millisecond.ToString());
+                UpdateCheckSumForExtType(this.GetType(), checkSum);
+            }
+            else if (extType.GetInterface(nameof(IPreviewGenerator)) != null
                 && extType.GetInterface(nameof(IConfigurationRecipient)) != null)
             {
                 IEnumerable<ISettingKey> newSettings = _settingsService
                     .GetSettingKeys(extType);
 
                 string checkSum = GetExtensionSettingsChecksum(extType, newSettings);
-
-                // stop new preview generation threads from starting
-                _checkSumsChangeFinishedMre.Reset();
-
-                // wait fot the already running threads to finish
-                _checkSumsCanChangeMre.WaitOne();
-                
-                // prevent the possibility of two threads simultaneously raising the event for the same key...
-                // unlikely, but...
-                lock (_checkSumLockHandle)
-                {
-                    _extensionSettingChecksums.Remove(extType.AssemblyQualifiedName);
-                    _extensionSettingChecksums.Add(extType.AssemblyQualifiedName, checkSum);
-                }
-
-                // allow the preview generation threads to start again
-                _checkSumsChangeFinishedMre.Set();
+                UpdateCheckSumForExtType(extType, checkSum);
             }
+        }
+
+        private void UpdateCheckSumForExtType(Type extType, string checkSum)
+        {
+            // stop new preview generation threads from starting
+            _checkSumsChangeFinishedMre.Reset();
+
+            // wait fot the already running threads to finish
+            _checkSumsCanChangeMre.WaitOne();
+
+            // prevent the possibility of two threads simultaneously raising the event for the same key...
+            // unlikely, but...
+            lock (_checkSumLockHandle)
+            {
+                _extensionSettingChecksums.Remove(extType.AssemblyQualifiedName);
+                _extensionSettingChecksums.Add(extType.AssemblyQualifiedName, checkSum);
+            }
+
+            // allow the preview generation threads to start again
+            _checkSumsChangeFinishedMre.Set();
         }
 
         private string GetExtensionSettingsChecksum(Type extensionType, IEnumerable<ISettingKey> settingKeys)
@@ -304,15 +322,50 @@ namespace Clipbox.Services
                     monitorDimensions.MonitorDPI,
                     cancellationToken);
 
-                // store the preview for faster access
-                if (pdto.PreviewItems.All(pi => pi.PreviewDimensions != null))
+                
+                if (pdto.PreviewItems.Any())
                 {
+                    if (pdto.PreviewItems.All(pi => pi.PreviewDimensions == null))
+                    {
+                        // add preview dimensions and store the item, regardless the fact thet the 
+                        // preview generation failed. Do this to avoid trying to generate the preview
+                        // over and over, because a stored preview is not found.
+                        pdto.PreviewItems.First().PreviewDimensions = new PreviewDimensions
+                        {
+                            PreviewHeight = itemRequestedHeight,
+                            PreviewWidth = itemRequestedWidth
+                        };
+                    }
+                }
+                else
+                {
+                    pdto.PreviewItems.Add(new PreviewItemTransferObject
+                    {
+                        PreviewGenereationStatus = PreviewGenerationStatus.Unknown,
+                        // add preview dimensions and store the item, regardless the fact thet the 
+                        // preview generation failed. Do this to avoid trying to generate the preview
+                        // over and over, because a stored preview is not found.
+                        PreviewDimensions = new PreviewDimensions 
+                        {
+                            PreviewHeight = itemRequestedHeight,
+                            PreviewWidth = itemRequestedWidth
+                        }
+                    });
+                }
+
+                // if the item has timed out, do not store the data, so that the service will try to 
+                // generate the preview again next time, rather than trying to load the useless data from the cache.
+                if (pdto.PreviewItems.First().PreviewGenereationStatus 
+                    != PreviewGenerationStatus.Timeout)
+                {
+                    // store the preview for faster access
                     CacheGeneratedData(monitorDimensions,
                         itemRequestedHeight,
                         itemRequestedWidth,
                         pdto,
                         hasHeightBeenDpiScaled);
                 }
+                
             }
         }
 
@@ -499,14 +552,22 @@ namespace Clipbox.Services
             // update the setting checksum dictionary with the new settings checksum
 
             // construct unique persistence key for the data
+
+            string extensionSettingsChecksum;
+
+            if (pdto.GeneratorExtensionTypeAssemblyQualifiedName == null)
+            {
+                pdto.GeneratorExtensionTypeAssemblyQualifiedName = this.GetType().AssemblyQualifiedName;
+            }
+
             if (!_extensionSettingChecksums.ContainsKey(pdto.GeneratorExtensionTypeAssemblyQualifiedName))
             {
                 // if we fail to get the setting checksum, then someone else has managed to mess up with our dictionaries
                 throw new InvalidOperationException($"Thread synchronization error.");
             }
 
-            string extensionSettingsChecksum = _extensionSettingChecksums[pdto.GeneratorExtensionTypeAssemblyQualifiedName];
-            
+            extensionSettingsChecksum = _extensionSettingChecksums[pdto.GeneratorExtensionTypeAssemblyQualifiedName];
+
             string persistenceKey = $"{clipboardItemId}_{itemRequestedWidth}_{itemRequestedHeight}_{monitorDimensions.MonitorDPI}_{extensionSettingsChecksum}.pdto";
 
             // store in the byte array cache
@@ -516,8 +577,8 @@ namespace Clipbox.Services
             _storeToDiskDispatcher.BeginInvoke(() =>
             {
                 StorePreviewDimensionsDictionaryТoDisk();
-                StoreSerializedPreviewDataTransferObjectToDisk(clipboardItemId, 
-                    serializedData, 
+                StoreSerializedPreviewDataTransferObjectToDisk(clipboardItemId,
+                    serializedData,
                     persistenceKey);
             });
         }
@@ -739,10 +800,9 @@ namespace Clipbox.Services
 
             int itemRequestedHeight = CalculateItemRequestedHeight(monitorDimensions, out bool hasHeightBeenDpiScaled);
             int itemRequestedWidth = itemRequestedHeight;
-            
-            foreach (var keyValuePair in _extensionSettingChecksums)
+
+            foreach (var checkSum in _extensionSettingChecksums.Values)
             {
-                string checkSum = keyValuePair.Value;
                 string key = $"{clipboardItemId}_{itemRequestedWidth}_{itemRequestedHeight}_{monitorDimensions.MonitorDPI}_{checkSum}.pdto";
 
                 if (_byteArrayCache.TryGet(key, out pdtoByteArray))

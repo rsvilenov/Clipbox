@@ -30,7 +30,7 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes
         public IEnumerable<IPreviewData> GetPreview(PreviewParams previewParams, int maxNumberOfPreviewsToGenerate)
         {
             return GetPreview(_intermediateFormatObj, previewParams, maxNumberOfPreviewsToGenerate)
-                .Cast<IPreviewData>();
+                ?.Cast<IPreviewData>();
         }
         
         protected abstract IEnumerable<TPreviewData> GetPreview(TIntermediateFormat intermediateFormatObj, PreviewParams previewParams, int maxNumberOfPreviewsToGenerate);
