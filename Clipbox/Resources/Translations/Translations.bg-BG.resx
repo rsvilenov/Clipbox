@@ -305,4 +305,25 @@
   <data name="TTP_SETTINGS_ENABLE_EXTENSION" xml:space="preserve">
     <value>Позволи това разширение</value>
   </data>
+  <data name="TTP_TILE_CONTENT_TYPE_CONTENT" xml:space="preserve">
+    <value>Данни</value>
+  </data>
+  <data name="TTP_TILE_CONTENT_TYPE_CONTENT_COLLECTION" xml:space="preserve">
+    <value>Колекция от данни</value>
+  </data>
+  <data name="TTP_TILE_CONTENT_TYPE_FILE_FOLDER" xml:space="preserve">
+    <value>Файл/Папка</value>
+  </data>
+  <data name="TTP_TILE_CONTENT_TYPE_FILE_FOLDER_COLLECTION" xml:space="preserve">
+    <value>Файлове/Папки</value>
+  </data>
+  <data name="TTP_TILE_CONTENT_TYPE_FORMATTED_TEXT" xml:space="preserve">
+    <value>Форматиран текст</value>
+  </data>
+  <data name="TTP_TILE_CONTENT_TYPE_IMAGE" xml:space="preserve">
+    <value>Изображение</value>
+  </data>
+  <data name="TTP_TILE_CONTENT_TYPE_TEXT" xml:space="preserve">
+    <value>Текст</value>
+  </data>
 </root>

@@ -619,5 +619,68 @@ namespace Clipbox.Resources.Translations {
                 return ResourceManager.GetString("TTP_SETTINGS_ENABLE_EXTENSION", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Content.
+        /// </summary>
+        internal static string TTP_TILE_CONTENT_TYPE_CONTENT {
+            get {
+                return ResourceManager.GetString("TTP_TILE_CONTENT_TYPE_CONTENT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Content collection.
+        /// </summary>
+        internal static string TTP_TILE_CONTENT_TYPE_CONTENT_COLLECTION {
+            get {
+                return ResourceManager.GetString("TTP_TILE_CONTENT_TYPE_CONTENT_COLLECTION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File/Folder.
+        /// </summary>
+        internal static string TTP_TILE_CONTENT_TYPE_FILE_FOLDER {
+            get {
+                return ResourceManager.GetString("TTP_TILE_CONTENT_TYPE_FILE_FOLDER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File-Folder collection.
+        /// </summary>
+        internal static string TTP_TILE_CONTENT_TYPE_FILE_FOLDER_COLLECTION {
+            get {
+                return ResourceManager.GetString("TTP_TILE_CONTENT_TYPE_FILE_FOLDER_COLLECTION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Formatted text.
+        /// </summary>
+        internal static string TTP_TILE_CONTENT_TYPE_FORMATTED_TEXT {
+            get {
+                return ResourceManager.GetString("TTP_TILE_CONTENT_TYPE_FORMATTED_TEXT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Image.
+        /// </summary>
+        internal static string TTP_TILE_CONTENT_TYPE_IMAGE {
+            get {
+                return ResourceManager.GetString("TTP_TILE_CONTENT_TYPE_IMAGE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Text.
+        /// </summary>
+        internal static string TTP_TILE_CONTENT_TYPE_TEXT {
+            get {
+                return ResourceManager.GetString("TTP_TILE_CONTENT_TYPE_TEXT", resourceCulture);
+            }
+        }
     }
 }

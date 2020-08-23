@@ -305,4 +305,25 @@ Warning: more rows means more RAM usage!</value>
   <data name="TTP_SETTINGS_ENABLE_EXTENSION" xml:space="preserve">
     <value>Enable the extension</value>
   </data>
+  <data name="TTP_TILE_CONTENT_TYPE_CONTENT" xml:space="preserve">
+    <value>Content</value>
+  </data>
+  <data name="TTP_TILE_CONTENT_TYPE_CONTENT_COLLECTION" xml:space="preserve">
+    <value>Content collection</value>
+  </data>
+  <data name="TTP_TILE_CONTENT_TYPE_FILE_FOLDER" xml:space="preserve">
+    <value>File/Folder</value>
+  </data>
+  <data name="TTP_TILE_CONTENT_TYPE_FILE_FOLDER_COLLECTION" xml:space="preserve">
+    <value>File-Folder collection</value>
+  </data>
+  <data name="TTP_TILE_CONTENT_TYPE_FORMATTED_TEXT" xml:space="preserve">
+    <value>Formatted text</value>
+  </data>
+  <data name="TTP_TILE_CONTENT_TYPE_IMAGE" xml:space="preserve">
+    <value>Image</value>
+  </data>
+  <data name="TTP_TILE_CONTENT_TYPE_TEXT" xml:space="preserve">
+    <value>Text</value>
+  </data>
 </root>
