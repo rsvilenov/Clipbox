@@ -145,6 +145,13 @@ namespace Clipbox.Views
             DimNonFocusedItems = settingsService.GetSetting<bool>(SettingsKeys.DimNonFocusedItemsInMainView);
 
             _searchTerms = new List<ISearchTerm>();
+
+            _viewModel.RequestCloseOfMainWindow += _viewModel_RequestCloseOfMainWindow;
+        }
+
+        private void _viewModel_RequestCloseOfMainWindow(object sender, EventArgs e)
+        {
+            CloseMainWindowRequested?.Invoke(this, new EventArgs());
         }
 
         private void SettingsService_SettingChanged(object sender, SettingsEventArgs e)
@@ -318,6 +325,8 @@ namespace Clipbox.Views
         protected override void Dispose(bool disposing)
         {
             _isDisposing = true;
+
+            _viewModel.RequestCloseOfMainWindow -= _viewModel_RequestCloseOfMainWindow;
 
             _uiExtensionGenerationSlidingTimer.Dispose();
 

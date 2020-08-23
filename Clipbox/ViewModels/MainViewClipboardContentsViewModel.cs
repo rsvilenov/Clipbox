@@ -20,6 +20,8 @@ namespace Clipbox.ViewModels
         private readonly ISearchService _searchService;
         private readonly ICloudSynchronizationService _cloudSyncService;
 
+        public event EventHandler RequestCloseOfMainWindow;
+
 
         public MainViewClipboardContentsViewModel(IClipboardManager clipboardManager,
             IPreviewGenerationService previewGenerationService,
@@ -36,6 +38,8 @@ namespace Clipbox.ViewModels
             _cloudSyncService.AuthenticationStateChanged += _cloudSyncService_AuthenticationStateChanged;
             _cloudSyncService.ItemSynced += _cloudSyncService_ItemSynced;
 
+            clipboardManager.ItemAdded += ClipboardManager_ItemAdded;
+
             IsCloudSyncAvailable = CheckIsCloudServiceAvailable();
 
             ClipboardItemsDataProvider = clipboardManager;
@@ -51,6 +55,11 @@ namespace Clipbox.ViewModels
                 // TODO: log non fatal exception
                 IsSearchIndexHealthy = false;
             }
+        }
+
+        private void ClipboardManager_ItemAdded(object sender, ExtendedClipboard.EventArgs.ClipboardManagerEventArgs e)
+        {
+            RequestCloseOfMainWindow?.Invoke(this, new EventArgs());
         }
 
         private void _settingsService_SettingChanged(object sender, SettingsEventArgs e)
