@@ -435,8 +435,8 @@ namespace Clipbox.Views.ClipboardListView
             // the group name is bound to ClipboardViewItemWrapper.DateCreatedDateOnlyStableString property,
             // which is culture independent and does not change when the language/culture is changed. So we
             // will use its format to parse the date back.
-            ScrollBarDataContext.FirstItemDate = DateTime.ParseExact(_groupNameGroupItemMapping.First().Key, "dd-MM-yyyy", CultureInfo.InvariantCulture);
-            ScrollBarDataContext.LastItemDate = DateTime.ParseExact(_groupNameGroupItemMapping.Last().Key, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+            ScrollBarDataContext.FirstItemDate = DateTime.ParseExact(_groupNameGroupItemMapping.First().Key, ClipboardViewItemWrapper.STABLE_DATE_TIME_FORMAT, CultureInfo.InvariantCulture);
+            ScrollBarDataContext.LastItemDate = DateTime.ParseExact(_groupNameGroupItemMapping.Last().Key, ClipboardViewItemWrapper.STABLE_DATE_TIME_FORMAT, CultureInfo.InvariantCulture);
 
             _lastListViewItemCount = this.Items.Count;
 

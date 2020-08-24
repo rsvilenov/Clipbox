@@ -174,6 +174,9 @@
   <data name="LBL_RESTART_REQUIRED_CONFIRMATION" xml:space="preserve">
     <value>This setting will not take effect until the next start of the application. Do you want to restart it now?</value>
   </data>
+  <data name="LBL_RMSELECTOR_TITLE" xml:space="preserve">
+    <value>Filter by source device</value>
+  </data>
   <data name="LBL_SETTINGS_ADVANCED_MODIFY_WARNING" xml:space="preserve">
     <value>Modifying these settings may cause the program to stop working properly.</value>
   </data>
@@ -337,6 +340,18 @@ Warning: more rows means more RAM usage!</value>
   </data>
   <data name="TLP_WINDOW_RESTORE" xml:space="preserve">
     <value>Restore</value>
+  </data>
+  <data name="TTP_RMSELECTOR_BTN_SELECT" xml:space="preserve">
+    <value>Select</value>
+  </data>
+  <data name="TTP_RMSELECTOR_BTN_UNSELECT" xml:space="preserve">
+    <value>Unselect</value>
+  </data>
+  <data name="TTP_RMSELECTOR_SEARCH_OVERLAY" xml:space="preserve">
+    <value>Type here to search</value>
+  </data>
+  <data name="TTP_RMSELECTOR_SELECTED_DEVICES_OVERLAY" xml:space="preserve">
+    <value>Select devices from the list below</value>
   </data>
   <data name="TTP_SETTINGS_DISABLE_EXTENSION" xml:space="preserve">
     <value>Disable the extension</value>

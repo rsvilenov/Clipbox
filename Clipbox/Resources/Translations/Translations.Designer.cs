@@ -232,6 +232,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Filter by source device.
+        /// </summary>
+        internal static string LBL_RMSELECTOR_TITLE {
+            get {
+                return ResourceManager.GetString("LBL_RMSELECTOR_TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Modifying these settings may cause the program to stop working properly..
         /// </summary>
         internal static string LBL_SETTINGS_ADVANCED_MODIFY_WARNING {
@@ -716,6 +725,42 @@ namespace Clipbox.Resources.Translations {
         internal static string TLP_WINDOW_RESTORE {
             get {
                 return ResourceManager.GetString("TLP_WINDOW_RESTORE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select.
+        /// </summary>
+        internal static string TTP_RMSELECTOR_BTN_SELECT {
+            get {
+                return ResourceManager.GetString("TTP_RMSELECTOR_BTN_SELECT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unselect.
+        /// </summary>
+        internal static string TTP_RMSELECTOR_BTN_UNSELECT {
+            get {
+                return ResourceManager.GetString("TTP_RMSELECTOR_BTN_UNSELECT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type here to search.
+        /// </summary>
+        internal static string TTP_RMSELECTOR_SEARCH_OVERLAY {
+            get {
+                return ResourceManager.GetString("TTP_RMSELECTOR_SEARCH_OVERLAY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select devices from the list below.
+        /// </summary>
+        internal static string TTP_RMSELECTOR_SELECTED_DEVICES_OVERLAY {
+            get {
+                return ResourceManager.GetString("TTP_RMSELECTOR_SELECTED_DEVICES_OVERLAY", resourceCulture);
             }
         }
         

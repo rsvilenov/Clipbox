@@ -174,6 +174,9 @@
   <data name="LBL_RESTART_REQUIRED_CONFIRMATION" xml:space="preserve">
     <value>Тази настройка ще влезе в действие при следващия старт на приложението. Искате ли да го рестартирате сега?</value>
   </data>
+  <data name="LBL_RMSELECTOR_TITLE" xml:space="preserve">
+    <value>Филтрирай по устройство</value>
+  </data>
   <data name="LBL_SETTINGS_ADVANCED_MODIFY_WARNING" xml:space="preserve">
     <value>Промяната на тези настройки може да попречи на нормалната работа на приложението.</value>
   </data>
@@ -337,6 +340,18 @@
   </data>
   <data name="TLP_WINDOW_RESTORE" xml:space="preserve">
     <value>Възстанови</value>
+  </data>
+  <data name="TTP_RMSELECTOR_BTN_SELECT" xml:space="preserve">
+    <value>Избери</value>
+  </data>
+  <data name="TTP_RMSELECTOR_BTN_UNSELECT" xml:space="preserve">
+    <value>Премахни</value>
+  </data>
+  <data name="TTP_RMSELECTOR_SEARCH_OVERLAY" xml:space="preserve">
+    <value>Пишете тук, за да търсите</value>
+  </data>
+  <data name="TTP_RMSELECTOR_SELECTED_DEVICES_OVERLAY" xml:space="preserve">
+    <value>Изберете устройство от списъка долу</value>
   </data>
   <data name="TTP_SETTINGS_DISABLE_EXTENSION" xml:space="preserve">
     <value>Забрани това разширение</value>

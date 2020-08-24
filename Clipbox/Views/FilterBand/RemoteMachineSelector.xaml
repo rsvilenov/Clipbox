@@ -10,6 +10,7 @@
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:infBeh="clr-namespace:Clipbox.Infrastructure.UI.Behaviors;assembly=Clipbox.Infrastructure.UI"
     xmlns:infConv="clr-namespace:Clipbox.Infrastructure.UI.Converters;assembly=Clipbox.Infrastructure.UI"
+    xmlns:loc="clr-namespace:Clipbox.Infrastructure.UI.Localization;assembly=Clipbox.Infrastructure.UI.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="450"
     d:DesignWidth="800"
@@ -106,7 +107,7 @@
                     <TextBlock
                         FontSize="18"
                         Foreground="{DynamicResource ControlForegroundBrush}"
-                        Text="Filter by source device" />
+                        Text="{loc:Localize LBL_RMSELECTOR_TITLE}" />
                 </StackPanel>
 
             </Grid>
@@ -195,7 +196,7 @@
                                         Command="{Binding DataContext.RemoveMachine, ElementName=mainBorder}"
                                         CommandParameter="{Binding}"
                                         Style="{DynamicResource BtnRemove}"
-                                        ToolTip="Select" />
+                                        ToolTip="{loc:Localize TTP_RMSELECTOR_BTN_UNSELECT}" />
                                 </Grid>
                             </Border>
                         </DataTemplate>
@@ -223,7 +224,7 @@
                     FontSize="16"
                     FontWeight="Bold"
                     Foreground="{DynamicResource ControlForegroundBrush}"
-                    Text="Select devices from the list below">
+                    Text="{loc:Localize TTP_RMSELECTOR_SELECTED_DEVICES_OVERLAY}">
                     <TextBlock.Style>
                         <Style TargetType="TextBlock">
                             <Setter Property="Visibility" Value="Collapsed" />
@@ -244,7 +245,7 @@
                     VerticalAlignment="Center"
                     HorizontalContentAlignment="Left"
                     VerticalContentAlignment="Center"
-                    OverlayText="Type here to search"
+                    OverlayText="{loc:Localize TTP_RMSELECTOR_SEARCH_OVERLAY}"
                     SearchRequested="SearchTextBox_SearchRequested" />
                 <ListView
                     x:Name="availableMachineListView"
@@ -283,7 +284,8 @@
                                         Margin="5,0,0,0"
                                         HorizontalAlignment="Left"
                                         VerticalAlignment="Center"
-                                        Background="Transparent">
+                                        Background="Transparent"
+                                        Foreground="White">
                                         <ContentControl.Style>
                                             <Style TargetType="ContentControl">
                                                 <Setter Property="Template" Value="{DynamicResource PcSourceIcon}" />
@@ -325,7 +327,7 @@
                                         Command="{Binding DataContext.AddMachine, ElementName=mainBorder}"
                                         CommandParameter="{Binding}"
                                         Style="{DynamicResource BtnAdd}"
-                                        ToolTip="Select" />
+                                        ToolTip="{loc:Localize TTP_RMSELECTOR_BTN_SELECT}" />
                                 </Grid>
                             </Border>
                         </DataTemplate>
@@ -358,7 +360,7 @@
                 Margin="10"
                 VerticalAlignment="Center"
                 Command="{Binding OkClicked}"
-                Content="OK"
+                Content="{loc:Localize BTN_LBL_Ok}"
                 Foreground="White"
                 IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBooleanConverter}}"
                 Style="{DynamicResource BtnOk}" />
@@ -372,7 +374,7 @@
                 Margin="10"
                 VerticalAlignment="Center"
                 Command="{Binding CancelClicked}"
-                Content="Cancel"
+                Content="{loc:Localize BTN_LBL_Cancel}"
                 Foreground="White"
                 Style="{DynamicResource BtnCancel}" />
         </Grid>
