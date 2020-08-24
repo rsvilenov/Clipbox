@@ -9,6 +9,7 @@
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:infBeh="clr-namespace:Clipbox.Infrastructure.UI.Behaviors;assembly=Clipbox.Infrastructure.UI"
     xmlns:infConv="clr-namespace:Clipbox.Infrastructure.UI.Converters;assembly=Clipbox.Infrastructure.UI"
+    xmlns:loc="clr-namespace:Clipbox.Infrastructure.UI.Localization;assembly=Clipbox.Infrastructure.UI.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="450"
     d:DesignWidth="800"
@@ -103,7 +104,7 @@
                     <TextBlock
                         FontSize="18"
                         Foreground="{DynamicResource ControlForegroundBrush}"
-                        Text="Filter by source application and/or window title" />
+                        Text="{loc:Localize LBL_APPSELECTOR_TITLE}" />
                 </StackPanel>
 
             </Grid>
@@ -118,7 +119,7 @@
                 BorderThickness="0.3"
                 Foreground="{DynamicResource ControlForegroundBrush}">
                 <GroupBox.Header>
-                    <TextBlock Text="Filter by application">
+                    <TextBlock Text="{loc:Localize LBL_APPSELECTOR_FILTER_BY_APP}">
                         <i:Interaction.Behaviors>
                             <infBeh:FrameworkElementDpiScalingBehavior MaxScaleFactor="1.5" />
                         </i:Interaction.Behaviors>
@@ -209,7 +210,7 @@
                         FontSize="16"
                         FontWeight="Bold"
                         Foreground="{DynamicResource ControlForegroundBrush}"
-                        Text="Select apps from the list below">
+                        Text="{loc:Localize LBL_APPSELECTOR_SELECT_APPS_OVERLAY}">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">
                                 <Setter Property="Visibility" Value="Collapsed" />
@@ -230,7 +231,7 @@
                         VerticalAlignment="Center"
                         HorizontalContentAlignment="Left"
                         VerticalContentAlignment="Center"
-                        OverlayText="Type here to search"
+                        OverlayText="{loc:Localize LBL_APPSELECTOR_SEARCH_OVERLAY}"
                         SearchRequested="SearchTextBox_SearchRequested" />
                     <ListView
                         x:Name="availableAppsListView"
@@ -322,7 +323,7 @@
                 BorderThickness="0.3"
                 Foreground="{DynamicResource ControlForegroundBrush}">
                 <GroupBox.Header>
-                    <TextBlock Text="Filter by window title (or part of it)">
+                    <TextBlock Text="{loc:Localize LBL_APPSELECTOR_FILTER_BY_WINDOW_TITLE}">
                         <i:Interaction.Behaviors>
                             <infBeh:FrameworkElementDpiScalingBehavior MaxScaleFactor="1.5" />
                         </i:Interaction.Behaviors>
@@ -335,7 +336,7 @@
                     VerticalAlignment="Stretch"
                     HorizontalContentAlignment="Left"
                     VerticalContentAlignment="Center"
-                    OverlayText="Type here part of the window caption"
+                    OverlayText="{loc:Localize LBL_APPSELECTOR_FILTER_BY_WINDOW_OVERLAY}"
                     Text="{Binding WindowCaptionSearchString, Mode=OneWayToSource, UpdateSourceTrigger=PropertyChanged}" />
                 <!--<TextBox
                     Height="30"
@@ -359,7 +360,7 @@
                 Margin="10"
                 VerticalAlignment="Center"
                 Command="{Binding OkClicked}"
-                Content="OK"
+                Content="{loc:Localize BTN_LBL_Ok}"
                 Foreground="White"
                 IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBooleanConverter}}"
                 Style="{DynamicResource BtnOk}" />
@@ -373,7 +374,7 @@
                 Margin="10"
                 VerticalAlignment="Center"
                 Command="{Binding CancelClicked}"
-                Content="Cancel"
+                Content="{loc:Localize BTN_LBL_Cancel}"
                 Foreground="White"
                 Style="{DynamicResource BtnCancel}" />
         </Grid>

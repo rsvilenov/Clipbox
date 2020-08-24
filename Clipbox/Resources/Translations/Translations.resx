@@ -135,6 +135,24 @@
   <data name="en-US" xml:space="preserve">
     <value>English</value>
   </data>
+  <data name="LBL_APPSELECTOR_FILTER_BY_APP" xml:space="preserve">
+    <value>Filter by application</value>
+  </data>
+  <data name="LBL_APPSELECTOR_FILTER_BY_WINDOW_OVERLAY" xml:space="preserve">
+    <value>Type here part of the window caption</value>
+  </data>
+  <data name="LBL_APPSELECTOR_FILTER_BY_WINDOW_TITLE" xml:space="preserve">
+    <value>Filter by window title (or part of it)</value>
+  </data>
+  <data name="LBL_APPSELECTOR_SEARCH_OVERLAY" xml:space="preserve">
+    <value>Type here to search</value>
+  </data>
+  <data name="LBL_APPSELECTOR_SELECT_APPS_OVERLAY" xml:space="preserve">
+    <value>Select apps from the list below</value>
+  </data>
+  <data name="LBL_APPSELECTOR_TITLE" xml:space="preserve">
+    <value>Filter by source application and/or window title</value>
+  </data>
   <data name="LBL_QV_INCOMPATIBLE_ITEMS" xml:space="preserve">
     <value>Incompatible items.</value>
   </data>

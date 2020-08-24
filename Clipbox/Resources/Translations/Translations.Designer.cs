@@ -115,6 +115,60 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Filter by application.
+        /// </summary>
+        internal static string LBL_APPSELECTOR_FILTER_BY_APP {
+            get {
+                return ResourceManager.GetString("LBL_APPSELECTOR_FILTER_BY_APP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type here part of the window caption.
+        /// </summary>
+        internal static string LBL_APPSELECTOR_FILTER_BY_WINDOW_OVERLAY {
+            get {
+                return ResourceManager.GetString("LBL_APPSELECTOR_FILTER_BY_WINDOW_OVERLAY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filter by window title (or part of it).
+        /// </summary>
+        internal static string LBL_APPSELECTOR_FILTER_BY_WINDOW_TITLE {
+            get {
+                return ResourceManager.GetString("LBL_APPSELECTOR_FILTER_BY_WINDOW_TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type here to search.
+        /// </summary>
+        internal static string LBL_APPSELECTOR_SEARCH_OVERLAY {
+            get {
+                return ResourceManager.GetString("LBL_APPSELECTOR_SEARCH_OVERLAY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select apps from the list below.
+        /// </summary>
+        internal static string LBL_APPSELECTOR_SELECT_APPS_OVERLAY {
+            get {
+                return ResourceManager.GetString("LBL_APPSELECTOR_SELECT_APPS_OVERLAY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filter by source application and/or window title.
+        /// </summary>
+        internal static string LBL_APPSELECTOR_TITLE {
+            get {
+                return ResourceManager.GetString("LBL_APPSELECTOR_TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Incompatible items..
         /// </summary>
         internal static string LBL_QV_INCOMPATIBLE_ITEMS {

@@ -135,6 +135,24 @@
   <data name="en-US" xml:space="preserve">
     <value>Английски</value>
   </data>
+  <data name="LBL_APPSELECTOR_FILTER_BY_APP" xml:space="preserve">
+    <value>Филтрирай по приложение</value>
+  </data>
+  <data name="LBL_APPSELECTOR_FILTER_BY_WINDOW_OVERLAY" xml:space="preserve">
+    <value>Въведете тук част от заглавието на прозореца</value>
+  </data>
+  <data name="LBL_APPSELECTOR_FILTER_BY_WINDOW_TITLE" xml:space="preserve">
+    <value>Филтрирай по заглавие на прозорец (или част от заглавие)</value>
+  </data>
+  <data name="LBL_APPSELECTOR_SEARCH_OVERLAY" xml:space="preserve">
+    <value>Пишете тук, за да търсите</value>
+  </data>
+  <data name="LBL_APPSELECTOR_SELECT_APPS_OVERLAY" xml:space="preserve">
+    <value>Изберете приложение от списъка долу</value>
+  </data>
+  <data name="LBL_APPSELECTOR_TITLE" xml:space="preserve">
+    <value>Филтрирай по приложение и/или по заглавие на прозорец</value>
+  </data>
   <data name="LBL_QV_INCOMPATIBLE_ITEMS" xml:space="preserve">
     <value>Несъвместими елементи.</value>
   </data>
