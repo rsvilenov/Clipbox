@@ -729,6 +729,150 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show files.
+        /// </summary>
+        internal static string TTP_FILTERBAND_FILES {
+            get {
+                return ResourceManager.GetString("TTP_FILTERBAND_FILES", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filter by source application/window.
+        /// </summary>
+        internal static string TTP_FILTERBAND_FILTER_BY_APP {
+            get {
+                return ResourceManager.GetString("TTP_FILTERBAND_FILTER_BY_APP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to all applications.
+        /// </summary>
+        internal static string TTP_FILTERBAND_FILTER_BY_APP_TOGGLED_ALL_APPS {
+            get {
+                return ResourceManager.GetString("TTP_FILTERBAND_FILTER_BY_APP_TOGGLED_ALL_APPS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to where the window&apos;s caption contains.
+        /// </summary>
+        internal static string TTP_FILTERBAND_FILTER_BY_APP_TOGGLED_CAPTION_CONTAINS {
+            get {
+                return ResourceManager.GetString("TTP_FILTERBAND_FILTER_BY_APP_TOGGLED_CAPTION_CONTAINS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Showing items, coming from.
+        /// </summary>
+        internal static string TTP_FILTERBAND_FILTER_BY_APP_TOGGLED_PREFIX {
+            get {
+                return ResourceManager.GetString("TTP_FILTERBAND_FILTER_BY_APP_TOGGLED_PREFIX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filter by date.
+        /// </summary>
+        internal static string TTP_FILTERBAND_FILTER_BY_DATE {
+            get {
+                return ResourceManager.GetString("TTP_FILTERBAND_FILTER_BY_DATE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Showing items, created from.
+        /// </summary>
+        internal static string TTP_FILTERBAND_FILTER_BY_DATE_TOGGLED_PREFIX {
+            get {
+                return ResourceManager.GetString("TTP_FILTERBAND_FILTER_BY_DATE_TOGGLED_PREFIX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to to.
+        /// </summary>
+        internal static string TTP_FILTERBAND_FILTER_BY_DATE_TOGGLED_ТО {
+            get {
+                return ResourceManager.GetString("TTP_FILTERBAND_FILTER_BY_DATE_TOGGLED_ТО", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filter by source device.
+        /// </summary>
+        internal static string TTP_FILTERBAND_FILTER_BY_DEVICE {
+            get {
+                return ResourceManager.GetString("TTP_FILTERBAND_FILTER_BY_DEVICE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show items, comming from this computer.
+        /// </summary>
+        internal static string TTP_FILTERBAND_FILTER_BY_DEVICE_CURRENT {
+            get {
+                return ResourceManager.GetString("TTP_FILTERBAND_FILTER_BY_DEVICE_CURRENT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show items, comming from remote devices.
+        /// </summary>
+        internal static string TTP_FILTERBAND_FILTER_BY_DEVICE_REMOTE {
+            get {
+                return ResourceManager.GetString("TTP_FILTERBAND_FILTER_BY_DEVICE_REMOTE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show items, comming from.
+        /// </summary>
+        internal static string TTP_FILTERBAND_FILTER_BY_DEVICE_REMOTE_TOGGLED_PREFIX {
+            get {
+                return ResourceManager.GetString("TTP_FILTERBAND_FILTER_BY_DEVICE_REMOTE_TOGGLED_PREFIX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Filter by type of the content.
+        /// </summary>
+        internal static string TTP_FILTERBAND_FILTER_BY_TYPE {
+            get {
+                return ResourceManager.GetString("TTP_FILTERBAND_FILTER_BY_TYPE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show images.
+        /// </summary>
+        internal static string TTP_FILTERBAND_IMAGES {
+            get {
+                return ResourceManager.GetString("TTP_FILTERBAND_IMAGES", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show other items.
+        /// </summary>
+        internal static string TTP_FILTERBAND_OTHER_ITEMS {
+            get {
+                return ResourceManager.GetString("TTP_FILTERBAND_OTHER_ITEMS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show text items.
+        /// </summary>
+        internal static string TTP_FILTERBAND_TEXT {
+            get {
+                return ResourceManager.GetString("TTP_FILTERBAND_TEXT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Select.
         /// </summary>
         internal static string TTP_RMSELECTOR_BTN_SELECT {

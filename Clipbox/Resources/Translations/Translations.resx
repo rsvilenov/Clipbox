@@ -341,6 +341,54 @@ Warning: more rows means more RAM usage!</value>
   <data name="TLP_WINDOW_RESTORE" xml:space="preserve">
     <value>Restore</value>
   </data>
+  <data name="TTP_FILTERBAND_FILES" xml:space="preserve">
+    <value>Show files</value>
+  </data>
+  <data name="TTP_FILTERBAND_FILTER_BY_APP" xml:space="preserve">
+    <value>Filter by source application/window</value>
+  </data>
+  <data name="TTP_FILTERBAND_FILTER_BY_APP_TOGGLED_ALL_APPS" xml:space="preserve">
+    <value>all applications</value>
+  </data>
+  <data name="TTP_FILTERBAND_FILTER_BY_APP_TOGGLED_CAPTION_CONTAINS" xml:space="preserve">
+    <value>where the window's caption contains</value>
+  </data>
+  <data name="TTP_FILTERBAND_FILTER_BY_APP_TOGGLED_PREFIX" xml:space="preserve">
+    <value>Showing items, coming from</value>
+  </data>
+  <data name="TTP_FILTERBAND_FILTER_BY_DATE" xml:space="preserve">
+    <value>Filter by date</value>
+  </data>
+  <data name="TTP_FILTERBAND_FILTER_BY_DATE_TOGGLED_PREFIX" xml:space="preserve">
+    <value>Showing items, created from</value>
+  </data>
+  <data name="TTP_FILTERBAND_FILTER_BY_DATE_TOGGLED_ТО" xml:space="preserve">
+    <value>to</value>
+  </data>
+  <data name="TTP_FILTERBAND_FILTER_BY_DEVICE" xml:space="preserve">
+    <value>Filter by source device</value>
+  </data>
+  <data name="TTP_FILTERBAND_FILTER_BY_DEVICE_CURRENT" xml:space="preserve">
+    <value>Show items, comming from this computer</value>
+  </data>
+  <data name="TTP_FILTERBAND_FILTER_BY_DEVICE_REMOTE" xml:space="preserve">
+    <value>Show items, comming from remote devices</value>
+  </data>
+  <data name="TTP_FILTERBAND_FILTER_BY_DEVICE_REMOTE_TOGGLED_PREFIX" xml:space="preserve">
+    <value>Show items, comming from</value>
+  </data>
+  <data name="TTP_FILTERBAND_FILTER_BY_TYPE" xml:space="preserve">
+    <value>Filter by type of the content</value>
+  </data>
+  <data name="TTP_FILTERBAND_IMAGES" xml:space="preserve">
+    <value>Show images</value>
+  </data>
+  <data name="TTP_FILTERBAND_OTHER_ITEMS" xml:space="preserve">
+    <value>Show other items</value>
+  </data>
+  <data name="TTP_FILTERBAND_TEXT" xml:space="preserve">
+    <value>Show text items</value>
+  </data>
   <data name="TTP_RMSELECTOR_BTN_SELECT" xml:space="preserve">
     <value>Select</value>
   </data>

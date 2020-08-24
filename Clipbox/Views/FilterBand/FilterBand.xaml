@@ -5,6 +5,7 @@
     xmlns:conv="clr-namespace:Clipbox.Technical.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:loc="clr-namespace:Clipbox.Infrastructure.UI.Localization;assembly=Clipbox.Infrastructure.UI.Localization"
     xmlns:localBeh="clr-namespace:Clipbox.Behaviors"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Width="47"
@@ -24,7 +25,7 @@
                         BasedOn="{StaticResource tglButton}"
                         TargetType="{x:Type ToggleButton}">
                         <Setter Property="Content" Value="{DynamicResource ClassTextIcon}" />
-                        <Setter Property="ToolTip" Value="Show text items" />
+                        <Setter Property="ToolTip" Value="{loc:Localize TTP_FILTERBAND_TEXT}" />
                     </Style>
 
                     <Style
@@ -32,7 +33,7 @@
                         BasedOn="{StaticResource tglButton}"
                         TargetType="{x:Type ToggleButton}">
                         <Setter Property="Content" Value="{DynamicResource ClassFileIcon}" />
-                        <Setter Property="ToolTip" Value="Show files" />
+                        <Setter Property="ToolTip" Value="{loc:Localize TTP_FILTERBAND_FILES}" />
                     </Style>
 
                     <Style
@@ -40,7 +41,7 @@
                         BasedOn="{StaticResource tglButton}"
                         TargetType="{x:Type ToggleButton}">
                         <Setter Property="Content" Value="{DynamicResource ClassImageIcon}" />
-                        <Setter Property="ToolTip" Value="Show images" />
+                        <Setter Property="ToolTip" Value="{loc:Localize TTP_FILTERBAND_IMAGES}" />
                     </Style>
 
                     <Style
@@ -48,7 +49,7 @@
                         BasedOn="{StaticResource tglButton}"
                         TargetType="{x:Type ToggleButton}">
                         <Setter Property="Content" Value="{DynamicResource ClassGeneralContentIcon}" />
-                        <Setter Property="ToolTip" Value="Show other items" />
+                        <Setter Property="ToolTip" Value="{loc:Localize TTP_FILTERBAND_OTHER_ITEMS}" />
                     </Style>
 
                     <Style
@@ -56,14 +57,14 @@
                         BasedOn="{StaticResource tglButton}"
                         TargetType="{x:Type ToggleButton}">
                         <Setter Property="Content" Value="{DynamicResource SourceWindowsIcon}" />
-                        <Setter Property="ToolTip" Value="Filter by source application/window" />
+                        <Setter Property="ToolTip" Value="{loc:Localize TTP_FILTERBAND_FILTER_BY_APP}" />
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding AppSelectorToggled}" Value="True">
                                 <Setter Property="ToolTip">
                                     <Setter.Value>
                                         <StackPanel MaxWidth="350" Orientation="Vertical">
                                             <TextBlock TextWrapping="Wrap">
-                                                <Run Text="Showing items, coming from" />
+                                                <Run Text="{loc:Localize TTP_FILTERBAND_FILTER_BY_APP_TOGGLED_PREFIX}" />
                                             </TextBlock>
                                             <TextBlock TextWrapping="Wrap">
                                                 <TextBlock.Style>
@@ -79,7 +80,7 @@
                                                         </Style.Triggers>
                                                     </Style>
                                                 </TextBlock.Style>
-                                                <Run FontWeight="Bold" Text="all applications" />
+                                                <Run FontWeight="Bold" Text="{loc:Localize TTP_FILTERBAND_FILTER_BY_APP_TOGGLED_ALL_APPS}" />
                                             </TextBlock>
                                             <TextBlock TextWrapping="Wrap">
                                                 <TextBlock.Style>
@@ -113,7 +114,7 @@
                                                     </Style>
                                                 </TextBlock.Style>
                                                 <!--  WARNING: do not put these runs on a new line each, as this will add a space between each run  -->
-                                                <Run Text="where the window's caption contains" /><Run Text="&#x0a;" /><Run FontWeight="Bold" Text="{Binding WindowCaptionSearchString, StringFormat='*{0}*'}" />
+                                                <Run Text="{loc:Localize TTP_FILTERBAND_FILTER_BY_APP_TOGGLED_CAPTION_CONTAINS}" /><Run Text="&#x0a;" /><Run FontWeight="Bold" Text="{Binding WindowCaptionSearchString, StringFormat='*{0}*'}" />
                                             </TextBlock>
                                         </StackPanel>
 
@@ -128,14 +129,16 @@
                         BasedOn="{StaticResource tglButton}"
                         TargetType="{x:Type ToggleButton}">
                         <Setter Property="Content" Value="{DynamicResource DateSelectionIcon}" />
-                        <Setter Property="ToolTip" Value="Filter by date" />
+                        <Setter Property="ToolTip" Value="{loc:Localize TTP_FILTERBAND_FILTER_BY_DATE}" />
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding DateRangeToggled}" Value="True">
                                 <Setter Property="ToolTip">
                                     <Setter.Value>
                                         <TextBlock>
-                                            <!--  WARNING: do not put these runs on a new line each, as this will add a space between each run  -->
-                                            <Run Text="Showing items, created from " /><Run FontWeight="Bold" Text="{Binding StartDateMs, Converter={StaticResource MillisecondsToHumanReadableDateStringConverter}}" /><Run Text=" to " /><Run FontWeight="Bold" Text="{Binding EndDateMs, Converter={StaticResource MillisecondsToHumanReadableDateStringConverter}}" />
+                                            <Run Text="{loc:Localize TTP_FILTERBAND_FILTER_BY_DATE_TOGGLED_PREFIX}" />
+                                            <Run FontWeight="Bold" Text="{Binding StartDateMs, Converter={StaticResource MillisecondsToHumanReadableDateStringConverter}}" />
+                                            <Run Text="{loc:Localize TTP_FILTERBAND_FILTER_BY_DATE_TOGGLED_ТО}" />
+                                            <Run FontWeight="Bold" Text="{Binding EndDateMs, Converter={StaticResource MillisecondsToHumanReadableDateStringConverter}}" />
                                         </TextBlock>
                                     </Setter.Value>
                                 </Setter>
@@ -148,7 +151,7 @@
                         BasedOn="{StaticResource tglButton}"
                         TargetType="{x:Type ToggleButton}">
                         <Setter Property="Content" Value="{DynamicResource MyMachineItemsIcon}" />
-                        <Setter Property="ToolTip" Value="Show items from current computer" />
+                        <Setter Property="ToolTip" Value="{loc:Localize TTP_FILTERBAND_FILTER_BY_DEVICE_CURRENT}" />
                     </Style>
 
                     <Style
@@ -156,14 +159,14 @@
                         BasedOn="{StaticResource tglButton}"
                         TargetType="{x:Type ToggleButton}">
                         <Setter Property="Content" Value="{DynamicResource AllMachinesItemsIcon}" />
-                        <Setter Property="ToolTip" Value="Show items from remote devices" />
+                        <Setter Property="ToolTip" Value="{loc:Localize TTP_FILTERBAND_FILTER_BY_DEVICE_REMOTE}" />
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding RemoteMachineSourceToggled}" Value="True">
                                 <Setter Property="ToolTip">
                                     <Setter.Value>
                                         <TextBlock TextWrapping="Wrap">
                                             <!--  WARNING: do not put these runs on a new line each, as this will add a space between each run  -->
-                                            <Run Text="Showing items, coming from" /><Run Text="&#x0a;" /><Run FontWeight="Bold" Text="{Binding SelectedMachinesString}" />
+                                            <Run Text="{loc:Localize TTP_FILTERBAND_FILTER_BY_DEVICE_REMOTE_TOGGLED_PREFIX}" /><Run Text="&#x0a;" /><Run FontWeight="Bold" Text="{Binding SelectedMachinesString}" />
                                         </TextBlock>
                                     </Setter.Value>
                                 </Setter>
@@ -215,7 +218,8 @@
                     Header="{DynamicResource CategoriesIcon}"
                     OverridesDefaultStyle="True"
                     Tag="{DynamicResource CategoriesIcon}"
-                    Template="{StaticResource VerticalStretchyExpander}">
+                    Template="{StaticResource VerticalStretchyExpander}"
+                    ToolTip="{loc:Localize TTP_FILTERBAND_FILTER_BY_TYPE}">
 
                     <StackPanel Margin="0,5" Orientation="Vertical">
                         <ToggleButton
@@ -248,7 +252,8 @@
                     Header="{DynamicResource SyncedItemsIcon}"
                     OverridesDefaultStyle="True"
                     Tag="{DynamicResource SyncedItemsIcon}"
-                    Template="{StaticResource VerticalStretchyExpander}">
+                    Template="{StaticResource VerticalStretchyExpander}"
+                    ToolTip="{loc:Localize TTP_FILTERBAND_FILTER_BY_DEVICE}">
 
                     <StackPanel Margin="0,5" Orientation="Vertical">
                         <ToggleButton
