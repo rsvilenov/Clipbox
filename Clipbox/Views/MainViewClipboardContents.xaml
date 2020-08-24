@@ -37,6 +37,7 @@
             <infConv:IsEqualOrGreaterThanConverter x:Key="IsEqualOrGreaterThanConverter" />
             <infConv:NullOrEmptyCollectionToBoolConverter x:Key="NullOrEmptyCollectionToBoolConverter" />
             <conv:ContentClassListContainsConverter x:Key="ContentClassListContainsConverter" />
+            <conv:DateTimeToHumanReadableDateString x:Key="DateTimeToHumanReadableDateString" />
 
             <Style
                 x:Key="keepGeneratedItemToggleButton"
@@ -52,7 +53,7 @@
                 IsLiveGroupingRequested="False"
                 Source="{Binding ClipboardViewItemWrappers, Mode=OneWay}">
                 <CollectionViewSource.GroupDescriptions>
-                    <PropertyGroupDescription PropertyName="DateCreatedFriendly" />
+                    <PropertyGroupDescription PropertyName="DateCreatedDateOnlyStableString" />
                 </CollectionViewSource.GroupDescriptions>
             </CollectionViewSource>
         </ResourceDictionary>
@@ -307,7 +308,11 @@
                                     <localDialog:DialogPopup.DialogText>
                                         <MultiBinding StringFormat="{}{0} {1}?">
                                             <Binding Source="Are you sure you want to delete all the items from" />
-                                            <Binding Path="GroupNameUndergoingDeletion" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type views:ClipboardViewControlBase}}" />
+                                            <Binding
+                                                Converter="{StaticResource DateTimeToHumanReadableDateString}"
+                                                Path="GroupDateUndergoingDeletion"
+                                                RelativeSource="{RelativeSource Mode=FindAncestor,
+                                                                                AncestorType={x:Type views:ClipboardViewControlBase}}" />
                                         </MultiBinding>
                                     </localDialog:DialogPopup.DialogText>
                                 </localDialog:DialogPopup>

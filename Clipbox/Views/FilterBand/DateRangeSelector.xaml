@@ -8,6 +8,7 @@
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:infBeh="clr-namespace:Clipbox.Infrastructure.UI.Behaviors;assembly=Clipbox.Infrastructure.UI"
     xmlns:infConv="clr-namespace:Clipbox.Infrastructure.UI.Converters;assembly=Clipbox.Infrastructure.UI"
+    xmlns:loc="clr-namespace:Clipbox.Infrastructure.UI.Localization;assembly=Clipbox.Infrastructure.UI.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="450"
     d:DesignWidth="800"
@@ -87,14 +88,14 @@
                         <infBeh:FrameworkElementDpiScalingBehavior MaxScaleFactor="1.5" />
                     </i:Interaction.Behaviors>
                     <TextBlock FontSize="14" Foreground="White">
-                        <Run Text="Show items from " />
+                        <Run Text="{loc:Localize LBL_DATERANGESELECTOR_SHOW_ITEMS_FROM}" />
                         <Run FontWeight="Bold" Text="{Binding SelectedMinDateTimeMs, Converter={StaticResource MillisecondsToHumanReadableDateStringConverter}}" />
                     </TextBlock>
                     <TextBlock
                         FontSize="14"
                         Foreground="White"
                         Visibility="{Binding AreMinAndMaxSelectedDatesDistinct, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <Run Text=" to " />
+                        <Run Text="{loc:Localize LBL_DATERANGESELECTOR_SHOW_ITEMS_TO}" />
                         <Run FontWeight="Bold" Text="{Binding SelectedMaxDateTimeMs, Converter={StaticResource MillisecondsToHumanReadableDateStringConverter}}" />
                     </TextBlock>
                 </StackPanel>
@@ -121,7 +122,7 @@
                 Height="30"
                 Margin="5"
                 Command="{Binding OkClicked}"
-                Content="OK"
+                Content="{loc:Localize BTN_LBL_Ok}"
                 Foreground="White"
                 IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBooleanConverter}}"
                 Style="{DynamicResource BtnOk}" />
@@ -134,7 +135,7 @@
                 Height="30"
                 Margin="5"
                 Command="{Binding CancelClicked}"
-                Content="Cancel"
+                Content="{loc:Localize BTN_LBL_Cancel}"
                 Foreground="White"
                 Style="{DynamicResource BtnCancel}" />
         </Grid>

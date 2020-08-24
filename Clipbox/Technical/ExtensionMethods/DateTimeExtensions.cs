@@ -10,39 +10,38 @@ namespace Clipbox.Technical.ExtensionMethods
 
         public static string ToWindowsStyleHumanReadableString(this DateTime date)
         {
-            string humanReadableDateString = string.Empty;
+            string humanReadableDateString;
 
-            // TODO: translate "Today" and "Yesterday"
             if (date.Date == DateTime.Today)
             {
-                humanReadableDateString = "Today";
+                humanReadableDateString = "LBL_DATE_TODAY";
             }
             else if (date.Date == DateTime.Today.AddDays(-1))
             {
-                humanReadableDateString = "Yesterday";
+                humanReadableDateString = "LBL_DATE_YESTERDAY";
             }
 
             else if (date.Year == DateTime.Now.Year)
             {
                 // If the date is from the current year, display the Month/Day pattern
-                humanReadableDateString = date.ToString("M");
+                humanReadableDateString = date.ToString("M", CultureInfo.DefaultThreadCurrentUICulture);
             }
             else
             {
                 // if not, show the long date pattern, but strip the day name away
                 if (LondDatePatternForCultureNoDayName == null 
-                    || LondDatePatternForCultureNoDayName.Culture != CultureInfo.CurrentCulture)
+                    || LondDatePatternForCultureNoDayName.Culture != CultureInfo.DefaultThreadCurrentUICulture)
                 {
-                    string longDatePattern = CultureInfo.CurrentCulture.DateTimeFormat.LongDatePattern;
+                    string longDatePattern = CultureInfo.DefaultThreadCurrentUICulture.DateTimeFormat.LongDatePattern;
 
                     LondDatePatternForCultureNoDayName = new DatePatternForCulture
                     {
-                        Culture = CultureInfo.CurrentCulture,
+                        Culture = CultureInfo.DefaultThreadCurrentUICulture,
                         DatePattern = Regex.Replace(longDatePattern, @"[\s,\.]*dddd[\s,\.]*", "")
                     };
                 }
 
-                humanReadableDateString = date.ToString(LondDatePatternForCultureNoDayName.DatePattern);
+                humanReadableDateString = date.ToString(LondDatePatternForCultureNoDayName.DatePattern, CultureInfo.DefaultThreadCurrentUICulture);
             }
 
             return humanReadableDateString;

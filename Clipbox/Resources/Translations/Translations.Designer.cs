@@ -169,6 +169,42 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Today.
+        /// </summary>
+        internal static string LBL_DATE_TODAY {
+            get {
+                return ResourceManager.GetString("LBL_DATE_TODAY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Yesterday.
+        /// </summary>
+        internal static string LBL_DATE_YESTERDAY {
+            get {
+                return ResourceManager.GetString("LBL_DATE_YESTERDAY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show items from.
+        /// </summary>
+        internal static string LBL_DATERANGESELECTOR_SHOW_ITEMS_FROM {
+            get {
+                return ResourceManager.GetString("LBL_DATERANGESELECTOR_SHOW_ITEMS_FROM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to to.
+        /// </summary>
+        internal static string LBL_DATERANGESELECTOR_SHOW_ITEMS_TO {
+            get {
+                return ResourceManager.GetString("LBL_DATERANGESELECTOR_SHOW_ITEMS_TO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Incompatible items..
         /// </summary>
         internal static string LBL_QV_INCOMPATIBLE_ITEMS {

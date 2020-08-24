@@ -1,14 +1,15 @@
 ﻿using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.Infrastructure.UI;
-using Clipbox.Technical.ExtensionMethods;
 using Clipbox.ViewModels.Enums;
 using System;
-using System.Linq;
+using System.Globalization;
 
 namespace Clipbox.ViewModels.BindableObjects
 {
     public class ClipboardViewItemWrapper : BindableObject
     {
+        public const string STABLE_DATE_TIME_FORMAT = "dd-MM-yyyy";
+
         public ClipboardViewItemWrapper(IClipboardItem clipboardItem)
         {
             // store the original item for searching...
@@ -36,18 +37,21 @@ namespace Clipbox.ViewModels.BindableObjects
             private set
             {
                 SetField(ref _dateCreated, value);
-                // I am not using the converter (DateTimeToHumanReadableStringConverter) but store
-                // the value here, so that it won't be converted each time the bindings are evaluated.
-                DateCreatedFriendly = value.ToWindowsStyleHumanReadableString();
+                DateCreatedDateOnlyStableString = _dateCreated
+                    .Date
+                    .ToString(STABLE_DATE_TIME_FORMAT, CultureInfo.InvariantCulture);
             }
         }
 
-        private string _dateCreatedFriendly;
+        private string _dateCreatedDateOnlyStableString;
 
-        public string DateCreatedFriendly
+        public string DateCreatedDateOnlyStableString
         {
-            get { return _dateCreatedFriendly; }
-            private set { SetField(ref _dateCreatedFriendly, value); }
+            get { return _dateCreatedDateOnlyStableString; }
+            private set
+            {
+                SetField(ref _dateCreatedDateOnlyStableString, value);
+            }
         }
 
         private ClipboardViewItem _viewItem;

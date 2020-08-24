@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Timers;
 using System.Windows;
@@ -331,7 +332,10 @@ namespace Clipbox.Views.ClipboardListView
                 if (thumbYPos + thumbRect.Height >= groupItemRelativeLocation.Y &&
                     thumbYPos <= groupItemRelativeLocation.Y + groupItem.ActualHeight)
                 {
-                    ScrollBarDataContext.CurrentVisibleItemsDateString = groupName;
+                    // the group name is bound to ClipboardViewItemWrapper.DateCreatedDateOnlyStableString property,
+                    // which is culture independent and does not change when the language/culture is changed. So we
+                    // will use its format to parse the date back.
+                    ScrollBarDataContext.CurrentVisibleItemsGroupDate = DateTime.ParseExact(groupName, ClipboardViewItemWrapper.STABLE_DATE_TIME_FORMAT, CultureInfo.InvariantCulture);
                 }
             }
         }
@@ -428,8 +432,11 @@ namespace Clipbox.Views.ClipboardListView
                 }
             }
 
-            ScrollBarDataContext.FirstItemDateString = _groupNameGroupItemMapping.First().Key;
-            ScrollBarDataContext.LastItemDateString = _groupNameGroupItemMapping.Last().Key;
+            // the group name is bound to ClipboardViewItemWrapper.DateCreatedDateOnlyStableString property,
+            // which is culture independent and does not change when the language/culture is changed. So we
+            // will use its format to parse the date back.
+            ScrollBarDataContext.FirstItemDate = DateTime.ParseExact(_groupNameGroupItemMapping.First().Key, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+            ScrollBarDataContext.LastItemDate = DateTime.ParseExact(_groupNameGroupItemMapping.Last().Key, "dd-MM-yyyy", CultureInfo.InvariantCulture);
 
             _lastListViewItemCount = this.Items.Count;
 
@@ -454,8 +461,8 @@ namespace Clipbox.Views.ClipboardListView
             foreach (ClipboardViewItemWrapper lviVm in this.Items)
             {
                 // if the item is part of a visible group...
-                // The item's group name is the wrapper's DateCreatedFriendly.
-                if (visibleGroupItemMapping.ContainsKey(lviVm.DateCreatedFriendly))
+                // The item's group name is the wrapper's DateCreatedDateOnlyStableString.
+                if (visibleGroupItemMapping.ContainsKey(lviVm.DateCreatedDateOnlyStableString))
                 {
                     // load the actual item
                     ListViewItem lvi = (ListViewItem)this.ItemContainerGenerator.ContainerFromItem(lviVm);
@@ -544,28 +551,25 @@ namespace Clipbox.Views.ClipboardListView
 
         private class ScrollBarDataContextClass : BindableObject
         {
-            private string _currentVisibleItemsDateString;
-
-            public string CurrentVisibleItemsDateString
+            private DateTime _currentVisibleItemsGroupDate;
+            public DateTime CurrentVisibleItemsGroupDate
             {
-                get { return _currentVisibleItemsDateString; }
-                set { SetField(ref _currentVisibleItemsDateString, value); }
+                get { return _currentVisibleItemsGroupDate; }
+                set { SetField(ref _currentVisibleItemsGroupDate, value); }
             }
 
-            private string _firstItemDateString;
-
-            public string FirstItemDateString
+            private DateTime _firstItemDate;
+            public DateTime FirstItemDate
             {
-                get { return _firstItemDateString; }
-                set { SetField(ref _firstItemDateString, value); }
+                get { return _firstItemDate; }
+                set { SetField(ref _firstItemDate, value); }
             }
 
-            private string _lastItemDateString;
-
-            public string LastItemDateString
+            private DateTime _lastItemDate;
+            public DateTime LastItemDate
             {
-                get { return _lastItemDateString; }
-                set { SetField(ref _lastItemDateString, value); }
+                get { return _lastItemDate; }
+                set { SetField(ref _lastItemDate, value); }
             }
         }
     }

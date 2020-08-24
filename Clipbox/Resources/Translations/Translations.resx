@@ -153,6 +153,18 @@
   <data name="LBL_APPSELECTOR_TITLE" xml:space="preserve">
     <value>Filter by source application and/or window title</value>
   </data>
+  <data name="LBL_DATERANGESELECTOR_SHOW_ITEMS_FROM" xml:space="preserve">
+    <value>Show items from</value>
+  </data>
+  <data name="LBL_DATERANGESELECTOR_SHOW_ITEMS_TO" xml:space="preserve">
+    <value>to</value>
+  </data>
+  <data name="LBL_DATE_TODAY" xml:space="preserve">
+    <value>Today</value>
+  </data>
+  <data name="LBL_DATE_YESTERDAY" xml:space="preserve">
+    <value>Yesterday</value>
+  </data>
   <data name="LBL_QV_INCOMPATIBLE_ITEMS" xml:space="preserve">
     <value>Incompatible items.</value>
   </data>

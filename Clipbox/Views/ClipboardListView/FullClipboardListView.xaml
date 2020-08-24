@@ -48,6 +48,7 @@
         <infConv:IsEqualOrGreaterThanConverter x:Key="IsEqualOrGreaterThanConverter" />
         <infConv:NullOrEmptyCollectionToBoolConverter x:Key="NullOrEmptyCollectionToBoolConverter" />
         <conv:ContentClassListContainsConverter x:Key="ContentClassListContainsConverter" />
+        <conv:DateTimeToHumanReadableDateString x:Key="DateTimeToHumanReadableDateString" />
 
         <Style x:Key="MultiItemPresenterStyleForSubItems_EventTriggersStyle" TargetType="{x:Type tile:MultiItemPresenter}">
             <EventSetter Event="Unloaded" Handler="MultiItemPresenter_Unloaded" />
@@ -83,17 +84,17 @@
                     Margin="50,0,0,0"
                     HorizontalAlignment="Right"
                     AutomationProperties.AutomationId="VerticalScrollBar"
-                    BottomLabelText="{Binding LastItemDateString}"
+                    BottomLabelText="{Binding LastItemDate, Converter={StaticResource DateTimeToHumanReadableDateString}}"
                     Cursor="Arrow"
                     DataContext="{Binding Path=ScrollBarDataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type lv:FullClipboardListView}}}"
-                    FloatingLabelText="{Binding CurrentVisibleItemsDateString}"
+                    FloatingLabelText="{Binding CurrentVisibleItemsGroupDate, Converter={StaticResource DateTimeToHumanReadableDateString}}"
                     FontSize="14"
                     Foreground="White"
                     Loaded="PART_VerticalScrollBar_Loaded"
                     Maximum="{TemplateBinding ScrollableHeight}"
                     Minimum="0"
                     ScrollBarThumbPositionChanged="PART_VerticalScrollBar_ScrollBarThumbPositionChanged"
-                    TopLabelText="{Binding FirstItemDateString}"
+                    TopLabelText="{Binding FirstItemDate, Converter={StaticResource DateTimeToHumanReadableDateString}}"
                     ViewportSize="{TemplateBinding ViewportHeight}"
                     Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
                     Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" />
@@ -183,7 +184,7 @@
                                             FontSize="22"
                                             FontWeight="Bold"
                                             Foreground="{TemplateBinding Foreground}"
-                                            Text="{Binding Items[0].DateCreatedFriendly}" />
+                                            Text="{Binding Items[0].DateCreated, Converter={StaticResource DateTimeToHumanReadableDateString}}" />
 
                                         <Button
                                             x:Name="deleteGroupBtn"

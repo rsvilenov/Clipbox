@@ -568,14 +568,14 @@ namespace Clipbox.Views
 
 
 
-        public string GroupNameUndergoingDeletion
+        public DateTime GroupDateUndergoingDeletion
         {
-            get { return (string)GetValue(GroupNameUndergoingDeletionProperty); }
-            set { SetValue(GroupNameUndergoingDeletionProperty, value); }
+            get { return (DateTime)GetValue(GroupDateUndergoingDeletionProperty); }
+            set { SetValue(GroupDateUndergoingDeletionProperty, value); }
         }
 
-        public static readonly DependencyProperty GroupNameUndergoingDeletionProperty =
-            DependencyProperty.Register(nameof(GroupNameUndergoingDeletion), typeof(string), typeof(MainViewClipboardContents), new PropertyMetadata(string.Empty));
+        public static readonly DependencyProperty GroupDateUndergoingDeletionProperty =
+            DependencyProperty.Register(nameof(GroupDateUndergoingDeletion), typeof(DateTime), typeof(MainViewClipboardContents), new PropertyMetadata(default(DateTime)));
 
 
 
@@ -597,7 +597,7 @@ namespace Clipbox.Views
             }
 
             //GroupItem itemGroupItem = Traversing.FindParent<GroupItem>(selectedListViewItem);
-            GroupNameUndergoingDeletion = wrapper.DateCreatedFriendly;
+            GroupDateUndergoingDeletion = wrapper.DateCreated.Date;
 
             // unselet all selected items, including the one that we are going to delete
             MainListView.UnselectAll();

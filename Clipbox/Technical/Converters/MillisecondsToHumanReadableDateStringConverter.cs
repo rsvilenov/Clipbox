@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Clipbox.Infrastructure.UI.Localization;
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Windows.Data;
@@ -21,9 +22,19 @@ namespace Clipbox.Technical.Converters
             DateTime utcDt = (new DateTime(1970, 1, 1))
                 .AddMilliseconds(milliseconds);
 
-            return utcDt
+            string humanReadableDateString = utcDt
                 .ToLocalTime()
                 .ToWindowsStyleHumanReadableString();
+
+            if (humanReadableDateString.StartsWith("LBL_"))
+            {
+                humanReadableDateString = TranslationSourcePool
+                    .Instance
+                    .GetSource()
+                    .GetTranslation(humanReadableDateString);
+            }
+
+            return humanReadableDateString;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
