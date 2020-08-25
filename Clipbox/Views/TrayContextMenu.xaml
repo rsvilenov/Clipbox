@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:coreConv="clr-namespace:Clipbox.Infrastructure.UI.Converters;assembly=Clipbox.Infrastructure.UI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:loc="clr-namespace:Clipbox.Infrastructure.UI.Localization;assembly=Clipbox.Infrastructure.UI.Localization"
     xmlns:local="clr-namespace:Clipbox.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="300"
@@ -15,7 +16,7 @@
         <ContextMenu x:Key="TrayContextMenu" Placement="MousePoint">
             <MenuItem
                 Command="{Binding ToggleMainWindowOpen}"
-                Header="Open Clipbox"
+                Header="{loc:Localize LBL_CONTEXT_MENU_OPEN_MAIN_WINDOW}"
                 IsEnabled="{Binding IsMainWindowOpen, Converter={StaticResource InverseBooleanConverter}}"
                 Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <MenuItem.Icon>
@@ -24,7 +25,7 @@
             </MenuItem>
             <MenuItem
                 Command="{Binding ToggleMainWindowOpen}"
-                Header="Close Clipbox"
+                Header="{loc:Localize LBL_CONTEXT_MENU_CLOSE_MAIN_WINDOW}"
                 Visibility="{Binding IsMainWindowOpen, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <MenuItem.Icon>
                     <Image Source="pack://application:,,,/Resources/Images/OpenMainWindow.png" />
@@ -32,7 +33,7 @@
             </MenuItem>
             <MenuItem
                 Command="{Binding ToggleCloudSyncEnabled}"
-                Header="Disable cloud sync"
+                Header="{loc:Localize LBL_CONTEXT_MENU_DISABLE_CLOUD_SYNC}"
                 Visibility="{Binding IsCloudSyncEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <MenuItem.Icon>
                     <Image Source="pack://application:,,,/Resources/Images/SyncDisabled.png" />
@@ -40,7 +41,7 @@
             </MenuItem>
             <MenuItem
                 Command="{Binding ToggleCloudSyncEnabled}"
-                Header="Enable cloud sync"
+                Header="{loc:Localize LBL_CONTEXT_MENU_ENABLE_CLOUD_SYNC}"
                 IsEnabled="{Binding IsCloudSyncEnabled, Converter={StaticResource InverseBooleanConverter}}"
                 Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <MenuItem.Icon>
@@ -48,7 +49,7 @@
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem
-                Header="Pause For"
+                Header="{loc:Localize LBL_CONTEXT_MENU_PAUSE_FOR}"
                 IsEnabled="{Binding IsPaused, Converter={StaticResource InverseBooleanConverter}}"
                 Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <MenuItem.Icon>
@@ -57,35 +58,35 @@
                 <MenuItem
                     Command="{Binding Pause}"
                     CommandParameter="30000"
-                    Header="30 sec" />
+                    Header="{loc:Localize LBL_CONTEXT_MENU_30_SEC}" />
                 <MenuItem
                     Command="{Binding Pause}"
                     CommandParameter="300000"
-                    Header="5 min" />
+                    Header="{loc:Localize LBL_CONTEXT_MENU_5_MIN}" />
                 <MenuItem
                     Command="{Binding Pause}"
                     CommandParameter="1800000"
-                    Header="30 min" />
+                    Header="{loc:Localize LBL_CONTEXT_MENU_30_MIN}" />
                 <MenuItem
                     Command="{Binding Pause}"
                     CommandParameter="-1"
-                    Header="Forever" />
+                    Header="{loc:Localize LBL_CONTEXT_MENU_PAUSE_FOREVER}" />
             </MenuItem>
             <MenuItem
                 Command="{Binding Resume}"
-                Header="Resume"
+                Header="{loc:Localize LBL_CONTEXT_MENU_RESUME}"
                 Visibility="{Binding IsPaused, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <MenuItem.Icon>
                     <Image Source="pack://application:,,,/Resources/Images/Resume.png" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Command="{Binding OpenSettingsWindow}" Header="Settings">
+            <MenuItem Command="{Binding OpenSettingsWindow}" Header="{loc:Localize LBL_CONTEXT_MENU_SETTINGS}">
                 <MenuItem.Icon>
                     <Image Source="pack://application:,,,/Resources/Images/Settings.png" />
                 </MenuItem.Icon>
             </MenuItem>
             <Separator />
-            <MenuItem Command="{Binding Quit}" Header="Quit">
+            <MenuItem Command="{Binding Quit}" Header="{loc:Localize LBL_CONTEXT_MENU_QUIT}">
                 <MenuItem.Icon>
                     <Image Source="pack://application:,,,/Resources/Images/Exit.png" />
                 </MenuItem.Icon>

@@ -46,6 +46,15 @@ namespace Clipbox.Views.Dialog
             DependencyProperty.Register(nameof(DialogText), typeof(string), typeof(DialogPopup), new PropertyMetadata(string.Empty));
 
 
+        public UIElement Content
+        {
+            get { return (UIElement)GetValue(ContentProperty); }
+            set { SetValue(ContentProperty, value); }
+        }
+
+        public static readonly DependencyProperty ContentProperty =
+            DependencyProperty.Register(nameof(Content), typeof(UIElement), typeof(DialogPopup), new PropertyMetadata(null));
+
 
 
         public IInputElement ReturnFocusTo

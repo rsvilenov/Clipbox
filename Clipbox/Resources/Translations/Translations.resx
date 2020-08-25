@@ -123,8 +123,17 @@
   <data name="BTN_LBL_Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="BTN_LBL_No" xml:space="preserve">
+    <value>No</value>
+  </data>
   <data name="BTN_LBL_Ok" xml:space="preserve">
     <value>OK</value>
+  </data>
+  <data name="BTN_LBL_Yes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="BTN_MAINVIEW_REBUILD_SEARCH_INDEX" xml:space="preserve">
+    <value>Rebuild</value>
   </data>
   <data name="BTN_QV_WIPE" xml:space="preserve">
     <value>Hide all copied clipboard entries from this window.</value>
@@ -156,6 +165,42 @@
   <data name="LBL_APPSELECTOR_TITLE" xml:space="preserve">
     <value>Filter by source application and/or window title</value>
   </data>
+  <data name="LBL_CONTEXT_MENU_30_MIN" xml:space="preserve">
+    <value>30 min</value>
+  </data>
+  <data name="LBL_CONTEXT_MENU_30_SEC" xml:space="preserve">
+    <value>30 sec</value>
+  </data>
+  <data name="LBL_CONTEXT_MENU_5_MIN" xml:space="preserve">
+    <value>5 min</value>
+  </data>
+  <data name="LBL_CONTEXT_MENU_CLOSE_MAIN_WINDOW" xml:space="preserve">
+    <value>Close fullscreen view</value>
+  </data>
+  <data name="LBL_CONTEXT_MENU_DISABLE_CLOUD_SYNC" xml:space="preserve">
+    <value>Disable cloud sync</value>
+  </data>
+  <data name="LBL_CONTEXT_MENU_ENABLE_CLOUD_SYNC" xml:space="preserve">
+    <value>Enable cloud sync</value>
+  </data>
+  <data name="LBL_CONTEXT_MENU_OPEN_MAIN_WINDOW" xml:space="preserve">
+    <value>Fullscreen view</value>
+  </data>
+  <data name="LBL_CONTEXT_MENU_PAUSE_FOR" xml:space="preserve">
+    <value>Pause for</value>
+  </data>
+  <data name="LBL_CONTEXT_MENU_PAUSE_FOREVER" xml:space="preserve">
+    <value>Forever</value>
+  </data>
+  <data name="LBL_CONTEXT_MENU_QUIT" xml:space="preserve">
+    <value>Quit</value>
+  </data>
+  <data name="LBL_CONTEXT_MENU_RESUME" xml:space="preserve">
+    <value>Resume</value>
+  </data>
+  <data name="LBL_CONTEXT_MENU_SETTINGS" xml:space="preserve">
+    <value>Settings</value>
+  </data>
   <data name="LBL_DATERANGESELECTOR_SHOW_ITEMS_FROM" xml:space="preserve">
     <value>Show items from</value>
   </data>
@@ -167,6 +212,21 @@
   </data>
   <data name="LBL_DATE_YESTERDAY" xml:space="preserve">
     <value>Yesterday</value>
+  </data>
+  <data name="LBL_MAINVIEW_NO_ITEMS" xml:space="preserve">
+    <value>No items to show.</value>
+  </data>
+  <data name="LBL_MAINVIEW_POPUP_DELETE_GROUP" xml:space="preserve">
+    <value>Are you sure you want to delete all the items from</value>
+  </data>
+  <data name="LBL_MAINVIEW_POPUP_DELETE_ITEMS" xml:space="preserve">
+    <value>Are you sure you want to delete the selected item(s)?</value>
+  </data>
+  <data name="LBL_MAINVIEW_POPUP_DELETE_SINGLE_ITEM" xml:space="preserve">
+    <value>Are you sure you want to delete this item?</value>
+  </data>
+  <data name="LBL_MAINVIEW_SEARCH_INDEX_BROKEN" xml:space="preserve">
+    <value>The search index is broken.</value>
   </data>
   <data name="LBL_QV_INCOMPATIBLE_ITEMS" xml:space="preserve">
     <value>Incompatible items.</value>
@@ -353,6 +413,12 @@ Warning: more rows means more RAM usage!</value>
   <data name="TLP_WINDOW_RESTORE" xml:space="preserve">
     <value>Restore</value>
   </data>
+  <data name="TTP_EXPANDABLESEARCH_BTN" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="TTP_EXPANDABLESEARCH_OVERLAYTEXT" xml:space="preserve">
+    <value>Type here to search</value>
+  </data>
   <data name="TTP_FILTERBAND_FILES" xml:space="preserve">
     <value>Show files</value>
   </data>
@@ -400,6 +466,27 @@ Warning: more rows means more RAM usage!</value>
   </data>
   <data name="TTP_FILTERBAND_TEXT" xml:space="preserve">
     <value>Show text items</value>
+  </data>
+  <data name="TTP_MAINVIEW_BTN_DELETE_SELECTED" xml:space="preserve">
+    <value>Delete the selected item(s)</value>
+  </data>
+  <data name="TTP_MAINVIEW_BTN_SETTINGS" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="TTP_MAINVIEW_BTN_SET_TO_CLIPBOARD" xml:space="preserve">
+    <value>Charge the system clipboard with the selected item(s)</value>
+  </data>
+  <data name="TTP_MAINVIEW_FILTERS_DISABLED_DUE_TO_ERRORS" xml:space="preserve">
+    <value>The filters are disabled due to search index errors.</value>
+  </data>
+  <data name="TTP_MAINVIEW_SEARCHBOX_DISABLED_DUE_TO_ERRORS" xml:space="preserve">
+    <value>The search box is disabled due to search index errors.</value>
+  </data>
+  <data name="TTP_MAINVIEW_SEARCH_FUNCTIONALITY_DISABLED" xml:space="preserve">
+    <value>The search/filter functionality is disabled.</value>
+  </data>
+  <data name="TTP_MAINVIEW_TGL_SAVE_MODIFIED_ITEM" xml:space="preserve">
+    <value>Save the combined/modified item, so it can be used in the future</value>
   </data>
   <data name="TTP_RMSELECTOR_BTN_SELECT" xml:space="preserve">
     <value>Select</value>

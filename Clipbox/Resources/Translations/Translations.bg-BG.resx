@@ -123,8 +123,17 @@
   <data name="BTN_LBL_Cancel" xml:space="preserve">
     <value>Отмени</value>
   </data>
+  <data name="BTN_LBL_No" xml:space="preserve">
+    <value>Не</value>
+  </data>
   <data name="BTN_LBL_Ok" xml:space="preserve">
     <value>OK</value>
+  </data>
+  <data name="BTN_LBL_Yes" xml:space="preserve">
+    <value>Да</value>
+  </data>
+  <data name="BTN_MAINVIEW_REBUILD_SEARCH_INDEX" xml:space="preserve">
+    <value>Възстанови</value>
   </data>
   <data name="BTN_QV_WIPE" xml:space="preserve">
     <value>Скрий всички копирани клипборд елементи от този прозорец.</value>
@@ -156,6 +165,42 @@
   <data name="LBL_APPSELECTOR_TITLE" xml:space="preserve">
     <value>Филтрирай по приложение и/или по заглавие на прозорец</value>
   </data>
+  <data name="LBL_CONTEXT_MENU_30_MIN" xml:space="preserve">
+    <value>30 мин</value>
+  </data>
+  <data name="LBL_CONTEXT_MENU_30_SEC" xml:space="preserve">
+    <value>30 сек</value>
+  </data>
+  <data name="LBL_CONTEXT_MENU_5_MIN" xml:space="preserve">
+    <value>5 мин</value>
+  </data>
+  <data name="LBL_CONTEXT_MENU_CLOSE_MAIN_WINDOW" xml:space="preserve">
+    <value>Затвори прегледа на цял екран</value>
+  </data>
+  <data name="LBL_CONTEXT_MENU_DISABLE_CLOUD_SYNC" xml:space="preserve">
+    <value>Забрани облачното синхронизиране</value>
+  </data>
+  <data name="LBL_CONTEXT_MENU_ENABLE_CLOUD_SYNC" xml:space="preserve">
+    <value>Позволи облачното синхронизиране</value>
+  </data>
+  <data name="LBL_CONTEXT_MENU_OPEN_MAIN_WINDOW" xml:space="preserve">
+    <value>Преглед на цял екран</value>
+  </data>
+  <data name="LBL_CONTEXT_MENU_PAUSE_FOR" xml:space="preserve">
+    <value>Пауза за</value>
+  </data>
+  <data name="LBL_CONTEXT_MENU_PAUSE_FOREVER" xml:space="preserve">
+    <value>За постоянно</value>
+  </data>
+  <data name="LBL_CONTEXT_MENU_QUIT" xml:space="preserve">
+    <value>Изход</value>
+  </data>
+  <data name="LBL_CONTEXT_MENU_RESUME" xml:space="preserve">
+    <value>Поднови работа</value>
+  </data>
+  <data name="LBL_CONTEXT_MENU_SETTINGS" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
   <data name="LBL_DATERANGESELECTOR_SHOW_ITEMS_FROM" xml:space="preserve">
     <value>Покажи елементи от</value>
   </data>
@@ -167,6 +212,21 @@
   </data>
   <data name="LBL_DATE_YESTERDAY" xml:space="preserve">
     <value>вчера</value>
+  </data>
+  <data name="LBL_MAINVIEW_NO_ITEMS" xml:space="preserve">
+    <value>Няма записи за показване.</value>
+  </data>
+  <data name="LBL_MAINVIEW_POPUP_DELETE_GROUP" xml:space="preserve">
+    <value>Сигурни ли сте, че искате да изтриете всички елементи от</value>
+  </data>
+  <data name="LBL_MAINVIEW_POPUP_DELETE_ITEMS" xml:space="preserve">
+    <value>Сигурни ли сте, че искате да изтриете избраните елементи?</value>
+  </data>
+  <data name="LBL_MAINVIEW_POPUP_DELETE_SINGLE_ITEM" xml:space="preserve">
+    <value>Сигурни ли сте, че искате да изтриете избрания елемент?</value>
+  </data>
+  <data name="LBL_MAINVIEW_SEARCH_INDEX_BROKEN" xml:space="preserve">
+    <value>Индексът за търсене е повреден.</value>
   </data>
   <data name="LBL_QV_INCOMPATIBLE_ITEMS" xml:space="preserve">
     <value>Несъвместими елементи.</value>
@@ -353,6 +413,12 @@
   <data name="TLP_WINDOW_RESTORE" xml:space="preserve">
     <value>Възстанови</value>
   </data>
+  <data name="TTP_EXPANDABLESEARCH_BTN" xml:space="preserve">
+    <value>Търсене</value>
+  </data>
+  <data name="TTP_EXPANDABLESEARCH_OVERLAYTEXT" xml:space="preserve">
+    <value>Пишете тук за търсене</value>
+  </data>
   <data name="TTP_FILTERBAND_FILES" xml:space="preserve">
     <value>Показвай файлове</value>
   </data>
@@ -400,6 +466,27 @@
   </data>
   <data name="TTP_FILTERBAND_TEXT" xml:space="preserve">
     <value>Показвай текстови елементи</value>
+  </data>
+  <data name="TTP_MAINVIEW_BTN_DELETE_SELECTED" xml:space="preserve">
+    <value>Изтрий избраните елементи</value>
+  </data>
+  <data name="TTP_MAINVIEW_BTN_SETTINGS" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="TTP_MAINVIEW_BTN_SET_TO_CLIPBOARD" xml:space="preserve">
+    <value>Зареди избраните елементи в системния клипборд</value>
+  </data>
+  <data name="TTP_MAINVIEW_FILTERS_DISABLED_DUE_TO_ERRORS" xml:space="preserve">
+    <value>Филтрите са забранени поради грешки в индекса за търсене.</value>
+  </data>
+  <data name="TTP_MAINVIEW_SEARCHBOX_DISABLED_DUE_TO_ERRORS" xml:space="preserve">
+    <value>Полето за търсене е забранено поради грешки в индекса.</value>
+  </data>
+  <data name="TTP_MAINVIEW_SEARCH_FUNCTIONALITY_DISABLED" xml:space="preserve">
+    <value>Функциите за търсене/филтриране са забранени.</value>
+  </data>
+  <data name="TTP_MAINVIEW_TGL_SAVE_MODIFIED_ITEM" xml:space="preserve">
+    <value>Запази модифицирания/комбинирания запис за повторна употреба по-късно</value>
   </data>
   <data name="TTP_RMSELECTOR_BTN_SELECT" xml:space="preserve">
     <value>Избери</value>

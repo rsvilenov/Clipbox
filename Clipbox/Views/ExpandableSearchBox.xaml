@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:Clipbox.Infrastructure.UI.CustomControls;assembly=Clipbox.Infrastructure.UI.CustomControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:loc="clr-namespace:Clipbox.Infrastructure.UI.Localization;assembly=Clipbox.Infrastructure.UI.Localization"
     xmlns:local="clr-namespace:Clipbox.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="450"
@@ -20,7 +21,7 @@
                         BasedOn="{StaticResource tglButton}"
                         TargetType="{x:Type ToggleButton}">
                         <Setter Property="Content" Value="{DynamicResource SearchIcon}" />
-                        <Setter Property="ToolTip" Value="Search" />
+                        <Setter Property="ToolTip" Value="{loc:Localize TTP_EXPANDABLESEARCH_BTN}" />
                     </Style>
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
@@ -45,7 +46,7 @@
             VerticalAlignment="Stretch"
             HorizontalContentAlignment="Left"
             VerticalContentAlignment="Center"
-            OverlayText="Type here to search"
+            OverlayText="{loc:Localize TTP_EXPANDABLESEARCH_OVERLAYTEXT}"
             SearchRequested="SearchTextBox_SearchRequested" />
     </Expander>
 </UserControl>

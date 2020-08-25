@@ -79,11 +79,38 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No.
+        /// </summary>
+        internal static string BTN_LBL_No {
+            get {
+                return ResourceManager.GetString("BTN_LBL_No", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to OK.
         /// </summary>
         internal static string BTN_LBL_Ok {
             get {
                 return ResourceManager.GetString("BTN_LBL_Ok", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Yes.
+        /// </summary>
+        internal static string BTN_LBL_Yes {
+            get {
+                return ResourceManager.GetString("BTN_LBL_Yes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rebuild.
+        /// </summary>
+        internal static string BTN_MAINVIEW_REBUILD_SEARCH_INDEX {
+            get {
+                return ResourceManager.GetString("BTN_MAINVIEW_REBUILD_SEARCH_INDEX", resourceCulture);
             }
         }
         
@@ -178,6 +205,114 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to 30 min.
+        /// </summary>
+        internal static string LBL_CONTEXT_MENU_30_MIN {
+            get {
+                return ResourceManager.GetString("LBL_CONTEXT_MENU_30_MIN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 30 sec.
+        /// </summary>
+        internal static string LBL_CONTEXT_MENU_30_SEC {
+            get {
+                return ResourceManager.GetString("LBL_CONTEXT_MENU_30_SEC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to 5 min.
+        /// </summary>
+        internal static string LBL_CONTEXT_MENU_5_MIN {
+            get {
+                return ResourceManager.GetString("LBL_CONTEXT_MENU_5_MIN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close fullscreen view.
+        /// </summary>
+        internal static string LBL_CONTEXT_MENU_CLOSE_MAIN_WINDOW {
+            get {
+                return ResourceManager.GetString("LBL_CONTEXT_MENU_CLOSE_MAIN_WINDOW", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disable cloud sync.
+        /// </summary>
+        internal static string LBL_CONTEXT_MENU_DISABLE_CLOUD_SYNC {
+            get {
+                return ResourceManager.GetString("LBL_CONTEXT_MENU_DISABLE_CLOUD_SYNC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enable cloud sync.
+        /// </summary>
+        internal static string LBL_CONTEXT_MENU_ENABLE_CLOUD_SYNC {
+            get {
+                return ResourceManager.GetString("LBL_CONTEXT_MENU_ENABLE_CLOUD_SYNC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Fullscreen view.
+        /// </summary>
+        internal static string LBL_CONTEXT_MENU_OPEN_MAIN_WINDOW {
+            get {
+                return ResourceManager.GetString("LBL_CONTEXT_MENU_OPEN_MAIN_WINDOW", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pause for.
+        /// </summary>
+        internal static string LBL_CONTEXT_MENU_PAUSE_FOR {
+            get {
+                return ResourceManager.GetString("LBL_CONTEXT_MENU_PAUSE_FOR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Forever.
+        /// </summary>
+        internal static string LBL_CONTEXT_MENU_PAUSE_FOREVER {
+            get {
+                return ResourceManager.GetString("LBL_CONTEXT_MENU_PAUSE_FOREVER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Quit.
+        /// </summary>
+        internal static string LBL_CONTEXT_MENU_QUIT {
+            get {
+                return ResourceManager.GetString("LBL_CONTEXT_MENU_QUIT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Resume.
+        /// </summary>
+        internal static string LBL_CONTEXT_MENU_RESUME {
+            get {
+                return ResourceManager.GetString("LBL_CONTEXT_MENU_RESUME", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        internal static string LBL_CONTEXT_MENU_SETTINGS {
+            get {
+                return ResourceManager.GetString("LBL_CONTEXT_MENU_SETTINGS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Today.
         /// </summary>
         internal static string LBL_DATE_TODAY {
@@ -210,6 +345,51 @@ namespace Clipbox.Resources.Translations {
         internal static string LBL_DATERANGESELECTOR_SHOW_ITEMS_TO {
             get {
                 return ResourceManager.GetString("LBL_DATERANGESELECTOR_SHOW_ITEMS_TO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No items to show..
+        /// </summary>
+        internal static string LBL_MAINVIEW_NO_ITEMS {
+            get {
+                return ResourceManager.GetString("LBL_MAINVIEW_NO_ITEMS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete all the items from.
+        /// </summary>
+        internal static string LBL_MAINVIEW_POPUP_DELETE_GROUP {
+            get {
+                return ResourceManager.GetString("LBL_MAINVIEW_POPUP_DELETE_GROUP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete the selected item(s)?.
+        /// </summary>
+        internal static string LBL_MAINVIEW_POPUP_DELETE_ITEMS {
+            get {
+                return ResourceManager.GetString("LBL_MAINVIEW_POPUP_DELETE_ITEMS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete this item?.
+        /// </summary>
+        internal static string LBL_MAINVIEW_POPUP_DELETE_SINGLE_ITEM {
+            get {
+                return ResourceManager.GetString("LBL_MAINVIEW_POPUP_DELETE_SINGLE_ITEM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The search index is broken..
+        /// </summary>
+        internal static string LBL_MAINVIEW_SEARCH_INDEX_BROKEN {
+            get {
+                return ResourceManager.GetString("LBL_MAINVIEW_SEARCH_INDEX_BROKEN", resourceCulture);
             }
         }
         
@@ -765,6 +945,24 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Search.
+        /// </summary>
+        internal static string TTP_EXPANDABLESEARCH_BTN {
+            get {
+                return ResourceManager.GetString("TTP_EXPANDABLESEARCH_BTN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type here to search.
+        /// </summary>
+        internal static string TTP_EXPANDABLESEARCH_OVERLAYTEXT {
+            get {
+                return ResourceManager.GetString("TTP_EXPANDABLESEARCH_OVERLAYTEXT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show files.
         /// </summary>
         internal static string TTP_FILTERBAND_FILES {
@@ -905,6 +1103,69 @@ namespace Clipbox.Resources.Translations {
         internal static string TTP_FILTERBAND_TEXT {
             get {
                 return ResourceManager.GetString("TTP_FILTERBAND_TEXT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete the selected item(s).
+        /// </summary>
+        internal static string TTP_MAINVIEW_BTN_DELETE_SELECTED {
+            get {
+                return ResourceManager.GetString("TTP_MAINVIEW_BTN_DELETE_SELECTED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Charge the system clipboard with the selected item(s).
+        /// </summary>
+        internal static string TTP_MAINVIEW_BTN_SET_TO_CLIPBOARD {
+            get {
+                return ResourceManager.GetString("TTP_MAINVIEW_BTN_SET_TO_CLIPBOARD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Settings.
+        /// </summary>
+        internal static string TTP_MAINVIEW_BTN_SETTINGS {
+            get {
+                return ResourceManager.GetString("TTP_MAINVIEW_BTN_SETTINGS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The filters are disabled due to search index errors..
+        /// </summary>
+        internal static string TTP_MAINVIEW_FILTERS_DISABLED_DUE_TO_ERRORS {
+            get {
+                return ResourceManager.GetString("TTP_MAINVIEW_FILTERS_DISABLED_DUE_TO_ERRORS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The search/filter functionality is disabled..
+        /// </summary>
+        internal static string TTP_MAINVIEW_SEARCH_FUNCTIONALITY_DISABLED {
+            get {
+                return ResourceManager.GetString("TTP_MAINVIEW_SEARCH_FUNCTIONALITY_DISABLED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The search box is disabled due to search index errors..
+        /// </summary>
+        internal static string TTP_MAINVIEW_SEARCHBOX_DISABLED_DUE_TO_ERRORS {
+            get {
+                return ResourceManager.GetString("TTP_MAINVIEW_SEARCHBOX_DISABLED_DUE_TO_ERRORS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save the combined/modified item, so it can be used in the future.
+        /// </summary>
+        internal static string TTP_MAINVIEW_TGL_SAVE_MODIFIED_ITEM {
+            get {
+                return ResourceManager.GetString("TTP_MAINVIEW_TGL_SAVE_MODIFIED_ITEM", resourceCulture);
             }
         }
         
