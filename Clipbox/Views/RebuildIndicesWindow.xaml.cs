@@ -37,6 +37,8 @@ namespace Clipbox.Views
 
             InitializeComponent();
 
+            ContentRendered += (sender, args) => IsContentRendered = true;
+
             Cancel = new DelegateCommand(CancelHandler);
             Retry = new DelegateCommand(RetryHandler);
 
@@ -139,6 +141,17 @@ namespace Clipbox.Views
         
         public static readonly DependencyProperty HasRebuildingFailedProperty =
             DependencyProperty.Register(nameof(HasRebuildingFailed), typeof(bool), typeof(RebuildIndicesWindow), new PropertyMetadata(false));
-      
+
+
+        public bool IsContentRendered
+        {
+            get { return (bool)GetValue(IsContentRenderedProperty); }
+            set { SetValue(IsContentRenderedProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsContentRenderedProperty =
+            DependencyProperty.Register(nameof(IsContentRendered), typeof(bool), typeof(RebuildIndicesWindow), new PropertyMetadata(false));
+
+
     }
 }

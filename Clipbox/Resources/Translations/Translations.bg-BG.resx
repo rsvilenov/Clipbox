@@ -129,6 +129,9 @@
   <data name="BTN_QV_WIPE" xml:space="preserve">
     <value>Скрий всички копирани клипборд елементи от този прозорец.</value>
   </data>
+  <data name="BTN_REBUILD_INDEX_RETRY" xml:space="preserve">
+    <value>Опитай отново</value>
+  </data>
   <data name="BTN_SETTINGS_MANAGE_EXTENSIONS" xml:space="preserve">
     <value>Управляване</value>
   </data>
@@ -170,6 +173,15 @@
   </data>
   <data name="LBL_QV_NO_CLIPBOARD_ITEMS" xml:space="preserve">
     <value>Няма клипборд елементи за показване.</value>
+  </data>
+  <data name="LBL_REBUILD_INDEX_FAILED_MSG" xml:space="preserve">
+    <value>Някои съхранени клипборд елементи причиняват грешка при възстановяването на индексите. Ако натиснете "Опитай отново", тези записи ще бъдат изтрити, за да може да се възстанови индексът.</value>
+  </data>
+  <data name="LBL_REBUILD_INDEX_TITLE_PART_FAILED" xml:space="preserve">
+    <value>Грешка.</value>
+  </data>
+  <data name="LBL_REBUILD_INDEX_TITLE_PREFIX" xml:space="preserve">
+    <value>Възстановяване на индексите за търсене</value>
   </data>
   <data name="LBL_RESTART_REQUIRED_CONFIRMATION" xml:space="preserve">
     <value>Тази настройка ще влезе в действие при следващия старт на приложението. Искате ли да го рестартирате сега?</value>

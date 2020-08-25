@@ -2,9 +2,11 @@
     x:Class="Clipbox.Views.RebuildIndicesWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:conv="clr-namespace:Clipbox.Technical.Converters"
     xmlns:core="clr-namespace:Clipbox.Core;assembly=Clipbox.Core"
     xmlns:customControls="clr-namespace:Clipbox.Infrastructure.UI.CustomControls;assembly=Clipbox.Infrastructure.UI.CustomControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:loc="clr-namespace:Clipbox.Infrastructure.UI.Localization;assembly=Clipbox.Infrastructure.UI.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Width="600"
     Height="250"
@@ -29,6 +31,7 @@
                 <ResourceDictionary Source="pack://application:,,,/Clipbox.Infrastructure.UI;component/Resources/Styles/Style.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            <conv:TextFromTextBlockConverter x:Key="TextFromTextBlockConverter" />
         </ResourceDictionary>
     </Window.Resources>
     <Window.TaskbarItemInfo>
@@ -37,15 +40,18 @@
             ProgressState="{Binding DataContext.ProgressState, ElementName=mainGrid}"
             ProgressValue="{Binding DataContext.TaskbarProgressValue, ElementName=mainGrid}" />
     </Window.TaskbarItemInfo>
-    <Window.Title>
-        <MultiBinding StringFormat="{}{0}: {1}">
-            <Binding Source="{x:Static core:ProductConstants.PRODUCT_NAME}" />
-            <Binding Source="rebuilding search index" />
-        </MultiBinding>
-    </Window.Title>
     <customControls:WindowFrame.CaptionIconControl>
         <ContentControl Template="{StaticResource ApplicationIcon}" />
     </customControls:WindowFrame.CaptionIconControl>
+    <Window.Style>
+        <Style TargetType="Window">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ElementName=mainGrid, Path=DataContext.IsContentRendered}" Value="True">
+                    <Setter Property="Title" Value="{Binding ElementName=tbRebuilding, Converter={StaticResource TextFromTextBlockConverter}}" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Style>
     <Grid x:Name="mainGrid">
         <Grid.RowDefinitions>
             <RowDefinition />
@@ -81,36 +87,44 @@
                 </ContentControl.Style>
             </ContentControl>
 
-            <TextBlock
+
+            <StackPanel
                 Grid.Row="0"
                 Grid.Column="1"
                 HorizontalAlignment="Center"
-                VerticalAlignment="Center">
-                <TextBlock.Style>
-                    <Style TargetType="TextBlock">
-                        <Setter Property="Text">
-                            <Setter.Value>
-                                <MultiBinding StringFormat="{}{0} {1} %">
-                                    <Binding Source="Rebuilding indices: " />
-                                    <Binding Path="ProgressPercentage" />
-                                </MultiBinding>
-                            </Setter.Value>
-                        </Setter>
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding HasRebuildingFailed}" Value="True">
-                                <Setter Property="Text">
-                                    <Setter.Value>
-                                        <MultiBinding StringFormat="{}{0} {1}">
-                                            <Binding Source="Rebuilding indices: " />
-                                            <Binding Source="Failed." />
-                                        </MultiBinding>
-                                    </Setter.Value>
-                                </Setter>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </TextBlock.Style>
-            </TextBlock>
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+
+                <TextBlock x:Name="tbRebuilding" TextWrapping="Wrap">
+                    <Run Text="{x:Static core:ProductConstants.PRODUCT_NAME}" />
+                    <Run Text=":" />
+                    <Run Text="{loc:Localize LBL_REBUILD_INDEX_TITLE_PREFIX}" />
+                </TextBlock>
+
+                <TextBlock>
+                    <Run Text=" : " />
+                    <Run Text="{Binding ProgressPercentage}" />
+                    <Run Text="%" />
+                </TextBlock>
+
+                <TextBlock
+                    x:Name="tbRebuildingFailed"
+                    Margin="10,0,0,0"
+                    Foreground="{DynamicResource AlertBrush1}"
+                    Text="{loc:Localize LBL_REBUILD_INDEX_TITLE_PART_FAILED}">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Hidden" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding HasRebuildingFailed}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+
+            </StackPanel>
 
             <TextBlock
                 Grid.Row="1"
@@ -118,7 +132,7 @@
                 Margin="15,10,0,0"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                Text="Some clipborad entries caused the building of the index to fail. If you click Retry, these entries will be deleted, so that the index can be built."
+                Text="{loc:Localize LBL_REBUILD_INDEX_FAILED_MSG}"
                 TextWrapping="Wrap"
                 Visibility="{Binding HasRebuildingFailed, Converter={StaticResource BooleanToVisibilityConverter}}" />
         </Grid>
@@ -134,7 +148,7 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Command="{Binding Cancel}"
-                Content="Cancel"
+                Content="{loc:Localize BTN_LBL_Cancel}"
                 Foreground="{DynamicResource ControlForegroundBrush}"
                 Style="{DynamicResource BtnCancel}" />
 
@@ -145,7 +159,7 @@
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 Command="{Binding Retry}"
-                Content="Retry"
+                Content="{loc:Localize BTN_REBUILD_INDEX_RETRY}"
                 Foreground="{DynamicResource ControlForegroundBrush}"
                 Style="{DynamicResource BtnRebuild}"
                 Visibility="{Binding HasRebuildingFailed, Converter={StaticResource BooleanToVisibilityConverter}}" />

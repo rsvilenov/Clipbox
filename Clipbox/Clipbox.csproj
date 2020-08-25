@@ -141,6 +141,7 @@
     <Compile Include="Services\SettingsWindowService.cs" />
     <Compile Include="Technical\Converters\DateTimeToHumanReadableDateString.cs" />
     <Compile Include="Technical\Converters\MillisecondsToHumanReadableDateStringConverter.cs" />
+    <Compile Include="Technical\Converters\TextFromTextBlockConverter.cs" />
     <Compile Include="Technical\ExtensionMethods\DateTimeExtensions.cs" />
     <Compile Include="ViewModels\AppDescriptionFormatter.cs" />
     <Compile Include="ViewModels\Enums\CloudSyncStatus.cs" />

@@ -97,6 +97,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Retry.
+        /// </summary>
+        internal static string BTN_REBUILD_INDEX_RETRY {
+            get {
+                return ResourceManager.GetString("BTN_REBUILD_INDEX_RETRY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Manage.
         /// </summary>
         internal static string BTN_SETTINGS_MANAGE_EXTENSIONS {
@@ -219,6 +228,33 @@ namespace Clipbox.Resources.Translations {
         internal static string LBL_QV_NO_CLIPBOARD_ITEMS {
             get {
                 return ResourceManager.GetString("LBL_QV_NO_CLIPBOARD_ITEMS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Some clipborad entries caused the building of the index to fail. If you click Retry, these entries will be deleted, so that the index can be built..
+        /// </summary>
+        internal static string LBL_REBUILD_INDEX_FAILED_MSG {
+            get {
+                return ResourceManager.GetString("LBL_REBUILD_INDEX_FAILED_MSG", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed..
+        /// </summary>
+        internal static string LBL_REBUILD_INDEX_TITLE_PART_FAILED {
+            get {
+                return ResourceManager.GetString("LBL_REBUILD_INDEX_TITLE_PART_FAILED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rebuilding search indices..
+        /// </summary>
+        internal static string LBL_REBUILD_INDEX_TITLE_PREFIX {
+            get {
+                return ResourceManager.GetString("LBL_REBUILD_INDEX_TITLE_PREFIX", resourceCulture);
             }
         }
         
