@@ -199,7 +199,7 @@
                                     FontSize="16"
                                     Foreground="White"
                                     IsEnabled="{Binding Path=AreSelectedItemsCombinable, ElementName=MainListView, Converter={StaticResource InverseBooleanConverter}}"
-                                    Text="Incompatible items."
+                                    Text="{loc:Localize LBL_MAINVIEW_INCOMPATIBLE_ITEMS}"
                                     Visibility="{Binding Path=IsEnabled, RelativeSource={RelativeSource Mode=Self}, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                                 <!--  vertical separator  -->

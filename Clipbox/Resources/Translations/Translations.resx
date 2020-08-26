@@ -216,6 +216,9 @@
   <data name="LBL_DATE_YESTERDAY" xml:space="preserve">
     <value>Yesterday</value>
   </data>
+  <data name="LBL_MAINVIEW_INCOMPATIBLE_ITEMS" xml:space="preserve">
+    <value>Incompatible items.</value>
+  </data>
   <data name="LBL_MAINVIEW_NO_ITEMS" xml:space="preserve">
     <value>No items to show.</value>
   </data>

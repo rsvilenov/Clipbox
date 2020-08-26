@@ -358,6 +358,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Incompatible items..
+        /// </summary>
+        internal static string LBL_MAINVIEW_INCOMPATIBLE_ITEMS {
+            get {
+                return ResourceManager.GetString("LBL_MAINVIEW_INCOMPATIBLE_ITEMS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No items to show..
         /// </summary>
         internal static string LBL_MAINVIEW_NO_ITEMS {

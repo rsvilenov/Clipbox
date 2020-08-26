@@ -216,6 +216,9 @@
   <data name="LBL_DATE_YESTERDAY" xml:space="preserve">
     <value>вчера</value>
   </data>
+  <data name="LBL_MAINVIEW_INCOMPATIBLE_ITEMS" xml:space="preserve">
+    <value>Несъвместими елементи.</value>
+  </data>
   <data name="LBL_MAINVIEW_NO_ITEMS" xml:space="preserve">
     <value>Няма записи за показване.</value>
   </data>
