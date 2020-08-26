@@ -132,6 +132,9 @@
   <data name="BTN_LBL_Yes" xml:space="preserve">
     <value>Да</value>
   </data>
+  <data name="BTN_MAINVIEW_LOAD_MORE" xml:space="preserve">
+    <value>Зареди още</value>
+  </data>
   <data name="BTN_MAINVIEW_REBUILD_SEARCH_INDEX" xml:space="preserve">
     <value>Възстанови</value>
   </data>
@@ -467,8 +470,17 @@
   <data name="TTP_FILTERBAND_TEXT" xml:space="preserve">
     <value>Показвай текстови елементи</value>
   </data>
+  <data name="TTP_MAINVIEW_BTN_CANCEL_SYNC" xml:space="preserve">
+    <value>Заявено е синхронизиране с облака. Кликнете, за да отмените заявката.</value>
+  </data>
+  <data name="TTP_MAINVIEW_BTN_DELETE_GROUP" xml:space="preserve">
+    <value>Изтрийте всички елементи от тази група</value>
+  </data>
   <data name="TTP_MAINVIEW_BTN_DELETE_SELECTED" xml:space="preserve">
     <value>Изтрий избраните елементи</value>
+  </data>
+  <data name="TTP_MAINVIEW_BTN_DELETE_THIS_ITEM" xml:space="preserve">
+    <value>Изтрийте този елемент</value>
   </data>
   <data name="TTP_MAINVIEW_BTN_SETTINGS" xml:space="preserve">
     <value>Настройки</value>
@@ -476,8 +488,17 @@
   <data name="TTP_MAINVIEW_BTN_SET_TO_CLIPBOARD" xml:space="preserve">
     <value>Зареди избраните елементи в системния клипборд</value>
   </data>
+  <data name="TTP_MAINVIEW_BTN_SYNC" xml:space="preserve">
+    <value>Кликнете тук, за да синхронизирате елемента с облака</value>
+  </data>
   <data name="TTP_MAINVIEW_FILTERS_DISABLED_DUE_TO_ERRORS" xml:space="preserve">
     <value>Филтрите са забранени поради грешки в индекса за търсене.</value>
+  </data>
+  <data name="TTP_MAINVIEW_ICON_SYNCING" xml:space="preserve">
+    <value>Синхронизира се</value>
+  </data>
+  <data name="TTP_MAINVIEW_ICON_SYNC_COMPLETE" xml:space="preserve">
+    <value>Синхронизирането е завършено</value>
   </data>
   <data name="TTP_MAINVIEW_SEARCHBOX_DISABLED_DUE_TO_ERRORS" xml:space="preserve">
     <value>Полето за търсене е забранено поради грешки в индекса.</value>

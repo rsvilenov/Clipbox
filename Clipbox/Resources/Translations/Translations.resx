@@ -132,6 +132,9 @@
   <data name="BTN_LBL_Yes" xml:space="preserve">
     <value>Yes</value>
   </data>
+  <data name="BTN_MAINVIEW_LOAD_MORE" xml:space="preserve">
+    <value>Load more</value>
+  </data>
   <data name="BTN_MAINVIEW_REBUILD_SEARCH_INDEX" xml:space="preserve">
     <value>Rebuild</value>
   </data>
@@ -467,8 +470,17 @@ Warning: more rows means more RAM usage!</value>
   <data name="TTP_FILTERBAND_TEXT" xml:space="preserve">
     <value>Show text items</value>
   </data>
+  <data name="TTP_MAINVIEW_BTN_CANCEL_SYNC" xml:space="preserve">
+    <value>Syncing requested. Click to stop the sync request.</value>
+  </data>
+  <data name="TTP_MAINVIEW_BTN_DELETE_GROUP" xml:space="preserve">
+    <value>Delete all items from this group</value>
+  </data>
   <data name="TTP_MAINVIEW_BTN_DELETE_SELECTED" xml:space="preserve">
     <value>Delete the selected item(s)</value>
+  </data>
+  <data name="TTP_MAINVIEW_BTN_DELETE_THIS_ITEM" xml:space="preserve">
+    <value>Delete this item</value>
   </data>
   <data name="TTP_MAINVIEW_BTN_SETTINGS" xml:space="preserve">
     <value>Settings</value>
@@ -476,8 +488,17 @@ Warning: more rows means more RAM usage!</value>
   <data name="TTP_MAINVIEW_BTN_SET_TO_CLIPBOARD" xml:space="preserve">
     <value>Charge the system clipboard with the selected item(s)</value>
   </data>
+  <data name="TTP_MAINVIEW_BTN_SYNC" xml:space="preserve">
+    <value>Click here to sync the item with the cloud</value>
+  </data>
   <data name="TTP_MAINVIEW_FILTERS_DISABLED_DUE_TO_ERRORS" xml:space="preserve">
     <value>The filters are disabled due to search index errors.</value>
+  </data>
+  <data name="TTP_MAINVIEW_ICON_SYNCING" xml:space="preserve">
+    <value>Syncing</value>
+  </data>
+  <data name="TTP_MAINVIEW_ICON_SYNC_COMPLETE" xml:space="preserve">
+    <value>Sync complete</value>
   </data>
   <data name="TTP_MAINVIEW_SEARCHBOX_DISABLED_DUE_TO_ERRORS" xml:space="preserve">
     <value>The search box is disabled due to search index errors.</value>

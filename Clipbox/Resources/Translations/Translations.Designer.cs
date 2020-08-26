@@ -106,6 +106,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Load more.
+        /// </summary>
+        internal static string BTN_MAINVIEW_LOAD_MORE {
+            get {
+                return ResourceManager.GetString("BTN_MAINVIEW_LOAD_MORE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Rebuild.
         /// </summary>
         internal static string BTN_MAINVIEW_REBUILD_SEARCH_INDEX {
@@ -1107,11 +1116,38 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Syncing requested. Click to stop the sync request..
+        /// </summary>
+        internal static string TTP_MAINVIEW_BTN_CANCEL_SYNC {
+            get {
+                return ResourceManager.GetString("TTP_MAINVIEW_BTN_CANCEL_SYNC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete all items from this group.
+        /// </summary>
+        internal static string TTP_MAINVIEW_BTN_DELETE_GROUP {
+            get {
+                return ResourceManager.GetString("TTP_MAINVIEW_BTN_DELETE_GROUP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete the selected item(s).
         /// </summary>
         internal static string TTP_MAINVIEW_BTN_DELETE_SELECTED {
             get {
                 return ResourceManager.GetString("TTP_MAINVIEW_BTN_DELETE_SELECTED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete this item.
+        /// </summary>
+        internal static string TTP_MAINVIEW_BTN_DELETE_THIS_ITEM {
+            get {
+                return ResourceManager.GetString("TTP_MAINVIEW_BTN_DELETE_THIS_ITEM", resourceCulture);
             }
         }
         
@@ -1134,11 +1170,38 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Click here to sync the item with the cloud.
+        /// </summary>
+        internal static string TTP_MAINVIEW_BTN_SYNC {
+            get {
+                return ResourceManager.GetString("TTP_MAINVIEW_BTN_SYNC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The filters are disabled due to search index errors..
         /// </summary>
         internal static string TTP_MAINVIEW_FILTERS_DISABLED_DUE_TO_ERRORS {
             get {
                 return ResourceManager.GetString("TTP_MAINVIEW_FILTERS_DISABLED_DUE_TO_ERRORS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sync complete.
+        /// </summary>
+        internal static string TTP_MAINVIEW_ICON_SYNC_COMPLETE {
+            get {
+                return ResourceManager.GetString("TTP_MAINVIEW_ICON_SYNC_COMPLETE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Syncing.
+        /// </summary>
+        internal static string TTP_MAINVIEW_ICON_SYNCING {
+            get {
+                return ResourceManager.GetString("TTP_MAINVIEW_ICON_SYNCING", resourceCulture);
             }
         }
         

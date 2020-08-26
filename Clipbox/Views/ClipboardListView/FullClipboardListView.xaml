@@ -8,6 +8,7 @@
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:infBeh="clr-namespace:Clipbox.Infrastructure.UI.Behaviors;assembly=Clipbox.Infrastructure.UI"
     xmlns:infConv="clr-namespace:Clipbox.Infrastructure.UI.Converters;assembly=Clipbox.Infrastructure.UI"
+    xmlns:loc="clr-namespace:Clipbox.Infrastructure.UI.Localization;assembly=Clipbox.Infrastructure.UI.Localization"
     xmlns:localBeh="clr-namespace:Clipbox.Behaviors"
     xmlns:localBindableObjects="clr-namespace:Clipbox.ViewModels.BindableObjects"
     xmlns:lv="clr-namespace:Clipbox.Views.ClipboardListView"
@@ -193,7 +194,7 @@
                                             Command="{Binding Path=ActionButtonsDataContext.DeleteClipboardEntryGroup, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
                                             CommandParameter="{Binding Items[0].ViewItem}"
                                             Style="{DynamicResource BtnTrash}"
-                                            ToolTip="Delete all items from this group">
+                                            ToolTip="{loc:Localize TTP_MAINVIEW_BTN_DELETE_GROUP}">
                                             <i:Interaction.Behaviors>
                                                 <infBeh:FrameworkElementDpiScalingBehavior />
                                             </i:Interaction.Behaviors>
@@ -225,7 +226,7 @@
                                                                 <Border.Background>
                                                                     <SolidColorBrush Opacity="0.6" Color="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Background.Color}" />
                                                                 </Border.Background>
-                                                                <TextBlock Margin="35,5,35,5" Text="Load more" />
+                                                                <TextBlock Margin="35,5,35,5" Text="{loc:Localize BTN_MAINVIEW_LOAD_MORE}" />
                                                             </Border>
                                                         </ControlTemplate>
                                                     </Setter.Value>
@@ -515,7 +516,7 @@
                                                                         </Style.Triggers>
                                                                     </Style>
                                                                 </Grid.Style>
-                                                                <ContentControl Template="{DynamicResource SyncingIcon}" ToolTip="Syncing">
+                                                                <ContentControl Template="{DynamicResource SyncingIcon}" ToolTip="{loc:Localize TTP_MAINVIEW_ICON_SYNCING}">
                                                                     <ContentControl.Style>
                                                                         <Style TargetType="{x:Type ContentControl}">
                                                                             <Setter Property="Visibility" Value="Collapsed" />
@@ -527,7 +528,7 @@
                                                                         </Style>
                                                                     </ContentControl.Style>
                                                                 </ContentControl>
-                                                                <ContentControl Template="{DynamicResource SyncCompleteIcon}" ToolTip="Sync complete">
+                                                                <ContentControl Template="{DynamicResource SyncCompleteIcon}" ToolTip="{loc:Localize TTP_MAINVIEW_ICON_SYNC_COMPLETE}">
                                                                     <ContentControl.Style>
                                                                         <Style TargetType="{x:Type ContentControl}">
                                                                             <Setter Property="Visibility" Value="Collapsed" />
@@ -546,11 +547,11 @@
                                                                             <Style.Triggers>
                                                                                 <DataTrigger Binding="{Binding Path=SyncStatus}" Value="{x:Static vmEnums:CloudSyncStatus.SyncDisabled}">
                                                                                     <Setter Property="Visibility" Value="Visible" />
-                                                                                    <Setter Property="ToolTip" Value="Click to sync item with cloud" />
+                                                                                    <Setter Property="ToolTip" Value="{loc:Localize TTP_MAINVIEW_BTN_SYNC}" />
                                                                                 </DataTrigger>
                                                                                 <DataTrigger Binding="{Binding Path=SyncStatus}" Value="{x:Static vmEnums:CloudSyncStatus.SyncRequested}">
                                                                                     <Setter Property="Visibility" Value="Visible" />
-                                                                                    <Setter Property="ToolTip" Value="Syncing requested. Click to stop the sync request." />
+                                                                                    <Setter Property="ToolTip" Value="{loc:Localize TTP_MAINVIEW_BTN_CANCEL_SYNC}" />
                                                                                 </DataTrigger>
                                                                             </Style.Triggers>
                                                                         </Style>
@@ -629,7 +630,7 @@
                                 Command="{Binding Path=ActionButtonsDataContext.DeleteClipboardEntry, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
                                 CommandParameter="{Binding Path=ViewItem}"
                                 Style="{DynamicResource BtnTrash}"
-                                ToolTip="Delete this item"
+                                ToolTip="{loc:Localize TTP_MAINVIEW_BTN_DELETE_THIS_ITEM}"
                                 Visibility="{Binding Path=IsManipulationEnabled, RelativeSource={RelativeSource AncestorType={x:Type Border}}, Converter={StaticResource BooleanToVisibilityHiddenConverter}}">
                                 <i:Interaction.Behaviors>
                                     <infBeh:FrameworkElementDpiScalingBehavior />
