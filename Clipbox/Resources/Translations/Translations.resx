@@ -132,11 +132,17 @@
   <data name="BTN_LBL_Yes" xml:space="preserve">
     <value>Yes</value>
   </data>
+  <data name="BTN_MAINVIEW_DELETE_SELECTED" xml:space="preserve">
+    <value>Delete</value>
+  </data>
   <data name="BTN_MAINVIEW_LOAD_MORE" xml:space="preserve">
     <value>Load more</value>
   </data>
   <data name="BTN_MAINVIEW_REBUILD_SEARCH_INDEX" xml:space="preserve">
     <value>Rebuild</value>
+  </data>
+  <data name="BTN_MAINVIEW_SET_TO_CLIPBOARD" xml:space="preserve">
+    <value>Charge clipboard</value>
   </data>
   <data name="BTN_QV_WIPE" xml:space="preserve">
     <value>Hide all copied clipboard entries from this window.</value>
@@ -233,6 +239,9 @@
   </data>
   <data name="LBL_MAINVIEW_SEARCH_INDEX_BROKEN" xml:space="preserve">
     <value>The search index is broken.</value>
+  </data>
+  <data name="LBL_MAINVIEW_UI_EXT_PANEL" xml:space="preserve">
+    <value>Modify:</value>
   </data>
   <data name="LBL_QV_INCOMPATIBLE_ITEMS" xml:space="preserve">
     <value>Incompatible items.</value>

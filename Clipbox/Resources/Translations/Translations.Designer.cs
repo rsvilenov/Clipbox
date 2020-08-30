@@ -106,6 +106,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        internal static string BTN_MAINVIEW_DELETE_SELECTED {
+            get {
+                return ResourceManager.GetString("BTN_MAINVIEW_DELETE_SELECTED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Load more.
         /// </summary>
         internal static string BTN_MAINVIEW_LOAD_MORE {
@@ -120,6 +129,15 @@ namespace Clipbox.Resources.Translations {
         internal static string BTN_MAINVIEW_REBUILD_SEARCH_INDEX {
             get {
                 return ResourceManager.GetString("BTN_MAINVIEW_REBUILD_SEARCH_INDEX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Charge clipboard.
+        /// </summary>
+        internal static string BTN_MAINVIEW_SET_TO_CLIPBOARD {
+            get {
+                return ResourceManager.GetString("BTN_MAINVIEW_SET_TO_CLIPBOARD", resourceCulture);
             }
         }
         
@@ -408,6 +426,15 @@ namespace Clipbox.Resources.Translations {
         internal static string LBL_MAINVIEW_SEARCH_INDEX_BROKEN {
             get {
                 return ResourceManager.GetString("LBL_MAINVIEW_SEARCH_INDEX_BROKEN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Modify:.
+        /// </summary>
+        internal static string LBL_MAINVIEW_UI_EXT_PANEL {
+            get {
+                return ResourceManager.GetString("LBL_MAINVIEW_UI_EXT_PANEL", resourceCulture);
             }
         }
         

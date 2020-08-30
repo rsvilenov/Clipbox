@@ -49,6 +49,107 @@
                 <Setter Property="Padding" Value="5" />
             </Style>
 
+            <Style x:Key="SetToClipboardButton" TargetType="{x:Type Button}">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Foreground" Value="{DynamicResource ControlForegroundBrush}" />
+                <Setter Property="BorderBrush" Value="Transparent" />
+
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+
+                            <Border
+                                Name="btnBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock
+                                        Margin="10,0,10,0"
+                                        VerticalAlignment="Center"
+                                        Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource TemplatedParent}}"
+                                        Text="{TemplateBinding Content}" />
+                                    <Border x:Name="btnIconBorder">
+                                        <ContentControl Margin="5" Template="{DynamicResource SetToSystemClipboardIcon}" />
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="Button.IsMouseOver" Value="True">
+                                    <Setter TargetName="btnIconBorder" Property="Background">
+                                        <Setter.Value>
+                                            <SolidColorBrush Opacity="0.5" Color="{DynamicResource TaskbarColor}" />
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource ControlHighlightBackgroundBrush}" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource ControlHighlightBorderBrush}" />
+                        <Setter Property="Foreground" Value="{DynamicResource ControlHighlightForegroundBrush}" />
+                    </Trigger>
+                    <Trigger Property="IsPressed" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource ControlPressedBrush}" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style x:Key="DeleteItemsButton" TargetType="{x:Type Button}">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Foreground" Value="{DynamicResource ControlForegroundBrush}" />
+                <Setter Property="BorderBrush" Value="Transparent" />
+
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+
+                            <Border
+                                Name="btnBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock
+                                        Margin="10,0,10,0"
+                                        VerticalAlignment="Center"
+                                        Text="{TemplateBinding Content}" />
+                                    <Border x:Name="btnIconBorder">
+                                        <ContentControl
+                                            x:Name="btnIcon"
+                                            Margin="5"
+                                            Template="{DynamicResource TrashIcon}" />
+                                    </Border>
+                                </StackPanel>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="Button.IsMouseOver" Value="True">
+                                    <Setter TargetName="btnIconBorder" Property="Background" Value="{DynamicResource AlertBrush1}" />
+                                </Trigger>
+                                <Trigger Property="Button.IsPressed" Value="True">
+                                    <Setter TargetName="btnIcon" Property="Background" Value="{DynamicResource AlertBrush2}" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource ControlHighlightBackgroundBrush}" />
+                        <Setter Property="BorderBrush" Value="{DynamicResource AlertBrush1}" />
+                        <Setter Property="Foreground" Value="{DynamicResource ControlHighlightForegroundBrush}" />
+                    </Trigger>
+                    <Trigger Property="IsPressed" Value="True">
+                        <Setter Property="Background" Value="{DynamicResource ControlPressedBrush}" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
             <CollectionViewSource
                 x:Key="ListViewSource"
                 IsLiveGroupingRequested="False"
@@ -178,6 +279,8 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
+
+                            <!--  charge clipboard button  -->
                             <StackPanel
                                 Grid.Column="0"
                                 Height="40"
@@ -185,40 +288,9 @@
                                 <i:Interaction.Behaviors>
                                     <infBeh:FrameworkElementDpiScalingBehavior />
                                 </i:Interaction.Behaviors>
-                                <WrapPanel
-                                    x:Name="uiExtensionContainer"
-                                    Margin="0,5,0,0"
-                                    VerticalAlignment="Center"
-                                    Panel.ZIndex="99"
-                                    Visibility="{Binding Path=AreAnyUIExtensionsLoaded, RelativeSource={RelativeSource AncestorType={x:Type local:ClipboardViewControlBase}}, Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                <TextBlock
-                                    Margin="15,0,0,0"
-                                    VerticalAlignment="Center"
-                                    Panel.ZIndex="100"
-                                    Background="Transparent"
-                                    FontSize="16"
-                                    Foreground="White"
-                                    IsEnabled="{Binding Path=AreSelectedItemsCombinable, ElementName=MainListView, Converter={StaticResource InverseBooleanConverter}}"
-                                    Text="{loc:Localize LBL_MAINVIEW_INCOMPATIBLE_ITEMS}"
-                                    Visibility="{Binding Path=IsEnabled, RelativeSource={RelativeSource Mode=Self}, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
-                                <!--  vertical separator  -->
-                                <Rectangle
-                                    Width="1"
-                                    Margin="10,5,10,5"
-                                    VerticalAlignment="Stretch"
-                                    Stroke="DarkGray"
-                                    Visibility="{Binding ElementName=uiExtensionContainer, Path=Visibility}" />
-                            </StackPanel>
-
-
-                            <StackPanel
-                                Grid.Column="1"
-                                Height="35"
-                                Orientation="Horizontal">
-                                <i:Interaction.Behaviors>
-                                    <infBeh:FrameworkElementDpiScalingBehavior />
-                                </i:Interaction.Behaviors>
+                                <StackPanel.Background>
+                                    <SolidColorBrush Opacity="0.5" Color="{DynamicResource TaskbarColor}" />
+                                </StackPanel.Background>
                                 <StackPanel.Style>
                                     <Style TargetType="{x:Type StackPanel}">
                                         <Setter Property="Visibility" Value="Collapsed" />
@@ -234,39 +306,29 @@
                                         </Style.Triggers>
                                     </Style>
                                 </StackPanel.Style>
-                                <ToggleButton
-                                    x:Name="keepGeneratedItemsCb"
-                                    Width="32"
-                                    Height="32"
-                                    Style="{StaticResource keepGeneratedItemToggleButton}"
-                                    Visibility="{Binding Path=AreAnyUIExtensionsLoaded, RelativeSource={RelativeSource AncestorType={x:Type local:ClipboardViewControlBase}}, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
-                                <!--  vertical separator  -->
-                                <Rectangle
-                                    Width="1"
-                                    Margin="10,5,10,5"
-                                    VerticalAlignment="Stretch"
-                                    Stroke="DarkGray"
-                                    Visibility="{Binding ElementName=keepGeneratedItemsCb, Path=Visibility}" />
-
                                 <Button
                                     x:Name="setToClipboardBtn"
-                                    Height="32"
-                                    VerticalAlignment="Top"
                                     Click="SetToClipboardButton_Click"
+                                    Content="{loc:Localize BTN_MAINVIEW_SET_TO_CLIPBOARD}"
+                                    FontSize="14"
                                     Style="{DynamicResource SetToClipboardButton}"
                                     ToolTip="{loc:Localize TTP_MAINVIEW_BTN_SET_TO_CLIPBOARD}" />
 
                             </StackPanel>
 
+                            <!--  trash button and confirmation popups  -->
                             <StackPanel
-                                Grid.Column="2"
-                                Height="35"
+                                Grid.Column="1"
+                                Height="40"
+                                Margin="10,0,0,0"
                                 Orientation="Horizontal">
+                                <StackPanel.Background>
+                                    <SolidColorBrush Opacity="0.5" Color="{DynamicResource TaskbarColor}" />
+                                </StackPanel.Background>
 
                                 <StackPanel.Style>
                                     <Style TargetType="{x:Type StackPanel}">
-                                        <Setter Property="Visibility" Value="Hidden" />
+                                        <Setter Property="Visibility" Value="Collapsed" />
                                         <Style.Triggers>
                                             <MultiDataTrigger>
                                                 <MultiDataTrigger.Conditions>
@@ -284,19 +346,12 @@
                                     <infBeh:FrameworkElementDpiScalingBehavior />
                                 </i:Interaction.Behaviors>
 
-                                <Rectangle
-                                    Width="1"
-                                    Margin="10,5,10,5"
-                                    VerticalAlignment="Stretch"
-                                    Stroke="DarkGray"
-                                    Visibility="{Binding ElementName=keepGenersetToClipboardBtnatedItemsCb, Path=Visibility}" />
-
                                 <Button
                                     x:Name="trashBtn"
-                                    Height="32"
-                                    VerticalAlignment="Top"
                                     Click="TrashBtn_Click"
-                                    Style="{DynamicResource BtnTrash}"
+                                    Content="{loc:Localize BTN_MAINVIEW_DELETE_SELECTED}"
+                                    FontSize="14"
+                                    Style="{DynamicResource DeleteItemsButton}"
                                     ToolTip="{loc:Localize TTP_MAINVIEW_BTN_DELETE_SELECTED}" />
 
                                 <localDialog:DialogPopup
@@ -337,6 +392,66 @@
                                     IsOpen="False"
                                     Placement="Bottom"
                                     ReturnFocusTo="{Binding ElementName=MainListView}" />
+                            </StackPanel>
+
+
+                            <!--  text block for the "incompatible items" message  -->
+                            <TextBlock
+                                Grid.Column="2"
+                                Margin="15,0,0,0"
+                                VerticalAlignment="Center"
+                                Panel.ZIndex="100"
+                                Background="Transparent"
+                                FontSize="16"
+                                Foreground="White"
+                                IsEnabled="{Binding Path=AreSelectedItemsCombinable, ElementName=MainListView, Converter={StaticResource InverseBooleanConverter}}"
+                                Text="{loc:Localize LBL_MAINVIEW_INCOMPATIBLE_ITEMS}"
+                                Visibility="{Binding Path=IsEnabled, RelativeSource={RelativeSource Mode=Self}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <i:Interaction.Behaviors>
+                                    <infBeh:FrameworkElementDpiScalingBehavior />
+                                </i:Interaction.Behaviors>
+                            </TextBlock>
+
+                            <!--  ui extension container and "keep generated item" toggle button  -->
+                            <StackPanel
+                                Grid.Column="2"
+                                Height="40"
+                                Margin="10,0,0,0"
+                                Orientation="Horizontal"
+                                Visibility="{Binding Path=AreAnyUIExtensionsLoaded, RelativeSource={RelativeSource AncestorType={x:Type local:ClipboardViewControlBase}}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <i:Interaction.Behaviors>
+                                    <infBeh:FrameworkElementDpiScalingBehavior />
+                                </i:Interaction.Behaviors>
+                                <StackPanel.Background>
+                                    <SolidColorBrush Opacity="0.5" Color="{DynamicResource TaskbarColor}" />
+                                </StackPanel.Background>
+
+                                <TextBlock
+                                    Margin="10,0,0,0"
+                                    VerticalAlignment="Center"
+                                    FontSize="14"
+                                    Foreground="{DynamicResource ControlForegroundBrush}"
+                                    Text="{loc:Localize LBL_MAINVIEW_UI_EXT_PANEL}" />
+                                <WrapPanel
+                                    x:Name="uiExtensionContainer"
+                                    Margin="0,5,0,0"
+                                    VerticalAlignment="Center"
+                                    Panel.ZIndex="99" />
+
+                                <!--  vertical separator  -->
+                                <Rectangle
+                                    Width="1"
+                                    Margin="10,10,10,10"
+                                    VerticalAlignment="Stretch"
+                                    Stroke="DarkGray" />
+
+                                <ToggleButton
+                                    x:Name="keepGeneratedItemsCb"
+                                    Width="32"
+                                    Height="32"
+                                    Margin="0,0,10,0"
+                                    Style="{StaticResource keepGeneratedItemToggleButton}" />
+
                             </StackPanel>
 
                         </Grid>
