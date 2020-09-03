@@ -197,7 +197,7 @@ namespace Clipbox
             // Initialize the keyboard service
             _keyboardService = new LowLevelKeyboardService();
 
-            _cloudSyncService = new CloudSynchronizationService(_clipboardManager, new GoogleDriveCloudSupportProvider(), appGuid);
+            _cloudSyncService = new CloudSynchronizationService(_clipboardManager, _settingsService, _extensionLoader.CloudSupportExtensionContainer, appGuid);
             _cloudSyncService.IsEnabled = _settingsService.GetSetting<bool>(SettingsKeys.IsCloudSyncEnabled);
 
             _pauseService = new PauseService(_settingsService);

@@ -19,4 +19,3 @@ namespace Clipbox.Infrastructure.Extensibility.Containers
         }
     }
 }
-}

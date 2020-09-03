@@ -147,26 +147,54 @@ namespace Clipbox.Services
 
         private void _settingsService_SettingChanged(object sender, EventArgsClasses.SettingsEventArgs e)
         {
-            Type extType = e.Key.TargetComponentType;
-
-            if (extType == null)
+            // If the localization culture changes, 
+            // rebuild the checksums for all registered extensions
+            if (e.Key == SettingsKeys.LocalizationCulture)
             {
-                // If the setting is not for a particular extension, but it is a general one,
-                // then update the random checksum, used as part of the persistence key for
-                // those previews, which has failed for some reason (other than a timeout).
-                // When such a setting changes or the app is restarted, this service will 
-                // try to generate the failed previews again.
+                IEnumerable<Type> previewExtensionTypes = _clipboardFormatPreviewExtContainer
+                   .GetRegisteredTypes();
+
+                foreach (Type t in previewExtensionTypes)
+                {
+                    IEnumerable<ISettingKey> newSettings = _settingsService
+                        .GetSettingKeys(t);
+
+                    string checkSum = GetExtensionSettingsChecksum(t, newSettings);
+                    UpdateCheckSumForExtType(t, checkSum);
+                }
+            }
+
+            // If the setting is not for a particular extension, but it is a general one,
+            // then update the random checksum, used as part of the persistence key for
+            // those previews, which has failed for some reason (other than a timeout).
+            // When such a setting changes or the app is restarted, this service will 
+            // try to generate the failed previews again.
+            if (e.Key == SettingsKeys.EnabledExtensions
+                || e.Key == SettingsKeys.IsBackgroundPreviewGenerationEnabled
+                || e.Key == SettingsKeys.MaxPreviewItemsInGroupItem
+                || e.Key == SettingsKeys.MaxSimultaneousPreviewTasks
+                || e.Key == SettingsKeys.PreviewCacheMaxSize
+                || e.Key == SettingsKeys.PreviewGenerationTimeout
+                || e.Key == SettingsKeys.PreviewItemHeightRatio
+                || e.Key == SettingsKeys.ResizeAccordingToMonitorOrSystemDpi
+                || e.Key == SettingsKeys.LocalizationCulture /* the failure may be due to a culture-speciffic issue */)
+            {
                 string checkSum = MD5Hash.Create(DateTime.Now.Millisecond.ToString());
                 UpdateCheckSumForExtType(this.GetType(), checkSum);
             }
-            else if (extType.GetInterface(nameof(IPreviewGenerator)) != null
-                && extType.GetInterface(nameof(IConfigurationRecipient)) != null)
-            {
-                IEnumerable<ISettingKey> newSettings = _settingsService
-                    .GetSettingKeys(extType);
 
-                string checkSum = GetExtensionSettingsChecksum(extType, newSettings);
-                UpdateCheckSumForExtType(extType, checkSum);
+            // if the changed setting is registered for a specific extension,
+            // rebuild the checksum for tht extension.
+            else if (e.Key.TargetComponentType != null
+                && e.Key.TargetComponentType.GetInterface(nameof(IPreviewGenerator)) != null
+                && e.Key.TargetComponentType.GetInterface(nameof(IConfigurationRecipient)) != null)
+            {
+                
+                IEnumerable<ISettingKey> newSettings = _settingsService
+                    .GetSettingKeys(e.Key.TargetComponentType);
+
+                string checkSum = GetExtensionSettingsChecksum(e.Key.TargetComponentType, newSettings);
+                UpdateCheckSumForExtType(e.Key.TargetComponentType, checkSum);
             }
         }
 

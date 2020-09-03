@@ -120,16 +120,16 @@ namespace Clipbox.Services
 
                     Thread.Sleep(100);
 
+                    if (!(IsEnabled && IsNetworkAvailable && IsAuthenticated))
+                    {
+                        continue;
+                    }
+
                     CloudServiceInfo csi = _cloudSupport.GetCloudServiceInfo();
                     if (!csi.IsHealthy)
                     {
                         _lastError = $"{csi.ServiceName} : {csi.FailureReason}";
                         ErrorOccurred?.Invoke(this, new ErrorEventArgs(new CloudSyncException(_lastError)));
-                        continue;
-                    }
-
-                    if (!(IsEnabled && IsNetworkAvailable && IsAuthenticated))
-                    {
                         continue;
                     }
 
