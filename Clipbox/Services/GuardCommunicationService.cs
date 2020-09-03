@@ -31,7 +31,10 @@ namespace Clipbox.Services
 
         private void _settingsService_SettingChanged(object sender, EventArgsClasses.SettingsEventArgs e)
         {
-            SetOrUnsetPersistentFlagForHighPriority();
+            if (e.Key == SettingsKeys.RunMainProcessWithHighPriority)
+            {
+                SetOrUnsetPersistentFlagForHighPriority();
+            }
         }
 
         private void _pipeServer_GotMessage(object sender, NamedPipesResponseEventArgs e)

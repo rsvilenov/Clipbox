@@ -31,7 +31,10 @@ namespace Clipbox.Services
 
         private void _settingsService_SettingChanged(object sender, EventArgsClasses.SettingsEventArgs e)
         {
-            SetOrUnsetPersistentFlagForExternalProcess();
+            if (e.Key == SettingsKeys.UseSearchProviderInExternalProcess)
+            {
+                SetOrUnsetPersistentFlagForExternalProcess();
+            }
         }
 
         private void SetOrUnsetPersistentFlagForExternalProcess()

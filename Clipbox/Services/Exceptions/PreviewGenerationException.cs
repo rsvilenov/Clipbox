@@ -2,7 +2,7 @@
 
 namespace Clipbox.Services.Exceptions
 {
-    class PreviewGenerationException : Exception
+    class PreviewGenerationException : ApplicationException
     {
         public PreviewGenerationException()
         {

@@ -12,6 +12,10 @@ namespace Clipbox.Services.Interfaces
 
         bool IsEnabled { get; set; }
 
+        bool IsInErrorState { get; }
+
+        string GetLastError();
+
         event EventHandler NetworkAvailabilityChanged;
 
         event EventHandler AuthenticationStateChanged;

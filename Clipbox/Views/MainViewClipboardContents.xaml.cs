@@ -159,11 +159,14 @@ namespace Clipbox.Views
 
         private void SettingsService_SettingChanged(object sender, SettingsEventArgs e)
         {
-            ISettingsService settingsService = (ISettingsService)sender;
-            Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, (Action)(() =>
+            if (e.Key == SettingsKeys.DimNonFocusedItemsInMainView)
             {
-                DimNonFocusedItems = settingsService.GetSetting<bool>(SettingsKeys.DimNonFocusedItemsInMainView);
-            }));
+                ISettingsService settingsService = (ISettingsService)sender;
+                Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, (Action)(() =>
+                {
+                    DimNonFocusedItems = settingsService.GetSetting<bool>(SettingsKeys.DimNonFocusedItemsInMainView);
+                }));
+            }
         }
 
         private void MainViewClipboardContents_Loaded(object sender, RoutedEventArgs e)

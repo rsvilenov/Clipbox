@@ -88,7 +88,7 @@ namespace Clipbox.ViewModels
             {
                 RemoveOldItemWrappersExceedingLimit();
             }
-            else
+            else if (e.Key.TargetComponentType != null)
             {
                 Type extType = e.Key.TargetComponentType;
 

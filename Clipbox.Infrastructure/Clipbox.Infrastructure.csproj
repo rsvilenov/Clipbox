@@ -72,7 +72,9 @@
     <Compile Include="Encryption\MD5Hash.cs" />
     <Compile Include="Extensibility\Containers\BaseExtensionContainer.cs" />
     <Compile Include="Extensibility\Containers\ClipboardFormatExtensionContainer.cs" />
+    <Compile Include="Extensibility\Containers\CloudSupportExtensionContainer.cs" />
     <Compile Include="Extensibility\Containers\IExtensionInfoProvider.cs" />
+    <Compile Include="Extensibility\Containers\Interfaces\ICloudSupportExtensionContainer.cs" />
     <Compile Include="Extensibility\Containers\Interfaces\IExtensionRegistrator.cs" />
     <Compile Include="Extensibility\Containers\PreviewGeneratorExtensionContainer.cs" />
     <Compile Include="Extensibility\Containers\FlowExtensionContainer.cs" />

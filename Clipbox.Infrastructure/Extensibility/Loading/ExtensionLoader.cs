@@ -3,6 +3,7 @@ using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
+using Clipbox.Core.Extensibility.Contracts.ExtentionTypes.CloudSupportTypes;
 using Clipbox.Infrastructure.Extensibility.Containers;
 using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
 using Clipbox.Infrastructure.Extensibility.Discovery;
@@ -23,7 +24,8 @@ namespace Clipbox.Infrastructure.Extensibility.Loading
         public UIExtensionContainer UIExtensionContainer { get; private set; }
         public SettingsUIExtensionContainer SettingsUIExtensionContainer { get; private set; }
         public PersistenceSupportExtensionContainer PersistenceSupportExtensionContainer { get; private set; }
-        
+        public CloudSupportExtensionContainer CloudSupportExtensionContainer { get; private set; }
+
         public List<Type> LoadedTypes { get; private set; }
         public List<IExtensionInfo> LoadedExtensions { get; private set; }
         private List<PersistableExtensionInfo> EnabledExtensions { get; set; }
@@ -60,6 +62,7 @@ namespace Clipbox.Infrastructure.Extensibility.Loading
             PreviewGeneratorsContainer = new PreviewGeneratorExtensionContainer();
             SearchSupportExtensionContainer = new SearchSupportExtensionContainer();
             PersistenceSupportExtensionContainer = new PersistenceSupportExtensionContainer();
+            CloudSupportExtensionContainer = new CloudSupportExtensionContainer();
 
             // the above three containers contain stateless extensions and we can track their loading
             FormatsContainer.ExtensionResolved += (s, e) => StatelessExtensionResolved?.Invoke(this, e);
@@ -99,6 +102,9 @@ namespace Clipbox.Infrastructure.Extensibility.Loading
                 
                 // find all extensions of type SettingsUIExtension
                 LoadAndRegisterExtensions<SettingsUIExtension>(SettingsUIExtensionContainer, assemblyPath);
+
+                // find all extensions of type CloudSupportExtension
+                LoadAndRegisterExtensions<CloudSupportExtension>(CloudSupportExtensionContainer, assemblyPath);
             }
         }
 

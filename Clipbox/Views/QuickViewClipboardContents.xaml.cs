@@ -54,10 +54,13 @@ namespace Clipbox.Views
 
         private void _settingsService_SettingChanged(object sender, SettingsEventArgs e)
         {
-            Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, (Action)(() =>
+            if (e.Key == SettingsKeys.DimNonFocusedItemsInQuickView)
             {
-                DimNonFocusedItems = _settingsService.GetSetting<bool>(SettingsKeys.DimNonFocusedItemsInQuickView);
-            }));
+                Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.ContextIdle, (Action)(() =>
+                {
+                    DimNonFocusedItems = _settingsService.GetSetting<bool>(SettingsKeys.DimNonFocusedItemsInQuickView);
+                }));
+            }
         }
 
         private void MainListView_UncombinableItemsSelected(object sender, UncombinableItemsEventArgs e)
