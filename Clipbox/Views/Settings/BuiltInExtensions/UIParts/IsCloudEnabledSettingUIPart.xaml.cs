@@ -37,7 +37,6 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
         public override void SetSettingValue(bool value)
         {
             IsCloudEnabled = value;
-            tglSwitch.SetSwitchState(value);
         }
     }
 }

@@ -37,7 +37,10 @@ namespace Clipbox.Infrastructure.UI.Extensibility
 
         void ISettingUIPart.SetSettingValue(object value)
         {
-            SetSettingValue((TSettingValue)value);
+            // make sure that all bindings in the ui part has already completed,
+            // so that we do not run into some race condition with the binding updates.
+            Dispatcher.BeginInvoke(new Action(() => 
+                SetSettingValue((TSettingValue)value)), DispatcherPriority.ContextIdle);
         }
 
         object ISettingUIPart.GetSettingValue()

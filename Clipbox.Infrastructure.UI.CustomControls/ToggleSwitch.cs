@@ -84,12 +84,6 @@ namespace Clipbox.Infrastructure.UI.CustomControls
             }
         }
 
-        public void SetSwitchState(bool isChecked)
-        {
-            IsChecked = isChecked;
-            Dispatcher.Invoke(() => SyncTogglePositionWithBtnValue(), DispatcherPriority.ContextIdle);
-        }
-
         private void Grid_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             _isDragging = true;
@@ -181,13 +175,14 @@ namespace Clipbox.Infrastructure.UI.CustomControls
 
         private void SetThumbToOffPosition(bool useAnimation)
         {
-            double finalThumbOffXPos = GetThumbFinalOffXPosInCanvas();
             Dispatcher.Invoke(() =>
             {
                 Task.Run(() =>
                 {
                     _animationCompletedMre.WaitOne();
                     _templateCompletedMre.WaitOne();
+
+                    double finalThumbOffXPos = GetThumbFinalOffXPosInCanvas();
                     Dispatcher.Invoke(() =>
                     {
                         if (useAnimation)
@@ -206,11 +201,12 @@ namespace Clipbox.Infrastructure.UI.CustomControls
 
         private void SetThumbToOnPosition(bool useAnimation)
         {
-            double finalThumOnPosX = GetThumbFinalOnXPosInCanvas();
             Task.Run(() =>
                 {
                     _animationCompletedMre.WaitOne();
                     _templateCompletedMre.WaitOne();
+
+                    double finalThumOnPosX = GetThumbFinalOnXPosInCanvas();
                     Dispatcher.Invoke(() =>
                     {
                         if (useAnimation)
@@ -264,6 +260,8 @@ namespace Clipbox.Infrastructure.UI.CustomControls
 
         private static void IsChecked_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
+            ToggleSwitch ts = (ToggleSwitch)d;
+            ts.Dispatcher.Invoke(() => ts.SyncTogglePositionWithBtnValue(), DispatcherPriority.ContextIdle);
         }
 
         public bool IsChecked
