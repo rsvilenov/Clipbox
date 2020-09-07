@@ -25,7 +25,6 @@ namespace Clipbox.Infrastructure.UI.CustomControls
         private FrameworkElement _thumb;
 
         private readonly ManualResetEvent _animationCompletedMre;
-        private readonly ManualResetEvent _templateCompletedMre;
 
         static ToggleSwitch()
         {
@@ -35,7 +34,6 @@ namespace Clipbox.Infrastructure.UI.CustomControls
         public ToggleSwitch()
         {
             _animationCompletedMre = new ManualResetEvent(true);
-            _templateCompletedMre = new ManualResetEvent(false);
         }
 
         public override void OnApplyTemplate()
@@ -64,7 +62,7 @@ namespace Clipbox.Infrastructure.UI.CustomControls
                 throw new InvalidOperationException("PART_ThumbMoveArea is not present in the template or it is not a Canvas.");
             }
 
-            _templateCompletedMre.Set();
+            IsInteractionReady = true;
         }
 
         private void ToggleSwitch_Loaded(object sender, RoutedEventArgs e)
@@ -74,6 +72,11 @@ namespace Clipbox.Infrastructure.UI.CustomControls
 
         private void SyncTogglePositionWithBtnValue()
         {
+            if (!IsInteractionReady)
+            {
+                return;
+            }
+
             if (IsChecked)
             {
                 SetThumbToOnPosition(useAnimation: false);
@@ -86,6 +89,11 @@ namespace Clipbox.Infrastructure.UI.CustomControls
 
         private void Grid_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            if (!IsInteractionReady)
+            {
+                return;
+            }
+
             _isDragging = true;
             _clickPosition = e.GetPosition(_thumbMoveArea);
             _thumb.CaptureMouse();
@@ -94,7 +102,7 @@ namespace Clipbox.Infrastructure.UI.CustomControls
 
         private void Grid_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            if (_isDragging && _thumb != null)
+            if (IsInteractionReady && _isDragging)
             {
                 Point mousePos = e.GetPosition(_thumbMoveArea);
 
@@ -120,7 +128,13 @@ namespace Clipbox.Infrastructure.UI.CustomControls
 
         private void Grid_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
+            if (!IsInteractionReady)
+            {
+                return;
+            }
+
             _isDragging = false;
+
             _thumb.ReleaseMouseCapture();
 
             double currentThumbXPos = GetThumbCurrentXPosInCanvas();
@@ -175,28 +189,23 @@ namespace Clipbox.Infrastructure.UI.CustomControls
 
         private void SetThumbToOffPosition(bool useAnimation)
         {
-            Dispatcher.Invoke(() =>
+            Task.Run(() =>
             {
-                Task.Run(() =>
-                {
-                    _animationCompletedMre.WaitOne();
-                    _templateCompletedMre.WaitOne();
+                _animationCompletedMre.WaitOne();
 
-                    double finalThumbOffXPos = GetThumbFinalOffXPosInCanvas();
-                    Dispatcher.Invoke(() =>
+                double finalThumbOffXPos = GetThumbFinalOffXPosInCanvas();
+                Dispatcher.Invoke(() =>
+                {
+                    if (useAnimation)
                     {
-                        if (useAnimation)
-                        {
-                            AnimateThumbToPosition(finalThumbOffXPos);
-                        }
-                        else
-                        {
-                            SetThumbPosition(finalThumbOffXPos);
-                        }
-                    }, DispatcherPriority.Send);
-                });
-            }, DispatcherPriority.Send);
-            
+                        AnimateThumbToPosition(finalThumbOffXPos);
+                    }
+                    else
+                    {
+                        SetThumbPosition(finalThumbOffXPos);
+                    }
+                }, DispatcherPriority.Send);
+            });
         }
 
         private void SetThumbToOnPosition(bool useAnimation)
@@ -204,7 +213,6 @@ namespace Clipbox.Infrastructure.UI.CustomControls
             Task.Run(() =>
                 {
                     _animationCompletedMre.WaitOne();
-                    _templateCompletedMre.WaitOne();
 
                     double finalThumOnPosX = GetThumbFinalOnXPosInCanvas();
                     Dispatcher.Invoke(() =>
@@ -299,6 +307,15 @@ namespace Clipbox.Infrastructure.UI.CustomControls
         public static readonly DependencyProperty IsTogglingProperty =
             DependencyProperty.Register(nameof(IsToggling), typeof(bool), typeof(ToggleSwitch), new PropertyMetadata(false));
 
+
+        public bool IsInteractionReady
+        {
+            get { return (bool)GetValue(IsInteractionReadyProperty); }
+            set { SetValue(IsInteractionReadyProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsInteractionReadyProperty =
+            DependencyProperty.Register(nameof(IsInteractionReady), typeof(bool), typeof(ToggleSwitch), new PropertyMetadata(false));
 
     }
 }

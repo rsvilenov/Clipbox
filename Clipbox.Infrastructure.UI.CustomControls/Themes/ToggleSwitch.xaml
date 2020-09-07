@@ -43,7 +43,18 @@
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
                                         Fill="{Binding Foreground, RelativeSource={RelativeSource Mode=TemplatedParent}}"
-                                        Stretch="Uniform" />
+                                        Stretch="Uniform">
+                                        <Ellipse.Style>
+                                            <Style TargetType="Ellipse">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsInteractionReady, RelativeSource={RelativeSource Mode=TemplatedParent}}" Value="False">
+                                                        <Setter Property="Visibility" Value="Hidden" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Ellipse.Style>
+                                    </Ellipse>
                                 </Canvas>
                             </Viewbox>
                             <TextBlock
@@ -53,10 +64,14 @@
                                 TextWrapping="Wrap">
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Visible" />
                                         <Setter Property="Text" Value="{Binding OffText, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding IsChecked, RelativeSource={RelativeSource Mode=TemplatedParent}}" Value="True">
                                                 <Setter Property="Text" Value="{Binding OnText, RelativeSource={RelativeSource Mode=TemplatedParent}}" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsInteractionReady, RelativeSource={RelativeSource Mode=TemplatedParent}}" Value="False">
+                                                <Setter Property="Visibility" Value="Hidden" />
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
@@ -96,6 +111,9 @@
             <Trigger Property="IsToggling" Value="True">
                 <Setter Property="Background" Value="#999999" />
                 <Setter Property="Foreground" Value="White" />
+            </Trigger>
+            <Trigger Property="IsInteractionReady" Value="False">
+                <Setter Property="Foreground" Value="Gray" />
             </Trigger>
         </Style.Triggers>
 

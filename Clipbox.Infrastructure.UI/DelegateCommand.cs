@@ -12,6 +12,7 @@ namespace Clipbox.Infrastructure.UI
         private readonly Func<bool> _canExecute;
         private readonly Action _execute;
         private bool _isExecuting;
+        private ICommand changeClicked;
 
         public DelegateCommand(Action execute)
                        : this(execute, null)
@@ -24,7 +25,12 @@ namespace Clipbox.Infrastructure.UI
             _execute = execute;
             _canExecute = canExecute;
         }
-        
+
+        public DelegateCommand(ICommand changeClicked)
+        {
+            this.changeClicked = changeClicked;
+        }
+
         public bool CanExecute(object parameter)
         {
             if (_canExecute == null)

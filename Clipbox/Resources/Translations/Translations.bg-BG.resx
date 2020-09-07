@@ -150,6 +150,9 @@
   <data name="BTN_REBUILD_INDEX_RETRY" xml:space="preserve">
     <value>Опитай отново</value>
   </data>
+  <data name="BTN_SETTINGS_CLOUD_CHANGE_EXTENSION" xml:space="preserve">
+    <value>Промени</value>
+  </data>
   <data name="BTN_SETTINGS_MANAGE_EXTENSIONS" xml:space="preserve">
     <value>Управляване</value>
   </data>
@@ -388,6 +391,9 @@
   </data>
   <data name="LBL_SETTINGS_SEARCH_ENABLED" xml:space="preserve">
     <value>Позволи функционалностите за търсене</value>
+  </data>
+  <data name="LBL_SETTINGS_SELECTED_CLOUD_EXTENSION" xml:space="preserve">
+    <value>Използва се</value>
   </data>
   <data name="LBL_SETTINGS_SIZE_TO_DPI" xml:space="preserve">
     <value>Автоматично настройване на размера на прегледи, бутони и текс според DPI настройките на системата</value>

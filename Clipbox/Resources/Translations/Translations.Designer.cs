@@ -160,6 +160,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Change.
+        /// </summary>
+        internal static string BTN_SETTINGS_CLOUD_CHANGE_EXTENSION {
+            get {
+                return ResourceManager.GetString("BTN_SETTINGS_CLOUD_CHANGE_EXTENSION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Manage.
         /// </summary>
         internal static string BTN_SETTINGS_MANAGE_EXTENSIONS {
@@ -869,6 +878,15 @@ namespace Clipbox.Resources.Translations {
         internal static string LBL_SETTINGS_SEARCH_ENABLED {
             get {
                 return ResourceManager.GetString("LBL_SETTINGS_SEARCH_ENABLED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Using.
+        /// </summary>
+        internal static string LBL_SETTINGS_SELECTED_CLOUD_EXTENSION {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_SELECTED_CLOUD_EXTENSION", resourceCulture);
             }
         }
         

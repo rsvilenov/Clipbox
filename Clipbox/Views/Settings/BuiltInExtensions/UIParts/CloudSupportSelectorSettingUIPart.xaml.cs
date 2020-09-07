@@ -20,6 +20,7 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
     {
         public ICommand OkClicked { get; }
         public ICommand CancelClicked { get; }
+        public ICommand ChangeClicked { get; }
 
         public CloudSupportSelectorSettingUIPart()
         {
@@ -32,33 +33,39 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
 
             OkClicked = new DelegateCommand(OkCommandHandler, () => SelectedCloudInfoDisplayData != null);
             CancelClicked = new DelegateCommand(CancelCommandHandler);
+            ChangeClicked = new DelegateCommand(ChangeClickedHandler);
+        }
+
+        private void ChangeClickedHandler()
+        {
+            cloudSelectorPopup.IsOpen = true;
         }
 
         private void CancelCommandHandler()
         {
-            SetIsVisible(false);
-            SelectedCloudInfoDisplayData = null;
-            CloudExtensionName = string.Empty;
+            if (string.IsNullOrEmpty(CloudExtensionName))
+            {
+                SetIsVisible(false);
+                SelectedCloudInfoDisplayData = null;
+            }
+
+            cloudSelectorPopup.IsOpen = false;
         }
 
         private void OkCommandHandler()
         {
             CloudExtensionName = SelectedCloudInfoDisplayData.Name;
-            SetIsVisible(false);
+            cloudSelectorPopup.IsOpen = false;
         }
 
         private void CloudSupportSelectorSettingUIPart_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if ((bool)e.NewValue)
+            if ((bool)e.NewValue && string.IsNullOrEmpty(CloudExtensionName))
             {
                 cloudSelectorPopup.IsOpen = true;
                 cloudSelectorPopup.Closed += CloudSelectorPopup_Closed;
                 Window.GetWindow(this).IsEnabled = false;
                 LoadCloudExtensionsInfo();
-            }
-            else
-            {
-                cloudSelectorPopup.IsOpen = false;
             }
         }
 
