@@ -28,6 +28,7 @@ namespace Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions
            version: 1.0,
            MinHostVersion = 1.0
            )]
+    [CloudSupport("Google Drive", "google_drive.png")]
     public class GoogleDriveCloudSupportExtension : CloudSupportExtension, IAuthenticatable
     {
 

@@ -78,6 +78,7 @@
     <Compile Include="Diagnostics\SystemInfo.cs" />
     <Compile Include="DisposableObject.cs" />
     <Compile Include="ClipboardContent\Enums\ClipboardContentClass.cs" />
+    <Compile Include="Extensibility\Attributes\CloudSupportAttribute.cs" />
     <Compile Include="Extensibility\Attributes\IntermediateFormatSupportAttribute.cs" />
     <Compile Include="Extensibility\Attributes\PreviewPriorityAttribute.cs" />
     <Compile Include="Extensibility\Contracts\CloudServiceInfo.cs" />
@@ -108,6 +109,7 @@
     <Compile Include="Extensibility\Contracts\ISettingsRegistrator.cs" />
     <Compile Include="Extensibility\Enums\SettingsCategory.cs" />
     <Compile Include="Extensibility\EventArgsClasses\RequestSettingChangeEventArgs.cs" />
+    <Compile Include="ICloudInfo.cs" />
     <Compile Include="Search\Enums\SearchCategory.cs" />
     <Compile Include="Search\Enums\TermOccurrence.cs" />
     <Compile Include="Search\IIndexUnit.cs" />

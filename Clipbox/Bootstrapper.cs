@@ -254,6 +254,7 @@ namespace Clipbox
 
                 foreach (PersistableExtensionInfo availableExtension  in  _extensionLoader
                     .GetAllAvailableExtensions()
+                    .Select(ei => ei.PersistableExtensionInfo)
                     .ToList())
                 {
 #if RELEASE

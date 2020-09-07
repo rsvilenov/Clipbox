@@ -69,6 +69,8 @@ namespace Clipbox.Settings
 
         public static SettingKey<string> EnabledExtensions = new SettingKey<string>(nameof(EnabledExtensions), string.Empty);
 
+        public static SettingKey<string> SelectedCloudSupportServiceName = new SettingKey<string>(nameof(SelectedCloudSupportServiceName), string.Empty);
+
         /// <summary>
         /// This is a special key - it is false only upon the first start of the application. It should not be resettable by the user.
         /// </summary>

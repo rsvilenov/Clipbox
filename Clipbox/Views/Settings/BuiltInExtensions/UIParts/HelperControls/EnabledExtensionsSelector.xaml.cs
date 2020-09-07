@@ -187,7 +187,7 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts.HelperControls
         {
             ExtensionLoader extensionLoader = new ExtensionLoader();
             _allExtensionsCollection.AddRange(extensionLoader.GetAllAvailableExtensions()
-                .Select(pei => new ExtensionDisplayInfo(pei)));
+                .Select(pei => new ExtensionDisplayInfo(pei.PersistableExtensionInfo)));
         }
 
         private void OnLoadDataComplete()

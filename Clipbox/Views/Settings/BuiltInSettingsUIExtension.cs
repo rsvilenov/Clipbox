@@ -37,6 +37,17 @@ namespace Clipbox.Views.Settings
         protected virtual void OnSettingUpdated(ISettingKey settingKey) { }
 
         /// <summary>
+        /// The extensions override this method in order to know when
+        /// the request made by calling of the method <see cref="RequestSettingChange"/> 
+        /// is about to be made. It allows cancelling the operation.
+        /// </summary>
+        /// <param name="settingKey">The key of the setting.</param>
+        /// <param name="settingKey">The value to be set.</param>
+        /// <param name="cancel">If true, cancel the opreration.</param>
+        protected virtual void OnSettingUpdating(ISettingKey settingKey, object newValue, out bool cancel) 
+        { cancel = false; }
+
+        /// <summary>
         /// Registers the UI elements which will control our settings.
         /// </summary>
         /// <param name="builder">This is where the UI elements are registered.
@@ -91,7 +102,11 @@ namespace Clipbox.Views.Settings
         /// <param name="newValue"></param>
         protected void RequestSettingChange(ISettingKey key, object newValue)
         {
-            _requestSettingChange?.Invoke(this, new RequestSettingChangeEventArgs(key, newValue));
+            OnSettingUpdating(key, newValue, out bool cancel);
+            if (!cancel)
+            {
+                _requestSettingChange?.Invoke(this, new RequestSettingChangeEventArgs(key, newValue));
+            }
         }
 
         /// <summary>
@@ -149,8 +164,9 @@ namespace Clipbox.Views.Settings
 
                     _settings[settingKey] = settingValue;
 
-                    if (oldValue != settingValue)
+                    if (!oldValue.Equals(settingValue))
                     {
+                        _settingKeyUIPartMapping[settingKey].SetSettingValue(settingValue);
                         OnSettingUpdated(settingKey);
                     }
                 }
@@ -263,8 +279,24 @@ namespace Clipbox.Views.Settings
                     throw new InvalidOperationException($"No settings available for SettingUIPart {typeof(ISettingUIPart).Name}");
                 }
 
-                _settings.FirstOrDefault(s => s.Key == settingKey);
-                _requestSettingChange?.Invoke(this, new RequestSettingChangeEventArgs(settingKey, uiPart.GetSettingValue()));
+                object newValue = uiPart.GetSettingValue();
+                object oldValue = _settings[settingKey];
+                if (!newValue.Equals(oldValue))
+                {
+                    OnSettingUpdating(settingKey, newValue, out bool cancel);
+                    if (!cancel)
+                    {
+                        _requestSettingChange?.Invoke(this, new RequestSettingChangeEventArgs(settingKey, newValue));
+                    }
+                    else
+                    {
+                        // the setting will not get applied by the system and PutSetting will not be called,
+                        // but the ui part may not know that and may have updated its internal state
+                        // so we have to let it know by passing it the old setting value.
+                        uiPart.SetSettingValue(oldValue);
+                    }
+                }
+            
             }
         }
 
@@ -290,6 +322,16 @@ namespace Clipbox.Views.Settings
 
             public IBuiltInSettingsUIBuilder Add(ISettingKey settingKey, ISettingUIPart uiPart)
             {
+                if (settingKey == null)
+                {
+                    throw new ArgumentNullException(nameof(settingKey));
+                }
+
+                if (uiPart == null)
+                {
+                    throw new ArgumentNullException(nameof(uiPart));
+                }
+
                 if (!(uiPart is ISettingUIPart))
                 {
                     throw new ArgumentException($"{nameof(uiPart)} should implement {nameof(ISettingUIPart)}.");

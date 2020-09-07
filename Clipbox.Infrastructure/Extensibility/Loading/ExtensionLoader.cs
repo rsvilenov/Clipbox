@@ -165,7 +165,7 @@ namespace Clipbox.Infrastructure.Extensibility.Loading
             return fullWalker;
         }
 
-        public IEnumerable<PersistableExtensionInfo> GetAllAvailableExtensions()
+        public IEnumerable<ExtensionTypeInfo> GetAllAvailableExtensions()
         {
             string[] assemblyPaths = GetAllExtensionAssemblyPaths();
 
@@ -180,8 +180,7 @@ namespace Clipbox.Infrastructure.Extensibility.Loading
                     if (IsExtensionVersionCompatible(extInfo))
                     {
                         Assembly assembly = reflectionOnlyWalker.GetAssembly();
-
-                        yield return new PersistableExtensionInfo
+                        var persistableExtensionInfo = new PersistableExtensionInfo
                         {
                             AssemblyFullName = assembly.FullName,
                             AssemblyLocation = assembly.Location,
@@ -192,6 +191,8 @@ namespace Clipbox.Infrastructure.Extensibility.Loading
                             Version = extInfo.Version,
                             MinHostVersion = extInfo.MinHostVersion
                         };
+
+                        yield return new ExtensionTypeInfo(extInfo.ExtensionObjectType, persistableExtensionInfo);
                     }
                 }
             }

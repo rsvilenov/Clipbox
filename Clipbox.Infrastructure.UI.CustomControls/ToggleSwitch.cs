@@ -1,8 +1,13 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Threading;
 
 namespace Clipbox.Infrastructure.UI.CustomControls
 {
@@ -19,9 +24,18 @@ namespace Clipbox.Infrastructure.UI.CustomControls
         private Canvas _thumbMoveArea;
         private FrameworkElement _thumb;
 
+        private readonly ManualResetEvent _animationCompletedMre;
+        private readonly ManualResetEvent _templateCompletedMre;
+
         static ToggleSwitch()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(ToggleSwitch), new FrameworkPropertyMetadata(typeof(ToggleSwitch)));
+        }
+
+        public ToggleSwitch()
+        {
+            _animationCompletedMre = new ManualResetEvent(true);
+            _templateCompletedMre = new ManualResetEvent(false);
         }
 
         public override void OnApplyTemplate()
@@ -49,9 +63,16 @@ namespace Clipbox.Infrastructure.UI.CustomControls
             {
                 throw new InvalidOperationException("PART_ThumbMoveArea is not present in the template or it is not a Canvas.");
             }
+
+            _templateCompletedMre.Set();
         }
 
         private void ToggleSwitch_Loaded(object sender, RoutedEventArgs e)
+        {
+            SyncTogglePositionWithBtnValue();
+        }
+
+        private void SyncTogglePositionWithBtnValue()
         {
             if (IsChecked)
             {
@@ -61,6 +82,12 @@ namespace Clipbox.Infrastructure.UI.CustomControls
             {
                 SetThumbToOffPosition(useAnimation: false);
             }
+        }
+
+        public void SetSwitchState(bool isChecked)
+        {
+            IsChecked = isChecked;
+            Dispatcher.Invoke(() => SyncTogglePositionWithBtnValue(), DispatcherPriority.ContextIdle);
         }
 
         private void Grid_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -96,7 +123,7 @@ namespace Clipbox.Infrastructure.UI.CustomControls
                 }
             }
         }
-        
+
         private void Grid_MouseLeftButtonUp(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             _isDragging = false;
@@ -133,7 +160,7 @@ namespace Clipbox.Infrastructure.UI.CustomControls
                     IsChecked = true;
                 }
             }
-            
+
             IsToggling = false;
         }
 
@@ -155,44 +182,88 @@ namespace Clipbox.Infrastructure.UI.CustomControls
         private void SetThumbToOffPosition(bool useAnimation)
         {
             double finalThumbOffXPos = GetThumbFinalOffXPosInCanvas();
-            if (useAnimation)
+            Dispatcher.Invoke(() =>
             {
-                AnimateThumbToPosition(finalThumbOffXPos);
-            }
-            else
-            {
-                _thumb.SetValue(Canvas.LeftProperty, finalThumbOffXPos);
-            }
+                Task.Run(() =>
+                {
+                    _animationCompletedMre.WaitOne();
+                    _templateCompletedMre.WaitOne();
+                    Dispatcher.Invoke(() =>
+                    {
+                        if (useAnimation)
+                        {
+                            AnimateThumbToPosition(finalThumbOffXPos);
+                        }
+                        else
+                        {
+                            SetThumbPosition(finalThumbOffXPos);
+                        }
+                    }, DispatcherPriority.Send);
+                });
+            }, DispatcherPriority.Send);
+            
         }
 
         private void SetThumbToOnPosition(bool useAnimation)
         {
             double finalThumOnPosX = GetThumbFinalOnXPosInCanvas();
-            if (useAnimation)
-            {
-                AnimateThumbToPosition(finalThumOnPosX);
-            }
-            else
-            {
-                _thumb.SetValue(Canvas.LeftProperty, finalThumOnPosX);
-            }
+            Task.Run(() =>
+                {
+                    _animationCompletedMre.WaitOne();
+                    _templateCompletedMre.WaitOne();
+                    Dispatcher.Invoke(() =>
+                    {
+                        if (useAnimation)
+                        {
+                            AnimateThumbToPosition(finalThumOnPosX);
+                        }
+                        else
+                        {
+                            SetThumbPosition(finalThumOnPosX);
+                        }
+                    }, DispatcherPriority.Send);
+                });
         }
-        
+
+
+        private void SetThumbPosition(double position)
+        {
+            _animationCompletedMre.Reset();
+            Dispatcher.Invoke(() =>
+            {
+                _thumb.SetValue(Canvas.LeftProperty, position);
+                _animationCompletedMre.Set();
+            });
+        }
+
         private void AnimateThumbToPosition(double position)
         {
-            double currentThumbXPos = GetThumbCurrentXPosInCanvas();
-            DoubleAnimation anim = new DoubleAnimation(currentThumbXPos, position, (Duration)TimeSpan.FromMilliseconds(SWITCH_ANIMATION_DURATION_MS));
-
-            // remove the animation from the property once it completes,
-            // so we can set the property's value from elsewhere.
-            // (the property is 'blocked' if there is an animation on it)
-            anim.Completed += (e, args) =>
+            _animationCompletedMre.Reset();
+            Dispatcher.Invoke(() =>
             {
-                _thumb.BeginAnimation(Canvas.LeftProperty, null);
-                _thumb.SetValue(Canvas.LeftProperty, position);
-            };
+                double currentThumbXPos = GetThumbCurrentXPosInCanvas();
+                DoubleAnimation anim = new DoubleAnimation(currentThumbXPos, position, (Duration)TimeSpan.FromMilliseconds(SWITCH_ANIMATION_DURATION_MS));
 
-            _thumb.BeginAnimation(Canvas.LeftProperty, anim);
+                    // remove the animation from the property once it completes,
+                    // so we can set the property's value from elsewhere.
+                    // (the property is 'blocked' if there is an animation on it)
+                    anim.Completed += (e, args) =>
+                {
+                    _thumb.BeginAnimation(Canvas.LeftProperty, null);
+                    _thumb.SetValue(Canvas.LeftProperty, position);
+
+                    _animationCompletedMre.Set();
+                };
+
+                _thumb.BeginAnimation(Canvas.LeftProperty, anim);
+            });
+        }
+
+        public static readonly DependencyProperty IsCheckedProperty =
+            DependencyProperty.Register(nameof(IsChecked), typeof(bool), typeof(ToggleSwitch), new PropertyMetadata(false, IsChecked_PropertyChanged));
+
+        private static void IsChecked_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
         }
 
         public bool IsChecked
@@ -201,10 +272,6 @@ namespace Clipbox.Infrastructure.UI.CustomControls
             set { SetValue(IsCheckedProperty, value); }
         }
 
-        public static readonly DependencyProperty IsCheckedProperty =
-            DependencyProperty.Register(nameof(IsChecked), typeof(bool), typeof(ToggleSwitch), new PropertyMetadata(true));
-
-        
         public string OnText
         {
             get { return (string)GetValue(OnTextProperty); }

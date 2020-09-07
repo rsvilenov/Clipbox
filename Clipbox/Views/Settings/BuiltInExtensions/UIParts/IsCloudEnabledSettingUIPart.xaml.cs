@@ -4,7 +4,7 @@ using System.Windows;
 namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
 {
     /// <summary>
-    /// Interaction logic for ClipboardTrackingSettingUIPart.xaml
+    /// Interaction logic for IsCloudEnabledSettingUIPart.xaml
     /// </summary>
     public partial class IsCloudEnabledSettingUIPart : SettingUIPart<bool>
     {
@@ -37,6 +37,7 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
         public override void SetSettingValue(bool value)
         {
             IsCloudEnabled = value;
+            tglSwitch.SetSwitchState(value);
         }
     }
 }

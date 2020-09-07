@@ -6,5 +6,7 @@ namespace Clipbox.Infrastructure.Extensibility.Containers.Interfaces
     public interface ICloudSupportExtensionContainer
     {
         IEnumerable<CloudSupportExtension> ResolveAll();
+
+        CloudSupportExtension Resolve(string cloudServiceName);
     }
 }

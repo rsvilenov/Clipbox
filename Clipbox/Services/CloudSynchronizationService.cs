@@ -2,7 +2,6 @@
 using Clipbox.Core.ClipboardContent.Enums;
 using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.Core.Extensibility.Contracts;
-using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes.CloudSupportTypes;
 using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.CloudSupport;
@@ -11,6 +10,7 @@ using Clipbox.Infrastructure.UI.Utils;
 using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Exceptions;
 using Clipbox.Services.Interfaces;
+using Clipbox.Settings;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -29,8 +29,6 @@ namespace Clipbox.Services
         ICloudSynchronizationService, 
         IDisposable
     {
-        private readonly string _cloudStorageCategoryName;
-
         public bool IsNetworkAvailable { get; private set; }
 
         public bool IsAuthenticated { get; private set; }
@@ -54,8 +52,9 @@ namespace Clipbox.Services
         private readonly CancellationTokenSource _syncTaskCancellationTokenSource;
         private Task _syncRunnerTask;
         private readonly SynchronizationContext _mainSyncContext;
+        private readonly string _cloudStorageCategoryName;
 
-        private CloudSupportExtension _cloudSupport;
+        private CloudSupportExtension _cloudSupportExt;
 
         private string _lastError;
 
@@ -74,6 +73,12 @@ namespace Clipbox.Services
             _mainSyncContext = SynchronizationContext.Current;
 
             _syncTaskCancellationTokenSource = new CancellationTokenSource();
+
+            string selectedCloudSupportServiceName = _settingsService.GetSetting<string>(SettingsKeys.SelectedCloudSupportServiceName);
+
+            _cloudSupportExt = _extensionContainer.Resolve(selectedCloudSupportServiceName);
+
+            _settingsService.SettingChanged += _settingsService_SettingChanged;
 
             NetworkChange.NetworkAvailabilityChanged += NetworkChange_NetworkAvailabilityChanged;
 
@@ -101,11 +106,24 @@ namespace Clipbox.Services
             StartSyncTask();
         }
 
+        private void _settingsService_SettingChanged(object sender, SettingsEventArgs e)
+        {
+            if (e.Key == SettingsKeys.SelectedCloudSupportServiceName)
+            {
+                StopSyncTask();
+
+                string selectedCloudSupportServiceName = _settingsService.GetSetting<string>(SettingsKeys.SelectedCloudSupportServiceName);
+                _cloudSupportExt = _extensionContainer.Resolve(selectedCloudSupportServiceName);
+
+                StartSyncTask();
+            }
+        }
+
         public string GetLastError()
         {
             return _lastError;
         }
-        
+
         private void StartSyncTask()
         {
             CancellationToken ct = _syncTaskCancellationTokenSource.Token;
@@ -120,12 +138,12 @@ namespace Clipbox.Services
 
                     Thread.Sleep(100);
 
-                    if (!(IsEnabled && IsNetworkAvailable && IsAuthenticated))
+                    if (!(IsEnabled && IsNetworkAvailable && IsAuthenticated && _cloudSupportExt != null))
                     {
                         continue;
                     }
 
-                    CloudServiceInfo csi = _cloudSupport.GetCloudServiceInfo();
+                    CloudServiceInfo csi = _cloudSupportExt.GetCloudServiceInfo();
                     if (!csi.IsHealthy)
                     {
                         _lastError = $"{csi.ServiceName} : {csi.FailureReason}";
@@ -147,30 +165,46 @@ namespace Clipbox.Services
             }, _syncTaskCancellationTokenSource.Token);
         }
 
+        private void StopSyncTask()
+        {
+            // request sync task cancellation
+            _syncTaskCancellationTokenSource.Cancel();
+
+            var dispatcher = Dispatcher.FromThread(Thread.CurrentThread);
+            if (dispatcher != null)
+            {
+                DispatcherUtils.DispatchWhile(dispatcher, () => !_syncRunnerTask.IsCompleted);
+            }
+            else
+            {
+                _syncRunnerTask.Wait();
+            }
+        }
+
         private void PerformSynchronization()
         {
             // ensure the existence of the cloud target directory
-            if (!_cloudSupport.CheckCategoryExists(_cloudStorageCategoryName))
+            if (!_cloudSupportExt.CheckCategoryExists(_cloudStorageCategoryName))
             {
-                _cloudSupport.CreateCategory(_cloudStorageCategoryName);
+                _cloudSupportExt.CreateCategory(_cloudStorageCategoryName);
             }
 
             // write out app id to the cloud
             EnsureAppIdFileOnCloud();
 
-            IEnumerable<string> allAppIds = _cloudSupport.
+            IEnumerable<string> allAppIds = _cloudSupportExt.
                 ListItems(_cloudStorageCategoryName, "_app_").
                 Select(file => file.Replace("_app_", "").Replace(".txt", ""));
 
 
-            List<string> deletionRequests = _cloudSupport.ListItems(_cloudStorageCategoryName, "_dr_").ToList();
+            List<string> deletionRequests = _cloudSupportExt.ListItems(_cloudStorageCategoryName, "_dr_").ToList();
             if (deletionRequests.Any())
             {
                 DeleteOldestDeletionRequest(deletionRequests);
             }
             
 
-            List<string> existingCloudItems = _cloudSupport.ListItems(_cloudStorageCategoryName, $"_cso_").ToList();
+            List<string> existingCloudItems = _cloudSupportExt.ListItems(_cloudStorageCategoryName, $"_cso_").ToList();
 
             IReadOnlyList<IClipboardSyncObject> itemsForCloudSync = _clipboardManager.GetItemsForCloudSynchronization();
 
@@ -217,9 +251,9 @@ namespace Clipbox.Services
             DateTime dt = DateTime.ParseExact(oldestDeletionRequest.Split(new char[] { '_', '.' })[3], "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
             if (dt < DateTime.UtcNow.AddDays(-10))
             {
-                if (_cloudSupport.CheckItemExists(_cloudStorageCategoryName, oldestDeletionRequest))
+                if (_cloudSupportExt.CheckItemExists(_cloudStorageCategoryName, oldestDeletionRequest))
                 {
-                    _cloudSupport.DeleteItem(_cloudStorageCategoryName, oldestDeletionRequest);
+                    _cloudSupportExt.DeleteItem(_cloudStorageCategoryName, oldestDeletionRequest);
                 }
 
                 deletionRequests.Remove(oldestDeletionRequest);
@@ -229,9 +263,9 @@ namespace Clipbox.Services
         private void EnsureAppIdFileOnCloud()
         {
             string appGuidFileName = $"_app_{_appGuid}.txt";
-            if (!_cloudSupport.CheckItemExists(_cloudStorageCategoryName, appGuidFileName))
+            if (!_cloudSupportExt.CheckItemExists(_cloudStorageCategoryName, appGuidFileName))
             {
-                _cloudSupport.PutItem(_cloudStorageCategoryName, 
+                _cloudSupportExt.PutItem(_cloudStorageCategoryName, 
                     appGuidFileName, 
                     Encoding.UTF8.GetBytes(_appGuid));
             }
@@ -246,7 +280,7 @@ namespace Clipbox.Services
 
             if (deletionRequests.Contains(deleteRequestFileName))
             {
-                byte[] itemBytes = _cloudSupport.GetItem(_cloudStorageCategoryName, deleteRequestFileName);
+                byte[] itemBytes = _cloudSupportExt.GetItem(_cloudStorageCategoryName, deleteRequestFileName);
                 fileContents = Encoding.UTF8.GetString(itemBytes);
 
                 string[] appGuids = fileContents.Split('\n');
@@ -272,16 +306,16 @@ namespace Clipbox.Services
 
             if (allAppsDeletedTheFile)
             {
-                if (_cloudSupport.CheckItemExists(_cloudStorageCategoryName, deleteRequestFileName))
+                if (_cloudSupportExt.CheckItemExists(_cloudStorageCategoryName, deleteRequestFileName))
                 {
-                    _cloudSupport.DeleteItem(_cloudStorageCategoryName, deleteRequestFileName);
+                    _cloudSupportExt.DeleteItem(_cloudStorageCategoryName, deleteRequestFileName);
                 }
             }
             else
             {
-                if (!_cloudSupport.CheckItemExists(_cloudStorageCategoryName, deleteRequestFileName))
+                if (!_cloudSupportExt.CheckItemExists(_cloudStorageCategoryName, deleteRequestFileName))
                 {
-                        _cloudSupport.PutItem(_cloudStorageCategoryName, 
+                        _cloudSupportExt.PutItem(_cloudStorageCategoryName, 
                             deleteRequestFileName, 
                             Encoding.UTF8.GetBytes(fileContents));
                 }
@@ -292,9 +326,9 @@ namespace Clipbox.Services
         {
             string cloudFileName = $"_cso_{syncObject.Id}_{syncObject.ModifiedDateUtcTicks}.zip";
 
-            if (!_cloudSupport.CheckItemExists(_cloudStorageCategoryName, cloudFileName))
+            if (!_cloudSupportExt.CheckItemExists(_cloudStorageCategoryName, cloudFileName))
             {
-                _cloudSupport.PutItem(_cloudStorageCategoryName, cloudFileName, syncObject.Data);
+                _cloudSupportExt.PutItem(_cloudStorageCategoryName, cloudFileName, syncObject.Data);
                 existingItems.Add(cloudFileName);
             }
         }
@@ -305,7 +339,7 @@ namespace Clipbox.Services
 
             string cloudFileName = $"_cso_{syncObject.Id}_{syncObject.ModifiedDateUtcTicks}.zip";
 
-            _cloudSupport.PutItem(_cloudStorageCategoryName, cloudFileName, syncObject.Data);
+            _cloudSupportExt.PutItem(_cloudStorageCategoryName, cloudFileName, syncObject.Data);
 
             existingItems.Add(cloudFileName);
         }
@@ -325,7 +359,7 @@ namespace Clipbox.Services
 
             foreach (string existingOwnItem in ownCloudItems)
             {
-                _cloudSupport.DeleteItem(_cloudStorageCategoryName, existingOwnItem);
+                _cloudSupportExt.DeleteItem(_cloudStorageCategoryName, existingOwnItem);
                 existingItems.Remove(existingOwnItem);
             }
         }
@@ -337,7 +371,7 @@ namespace Clipbox.Services
             
             AuthenticationStateChanged?.Invoke(this, new EventArgs());
 
-            if (_cloudSupport is IAuthenticatable authenticatable)
+            if (_cloudSupportExt is IAuthenticatable authenticatable)
             {
                 authenticatable.InitiateAuthentication(null);
                 authenticatable.Authenticated += (sender, args) =>
@@ -380,18 +414,7 @@ namespace Clipbox.Services
 
         public void Dispose()
         {
-            // request sync task cancellation
-            _syncTaskCancellationTokenSource.Cancel();
-
-            var dispatcher = Dispatcher.FromThread(Thread.CurrentThread);
-            if (dispatcher != null)
-            {
-                DispatcherUtils.DispatchWhile(dispatcher, () => !_syncRunnerTask.IsCompleted);
-            }
-            else
-            {
-                _syncRunnerTask.Wait();
-            }
+            StopSyncTask();
 
             _syncTaskCancellationTokenSource.Dispose();
         }

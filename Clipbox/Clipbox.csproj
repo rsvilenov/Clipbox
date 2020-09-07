@@ -304,6 +304,9 @@
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\BackgroundPreviewGenerationSettingUIPart.xaml.cs">
       <DependentUpon>BackgroundPreviewGenerationSettingUIPart.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\CloudSupportSelectorSettingUIPart.xaml.cs">
+      <DependentUpon>CloudSupportSelectorSettingUIPart.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\DimNonFocusedItemsInMVSettingUIPart.xaml.cs">
       <DependentUpon>DimNonFocusedItemsInMVSettingUIPart.xaml</DependentUpon>
     </Compile>
@@ -517,6 +520,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\BuiltInExtensions\UIParts\ClipboardTrackingSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\BuiltInExtensions\UIParts\CloudSupportSelectorSettingUIPart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -411,7 +411,7 @@
     <value>избрани</value>
   </data>
   <data name="TGL_BTN_LBL_Off" xml:space="preserve">
-    <value>Изключено</value>
+    <value>Изкл.</value>
   </data>
   <data name="TGL_BTN_LBL_On" xml:space="preserve">
     <value>Вкл.</value>
