@@ -41,9 +41,16 @@ namespace Clipbox.Views.Settings
     /// </summary>
     public partial class SettingsWindow : WindowFrame, ICanResolveDependentExtensions
     {
-        public SettingsWindow(ISettingsService settingsService, SettingsUIExtensionContainer extContainer)
+        private readonly ISettingsService _settingsService;
+        private readonly ICloudSynchronizationService _cloudSyncService;
+        private readonly SettingsUIExtensionContainer _extContainer;
+
+        public SettingsWindow(ISettingsService settingsService,
+            ICloudSynchronizationService cloudSyncService,
+            SettingsUIExtensionContainer extContainer)
         {
             _settingsService = settingsService;
+            _cloudSyncService = cloudSyncService;
             _extContainer = extContainer;
 
             InitializeComponent();
@@ -195,6 +202,11 @@ namespace Clipbox.Views.Settings
                     {
                         _configurableExtensionSettingUIExtMapping.Add(settingKey.TargetComponentType, ext.GetType());
                     }
+                }
+
+                if (ext is ICloudSyncServiceConsumer cloudSyncSvcConsumer)
+                {
+                    cloudSyncSvcConsumer.SetCloudSyncService(_cloudSyncService);
                 }
 
                 var uiItem = new ExtensionUIItem(extUIParts.Select(d => d.Value).Cast<UIElement>(), ext.GetType());
@@ -450,10 +462,6 @@ namespace Clipbox.Views.Settings
         public static readonly DependencyProperty IsAdvancedTabEnabledProperty =
             DependencyProperty.Register(nameof(IsAdvancedTabEnabled), typeof(bool), typeof(SettingsWindow), new PropertyMetadata(false));
 
-
-        private readonly ISettingsService _settingsService;
-
-        private readonly SettingsUIExtensionContainer _extContainer;
 
         private void BtnEnableAdvanced_Click(object sender, RoutedEventArgs e)
         {

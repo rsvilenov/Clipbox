@@ -628,11 +628,20 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Enable cloud services.
+        /// </summary>
+        internal static string LBL_SETTINGS_CLOUD_SERVICES_ENABLED {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_CLOUD_SERVICES_ENABLED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enable cloud sychronization of the clipboard contents.
         /// </summary>
-        internal static string LBL_SETTINGS_CLOUD_ENABLED {
+        internal static string LBL_SETTINGS_CLOUD_SYNC_ENABLED {
             get {
-                return ResourceManager.GetString("LBL_SETTINGS_CLOUD_ENABLED", resourceCulture);
+                return ResourceManager.GetString("LBL_SETTINGS_CLOUD_SYNC_ENABLED", resourceCulture);
             }
         }
         

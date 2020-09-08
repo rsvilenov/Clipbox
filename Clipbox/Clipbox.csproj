@@ -329,8 +329,11 @@
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\FadeAnimationsSettingUIPart.xaml.cs">
       <DependentUpon>FadeAnimationsSettingUIPart.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\IsCloudEnabledSettingUIPart.xaml.cs">
-      <DependentUpon>IsCloudEnabledSettingUIPart.xaml</DependentUpon>
+    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\AreCloudServicesEnabledSettingUIPart.xaml.cs">
+      <DependentUpon>AreCloudServicesEnabledSettingUIPart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\IsCloudSyncEnabledSettingUIPart.xaml.cs">
+      <DependentUpon>IsCloudSyncEnabledSettingUIPart.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\LanguageSettingUIPart.xaml.cs">
       <DependentUpon>LanguageSettingUIPart.xaml</DependentUpon>
@@ -389,6 +392,7 @@
     </Compile>
     <Compile Include="Views\Settings\Interfaces\ICanRequestAppRestart.cs" />
     <Compile Include="Views\Settings\Interfaces\ICanResolveDependentExtensions.cs" />
+    <Compile Include="Views\Settings\Interfaces\ICloudSyncServiceConsumer.cs" />
     <Compile Include="Views\Settings\SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
@@ -555,7 +559,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\Settings\BuiltInExtensions\UIParts\IsCloudEnabledSettingUIPart.xaml">
+    <Page Include="Views\Settings\BuiltInExtensions\UIParts\AreCloudServicesEnabledSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\BuiltInExtensions\UIParts\IsCloudSyncEnabledSettingUIPart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

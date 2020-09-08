@@ -10,6 +10,8 @@ namespace Clipbox.Services.Interfaces
 
         bool IsAuthenticated { get; }
 
+        bool IsAuthenticating { get; }
+
         bool IsEnabled { get; set; }
 
         bool IsInErrorState { get; }

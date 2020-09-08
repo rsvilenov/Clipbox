@@ -15,7 +15,6 @@ namespace Clipbox.Services
     public class TrayContextMenuService : ITrayContextMenuService, IDisposable
     {
         private ISettingsService _settingsService;
-
         private ITrayContextMenu _trayContextMenu;
 
         private MouseLLHook _mouseHook;

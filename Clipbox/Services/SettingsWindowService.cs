@@ -1,12 +1,7 @@
 ﻿using Clipbox.Infrastructure.Extensibility.Containers;
 using Clipbox.Services.Interfaces;
-using Clipbox.Views;
 using Clipbox.Views.Settings;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Clipbox.Services
 {
@@ -14,6 +9,7 @@ namespace Clipbox.Services
     {
         private readonly ISettingsService _settingsService;
         private readonly ITrayContextMenuService _trayContextMenuService;
+        private readonly ICloudSynchronizationService _cloudSyncService;
         private readonly SettingsUIExtensionContainer _extContainer;
 
         IMainClipboardViewWindowService _mainClipboardViewWindowService;
@@ -22,10 +18,12 @@ namespace Clipbox.Services
         public SettingsWindowService(ISettingsService settingsService,
             IMainClipboardViewWindowService mainClipboardViewWindowService,
             ITrayContextMenuService trayContextMenuService,
+            ICloudSynchronizationService cloudSyncService,
             SettingsUIExtensionContainer extContainer)
         {
             _settingsService = settingsService;
             _trayContextMenuService = trayContextMenuService;
+            _cloudSyncService = cloudSyncService;
 
             _mainClipboardViewWindowService = mainClipboardViewWindowService;
 
@@ -48,7 +46,7 @@ namespace Clipbox.Services
         private void OpenSettingsWindow()
         {
             // TODO: memory leak - the window never frees its memory
-            _settingsWindow = new SettingsWindow(_settingsService, _extContainer);
+            _settingsWindow = new SettingsWindow(_settingsService, _cloudSyncService, _extContainer);
             _settingsWindow.Show();
         }
 

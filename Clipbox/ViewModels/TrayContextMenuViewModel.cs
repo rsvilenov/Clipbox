@@ -65,7 +65,7 @@ namespace Clipbox.ViewModels
             ToggleMainWindowOpen = new DelegateCommand(ToggleMainWindowOpenHandler);
 
             Quit = new DelegateCommand(QuitHandler);
-            OpenSettingsWindow = new DelegateCommand(() => SettingsWindowOpenRequested?.Invoke(this, new EventArgs()));
+            OpenSettingsWindow = new DelegateCommand(async () => SettingsWindowOpenRequested?.Invoke(this, new EventArgs()));
 
             _settingsService.SettingChanged += _settingsService_SettingChanged;
         }

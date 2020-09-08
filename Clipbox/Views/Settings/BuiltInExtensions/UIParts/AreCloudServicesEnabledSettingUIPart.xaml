@@ -1,5 +1,5 @@
 ﻿<infUI:SettingUIPart
-    x:Class="Clipbox.Views.Settings.BuiltInExtensions.UIParts.IsCloudEnabledSettingUIPart"
+    x:Class="Clipbox.Views.Settings.BuiltInExtensions.UIParts.AreCloudServicesEnabledSettingUIPart"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:Clipbox.Infrastructure.UI.CustomControls;assembly=Clipbox.Infrastructure.UI.CustomControls"
@@ -29,7 +29,7 @@
         <TextBlock
             Grid.Row="0"
             VerticalAlignment="Center"
-            Text="{loc:Localize LBL_SETTINGS_CLOUD_ENABLED,
+            Text="{loc:Localize LBL_SETTINGS_CLOUD_SERVICES_ENABLED,
                                 ResourceLookupMode=CurrentAssembly}"
             TextWrapping="Wrap" />
 
@@ -38,7 +38,7 @@
             Grid.Row="1"
             Margin="0,10,0,0"
             HorizontalAlignment="Left"
-            IsChecked="{Binding IsCloudEnabled, Mode=TwoWay}"
+            IsChecked="{Binding AreCloudSvcsEnabled, Mode=TwoWay}"
             OffText="{loc:Localize TGL_BTN_LBL_Off,
                                    ResourceLookupMode=CurrentAssembly}"
             OnText="{loc:Localize TGL_BTN_LBL_On,

@@ -33,6 +33,8 @@ namespace Clipbox.Services
 
         public bool IsAuthenticated { get; private set; }
 
+        public bool IsAuthenticating { get; private set; }
+
         public bool IsEnabled { get; set; }
 
         public bool IsInErrorState { get; private set; }
@@ -48,7 +50,7 @@ namespace Clipbox.Services
         private readonly ISettingsService _settingsService;
         private readonly string _appGuid;
 
-        private bool _isAuthenticating;
+        
         private readonly CancellationTokenSource _syncTaskCancellationTokenSource;
         private Task _syncRunnerTask;
         private readonly SynchronizationContext _mainSyncContext;
@@ -366,7 +368,7 @@ namespace Clipbox.Services
 
         private void Authenticate()
         {
-            _isAuthenticating = true;
+            IsAuthenticating = true;
             IsAuthenticated = false;
             
             AuthenticationStateChanged?.Invoke(this, new EventArgs());
@@ -377,7 +379,7 @@ namespace Clipbox.Services
                 authenticatable.Authenticated += (sender, args) =>
                 {
                     IsAuthenticated = true;
-                    _isAuthenticating = false;
+                    IsAuthenticating = false;
 
                     AuthenticationStateChanged?.Invoke(this, new EventArgs());
                 };
@@ -385,7 +387,7 @@ namespace Clipbox.Services
                 authenticatable.AuthenticationFailed += (sender, args) =>
                 {
                     IsAuthenticated = false;
-                    _isAuthenticating = false;
+                    IsAuthenticating = false;
 
                     AuthenticationStateChanged?.Invoke(this, new EventArgs());
                 };
@@ -396,7 +398,7 @@ namespace Clipbox.Services
                 // then no authentication is needed, so just
                 // say that the autentication is successfull
                 IsAuthenticated = true;
-                _isAuthenticating = false;
+                IsAuthenticating = false;
 
                 AuthenticationStateChanged?.Invoke(this, new EventArgs());
             }
@@ -406,7 +408,7 @@ namespace Clipbox.Services
         {
             IsNetworkAvailable = e.IsAvailable;
             NetworkAvailabilityChanged?.Invoke(this, new EventArgs());
-            if (IsNetworkAvailable && !_isAuthenticating)
+            if (IsNetworkAvailable && !IsAuthenticating)
             {
                 Authenticate();
             }
