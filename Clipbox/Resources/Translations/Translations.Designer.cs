@@ -637,6 +637,51 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Authenticated. The service is ready..
+        /// </summary>
+        internal static string LBL_SETTINGS_CLOUD_SVC_AUTHENTICATED {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_CLOUD_SVC_AUTHENTICATED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Authenticating....
+        /// </summary>
+        internal static string LBL_SETTINGS_CLOUD_SVC_AUTHENTICATING {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_CLOUD_SVC_AUTHENTICATING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Connecting....
+        /// </summary>
+        internal static string LBL_SETTINGS_CLOUD_SVC_CONNECTING {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_CLOUD_SVC_CONNECTING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error.
+        /// </summary>
+        internal static string LBL_SETTINGS_CLOUD_SVC_ERROR {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_CLOUD_SVC_ERROR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Network not available..
+        /// </summary>
+        internal static string LBL_SETTINGS_CLOUD_SVC_NO_NETWORK {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_CLOUD_SVC_NO_NETWORK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enable cloud sychronization of the clipboard contents.
         /// </summary>
         internal static string LBL_SETTINGS_CLOUD_SYNC_ENABLED {

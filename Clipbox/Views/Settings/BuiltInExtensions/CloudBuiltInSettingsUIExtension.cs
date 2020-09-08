@@ -87,7 +87,7 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
 
         public void SetCloudSyncService(ICloudSynchronizationService cloudSyncSvc)
         {
-            _isCloudSyncEnabledSettingUIPart.SetCloudSyncService(cloudSyncSvc);
+            _cloudSupportSelectorSettingUIPart.SetCloudSyncService(cloudSyncSvc);
         }
     }
 }

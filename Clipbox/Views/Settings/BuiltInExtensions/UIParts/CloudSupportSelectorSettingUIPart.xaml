@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:customControls="clr-namespace:Clipbox.Infrastructure.UI.CustomControls;assembly=Clipbox.Infrastructure.UI.CustomControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:infConv="clr-namespace:Clipbox.Infrastructure.UI.Converters;assembly=Clipbox.Infrastructure.UI"
     xmlns:infUI="clr-namespace:Clipbox.Infrastructure.UI.Extensibility;assembly=Clipbox.Infrastructure.UI"
     xmlns:loc="clr-namespace:Clipbox.Infrastructure.UI.Localization;assembly=Clipbox.Infrastructure.UI.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -19,6 +20,7 @@
                 <ResourceDictionary Source="pack://application:,,,/Clipbox.Infrastructure.UI;component/Resources/Styles/Style.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/Clipbox.Infrastructure.UI.CustomControls;component/Styles/ToggleSwitchWindows10.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <infConv:InverseBooleanConverter x:Key="InverseBooleanConverter" />
 
             <Style BasedOn="{StaticResource MinimalisticScrollBarStyle}" TargetType="ScrollBar">
                 <Setter Property="Foreground" Value="White" />
@@ -54,7 +56,7 @@
             <Style x:Key="BtnChange" TargetType="{x:Type Button}">
                 <Setter Property="Background" Value="Transparent" />
                 <Setter Property="BorderThickness" Value="1" />
-
+                <Setter Property="Foreground" Value="White" />
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="{x:Type Button}">
@@ -74,6 +76,7 @@
                                             <ColumnDefinition Width="*" />
                                         </Grid.ColumnDefinitions>
                                         <TextBlock
+                                            Name="textBlock"
                                             Grid.Column="0"
                                             Margin="5,0,0,2"
                                             HorizontalAlignment="Center"
@@ -81,6 +84,7 @@
                                             Foreground="{TemplateBinding Foreground}"
                                             Text="{TemplateBinding Content}" />
                                         <ContentControl
+                                            Name="contentControl"
                                             Grid.Column="1"
                                             Margin="5,3,2,2"
                                             HorizontalAlignment="Right"
@@ -96,6 +100,10 @@
                                 <Trigger Property="IsMouseOver" Value="True">
                                     <Setter TargetName="selectionBorder" Property="Background" Value="{DynamicResource ControlHighlightBackgroundBrush}" />
 
+                                </Trigger>
+                                <Trigger Property="Button.IsEnabled" Value="False">
+                                    <Setter TargetName="textBlock" Property="Foreground" Value="Gray" />
+                                    <Setter TargetName="contentControl" Property="Foreground" Value="Gray" />
                                 </Trigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
@@ -121,8 +129,9 @@
                 </Style>
             </Grid.Style>
             <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="60" />
             </Grid.RowDefinitions>
             <TextBlock
                 Grid.Row="0"
@@ -132,18 +141,216 @@
                 <Run Text="{Binding CloudExtensionName}" />
             </TextBlock>
 
-            <Button
+            <StackPanel
                 Grid.Row="1"
-                Height="30"
-                MinWidth="100"
                 Margin="0,10,0,0"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Center"
-                Command="{Binding ChangeClicked}"
-                Content="{loc:Localize BTN_SETTINGS_CLOUD_CHANGE_EXTENSION,
-                                       ResourceLookupMode=CurrentAssembly}"
-                Foreground="{DynamicResource ControlForegroundBrush}"
-                Style="{StaticResource BtnChange}" />
+                Orientation="Horizontal">
+
+                <Image
+                    Height="25"
+                    Margin="0,0,20,0"
+                    Source="{Binding SelectedCloudInfoDisplayData.Icon}"
+                    Stretch="Uniform" />
+
+                <Button
+                    Height="30"
+                    MinWidth="100"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Command="{Binding ChangeClicked}"
+                    Content="{loc:Localize BTN_SETTINGS_CLOUD_CHANGE_EXTENSION,
+                                           ResourceLookupMode=CurrentAssembly}"
+                    Foreground="{DynamicResource ControlForegroundBrush}"
+                    IsEnabled="{Binding IsAuthenticating, Converter={StaticResource InverseBooleanConverter}}"
+                    Style="{StaticResource BtnChange}" />
+
+            </StackPanel>
+
+
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <ContentControl
+                    Grid.Column="0"
+                    Width="25"
+                    Margin="0,0,0,20"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Foreground="Gray"
+                    Template="{DynamicResource LoadingSolidIcon}">
+                    <ContentControl.Style>
+                        <Style TargetType="ContentControl">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsAuthenticated}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+
+                    </ContentControl.Style>
+                </ContentControl>
+
+                <ContentControl
+                    Grid.Column="0"
+                    Width="18"
+                    Margin="0,0,10,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Foreground="Green"
+                    Template="{DynamicResource SuccessIcon}">
+                    <ContentControl.Style>
+                        <Style TargetType="ContentControl">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsAuthenticated}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ContentControl.Style>
+                </ContentControl>
+
+                <ContentControl
+                    Grid.Column="0"
+                    Width="18"
+                    Margin="0,0,10,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Foreground="Red"
+                    Template="{DynamicResource ErrorIcon}">
+                    <ContentControl.Style>
+                        <Style TargetType="ContentControl">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsInErrorState}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ContentControl.Style>
+                </ContentControl>
+
+                <TextBlock
+                    Grid.Column="1"
+                    VerticalAlignment="Center"
+                    Text="{loc:Localize LBL_SETTINGS_CLOUD_SVC_CONNECTING,
+                                        ResourceLookupMode=CurrentAssembly}"
+                    TextWrapping="Wrap">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsNetworkAvailable}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsAuthenticated}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsAuthenticating}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsInErrorState}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+
+                <TextBlock
+                    Grid.Column="1"
+                    VerticalAlignment="Center"
+                    Text="{loc:Localize LBL_SETTINGS_CLOUD_SVC_AUTHENTICATING,
+                                        ResourceLookupMode=CurrentAssembly}"
+                    TextWrapping="Wrap">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsAuthenticating}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsInErrorState}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsNetworkAvailable}" Value="False">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+
+                <TextBlock
+                    Grid.Column="1"
+                    VerticalAlignment="Center"
+                    Text="{loc:Localize LBL_SETTINGS_CLOUD_SVC_AUTHENTICATED,
+                                        ResourceLookupMode=CurrentAssembly}"
+                    TextWrapping="Wrap">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsAuthenticated}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsInErrorState}" Value="True">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsNetworkAvailable}" Value="False">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+
+                <TextBlock
+                    Grid.Column="1"
+                    VerticalAlignment="Center"
+                    TextWrapping="Wrap">
+                    <Run Text="{loc:Localize LBL_SETTINGS_CLOUD_SVC_ERROR, ResourceLookupMode=CurrentAssembly}" />
+                    <Run Text=": " />
+                    <Run Text="{Binding ErrorMessage}" />
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsInErrorState}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsNetworkAvailable}" Value="False">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+
+                <TextBlock
+                    Grid.Column="1"
+                    VerticalAlignment="Center"
+                    TextWrapping="Wrap">
+                    <Run Text="{loc:Localize LBL_SETTINGS_CLOUD_SVC_NO_NETWORK, ResourceLookupMode=CurrentAssembly}" />
+                    <Run Text=": " />
+                    <Run Text="{Binding ErrorMessage}" />
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsNetworkAvailable}" Value="False">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+
+            </Grid>
+
 
         </Grid>
 

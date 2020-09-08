@@ -309,6 +309,21 @@
   <data name="LBL_SETTINGS_CLOUD_SERVICES_ENABLED" xml:space="preserve">
     <value>Използвай облачните услуги</value>
   </data>
+  <data name="LBL_SETTINGS_CLOUD_SVC_AUTHENTICATED" xml:space="preserve">
+    <value>Автентичността е потвърдена. Услугата е готова за работа.</value>
+  </data>
+  <data name="LBL_SETTINGS_CLOUD_SVC_AUTHENTICATING" xml:space="preserve">
+    <value>Потвърждаване на идентичността...</value>
+  </data>
+  <data name="LBL_SETTINGS_CLOUD_SVC_CONNECTING" xml:space="preserve">
+    <value>Свързване...</value>
+  </data>
+  <data name="LBL_SETTINGS_CLOUD_SVC_ERROR" xml:space="preserve">
+    <value>Грешка</value>
+  </data>
+  <data name="LBL_SETTINGS_CLOUD_SVC_NO_NETWORK" xml:space="preserve">
+    <value>Мрежата не е достъпна.</value>
+  </data>
   <data name="LBL_SETTINGS_CLOUD_SYNC_ENABLED" xml:space="preserve">
     <value>Облачна синхронизация на съдържанието на клипбоарда</value>
   </data>
