@@ -3,6 +3,7 @@ using Clipbox.Core.Extensibility.EventArgsClasses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
 {
@@ -54,19 +55,24 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
         /// </summary>
         protected void RequestSettingChange<TValueType>(string settingName, TValueType value)
         {
-            if (!_settings.Any(s => s.Key.Name == settingName 
-                && s.Key.TargetComponentType == GetType()))
+            lock (_lockObject)
             {
-                throw new ArgumentException($"Setting with name '{settingName}' is not registered for this extention type.");
+                if (!_settings.Any(s => s.Key.Name == settingName
+                && s.Key.TargetComponentType == GetType()))
+                {
+                    throw new ArgumentException($"Setting with name '{settingName}' is not registered for this extention type.");
+                }
+
+
+                ISettingKey key = _settings
+                    .Single(s => s.Key.Name == settingName
+                        && s.Key.TargetComponentType == GetType())
+                    .Key;
+
+                // prevent deadlocks, resulting in from some consumers calling GetSetting or PutSetting
+                // from within this event's handler. GetSetting or PutSetting both use the same lock the current method uses.
+                Task.Run(() => _requestSettingChange?.Invoke(this, new RequestSettingChangeEventArgs(key, value)));
             }
-            
-
-            ISettingKey key = _settings
-                .Single(s => s.Key.Name == settingName
-                    && s.Key.TargetComponentType == GetType())
-                .Key;
-
-            _requestSettingChange?.Invoke(this, new RequestSettingChangeEventArgs(key, value));
         }
 
         // the following methods and event are to be used by the callers of the
@@ -88,7 +94,10 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
 
                     if (oldValue != settingValue)
                     {
-                        OnSettingUpdated(settingKey.Name);
+                        // Some plugins may call RequestSettingChange from the override of OnSettingUpdated,
+                        // so in order to prevent deadlocks, we will run this call in a separate task, which will allow the
+                        // execution of the locked code in RauseSettingChange the moment our method finishes and the lock is released.
+                        Task.Run(() => OnSettingUpdated(settingKey.Name));
                     }
                 }
                 else

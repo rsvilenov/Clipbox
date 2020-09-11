@@ -427,7 +427,16 @@ namespace Clipbox.Views.Settings
 
         private void SettingChangeRequestor_RequestSettingChange(object sender, Core.Extensibility.EventArgsClasses.RequestSettingChangeEventArgs e)
         {
-            ((IConfigurationRecipient)sender).PutSetting(e.SettingKey, e.Value);
+            // allow for requesting changes of settings, which are not registered by the plugin
+            // by not trying to tell the plugin that it's setting has changed (it will cause
+            // the plugin to complain that the setting in question is not one of its own)
+            if (sender is IConfigurationRecipient confRecipient
+                && sender is ISettingsRegistrator settingRegistrator 
+                && settingRegistrator.GetSettingKeys().Contains(e.SettingKey))
+            {
+                confRecipient.PutSetting(e.SettingKey, e.Value);
+            }
+
             _settingsService.SetSetting(e.SettingKey, e.Value);
         }
 
