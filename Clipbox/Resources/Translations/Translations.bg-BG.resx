@@ -322,7 +322,7 @@
     <value>Грешка</value>
   </data>
   <data name="LBL_SETTINGS_CLOUD_SVC_NO_NETWORK" xml:space="preserve">
-    <value>Мрежата не е достъпна.</value>
+    <value>Мрежата не е достъпна в момента. Изчакване...</value>
   </data>
   <data name="LBL_SETTINGS_CLOUD_SYNC_ENABLED" xml:space="preserve">
     <value>Облачна синхронизация на съдържанието на клипбоарда</value>
@@ -387,6 +387,9 @@
   <data name="LBL_SETTINGS_MAX_PREVIEW_TASKS" xml:space="preserve">
     <value>Максимален брой на едновременните задачи за генериране на прегледи</value>
   </data>
+  <data name="LBL_SETTINGS_NO_CLOUD_SUPPORT_EXT_AVAILABLE" xml:space="preserve">
+    <value>Няма нито една услуга в списъка.</value>
+  </data>
   <data name="LBL_SETTINGS_NUM_ITEMS_ON_PAGE" xml:space="preserve">
     <value>Брой на клипбоард елементите, които се зареждат на една страница при преглед на цял екран (основния прозорец).
 Внимание: повече елементи означава повече използвана оперативна памет.</value>
@@ -412,6 +415,9 @@
   </data>
   <data name="LBL_SETTINGS_SELECTED_CLOUD_EXTENSION" xml:space="preserve">
     <value>Използва се</value>
+  </data>
+  <data name="LBL_SETTINGS_SELECT_CLOUD_SUPPORT_EXT" xml:space="preserve">
+    <value>Изберете облачна услуга от списъка</value>
   </data>
   <data name="LBL_SETTINGS_SIZE_TO_DPI" xml:space="preserve">
     <value>Автоматично настройване на размера на прегледи, бутони и текс според DPI настройките на системата</value>

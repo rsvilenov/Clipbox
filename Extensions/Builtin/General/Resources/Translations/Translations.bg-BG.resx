@@ -147,6 +147,9 @@
   <data name="LBL_BLACKLIST_SEARCH_OVERLAY" xml:space="preserve">
     <value>Пишете тук, за да търсите</value>
   </data>
+  <data name="LBL_GOOGLE_DRIVE_REQUEST_REAUTH" xml:space="preserve">
+    <value>Google Drive: Повторно потвърждаване на самоличността</value>
+  </data>
   <data name="LBL_INSTALLED_APP_SELECTOR_TITLE" xml:space="preserve">
     <value>Приложения в черния списък</value>
   </data>

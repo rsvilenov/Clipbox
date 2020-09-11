@@ -1,8 +1,12 @@
 ﻿using Clipbox.Core;
 using Clipbox.Core.ClipboardContent.Enums;
 using Clipbox.Core.ClipboardContent.Interfaces;
+using Clipbox.Core.Configuration;
 using Clipbox.Core.Extensibility.Contracts;
+using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes.CloudSupportTypes;
+using Clipbox.Core.Extensibility.EventArgsClasses;
+using Clipbox.Core.Extensibility.Exceptions;
 using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.CloudSupport;
 using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
@@ -36,6 +40,8 @@ namespace Clipbox.Services
         public bool IsAuthenticating { get; private set; }
 
         public bool IsEnabled { get; set; }
+
+        public bool IsCloudSyncEnabled { get; set; }
 
         public bool IsInErrorState { get; private set; }
 
@@ -76,14 +82,41 @@ namespace Clipbox.Services
 
             _syncTaskCancellationTokenSource = new CancellationTokenSource();
 
-            string selectedCloudSupportServiceName = _settingsService.GetSetting<string>(SettingsKeys.SelectedCloudSupportServiceName);
 
-            _cloudSupportExt = _extensionContainer.Resolve(selectedCloudSupportServiceName);
+            IsEnabled = _settingsService.GetSetting<bool>(SettingsKeys.AreCloudServicesEnabled);
+            IsCloudSyncEnabled = _settingsService.GetSetting<bool>(SettingsKeys.IsCloudSyncEnabled);
+
+            string selectedCloudSupportServiceName = _settingsService.GetSetting<string>(SettingsKeys.SelectedCloudSupportServiceName);
+            if (!string.IsNullOrEmpty(selectedCloudSupportServiceName))
+            {
+                _cloudSupportExt = _extensionContainer.Resolve(selectedCloudSupportServiceName);
+                SetUpSelectedCloudSupportExtension();
+            }
 
             _settingsService.SettingChanged += _settingsService_SettingChanged;
 
+            IsNetworkAvailable = NetworkInterface.GetIsNetworkAvailable();
             NetworkChange.NetworkAvailabilityChanged += NetworkChange_NetworkAvailabilityChanged;
 
+            if (_cloudSupportExt != null)
+            {
+                RequestAuthentication();
+            }
+
+            StartSyncTask();
+        }
+
+        /// <summary>
+        /// Gets all the available extensions which are not disabled
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<Type> GetAvailableExtensionTypes()
+        {
+            return _extensionContainer.GetRegisteredTypes();
+        }
+
+        private void RequestAuthentication()
+        {
             Task.Run(() =>
             {
                 try
@@ -104,8 +137,6 @@ namespace Clipbox.Services
                     _mainSyncContext.Post(state => ((ExceptionDispatchInfo)state).Throw(), edi);
                 }
             });
-
-            StartSyncTask();
         }
 
         private void _settingsService_SettingChanged(object sender, SettingsEventArgs e)
@@ -117,8 +148,45 @@ namespace Clipbox.Services
                 string selectedCloudSupportServiceName = _settingsService.GetSetting<string>(SettingsKeys.SelectedCloudSupportServiceName);
                 _cloudSupportExt = _extensionContainer.Resolve(selectedCloudSupportServiceName);
 
+                SetUpSelectedCloudSupportExtension();
+
+                RequestAuthentication();
                 StartSyncTask();
             }
+            else if (e.Key == SettingsKeys.IsCloudSyncEnabled)
+            {
+                IsCloudSyncEnabled = _settingsService.GetSetting<bool>(SettingsKeys.IsCloudSyncEnabled);
+            }
+            else if (e.Key == SettingsKeys.AreCloudServicesEnabled)
+            {
+                IsEnabled = _settingsService.GetSetting<bool>(SettingsKeys.AreCloudServicesEnabled);
+            }
+        }
+
+        private void SetUpSelectedCloudSupportExtension()
+        {
+            if (_cloudSupportExt is IConfigurationRecipient confRecipient)
+            {
+                foreach (ISettingKey settingKey in _settingsService.GetSettingKeys(_cloudSupportExt.GetType()))
+                {
+                    try { confRecipient.PutSetting(settingKey, _settingsService.GetSetting(settingKey)); }
+                    catch (Exception ex) { throw new ClipboxExtensionException(nameof(confRecipient.PutSetting), _cloudSupportExt.GetType(), ex); }
+                }
+            }
+
+            if (_cloudSupportExt is ISettingChangeRequestor settingChangeRequestor)
+            {
+                settingChangeRequestor.RequestSettingChange += ConfRequestor_RequestSettingChange;
+            }
+        }
+
+        private void ConfRequestor_RequestSettingChange(object sender, RequestSettingChangeEventArgs e)
+        {
+            // save the setting
+            _settingsService.SetSetting(e.SettingKey, e.Value);
+            // update the setting in the extension
+            IConfigurationRecipient ext = (IConfigurationRecipient)sender;
+            ext.PutSetting(e.SettingKey, e.Value);
         }
 
         public string GetLastError()

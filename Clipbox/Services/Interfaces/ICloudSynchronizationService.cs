@@ -1,5 +1,7 @@
-﻿using Clipbox.Services.EventArgsClasses;
+﻿using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
+using Clipbox.Services.EventArgsClasses;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Clipbox.Services.Interfaces
@@ -12,11 +14,19 @@ namespace Clipbox.Services.Interfaces
 
         bool IsAuthenticating { get; }
 
-        bool IsEnabled { get; set; }
+        bool IsEnabled { get; }
+
+        bool IsCloudSyncEnabled { get; }
 
         bool IsInErrorState { get; }
 
         string GetLastError();
+
+        /// <summary>
+        /// Gets all the available extension types which are not disabled
+        /// </summary>
+        /// <returns></returns>
+        IEnumerable<Type> GetAvailableExtensionTypes();
 
         event EventHandler NetworkAvailabilityChanged;
 

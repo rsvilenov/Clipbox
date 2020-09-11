@@ -111,6 +111,7 @@ namespace Clipbox.ViewModels
         private bool CheckIsCloudServiceAvailable()
         {
             return _cloudSyncService.IsEnabled
+                && _cloudSyncService.IsCloudSyncEnabled
                 && _cloudSyncService.IsNetworkAvailable 
                 && _cloudSyncService.IsAuthenticated;
         }

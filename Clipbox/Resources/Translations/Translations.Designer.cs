@@ -673,7 +673,7 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Network not available..
+        ///   Looks up a localized string similar to Network not currently available. Waiting....
         /// </summary>
         internal static string LBL_SETTINGS_CLOUD_SVC_NO_NETWORK {
             get {
@@ -871,6 +871,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No services available..
+        /// </summary>
+        internal static string LBL_SETTINGS_NO_CLOUD_SUPPORT_EXT_AVAILABLE {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_NO_CLOUD_SUPPORT_EXT_AVAILABLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Number of items to load on a single page in the fullscreen window (the main window).
         ///Warning: more items means more RAM usage!.
         /// </summary>
@@ -932,6 +941,15 @@ namespace Clipbox.Resources.Translations {
         internal static string LBL_SETTINGS_SEARCH_ENABLED {
             get {
                 return ResourceManager.GetString("LBL_SETTINGS_SEARCH_ENABLED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Select a cloud service from the list.
+        /// </summary>
+        internal static string LBL_SETTINGS_SELECT_CLOUD_SUPPORT_EXT {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_SELECT_CLOUD_SUPPORT_EXT", resourceCulture);
             }
         }
         

@@ -198,8 +198,7 @@ namespace Clipbox
             _keyboardService = new LowLevelKeyboardService();
 
             _cloudSyncService = new CloudSynchronizationService(_clipboardManager, _settingsService, _extensionLoader.CloudSupportExtensionContainer, appGuid);
-            _cloudSyncService.IsEnabled = _settingsService.GetSetting<bool>(SettingsKeys.IsCloudSyncEnabled);
-
+            
             _pauseService = new PauseService(_settingsService);
             _trayContextMenuService = new TrayContextMenuService(_settingsService, _pauseService);
 

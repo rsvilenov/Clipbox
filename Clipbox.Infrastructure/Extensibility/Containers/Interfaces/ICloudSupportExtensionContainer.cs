@@ -1,4 +1,5 @@
 ﻿using Clipbox.Core.Extensibility.Contracts.ExtentionTypes.CloudSupportTypes;
+using System;
 using System.Collections.Generic;
 
 namespace Clipbox.Infrastructure.Extensibility.Containers.Interfaces
@@ -8,5 +9,7 @@ namespace Clipbox.Infrastructure.Extensibility.Containers.Interfaces
         IEnumerable<CloudSupportExtension> ResolveAll();
 
         CloudSupportExtension Resolve(string cloudServiceName);
+
+        IEnumerable<Type> GetRegisteredTypes();
     }
 }

@@ -10,5 +10,7 @@
         /// encryption capability, if the service is initialized with a encrypting IPersistenceProvider.
         /// </summary>
         public static string GoogleDriveAuthToken = nameof(GoogleDriveAuthToken);
+
+        public static string GoogleDriveReauthRequested = nameof(GoogleDriveReauthRequested);
     }
 }

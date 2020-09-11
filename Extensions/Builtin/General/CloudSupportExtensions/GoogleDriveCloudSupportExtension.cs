@@ -84,7 +84,15 @@ namespace Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions
 
         protected override void OnSettingUpdated(string settingName)
         {
-            _settingChangeWaitAutoResetEvent.Set();
+            if (settingName == ExtensionSettingNames.GoogleDriveAuthToken)
+            {
+                _settingChangeWaitAutoResetEvent.Set();
+            }
+            else if (settingName == ExtensionSettingNames.GoogleDriveReauthRequested && GetSetting<bool>(ExtensionSettingNames.GoogleDriveReauthRequested))
+            {
+                Reauthenticate();
+                RequestSettingChange(ExtensionSettingNames.GoogleDriveReauthRequested, false);
+            }
         }
 
         private void _dataStore_FetchDataRequested(object sender, StringDataTransferEventArgs e)
@@ -511,11 +519,12 @@ namespace Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions
             GoogleWebAuthorizationBroker.ReauthorizeAsync(_credential, CancellationToken.None).Wait();
         }
 
-        private bool CheckIsCloudServiceReachable(string uri, int port, int timeoutMs = 5000)
+        private bool CheckIsCloudServiceReachable(string uriString, int port, int timeoutMs = 5000)
         {
             Task<bool> task = Task<bool>.Factory.StartNew(() =>
             {
-                IPAddress[] ipList = Dns.GetHostAddresses(uri);
+                Uri uri = new Uri(uriString);
+                IPAddress[] ipList = Dns.GetHostAddresses(uri.Host);
 
                 foreach (IPAddress ip in ipList)
                 {
@@ -539,7 +548,7 @@ namespace Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions
             }
             else
             {
-                throw new TimeoutException($"The connection to {uri}:{port} timed out.");
+                throw new TimeoutException($"The connection to {uriString}:{port} timed out.");
             }
         }
 

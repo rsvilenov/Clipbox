@@ -23,6 +23,11 @@ namespace Clipbox.Infrastructure.Extensibility.Containers
             }
         }
 
+        public IEnumerable<Type> GetRegisteredTypes()
+        {
+            return base.RegisteredTypes;
+        }
+
         public CloudSupportExtension Resolve(string cloudServiceName)
         {
             if (_cloudServiceNameExtensionMapping.ContainsKey(cloudServiceName))

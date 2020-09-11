@@ -1,13 +1,17 @@
 ﻿using Clipbox.Core;
 using Clipbox.Core.Extensibility.Attributes;
+using Clipbox.Core.Extensibility.Contracts;
+using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using Clipbox.Infrastructure.Extensibility.Loading;
 using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.Extensibility;
 using Clipbox.Infrastructure.UI.ExtensionMethods;
 using Clipbox.Services.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -34,7 +38,7 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
             this.Visibility = Visibility.Collapsed;
             IsVisibleChanged += CloudSupportSelectorSettingUIPart_IsVisibleChanged;
 
-            OkClicked = new DelegateCommand(OkCommandHandler, () => SelectedCloudInfoDisplayData != null);
+            OkClicked = new DelegateCommand(OkCommandHandler, () => AvailableCloudExtensions.Any() && SelectedCloudInfoDisplayData != null);
             CancelClicked = new DelegateCommand(CancelCommandHandler);
             ChangeClicked = new DelegateCommand(ChangeClickedHandler);
 
@@ -84,18 +88,17 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
         {
             AvailableCloudExtensions.Clear();
 
-            ExtensionLoader extensionLoader = new ExtensionLoader();
-            var cloudSupportExtensions = extensionLoader
-                .GetAllAvailableExtensions();
+            IEnumerable<Type> availableExtensionTypes = _cloudSyncSvc.GetAvailableExtensionTypes();
 
-            foreach (ExtensionTypeInfo eti in cloudSupportExtensions)
+            foreach (Type extType in availableExtensionTypes)
             {
-                if (!CloudSupportAttribute.IsDefinedFor(eti.ReflectionOnlyType))
+                if (!(CloudSupportAttribute.IsDefinedFor(extType) 
+                    && ClipboxExtensionAttribute.IsDefinedFor(extType)))
                 {
                     continue;
                 }
 
-                ICloudInfo cloudInfo = CloudSupportAttribute.GetCloudInfo(eti.ReflectionOnlyType);
+                ICloudInfo cloudInfo = CloudSupportAttribute.GetCloudInfo(extType);
                 ImageSource imgSource = null;
                 if (cloudInfo.IconImageData != null)
                 {
@@ -106,9 +109,10 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
                     }
                 }
 
+                IExtensionInfo extInfo = ClipboxExtensionAttribute.GetExtensionInfo(extType);
                 AvailableCloudExtensions.Add(new CloudInfoDisplayData
                 {
-                    Description = eti.PersistableExtensionInfo.Description,
+                    Description = extInfo.Description,
                     Name = cloudInfo.CloudServiceName,
                     Icon = imgSource
                 });
@@ -208,19 +212,28 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
 
         private void _cloudSyncSvc_ErrorOccurred(object sender, System.IO.ErrorEventArgs e)
         {
-            IsInErrorState = _cloudSyncSvc.IsInErrorState;
-            ErrorMessage = _cloudSyncSvc.GetLastError();
+            Dispatcher.Invoke(() =>
+            {
+                IsInErrorState = _cloudSyncSvc.IsInErrorState;
+                ErrorMessage = _cloudSyncSvc.GetLastError();
+            });
         }
 
         private void _cloudSyncSvc_NetworkAvailabilityChanged(object sender, System.EventArgs e)
         {
-            IsNetworkAvailable = _cloudSyncSvc.IsNetworkAvailable;
+            Dispatcher.Invoke(() =>
+            {
+                IsNetworkAvailable = _cloudSyncSvc.IsNetworkAvailable;
+            });
         }
 
         private void _cloudSyncSvc_AuthenticationStateChanged(object sender, System.EventArgs e)
         {
-            IsAuthenticated = _cloudSyncSvc.IsAuthenticated;
-            IsAuthenticating = _cloudSyncSvc.IsAuthenticating;
+            Dispatcher.Invoke(() =>
+            {
+                IsAuthenticated = _cloudSyncSvc.IsAuthenticated;
+                IsAuthenticating = _cloudSyncSvc.IsAuthenticating;
+            });
         }
 
         private void CloudSupportSelectorSettingUIPart_Unloaded(object sender, RoutedEventArgs e)

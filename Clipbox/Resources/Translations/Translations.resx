@@ -322,7 +322,7 @@
     <value>Error</value>
   </data>
   <data name="LBL_SETTINGS_CLOUD_SVC_NO_NETWORK" xml:space="preserve">
-    <value>Network not available.</value>
+    <value>Network not currently available. Waiting...</value>
   </data>
   <data name="LBL_SETTINGS_CLOUD_SYNC_ENABLED" xml:space="preserve">
     <value>Enable cloud sychronization of the clipboard contents</value>
@@ -387,6 +387,9 @@
   <data name="LBL_SETTINGS_MAX_PREVIEW_TASKS" xml:space="preserve">
     <value>Maximum number of simultaneous preview generation tasks</value>
   </data>
+  <data name="LBL_SETTINGS_NO_CLOUD_SUPPORT_EXT_AVAILABLE" xml:space="preserve">
+    <value>No services available.</value>
+  </data>
   <data name="LBL_SETTINGS_NUM_ITEMS_ON_PAGE" xml:space="preserve">
     <value>Number of items to load on a single page in the fullscreen window (the main window).
 Warning: more items means more RAM usage!</value>
@@ -412,6 +415,9 @@ Warning: more rows means more RAM usage!</value>
   </data>
   <data name="LBL_SETTINGS_SELECTED_CLOUD_EXTENSION" xml:space="preserve">
     <value>Using</value>
+  </data>
+  <data name="LBL_SETTINGS_SELECT_CLOUD_SUPPORT_EXT" xml:space="preserve">
+    <value>Select a cloud service from the list</value>
   </data>
   <data name="LBL_SETTINGS_SIZE_TO_DPI" xml:space="preserve">
     <value>Automatically resize previews, buttons and text accorting to system scaling (DPI) settings</value>

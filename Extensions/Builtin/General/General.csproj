@@ -107,8 +107,12 @@
       <DependentUpon>Translations.resx</DependentUpon>
     </Compile>
     <Compile Include="SettingsUIExtensions\BlacklistedAppsSettingsUIExtension.cs" />
+    <Compile Include="SettingsUIExtensions\GoogleDriveSettingsUIExtension.cs" />
     <Compile Include="SettingsUIExtensions\SettingUIParts\BindableObjects\InstalledApplicationInfo.cs" />
     <Compile Include="SettingsUIExtensions\SettingUIParts\EventArgsClasses\InstalledApplicationInfoEventArgs.cs" />
+    <Compile Include="SettingsUIExtensions\SettingUIParts\GoogleCloudAuthSettingUIPart.xaml.cs">
+      <DependentUpon>GoogleCloudAuthSettingUIPart.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SettingsUIExtensions\SettingUIParts\InstalledApplicationSelector.xaml.cs">
       <DependentUpon>InstalledApplicationSelector.xaml</DependentUpon>
     </Compile>
@@ -143,6 +147,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Page Include="SettingsUIExtensions\SettingUIParts\GoogleCloudAuthSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="SettingsUIExtensions\SettingUIParts\InstalledApplicationSelector.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

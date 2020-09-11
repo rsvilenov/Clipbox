@@ -151,6 +151,15 @@ namespace Clipbox.Extensions.BuiltIn.General.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Google Drive: Request reauthentication.
+        /// </summary>
+        internal static string LBL_GOOGLE_DRIVE_REQUEST_REAUTH {
+            get {
+                return ResourceManager.GetString("LBL_GOOGLE_DRIVE_REQUEST_REAUTH", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Blacklisted applications.
         /// </summary>
         internal static string LBL_INSTALLED_APP_SELECTOR_TITLE {

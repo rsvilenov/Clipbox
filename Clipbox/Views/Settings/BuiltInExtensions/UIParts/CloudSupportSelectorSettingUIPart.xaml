@@ -174,8 +174,8 @@
                 </Grid.ColumnDefinitions>
                 <ContentControl
                     Grid.Column="0"
-                    Width="25"
-                    Margin="0,0,0,20"
+                    Width="18"
+                    Margin="0,0,10,0"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Foreground="Gray"
@@ -333,10 +333,9 @@
                 <TextBlock
                     Grid.Column="1"
                     VerticalAlignment="Center"
+                    Text="{loc:Localize LBL_SETTINGS_CLOUD_SVC_NO_NETWORK,
+                                        ResourceLookupMode=CurrentAssembly}"
                     TextWrapping="Wrap">
-                    <Run Text="{loc:Localize LBL_SETTINGS_CLOUD_SVC_NO_NETWORK, ResourceLookupMode=CurrentAssembly}" />
-                    <Run Text=": " />
-                    <Run Text="{Binding ErrorMessage}" />
                     <TextBlock.Style>
                         <Style TargetType="TextBlock">
                             <Setter Property="Visibility" Value="Collapsed" />
@@ -372,67 +371,100 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         FontSize="18"
-                        Text="{loc:Localize LBL_SETTINGS_CLIPBOARD_TRACKING,
+                        Text="{loc:Localize LBL_SETTINGS_SELECT_CLOUD_SUPPORT_EXT,
                                             ResourceLookupMode=CurrentAssembly}"
                         TextWrapping="Wrap" />
 
-                    <ScrollViewer
+                    <TextBlock
                         Grid.Row="1"
-                        HorizontalScrollBarVisibility="Hidden"
-                        VerticalScrollBarVisibility="Auto">
-                        <ListView
-                            Background="Transparent"
-                            BorderThickness="0"
-                            Foreground="{DynamicResource ControlForegroundBrush}"
-                            ItemsSource="{Binding AvailableCloudExtensions}"
-                            SelectedItem="{Binding SelectedCloudInfoDisplayData}"
-                            SelectionMode="Single">
-                            <ListView.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Margin="0,0,0,30" Orientation="Vertical" />
-                                </ItemsPanelTemplate>
-                            </ListView.ItemsPanel>
-                            <ListView.ItemContainerStyle>
-                                <Style TargetType="ListViewItem">
-                                    <Setter Property="FrameworkElement.Margin" Value="0,5,0,0" />
-                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                                </Style>
-                            </ListView.ItemContainerStyle>
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <Grid HorizontalAlignment="Stretch">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition />
-                                            <ColumnDefinition Width="45" />
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition />
-                                            <RowDefinition />
-                                        </Grid.RowDefinitions>
-                                        <TextBlock
-                                            Grid.Row="0"
-                                            Grid.Column="0"
-                                            FontSize="14"
-                                            FontWeight="Bold"
-                                            Text="{Binding Name}" />
-                                        <TextBlock
-                                            Grid.Row="1"
-                                            Grid.Column="0"
-                                            FontSize="12"
-                                            Text="{Binding Description}"
-                                            TextWrapping="Wrap" />
-                                        <Image
-                                            Grid.RowSpan="2"
-                                            Grid.Column="1"
-                                            Height="45"
-                                            Margin="15,0,0,0"
-                                            VerticalAlignment="Center"
-                                            Source="{Binding Icon}" />
-                                    </Grid>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-                    </ScrollViewer>
+                        Margin="0,15,0,10"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="14"
+                        Text="{loc:Localize LBL_SETTINGS_NO_CLOUD_SUPPORT_EXT_AVAILABLE,
+                                            ResourceLookupMode=CurrentAssembly}"
+                        TextWrapping="Wrap">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding AvailableCloudExtensions.Count}" Value="0">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+
+                    <Border Grid.Row="1">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Visibility" Value="Visible" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding AvailableCloudExtensions.Count}" Value="0">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <ScrollViewer
+                            Grid.Row="1"
+                            HorizontalScrollBarVisibility="Hidden"
+                            VerticalScrollBarVisibility="Auto">
+                            <ListView
+                                Background="Transparent"
+                                BorderThickness="0"
+                                Foreground="{DynamicResource ControlForegroundBrush}"
+                                ItemsSource="{Binding AvailableCloudExtensions}"
+                                SelectedItem="{Binding SelectedCloudInfoDisplayData}"
+                                SelectionMode="Single">
+                                <ListView.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Margin="0,0,0,30" Orientation="Vertical" />
+                                    </ItemsPanelTemplate>
+                                </ListView.ItemsPanel>
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem">
+                                        <Setter Property="FrameworkElement.Margin" Value="0,5,0,0" />
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Grid HorizontalAlignment="Stretch">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition />
+                                                <ColumnDefinition Width="45" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition />
+                                                <RowDefinition />
+                                            </Grid.RowDefinitions>
+                                            <TextBlock
+                                                Grid.Row="0"
+                                                Grid.Column="0"
+                                                FontSize="14"
+                                                FontWeight="Bold"
+                                                Text="{Binding Name}" />
+                                            <TextBlock
+                                                Grid.Row="1"
+                                                Grid.Column="0"
+                                                FontSize="12"
+                                                Text="{Binding Description}"
+                                                TextWrapping="Wrap" />
+                                            <Image
+                                                Grid.RowSpan="2"
+                                                Grid.Column="1"
+                                                Height="45"
+                                                Margin="15,0,0,0"
+                                                VerticalAlignment="Center"
+                                                Source="{Binding Icon}" />
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </ScrollViewer>
+                    </Border>
 
                     <UniformGrid
                         Grid.Row="2"
