@@ -1,5 +1,5 @@
-﻿using System;
-using System.IO;
+﻿using Clipbox.Core.Extensibility.EventArgsClasses;
+using System;
 
 namespace Clipbox.Infrastructure.CloudSupport
 {
@@ -13,8 +13,6 @@ namespace Clipbox.Infrastructure.CloudSupport
 
         bool IsAuthenticated { get; }
 
-        event EventHandler Authenticated;
-
-        event EventHandler<ErrorEventArgs> AuthenticationFailed;
+        event EventHandler<AuthenticationStageEventArgs> AuthenticationStageChanged;
     }
 }

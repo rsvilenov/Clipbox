@@ -23,7 +23,7 @@ namespace Clipbox.Extensions.BuiltIn.General.SettingsUIExtensions.SettingUIParts
 
         private void RequestReauthHandler()
         {
-            IsReauthRequested = true;
+            IsReauthRequested = !IsReauthRequested;
             NotifySettingModified();
         }
 

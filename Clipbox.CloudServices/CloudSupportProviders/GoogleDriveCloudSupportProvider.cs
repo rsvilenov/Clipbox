@@ -1,4 +1,6 @@
 ﻿using Clipbox.Core;
+using Clipbox.Core.Extensibility.Enums;
+using Clipbox.Core.Extensibility.EventArgsClasses;
 using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.Persistence.FilesystemAccess;
 using Google.Apis.Auth.OAuth2;
@@ -27,11 +29,7 @@ namespace Clipbox.Infrastructure.CloudSupport.CloudSupportProviders
     {
         public bool IsAuthenticated { get; private set; }
 
-
-        public event EventHandler Authenticated;
-
-        public event EventHandler<ErrorEventArgs> AuthenticationFailed;
-
+        public event EventHandler<AuthenticationStageEventArgs> AuthenticationStageChanged;
 
         private UserCredential _credential;
 
@@ -236,12 +234,14 @@ namespace Clipbox.Infrastructure.CloudSupport.CloudSupportProviders
 
         public void InitiateAuthentication(object loginInfo)
         {
+            AuthenticationStageChanged?.Invoke(this, new AuthenticationStageEventArgs(AuthenticationStage.Authenticating));
+
             Authenticate(false).ContinueWith(t =>
             {
                 if (_credential != null)
                 {
                     IsAuthenticated = true;
-                    Authenticated?.Invoke(this, new EventArgs());
+                    AuthenticationStageChanged?.Invoke(this, new AuthenticationStageEventArgs(AuthenticationStage.Authenticated));
                 }
             });
         }
@@ -428,7 +428,7 @@ namespace Clipbox.Infrastructure.CloudSupport.CloudSupportProviders
             }
             catch (Exception ex)
             {
-                AuthenticationFailed?.Invoke(this, new ErrorEventArgs(ex));
+                AuthenticationStageChanged?.Invoke(this, new AuthenticationStageEventArgs(AuthenticationStage.Authenticated, ex.ToString()));
             }
         }
 

@@ -2,6 +2,8 @@
 using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes.CloudSupportTypes;
+using Clipbox.Core.Extensibility.Enums;
+using Clipbox.Core.Extensibility.EventArgsClasses;
 using Clipbox.Infrastructure.CloudSupport;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Drive.v3;
@@ -35,18 +37,18 @@ namespace Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions
         #region IAuthenticatable
         public bool IsAuthenticated { get; private set; }
 
-        public event EventHandler Authenticated;
-
-        public event EventHandler<ErrorEventArgs> AuthenticationFailed;
+        public event EventHandler<AuthenticationStageEventArgs> AuthenticationStageChanged;
 
         public void InitiateAuthentication(object loginInfo)
         {
+            AuthenticationStageChanged?.Invoke(this, new AuthenticationStageEventArgs(AuthenticationStage.Authenticating));
+
             Authenticate(false).ContinueWith(t =>
             {
                 if (_credential != null)
                 {
                     IsAuthenticated = true;
-                    Authenticated?.Invoke(this, new EventArgs());
+                    AuthenticationStageChanged?.Invoke(this, new AuthenticationStageEventArgs(AuthenticationStage.Authenticated));
                 }
             });
         }
@@ -90,8 +92,17 @@ namespace Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions
             }
             else if (settingName == ExtensionSettingNames.GoogleDriveReauthRequested && GetSetting<bool>(ExtensionSettingNames.GoogleDriveReauthRequested))
             {
-                Reauthenticate();
+                AuthenticationStageChanged?.Invoke(this, new AuthenticationStageEventArgs(AuthenticationStage.Authenticating));
+
                 RequestSettingChange(ExtensionSettingNames.GoogleDriveReauthRequested, false);
+                Authenticate(updatePermissions: true).ContinueWith(t =>
+                {
+                    if (_credential != null)
+                    {
+                        IsAuthenticated = true;
+                        AuthenticationStageChanged?.Invoke(this, new AuthenticationStageEventArgs(AuthenticationStage.Authenticated));
+                    }
+                });
             }
         }
 
@@ -495,9 +506,16 @@ namespace Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions
                     await _dataStore.ClearAsync();
                 }
 
-                using (var stream =
-                        new FileStream(@"CloudCredentials\GoogleDriveCredentials.json", FileMode.Open, FileAccess.Read))
+                using (var stream = this.GetType().Assembly
+                        .GetManifestResourceStream(string.Format("{0}.Resources.Credentials.GoogleDriveCredentials.json",
+                        this.GetType().Assembly.GetName().Name)))
+                //using (var stream =
+                //        new FileStream(@"CloudCredentials\GoogleDriveCredentials.json", FileMode.Open, FileAccess.Read))
                 {
+                    if (stream == null)
+                    {
+                        throw new InvalidOperationException("Cannot find app credentials for Google Drive. The credentials json file must be an embedded resource in the current assembly.");
+                    }
                     // The file token.json stores the user's access and refresh tokens, and is created
                     // automatically when the authorization flow completes for the first time.
                     _credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
@@ -510,7 +528,7 @@ namespace Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions
             }
             catch (Exception ex)
             {
-                AuthenticationFailed?.Invoke(this, new ErrorEventArgs(ex));
+                AuthenticationStageChanged?.Invoke(this, new AuthenticationStageEventArgs(AuthenticationStage.AuthenticationError, ex.ToString()));
             }
         }
 

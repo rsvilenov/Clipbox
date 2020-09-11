@@ -3,8 +3,10 @@ using Clipbox.Core.ClipboardContent.Enums;
 using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.Core.Configuration;
 using Clipbox.Core.Extensibility.Contracts;
+using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes.CloudSupportTypes;
+using Clipbox.Core.Extensibility.Enums;
 using Clipbox.Core.Extensibility.EventArgsClasses;
 using Clipbox.Core.Extensibility.Exceptions;
 using Clipbox.ExtendedClipboard.Interfaces;
@@ -46,7 +48,8 @@ namespace Clipbox.Services
         public bool IsInErrorState { get; private set; }
 
         public event EventHandler NetworkAvailabilityChanged;
-        public event EventHandler AuthenticationStateChanged;
+        public event EventHandler<AuthenticationStageEventArgs> AuthenticationStateChanged;
+
         public event EventHandler<ErrorEventArgs> ErrorOccurred;
         public event EventHandler<SyncEventArgs> ItemSynced;
 
@@ -145,6 +148,11 @@ namespace Clipbox.Services
             {
                 StopSyncTask();
 
+                if (_cloudSupportExt != null)
+                {
+                    UnsubscribeCloudSupportExtensionEvents();
+                }
+
                 string selectedCloudSupportServiceName = _settingsService.GetSetting<string>(SettingsKeys.SelectedCloudSupportServiceName);
                 _cloudSupportExt = _extensionContainer.Resolve(selectedCloudSupportServiceName);
 
@@ -161,9 +169,13 @@ namespace Clipbox.Services
             {
                 IsEnabled = _settingsService.GetSetting<bool>(SettingsKeys.AreCloudServicesEnabled);
             }
+            else if (e.Key.TargetComponentType != null && typeof(CloudSupportExtension).IsAssignableFrom(e.Key.TargetComponentType))
+            {
+                LoadSettingsInCloudExtension();
+            }
         }
 
-        private void SetUpSelectedCloudSupportExtension()
+        private void LoadSettingsInCloudExtension()
         {
             if (_cloudSupportExt is IConfigurationRecipient confRecipient)
             {
@@ -173,10 +185,58 @@ namespace Clipbox.Services
                     catch (Exception ex) { throw new ClipboxExtensionException(nameof(confRecipient.PutSetting), _cloudSupportExt.GetType(), ex); }
                 }
             }
+        }
+
+        private void SetUpSelectedCloudSupportExtension()
+        {
+            LoadSettingsInCloudExtension();
 
             if (_cloudSupportExt is ISettingChangeRequestor settingChangeRequestor)
             {
                 settingChangeRequestor.RequestSettingChange += ConfRequestor_RequestSettingChange;
+            }
+
+            if (_cloudSupportExt is IAuthenticatable authenticatable)
+            {
+                authenticatable.AuthenticationStageChanged += Authenticatable_AuthenticationStageChanged;
+            }
+        }
+
+        private void UnsubscribeCloudSupportExtensionEvents()
+        {
+            if (_cloudSupportExt is ISettingChangeRequestor settingChangeRequestor)
+            {
+                settingChangeRequestor.RequestSettingChange -= ConfRequestor_RequestSettingChange;
+            }
+
+            if (_cloudSupportExt is IAuthenticatable authenticatable)
+            {
+                authenticatable.AuthenticationStageChanged -= Authenticatable_AuthenticationStageChanged;
+            }
+        }
+
+        private void Authenticatable_AuthenticationStageChanged(object sender, AuthenticationStageEventArgs e)
+        {
+            if (e.Stage == AuthenticationStage.Authenticated)
+            {
+                IsAuthenticated = true;
+                IsAuthenticating = false;
+
+                AuthenticationStateChanged?.Invoke(this, new AuthenticationStageEventArgs(AuthenticationStage.Authenticated));
+            }
+            else if (e.Stage == AuthenticationStage.Authenticating)
+            {
+                IsAuthenticated = false;
+                IsAuthenticating = true;
+
+                AuthenticationStateChanged?.Invoke(this, new AuthenticationStageEventArgs(AuthenticationStage.Authenticating));
+            }
+            else if (e.Stage == AuthenticationStage.AuthenticationError)
+            {
+                IsAuthenticated = false;
+                IsAuthenticating = false;
+
+                AuthenticationStateChanged?.Invoke(this, new AuthenticationStageEventArgs(AuthenticationStage.AuthenticationError, e.Message));
             }
         }
 
@@ -436,29 +496,19 @@ namespace Clipbox.Services
 
         private void Authenticate()
         {
+            if (IsAuthenticating)
+            {
+                return;
+            }
+
             IsAuthenticating = true;
             IsAuthenticated = false;
             
-            AuthenticationStateChanged?.Invoke(this, new EventArgs());
+            AuthenticationStateChanged?.Invoke(this, new AuthenticationStageEventArgs(AuthenticationStage.Authenticating));
 
             if (_cloudSupportExt is IAuthenticatable authenticatable)
             {
                 authenticatable.InitiateAuthentication(null);
-                authenticatable.Authenticated += (sender, args) =>
-                {
-                    IsAuthenticated = true;
-                    IsAuthenticating = false;
-
-                    AuthenticationStateChanged?.Invoke(this, new EventArgs());
-                };
-
-                authenticatable.AuthenticationFailed += (sender, args) =>
-                {
-                    IsAuthenticated = false;
-                    IsAuthenticating = false;
-
-                    AuthenticationStateChanged?.Invoke(this, new EventArgs());
-                };
             }
             else
             {
@@ -468,7 +518,7 @@ namespace Clipbox.Services
                 IsAuthenticated = true;
                 IsAuthenticating = false;
 
-                AuthenticationStateChanged?.Invoke(this, new EventArgs());
+                AuthenticationStateChanged?.Invoke(this, new AuthenticationStageEventArgs(AuthenticationStage.Authenticated));
             }
         }
 
@@ -485,6 +535,11 @@ namespace Clipbox.Services
         public void Dispose()
         {
             StopSyncTask();
+            
+            if (_cloudSupportExt != null)
+            {
+                UnsubscribeCloudSupportExtensionEvents();
+            }
 
             _syncTaskCancellationTokenSource.Dispose();
         }

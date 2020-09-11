@@ -1,4 +1,5 @@
 ﻿using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
+using Clipbox.Core.Extensibility.EventArgsClasses;
 using Clipbox.Services.EventArgsClasses;
 using System;
 using System.Collections.Generic;
@@ -30,7 +31,7 @@ namespace Clipbox.Services.Interfaces
 
         event EventHandler NetworkAvailabilityChanged;
 
-        event EventHandler AuthenticationStateChanged;
+        event EventHandler<AuthenticationStageEventArgs> AuthenticationStateChanged;
 
         event EventHandler<ErrorEventArgs> ErrorOccurred;
 

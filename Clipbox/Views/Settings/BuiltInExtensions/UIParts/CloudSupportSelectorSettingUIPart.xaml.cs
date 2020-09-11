@@ -2,6 +2,7 @@
 using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
+using Clipbox.Core.Extensibility.EventArgsClasses;
 using Clipbox.Infrastructure.Extensibility.Loading;
 using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.Extensibility;
@@ -227,7 +228,7 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
             });
         }
 
-        private void _cloudSyncSvc_AuthenticationStateChanged(object sender, System.EventArgs e)
+        private void _cloudSyncSvc_AuthenticationStateChanged(object sender, AuthenticationStageEventArgs e)
         {
             Dispatcher.Invoke(() =>
             {
