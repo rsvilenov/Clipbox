@@ -7,6 +7,7 @@
     xmlns:infConv="clr-namespace:Clipbox.Infrastructure.UI.Converters;assembly=Clipbox.Infrastructure.UI"
     xmlns:infUI="clr-namespace:Clipbox.Infrastructure.UI.Extensibility;assembly=Clipbox.Infrastructure.UI"
     xmlns:loc="clr-namespace:Clipbox.Infrastructure.UI.Localization;assembly=Clipbox.Infrastructure.UI.Localization"
+    xmlns:local="clr-namespace:Clipbox.Views.Settings.BuiltInExtensions.UIParts"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:settings="clr-namespace:Clipbox.Views.Settings"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
@@ -160,9 +161,17 @@
                     Command="{Binding ChangeClicked}"
                     Content="{loc:Localize BTN_SETTINGS_CLOUD_CHANGE_EXTENSION,
                                            ResourceLookupMode=CurrentAssembly}"
-                    Foreground="{DynamicResource ControlForegroundBrush}"
-                    IsEnabled="{Binding IsAuthenticating, Converter={StaticResource InverseBooleanConverter}}"
-                    Style="{StaticResource BtnChange}" />
+                    Foreground="{DynamicResource ControlForegroundBrush}">
+                    <Button.Style>
+                        <Style BasedOn="{StaticResource BtnChange}" TargetType="Button">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static local:CloudServiceConnectionState.Connecting}">
+                                    <Setter Property="IsEnabled" Value="False" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
 
             </StackPanel>
 
@@ -184,7 +193,10 @@
                         <Style TargetType="ContentControl">
                             <Setter Property="Visibility" Value="Visible" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsAuthenticated}" Value="True">
+                                <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static local:CloudServiceConnectionState.Authenticated}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static local:CloudServiceConnectionState.Error}">
                                     <Setter Property="Visibility" Value="Collapsed" />
                                 </DataTrigger>
                             </Style.Triggers>
@@ -205,7 +217,7 @@
                         <Style TargetType="ContentControl">
                             <Setter Property="Visibility" Value="Collapsed" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsAuthenticated}" Value="True">
+                                <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static local:CloudServiceConnectionState.Authenticated}">
                                     <Setter Property="Visibility" Value="Visible" />
                                 </DataTrigger>
                             </Style.Triggers>
@@ -225,7 +237,7 @@
                         <Style TargetType="ContentControl">
                             <Setter Property="Visibility" Value="Collapsed" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsInErrorState}" Value="True">
+                                <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static local:CloudServiceConnectionState.Error}">
                                     <Setter Property="Visibility" Value="Visible" />
                                 </DataTrigger>
                             </Style.Triggers>
@@ -233,120 +245,73 @@
                     </ContentControl.Style>
                 </ContentControl>
 
-                <TextBlock
-                    Grid.Column="1"
-                    VerticalAlignment="Center"
-                    Text="{loc:Localize LBL_SETTINGS_CLOUD_SVC_CONNECTING,
-                                        ResourceLookupMode=CurrentAssembly}"
-                    TextWrapping="Wrap">
-                    <TextBlock.Style>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="Visibility" Value="Collapsed" />
+                <ContentControl Grid.Column="1" VerticalAlignment="Center">
+                    <ContentControl.Style>
+                        <Style TargetType="ContentControl">
+                            <Setter Property="Content" Value="" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsNetworkAvailable}" Value="True">
-                                    <Setter Property="Visibility" Value="Visible" />
+                                <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static local:CloudServiceConnectionState.Connecting}">
+                                    <Setter Property="Content">
+                                        <Setter.Value>
+                                            <TextBlock
+                                                VerticalAlignment="Center"
+                                                Text="{loc:Localize LBL_SETTINGS_CLOUD_SVC_CONNECTING,
+                                                                    ResourceLookupMode=CurrentAssembly}"
+                                                TextWrapping="Wrap" />
+                                        </Setter.Value>
+                                    </Setter>
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding IsAuthenticated}" Value="True">
-                                    <Setter Property="Visibility" Value="Collapsed" />
+                                <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static local:CloudServiceConnectionState.Authenticating}">
+                                    <Setter Property="Content">
+                                        <Setter.Value>
+                                            <TextBlock
+                                                VerticalAlignment="Center"
+                                                Text="{loc:Localize LBL_SETTINGS_CLOUD_SVC_AUTHENTICATING,
+                                                                    ResourceLookupMode=CurrentAssembly}"
+                                                TextWrapping="Wrap" />
+                                        </Setter.Value>
+                                    </Setter>
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding IsAuthenticating}" Value="True">
-                                    <Setter Property="Visibility" Value="Collapsed" />
+                                <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static local:CloudServiceConnectionState.Authenticated}">
+                                    <Setter Property="Content">
+                                        <Setter.Value>
+                                            <TextBlock
+                                                VerticalAlignment="Center"
+                                                Text="{loc:Localize LBL_SETTINGS_CLOUD_SVC_AUTHENTICATED,
+                                                                    ResourceLookupMode=CurrentAssembly}"
+                                                TextWrapping="Wrap" />
+                                        </Setter.Value>
+                                    </Setter>
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding IsInErrorState}" Value="True">
-                                    <Setter Property="Visibility" Value="Collapsed" />
+                                <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static local:CloudServiceConnectionState.Error}">
+                                    <Setter Property="Content">
+                                        <Setter.Value>
+                                            <TextBlock
+                                                Grid.Column="1"
+                                                VerticalAlignment="Center"
+                                                TextWrapping="Wrap">
+                                                <Run Text="{loc:Localize LBL_SETTINGS_CLOUD_SVC_ERROR, ResourceLookupMode=CurrentAssembly}" />
+                                                <Run Text=": " />
+                                                <Run Text="{Binding ErrorMessage}" />
+                                            </TextBlock>
+                                        </Setter.Value>
+                                    </Setter>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static local:CloudServiceConnectionState.NoNetwork}">
+                                    <Setter Property="Content">
+                                        <Setter.Value>
+                                            <TextBlock
+                                                VerticalAlignment="Center"
+                                                Text="{loc:Localize LBL_SETTINGS_CLOUD_SVC_NO_NETWORK,
+                                                                    ResourceLookupMode=CurrentAssembly}"
+                                                TextWrapping="Wrap" />
+                                        </Setter.Value>
+                                    </Setter>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
-                    </TextBlock.Style>
-                </TextBlock>
-
-                <TextBlock
-                    Grid.Column="1"
-                    VerticalAlignment="Center"
-                    Text="{loc:Localize LBL_SETTINGS_CLOUD_SVC_AUTHENTICATING,
-                                        ResourceLookupMode=CurrentAssembly}"
-                    TextWrapping="Wrap">
-                    <TextBlock.Style>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="Visibility" Value="Collapsed" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsAuthenticating}" Value="True">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding IsInErrorState}" Value="True">
-                                    <Setter Property="Visibility" Value="Collapsed" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding IsNetworkAvailable}" Value="False">
-                                    <Setter Property="Visibility" Value="Collapsed" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
-                </TextBlock>
-
-                <TextBlock
-                    Grid.Column="1"
-                    VerticalAlignment="Center"
-                    Text="{loc:Localize LBL_SETTINGS_CLOUD_SVC_AUTHENTICATED,
-                                        ResourceLookupMode=CurrentAssembly}"
-                    TextWrapping="Wrap">
-                    <TextBlock.Style>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="Visibility" Value="Collapsed" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsAuthenticated}" Value="True">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding IsInErrorState}" Value="True">
-                                    <Setter Property="Visibility" Value="Collapsed" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding IsNetworkAvailable}" Value="False">
-                                    <Setter Property="Visibility" Value="Collapsed" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
-                </TextBlock>
-
-                <TextBlock
-                    Grid.Column="1"
-                    VerticalAlignment="Center"
-                    TextWrapping="Wrap">
-                    <Run Text="{loc:Localize LBL_SETTINGS_CLOUD_SVC_ERROR, ResourceLookupMode=CurrentAssembly}" />
-                    <Run Text=": " />
-                    <Run Text="{Binding ErrorMessage}" />
-                    <TextBlock.Style>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="Visibility" Value="Collapsed" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsInErrorState}" Value="True">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding IsNetworkAvailable}" Value="False">
-                                    <Setter Property="Visibility" Value="Collapsed" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
-                </TextBlock>
-
-                <TextBlock
-                    Grid.Column="1"
-                    VerticalAlignment="Center"
-                    Text="{loc:Localize LBL_SETTINGS_CLOUD_SVC_NO_NETWORK,
-                                        ResourceLookupMode=CurrentAssembly}"
-                    TextWrapping="Wrap">
-                    <TextBlock.Style>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="Visibility" Value="Collapsed" />
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsNetworkAvailable}" Value="False">
-                                    <Setter Property="Visibility" Value="Visible" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
-                </TextBlock>
+                    </ContentControl.Style>
+                </ContentControl>
 
             </Grid>
 

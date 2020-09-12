@@ -313,6 +313,11 @@ namespace Clipbox.Services
 
         private void PerformSynchronization()
         {
+            if (IsNetworkAvailable)
+            {
+                return;
+            }
+
             // ensure the existence of the cloud target directory
             if (!_cloudSupportExt.CheckCategoryExists(_cloudStorageCategoryName))
             {
