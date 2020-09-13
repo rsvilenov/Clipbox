@@ -66,8 +66,10 @@ namespace Clipbox.Services
         private readonly string _cloudStorageCategoryName;
 
         private CloudSupportExtension _cloudSupportExt;
-
         private string _lastError;
+        private SemaphoreSlim _authTaskSemaphore;
+        private int _numberOfAuthFailures;
+
 
         public CloudSynchronizationService(IClipboardManager clipboardManager,
             ISettingsService settingsService,
@@ -85,6 +87,7 @@ namespace Clipbox.Services
 
             _syncTaskCancellationTokenSource = new CancellationTokenSource();
 
+            _authTaskSemaphore = new SemaphoreSlim(1);
 
             IsEnabled = _settingsService.GetSetting<bool>(SettingsKeys.AreCloudServicesEnabled);
             IsCloudSyncEnabled = _settingsService.GetSetting<bool>(SettingsKeys.IsCloudSyncEnabled);
@@ -127,7 +130,7 @@ namespace Clipbox.Services
                     if (NetworkInterface.GetIsNetworkAvailable())
                     {
                         IsNetworkAvailable = true;
-                        Authenticate();
+                        EnqueueAuthTask();
                     }
                 }
                 catch (TimeoutException)
@@ -273,7 +276,21 @@ namespace Clipbox.Services
                         continue;
                     }
 
-                    CloudServiceInfo csi = _cloudSupportExt.GetCloudServiceInfo();
+                    CloudServiceInfo csi = null;
+                    try
+                    {
+                        csi = _cloudSupportExt.GetCloudServiceInfo();
+                    }
+                    catch (TimeoutException)
+                    {
+                        continue;
+                    }
+
+                    if (csi.Exception is TimeoutException)
+                    {
+                        continue;
+                    }
+
                     if (!csi.IsHealthy)
                     {
                         _lastError = $"{csi.ServiceName} : {csi.FailureReason}";
@@ -499,13 +516,44 @@ namespace Clipbox.Services
             }
         }
 
-        private void Authenticate()
+        private void EnqueueAuthTask()
         {
-            if (IsAuthenticating)
+            if (_numberOfAuthFailures > 3)
             {
-                return;
+                throw new CloudSyncException("Could not authenticate after the maximum number of attempts.");
             }
 
+            var syncContext = SynchronizationContext.Current;
+
+            Task.Run(() =>
+            {
+                _authTaskSemaphore.Wait();
+                try
+                {
+                    Task.Run(() => Authenticate()).Wait(20000);
+                    if (!IsAuthenticated)
+                    {
+                        _numberOfAuthFailures++;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _numberOfAuthFailures++;
+                    if (_numberOfAuthFailures > 3)
+                    {
+                        var edi = ExceptionDispatchInfo.Capture(ex);
+                        syncContext.Post(state => ((ExceptionDispatchInfo)state).Throw(), edi);
+                    }
+                }
+                finally
+                {
+                    _authTaskSemaphore.Release();
+                }
+            });
+        }
+
+        private void Authenticate()
+        {
             IsAuthenticating = true;
             IsAuthenticated = false;
             
@@ -531,9 +579,9 @@ namespace Clipbox.Services
         {
             IsNetworkAvailable = e.IsAvailable;
             NetworkAvailabilityChanged?.Invoke(this, new EventArgs());
-            if (IsNetworkAvailable && !IsAuthenticating)
+            if (IsNetworkAvailable)
             {
-                Authenticate();
+                EnqueueAuthTask();
             }
         }
 

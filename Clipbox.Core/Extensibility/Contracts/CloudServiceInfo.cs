@@ -21,6 +21,19 @@ namespace Clipbox.Core.Extensibility.Contracts
             FailureReason = failureReason;
         }
 
+        public CloudServiceInfo(string serviceName,
+           string serviceURI,
+           bool isAuthenticated,
+           bool isHealthy,
+           Exception exception)
+        {
+            ServiceName = serviceName;
+            ServiceURI = serviceURI;
+            IsHealthy = isHealthy;
+            Exception = exception;
+            FailureReason = exception?.Message;
+        }
+
         public string ServiceName { get; }
 
         public string ServiceURI { get; }
@@ -28,5 +41,7 @@ namespace Clipbox.Core.Extensibility.Contracts
         public bool IsHealthy { get; }
 
         public string FailureReason { get; }
+
+        public Exception Exception { get; }
     }
 }

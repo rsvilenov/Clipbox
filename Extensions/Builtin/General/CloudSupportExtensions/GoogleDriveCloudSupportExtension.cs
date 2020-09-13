@@ -188,6 +188,7 @@ namespace Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions
             const string url = "https://drive.google.com";
             bool isAvailable = false;
             string failureReason = string.Empty;
+
             try
             { 
                 isAvailable = CheckIsCloudServiceReachable(url, 80); 
@@ -195,17 +196,22 @@ namespace Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions
                 {
                     failureReason = "Unknown";
                 }
-            }
-            catch (Exception ex) 
-            {
-                failureReason = ex.Message;
-            }
 
-            return new CloudServiceInfo("Google Drive",
-                url, 
-                IsAuthenticated,
-                isAvailable,
-                failureReason);
+                return new CloudServiceInfo("Google Drive",
+                    url,
+                    IsAuthenticated,
+                    isAvailable,
+                    failureReason);
+            }
+            catch (Exception ex)
+            {
+                return new CloudServiceInfo("Google Drive",
+                   url,
+                   IsAuthenticated,
+                   isAvailable,
+                   ex);
+            }
+            
         }
 
         public override byte[] GetItem(string categoryName, string itemName)
