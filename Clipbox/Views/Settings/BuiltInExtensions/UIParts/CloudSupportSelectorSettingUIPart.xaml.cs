@@ -29,6 +29,8 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
         public ICommand CancelClicked { get; }
         public ICommand ChangeClicked { get; }
 
+        public ICommand RetryClicked { get; }
+
         private ICloudSynchronizationService _cloudSyncSvc;
 
         public CloudSupportSelectorSettingUIPart()
@@ -43,11 +45,16 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
             OkClicked = new DelegateCommand(OkCommandHandler, () => AvailableCloudExtensions.Any() && SelectedCloudInfoDisplayData != null);
             CancelClicked = new DelegateCommand(CancelCommandHandler);
             ChangeClicked = new DelegateCommand(ChangeClickedHandler);
+            RetryClicked = new DelegateCommand(RetryClickedHandler);
 
 
             Unloaded += CloudSupportSelectorSettingUIPart_Unloaded;
         }
 
+        private void RetryClickedHandler()
+        {
+            _cloudSyncSvc.RequestAuthentication();
+        }
         private void ChangeClickedHandler()
         {
             cloudSelectorPopup.IsOpen = true;
@@ -72,12 +79,20 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
 
         private void CloudSupportSelectorSettingUIPart_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            if ((bool)e.NewValue && string.IsNullOrEmpty(CloudExtensionName))
+            if ((bool)e.NewValue)
             {
-                cloudSelectorPopup.IsOpen = true;
-                cloudSelectorPopup.Closed += CloudSelectorPopup_Closed;
-                Window.GetWindow(this).IsEnabled = false;
                 LoadCloudExtensionsInfo();
+
+                if (string.IsNullOrEmpty(CloudExtensionName))
+                {
+                    cloudSelectorPopup.IsOpen = true;
+                    cloudSelectorPopup.Closed += CloudSelectorPopup_Closed;
+                    Window.GetWindow(this).IsEnabled = false;
+                }
+                else
+                {
+                    SelectedCloudInfoDisplayData = AvailableCloudExtensions.First(ace => ace.Name == CloudExtensionName);
+                }
             }
         }
 
@@ -166,6 +181,10 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
         public override void SetSettingValue(string value)
         {
             CloudExtensionName = value;
+            if (AvailableCloudExtensions.Any() && !string.IsNullOrEmpty(CloudExtensionName))
+            {
+                SelectedCloudInfoDisplayData = AvailableCloudExtensions.First(ace => ace.Name == CloudExtensionName);
+            }
         }
 
 

@@ -153,6 +153,9 @@
   <data name="BTN_SETTINGS_CLOUD_CHANGE_EXTENSION" xml:space="preserve">
     <value>Промени</value>
   </data>
+  <data name="BTN_SETTINGS_CLOUD_RETRY_AUTHENTICATION" xml:space="preserve">
+    <value>Опитай отново</value>
+  </data>
   <data name="BTN_SETTINGS_MANAGE_EXTENSIONS" xml:space="preserve">
     <value>Управляване</value>
   </data>

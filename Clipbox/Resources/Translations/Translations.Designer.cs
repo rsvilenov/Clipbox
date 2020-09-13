@@ -169,6 +169,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Retry.
+        /// </summary>
+        internal static string BTN_SETTINGS_CLOUD_RETRY_AUTHENTICATION {
+            get {
+                return ResourceManager.GetString("BTN_SETTINGS_CLOUD_RETRY_AUTHENTICATION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Manage.
         /// </summary>
         internal static string BTN_SETTINGS_MANAGE_EXTENSIONS {

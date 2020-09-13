@@ -23,6 +23,8 @@ namespace Clipbox.Services.Interfaces
 
         string GetLastError();
 
+        void RequestAuthentication();
+
         /// <summary>
         /// Gets all the available extension types which are not disabled
         /// </summary>

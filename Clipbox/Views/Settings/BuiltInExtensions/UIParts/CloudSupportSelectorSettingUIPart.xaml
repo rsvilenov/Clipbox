@@ -111,6 +111,64 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+
+            <Style x:Key="BtnRetry" TargetType="{x:Type Button}">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border
+                                Name="btnBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                SnapsToDevicePixels="True">
+                                <Border
+                                    Name="selectionBorder"
+                                    BorderBrush="{DynamicResource accentDottedBrush}"
+                                    BorderThickness="0">
+                                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock
+                                            Name="textBlock"
+                                            Grid.Column="0"
+                                            Margin="5,0,0,2"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Foreground="{TemplateBinding Foreground}"
+                                            Text="{TemplateBinding Content}" />
+                                        <ContentControl
+                                            Name="contentControl"
+                                            Grid.Column="1"
+                                            Margin="5"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Stretch"
+                                            Template="{StaticResource RetryIcon}" />
+                                    </Grid>
+                                </Border>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="Button.IsPressed" Value="True">
+                                    <Setter TargetName="btnBorder" Property="Background" Value="{DynamicResource ControlPressedBrush}" />
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="selectionBorder" Property="Background" Value="{DynamicResource ControlHighlightBackgroundBrush}" />
+
+                                </Trigger>
+                                <Trigger Property="Button.IsEnabled" Value="False">
+                                    <Setter TargetName="textBlock" Property="Foreground" Value="Gray" />
+                                    <Setter TargetName="contentControl" Property="Foreground" Value="Gray" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
         </ResourceDictionary>
     </UserControl.Resources>
     <Grid x:Name="mainGrid" Margin="0,15,0,15">
@@ -180,6 +238,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <ContentControl
                     Grid.Column="0"
@@ -312,6 +371,29 @@
                         </Style>
                     </ContentControl.Style>
                 </ContentControl>
+
+                <Button
+                    Grid.Column="2"
+                    Height="30"
+                    MinWidth="100"
+                    Margin="10,0,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Command="{Binding RetryClicked}"
+                    Content="{loc:Localize BTN_SETTINGS_CLOUD_RETRY_AUTHENTICATION,
+                                           ResourceLookupMode=CurrentAssembly}"
+                    Foreground="{DynamicResource ControlForegroundBrush}">
+                    <Button.Style>
+                        <Style BasedOn="{StaticResource BtnRetry}" TargetType="Button">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static local:CloudServiceConnectionState.Error}">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
 
             </Grid>
 

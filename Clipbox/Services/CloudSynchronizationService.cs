@@ -31,8 +31,8 @@ using System.Windows.Threading;
 
 namespace Clipbox.Services
 {
-    public class CloudSynchronizationService : 
-        ICloudSynchronizationService, 
+    public class CloudSynchronizationService :
+        ICloudSynchronizationService,
         IDisposable
     {
         public bool IsNetworkAvailable { get; private set; }
@@ -59,7 +59,7 @@ namespace Clipbox.Services
         private readonly ISettingsService _settingsService;
         private readonly string _appGuid;
 
-        
+
         private readonly CancellationTokenSource _syncTaskCancellationTokenSource;
         private Task _syncRunnerTask;
         private readonly SynchronizationContext _mainSyncContext;
@@ -70,10 +70,12 @@ namespace Clipbox.Services
         private SemaphoreSlim _authTaskSemaphore;
         private int _numberOfAuthFailures;
 
+        private ManualResetEvent _cloudExtensionAuthMre;
+
 
         public CloudSynchronizationService(IClipboardManager clipboardManager,
             ISettingsService settingsService,
-            ICloudSupportExtensionContainer extensionContainer, 
+            ICloudSupportExtensionContainer extensionContainer,
             string appGuid)
         {
             _clipboardManager = clipboardManager;
@@ -88,6 +90,8 @@ namespace Clipbox.Services
             _syncTaskCancellationTokenSource = new CancellationTokenSource();
 
             _authTaskSemaphore = new SemaphoreSlim(1);
+
+            _cloudExtensionAuthMre = new ManualResetEvent(true);
 
             IsEnabled = _settingsService.GetSetting<bool>(SettingsKeys.AreCloudServicesEnabled);
             IsCloudSyncEnabled = _settingsService.GetSetting<bool>(SettingsKeys.IsCloudSyncEnabled);
@@ -121,7 +125,7 @@ namespace Clipbox.Services
             return _extensionContainer.GetRegisteredTypes();
         }
 
-        private void RequestAuthentication()
+        public void RequestAuthentication()
         {
             Task.Run(() =>
             {
@@ -150,6 +154,7 @@ namespace Clipbox.Services
             if (e.Key == SettingsKeys.SelectedCloudSupportServiceName)
             {
                 StopSyncTask();
+                IsAuthenticated = false;
 
                 if (_cloudSupportExt != null)
                 {
@@ -157,12 +162,15 @@ namespace Clipbox.Services
                 }
 
                 string selectedCloudSupportServiceName = _settingsService.GetSetting<string>(SettingsKeys.SelectedCloudSupportServiceName);
-                _cloudSupportExt = _extensionContainer.Resolve(selectedCloudSupportServiceName);
+                if (!string.IsNullOrEmpty(selectedCloudSupportServiceName))
+                {
+                    _cloudSupportExt = _extensionContainer.Resolve(selectedCloudSupportServiceName);
 
-                SetUpSelectedCloudSupportExtension();
+                    SetUpSelectedCloudSupportExtension();
 
-                RequestAuthentication();
-                StartSyncTask();
+                    RequestAuthentication();
+                    StartSyncTask();
+                }
             }
             else if (e.Key == SettingsKeys.IsCloudSyncEnabled)
             {
@@ -171,6 +179,10 @@ namespace Clipbox.Services
             else if (e.Key == SettingsKeys.AreCloudServicesEnabled)
             {
                 IsEnabled = _settingsService.GetSetting<bool>(SettingsKeys.AreCloudServicesEnabled);
+                if (!IsEnabled)
+                {
+                    IsAuthenticated = false;
+                }
             }
             else if (e.Key.TargetComponentType != null && typeof(CloudSupportExtension).IsAssignableFrom(e.Key.TargetComponentType))
             {
@@ -225,6 +237,8 @@ namespace Clipbox.Services
                 IsAuthenticated = true;
                 IsAuthenticating = false;
 
+                _cloudExtensionAuthMre.Set();
+
                 AuthenticationStateChanged?.Invoke(this, new AuthenticationStageEventArgs(AuthenticationStage.Authenticated));
             }
             else if (e.Stage == AuthenticationStage.Authenticating)
@@ -239,6 +253,7 @@ namespace Clipbox.Services
                 IsAuthenticated = false;
                 IsAuthenticating = false;
 
+                _cloudExtensionAuthMre.Set();
                 AuthenticationStateChanged?.Invoke(this, new AuthenticationStageEventArgs(AuthenticationStage.AuthenticationError, e.Message));
             }
         }
@@ -354,7 +369,7 @@ namespace Clipbox.Services
             {
                 DeleteOldestDeletionRequest(deletionRequests);
             }
-            
+
 
             List<string> existingCloudItems = _cloudSupportExt.ListItems(_cloudStorageCategoryName, $"_cso_").ToList();
 
@@ -417,8 +432,8 @@ namespace Clipbox.Services
             string appGuidFileName = $"_app_{_appGuid}.txt";
             if (!_cloudSupportExt.CheckItemExists(_cloudStorageCategoryName, appGuidFileName))
             {
-                _cloudSupportExt.PutItem(_cloudStorageCategoryName, 
-                    appGuidFileName, 
+                _cloudSupportExt.PutItem(_cloudStorageCategoryName,
+                    appGuidFileName,
                     Encoding.UTF8.GetBytes(_appGuid));
             }
         }
@@ -467,9 +482,9 @@ namespace Clipbox.Services
             {
                 if (!_cloudSupportExt.CheckItemExists(_cloudStorageCategoryName, deleteRequestFileName))
                 {
-                        _cloudSupportExt.PutItem(_cloudStorageCategoryName, 
-                            deleteRequestFileName, 
-                            Encoding.UTF8.GetBytes(fileContents));
+                    _cloudSupportExt.PutItem(_cloudStorageCategoryName,
+                        deleteRequestFileName,
+                        Encoding.UTF8.GetBytes(fileContents));
                 }
             }
         }
@@ -516,34 +531,57 @@ namespace Clipbox.Services
             }
         }
 
+
+        private class AuthAttemptsFailException : CloudSyncException {}
+
         private void EnqueueAuthTask()
         {
-            if (_numberOfAuthFailures > 3)
-            {
-                throw new CloudSyncException("Could not authenticate after the maximum number of attempts.");
-            }
-
             var syncContext = SynchronizationContext.Current;
 
             Task.Run(() =>
             {
+                if (IsAuthenticated)
+                {
+                    return;
+                }
+
                 _authTaskSemaphore.Wait();
+                
                 try
                 {
-                    Task.Run(() => Authenticate()).Wait(20000);
+                    Authenticate();
                     if (!IsAuthenticated)
                     {
-                        _numberOfAuthFailures++;
+                        _numberOfAuthFailures++; 
+                        if (_numberOfAuthFailures >= 3)
+                        {
+                            _numberOfAuthFailures = 0;
+                            IsInErrorState = true;
+                            _lastError = "Could not authenticate after the maximum number of attempts.";
+                            ErrorOccurred?.Invoke(this, new ErrorEventArgs(new CloudSyncException(_lastError)));
+                            return;
+                        }
+
+                        EnqueueAuthTask();
+                    }
+                    else
+                    {
+                        _numberOfAuthFailures = 0;
                     }
                 }
                 catch (Exception ex)
                 {
                     _numberOfAuthFailures++;
-                    if (_numberOfAuthFailures > 3)
+                    if (_numberOfAuthFailures >= 3)
                     {
-                        var edi = ExceptionDispatchInfo.Capture(ex);
-                        syncContext.Post(state => ((ExceptionDispatchInfo)state).Throw(), edi);
+                        _numberOfAuthFailures = 0;
+                        IsInErrorState = true;
+                        _lastError = "Could not authenticate after the maximum number of attempts. : " + ex.Message;
+                        ErrorOccurred?.Invoke(this, new ErrorEventArgs(new CloudSyncException(_lastError)));
+                        return;
                     }
+
+                    EnqueueAuthTask();
                 }
                 finally
                 {
@@ -561,7 +599,9 @@ namespace Clipbox.Services
 
             if (_cloudSupportExt is IAuthenticatable authenticatable)
             {
+                _cloudExtensionAuthMre.Reset();
                 authenticatable.InitiateAuthentication(null);
+                _cloudExtensionAuthMre.WaitOne(20000);
             }
             else
             {
@@ -573,6 +613,7 @@ namespace Clipbox.Services
 
                 AuthenticationStateChanged?.Invoke(this, new AuthenticationStageEventArgs(AuthenticationStage.Authenticated));
             }
+
         }
 
         private void NetworkChange_NetworkAvailabilityChanged(object sender, NetworkAvailabilityEventArgs e)

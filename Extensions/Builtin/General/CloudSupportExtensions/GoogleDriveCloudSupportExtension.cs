@@ -610,7 +610,7 @@ namespace Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions
 
         private class EventDrivenDataStore : IDataStore
         {
-            private static ConcurrentDictionary<string, object> _settings = new ConcurrentDictionary<string, object>();
+            private static ConcurrentDictionary<string, string> _settings = new ConcurrentDictionary<string, string>();
 
             public event EventHandler<StringDataTransferEventArgs> DataModified;
 
@@ -644,16 +644,17 @@ namespace Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions
                         return default(T);
                     }
 
-                    IDictionary<string, object> dic = NewtonsoftJsonSerializer.Instance.Deserialize<IDictionary<string, object>>(args.OutData);
+
+                    IDictionary<string, string> dic = NewtonsoftJsonSerializer.Instance.Deserialize<IDictionary<string, string>>(args.OutData);
                     foreach (string dicKey in dic.Keys)
                     {
-                        _settings.AddOrUpdate(key, dic[dicKey], (k, oldValue) => dic[dicKey]);
+                        _settings.AddOrUpdate(dicKey, dic[dicKey], (k, oldValue) => dic[dicKey]);
                     }
 
                     T value = default(T);
-                    if (_settings.TryGetValue(key, out object val) && val is T t)
+                    if (_settings.TryGetValue(key, out string val) && !string.IsNullOrEmpty(val))
                     {
-                        value = t;
+                        value = NewtonsoftJsonSerializer.Instance.Deserialize<T>(val);
                     }
 
                     return value;
@@ -662,7 +663,8 @@ namespace Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions
 
             public Task StoreAsync<T>(string key, T value)
             {
-                _settings.AddOrUpdate(key, value, (k, oldValue) => value);
+                string newVal = NewtonsoftJsonSerializer.Instance.Serialize(value);
+                _settings.AddOrUpdate(key, newVal, (k, oldValue) => newVal);
                 return EventSyncSettingDictionary();
             }
 
