@@ -644,8 +644,16 @@ namespace Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions
                         return default(T);
                     }
 
+                    IDictionary<string, string> dic = null;
+                    try
+                    {
+                        dic = NewtonsoftJsonSerializer.Instance.Deserialize<IDictionary<string, string>>(args.OutData);
+                    }
+                    catch 
+                    {
+                        return default(T);
+                    }
 
-                    IDictionary<string, string> dic = NewtonsoftJsonSerializer.Instance.Deserialize<IDictionary<string, string>>(args.OutData);
                     foreach (string dicKey in dic.Keys)
                     {
                         _settings.AddOrUpdate(dicKey, dic[dicKey], (k, oldValue) => dic[dicKey]);

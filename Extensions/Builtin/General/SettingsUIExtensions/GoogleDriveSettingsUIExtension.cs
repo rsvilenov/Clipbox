@@ -5,6 +5,8 @@ using Clipbox.Core.Extensibility.Enums;
 using Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions;
 using Clipbox.Extensions.BuiltIn.General.SettingsUIExtensions.SettingUIParts;
 
+#if DEBUG
+
 namespace Clipbox.Extensions.BuiltIn.General.SettingsUIExtensions
 {
     [ClipboxExtension(
@@ -30,3 +32,5 @@ namespace Clipbox.Extensions.BuiltIn.General.SettingsUIExtensions
         }
     }
 }
+
+#endif
