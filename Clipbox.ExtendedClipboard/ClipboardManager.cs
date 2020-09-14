@@ -463,6 +463,7 @@ namespace Clipbox.ExtendedClipboard
                 }
 
                 var currentItem = new ClipboardItem(source, clipboardDataObjects);
+                currentItem.CanTransfer = clipboardDataObjects.Any(cdo => cdo.IntermediateFormatMetadata.IsTransferable);
 
                 lock (_ioLockHandle)
                 {
