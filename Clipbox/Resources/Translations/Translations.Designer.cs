@@ -1314,6 +1314,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This type of content cannot be stored in the cloud.
+        /// </summary>
+        internal static string TTP_MAINVIEW_BTN_SYNC_NON_TRANSFERABLE_ITEM {
+            get {
+                return ResourceManager.GetString("TTP_MAINVIEW_BTN_SYNC_NON_TRANSFERABLE_ITEM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The filters are disabled due to search index errors..
         /// </summary>
         internal static string TTP_MAINVIEW_FILTERS_DISABLED_DUE_TO_ERRORS {

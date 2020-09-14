@@ -536,6 +536,9 @@ Warning: more rows means more RAM usage!</value>
   <data name="TTP_MAINVIEW_BTN_SYNC" xml:space="preserve">
     <value>Click here to sync the item with the cloud</value>
   </data>
+  <data name="TTP_MAINVIEW_BTN_SYNC_NON_TRANSFERABLE_ITEM" xml:space="preserve">
+    <value>This type of content cannot be stored in the cloud</value>
+  </data>
   <data name="TTP_MAINVIEW_FILTERS_DISABLED_DUE_TO_ERRORS" xml:space="preserve">
     <value>The filters are disabled due to search index errors.</value>
   </data>

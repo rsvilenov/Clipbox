@@ -540,10 +540,11 @@
                                                                         </Style>
                                                                     </ContentControl.Style>
                                                                 </ContentControl>
-                                                                <ContentControl>
+                                                                <ContentControl ToolTipService.ShowOnDisabled="True">
                                                                     <ContentControl.Style>
                                                                         <Style TargetType="{x:Type ContentControl}">
                                                                             <Setter Property="Visibility" Value="Collapsed" />
+                                                                            <Setter Property="IsEnabled" Value="True" />
                                                                             <Style.Triggers>
                                                                                 <DataTrigger Binding="{Binding Path=SyncStatus}" Value="{x:Static vmEnums:CloudSyncStatus.SyncDisabled}">
                                                                                     <Setter Property="Visibility" Value="Visible" />
@@ -553,6 +554,10 @@
                                                                                     <Setter Property="Visibility" Value="Visible" />
                                                                                     <Setter Property="ToolTip" Value="{loc:Localize TTP_MAINVIEW_BTN_CANCEL_SYNC}" />
                                                                                 </DataTrigger>
+                                                                                <DataTrigger Binding="{Binding Path=IsItemTransferable}" Value="False">
+                                                                                    <Setter Property="IsEnabled" Value="False" />
+                                                                                    <Setter Property="ToolTip" Value="{loc:Localize TTP_MAINVIEW_BTN_SYNC_NON_TRANSFERABLE_ITEM}" />
+                                                                                </DataTrigger>
                                                                             </Style.Triggers>
                                                                         </Style>
                                                                     </ContentControl.Style>
@@ -560,7 +565,6 @@
                                                                         Command="{Binding Path=ActionButtonsDataContext.EnableDisableSyncOfClipboardEntry, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
                                                                         CommandParameter="{Binding ViewItem}"
                                                                         IsChecked="{Binding Path=SyncStatus, Mode=OneWay, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static vmEnums:CloudSyncStatus.SyncRequested}}"
-                                                                        IsEnabled="{Binding Path=IsItemTransferable}"
                                                                         Style="{DynamicResource ToggleBtnEnableDisableSync}">
                                                                         <i:Interaction.Behaviors>
                                                                             <infBeh:FrameworkElementDpiScalingBehavior />

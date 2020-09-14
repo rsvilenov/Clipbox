@@ -536,6 +536,9 @@
   <data name="TTP_MAINVIEW_BTN_SYNC" xml:space="preserve">
     <value>Кликнете тук, за да синхронизирате елемента с облака</value>
   </data>
+  <data name="TTP_MAINVIEW_BTN_SYNC_NON_TRANSFERABLE_ITEM" xml:space="preserve">
+    <value>Този вид съдържание не може да се съхранява в облака</value>
+  </data>
   <data name="TTP_MAINVIEW_FILTERS_DISABLED_DUE_TO_ERRORS" xml:space="preserve">
     <value>Филтрите са забранени поради грешки в индекса за търсене.</value>
   </data>
