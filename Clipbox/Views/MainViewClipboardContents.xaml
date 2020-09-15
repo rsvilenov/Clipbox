@@ -354,9 +354,11 @@
                                     Style="{DynamicResource DeleteItemsButton}"
                                     ToolTip="{loc:Localize TTP_MAINVIEW_BTN_DELETE_SELECTED}" />
 
+
                                 <localDialog:DialogPopup
                                     x:Name="deleteGroupConfirmationPopup"
                                     MaxWidth="350"
+                                    DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type views:ClipboardViewControlBase}}}"
                                     DefaultButton="No"
                                     DialogueType="YesNo"
                                     IsOpen="False"
@@ -364,9 +366,9 @@
                                     PlacementTarget="{Binding ElementName=trashBtn}"
                                     ReturnFocusTo="{Binding ElementName=MainListView}">
                                     <localDialog:DialogPopup.Content>
-                                        <TextBlock>
+                                        <TextBlock Foreground="{DynamicResource ControlForegroundBrush}" TextWrapping="Wrap">
                                             <Run Text="{loc:Localize LBL_MAINVIEW_POPUP_DELETE_GROUP}" />
-                                            <Run Text="{Binding Path=GroupDateUndergoingDeletion, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type views:ClipboardViewControlBase}}, Converter={StaticResource DateTimeToHumanReadableDateString}}" />
+                                            <Run Text="{Binding Path=DataContext.GroupDateUndergoingDeletion, Converter={StaticResource DateTimeToHumanReadableDateString}}" />
                                         </TextBlock>
                                     </localDialog:DialogPopup.Content>
                                 </localDialog:DialogPopup>

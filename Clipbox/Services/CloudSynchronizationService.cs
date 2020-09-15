@@ -409,7 +409,8 @@ namespace Clipbox.Services
 
                 if (!allClipboardItemIds.Contains(cloudItemId))
                 {
-
+                    byte[] downloadedItem = _cloudSupportExt.GetItem(_cloudStorageCategoryName, cloudItem);
+                    _clipboardManager.TryAddItemFromCloud(downloadedItem);
                 }
             }
         }

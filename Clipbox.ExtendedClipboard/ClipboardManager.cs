@@ -757,7 +757,15 @@ namespace Clipbox.ExtendedClipboard
             bool success = _persistenceHelper.TryGetClipboardItemFromCloudItemByteArray(itemData, out ClipboardItem item);
             if (success)
             {
-                // TODO: add...
+                lock (_ioLockHandle)
+                {
+                    _clipboardItems.Add(item);
+
+                    // try to save memory by swapping the big data to the hard drive
+                    _persistenceHelper.StoreAndShrinkClipboardItem(item, checkIsItemModified: false);
+                }
+
+                ItemAdded?.Invoke(this, new ClipboardManagerEventArgs(item.Id));
             }
 
             return success;

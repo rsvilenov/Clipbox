@@ -43,7 +43,7 @@ namespace Clipbox.Views.Dialog
         }
         
         public static readonly DependencyProperty DialogTextProperty =
-            DependencyProperty.Register(nameof(DialogText), typeof(string), typeof(DialogPopup), new PropertyMetadata(string.Empty));
+            DependencyProperty.Register(nameof(DialogText), typeof(string), typeof(DialogPopup), new PropertyMetadata(null));
 
 
         public UIElement Content
