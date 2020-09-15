@@ -407,7 +407,8 @@ namespace Clipbox.ExtendedClipboard
                 {
                     ClipboardFormatName = cdo.ClipboardFormatName,
                     IntermediateFormatMetadata = new SerializableIntermediateFormatMetadata(cdo.IntermediateFormatMetadata),
-                    ByteArray = dataBytes
+                    ByteArray = dataBytes,
+                    IsTransferable = cdo.IntermediateFormatMetadata.IsTransferable
                 };
 
             }

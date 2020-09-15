@@ -129,14 +129,17 @@ namespace Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions
             var folderMetadata = new Google.Apis.Drive.v3.Data.File()
             {
                 Name = categoryName,
-                MimeType = "application/vnd.google-apps.folder"
+                MimeType = "application/vnd.google-apps.folder",
+                Parents = new List<string>()
+                {
+                    "appDataFolder"
+                }
             };
 
             ExecuteAuthenticated((service) =>
             {
                 var request = service.Files.Create(folderMetadata);
                 request.Fields = "id";
-
                 var folder = request.Execute();
 
                 _driveObjectCache.Add(new DriveObjectInfo
@@ -154,7 +157,8 @@ namespace Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions
 
             ExecuteAuthenticated((service) =>
             {
-                service.Files.Delete(folderCacheObj.Id).Execute();
+                var deleteRequest = service.Files.Delete(folderCacheObj.Id);
+                deleteRequest.Execute();
 
                 if (_driveObjectCache.Contains(folderCacheObj))
                 {
@@ -173,7 +177,11 @@ namespace Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions
 
             ExecuteAuthenticated((service) =>
             {
-                try { service.Files.Delete(fileCacheObj.Id).Execute(); }
+                try 
+                {
+                    var deleteRequest = service.Files.Delete(fileCacheObj.Id);
+                    deleteRequest.Execute(); 
+                }
                 catch { } // TODO: ?
 
                 if (_driveObjectCache.Contains(fileCacheObj))
@@ -317,6 +325,7 @@ namespace Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions
             {
                 FilesResource.ListRequest listFolderRequest = service.Files.List();
                 listFolderRequest.Fields = "files(id, name)";
+                listFolderRequest.Spaces = "appDataFolder";
                 listFolderRequest.Q = $"'{folderCacheObj.Id}' in parents and trashed=false ";
                 if (itemNamePart != string.Empty)
                 {
@@ -377,6 +386,7 @@ namespace Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions
             {
                 FilesResource.ListRequest listFolderRequest = service.Files.List();
                 listFolderRequest.Fields = "files(id)";
+                listFolderRequest.Spaces = "appDataFolder";
                 listFolderRequest.Q = $"'{folderCacheObj.Id}' in parents and trashed=false and name='{driveFileName}' ";
 
                 IList<Google.Apis.Drive.v3.Data.File> files = listFolderRequest.Execute()
@@ -422,8 +432,8 @@ namespace Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions
             {
                 FilesResource.ListRequest listFolderRequest = service.Files.List();
                 listFolderRequest.Fields = "files(id)";
-                // TODO: appdata
-                //listFolderRequest.Spaces = "appDataFolder";
+
+                listFolderRequest.Spaces = "appDataFolder";
                 listFolderRequest.Q = $"mimeType = 'application/vnd.google-apps.folder' and name = '{driveFolderName}' and trashed=false";
 
                 IList<Google.Apis.Drive.v3.Data.File> folders = listFolderRequest.Execute()
@@ -503,7 +513,7 @@ namespace Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions
 
         private async Task Authenticate(bool updatePermissions = false)
         {
-            string[] Scopes = { DriveService.Scope.DriveFile };
+            string[] Scopes = { DriveService.Scope.DriveAppdata };
 
             try
             {

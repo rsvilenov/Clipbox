@@ -315,7 +315,10 @@ namespace Clipbox.Services
 
                     try
                     {
-                        PerformSynchronization();
+                        if (IsCloudSyncEnabled)
+                        {
+                            PerformSynchronization();
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -345,7 +348,7 @@ namespace Clipbox.Services
 
         private void PerformSynchronization()
         {
-            if (IsNetworkAvailable)
+            if (!IsNetworkAvailable)
             {
                 return;
             }
@@ -369,7 +372,6 @@ namespace Clipbox.Services
             {
                 DeleteOldestDeletionRequest(deletionRequests);
             }
-
 
             List<string> existingCloudItems = _cloudSupportExt.ListItems(_cloudStorageCategoryName, $"_cso_").ToList();
 
