@@ -734,11 +734,20 @@ namespace Clipbox.ExtendedClipboard
                 var itemToUpdate = _clipboardItems.FirstOrDefault(item => item.Id == id);
                 if (itemToUpdate != null)
                 {
-                    itemToUpdate.BeginEdit();
+                    // do not use BeginEdit() and EndEdit() here
+                    // as this will also change the timestamp
+                    // of the item and the cloud service will think
+                    // that the item has been modified and will
+                    // upload it to the cloud again with the different
+                    // timestamp.
                     itemToUpdate.IsSynchronizedWithCloud = true;
-                    itemToUpdate.EndEdit();
 
-                    _persistenceHelper.StoreAndShrinkClipboardItem(itemToUpdate);
+                    // make sure that we have told the persistence helper
+                    // not to check whether the item has been modified before saving.
+                    // The item's IsModified property will be "false" as the
+                    // item's modification has not been made inside a 
+                    // BeginEdit() and EndEdit() sequence.
+                    _persistenceHelper.StoreAndShrinkClipboardItem(itemToUpdate, checkIsItemModified: false);
                 }
             }
         }

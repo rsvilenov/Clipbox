@@ -41,32 +41,43 @@ namespace Clipbox.ExtendedClipboard
             }
         }
         
-        public void StoreAndShrinkClipboardItem(ClipboardItem clipboardItem)
+        public void StoreAndShrinkClipboardItem(ClipboardItem clipboardItem, bool checkIsItemModified = true)
         {
             if (!CheckIsClipboardItemPersistable(clipboardItem))
             {
                 // the item is not persistable
                 return;
             }
-            
-            // if the item is persistable and is modified, then we should be
-            // able to load it from the disk. If the item's modified ticks is
-            // different, we should proceed with saving. Otherwise - we stop here.
-            if (clipboardItem.IsModified)
-            {
-                // load from disk
-                PersistableClipboardItem savedClipboardItem = LoadPersistableClipboardItemFromStorage(clipboardItem);
-                
-                // check to see if it has really been modified
-                if (clipboardItem.TimestampInfo.ModifiedDateUtcTicks == savedClipboardItem.TimestampInfo.ModifiedDateUtcTicks)
-                {
-                    return;
-                }
 
-                // load the original clipboard data objects in order to prevent the
-                // possibility of someone modifying the object somewhere accidentally
-                // or with bad intentions in mind and then we save it here. CDOs should
-                // not be modifiable.
+            if (checkIsItemModified)
+            {
+                // if the item is persistable and is modified, then we should be
+                // able to load it from the disk. If the item's modified ticks is
+                // different, we should proceed with saving. Otherwise - we stop here.
+                if (clipboardItem.IsModified)
+                {
+                    // load from disk
+                    PersistableClipboardItem savedClipboardItem = LoadPersistableClipboardItemFromStorage(clipboardItem);
+
+                    // check to see if it has really been modified
+                    if (clipboardItem.TimestampInfo.ModifiedDateUtcTicks == savedClipboardItem.TimestampInfo.ModifiedDateUtcTicks)
+                    {
+                        return;
+                    }
+
+                    // load the original clipboard data objects in order to prevent the
+                    // possibility of someone modifying the object somewhere accidentally
+                    // or with bad intentions in mind and then we save it here. CDOs should
+                    // not be modifiable.
+                    RestoreClipboardDataObjects(clipboardItem, savedClipboardItem, decryptIfPossible: true);
+                }
+            }
+            else
+            {
+                // if the caller has requested that we should not check
+                // whether the item has been modified before saving,
+                // then restore the item from the disk directly.
+                PersistableClipboardItem savedClipboardItem = LoadPersistableClipboardItemFromStorage(clipboardItem);
                 RestoreClipboardDataObjects(clipboardItem, savedClipboardItem, decryptIfPossible: true);
             }
 
