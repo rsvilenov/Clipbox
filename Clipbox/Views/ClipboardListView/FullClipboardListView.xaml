@@ -495,97 +495,6 @@
 
                                                             </StackPanel>
 
-                                                            <Grid
-                                                                Grid.Column="3"
-                                                                MaxWidth="25"
-                                                                Margin="0,0,5,0">
-                                                                <Grid.Style>
-                                                                    <Style TargetType="{x:Type Grid}">
-                                                                        <Setter Property="Visibility" Value="Visible" />
-                                                                        <Style.Triggers>
-                                                                            <!--
-                                                                                for items that come from the cloud we should never show this grid, so we can safely set its visibility to collapsed.
-                                                                                For other items, showing the grid may change the layout sizing, so in order to prevent that, we should hide it with Hidden.
-                                                                            -->
-                                                                            <DataTrigger Binding="{Binding Path=ViewItem.IsCloudItem}" Value="True">
-                                                                                <Setter Property="Visibility" Value="Collapsed" />
-                                                                            </DataTrigger>
-                                                                            <DataTrigger Binding="{Binding DataContext.IsCloudSyncAvailable, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}" Value="False">
-                                                                                <Setter Property="Visibility" Value="Hidden" />
-                                                                            </DataTrigger>
-                                                                        </Style.Triggers>
-                                                                    </Style>
-                                                                </Grid.Style>
-                                                                <ContentControl Template="{DynamicResource SyncingIcon}" ToolTip="{loc:Localize TTP_MAINVIEW_ICON_SYNCING}">
-                                                                    <ContentControl.Style>
-                                                                        <Style TargetType="{x:Type ContentControl}">
-                                                                            <Setter Property="Visibility" Value="Collapsed" />
-                                                                            <Style.Triggers>
-                                                                                <DataTrigger Binding="{Binding Path=SyncStatus}" Value="{x:Static vmEnums:CloudSyncStatus.Syncing}">
-                                                                                    <Setter Property="Visibility" Value="Visible" />
-                                                                                </DataTrigger>
-                                                                            </Style.Triggers>
-                                                                        </Style>
-                                                                    </ContentControl.Style>
-                                                                </ContentControl>
-                                                                <ContentControl Template="{DynamicResource SyncCompleteIcon}" ToolTip="{loc:Localize TTP_MAINVIEW_ICON_SYNC_COMPLETE}">
-                                                                    <ContentControl.Style>
-                                                                        <Style TargetType="{x:Type ContentControl}">
-                                                                            <Setter Property="Visibility" Value="Collapsed" />
-                                                                            <Style.Triggers>
-                                                                                <DataTrigger Binding="{Binding Path=SyncStatus}" Value="{x:Static vmEnums:CloudSyncStatus.SyncComplete}">
-                                                                                    <Setter Property="Visibility" Value="Visible" />
-                                                                                </DataTrigger>
-                                                                            </Style.Triggers>
-                                                                        </Style>
-                                                                    </ContentControl.Style>
-                                                                </ContentControl>
-                                                                <ContentControl ToolTipService.ShowOnDisabled="True">
-                                                                    <ContentControl.Style>
-                                                                        <Style TargetType="{x:Type ContentControl}">
-                                                                            <Setter Property="Visibility" Value="Collapsed" />
-                                                                            <Setter Property="IsEnabled" Value="True" />
-                                                                            <Style.Triggers>
-                                                                                <DataTrigger Binding="{Binding Path=SyncStatus}" Value="{x:Static vmEnums:CloudSyncStatus.SyncDisabled}">
-                                                                                    <Setter Property="Visibility" Value="Visible" />
-                                                                                    <Setter Property="ToolTip" Value="{loc:Localize TTP_MAINVIEW_BTN_SYNC}" />
-                                                                                </DataTrigger>
-                                                                                <DataTrigger Binding="{Binding Path=SyncStatus}" Value="{x:Static vmEnums:CloudSyncStatus.SyncRequested}">
-                                                                                    <Setter Property="Visibility" Value="Visible" />
-                                                                                    <Setter Property="ToolTip" Value="{loc:Localize TTP_MAINVIEW_BTN_CANCEL_SYNC}" />
-                                                                                </DataTrigger>
-                                                                                <DataTrigger Binding="{Binding Path=IsItemTransferable}" Value="False">
-                                                                                    <Setter Property="IsEnabled" Value="False" />
-                                                                                    <Setter Property="ToolTip" Value="{loc:Localize TTP_MAINVIEW_BTN_SYNC_NON_TRANSFERABLE_ITEM}" />
-                                                                                </DataTrigger>
-                                                                            </Style.Triggers>
-                                                                        </Style>
-                                                                    </ContentControl.Style>
-                                                                    <ToggleButton
-                                                                        Command="{Binding Path=ActionButtonsDataContext.EnableDisableSyncOfClipboardEntry, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
-                                                                        CommandParameter="{Binding ViewItem}"
-                                                                        IsChecked="{Binding Path=SyncStatus, Mode=OneWay, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static vmEnums:CloudSyncStatus.SyncRequested}}"
-                                                                        Style="{DynamicResource ToggleBtnEnableDisableSync}">
-                                                                        <i:Interaction.Behaviors>
-                                                                            <infBeh:FrameworkElementDpiScalingBehavior />
-                                                                        </i:Interaction.Behaviors>
-
-                                                                        <!--  Visible only if the ListViewItem is highlighted or selected (IsManipulationEnabled = true) OR the toggle button is checked  -->
-                                                                        <ToggleButton.IsManipulationEnabled>
-                                                                            <MultiBinding Converter="{StaticResource OrMultiValueConverter}">
-                                                                                <Binding Path="IsManipulationEnabled" RelativeSource="{RelativeSource AncestorType={x:Type Border}}" />
-                                                                                <Binding Path="IsChecked" RelativeSource="{RelativeSource Self}" />
-                                                                            </MultiBinding>
-                                                                        </ToggleButton.IsManipulationEnabled>
-                                                                        <ToggleButton.Visibility>
-                                                                            <Binding
-                                                                                Converter="{StaticResource BooleanToVisibilityHiddenConverter}"
-                                                                                Path="IsManipulationEnabled"
-                                                                                RelativeSource="{RelativeSource Self}" />
-                                                                        </ToggleButton.Visibility>
-                                                                    </ToggleButton>
-                                                                </ContentControl>
-                                                            </Grid>
                                                         </Grid>
                                                     </DataTemplate>
                                                 </Setter.Value>
@@ -601,46 +510,144 @@
                             regardless of whether the template has been set or not... So when the template is set,
                             the total hight stays the same
                         -->
-                        <ContentControl Grid.Column="1">
-                            <ContentControl.Style>
-                                <Style TargetType="{x:Type ContentControl}">
-                                    <!--  hidden by default  -->
-                                    <Setter Property="Visibility" Value="Hidden" />
-                                    <Style.Triggers>
-                                        <!--  when the item is loaded, show the close button  -->
-                                        <!--<DataTrigger Binding="{Binding Path=IsViewItemLoaded}" Value="True">
+                        <Grid Grid.Column="1">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <ContentControl Grid.Column="0">
+                                <ContentControl.Style>
+                                    <Style TargetType="{x:Type ContentControl}">
+                                        <!--  hidden by default  -->
+                                        <Setter Property="Visibility" Value="Hidden" />
+                                        <Style.Triggers>
+                                            <!--  when the item is loaded, show the close button  -->
+                                            <!--<DataTrigger Binding="{Binding Path=IsViewItemLoaded}" Value="True">
                                             <Setter Property="Visibility" Value="Visible" />
                                         </DataTrigger>-->
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding Path=IsViewItemLoaded}" Value="True" />
-                                                <Condition Binding="{Binding Path=SelectedItems.Count, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListView}}}" Value="0" />
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter Property="Visibility" Value="Visible" />
-                                        </MultiDataTrigger>
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding Path=IsViewItemLoaded}" Value="True" />
-                                                <Condition Binding="{Binding Path=SelectedItems.Count, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListView}}}" Value="1" />
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter Property="Visibility" Value="Visible" />
-                                        </MultiDataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </ContentControl.Style>
-                            <Button
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding Path=IsViewItemLoaded}" Value="True" />
+                                                    <Condition Binding="{Binding Path=SelectedItems.Count, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListView}}}" Value="0" />
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </MultiDataTrigger>
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding Path=IsViewItemLoaded}" Value="True" />
+                                                    <Condition Binding="{Binding Path=SelectedItems.Count, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type ListView}}}" Value="1" />
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </MultiDataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </ContentControl.Style>
+                                <Button
+                                    MaxWidth="25"
+                                    Margin="0,0,5,0"
+                                    Command="{Binding Path=ActionButtonsDataContext.DeleteClipboardEntry, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
+                                    CommandParameter="{Binding Path=ViewItem}"
+                                    Style="{DynamicResource BtnTrash}"
+                                    ToolTip="{loc:Localize TTP_MAINVIEW_BTN_DELETE_THIS_ITEM}"
+                                    Visibility="{Binding Path=IsManipulationEnabled, RelativeSource={RelativeSource AncestorType={x:Type Border}}, Converter={StaticResource BooleanToVisibilityHiddenConverter}}">
+                                    <i:Interaction.Behaviors>
+                                        <infBeh:FrameworkElementDpiScalingBehavior />
+                                    </i:Interaction.Behaviors>
+                                </Button>
+                            </ContentControl>
+                            <Grid
+                                Grid.Column="1"
                                 MaxWidth="25"
-                                Margin="0,0,5,0"
-                                Command="{Binding Path=ActionButtonsDataContext.DeleteClipboardEntry, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
-                                CommandParameter="{Binding Path=ViewItem}"
-                                Style="{DynamicResource BtnTrash}"
-                                ToolTip="{loc:Localize TTP_MAINVIEW_BTN_DELETE_THIS_ITEM}"
-                                Visibility="{Binding Path=IsManipulationEnabled, RelativeSource={RelativeSource AncestorType={x:Type Border}}, Converter={StaticResource BooleanToVisibilityHiddenConverter}}">
-                                <i:Interaction.Behaviors>
-                                    <infBeh:FrameworkElementDpiScalingBehavior />
-                                </i:Interaction.Behaviors>
-                            </Button>
-                        </ContentControl>
+                                Margin="0,0,5,0">
+                                <Grid.Style>
+                                    <Style TargetType="{x:Type Grid}">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                        <Style.Triggers>
+                                            <!--
+                                                for items that come from the cloud we should never show this grid, so we can safely set its visibility to collapsed.
+                                                For other items, showing the grid may change the layout sizing, so in order to prevent that, we should hide it with Hidden.
+                                            -->
+                                            <DataTrigger Binding="{Binding Path=ViewItem.IsCloudItem}" Value="True">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding DataContext.IsCloudSyncAvailable, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}" Value="False">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Grid.Style>
+                                <ContentControl Template="{DynamicResource SyncingIcon}" ToolTip="{loc:Localize TTP_MAINVIEW_ICON_SYNCING}">
+                                    <ContentControl.Style>
+                                        <Style TargetType="{x:Type ContentControl}">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Path=SyncStatus}" Value="{x:Static vmEnums:CloudSyncStatus.Syncing}">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ContentControl.Style>
+                                </ContentControl>
+                                <ContentControl Template="{DynamicResource SyncCompleteIcon}" ToolTip="{loc:Localize TTP_MAINVIEW_ICON_SYNC_COMPLETE}">
+                                    <ContentControl.Style>
+                                        <Style TargetType="{x:Type ContentControl}">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Path=SyncStatus}" Value="{x:Static vmEnums:CloudSyncStatus.SyncComplete}">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ContentControl.Style>
+                                </ContentControl>
+                                <ContentControl ToolTipService.ShowOnDisabled="True">
+                                    <ContentControl.Style>
+                                        <Style TargetType="{x:Type ContentControl}">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                            <Setter Property="IsEnabled" Value="True" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Path=SyncStatus}" Value="{x:Static vmEnums:CloudSyncStatus.SyncDisabled}">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                    <Setter Property="ToolTip" Value="{loc:Localize TTP_MAINVIEW_BTN_SYNC}" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Path=SyncStatus}" Value="{x:Static vmEnums:CloudSyncStatus.SyncRequested}">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                    <Setter Property="ToolTip" Value="{loc:Localize TTP_MAINVIEW_BTN_CANCEL_SYNC}" />
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Path=IsItemTransferable}" Value="False">
+                                                    <Setter Property="IsEnabled" Value="False" />
+                                                    <Setter Property="ToolTip" Value="{loc:Localize TTP_MAINVIEW_BTN_SYNC_NON_TRANSFERABLE_ITEM}" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ContentControl.Style>
+                                    <ToggleButton
+                                        Command="{Binding Path=ActionButtonsDataContext.EnableDisableSyncOfClipboardEntry, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
+                                        CommandParameter="{Binding ViewItem}"
+                                        IsChecked="{Binding Path=SyncStatus, Mode=OneWay, Converter={StaticResource ComparisonConverter}, ConverterParameter={x:Static vmEnums:CloudSyncStatus.SyncRequested}}"
+                                        Style="{DynamicResource ToggleBtnEnableDisableSync}">
+                                        <i:Interaction.Behaviors>
+                                            <infBeh:FrameworkElementDpiScalingBehavior />
+                                        </i:Interaction.Behaviors>
+
+                                        <!--  Visible only if the ListViewItem is highlighted or selected (IsManipulationEnabled = true) OR the toggle button is checked  -->
+                                        <ToggleButton.IsManipulationEnabled>
+                                            <MultiBinding Converter="{StaticResource OrMultiValueConverter}">
+                                                <Binding Path="IsManipulationEnabled" RelativeSource="{RelativeSource AncestorType={x:Type Border}}" />
+                                                <Binding Path="IsChecked" RelativeSource="{RelativeSource Self}" />
+                                            </MultiBinding>
+                                        </ToggleButton.IsManipulationEnabled>
+                                        <ToggleButton.Visibility>
+                                            <Binding
+                                                Converter="{StaticResource BooleanToVisibilityHiddenConverter}"
+                                                Path="IsManipulationEnabled"
+                                                RelativeSource="{RelativeSource Self}" />
+                                        </ToggleButton.Visibility>
+                                    </ToggleButton>
+                                </ContentControl>
+                            </Grid>
+                        </Grid>
+
                     </Grid>
 
 

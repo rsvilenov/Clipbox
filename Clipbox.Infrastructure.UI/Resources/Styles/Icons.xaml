@@ -996,7 +996,10 @@
 
     <ControlTemplate x:Key="SyncingIcon">
         <Viewbox>
-            <Grid Background="Transparent">
+            <Grid
+                Width="128"
+                Height="128"
+                Background="Transparent">
                 <Path
                     Width="92"
                     Height="92"
@@ -1006,13 +1009,32 @@
                     RenderTransformOrigin="0.5,0.5"
                     Stretch="Uniform">
                     <Path.RenderTransform>
-                        <TransformGroup>
-                            <TransformGroup.Children>
-                                <RotateTransform Angle="0" />
-                                <ScaleTransform ScaleX="1" ScaleY="1" />
-                            </TransformGroup.Children>
-                        </TransformGroup>
+                        <RotateTransform Angle="0" />
                     </Path.RenderTransform>
+                    <Path.Style>
+                        <Style TargetType="Path">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsVisible, RelativeSource={RelativeSource Mode=Self}}" Value="True">
+                                    <DataTrigger.EnterActions>
+                                        <BeginStoryboard x:Name="rotateBeginSb">
+                                            <!--  set the framerate to a lower value, so the animation does not occupy much of the cpu power. Animations are cpu intensive, so this is important.  -->
+                                            <Storyboard Timeline.DesiredFrameRate="25">
+                                                <DoubleAnimation
+                                                    RepeatBehavior="Forever"
+                                                    Storyboard.TargetProperty="(Path.RenderTransform).(RotateTransform.Angle)"
+                                                    To="-360"
+                                                    Duration="0:0:1" />
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </DataTrigger.EnterActions>
+                                    <!--  remove the storyboard when the control is not visible, otherwise it will continue to use the cpu  -->
+                                    <DataTrigger.ExitActions>
+                                        <StopStoryboard BeginStoryboardName="rotateBeginSb" />
+                                    </DataTrigger.ExitActions>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Path.Style>
                 </Path>
             </Grid>
         </Viewbox>
@@ -1020,7 +1042,10 @@
 
     <ControlTemplate x:Key="SyncCompleteIcon">
         <Viewbox>
-            <Grid Background="Transparent">
+            <Grid
+                Width="128"
+                Height="128"
+                Background="Transparent">
                 <!--  the syncing icon  -->
                 <Path
                     Width="92"
