@@ -32,6 +32,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using System.Windows.Threading;
 using static Clipbox.Win32.MonitorUtils;
 
 namespace Clipbox.Views.Settings
@@ -70,7 +71,10 @@ namespace Clipbox.Views.Settings
             AdvancedExtensionUIItems = new AsyncObservableCollection<ExtensionUIItem>();
 
             this.tabControl.DataContext = this;
-            
+
+            // this will be reset by the Loaded event
+            IsLoading = true;
+
             Loaded += SettingsWindow_Loaded;
             Closing += SettingsWindow_Closing;
             MouseDown += SettingsWindow_MouseDown;
@@ -165,6 +169,11 @@ namespace Clipbox.Views.Settings
 
             IEnumerable<SettingsUIExtension> externalExtensions = _extContainer.ResolveAll();
             LoadSettingUIExtensions(externalExtensions);
+
+            Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
+            {
+                IsLoading = false;
+            }));
         }
 
         private List<ISettingsUIComponent> _settingUIExtensions = new List<ISettingsUIComponent>();
@@ -470,6 +479,17 @@ namespace Clipbox.Views.Settings
 
         public static readonly DependencyProperty IsAdvancedTabEnabledProperty =
             DependencyProperty.Register(nameof(IsAdvancedTabEnabled), typeof(bool), typeof(SettingsWindow), new PropertyMetadata(false));
+
+
+
+        public bool IsLoading
+        {
+            get { return (bool)GetValue(IsLoadingProperty); }
+            set { SetValue(IsLoadingProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsLoadingProperty =
+            DependencyProperty.Register(nameof(IsLoading), typeof(bool), typeof(SettingsWindow), new PropertyMetadata(false));
 
 
         private void BtnEnableAdvanced_Click(object sender, RoutedEventArgs e)

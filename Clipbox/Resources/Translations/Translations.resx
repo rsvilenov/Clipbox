@@ -309,6 +309,9 @@
   <data name="LBL_SETTINGS_CLIPBOARD_TRACKING" xml:space="preserve">
     <value>Enable system clipboard tracking</value>
   </data>
+  <data name="LBL_SETTINGS_CLOUD_AUTH_TIMEOUT" xml:space="preserve">
+    <value>Cloud authentication timeout</value>
+  </data>
   <data name="LBL_SETTINGS_CLOUD_SERVICES_ENABLED" xml:space="preserve">
     <value>Enable cloud services</value>
   </data>
@@ -430,6 +433,9 @@ Warning: more rows means more RAM usage!</value>
   </data>
   <data name="LBL_SETTINGS_STORE_MAX_TASKS_TIMEOUT" xml:space="preserve">
     <value>Maximum number simultaneous of store tasks</value>
+  </data>
+  <data name="LBL_SETTINGS_WINDOW_LOADING" xml:space="preserve">
+    <value>Loading...</value>
   </data>
   <data name="LBL_SETTINGS_WINDOW_TITLE_SETTINGS_PART" xml:space="preserve">
     <value>settings</value>

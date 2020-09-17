@@ -309,6 +309,9 @@
   <data name="LBL_SETTINGS_CLIPBOARD_TRACKING" xml:space="preserve">
     <value>Следене на системния клипборд</value>
   </data>
+  <data name="LBL_SETTINGS_CLOUD_AUTH_TIMEOUT" xml:space="preserve">
+    <value>Таймаут за вписване в облака</value>
+  </data>
   <data name="LBL_SETTINGS_CLOUD_SERVICES_ENABLED" xml:space="preserve">
     <value>Използвай облачните услуги</value>
   </data>
@@ -430,6 +433,9 @@
   </data>
   <data name="LBL_SETTINGS_STORE_MAX_TASKS_TIMEOUT" xml:space="preserve">
     <value>Максимален брой едновременни процеси за запазване на клипборд елемент</value>
+  </data>
+  <data name="LBL_SETTINGS_WINDOW_LOADING" xml:space="preserve">
+    <value>Зареждане...</value>
   </data>
   <data name="LBL_SETTINGS_WINDOW_TITLE_SETTINGS_PART" xml:space="preserve">
     <value>настройки</value>

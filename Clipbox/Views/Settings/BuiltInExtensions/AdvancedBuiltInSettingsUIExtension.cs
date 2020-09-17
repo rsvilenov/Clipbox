@@ -80,7 +80,8 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
                 .Add(SettingsKeys.RunMainProcessWithHighPriority, new MainProcessPrioritySettingUIPart())
                 .Add(SettingsKeys.OnItemStoringFlowExtensionsTimeoutMs, new StoreItemTimeoutSettingUIPart())
                 .Add(SettingsKeys.OnItemStoringFlowExtensionsMaxTasks, new StoreMaxTasksSettingUIPart())
-                .Add(SettingsKeys.AreFadeAnimationsEnabled, new FadeAnimationsSettingUIPart());
+                .Add(SettingsKeys.AreFadeAnimationsEnabled, new FadeAnimationsSettingUIPart())
+                .Add(SettingsKeys.CloudServiceAuthAttemptTimeout, new CloudAuthTimeoutSettingUIPart());
         }
 
         private void ManageUIPartsVisibility(ISettingKey settingKey)

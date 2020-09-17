@@ -621,5 +621,32 @@
                 </Style>
             </Border.Style>
         </Border>
+
+        <!--  the loading screen  -->
+        <Border
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            Background="Black"
+            Opacity="0.8">
+            <Grid Background="Black">
+                <TextBlock
+                    Margin="20"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    FontSize="18"
+                    Foreground="White"
+                    Text="{loc:Localize LBL_SETTINGS_WINDOW_LOADING}" />
+            </Grid>
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsLoading, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}}" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+        </Border>
     </Grid>
 </customControls:WindowFrame>

@@ -539,6 +539,8 @@ namespace Clipbox.Services
 
         private void EnqueueAuthTask()
         {
+            const int maxAuthAttempts = 3;
+
             var syncContext = SynchronizationContext.Current;
 
             Task.Run(() =>
@@ -556,7 +558,7 @@ namespace Clipbox.Services
                     if (!IsAuthenticated)
                     {
                         _numberOfAuthFailures++; 
-                        if (_numberOfAuthFailures >= 3)
+                        if (_numberOfAuthFailures >= maxAuthAttempts)
                         {
                             _numberOfAuthFailures = 0;
                             IsInErrorState = true;
@@ -575,7 +577,7 @@ namespace Clipbox.Services
                 catch (Exception ex)
                 {
                     _numberOfAuthFailures++;
-                    if (_numberOfAuthFailures >= 3)
+                    if (_numberOfAuthFailures >= maxAuthAttempts)
                     {
                         _numberOfAuthFailures = 0;
                         IsInErrorState = true;
@@ -602,9 +604,11 @@ namespace Clipbox.Services
 
             if (_cloudSupportExt is IAuthenticatable authenticatable)
             {
+                int authAttemptTimeout = _settingsService.GetSetting<int>(SettingsKeys.CloudServiceAuthAttemptTimeout);
+
                 _cloudExtensionAuthMre.Reset();
                 authenticatable.InitiateAuthentication(null);
-                _cloudExtensionAuthMre.WaitOne(20000);
+                _cloudExtensionAuthMre.WaitOne(authAttemptTimeout);
             }
             else
             {

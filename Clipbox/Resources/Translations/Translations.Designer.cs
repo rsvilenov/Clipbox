@@ -637,6 +637,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cloud authentication timeout.
+        /// </summary>
+        internal static string LBL_SETTINGS_CLOUD_AUTH_TIMEOUT {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_CLOUD_AUTH_TIMEOUT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enable cloud services.
         /// </summary>
         internal static string LBL_SETTINGS_CLOUD_SERVICES_ENABLED {
@@ -995,6 +1004,15 @@ namespace Clipbox.Resources.Translations {
         internal static string LBL_SETTINGS_STORE_MAX_TASKS_TIMEOUT {
             get {
                 return ResourceManager.GetString("LBL_SETTINGS_STORE_MAX_TASKS_TIMEOUT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loading....
+        /// </summary>
+        internal static string LBL_SETTINGS_WINDOW_LOADING {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_WINDOW_LOADING", resourceCulture);
             }
         }
         

@@ -24,6 +24,8 @@ namespace Clipbox.Settings
         public static SettingKey<bool> AreCloudServicesEnabled = new SettingKey<bool>(nameof(AreCloudServicesEnabled), false);
 
         public static SettingKey<bool> IsCloudSyncEnabled = new SettingKey<bool>(nameof(IsCloudSyncEnabled), false);
+        
+        public static SettingKey<int> CloudServiceAuthAttemptTimeout = new SettingKey<int>(nameof(CloudServiceAuthAttemptTimeout), 20000);
 
         public static SettingKey<int> MainClipboardViewBackgroundRenderMode = new SettingKey<int>(nameof(MainClipboardViewBackgroundRenderMode), (int)Enums.MainClipboardViewBackgroundRenderMode.ImageBrush);
 

@@ -95,6 +95,7 @@
                         FontSize="14"
                         Foreground="White"
                         Visibility="{Binding AreMinAndMaxSelectedDatesDistinct, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <Run Text=" " />
                         <Run Text="{loc:Localize LBL_DATERANGESELECTOR_SHOW_ITEMS_TO}" />
                         <Run FontWeight="Bold" Text="{Binding SelectedMaxDateTimeMs, Converter={StaticResource MillisecondsToHumanReadableDateStringConverter}}" />
                     </TextBlock>
