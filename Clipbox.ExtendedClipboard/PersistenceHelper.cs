@@ -198,7 +198,8 @@ namespace Clipbox.ExtendedClipboard
                 {
                     IsPinned = persistableClipboardItem.IsPinned,
                     CanTransfer = persistableClipboardItem.CanTransfer,
-                    ShouldTransfer = persistableClipboardItem.ShouldTransfer
+                    ShouldTransfer = persistableClipboardItem.ShouldTransfer,
+                    IsSynchronizedWithCloud = persistableClipboardItem.IsSynchronizedWithCloud
                 };
             }
         }
@@ -334,7 +335,8 @@ namespace Clipbox.ExtendedClipboard
                     PersistableClipboardDataObjects = persistableCdos,
                     TimestampInfo = clipboardItem.TimestampInfo,
                     CanTransfer = clipboardItem.CanTransfer,
-                    ShouldTransfer = clipboardItem.ShouldTransfer
+                    ShouldTransfer = clipboardItem.ShouldTransfer,
+                    IsSynchronizedWithCloud = clipboardItem.IsSynchronizedWithCloud
                 };
             }
 
