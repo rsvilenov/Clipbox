@@ -533,6 +533,7 @@
                 x:Name="filterBand"
                 Grid.Row="0"
                 ClipboardItemsDataProvider="{Binding ClipboardItemsDataProvider}"
+                IsCloudSyncAvailable="{Binding IsCloudSyncAvailable, Mode=OneWay}"
                 SearchTermsChanged="FilterBand_SearchTermsChanged"
                 ShouldParentBeEnabled="{Binding Path=IsEnabled, Mode=OneWayToSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type views:ClipboardViewControlBase}}}">
                 <filterBand:FilterBand.Style>

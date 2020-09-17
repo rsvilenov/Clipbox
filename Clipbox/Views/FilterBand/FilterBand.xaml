@@ -19,6 +19,7 @@
                 <ResourceDictionary Source="pack://application:,,,/Clipbox.Infrastructure.UI;component/Resources/Styles/Expander.xaml" />
                 <ResourceDictionary>
                     <conv:MillisecondsToHumanReadableDateStringConverter x:Key="MillisecondsToHumanReadableDateStringConverter" />
+                    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
                     <Style
                         x:Key="textToggleButton"
@@ -253,7 +254,8 @@
                     OverridesDefaultStyle="True"
                     Tag="{DynamicResource SyncedItemsIcon}"
                     Template="{StaticResource VerticalStretchyExpander}"
-                    ToolTip="{loc:Localize TTP_FILTERBAND_FILTER_BY_DEVICE}">
+                    ToolTip="{loc:Localize TTP_FILTERBAND_FILTER_BY_DEVICE}"
+                    Visibility="{Binding IsCloudSyncAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                     <StackPanel Margin="0,5" Orientation="Vertical">
                         <ToggleButton
