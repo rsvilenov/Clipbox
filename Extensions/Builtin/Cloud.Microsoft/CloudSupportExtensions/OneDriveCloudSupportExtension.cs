@@ -116,6 +116,18 @@ namespace Clipbox.Extensions.BuiltIn.Cloud.Microsoft.CloudSupportExtensions
                 }));
         }
 
+        protected override void OnSettingUpdated(string settingName)
+        {
+            if (settingName == ExtensionSettingNames.OneDriveClearTokenCacheRequested 
+                && GetSetting<bool>(ExtensionSettingNames.OneDriveClearTokenCacheRequested))
+            {
+                _tokenCache = string.Empty;
+                RequestSettingChange(ExtensionSettingNames.OneDriveDriveAuthTokenCache, _tokenCache);
+
+                RequestSettingChange(ExtensionSettingNames.OneDriveClearTokenCacheRequested, false);
+            }
+        }
+
         private void TokenCacheAfterAccess(TokenCacheNotificationArgs args)
         {
             // if the access operation resulted in a cache update

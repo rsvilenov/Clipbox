@@ -62,7 +62,7 @@ namespace Clipbox.Extensions.BuiltIn.General.Cloud.Microsoft.Resources.Translati
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Request reauthentication.
+        ///   Looks up a localized string similar to Clear the saved token cache.
         /// </summary>
         internal static string LBL_ONEDRIVE_REQUEST_REAUTH {
             get {

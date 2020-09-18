@@ -9,6 +9,6 @@
         /// </summary>
         public static string OneDriveDriveAuthTokenCache = nameof(OneDriveDriveAuthTokenCache);
 
-        public static string OneDriveReauthRequested = nameof(OneDriveReauthRequested);
+        public static string OneDriveClearTokenCacheRequested = nameof(OneDriveClearTokenCacheRequested);
     }
 }

@@ -20,14 +20,14 @@ namespace Clipbox.Extensions.BuiltIn.Cloud.Microsoft.SettingsUIExtensions
         protected override void RegisterSettings(IRegisteredSettingStore settingsStore)
         {
             settingsStore
-                .Add<bool, OneDriveCloudSupportExtension>(ExtensionSettingNames.OneDriveReauthRequested, false)
+                .Add<bool, OneDriveCloudSupportExtension>(ExtensionSettingNames.OneDriveClearTokenCacheRequested, false)
                 .Add<string, OneDriveCloudSupportExtension>(ExtensionSettingNames.OneDriveDriveAuthTokenCache, string.Empty);
         }
 
         protected override void RegisterSettingUIParts(ISettingsUIBuilder builder)
         {
 #if DEBUG
-            builder.Add(ExtensionSettingNames.OneDriveReauthRequested, new OneDriveAuthSettingUIPart());
+            builder.Add(ExtensionSettingNames.OneDriveClearTokenCacheRequested, new OneDriveAuthSettingUIPart());
 #endif
         }
     }

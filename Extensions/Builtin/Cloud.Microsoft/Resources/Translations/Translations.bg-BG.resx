@@ -118,6 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="LBL_ONEDRIVE_REQUEST_REAUTH" xml:space="preserve">
-    <value>OneDrive: Повторно потвърждаване на самоличността</value>
+    <value>OneDrive: Изтриване на запазения тоукън кеш</value>
   </data>
 </root>
