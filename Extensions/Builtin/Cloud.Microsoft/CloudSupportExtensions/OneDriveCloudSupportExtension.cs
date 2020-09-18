@@ -16,7 +16,7 @@ using System.Linq;
 using System.Net.Http.Headers;
 using System.Net.Sockets;
 
-namespace Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions
+namespace Clipbox.Extensions.BuiltIn.Cloud.Microsoft.CloudSupportExtensions
 {
     [ClipboxExtension(
               description: "Microsoft OneDrive cloud support",
@@ -86,7 +86,7 @@ namespace Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions
 
                             authResult = await app.AcquireTokenInteractive(scopes)
                                 .WithAccount(accounts.FirstOrDefault())
-                                .WithPrompt(Microsoft.Identity.Client.Prompt.SelectAccount)
+                                .WithPrompt(global::Microsoft.Identity.Client.Prompt.SelectAccount)
                                 .ExecuteAsync();
 
                             AuthenticationStageChanged?.Invoke(this, new AuthenticationStageEventArgs(AuthenticationStage.Authenticated));
@@ -123,11 +123,17 @@ namespace Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions
             {
                 byte[] tokenCacheBytes = args.TokenCache.SerializeMsalV3();
                 _tokenCache = System.Convert.ToBase64String(tokenCacheBytes);
+                RequestSettingChange(ExtensionSettingNames.OneDriveDriveAuthTokenCache, _tokenCache);
             }
         }
 
         private void TokenCacheBeforeAccess(TokenCacheNotificationArgs args)
         {
+            if (string.IsNullOrEmpty(_tokenCache))
+            {
+                _tokenCache = GetSetting<string>(ExtensionSettingNames.OneDriveDriveAuthTokenCache);
+            }
+
             if (!string.IsNullOrEmpty(_tokenCache))
             {
                 byte[] tokenCacheBytes = Convert.FromBase64String(_tokenCache);

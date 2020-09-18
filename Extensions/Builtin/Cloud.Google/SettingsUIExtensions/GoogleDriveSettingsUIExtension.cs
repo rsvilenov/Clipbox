@@ -5,8 +5,6 @@ using Clipbox.Core.Extensibility.Enums;
 using Clipbox.Extensions.BuiltIn.Cloud.Google.CloudSupportExtensions;
 using Clipbox.Extensions.BuiltIn.Cloud.Google.SettingsUIExtensions.SettingUIParts;
 
-#if DEBUG
-
 namespace Clipbox.Extensions.BuiltIn.Cloud.Google.SettingsUIExtensions
 {
     [ClipboxExtension(
@@ -28,9 +26,9 @@ namespace Clipbox.Extensions.BuiltIn.Cloud.Google.SettingsUIExtensions
 
         protected override void RegisterSettingUIParts(ISettingsUIBuilder builder)
         {
+#if DEBUG
             builder.Add(ExtensionSettingNames.GoogleDriveReauthRequested, new GoogleCloudAuthSettingUIPart());
+#endif
         }
     }
 }
-
-#endif
