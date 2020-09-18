@@ -90,9 +90,7 @@
       <LastGenOutput>Translations.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="packages.config" />
-    <EmbeddedResource Include="Resources\Credentials\GoogleDriveCredentials.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Credentials\GoogleDriveCredentials.json" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Clipbox.Core\Clipbox.Core.csproj">

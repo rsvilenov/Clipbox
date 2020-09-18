@@ -14,3 +14,7 @@ This is very dirty but it was the best I could do to resolve the version conflic
       
       </assemblyBinding>
     </runtime>
+
+
+    Note: if I need to specify the target platform, I  may use something like this:
+    <codeBase version="6.0.0.0" href="Resources\dephell_x86\Newtonsoft.Json.6.0.0.0.dll" processorArchitecture="x86" />
