@@ -147,7 +147,10 @@ namespace Clipbox.Infrastructure.UI.Localization.LozalizationProviders
         {
             foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
             {
-                CacheResourceManagers(asm);
+                if (asm.FullName.StartsWith(ProductConstants.PRODUCT_NAME, StringComparison.OrdinalIgnoreCase))
+                {
+                    CacheResourceManagers(asm);
+                }
             }
         }
 

@@ -98,5 +98,13 @@
   <ItemGroup>
     <EmbeddedResource Include="Resources\Icons\OneDrive.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\dephell\Newtonsoft.Json.6.0.0.0.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Important.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

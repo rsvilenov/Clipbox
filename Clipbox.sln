@@ -70,7 +70,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClipboxSearch", "ClipboxSea
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cloud.Microsoft", "Extensions\Builtin\Cloud.Microsoft\Cloud.Microsoft.csproj", "{264AEC74-5B07-4247-BB16-4649D3F0D68D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cloud.Google", "Cloud.Google\Cloud.Google.csproj", "{EABAEF57-8F6C-4355-90B9-93F3E1BDAD2B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cloud.Google", "Extensions\Builtin\Cloud.Google\Cloud.Google.csproj", "{EABAEF57-8F6C-4355-90B9-93F3E1BDAD2B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
