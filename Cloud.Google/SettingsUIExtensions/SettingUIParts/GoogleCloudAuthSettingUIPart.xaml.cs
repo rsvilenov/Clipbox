@@ -1,10 +1,9 @@
 ﻿using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.Extensibility;
-using System;
 using System.Windows;
 using System.Windows.Input;
 
-namespace Clipbox.Extensions.BuiltIn.General.SettingsUIExtensions.SettingUIParts
+namespace Clipbox.Extensions.BuiltIn.Cloud.Google.SettingsUIExtensions.SettingUIParts
 {
     /// <summary>
     /// Interaction logic for GoogleCloudAuthSettingUIPart.xaml

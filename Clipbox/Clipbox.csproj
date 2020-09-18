@@ -700,10 +700,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Clipbox.CloudServices\Clipbox.Infrastructure.CloudSupport.csproj">
-      <Project>{1B3D8AE2-4822-4970-A4C1-AB73CC33257E}</Project>
-      <Name>Clipbox.Infrastructure.CloudSupport</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Clipbox.Core\Clipbox.Core.csproj">
       <Project>{f4bd7048-4d9f-4036-98aa-da8232ef2afb}</Project>
       <Name>Clipbox.Core</Name>

@@ -63,6 +63,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cache\ByteArrayCache.cs" />
+    <Compile Include="Cache\CloudObjectCache.cs" />
+    <Compile Include="Cache\ICloudObjectInfo.cs" />
     <Compile Include="CLR\ClrHelpers.cs" />
     <Compile Include="CLR\TrackableObject.cs" />
     <Compile Include="Compression\ByteArrayCompressor.cs" />
@@ -111,6 +113,7 @@
     <Compile Include="IPC\NamedPipesResponseEventArgs.cs" />
     <Compile Include="IPC\NamedPipesServer.cs" />
     <Compile Include="IPC\WindowMessageIPC.cs" />
+    <Compile Include="Network\NetworkUtils.cs" />
     <Compile Include="ObjectHelpers\GetHashCodeHelper.cs" />
     <Compile Include="Serialization\BinaryFormatterSerialization.cs" />
     <Compile Include="Serialization\XmlSerialization.cs" />

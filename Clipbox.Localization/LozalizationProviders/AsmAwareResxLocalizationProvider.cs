@@ -1,4 +1,5 @@
-﻿using Clipbox.Infrastructure.UI.Localization.Enums;
+﻿using Clipbox.Core;
+using Clipbox.Infrastructure.UI.Localization.Enums;
 using Clipbox.Infrastructure.UI.Localization.EventArgsClasses;
 using System;
 using System.Collections.Concurrent;
@@ -165,7 +166,10 @@ namespace Clipbox.Infrastructure.UI.Localization.LozalizationProviders
     
         private void CurrentDomain_AssemblyLoad(object sender, AssemblyLoadEventArgs args)
         {
-            CacheResourceManagers(args.LoadedAssembly);
+            if (args.LoadedAssembly.FullName.StartsWith(ProductConstants.PRODUCT_NAME, StringComparison.OrdinalIgnoreCase))
+            {
+                CacheResourceManagers(args.LoadedAssembly);
+            }
         }
 
         private List<Type> GetResourceClasses(Assembly asm)

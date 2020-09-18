@@ -6,7 +6,6 @@ using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
 using Clipbox.Core.Extensibility.Exceptions;
 using Clipbox.ExtendedClipboard;
 using Clipbox.ExtendedClipboard.Interfaces;
-using Clipbox.Infrastructure.CloudSupport.CloudSupportProviders;
 using Clipbox.Infrastructure.Configuration;
 using Clipbox.Infrastructure.Diagnostics;
 using Clipbox.Infrastructure.Encryption;

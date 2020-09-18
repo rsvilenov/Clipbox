@@ -2,12 +2,12 @@
 using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
 using Clipbox.Core.Extensibility.Enums;
-using Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions;
-using Clipbox.Extensions.BuiltIn.General.SettingsUIExtensions.SettingUIParts;
+using Clipbox.Extensions.BuiltIn.Cloud.Google.CloudSupportExtensions;
+using Clipbox.Extensions.BuiltIn.Cloud.Google.SettingsUIExtensions.SettingUIParts;
 
 #if DEBUG
 
-namespace Clipbox.Extensions.BuiltIn.General.SettingsUIExtensions
+namespace Clipbox.Extensions.BuiltIn.Cloud.Google.SettingsUIExtensions
 {
     [ClipboxExtension(
            description: "Settings UI for Google Drive cloud support",

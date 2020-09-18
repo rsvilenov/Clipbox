@@ -44,7 +44,7 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
 
             OkClicked = new DelegateCommand(OkCommandHandler, () => AvailableCloudExtensions.Any() && SelectedCloudInfoDisplayData != null);
             CancelClicked = new DelegateCommand(CancelCommandHandler);
-            ChangeClicked = new DelegateCommand(ChangeClickedHandler);
+            ChangeClicked = new DelegateCommand(ChangeClickedHandler, () => AvailableCloudExtensions.Any());
             RetryClicked = new DelegateCommand(RetryClickedHandler);
 
 
@@ -83,15 +83,18 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
             {
                 LoadCloudExtensionsInfo();
 
-                if (string.IsNullOrEmpty(CloudExtensionName))
+                if (AvailableCloudExtensions.Any())
                 {
-                    cloudSelectorPopup.IsOpen = true;
-                    cloudSelectorPopup.Closed += CloudSelectorPopup_Closed;
-                    Window.GetWindow(this).IsEnabled = false;
-                }
-                else
-                {
-                    SelectedCloudInfoDisplayData = AvailableCloudExtensions.First(ace => ace.Name == CloudExtensionName);
+                    if (string.IsNullOrEmpty(CloudExtensionName) || !AvailableCloudExtensions.Any(ace => ace.Name == CloudExtensionName))
+                    {
+                        cloudSelectorPopup.IsOpen = true;
+                        cloudSelectorPopup.Closed += CloudSelectorPopup_Closed;
+                        Window.GetWindow(this).IsEnabled = false;
+                    }
+                    else
+                    {
+                        SelectedCloudInfoDisplayData = AvailableCloudExtensions.First(ace => ace.Name == CloudExtensionName);
+                    }
                 }
             }
         }

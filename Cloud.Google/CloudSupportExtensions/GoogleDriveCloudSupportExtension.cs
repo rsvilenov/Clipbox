@@ -5,6 +5,7 @@ using Clipbox.Core.Extensibility.Contracts.ExtentionTypes.CloudSupportTypes;
 using Clipbox.Core.Extensibility.Enums;
 using Clipbox.Core.Extensibility.EventArgsClasses;
 using Clipbox.Infrastructure.CloudSupport;
+using Clipbox.Infrastructure.Network;
 using Google.Apis.Auth.OAuth2;
 using Google.Apis.Drive.v3;
 using Google.Apis.Json;
@@ -17,12 +18,11 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Net.Sockets;
 using System.Security.Authentication;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions
+namespace Clipbox.Extensions.BuiltIn.Cloud.Google.CloudSupportExtensions
 {
     [ClipboxExtension(
            description: "Google Drive cloud support",
@@ -30,7 +30,7 @@ namespace Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions
            version: 1.0,
            MinHostVersion = 1.0
            )]
-    [CloudSupport("Google Drive", "google_drive.png")]
+    [CloudSupport("Google Drive", "GoogleDrive.png")]
     public class GoogleDriveCloudSupportExtension : CloudSupportExtension, IAuthenticatable
     {
 
@@ -126,7 +126,7 @@ namespace Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions
 
         public override void CreateCategory(string categoryName)
         {
-            var folderMetadata = new Google.Apis.Drive.v3.Data.File()
+            var folderMetadata = new global::Google.Apis.Drive.v3.Data.File()
             {
                 Name = categoryName,
                 MimeType = "application/vnd.google-apps.folder",
@@ -193,13 +193,13 @@ namespace Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions
 
         public override CloudServiceInfo GetCloudServiceInfo()
         {
-            const string url = "https://drive.google.com";
+            const string url = "http://drive.google.com";
             bool isAvailable = false;
             string failureReason = string.Empty;
 
             try
             { 
-                isAvailable = CheckIsCloudServiceReachable(url, 80); 
+                isAvailable = NetworkUtils.CheckIsEndpointReachable(url, 80); 
                 if (!isAvailable)
                 {
                     failureReason = "Unknown";
@@ -273,7 +273,7 @@ namespace Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions
                 throw new InvalidOperationException($"Got path instead of filename: {itemName}");
             }
 
-            var fileMetadata = new Google.Apis.Drive.v3.Data.File()
+            var fileMetadata = new global::Google.Apis.Drive.v3.Data.File()
             {
                 Name = itemName,
                 Parents = new List<string>
@@ -320,7 +320,7 @@ namespace Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions
 
             // TODO: make this use the paging functionality of google drive
             // https://stackoverflow.com/questions/41572228/how-to-list-of-more-than-1000-records-from-google-drive-api-v3-in-c-sharp
-            IList<Google.Apis.Drive.v3.Data.File> files = null;
+            IList<global::Google.Apis.Drive.v3.Data.File> files = null;
             ExecuteAuthenticated(service =>
             {
                 FilesResource.ListRequest listFolderRequest = service.Files.List();
@@ -389,7 +389,7 @@ namespace Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions
                 listFolderRequest.Spaces = "appDataFolder";
                 listFolderRequest.Q = $"'{folderCacheObj.Id}' in parents and trashed=false and name='{driveFileName}' ";
 
-                IList<Google.Apis.Drive.v3.Data.File> files = listFolderRequest.Execute()
+                IList<global::Google.Apis.Drive.v3.Data.File> files = listFolderRequest.Execute()
                     .Files;
 
                 if (files.Count == 1)
@@ -436,7 +436,7 @@ namespace Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions
                 listFolderRequest.Spaces = "appDataFolder";
                 listFolderRequest.Q = $"mimeType = 'application/vnd.google-apps.folder' and name = '{driveFolderName}' and trashed=false";
 
-                IList<Google.Apis.Drive.v3.Data.File> folders = listFolderRequest.Execute()
+                IList<global::Google.Apis.Drive.v3.Data.File> folders = listFolderRequest.Execute()
                     .Files;
 
                 if (folders.Count == 1)
@@ -487,7 +487,7 @@ namespace Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions
                         break;
                     }
                 }
-                catch (Google.Apis.Auth.OAuth2.Responses.TokenResponseException trex)
+                catch (global::Google.Apis.Auth.OAuth2.Responses.TokenResponseException trex)
                 {
                     if (trex.Message.Contains("invalid_grant"))
                     {
@@ -551,39 +551,6 @@ namespace Clipbox.Extensions.BuiltIn.General.CloudSupportExtensions
         private void Reauthenticate()
         {
             GoogleWebAuthorizationBroker.ReauthorizeAsync(_credential, CancellationToken.None).Wait();
-        }
-
-        private bool CheckIsCloudServiceReachable(string uriString, int port, int timeoutMs = 5000)
-        {
-            Task<bool> task = Task<bool>.Factory.StartNew(() =>
-            {
-                Uri uri = new Uri(uriString);
-                IPAddress[] ipList = Dns.GetHostAddresses(uri.Host);
-
-                foreach (IPAddress ip in ipList)
-                {
-                    Socket s = new Socket(AddressFamily.InterNetwork,
-                    SocketType.Stream,
-                    ProtocolType.Tcp);
-
-                    s.SendTimeout = timeoutMs;
-                    s.ReceiveTimeout = timeoutMs;
-                    s.Connect(ip, port);
-                    return true;
-                }
-
-                return false;
-            });
-
-            bool success = task.Wait(timeoutMs);
-            if (success)
-            {
-                return task.Result;
-            }
-            else
-            {
-                throw new TimeoutException($"The connection to {uriString}:{port} timed out.");
-            }
         }
 
         private class DriveObjectInfo
