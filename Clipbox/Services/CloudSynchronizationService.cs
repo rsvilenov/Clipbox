@@ -602,7 +602,8 @@ namespace Clipbox.Services
             
             AuthenticationStateChanged?.Invoke(this, new AuthenticationStageEventArgs(AuthenticationStage.Authenticating));
 
-            if (_cloudSupportExt is IAuthenticatable authenticatable)
+            if (_cloudSupportExt is IAuthenticatable authenticatable
+                && !authenticatable.IsAuthenticated)
             {
                 int authAttemptTimeout = _settingsService.GetSetting<int>(SettingsKeys.CloudServiceAuthAttemptTimeout);
 
@@ -612,7 +613,8 @@ namespace Clipbox.Services
             }
             else
             {
-                // if the extension does not implement IAuthenticatable,
+                // if the extension does not implement IAuthenticatable
+                // or if the extension says that it is already authenticated,
                 // then no authentication is needed, so just
                 // say that the autentication is successfull
                 IsAuthenticated = true;
