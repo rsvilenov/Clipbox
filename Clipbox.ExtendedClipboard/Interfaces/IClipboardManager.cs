@@ -71,7 +71,7 @@ namespace Clipbox.ExtendedClipboard.Interfaces
 
         bool TryAddItemFromCloud(byte[] itemData);
 
-        void SetItemSynchronized(string id);
+        void SetItemSynchronized(string id, bool isSynchronized = true);
 
         event EventHandler<ItemFetchingEventArgs> ItemFetching;
 

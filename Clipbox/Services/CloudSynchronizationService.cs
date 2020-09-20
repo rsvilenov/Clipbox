@@ -12,6 +12,7 @@ using Clipbox.Core.Extensibility.Exceptions;
 using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.CloudSupport;
 using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
+using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.UI.Utils;
 using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Exceptions;
@@ -60,7 +61,7 @@ namespace Clipbox.Services
         private readonly string _appGuid;
 
 
-        private readonly CancellationTokenSource _syncTaskCancellationTokenSource;
+        private CancellationTokenSource _syncTaskCancellationTokenSource;
         private Task _syncRunnerTask;
         private readonly SynchronizationContext _mainSyncContext;
         private readonly string _cloudStorageCategoryName;
@@ -69,6 +70,7 @@ namespace Clipbox.Services
         private string _lastError;
         private SemaphoreSlim _authTaskSemaphore;
         private int _numberOfAuthFailures;
+        private bool _isResetOfItemsSyncStatusRequested;
 
         private ManualResetEvent _cloudExtensionAuthMre;
 
@@ -164,7 +166,11 @@ namespace Clipbox.Services
                 string selectedCloudSupportServiceName = _settingsService.GetSetting<string>(SettingsKeys.SelectedCloudSupportServiceName);
                 if (!string.IsNullOrEmpty(selectedCloudSupportServiceName))
                 {
-                    _cloudSupportExt = _extensionContainer.Resolve(selectedCloudSupportServiceName);
+                    var newExtension = _extensionContainer.Resolve(selectedCloudSupportServiceName);
+                    if (!newExtension.GetType().Equals(_cloudSupportExt.GetType()))
+                    {
+                        _isResetOfItemsSyncStatusRequested = true;
+                    }
 
                     SetUpSelectedCloudSupportExtension();
 
@@ -291,6 +297,12 @@ namespace Clipbox.Services
                         continue;
                     }
 
+                    if (_isResetOfItemsSyncStatusRequested)
+                    {
+                        ResetClipboardItemsIsSynchronizedStatus();
+                        _isResetOfItemsSyncStatusRequested = false;
+                    }
+
                     CloudServiceInfo csi = null;
                     try
                     {
@@ -335,6 +347,7 @@ namespace Clipbox.Services
             // request sync task cancellation
             _syncTaskCancellationTokenSource.Cancel();
 
+            // wait for the task to complete
             var dispatcher = Dispatcher.FromThread(Thread.CurrentThread);
             if (dispatcher != null)
             {
@@ -343,6 +356,21 @@ namespace Clipbox.Services
             else
             {
                 _syncRunnerTask.Wait();
+            }
+
+            // create a new cancellationtokensource for the next task
+            _syncTaskCancellationTokenSource = new CancellationTokenSource();
+        }
+
+        private void ResetClipboardItemsIsSynchronizedStatus()
+        {
+            List<string> allSynchronizedItemIds = _clipboardManager
+                .GetAllItemIds((item) => (item as ICloudSynchronizable)?.IsSynchronizedWithCloud == true)
+                .ToList();
+
+            foreach (string itemIdToReset in allSynchronizedItemIds)
+            {
+                _clipboardManager.SetItemSynchronized(itemIdToReset, isSynchronized: false);
             }
         }
 

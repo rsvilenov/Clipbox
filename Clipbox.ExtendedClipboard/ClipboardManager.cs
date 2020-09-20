@@ -723,7 +723,7 @@ namespace Clipbox.ExtendedClipboard
 #region Serialization
         
 
-        public void SetItemSynchronized(string id)
+        public void SetItemSynchronized(string id, bool isSynchronized = true)
         {
             if (_deletedSyncedClipboardItemIds.Contains(id))
             {
@@ -740,7 +740,7 @@ namespace Clipbox.ExtendedClipboard
                     // that the item has been modified and will
                     // upload it to the cloud again with the different
                     // timestamp.
-                    itemToUpdate.IsSynchronizedWithCloud = true;
+                    itemToUpdate.IsSynchronizedWithCloud = isSynchronized;
 
                     // make sure that we have told the persistence helper
                     // not to check whether the item has been modified before saving.
