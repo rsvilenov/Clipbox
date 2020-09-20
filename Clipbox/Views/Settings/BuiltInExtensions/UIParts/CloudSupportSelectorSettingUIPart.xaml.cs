@@ -74,6 +74,8 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
         private void OkCommandHandler()
         {
             CloudExtensionName = SelectedCloudInfoDisplayData.Name;
+            CloudExtensionIcon = SelectedCloudInfoDisplayData.Icon;
+
             cloudSelectorPopup.IsOpen = false;
         }
 
@@ -94,6 +96,7 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
                     else
                     {
                         SelectedCloudInfoDisplayData = AvailableCloudExtensions.First(ace => ace.Name == CloudExtensionName);
+                        CloudExtensionIcon = SelectedCloudInfoDisplayData.Icon;
                     }
                 }
             }
@@ -161,6 +164,18 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
 
 
 
+
+        public ImageSource CloudExtensionIcon
+        {
+            get { return (ImageSource)GetValue(CloudExtensionIconconProperty); }
+            set { SetValue(CloudExtensionIconconProperty, value); }
+        }
+
+        public static readonly DependencyProperty CloudExtensionIconconProperty =
+            DependencyProperty.Register(nameof(CloudExtensionIcon), typeof(ImageSource), typeof(CloudSupportSelectorSettingUIPart), new PropertyMetadata(null));
+
+
+
         public string CloudExtensionName
         {
             get { return (string)GetValue(CloudExtensionNameProperty); }
@@ -187,6 +202,7 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
             if (AvailableCloudExtensions.Any() && !string.IsNullOrEmpty(CloudExtensionName))
             {
                 SelectedCloudInfoDisplayData = AvailableCloudExtensions.First(ace => ace.Name == CloudExtensionName);
+                CloudExtensionIcon = SelectedCloudInfoDisplayData.Icon;
             }
         }
 

@@ -208,7 +208,7 @@
                 <Image
                     Height="25"
                     Margin="0,0,20,0"
-                    Source="{Binding SelectedCloudInfoDisplayData.Icon}"
+                    Source="{Binding CloudExtensionIcon}"
                     Stretch="Uniform" />
 
                 <Button
