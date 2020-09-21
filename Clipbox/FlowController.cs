@@ -246,10 +246,10 @@ namespace Clipbox
         private void RequestOpenQuickViewWindow()
         {
             bool cancel = false;
-            _hasQuickViewWindowShowingBeenRequested = true;
             _flowExtensionExecutorService.OnShowQuickViewWindowRequestedMethods(ref cancel);
-            if (!cancel)
+            if (!cancel && !_mainViewWindowService.IsOpen)
             {
+                _hasQuickViewWindowShowingBeenRequested = true;
                 _quickViewWindowService.ShowQuickClipboardViewWindow();
             }
         }
