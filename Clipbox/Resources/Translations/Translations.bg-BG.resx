@@ -249,6 +249,9 @@
   <data name="LBL_MAINVIEW_UI_EXT_PANEL" xml:space="preserve">
     <value>Промени:</value>
   </data>
+  <data name="LBL_OPEN_MAIN_VIEW_REQUESTED_POPUP" xml:space="preserve">
+    <value>За да отворите прегледа на цял екран, моля първо затворете този прозорец.</value>
+  </data>
   <data name="LBL_QV_INCOMPATIBLE_ITEMS" xml:space="preserve">
     <value>Несъвместими елементи.</value>
   </data>

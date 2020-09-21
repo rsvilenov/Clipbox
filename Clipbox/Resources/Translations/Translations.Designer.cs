@@ -457,6 +457,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to To open the fullscreen view, please close this window first..
+        /// </summary>
+        internal static string LBL_OPEN_MAIN_VIEW_REQUESTED_POPUP {
+            get {
+                return ResourceManager.GetString("LBL_OPEN_MAIN_VIEW_REQUESTED_POPUP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Incompatible items..
         /// </summary>
         internal static string LBL_QV_INCOMPATIBLE_ITEMS {

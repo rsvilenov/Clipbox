@@ -33,6 +33,7 @@
                                 <Setter Property="Content">
                                     <Setter.Value>
                                         <TextBlock
+                                            Margin="10"
                                             HorizontalAlignment="Stretch"
                                             VerticalAlignment="Stretch"
                                             FontSize="16"

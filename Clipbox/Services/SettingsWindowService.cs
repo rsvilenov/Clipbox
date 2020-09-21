@@ -2,6 +2,7 @@
 using Clipbox.Services.Interfaces;
 using Clipbox.Views.Settings;
 using System;
+using System.Windows.Threading;
 
 namespace Clipbox.Services
 {
@@ -30,11 +31,22 @@ namespace Clipbox.Services
             _extContainer = extContainer;
 
             _mainClipboardViewWindowService.SettingsWindowOpenRequested += _mainClipboardViewWindowService_SettingsWindowOpenRequested;
+            _mainClipboardViewWindowService.OpenMainWindowRequested += _mainClipboardViewWindowService_OpenMainWindowRequested;
             _trayContextMenuService.SettingsWindowOpenRequested += _trayContextMenuService_SettingsWindowOpenRequested;
+        }
+
+        private void _mainClipboardViewWindowService_OpenMainWindowRequested(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (_settingsWindow?.IsVisible == true)
+            {
+                _settingsWindow?.ActivateFromTray();
+                e.Cancel = true;
+            }
         }
 
         private void _trayContextMenuService_SettingsWindowOpenRequested(object sender, EventArgs e)
         {
+            _mainClipboardViewWindowService.Close();
             OpenSettingsWindow();
         }
 

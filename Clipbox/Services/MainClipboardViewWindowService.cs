@@ -164,6 +164,7 @@ namespace Clipbox.Services
 
         private void _mainWindow_SettingsWindowOpenRequested(object sender, EventArgs e)
         {
+            Close();
             SettingsWindowOpenRequested?.Invoke(this, new EventArgs());
         }
 

@@ -259,13 +259,10 @@ namespace Clipbox.Views.Settings
         private void Ext_AppRestartRequestor_RestartAppRequested(object sender, EventArgs e)
         {
             restartConfirmationPopup.IsOpen = true;
-            this.IsEnabled = false;
         }
 
         private void RestartConfirmationPopup_DialogAnswered(object sender, DialogAnswerEventArgs e)
         {
-            this.IsEnabled = true;
-
             if (e.SelectedButton == DialogButtons.Yes)
             {
                 // if we exit with exit code Special, the Guard will restart us.
@@ -495,6 +492,16 @@ namespace Clipbox.Views.Settings
         private void BtnEnableAdvanced_Click(object sender, RoutedEventArgs e)
         {
             IsAdvancedTabEnabled = true;
+        }
+
+        public void ActivateFromTray()
+        {
+            Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle,
+                    new Action(() =>
+                    {
+                        base.Activate();
+                        openMainViewRequestedPopup.IsOpen = true;
+                    }));
         }
     }
 }

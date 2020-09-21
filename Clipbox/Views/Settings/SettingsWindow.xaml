@@ -599,6 +599,19 @@
             DialogText="{loc:Localize LBL_RESTART_REQUIRED_CONFIRMATION,
                                       ResourceLookupMode=CurrentAssembly}"
             DialogueType="YesNo"
+            DisableParentWindow="True"
+            IsOpen="False"
+            Placement="Center"
+            PlacementTarget="{Binding ElementName=mainGrid}"
+            ReturnFocusTo="{Binding ElementName=tabControl}" />
+
+        <localDialog:DialogPopup
+            x:Name="openMainViewRequestedPopup"
+            MaxWidth="370"
+            DialogText="{loc:Localize LBL_OPEN_MAIN_VIEW_REQUESTED_POPUP,
+                                      ResourceLookupMode=CurrentAssembly}"
+            DialogueType="Ok"
+            DisableParentWindow="True"
             IsOpen="False"
             Placement="Center"
             PlacementTarget="{Binding ElementName=mainGrid}"

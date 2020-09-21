@@ -15,6 +15,8 @@ namespace Clipbox.Views.Dialog
 
         public event EventHandler<DialogAnswerEventArgs> DialogAnswered;
 
+        private bool _hasParentWindowBeenDisabledByMe;
+
         public DialogButtons DefaultButton
         {
             get { return (DialogButtons)GetValue(DefaultButtonProperty); }
@@ -65,6 +67,17 @@ namespace Clipbox.Views.Dialog
         
         public static readonly DependencyProperty ReturnFocusToProperty =
             DependencyProperty.Register(nameof(ReturnFocusTo), typeof(IInputElement), typeof(DialogPopup), new PropertyMetadata(null));
+
+
+
+        public bool DisableParentWindow
+        {
+            get { return (bool)GetValue(DisableParentWindowProperty); }
+            set { SetValue(DisableParentWindowProperty, value); }
+        }
+
+        public static readonly DependencyProperty DisableParentWindowProperty =
+            DependencyProperty.Register(nameof(DisableParentWindow), typeof(bool), typeof(DialogPopup), new PropertyMetadata(false));
 
 
 
@@ -120,6 +133,13 @@ namespace Clipbox.Views.Dialog
                 ReturnFocusTo = Keyboard.FocusedElement;
             }
 
+            if (DisableParentWindow &&
+               Window.GetWindow(this.Parent) is Window parentWindow)
+            {
+                parentWindow.IsEnabled = false;
+                _hasParentWindowBeenDisabledByMe = true;
+            }
+
             this.Child.Focusable = true;
 
             switch (DefaultButton)
@@ -141,6 +161,12 @@ namespace Clipbox.Views.Dialog
             if (ReturnFocusTo != null)
             {
                 Keyboard.Focus(ReturnFocusTo);
+            }
+
+            if (_hasParentWindowBeenDisabledByMe &&
+                Window.GetWindow(this.Parent) is Window parentWindow)
+            {
+                parentWindow.IsEnabled = true;
             }
         }
 
