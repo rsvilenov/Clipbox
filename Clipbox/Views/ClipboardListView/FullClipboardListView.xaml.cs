@@ -4,6 +4,7 @@ using Clipbox.ViewModels.BindableObjects;
 using Clipbox.Views.EventArgsClasses;
 using Clipbox.Win32.Native;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
@@ -47,7 +48,7 @@ namespace Clipbox.Views.ClipboardListView
 
         public int DoubleClickDetectionWaitIntervalMs;
         
-        private Timer _postSelectionUtilsTimer;
+        private System.Timers.Timer _postSelectionUtilsTimer;
 
         private SlidingTimer _scrollbarThumbPositionChangedSlidingTimer;
 
@@ -217,6 +218,8 @@ namespace Clipbox.Views.ClipboardListView
 
         private void _postSelectionUtilsTimer_Elapsed(object sender, EventArgs e)
         {
+            _selectedItemsBeforePotentialDoubleClick.Clear();
+
             ClipboardItemContentControl_MouseDoubleClickDetection_SingleClickDetected?.Invoke(this, e);
         }
 
@@ -249,10 +252,22 @@ namespace Clipbox.Views.ClipboardListView
             ClipboardItemsPanel_KeyUp?.Invoke(this, e);
         }
 
+        ConcurrentStack<ClipboardViewItemWrapper> _selectedItemsBeforePotentialDoubleClick = new ConcurrentStack<ClipboardViewItemWrapper>();
         private void ContentControl_PreviewMouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (e.ClickCount == 1)
             {
+                // the single click (or the first click of a double-click) will unselect the
+                // selected items, so we need to save them. We have to restore the selection
+                // if a double click is detected, so all the selected items will run the 
+                // animation, showing that they are going to the system clipboard.
+                _selectedItemsBeforePotentialDoubleClick.Clear();
+                ClipboardViewItemWrapper[] selectedItemsWrappers = this.SelectedItems.Cast<ClipboardViewItemWrapper>().ToArray();
+                if (selectedItemsWrappers.Length > 0)
+                {
+                    _selectedItemsBeforePotentialDoubleClick.PushRange(selectedItemsWrappers, 0, selectedItemsWrappers.Length);
+                }
+
                 ClipboardItemContentControl_MouseDoubleClickDetectionStarted?.Invoke(this, e);
                 _postSelectionUtilsTimer.Start();
             }
@@ -268,7 +283,7 @@ namespace Clipbox.Views.ClipboardListView
                 if (clickOriginalSourceElement != null)
                 {
                     Clipbox.Views.ClipboardViewItemTile.MultiItemPresenter mip = Traversing.FindParent<Clipbox.Views.ClipboardViewItemTile.MultiItemPresenter>(clickOriginalSourceElement);
-                   if (mip != null)
+                    if (mip != null)
                     {
                         ListViewItem subLvi = Traversing.FindParent<ListViewItem>(clickOriginalSourceElement);
                         if (subLvi != null)
@@ -287,6 +302,22 @@ namespace Clipbox.Views.ClipboardListView
                         this.SelectedItems.Add(itemWrapper);
                     }
                 }
+
+                // restore the selected items (if there were any), which were unselected
+                // by the first click in the double-click sequence.
+                while (!_selectedItemsBeforePotentialDoubleClick.IsEmpty)
+                {
+                    if (_selectedItemsBeforePotentialDoubleClick.TryPop(out ClipboardViewItemWrapper itemWrapper))
+                    {
+                        if (!itemWrapper.IsSelected
+                            && !this.SelectedItems.Contains(itemWrapper))
+                        {
+                            itemWrapper.IsSelected = true;
+                            this.SelectedItems.Add(itemWrapper);
+                        }
+                    }
+                }
+
 
                 // cancel the second click in a doubleclick so that it won't deselect the item
                 e.Handled = true;
