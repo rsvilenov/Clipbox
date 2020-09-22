@@ -500,6 +500,14 @@ namespace Clipbox.Views.Settings
                     new Action(() =>
                     {
                         base.Activate();
+                    }));
+        }
+
+        public void ShowMainViewRequestedPopup()
+        {
+            Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle,
+                    new Action(() =>
+                    {
                         openMainViewRequestedPopup.IsOpen = true;
                     }));
         }

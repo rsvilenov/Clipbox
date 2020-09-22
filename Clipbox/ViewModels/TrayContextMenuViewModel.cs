@@ -3,16 +3,19 @@ using Clipbox.Infrastructure.UI;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 
 namespace Clipbox.ViewModels
 {
-    public class TrayContextMenuViewModel : BindableObject
+    public class TrayContextMenuViewModel : BindableObject, IDisposable
     {
         private readonly ISettingsService _settingsService;
         private readonly IPauseService _pauseService;
+        private readonly IMainClipboardViewWindowService _mainClipboardViewWindowService;
 
+        private bool _isDisposed;
 
         public event EventHandler ToggleMainWindowOpenRequested;
 
@@ -51,10 +54,14 @@ namespace Clipbox.ViewModels
             set { SetField(ref _isMainWindowOpen, value); }
         }
 
-        public TrayContextMenuViewModel(ISettingsService settingsService, IPauseService pauseService)
+        public TrayContextMenuViewModel(ISettingsService settingsService, IPauseService pauseService, IMainClipboardViewWindowService mainClipboardViewWindowService)
         {
             _settingsService = settingsService;
             _pauseService = pauseService;
+            _mainClipboardViewWindowService = mainClipboardViewWindowService;
+
+            _mainClipboardViewWindowService.MainWindowOpened += _mainClipboardViewWindowService_MainWindowOpened;
+            _mainClipboardViewWindowService.MainWindowClosed += _mainClipboardViewWindowService_MainWindowClosed;
 
             IsCloudSyncEnabled = _settingsService.GetSetting<bool>(SettingsKeys.IsCloudSyncEnabled);
             IsPaused = !_settingsService.GetSetting<bool>(SettingsKeys.IsClipboardTrackingEnabled);
@@ -62,12 +69,21 @@ namespace Clipbox.ViewModels
             ToggleCloudSyncEnabled = new DelegateCommand(ToggleCloudSyncEnabledHandler);
             Pause = new DelegateCommand<object>(PauseHandler);
             Resume = new DelegateCommand(ResumeHandler);
-            ToggleMainWindowOpen = new DelegateCommand(ToggleMainWindowOpenHandler);
-
+            ToggleMainWindowOpen = new DelegateCommand(() => Task.Run(() => ToggleMainWindowOpenRequested?.Invoke(this, new EventArgs())));
+            OpenSettingsWindow = new DelegateCommand(() => Task.Run(() => SettingsWindowOpenRequested?.Invoke(this, new EventArgs())));
             Quit = new DelegateCommand(QuitHandler);
-            OpenSettingsWindow = new DelegateCommand(async () => SettingsWindowOpenRequested?.Invoke(this, new EventArgs()));
 
             _settingsService.SettingChanged += _settingsService_SettingChanged;
+        }
+
+        private void _mainClipboardViewWindowService_MainWindowClosed(object sender, EventArgs e)
+        {
+            IsMainWindowOpen = false;
+        }
+
+        private void _mainClipboardViewWindowService_MainWindowOpened(object sender, EventArgs e)
+        {
+            IsMainWindowOpen = true;
         }
 
         private void _settingsService_SettingChanged(object sender, Services.EventArgsClasses.SettingsEventArgs e)
@@ -95,12 +111,6 @@ namespace Clipbox.ViewModels
         private void QuitHandler()
         {
             Application.Current.Shutdown((int)ProcessExitCodes.Ok);
-        }
-
-        private void ToggleMainWindowOpenHandler()
-        {
-            ToggleMainWindowOpenRequested?.Invoke(this, new EventArgs());
-            IsMainWindowOpen = !IsMainWindowOpen;
         }
 
         private void PauseHandler(object intervalObj)
@@ -135,6 +145,18 @@ namespace Clipbox.ViewModels
             {
                 _settingsService.SetSetting(SettingsKeys.IsCloudSyncEnabled, true);
                 IsCloudSyncEnabled = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            if (!_isDisposed)
+            {
+                _mainClipboardViewWindowService.MainWindowOpened -= _mainClipboardViewWindowService_MainWindowOpened;
+                _mainClipboardViewWindowService.MainWindowClosed -= _mainClipboardViewWindowService_MainWindowClosed;
+                _settingsService.SettingChanged -= _settingsService_SettingChanged;
+
+                _isDisposed = true;
             }
         }
     }

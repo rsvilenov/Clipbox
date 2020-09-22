@@ -19,5 +19,9 @@ namespace Clipbox.Services.Interfaces
         event EventHandler RebuildIndexRequested;
 
         event EventHandler<CancelEventArgs> OpenMainWindowRequested;
+
+        event EventHandler MainWindowOpened;
+
+        event EventHandler MainWindowClosed;
     }
 }

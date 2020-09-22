@@ -24,27 +24,20 @@ namespace Clipbox.Services
         private static readonly object _mainWindowLockHandle = new object();
 
         private readonly ISettingsService _settingsService;
-        
         private readonly IClipboardManager _clipboardManager;
-
         private readonly IPreviewGenerationService _previewGenerationService;
-
         private readonly ISearchService _searchService;
-
         private readonly ICloudSynchronizationService _cloudSyncService;
-
         private readonly UIExtensionContainer _uiExtContainer;
         
         private IMainWindow _mainWindow;
 
         public event EventHandler<SetToClipboardEventArgs> SetItemsToClipboardRequested;
-
         public event EventHandler SettingsWindowOpenRequested;
-
         public event EventHandler RebuildIndexRequested;
-
         public event EventHandler<CancelEventArgs> OpenMainWindowRequested;
-
+        public event EventHandler MainWindowOpened;
+        public event EventHandler MainWindowClosed;
         public bool IsOpen
         {
             get
@@ -97,6 +90,8 @@ namespace Clipbox.Services
                         _mainWindow.Close();
                         //_mainWindow.Close();
                         _mainWindow = null;
+
+                        MainWindowClosed?.Invoke(this, new EventArgs());
                     }
                 }));
             
@@ -158,6 +153,8 @@ namespace Clipbox.Services
                         
 
                         _mainWindow.Show();
+
+                        MainWindowOpened?.Invoke(this, new EventArgs());
                     }
                 }));
         }

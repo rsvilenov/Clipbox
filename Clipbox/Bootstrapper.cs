@@ -199,8 +199,7 @@ namespace Clipbox
             _cloudSyncService = new CloudSynchronizationService(_clipboardManager, _settingsService, _extensionLoader.CloudSupportExtensionContainer, appGuid);
             
             _pauseService = new PauseService(_settingsService);
-            _trayContextMenuService = new TrayContextMenuService(_settingsService, _pauseService);
-
+            
             _searchProviderSelectorService = new SearchProviderSelectorService(_settingsService, _persistenceProvider, encryptionProvider, sessionId);
             ISearchProvider searchProvider = _searchProviderSelectorService.GetSearchProvider();
 
@@ -221,11 +220,14 @@ namespace Clipbox
             //_mainWindow = new MainWindow(_settingsService);
             //Application.Current.MainWindow = _mainWindow;
 
-            _trayBandService = new TrayBandService(_mainClipboardViewWindowService, _trayContextMenuService, _settingsService);
-
+            
             _trayService = new TrayIconService(_mainClipboardViewWindowService, _trayContextMenuService, _settingsService, _pauseService);
 
-            _settingsWindowService = new SettingsWindowService(_settingsService, _mainClipboardViewWindowService, _trayContextMenuService, _cloudSyncService, _extensionLoader.SettingsUIExtensionContainer);
+            _settingsWindowService = new SettingsWindowService(_settingsService, _mainClipboardViewWindowService, _cloudSyncService, _extensionLoader.SettingsUIExtensionContainer);
+
+            _trayContextMenuService = new TrayContextMenuService(_settingsService, _pauseService, _mainClipboardViewWindowService, _settingsWindowService);
+            
+            _trayBandService = new TrayBandService(_mainClipboardViewWindowService, _trayContextMenuService, _settingsService);
 
             _rebuildIndexWindowService = new RebuildIndexWindowService(_searchService, _mainClipboardViewWindowService, _clipboardManager);
 

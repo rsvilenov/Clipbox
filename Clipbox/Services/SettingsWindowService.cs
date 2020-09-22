@@ -2,6 +2,7 @@
 using Clipbox.Services.Interfaces;
 using Clipbox.Views.Settings;
 using System;
+using System.Windows;
 using System.Windows.Threading;
 
 namespace Clipbox.Services
@@ -9,7 +10,6 @@ namespace Clipbox.Services
     internal class SettingsWindowService : ISettingsWindowService, IDisposable
     {
         private readonly ISettingsService _settingsService;
-        private readonly ITrayContextMenuService _trayContextMenuService;
         private readonly ICloudSynchronizationService _cloudSyncService;
         private readonly SettingsUIExtensionContainer _extContainer;
 
@@ -18,36 +18,17 @@ namespace Clipbox.Services
 
         public SettingsWindowService(ISettingsService settingsService,
             IMainClipboardViewWindowService mainClipboardViewWindowService,
-            ITrayContextMenuService trayContextMenuService,
             ICloudSynchronizationService cloudSyncService,
             SettingsUIExtensionContainer extContainer)
         {
             _settingsService = settingsService;
-            _trayContextMenuService = trayContextMenuService;
             _cloudSyncService = cloudSyncService;
 
             _mainClipboardViewWindowService = mainClipboardViewWindowService;
+            _mainClipboardViewWindowService.OpenMainWindowRequested += _mainClipboardViewWindowService_OpenMainWindowRequested;
+            _mainClipboardViewWindowService.SettingsWindowOpenRequested += _mainClipboardViewWindowService_SettingsWindowOpenRequested;
 
             _extContainer = extContainer;
-
-            _mainClipboardViewWindowService.SettingsWindowOpenRequested += _mainClipboardViewWindowService_SettingsWindowOpenRequested;
-            _mainClipboardViewWindowService.OpenMainWindowRequested += _mainClipboardViewWindowService_OpenMainWindowRequested;
-            _trayContextMenuService.SettingsWindowOpenRequested += _trayContextMenuService_SettingsWindowOpenRequested;
-        }
-
-        private void _mainClipboardViewWindowService_OpenMainWindowRequested(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            if (_settingsWindow?.IsVisible == true)
-            {
-                _settingsWindow?.ActivateFromTray();
-                e.Cancel = true;
-            }
-        }
-
-        private void _trayContextMenuService_SettingsWindowOpenRequested(object sender, EventArgs e)
-        {
-            _mainClipboardViewWindowService.Close();
-            OpenSettingsWindow();
         }
 
         private void _mainClipboardViewWindowService_SettingsWindowOpenRequested(object sender, EventArgs e)
@@ -55,17 +36,49 @@ namespace Clipbox.Services
             OpenSettingsWindow();
         }
 
-        private void OpenSettingsWindow()
+        private void _mainClipboardViewWindowService_OpenMainWindowRequested(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            // TODO: memory leak - the window never frees its memory
-            _settingsWindow = new SettingsWindow(_settingsService, _cloudSyncService, _extContainer);
-            _settingsWindow.Show();
+            if (IsSettingsWindowOpen)
+            {
+                BringSettingsWindowToFront();
+                ShowMainViewRequestedPopup();
+                e.Cancel = true;
+            }
+        }
+
+        public bool IsSettingsWindowOpen { get { return _settingsWindow?.IsVisible == true; } }
+
+        private void BringSettingsWindowToFront()
+        {
+            if (_settingsWindow?.IsVisible == true)
+            {
+                _settingsWindow?.ActivateFromTray();
+            }
+        }
+
+        private void ShowMainViewRequestedPopup()
+        {
+            if (_settingsWindow?.IsVisible == true)
+            {
+                _settingsWindow?.ShowMainViewRequestedPopup();
+            }
+        }
+
+        public void OpenSettingsWindow()
+        {
+            Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle,
+                new Action(() =>
+                {
+                    // TODO: memory leak - the window never frees its memory
+                    _settingsWindow = new SettingsWindow(_settingsService, _cloudSyncService, _extContainer);
+                    _settingsWindow.Show();
+                }));
         }
 
         public void Dispose()
         {
+            _mainClipboardViewWindowService.OpenMainWindowRequested -= _mainClipboardViewWindowService_OpenMainWindowRequested;
             _mainClipboardViewWindowService.SettingsWindowOpenRequested -= _mainClipboardViewWindowService_SettingsWindowOpenRequested;
-            _trayContextMenuService.SettingsWindowOpenRequested -= _trayContextMenuService_SettingsWindowOpenRequested;
         }
     }
 }
