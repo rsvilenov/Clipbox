@@ -16,6 +16,7 @@ namespace Clipbox.ViewModels
 {
     public class MainViewClipboardContentsViewModel : ClipboardContentsViewModelBase
     {
+        private readonly IClipboardManager _clipboardManager;
         private readonly ISettingsService _settingsService;
         private readonly ISearchService _searchService;
         private readonly ICloudSynchronizationService _cloudSyncService;
@@ -33,12 +34,13 @@ namespace Clipbox.ViewModels
             _settingsService = settingsService;
             _searchService = searchService;
             _cloudSyncService = cloudSyncService;
+            _clipboardManager = clipboardManager;
 
             _settingsService.SettingChanged += _settingsService_SettingChanged;
             _cloudSyncService.AuthenticationStateChanged += _cloudSyncService_AuthenticationStateChanged;
             _cloudSyncService.ItemSynced += _cloudSyncService_ItemSynced;
 
-            clipboardManager.ItemAdded += ClipboardManager_ItemAdded;
+            _clipboardManager.ItemAdded += ClipboardManager_ItemAdded;
 
             IsCloudSyncAvailable = CheckIsCloudServiceAvailable();
 
@@ -250,7 +252,10 @@ namespace Clipbox.ViewModels
             // which is the same as the lifetime of the program.
             _cloudSyncService.AuthenticationStateChanged -= _cloudSyncService_AuthenticationStateChanged;
             _cloudSyncService.ItemSynced -= _cloudSyncService_ItemSynced;
-            
+
+            _clipboardManager.ItemAdded -= ClipboardManager_ItemAdded;
+
+            _settingsService.SettingChanged -= _settingsService_SettingChanged;
             // without cleaning this collection, we get a memory leak
             // if the view is closed without the items are fully loaded.
             ClipboardViewItemWrappers.Clear();
