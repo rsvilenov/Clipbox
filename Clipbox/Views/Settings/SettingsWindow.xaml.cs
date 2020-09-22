@@ -535,9 +535,12 @@ namespace Clipbox.Views.Settings
                     }));
         }
 
+#if DEBUG
         ~SettingsWindow()
         {
-
+            System.Diagnostics.Debug.WriteLine("GC-ing SettingsWindow");
         }
+#endif
+
     }
 }
