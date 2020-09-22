@@ -23,8 +23,10 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
     /// <summary>
     /// Interaction logic for CloudSupportSelectorSettingUIPart.xaml
     /// </summary>
-    public partial class CloudSupportSelectorSettingUIPart : SettingUIPart<string>
+    public partial class CloudSupportSelectorSettingUIPart : SettingUIPart<string>, IDisposable
     {
+        private bool _isDisposed;
+
         public ICommand OkClicked { get; }
         public ICommand CancelClicked { get; }
         public ICommand ChangeClicked { get; }
@@ -323,6 +325,18 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
             _cloudSyncSvc.AuthenticationStateChanged -= _cloudSyncSvc_AuthenticationStateChanged;
             _cloudSyncSvc.NetworkAvailabilityChanged -= _cloudSyncSvc_NetworkAvailabilityChanged;
             _cloudSyncSvc.ErrorOccurred -= _cloudSyncSvc_ErrorOccurred;
+        }
+
+        public void Dispose()
+        {
+            if (_cloudSyncSvc != null && !_isDisposed)
+            {
+                _cloudSyncSvc.AuthenticationStateChanged -= _cloudSyncSvc_AuthenticationStateChanged;
+                _cloudSyncSvc.NetworkAvailabilityChanged -= _cloudSyncSvc_NetworkAvailabilityChanged;
+                _cloudSyncSvc.ErrorOccurred -= _cloudSyncSvc_ErrorOccurred;
+
+                _isDisposed = true;
+            }
         }
 
         public string ErrorMessage

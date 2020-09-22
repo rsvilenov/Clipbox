@@ -54,6 +54,11 @@ namespace Clipbox.Views
 
         public void OpenAtPoint(Point p)
         {
+            if (_isDisposed)
+            {
+                throw new ObjectDisposedException(this.GetType().FullName);
+            }
+
             _trayContextMenu.Dispatcher.BeginInvoke(DispatcherPriority.Send, new Action(() =>
             {
                 _trayContextMenu.DataContext = this.DataContext;
@@ -68,6 +73,11 @@ namespace Clipbox.Views
 
         public void Close()
         {
+            if (_isDisposed)
+            {
+                throw new ObjectDisposedException(this.GetType().FullName);
+            }
+
             _trayContextMenu.Dispatcher.BeginInvoke(DispatcherPriority.Send, new Action(() =>
             {
                 _trayContextMenu.IsOpen = false;

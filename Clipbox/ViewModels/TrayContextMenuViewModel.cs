@@ -54,11 +54,13 @@ namespace Clipbox.ViewModels
             set { SetField(ref _isMainWindowOpen, value); }
         }
 
-        public TrayContextMenuViewModel(ISettingsService settingsService, IPauseService pauseService, IMainClipboardViewWindowService mainClipboardViewWindowService)
+        public TrayContextMenuViewModel(ISettingsService settingsService,
+            IPauseService pauseService, 
+            IMainClipboardViewWindowService mainClipboardViewWindowService)
         {
-            _settingsService = settingsService;
-            _pauseService = pauseService;
-            _mainClipboardViewWindowService = mainClipboardViewWindowService;
+            _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
+            _pauseService = pauseService ?? throw new ArgumentNullException(nameof(pauseService));
+            _mainClipboardViewWindowService = mainClipboardViewWindowService ?? throw new ArgumentNullException(nameof(pauseService));
 
             _mainClipboardViewWindowService.MainWindowOpened += _mainClipboardViewWindowService_MainWindowOpened;
             _mainClipboardViewWindowService.MainWindowClosed += _mainClipboardViewWindowService_MainWindowClosed;

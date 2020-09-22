@@ -3,11 +3,14 @@ using Clipbox.Core.Extensibility.Enums;
 using Clipbox.Infrastructure.UI;
 using Clipbox.Settings;
 using Clipbox.Views.Settings.BuiltInExtensions.UIParts;
+using System;
 
 namespace Clipbox.Views.Settings.BuiltInExtensions
 {
-    public class AdvancedBuiltInSettingsUIExtension : BuiltInSettingsUIExtension
+    public class AdvancedBuiltInSettingsUIExtension : BuiltInSettingsUIExtension, IDisposable
     {
+        private bool _isDisposed;
+
         private ExternalSearchProcessSettingUIPart _extenralSearchProcessSettingUIPart;
         private MaxPreviewTasksSettingUIPart _maxPreviewTasksSettingUIPart;
 
@@ -93,6 +96,14 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
             else if (settingKey == SettingsKeys.AutoDetermineMaxSimultaneousPreviewTasks)
             {
                 _maxPreviewTasksSettingUIPart?.SetIsVisible(!GetSetting<bool>(SettingsKeys.AutoDetermineMaxSimultaneousPreviewTasks));
+            }
+        }
+
+        public void Dispose()
+        {
+            if (!_isDisposed)
+            {
+                _restartAppDialogSlidingTimer.Dispose();
             }
         }
     }

@@ -71,8 +71,23 @@ namespace Clipbox.Services
                 {
                     // TODO: memory leak - the window never frees its memory
                     _settingsWindow = new SettingsWindow(_settingsService, _cloudSyncService, _extContainer);
+                    // this event never fires
+                    //_settingsWindow.Closed += _settingsWindow_Closed;
+                    _settingsWindow.Closing += _settingsWindow_Closing;
                     _settingsWindow.Show();
                 }));
+        }
+
+        private void _settingsWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            _settingsWindow.Closing -= _settingsWindow_Closing;
+            _settingsWindow = null;
+        }
+
+        private void _settingsWindow_Closed(object sender, EventArgs e)
+        {
+            _settingsWindow.Closed -= _settingsWindow_Closed;
+            _settingsWindow = null;
         }
 
         public void Dispose()

@@ -4,11 +4,14 @@ using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.Views.Settings.BuiltInExtensions.UIParts;
 using Clipbox.Views.Settings.Interfaces;
+using System;
 
 namespace Clipbox.Views.Settings.BuiltInExtensions
 {
-    public class CloudBuiltInSettingsUIExtension : BuiltInSettingsUIExtension, ICloudSyncServiceConsumer
+    public class CloudBuiltInSettingsUIExtension : BuiltInSettingsUIExtension, ICloudSyncServiceConsumer, IDisposable
     {
+        private bool _isDisposed;
+
         private AutoCloudSyncPinnedItemsSettingUIPart _autoCloudSyncPinnedItemsSettingUIPart;
         private CloudSupportSelectorSettingUIPart _cloudSupportSelectorSettingUIPart;
         private IsCloudSyncEnabledSettingUIPart _isCloudSyncEnabledSettingUIPart;
@@ -88,6 +91,14 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
         public void SetCloudSyncService(ICloudSynchronizationService cloudSyncSvc)
         {
             _cloudSupportSelectorSettingUIPart.SetCloudSyncService(cloudSyncSvc);
+        }
+
+        public void Dispose()
+        {
+            if (!_isDisposed)
+            {
+                _cloudSupportSelectorSettingUIPart?.Dispose();
+            }
         }
     }
 }

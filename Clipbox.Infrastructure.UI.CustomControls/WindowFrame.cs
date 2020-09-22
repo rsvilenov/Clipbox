@@ -2,14 +2,19 @@
 using Clipbox.Win32;
 using System;
 using System.Windows;
+using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Shell;
 
 namespace Clipbox.Infrastructure.UI.CustomControls
 {
     [TemplatePart(Name = "PART_Caption", Type = typeof(FrameworkElement))]
     public class WindowFrame : AcryllicWindow
     {
+        private FrameworkElement _container;
+        private Thumb _bottomRightResizeThumb;
+
         static WindowFrame()
         {
             DefaultStyleKeyProperty.OverrideMetadata(typeof(WindowFrame), new FrameworkPropertyMetadata(typeof(WindowFrame)));
@@ -126,18 +131,33 @@ namespace Clipbox.Infrastructure.UI.CustomControls
         
         public override void OnApplyTemplate()
         {
-            if (!(this.Template.FindName("PART_Caption", this) is FrameworkElement container))
+            _container = this.Template.FindName("PART_Caption", this) as FrameworkElement;
+            if (_container == null)
             {
                 throw new InvalidOperationException("PART_Caption is not present in the template or it is not a FrameworkElement.");
             }
-            
-            container.MouseMove += Container_MouseMove;
-            container.PreviewMouseLeftButtonDown += Container_PreviewMouseLeftButtonDown;
-            
+
+            _container.MouseMove += Container_MouseMove;
+            _container.PreviewMouseLeftButtonDown += Container_PreviewMouseLeftButtonDown;
+
+            _bottomRightResizeThumb = this.Template.FindName("PART_BottomRightResizeThumb", this) as Thumb;
+            if (_bottomRightResizeThumb != null)
+            {
+                _bottomRightResizeThumb.DragDelta += _bottomRightResizeThumb_DragDelta;
+            }
+
             this.CommandBindings.Add(new CommandBinding(SystemCommands.CloseWindowCommand, OnCloseWindow));
             this.CommandBindings.Add(new CommandBinding(SystemCommands.MaximizeWindowCommand, OnMaximizeWindow, OnCanResizeWindow));
             this.CommandBindings.Add(new CommandBinding(SystemCommands.MinimizeWindowCommand, OnMinimizeWindow, OnCanMinimizeWindow));
             this.CommandBindings.Add(new CommandBinding(SystemCommands.RestoreWindowCommand, OnRestoreWindow, OnCanResizeWindow));
+        }
+
+        private void _bottomRightResizeThumb_DragDelta(object sender, DragDeltaEventArgs e)
+        {
+            if (this.Width + e.HorizontalChange > 1)
+                this.Width += e.HorizontalChange;
+            if (this.Height + e.VerticalChange > 1)
+                this.Height += e.VerticalChange;
         }
 
         private void OnCanMinimizeWindow(object sender, CanExecuteRoutedEventArgs e)
@@ -152,6 +172,19 @@ namespace Clipbox.Infrastructure.UI.CustomControls
 
         private void OnCloseWindow(object sender, ExecutedRoutedEventArgs e)
         {
+            if (_container != null)
+            {
+                _container.MouseMove -= Container_MouseMove;
+                _container.PreviewMouseLeftButtonDown -= Container_PreviewMouseLeftButtonDown;
+            }
+
+            if (_bottomRightResizeThumb != null)
+            {
+                _bottomRightResizeThumb.DragDelta -= _bottomRightResizeThumb_DragDelta;
+            }
+
+            this.CommandBindings.Clear();
+
             SystemCommands.CloseWindow(this);
         }
 

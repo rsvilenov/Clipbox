@@ -25,6 +25,7 @@ using Clipbox.Views.Settings.Interfaces;
 using Clipbox.Win32;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
@@ -142,6 +143,16 @@ namespace Clipbox.Views.Settings
 
         private void SettingsWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            _settingsService.SettingChanged -= _settingsService_SettingChanged;
+
+            GeneralExtensionUIItems.Clear();
+            PreviewsExtensionUIItems.Clear();
+            CopyingExtensionUIItems.Clear();
+            PastingExtensionUIItems.Clear();
+            SecurityExtensionUIItems.Clear();
+            CloudExtensionUIItems.Clear();
+            AdvancedExtensionUIItems.Clear();
+
             foreach (ISettingsUIComponent ext in _settingUIExtensions)
             {
                 if (ext is ISettingChangeRequestor settingChangeRequestor)
@@ -149,8 +160,20 @@ namespace Clipbox.Views.Settings
                     settingChangeRequestor.RequestSettingChange -= SettingChangeRequestor_RequestSettingChange;
                 }
 
+                if (ext is ICanRequestAppRestart appRestartRequestor)
+                {
+                    appRestartRequestor.RestartAppRequested -= Ext_AppRestartRequestor_RestartAppRequested;
+                }
+
                 ext.ResultPreviewInvalidated -= Ext_ResultPreviewInvalidated;
+
+                if (ext is IDisposable disposableExt)
+                {
+                    disposableExt.Dispose();
+                }
             }
+
+            _allExtensionUIItems.Clear();
 
             _settingUIExtensions.Clear();
         }
@@ -510,6 +533,11 @@ namespace Clipbox.Views.Settings
                     {
                         openMainViewRequestedPopup.IsOpen = true;
                     }));
+        }
+
+        ~SettingsWindow()
+        {
+
         }
     }
 }

@@ -73,6 +73,11 @@ namespace Clipbox.Services
 
         public void ShowContextMenuAtPoint(Point p)
         {
+            if (_isDisposed)
+            {
+                throw new ObjectDisposedException(this.GetType().FullName);
+            }
+
             if (_trayContextMenu == null)
             {
                 _trayContextMenu = new TrayContextMenu(_trayContextMenuViewModel);

@@ -5,14 +5,12 @@
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:infBeh="clr-namespace:Clipbox.Infrastructure.UI.Behaviors;assembly=Clipbox.Infrastructure.UI">
 
-    <Style BasedOn="{StaticResource {x:Type Window}}" TargetType="{x:Type customControls:WindowFrame}">
+    <Style
+        x:Shared="False"
+        BasedOn="{StaticResource {x:Type Window}}"
+        TargetType="{x:Type customControls:WindowFrame}">
         <Setter Property="CaptionForeground" Value="White" />
         <Setter Property="CaptionBackground" Value="Black" />
-        <Setter Property="WindowChrome.WindowChrome">
-            <Setter.Value>
-                <WindowChrome CaptionHeight="0" ResizeBorderThickness="5,1,5,5" />
-            </Setter.Value>
-        </Setter>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type customControls:WindowFrame}">
@@ -125,20 +123,43 @@
 
                         </Grid>
                         <ContentPresenter Grid.Row="1" />
+                        <Thumb
+                            x:Name="PART_BottomRightResizeThumb"
+                            Grid.Row="1"
+                            Width="15"
+                            Height="15"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Bottom"
+                            Cursor="SizeNWSE">
+                            <Thumb.Template>
+                                <ControlTemplate>
+                                    <Grid Background="Transparent">
+                                        <Path
+                                            Data="M27.023987,23.459021L32,23.459021 32,27.869001 27.023987,27.869001z M18.014008,23.459021L22.98999,23.459021 22.98999,27.869001 18.014008,27.869001z M9.0100098,23.459021L13.985992,23.459021 13.985992,27.869001 9.0100098,27.869001z M0,23.459021L4.9760132,23.459021 4.9760132,27.869001 0,27.869001z M27.023987,15.639001L32,15.639001 32,20.045013 27.023987,20.045013z M18.014008,15.639001L22.98999,15.639001 22.98999,20.045013 18.014008,20.045013z M9.0100098,15.639001L13.985992,15.639001 13.985992,20.045013 9.0100098,20.045013z M27.023987,7.8189817L32,7.8189817 32,12.224995 27.023987,12.224995z M18.014008,7.8189817L22.98999,7.8189817 22.98999,12.224995 18.014008,12.224995z M27.023987,0L32,0 32,4.4060126 27.023987,4.4060126z"
+                                            Fill="{DynamicResource AccentBrush}"
+                                            RenderTransformOrigin="0.5,0.5"
+                                            Stretch="Uniform" />
+                                    </Grid>
+                                </ControlTemplate>
+                            </Thumb.Template>
+                        </Thumb>
                     </Grid>
 
                     <ControlTemplate.Triggers>
                         <Trigger Property="WindowState" Value="Normal">
                             <Setter TargetName="restoreButton" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="maximizeButton" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="PART_BottomRightResizeThumb" Property="Visibility" Value="Visible" />
                         </Trigger>
                         <Trigger Property="WindowState" Value="Maximized">
                             <Setter TargetName="restoreButton" Property="Visibility" Value="Visible" />
                             <Setter TargetName="maximizeButton" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_BottomRightResizeThumb" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                         <Trigger Property="ResizeMode" Value="NoResize">
                             <Setter TargetName="restoreButton" Property="Visibility" Value="Collapsed" />
                             <Setter TargetName="maximizeButton" Property="Visibility" Value="Collapsed" />
+                            <Setter TargetName="PART_BottomRightResizeThumb" Property="Visibility" Value="Collapsed" />
                         </Trigger>
                         <Trigger Property="IsCloseButtonVisible" Value="False">
                             <Setter TargetName="closeWindow" Property="Visibility" Value="Collapsed" />
