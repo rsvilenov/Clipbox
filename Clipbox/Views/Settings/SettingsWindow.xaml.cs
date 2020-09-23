@@ -522,6 +522,11 @@ namespace Clipbox.Views.Settings
             Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle,
                     new Action(() =>
                     {
+                        if (base.WindowState == WindowState.Minimized)
+                        {
+                            base.WindowState = WindowState.Normal;
+                        }
+
                         base.Activate();
                     }));
         }
