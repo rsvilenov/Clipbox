@@ -82,7 +82,11 @@
       <DependentUpon>GoogleCloudAuthSettingUIPart.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\dephell\Newtonsoft.Json.12.0.3.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Translations\Translations.bg-BG.resx" />
     <EmbeddedResource Include="Resources\Translations\Translations.resx">
@@ -122,6 +126,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Important.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

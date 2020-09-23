@@ -1,0 +1,20 @@
+﻿Due to the fact that Google.Drive.Api uses Newtonsoft.Json 12 and crashes if I try to make it use another version (e.g. the one needed by MS Graph),
+and the fact that if I try to set the codebase for the 12-th version in the current assembly's app.config, the CLR
+does not load it (it just ignores my app.config, probably because the current assembly is not referenced in the main project),
+I had to put the following in Clipbox project's App.config.
+This is very dirty but it was the best I could do to resolve the version conflict.
+
+    <runtime>
+      <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
+      
+        <dependentAssembly>
+          <assemblyIdentity name="Newtonsoft.Json" publicKeyToken="30ad4fe6b2a6aeed" culture="neutral"/>
+          <codeBase version="12.0.0.0" href="Resources\dephell\Newtonsoft.Json.12.0.3.dll" />
+        </dependentAssembly>
+      
+      </assemblyBinding>
+    </runtime>
+
+
+    Note: if I need to specify the target platform, I  may use something like this:
+    <codeBase version="6.0.0.0" href="Resources\dephell_x86\Newtonsoft.Json.6.0.0.0.dll" processorArchitecture="x86" />
