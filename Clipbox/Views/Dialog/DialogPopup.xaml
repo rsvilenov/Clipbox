@@ -17,7 +17,7 @@
         <Grid Margin="15" Background="{DynamicResource TaskbarColorBrush}">
             <Grid.RowDefinitions>
                 <RowDefinition MinHeight="80" />
-                <RowDefinition />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <ContentControl
@@ -25,7 +25,7 @@
                 Grid.Column="0"
                 Grid.ColumnSpan="2"
                 HorizontalAlignment="Stretch"
-                VerticalAlignment="Center">
+                VerticalAlignment="Stretch">
                 <ContentControl.Style>
                     <Style TargetType="ContentControl">
                         <Style.Triggers>
@@ -35,7 +35,7 @@
                                         <TextBlock
                                             Margin="10"
                                             HorizontalAlignment="Stretch"
-                                            VerticalAlignment="Stretch"
+                                            VerticalAlignment="Center"
                                             FontSize="16"
                                             Foreground="White"
                                             Text="{Binding DialogText}"
@@ -59,7 +59,7 @@
                 </ContentControl.Style>
             </ContentControl>
 
-            <Grid Grid.Row="1">
+            <Grid Grid.Row="1" Margin="0,5,0,0">
 
                 <Grid>
                     <Grid.ColumnDefinitions>

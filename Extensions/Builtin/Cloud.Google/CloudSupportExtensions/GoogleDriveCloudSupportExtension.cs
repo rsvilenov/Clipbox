@@ -544,7 +544,7 @@ namespace Clipbox.Extensions.BuiltIn.Cloud.Google.CloudSupportExtensions
             }
             catch (Exception ex)
             {
-                AuthenticationStageChanged?.Invoke(this, new AuthenticationStageEventArgs(AuthenticationStage.AuthenticationError, ex.ToString()));
+                AuthenticationStageChanged?.Invoke(this, new AuthenticationStageEventArgs(AuthenticationStage.AuthenticationError, ex.Message, ex.ToString()));
             }
         }
 

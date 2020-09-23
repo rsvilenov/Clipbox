@@ -94,12 +94,12 @@ namespace Clipbox.Extensions.BuiltIn.Cloud.Microsoft.CloudSupportExtensions
                         }
                         catch (MsalException msalex)
                         {
-                            AuthenticationStageChanged?.Invoke(this, new AuthenticationStageEventArgs(AuthenticationStage.AuthenticationError, msalex.Message));
+                            AuthenticationStageChanged?.Invoke(this, new AuthenticationStageEventArgs(AuthenticationStage.AuthenticationError, msalex.Message, msalex.ToString()));
                         }
                     }
                     catch (Exception ex)
                     {
-                        AuthenticationStageChanged?.Invoke(this, new AuthenticationStageEventArgs(AuthenticationStage.AuthenticationError, ex.Message));
+                        AuthenticationStageChanged?.Invoke(this, new AuthenticationStageEventArgs(AuthenticationStage.AuthenticationError, ex.Message, ex.ToString()));
                         return;
                     }
 

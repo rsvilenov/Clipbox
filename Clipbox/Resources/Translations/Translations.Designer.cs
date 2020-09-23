@@ -169,6 +169,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Copy to clipboard.
+        /// </summary>
+        internal static string BTN_SETTINGS_CLOUD_COPY_DETAILS {
+            get {
+                return ResourceManager.GetString("BTN_SETTINGS_CLOUD_COPY_DETAILS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Retry.
         /// </summary>
         internal static string BTN_SETTINGS_CLOUD_RETRY_AUTHENTICATION {
@@ -651,6 +660,15 @@ namespace Clipbox.Resources.Translations {
         internal static string LBL_SETTINGS_CLOUD_AUTH_TIMEOUT {
             get {
                 return ResourceManager.GetString("LBL_SETTINGS_CLOUD_AUTH_TIMEOUT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Details.
+        /// </summary>
+        internal static string LBL_SETTINGS_CLOUD_ERROR_DETAILS {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_CLOUD_ERROR_DETAILS", resourceCulture);
             }
         }
         

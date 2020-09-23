@@ -7,6 +7,7 @@ using Clipbox.Infrastructure.Extensibility.Loading;
 using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.Extensibility;
 using Clipbox.Infrastructure.UI.ExtensionMethods;
+using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -30,8 +31,9 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
         public ICommand OkClicked { get; }
         public ICommand CancelClicked { get; }
         public ICommand ChangeClicked { get; }
-
         public ICommand RetryClicked { get; }
+        public ICommand ShowDetailsClicked { get; }
+        public ICommand CopyDetailsToClipboardClicked { get; }
 
         private ICloudSynchronizationService _cloudSyncSvc;
 
@@ -48,9 +50,20 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
             CancelClicked = new DelegateCommand(CancelCommandHandler);
             ChangeClicked = new DelegateCommand(ChangeClickedHandler, () => AvailableCloudExtensions.Any());
             RetryClicked = new DelegateCommand(RetryClickedHandler);
-
+            ShowDetailsClicked = new DelegateCommand(ShowDetailsHandler);
+            CopyDetailsToClipboardClicked = new DelegateCommand(CopyDetailsToClipboardHandler);
 
             Unloaded += CloudSupportSelectorSettingUIPart_Unloaded;
+        }
+
+        private void CopyDetailsToClipboardHandler()
+        {
+            Clipboard.SetText(ErrorDetails);
+        }
+
+        private void ShowDetailsHandler()
+        {
+            errorDetailsPopup.IsOpen = true;
         }
 
         private void RetryClickedHandler()
@@ -245,6 +258,7 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
             {
                 ConnectionState = CloudServiceConnectionState.Error;
                 ErrorMessage = _cloudSyncSvc.GetLastError();
+                ErrorDetails = _cloudSyncSvc.GetLastErrorDetails();
             }
             else
             if (!_cloudSyncSvc.IsNetworkAvailable)
@@ -267,12 +281,13 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
             _cloudSyncSvc.ErrorOccurred += _cloudSyncSvc_ErrorOccurred;
         }
 
-        private void _cloudSyncSvc_ErrorOccurred(object sender, System.IO.ErrorEventArgs e)
+        private void _cloudSyncSvc_ErrorOccurred(object sender, DetailedErrorEventArgs e)
         {
             Dispatcher.Invoke(() =>
             {
                 ConnectionState = CloudServiceConnectionState.Error;
                 ErrorMessage = _cloudSyncSvc.GetLastError();
+                ErrorDetails = _cloudSyncSvc.GetLastErrorDetails();
             });
         }
 
@@ -347,6 +362,18 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
 
         public static readonly DependencyProperty ErrorMessageProperty =
             DependencyProperty.Register(nameof(ErrorMessage), typeof(string), typeof(CloudSupportSelectorSettingUIPart), new PropertyMetadata(string.Empty));
+
+
+
+        public string ErrorDetails
+        {
+            get { return (string)GetValue(ErrorDetailsProperty); }
+            set { SetValue(ErrorDetailsProperty, value); }
+        }
+
+        public static readonly DependencyProperty ErrorDetailsProperty =
+            DependencyProperty.Register(nameof(ErrorDetails), typeof(string), typeof(CloudSupportSelectorSettingUIPart), new PropertyMetadata(string.Empty));
+
 
 
         public CloudServiceConnectionState ConnectionState

@@ -120,6 +120,7 @@
     <Compile Include="Services\DataObjects\PreviewItemTransferObject.cs" />
     <Compile Include="Services\Enums\PreviewGenerationStatus.cs" />
     <Compile Include="Services\Enums\TrayIconVisibilityPreference.cs" />
+    <Compile Include="Services\EventArgsClasses\DetailedErrorEventArgs.cs" />
     <Compile Include="Services\EventArgsClasses\PauseEventArgs.cs" />
     <Compile Include="Services\EventArgsClasses\SyncEventArgs.cs" />
     <Compile Include="Services\Exceptions\CloudSyncException.cs" />

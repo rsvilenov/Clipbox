@@ -1,9 +1,7 @@
-﻿using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
-using Clipbox.Core.Extensibility.EventArgsClasses;
+﻿using Clipbox.Core.Extensibility.EventArgsClasses;
 using Clipbox.Services.EventArgsClasses;
 using System;
 using System.Collections.Generic;
-using System.IO;
 
 namespace Clipbox.Services.Interfaces
 {
@@ -23,6 +21,8 @@ namespace Clipbox.Services.Interfaces
 
         string GetLastError();
 
+        string GetLastErrorDetails();
+
         void RequestAuthentication();
 
         /// <summary>
@@ -35,7 +35,7 @@ namespace Clipbox.Services.Interfaces
 
         event EventHandler<AuthenticationStageEventArgs> AuthenticationStateChanged;
 
-        event EventHandler<ErrorEventArgs> ErrorOccurred;
+        event EventHandler<DetailedErrorEventArgs> ErrorOccurred;
 
         event EventHandler<SyncEventArgs> ItemSynced;
     }

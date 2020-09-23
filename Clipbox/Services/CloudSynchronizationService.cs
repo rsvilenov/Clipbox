@@ -51,7 +51,7 @@ namespace Clipbox.Services
         public event EventHandler NetworkAvailabilityChanged;
         public event EventHandler<AuthenticationStageEventArgs> AuthenticationStateChanged;
 
-        public event EventHandler<ErrorEventArgs> ErrorOccurred;
+        public event EventHandler<DetailedErrorEventArgs> ErrorOccurred;
         public event EventHandler<SyncEventArgs> ItemSynced;
 
 
@@ -67,7 +67,10 @@ namespace Clipbox.Services
         private readonly string _cloudStorageCategoryName;
 
         private CloudSupportExtension _cloudSupportExt;
-        private string _lastError;
+
+        private StringBuilder _lastErrorSb;
+        private StringBuilder _lastErrorDetailsSb;
+
         private SemaphoreSlim _authTaskSemaphore;
         private int _numberOfAuthFailures;
         private bool _isResetOfItemsSyncStatusRequested;
@@ -86,6 +89,9 @@ namespace Clipbox.Services
             _appGuid = appGuid;
 
             _cloudStorageCategoryName = $"{ProductConstants.PRODUCT_NAME}Clipboard";
+
+            _lastErrorSb = new StringBuilder();
+            _lastErrorDetailsSb = new StringBuilder();
 
             _mainSyncContext = SynchronizationContext.Current;
 
@@ -245,6 +251,7 @@ namespace Clipbox.Services
 
                 _cloudExtensionAuthMre.Set();
 
+                ClearLastError();
                 AuthenticationStateChanged?.Invoke(this, new AuthenticationStageEventArgs(AuthenticationStage.Authenticated));
             }
             else if (e.Stage == AuthenticationStage.Authenticating)
@@ -260,7 +267,9 @@ namespace Clipbox.Services
                 IsAuthenticating = false;
 
                 _cloudExtensionAuthMre.Set();
-                AuthenticationStateChanged?.Invoke(this, new AuthenticationStageEventArgs(AuthenticationStage.AuthenticationError, e.Message));
+
+                AppendLastError(e.Message, e.ToString());
+                AuthenticationStateChanged?.Invoke(this, new AuthenticationStageEventArgs(AuthenticationStage.AuthenticationError, e.Message, e.Details));
             }
         }
 
@@ -273,9 +282,29 @@ namespace Clipbox.Services
             ext.PutSetting(e.SettingKey, e.Value);
         }
 
+        private void AppendLastError(string error, string errorDetails = null)
+        {
+            _lastErrorSb.AppendLine(error);
+            if (errorDetails != null)
+            {
+                _lastErrorDetailsSb.AppendLine(errorDetails);
+            }
+        }
+
+        private void ClearLastError()
+        {
+            _lastErrorSb.Clear();
+            _lastErrorDetailsSb.Clear();
+        }
+
+        public string GetLastErrorDetails()
+        {
+            return _lastErrorDetailsSb.ToString();
+        }
+
         public string GetLastError()
         {
-            return _lastError;
+            return _lastErrorSb.ToString();
         }
 
         private void StartSyncTask()
@@ -320,8 +349,8 @@ namespace Clipbox.Services
 
                     if (!csi.IsHealthy)
                     {
-                        _lastError = $"{csi.ServiceName} : {csi.FailureReason}";
-                        ErrorOccurred?.Invoke(this, new ErrorEventArgs(new CloudSyncException(_lastError)));
+                        AppendLastError($"{csi.ServiceName} : {csi.FailureReason}");
+                        ErrorOccurred?.Invoke(this, new DetailedErrorEventArgs(GetLastError(), GetLastErrorDetails()));
                         continue;
                     }
 
@@ -334,7 +363,9 @@ namespace Clipbox.Services
                     }
                     catch (Exception ex)
                     {
-                        ErrorOccurred?.Invoke(this, new ErrorEventArgs(new CloudSyncException("Error syncing content with cloud.", ex)));
+                        AppendLastError("Error syncing content with cloud.");
+                        AppendLastError(ex.Message, ex.ToString());
+                        ErrorOccurred?.Invoke(this, new DetailedErrorEventArgs(GetLastError(), GetLastErrorDetails()));
                     }
 
                 }
@@ -590,8 +621,8 @@ namespace Clipbox.Services
                         {
                             _numberOfAuthFailures = 0;
                             IsInErrorState = true;
-                            _lastError = "Could not authenticate after the maximum number of attempts.";
-                            ErrorOccurred?.Invoke(this, new ErrorEventArgs(new CloudSyncException(_lastError)));
+                            AppendLastError("Could not authenticate after the maximum number of attempts.");
+                            ErrorOccurred?.Invoke(this, new DetailedErrorEventArgs(GetLastError(), GetLastErrorDetails()));
                             return;
                         }
 
@@ -609,8 +640,9 @@ namespace Clipbox.Services
                     {
                         _numberOfAuthFailures = 0;
                         IsInErrorState = true;
-                        _lastError = "Could not authenticate after the maximum number of attempts. : " + ex.Message;
-                        ErrorOccurred?.Invoke(this, new ErrorEventArgs(new CloudSyncException(_lastError)));
+                        AppendLastError("Could not authenticate after the maximum number of attempts.");
+                        AppendLastError(ex.Message, ex.ToString());
+                        ErrorOccurred?.Invoke(this, new DetailedErrorEventArgs(GetLastError(), GetLastErrorDetails()));
                         return;
                     }
 
