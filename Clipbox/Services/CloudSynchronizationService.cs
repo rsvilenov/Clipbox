@@ -728,10 +728,25 @@ namespace Clipbox.Services
 
         public void ClearSyncedData()
         {
-            StopSyncTask();
-            _cloudSupportExt.DeleteCategory(_cloudStorageCategoryName);
-            ResetClipboardItemsIsSynchronizedStatus();
-            StartSyncTask();
+            try
+            {
+                StopSyncTask();
+
+                if (_cloudSupportExt.CheckCategoryExists(_cloudStorageCategoryName))
+                {
+                    _cloudSupportExt.DeleteCategory(_cloudStorageCategoryName);
+                    ResetClipboardItemsIsSynchronizedStatus();
+                }
+
+                StartSyncTask();
+            }
+            catch (Exception ex)
+            {
+                AppendError("Error clearing the content in the cloud.");
+                AppendError(ex.Message, ex.ToString());
+                ErrorOccurred?.Invoke(this, new DetailedErrorEventArgs(GetError(), GetErrorDetails()));
+                ClearError();
+            }
         }
     }
 }

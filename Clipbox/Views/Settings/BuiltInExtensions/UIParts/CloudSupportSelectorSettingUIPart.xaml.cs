@@ -14,6 +14,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.ExceptionServices;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -34,12 +37,17 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
         public ICommand RetryClicked { get; }
         public ICommand ShowDetailsClicked { get; }
         public ICommand CopyDetailsToClipboardClicked { get; }
+        public ICommand ClearCloudDataClicked { get; }
 
         private ICloudSynchronizationService _cloudSyncSvc;
 
         public CloudSupportSelectorSettingUIPart()
         {
             InitializeComponent();
+
+#if DEBUG
+            IsInDebugMode = true;
+#endif
 
             AvailableCloudExtensions = new AsyncObservableCollection<CloudInfoDisplayData>();
             this.mainGrid.DataContext = this;
@@ -52,8 +60,31 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
             RetryClicked = new DelegateCommand(RetryClickedHandler);
             ShowDetailsClicked = new DelegateCommand(ShowDetailsHandler);
             CopyDetailsToClipboardClicked = new DelegateCommand(CopyDetailsToClipboardHandler);
-
+            ClearCloudDataClicked = new DelegateCommand(ClearCloudDataHandler);
             Unloaded += CloudSupportSelectorSettingUIPart_Unloaded;
+        }
+
+        private void ClearCloudDataHandler()
+        {
+            var mainSyncContext = SynchronizationContext.Current;
+
+            IsClearDataRunning = true;
+            Task.Run(() =>
+            {
+                try
+                {
+                    _cloudSyncSvc.ClearSyncedData();
+                }
+                catch (Exception ex)
+                {
+                    var edi = ExceptionDispatchInfo.Capture(ex);
+                    mainSyncContext.Post(state => ((ExceptionDispatchInfo)state).Throw(), edi);
+                }
+                finally
+                {
+                    Dispatcher.Invoke(() => IsClearDataRunning = false);
+                }
+            });
         }
 
         private void CopyDetailsToClipboardHandler()
@@ -157,6 +188,28 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
                 });
             }
         }
+
+        public bool IsInDebugMode
+        {
+            get { return (bool)GetValue(IsInDebugModeProperty); }
+            set { SetValue(IsInDebugModeProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsInDebugModeProperty =
+            DependencyProperty.Register(nameof(IsInDebugMode), typeof(bool), typeof(CloudSupportSelectorSettingUIPart), new PropertyMetadata(false));
+
+
+
+        public bool IsClearDataRunning
+        {
+            get { return (bool)GetValue(IsClearDataRunningProperty); }
+            set { SetValue(IsClearDataRunningProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsClearDataRunningProperty =
+            DependencyProperty.Register(nameof(IsClearDataRunning), typeof(bool), typeof(CloudSupportSelectorSettingUIPart), new PropertyMetadata(false));
+
+
 
         private AsyncObservableCollection<CloudInfoDisplayData> AvailableCloudExtensions
         {

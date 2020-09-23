@@ -169,6 +169,24 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Clear cloud data.
+        /// </summary>
+        internal static string BTN_SETTINGS_CLOUD_CLEAR_DATA {
+            get {
+                return ResourceManager.GetString("BTN_SETTINGS_CLOUD_CLEAR_DATA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clearing....
+        /// </summary>
+        internal static string BTN_SETTINGS_CLOUD_CLEARING_DATA {
+            get {
+                return ResourceManager.GetString("BTN_SETTINGS_CLOUD_CLEARING_DATA", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Copy to clipboard.
         /// </summary>
         internal static string BTN_SETTINGS_CLOUD_COPY_DETAILS {

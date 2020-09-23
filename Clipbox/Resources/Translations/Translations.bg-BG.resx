@@ -153,6 +153,12 @@
   <data name="BTN_SETTINGS_CLOUD_CHANGE_EXTENSION" xml:space="preserve">
     <value>Промени</value>
   </data>
+  <data name="BTN_SETTINGS_CLOUD_CLEARING_DATA" xml:space="preserve">
+    <value>Изтриване...</value>
+  </data>
+  <data name="BTN_SETTINGS_CLOUD_CLEAR_DATA" xml:space="preserve">
+    <value>Изтрий данните в облака</value>
+  </data>
   <data name="BTN_SETTINGS_CLOUD_COPY_DETAILS" xml:space="preserve">
     <value>Копирай в клипборда</value>
   </data>

@@ -24,6 +24,7 @@
                 <ResourceDictionary Source="pack://application:,,,/Clipbox.Infrastructure.UI.CustomControls;component/Styles/ToggleSwitchWindows10.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <infConv:InverseBooleanConverter x:Key="InverseBooleanConverter" />
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
             <Style BasedOn="{StaticResource MinimalisticScrollBarStyle}" TargetType="ScrollBar">
                 <Setter Property="Foreground" Value="White" />
@@ -79,6 +80,77 @@
                         Stretch="Uniform" />
                 </Viewbox>
             </ControlTemplate>
+
+            <ControlTemplate x:Key="ClearCloudDataIcon">
+                <Viewbox>
+                    <Path
+                        Width="128"
+                        Height="128"
+                        Data="M1.8002373,17.934131L11.78916,27.92324 32.000004,27.92324 32.000004,30.246261 11.093165,30.246261 11.093165,28.619502 9.0021781,30.711291C8.3051776,31.408257,7.3761987,31.408257,6.6791977,30.711291L1.5682294,25.600219C-0.52274312,23.510173,-0.52274312,20.257152,1.5682294,18.167165z M19.756094,0L29.777014,10.021091 13.843144,25.955203 3.8232168,15.934112z"
+                        Fill="{TemplateBinding Foreground}"
+                        RenderTransformOrigin="0.5,0.5"
+                        Stretch="Uniform" />
+                </Viewbox>
+
+            </ControlTemplate>
+
+            <Style x:Key="BtnClearCloudData" TargetType="{x:Type Button}">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border
+                                Name="btnBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                SnapsToDevicePixels="True">
+                                <Border
+                                    Name="selectionBorder"
+                                    BorderBrush="{DynamicResource accentDottedBrush}"
+                                    BorderThickness="0">
+                                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock
+                                            Name="textBlock"
+                                            Grid.Column="0"
+                                            Margin="5,0,0,2"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Foreground="{TemplateBinding Foreground}"
+                                            Text="{TemplateBinding Content}" />
+                                        <ContentControl
+                                            Name="contentControl"
+                                            Grid.Column="1"
+                                            Margin="7,5,5,5"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Stretch"
+                                            Template="{StaticResource ClearCloudDataIcon}" />
+                                    </Grid>
+                                </Border>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="Button.IsPressed" Value="True">
+                                    <Setter TargetName="btnBorder" Property="Background" Value="{DynamicResource ControlPressedBrush}" />
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="selectionBorder" Property="Background" Value="{DynamicResource ControlHighlightBackgroundBrush}" />
+
+                                </Trigger>
+                                <Trigger Property="Button.IsEnabled" Value="False">
+                                    <Setter TargetName="textBlock" Property="Foreground" Value="Gray" />
+                                    <Setter TargetName="contentControl" Property="Foreground" Value="Gray" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
 
             <Style x:Key="BtnChange" TargetType="{x:Type Button}">
                 <Setter Property="Background" Value="Transparent" />
@@ -314,6 +386,42 @@
                         </Style>
                     </Button.Style>
                 </Button>
+
+                <Button
+                    Height="30"
+                    MinWidth="100"
+                    Margin="10,0,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Command="{Binding ClearCloudDataClicked}"
+                    Content="{loc:Localize BTN_SETTINGS_CLOUD_CLEAR_DATA,
+                                           ResourceLookupMode=CurrentAssembly}"
+                    Foreground="{DynamicResource ControlForegroundBrush}">
+                    <Button.Style>
+                        <Style BasedOn="{StaticResource BtnClearCloudData}" TargetType="Button">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static local:CloudServiceConnectionState.Authenticated}">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsInDebugMode}" Value="False">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding IsClearDataRunning}" Value="True">
+                                    <Setter Property="IsEnabled" Value="False" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+                <TextBlock
+                    Margin="10,0,0,0"
+                    VerticalAlignment="Center"
+                    FontSize="14"
+                    Text="{loc:Localize BTN_SETTINGS_CLOUD_CLEARING_DATA,
+                                        ResourceLookupMode=CurrentAssembly}"
+                    Visibility="{Binding IsClearDataRunning, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
             </StackPanel>
 
