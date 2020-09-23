@@ -59,9 +59,12 @@ namespace Clipbox.ViewModels
             }
         }
 
-        private void ClipboardManager_ItemAdded(object sender, ExtendedClipboard.EventArgs.ClipboardManagerEventArgs e)
+        private void ClipboardManager_ItemAdded(object sender, ExtendedClipboard.EventArgs.ItemAddedEventArgs e)
         {
-            RequestCloseOfMainWindow?.Invoke(this, new EventArgs());
+            if (e.Source == ExtendedClipboard.Enums.ItemSource.SystemClipboard)
+            {
+                RequestCloseOfMainWindow?.Invoke(this, new EventArgs());
+            }
         }
 
         private void _settingsService_SettingChanged(object sender, SettingsEventArgs e)
@@ -69,6 +72,17 @@ namespace Clipbox.ViewModels
             if (e.Key == SettingsKeys.IsSearchEnabled)
             {
                 IsSearchEnabled = _settingsService.GetSetting<bool>(SettingsKeys.IsSearchEnabled);
+            }
+            else if (e.Key == SettingsKeys.IsCloudSyncEnabled)
+            {
+                if (e.Value is bool enabled && enabled)
+                {
+                    IsCloudSyncAvailable = CheckIsCloudServiceAvailable();
+                }
+                else
+                {
+                    IsCloudSyncAvailable = false;
+                }
             }
         }
 

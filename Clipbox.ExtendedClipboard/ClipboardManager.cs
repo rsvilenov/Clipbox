@@ -70,7 +70,7 @@ namespace Clipbox.ExtendedClipboard
 
         public event EventHandler<ItemStoringEventArgs> ItemStoring;
 
-        public event EventHandler<ClipboardManagerEventArgs> ItemAdded;
+        public event EventHandler<ItemAddedEventArgs> ItemAdded;
 
         public event EventHandler<ClipboardManagerEventArgs> ItemRemoved;
 
@@ -479,7 +479,7 @@ namespace Clipbox.ExtendedClipboard
                 }
 
 
-                ItemAdded?.Invoke(this, new ClipboardManagerEventArgs(currentItem.Id));
+                ItemAdded?.Invoke(this, new ItemAddedEventArgs(currentItem.Id, Enums.ItemSource.SystemClipboard));
             });
         }
 
@@ -765,7 +765,7 @@ namespace Clipbox.ExtendedClipboard
                     _persistenceHelper.StoreAndShrinkClipboardItem(item, checkIsItemModified: false);
                 }
 
-                ItemAdded?.Invoke(this, new ClipboardManagerEventArgs(item.Id));
+                ItemAdded?.Invoke(this, new ItemAddedEventArgs(item.Id, Enums.ItemSource.Cloud));
             }
 
             return success;
@@ -880,7 +880,7 @@ namespace Clipbox.ExtendedClipboard
 
             if (!beSilent)
             {
-                ItemAdded?.Invoke(this, new ClipboardManagerEventArgs(newItem.Id));
+                ItemAdded?.Invoke(this, new ItemAddedEventArgs(newItem.Id, Enums.ItemSource.Generated));
             }
 
             return newItem;

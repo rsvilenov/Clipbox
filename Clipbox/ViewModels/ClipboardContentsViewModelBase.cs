@@ -68,7 +68,8 @@ namespace Clipbox.ViewModels
             ClipboardViewItemWrapper wrapper = GetViewItemWrapper(clipboardItemId);
             if (wrapper == null)
             {
-                throw new InvalidOperationException($"The wrapper of {clipboardItemId} cannot be found. It could have been filtered off, but it should not have been.");
+                return;
+                //throw new InvalidOperationException($"The wrapper of {clipboardItemId} cannot be found. It could have been filtered off, but it should not have been.");
             }
 
             wrapper.ViewItem = GetViewItem(clipboardItemId, monitorDimensions);

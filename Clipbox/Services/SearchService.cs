@@ -117,7 +117,7 @@ namespace Clipbox.Services
             }
         }
 
-        private void _clipboardManager_ItemAdded(object sender, ExtendedClipboard.EventArgs.ClipboardManagerEventArgs e)
+        private void _clipboardManager_ItemAdded(object sender, ExtendedClipboard.EventArgs.ItemAddedEventArgs e)
         {
             lock (_listLockHandle)
             {

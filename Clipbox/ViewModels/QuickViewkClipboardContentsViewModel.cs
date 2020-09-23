@@ -151,9 +151,12 @@ namespace Clipbox.ViewModels
             }
         }
 
-        private void ClipboardManager_ItemAdded(object sender, ClipboardManagerEventArgs e)
+        private void ClipboardManager_ItemAdded(object sender, ItemAddedEventArgs e)
         {
-            ScheduleLoadingOfNewItem(e.ItemId);
+            if (e.Source == ExtendedClipboard.Enums.ItemSource.SystemClipboard)
+            {
+                ScheduleLoadingOfNewItem(e.ItemId);
+            }
         }
 
         public void ScheduleLoadingOfNewItem(string clipboardItemId)

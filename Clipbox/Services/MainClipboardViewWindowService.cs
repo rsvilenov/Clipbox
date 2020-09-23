@@ -67,7 +67,7 @@ namespace Clipbox.Services
             _searchService = searchService;
             _cloudSyncService = cloudSyncService;
         }
-        
+
         public void Close()
         {
             Application.Current.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background,

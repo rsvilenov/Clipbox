@@ -77,7 +77,7 @@ namespace Clipbox.ExtendedClipboard.Interfaces
 
         event EventHandler<ItemStoringEventArgs> ItemStoring;
 
-        event EventHandler<ClipboardManagerEventArgs> ItemAdded;
+        event EventHandler<ItemAddedEventArgs> ItemAdded;
 
         event EventHandler<ClipboardManagerEventArgs> ItemRemoved;
 

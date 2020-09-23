@@ -202,7 +202,7 @@ namespace Clipbox.Extensions.BuiltIn.Cloud.Google.CloudSupportExtensions
                 isAvailable = NetworkUtils.CheckIsEndpointReachable(url, 80); 
                 if (!isAvailable)
                 {
-                    failureReason = "Unknown";
+                    failureReason = "The cloud service is unreachable.";
                 }
 
                 return new CloudServiceInfo("Google Drive",
