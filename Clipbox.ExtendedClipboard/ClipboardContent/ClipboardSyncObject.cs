@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace Clipbox.ExtendedClipboard.ClipboardContent
 {
-    [DebuggerDisplay("{Action} - {Status} - {Id}")]
+    [DebuggerDisplay("{Action} - {Id}")]
     internal class ClipboardSyncObject : IClipboardSyncObject
     {
         public string Id { get; set; }
@@ -14,8 +14,6 @@ namespace Clipbox.ExtendedClipboard.ClipboardContent
         public long ModifiedDateUtcTicks { get; set; }
 
         public SyncAction Action { get; set; }
-
-        public SyncStatus Status { get; set; }
     }
     
 }

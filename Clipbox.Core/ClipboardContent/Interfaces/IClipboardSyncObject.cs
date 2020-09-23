@@ -4,14 +4,12 @@ namespace Clipbox.Core.ClipboardContent.Interfaces
 {
     public interface IClipboardSyncObject
     {
-        string Id { get; set; }
+        string Id { get; }
 
-        byte[] Data { get; set; }
+        byte[] Data { get; }
 
-        long ModifiedDateUtcTicks { get; set; }
+        long ModifiedDateUtcTicks { get; }
 
-        SyncAction Action { get; set; }
-
-        SyncStatus Status { get; set; }
+        SyncAction Action { get; }
     }
 }
