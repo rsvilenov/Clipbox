@@ -58,11 +58,12 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
 
         private void CopyDetailsToClipboardHandler()
         {
-            Clipboard.SetText(ErrorDetails);
+            Clipboard.SetText(ErrorDetailsForPopup);
         }
 
         private void ShowDetailsHandler()
         {
+            ErrorDetailsForPopup = ErrorDetails;
             errorDetailsPopup.IsOpen = true;
         }
 
@@ -373,6 +374,18 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
 
         public static readonly DependencyProperty ErrorDetailsProperty =
             DependencyProperty.Register(nameof(ErrorDetails), typeof(string), typeof(CloudSupportSelectorSettingUIPart), new PropertyMetadata(string.Empty));
+
+
+
+        public string ErrorDetailsForPopup
+        {
+            get { return (string)GetValue(ErrorDetailsForPopupProperty); }
+            set { SetValue(ErrorDetailsForPopupProperty, value); }
+        }
+
+        public static readonly DependencyProperty ErrorDetailsForPopupProperty =
+            DependencyProperty.Register(nameof(ErrorDetailsForPopup), typeof(string), typeof(CloudSupportSelectorSettingUIPart), new PropertyMetadata(string.Empty));
+
 
 
 

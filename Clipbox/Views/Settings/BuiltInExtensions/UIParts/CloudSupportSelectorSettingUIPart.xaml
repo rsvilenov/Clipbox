@@ -431,7 +431,7 @@
                                         <Setter.Value>
                                             <Grid MaxHeight="150">
                                                 <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition />
+                                                    <ColumnDefinition Width="260" />
                                                     <ColumnDefinition Width="Auto" />
                                                 </Grid.ColumnDefinitions>
                                                 <ScrollViewer
@@ -712,7 +712,7 @@
                             Margin="10"
                             FontSize="14"
                             Foreground="{DynamicResource ControlForegroundBrush}"
-                            Text="{Binding DataContext.ErrorDetails}"
+                            Text="{Binding DataContext.ErrorDetailsForPopup}"
                             TextWrapping="Wrap" />
                     </ScrollViewer>
                 </Grid>
