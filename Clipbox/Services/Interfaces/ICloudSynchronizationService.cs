@@ -25,6 +25,8 @@ namespace Clipbox.Services.Interfaces
 
         void RequestAuthentication();
 
+        void ClearSyncedData();
+
         /// <summary>
         /// Gets all the available extension types which are not disabled
         /// </summary>

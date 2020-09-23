@@ -481,7 +481,8 @@ namespace Clipbox.Services
             var itemsToDownload = new List<string>();
             foreach (string cloudItem in existingCloudItems)
             {
-                string cloudItemId = cloudItem.Split('_')[2];
+                string[] cloudItemIdParts = cloudItem.Split('_');
+                string cloudItemId = $"{cloudItemIdParts[2]}_{cloudItemIdParts[3]}";
 
                 if (!allClipboardItemIds.Contains(cloudItemId))
                 {
@@ -493,8 +494,8 @@ namespace Clipbox.Services
 
         private void DeleteOldestDeletionRequest(List<string> deletionRequests)
         {
-            string oldestDeletionRequest = deletionRequests.OrderBy(s => long.Parse(s.Split(new char[] { '_', '.' })[3])).First();
-            DateTime dt = DateTime.ParseExact(oldestDeletionRequest.Split(new char[] { '_', '.' })[3], "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
+            string oldestDeletionRequest = deletionRequests.OrderBy(s => long.Parse(s.Split(new char[] { '_', '.' })[4])).First();
+            DateTime dt = DateTime.ParseExact(oldestDeletionRequest.Split(new char[] { '_', '.' })[4], "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
             if (dt < DateTime.UtcNow.AddDays(-10))
             {
                 if (_cloudSupportExt.CheckItemExists(_cloudStorageCategoryName, oldestDeletionRequest))
@@ -517,14 +518,9 @@ namespace Clipbox.Services
             }
         }
 
-        private string EscapeSyncObjectId(string id)
-        {
-            return id.Replace("#", "");
-        }
-
         private void DeleteRemoteSyncObject(IClipboardSyncObject syncObject, IEnumerable<string> deletionRequests, IEnumerable<string> allAppIds, List<string> existingItems)
         {
-            string deleteRequestFileName = $"_dr_{EscapeSyncObjectId(syncObject.Id)}_{DateTime.UtcNow.ToString("yyyyMMddHHmmss")}.txt";
+            string deleteRequestFileName = $"_dr_{syncObject.Id}_{DateTime.UtcNow.ToString("yyyyMMddHHmmss")}.txt";
 
             string fileContents = $"{_appGuid}\n";
 
@@ -574,7 +570,7 @@ namespace Clipbox.Services
 
         private void CreateRemoteSyncObject(IClipboardSyncObject syncObject, List<string> existingItems)
         {
-            string cloudFileName = $"_cso_{EscapeSyncObjectId(syncObject.Id)}_{syncObject.ModifiedDateUtcTicks}.zip";
+            string cloudFileName = $"_cso_{syncObject.Id}_{syncObject.ModifiedDateUtcTicks}.zip";
 
             if (!_cloudSupportExt.CheckItemExists(_cloudStorageCategoryName, cloudFileName))
             {
@@ -587,7 +583,7 @@ namespace Clipbox.Services
         {
             DeleteExistingCloudVersionsOfTheObject(syncObject, existingItems);
 
-            string cloudFileName = $"_cso_{EscapeSyncObjectId(syncObject.Id)}_{syncObject.ModifiedDateUtcTicks}.zip";
+            string cloudFileName = $"_cso_{syncObject.Id}_{syncObject.ModifiedDateUtcTicks}.zip";
 
             _cloudSupportExt.PutItem(_cloudStorageCategoryName, cloudFileName, syncObject.Data);
 
@@ -604,7 +600,7 @@ namespace Clipbox.Services
             // long dateModifiedTicks = long.Parse(newestItem.Split(new char[] { '_', '.' })[3]);
 
 
-            var ownCloudItems = existingItems.Where(item => item.StartsWith($"_cso_{EscapeSyncObjectId(syncObject.Id)}"))
+            var ownCloudItems = existingItems.Where(item => item.StartsWith($"_cso_{syncObject.Id}"))
                 .ToList(); // ToList() - create another collection, so we can safely remove items from existingItems in the foreach below
 
             foreach (string existingOwnItem in ownCloudItems)
@@ -728,6 +724,14 @@ namespace Clipbox.Services
             }
 
             _syncTaskCancellationTokenSource.Dispose();
+        }
+
+        public void ClearSyncedData()
+        {
+            StopSyncTask();
+            _cloudSupportExt.DeleteCategory(_cloudStorageCategoryName);
+            ResetClipboardItemsIsSynchronizedStatus();
+            StartSyncTask();
         }
     }
 }

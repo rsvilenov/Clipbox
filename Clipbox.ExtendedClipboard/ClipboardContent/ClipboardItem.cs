@@ -44,7 +44,7 @@ namespace Clipbox.ExtendedClipboard.ClipboardContent
         {
             long utcTicks = DateTime.UtcNow.Ticks;
 
-            Id = $"{utcTicks}#{Guid.NewGuid().ToString()}";
+            Id = $"{utcTicks}_{Guid.NewGuid()}";
 
             ClipboardDataObjects = clipboardDataObjects?.ToList();
             Source = source;
