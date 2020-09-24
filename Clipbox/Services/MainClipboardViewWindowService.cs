@@ -33,7 +33,7 @@ namespace Clipbox.Services
         private IMainWindow _mainWindow;
 
         public event EventHandler<SetToClipboardEventArgs> SetItemsToClipboardRequested;
-        public event EventHandler SettingsWindowOpenRequested;
+        public event EventHandler<SettingsWindowEventArgs> SettingsWindowOpenRequested;
         public event EventHandler RebuildIndexRequested;
         public event EventHandler<CancelEventArgs> OpenMainWindowRequested;
         public event EventHandler MainWindowOpened;
@@ -159,10 +159,10 @@ namespace Clipbox.Services
                 }));
         }
 
-        private void _mainWindow_SettingsWindowOpenRequested(object sender, EventArgs e)
+        private void _mainWindow_SettingsWindowOpenRequested(object sender, SettingsWindowEventArgs e)
         {
             Close();
-            SettingsWindowOpenRequested?.Invoke(this, new EventArgs());
+            SettingsWindowOpenRequested?.Invoke(this, e);
         }
 
         private void _mainWindow_RebuildIndexRequested(object sender, EventArgs e)

@@ -25,7 +25,7 @@ namespace Clipbox.Views.Interfaces
 
         event EventHandler CloseRequested;
 
-        event EventHandler SettingsWindowOpenRequested;
+        event EventHandler<SettingsWindowEventArgs> SettingsWindowOpenRequested;
 
         event EventHandler RebuildIndexRequested;
     }

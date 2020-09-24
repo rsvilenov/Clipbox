@@ -539,6 +539,9 @@ Warning: more rows means more RAM usage!</value>
   <data name="TTP_MAINVIEW_BTN_CANCEL_SYNC" xml:space="preserve">
     <value>Syncing requested. Click to stop the sync request.</value>
   </data>
+  <data name="TTP_MAINVIEW_BTN_CLOUD_ERROR" xml:space="preserve">
+    <value>Cloud error. Click for details.</value>
+  </data>
   <data name="TTP_MAINVIEW_BTN_DELETE_GROUP" xml:space="preserve">
     <value>Delete all items from this group</value>
   </data>

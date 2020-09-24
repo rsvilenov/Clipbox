@@ -1,4 +1,5 @@
-﻿using Clipbox.Core.Search;
+﻿using Clipbox.Core.Extensibility.Enums;
+using Clipbox.Core.Search;
 using Clipbox.Core.Search.SearchTerms;
 using Clipbox.Infrastructure.Extensibility.Containers;
 using Clipbox.Infrastructure.Threading;
@@ -44,7 +45,7 @@ namespace Clipbox.Views
 
         public event EventHandler CloseMainWindowRequested;
 
-        public event EventHandler SettingsWindowOpenRequested;
+        public event EventHandler<SettingsWindowEventArgs> SettingsWindowOpenRequested;
 
         public event EventHandler RebuildIndexRequested;
 
@@ -946,7 +947,12 @@ namespace Clipbox.Views
 
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
         {
-            SettingsWindowOpenRequested?.Invoke(this, new EventArgs());
+            SettingsWindowOpenRequested?.Invoke(this, new SettingsWindowEventArgs(SettingsCategory.General));
+        }
+
+        private void CloudErrorButton_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsWindowOpenRequested?.Invoke(this, new SettingsWindowEventArgs(SettingsCategory.Cloud));
         }
 
         private void RebuildIndexButton_Click(object sender, RoutedEventArgs e)

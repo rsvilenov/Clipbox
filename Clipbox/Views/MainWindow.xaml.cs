@@ -60,7 +60,7 @@ namespace Clipbox.Views
 
         public event EventHandler CloseRequested;
 
-        public event EventHandler SettingsWindowOpenRequested;
+        public event EventHandler<SettingsWindowEventArgs> SettingsWindowOpenRequested;
 
         public event EventHandler RebuildIndexRequested;
 
@@ -182,9 +182,9 @@ namespace Clipbox.Views
             RebuildIndexRequested?.Invoke(this, new EventArgs());
         }
 
-        private void _mainViewClipboardContents_SettingsWindowOpenRequested(object sender, EventArgs e)
+        private void _mainViewClipboardContents_SettingsWindowOpenRequested(object sender, SettingsWindowEventArgs e)
         {
-            SettingsWindowOpenRequested?.Invoke(this, new EventArgs());
+            SettingsWindowOpenRequested?.Invoke(this, e);
         }
 
         private void MainWindow_KeyUp(object sender, KeyEventArgs e)

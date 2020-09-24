@@ -24,7 +24,7 @@ namespace Clipbox.ViewModels
             get { return _clipboardViewItemWrappers; }
             set { SetField(ref _clipboardViewItemWrappers, value); }
         }
-        
+
         protected IClipboardManager ClipboardManager { get; private set; }
         protected ISettingsService SettingsService { get; private set; }
         protected IPreviewGenerationService PreviewGenerationService { get; private set; }

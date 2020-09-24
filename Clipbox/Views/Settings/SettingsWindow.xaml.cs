@@ -540,6 +540,25 @@ namespace Clipbox.Views.Settings
                     }));
         }
 
+        public void HighlightCategory(SettingsCategory category)
+        {
+            Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => SelectTabByCategory(category)));
+        }
+
+        private void SelectTabByCategory(SettingsCategory category)
+        {
+            if (category != SettingsCategory.General)
+            {
+                foreach (TabItem tabItem in tabControl.Items)
+                {
+                    if (tabItem.Tag is SettingsCategory catTag && catTag == category)
+                    {
+                        tabItem.IsSelected = true;
+                    }
+                }
+            }
+        }
+
 #if DEBUG
         ~SettingsWindow()
         {

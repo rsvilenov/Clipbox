@@ -1323,6 +1323,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cloud error. Click for details..
+        /// </summary>
+        internal static string TTP_MAINVIEW_BTN_CLOUD_ERROR {
+            get {
+                return ResourceManager.GetString("TTP_MAINVIEW_BTN_CLOUD_ERROR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete all items from this group.
         /// </summary>
         internal static string TTP_MAINVIEW_BTN_DELETE_GROUP {

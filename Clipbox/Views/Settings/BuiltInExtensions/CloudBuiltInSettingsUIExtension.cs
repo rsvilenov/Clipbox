@@ -30,12 +30,12 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
                 // request enabling of the cloud syncronization. If the
                 // extension has been removed or no extension has been
                 // selected, disable the syncronization.
-                RequestSettingChange(SettingsKeys.AreCloudServicesEnabled, cloudSupportExtSelected);
+                RequestSettingChange(SettingsKeys.IsCloudServicesEnabled, cloudSupportExtSelected);
             }
-            else if (settingKey == SettingsKeys.AreCloudServicesEnabled)
+            else if (settingKey == SettingsKeys.IsCloudServicesEnabled)
             {
 
-                if (!GetSetting<bool>(SettingsKeys.AreCloudServicesEnabled))
+                if (!GetSetting<bool>(SettingsKeys.IsCloudServicesEnabled))
                 {
                     RequestSettingChange(SettingsKeys.SelectedCloudSupportServiceName, string.Empty);
                 }
@@ -51,7 +51,7 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
         {
             // if the user enables cloud syncing and no cloud support extension is selected,
             // cancel the change of the setting and show the cloud extension selector.
-            if (settingKey == SettingsKeys.AreCloudServicesEnabled 
+            if (settingKey == SettingsKeys.IsCloudServicesEnabled 
                 && (bool)newValue
                 && string.IsNullOrEmpty(GetSetting<string>(SettingsKeys.SelectedCloudSupportServiceName)))
             {
@@ -71,7 +71,7 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
             _isCloudSyncEnabledSettingUIPart = new IsCloudSyncEnabledSettingUIPart();
 
             builder
-                .Add(SettingsKeys.AreCloudServicesEnabled, new AreCloudServicesEnabledSettingUIPart())
+                .Add(SettingsKeys.IsCloudServicesEnabled, new AreCloudServicesEnabledSettingUIPart())
                 .Add(SettingsKeys.SelectedCloudSupportServiceName, _cloudSupportSelectorSettingUIPart)
                 .Add(SettingsKeys.IsCloudSyncEnabled, _isCloudSyncEnabledSettingUIPart)
                 .Add(SettingsKeys.IsAutomaticCloudSyncOfPinnedItemsEnabled, _autoCloudSyncPinnedItemsSettingUIPart);
@@ -79,8 +79,8 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
 
         private void ManageUIPartsVisibility(ISettingKey settingKey)
         {
-            bool areCloudSvcsEnabled = GetSetting<bool>(SettingsKeys.AreCloudServicesEnabled);
-            if (settingKey == SettingsKeys.AreCloudServicesEnabled)
+            bool areCloudSvcsEnabled = GetSetting<bool>(SettingsKeys.IsCloudServicesEnabled);
+            if (settingKey == SettingsKeys.IsCloudServicesEnabled)
             {
                 _isCloudSyncEnabledSettingUIPart.SetIsVisible(areCloudSvcsEnabled);
                 _cloudSupportSelectorSettingUIPart.SetIsVisible(areCloudSvcsEnabled);

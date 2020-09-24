@@ -1,8 +1,10 @@
-﻿namespace Clipbox.Services.Interfaces
+﻿using Clipbox.Core.Extensibility.Enums;
+
+namespace Clipbox.Services.Interfaces
 {
     public interface ISettingsWindowService
     {
-        void OpenSettingsWindow();
+        void OpenSettingsWindow(SettingsCategory highlightCategory);
 
         bool IsSettingsWindowOpen { get; }
     }

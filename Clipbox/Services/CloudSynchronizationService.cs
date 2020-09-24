@@ -105,7 +105,7 @@ namespace Clipbox.Services
 
             _cloudExtensionAuthMre = new ManualResetEvent(true);
 
-            IsEnabled = _settingsService.GetSetting<bool>(SettingsKeys.AreCloudServicesEnabled);
+            IsEnabled = _settingsService.GetSetting<bool>(SettingsKeys.IsCloudServicesEnabled);
             IsCloudSyncEnabled = _settingsService.GetSetting<bool>(SettingsKeys.IsCloudSyncEnabled);
 
             string selectedCloudSupportServiceName = _settingsService.GetSetting<string>(SettingsKeys.SelectedCloudSupportServiceName);
@@ -192,9 +192,9 @@ namespace Clipbox.Services
             {
                 IsCloudSyncEnabled = _settingsService.GetSetting<bool>(SettingsKeys.IsCloudSyncEnabled);
             }
-            else if (e.Key == SettingsKeys.AreCloudServicesEnabled)
+            else if (e.Key == SettingsKeys.IsCloudServicesEnabled)
             {
-                IsEnabled = _settingsService.GetSetting<bool>(SettingsKeys.AreCloudServicesEnabled);
+                IsEnabled = _settingsService.GetSetting<bool>(SettingsKeys.IsCloudServicesEnabled);
                 if (!IsEnabled)
                 {
                     IsAuthenticated = false;

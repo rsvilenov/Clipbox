@@ -255,7 +255,7 @@
                     Tag="{DynamicResource SyncedItemsIcon}"
                     Template="{StaticResource VerticalStretchyExpander}"
                     ToolTip="{loc:Localize TTP_FILTERBAND_FILTER_BY_DEVICE}"
-                    Visibility="{Binding IsCloudSyncAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    Visibility="{Binding IsCloudSyncServiceEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
 
                     <StackPanel Margin="0,5" Orientation="Vertical">
                         <ToggleButton

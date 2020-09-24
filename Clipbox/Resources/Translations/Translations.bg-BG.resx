@@ -539,6 +539,9 @@
   <data name="TTP_MAINVIEW_BTN_CANCEL_SYNC" xml:space="preserve">
     <value>Заявено е синхронизиране с облака. Кликнете, за да отмените заявката.</value>
   </data>
+  <data name="TTP_MAINVIEW_BTN_CLOUD_ERROR" xml:space="preserve">
+    <value>Грешка с облака. Кликнете за подробности.</value>
+  </data>
   <data name="TTP_MAINVIEW_BTN_DELETE_GROUP" xml:space="preserve">
     <value>Изтрийте всички елементи от тази група</value>
   </data>

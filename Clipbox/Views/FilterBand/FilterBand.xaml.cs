@@ -69,14 +69,14 @@ namespace Clipbox.Views.FilterBand
             DependencyProperty.Register(nameof(ShouldParentBeEnabled), typeof(bool), typeof(FilterBand), new PropertyMetadata(true));
 
 
-        public bool IsCloudSyncAvailable
+        public bool IsCloudSyncServiceEnabled
         {
-            get { return (bool)GetValue(IsCloudSyncAvailableProperty); }
-            set { SetValue(IsCloudSyncAvailableProperty, value); }
+            get { return (bool)GetValue(IsCloudSyncServiceEnabledProperty); }
+            set { SetValue(IsCloudSyncServiceEnabledProperty, value); }
         }
 
-        public static readonly DependencyProperty IsCloudSyncAvailableProperty =
-            DependencyProperty.Register(nameof(IsCloudSyncAvailable), typeof(bool), typeof(FilterBand), new PropertyMetadata(false));
+        public static readonly DependencyProperty IsCloudSyncServiceEnabledProperty =
+            DependencyProperty.Register(nameof(IsCloudSyncServiceEnabled), typeof(bool), typeof(FilterBand), new PropertyMetadata(false));
 
 
         private AsyncObservableCollection<SourceApplicationInfo> SelectedApplications

@@ -1,4 +1,5 @@
 ﻿using Clipbox.Core.ClipboardContent.Interfaces;
+using Clipbox.Core.Extensibility.EventArgsClasses;
 using Clipbox.Core.Search;
 using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.Persistence;
@@ -39,10 +40,15 @@ namespace Clipbox.ViewModels
             _settingsService.SettingChanged += _settingsService_SettingChanged;
             _cloudSyncService.AuthenticationStateChanged += _cloudSyncService_AuthenticationStateChanged;
             _cloudSyncService.ItemSynced += _cloudSyncService_ItemSynced;
+            _cloudSyncService.ErrorStateChanged += _cloudSyncService_ErrorStateChanged;
 
             _clipboardManager.ItemAdded += ClipboardManager_ItemAdded;
 
             IsCloudSyncAvailable = CheckIsCloudServiceAvailable();
+            IsCloudSyncSvcInErrorState = _cloudSyncService.IsEnabled
+                && _cloudSyncService.IsCloudSyncEnabled
+                && _cloudSyncService.IsInErrorState;
+            IsCloudSyncServiceEnabled = _cloudSyncService.IsEnabled;
 
             ClipboardItemsDataProvider = clipboardManager;
 
@@ -57,6 +63,13 @@ namespace Clipbox.ViewModels
                 // TODO: log non fatal exception
                 IsSearchIndexHealthy = false;
             }
+        }
+
+        private void _cloudSyncService_ErrorStateChanged(object sender, ErrorStateEventArgs e)
+        {
+            IsCloudSyncSvcInErrorState = _cloudSyncService.IsEnabled
+                && _cloudSyncService.IsCloudSyncEnabled
+                && e.State == Services.Enums.ErrorState.Error;
         }
 
         private void ClipboardManager_ItemAdded(object sender, ExtendedClipboard.EventArgs.ItemAddedEventArgs e)
@@ -84,6 +97,10 @@ namespace Clipbox.ViewModels
                     IsCloudSyncAvailable = false;
                 }
             }
+            else if (e.Key == SettingsKeys.IsCloudServicesEnabled)
+            {
+                IsCloudSyncServiceEnabled = e.Value is bool enabled && enabled;
+            }
         }
 
         private void _cloudSyncService_ItemSynced(object sender, Services.EventArgsClasses.SyncEventArgs e)
@@ -95,7 +112,7 @@ namespace Clipbox.ViewModels
             }
         }
 
-        private void _cloudSyncService_AuthenticationStateChanged(object sender, System.EventArgs e)
+        private void _cloudSyncService_AuthenticationStateChanged(object sender, AuthenticationStageEventArgs e)
         {
             IsCloudSyncAvailable = CheckIsCloudServiceAvailable();
             if (IsCloudSyncAvailable)
@@ -122,6 +139,10 @@ namespace Clipbox.ViewModels
                     }
                 }
             }
+
+            IsCloudSyncSvcInErrorState = _cloudSyncService.IsEnabled
+                && _cloudSyncService.IsCloudSyncEnabled
+                && e.Stage == Core.Extensibility.Enums.AuthenticationStage.AuthenticationError;
         }
 
         private bool CheckIsCloudServiceAvailable()
@@ -133,13 +154,26 @@ namespace Clipbox.ViewModels
         }
 
         private bool _isCloudSyncAvailable;
-
         public bool IsCloudSyncAvailable
         {
             get { return _isCloudSyncAvailable; }
             set { SetField(ref _isCloudSyncAvailable, value); }
         }
 
+        private bool _isCloudSyncSvcInErrorState;
+        public bool IsCloudSyncSvcInErrorState
+        {
+            get { return _isCloudSyncSvcInErrorState; }
+            set { SetField(ref _isCloudSyncSvcInErrorState, value); }
+        }
+
+        private bool _isCloudSyncServiceEnabled;
+        public bool IsCloudSyncServiceEnabled
+        {
+            get { return _isCloudSyncServiceEnabled; }
+            set { SetField(ref _isCloudSyncServiceEnabled, value); }
+        }
+        
         protected override void OnSyncOfClipboardEntryEnabledOrDisabled(string clipboardItemId)
         {
             var wrapper = ClipboardViewItemWrappers.FirstOrDefault(w => w.Id == clipboardItemId);

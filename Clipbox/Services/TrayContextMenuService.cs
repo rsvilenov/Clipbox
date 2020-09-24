@@ -1,4 +1,5 @@
-﻿using Clipbox.Services.Interfaces;
+﻿using Clipbox.Core.Extensibility.Enums;
+using Clipbox.Services.Interfaces;
 using Clipbox.ViewModels;
 using Clipbox.Views;
 using Clipbox.Views.Interfaces;
@@ -94,7 +95,7 @@ namespace Clipbox.Services
                 _mainClipboardViewWindowService.Close();
             }
 
-            _settingsWindowService.OpenSettingsWindow();
+            _settingsWindowService.OpenSettingsWindow(SettingsCategory.General);
         }
 
         private void _trayContextMenu_Opened(object sender, EventArgs e)

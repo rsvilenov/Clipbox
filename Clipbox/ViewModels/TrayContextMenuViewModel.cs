@@ -72,7 +72,7 @@ namespace Clipbox.ViewModels
             _mainClipboardViewWindowService.MainWindowOpened += _mainClipboardViewWindowService_MainWindowOpened;
             _mainClipboardViewWindowService.MainWindowClosed += _mainClipboardViewWindowService_MainWindowClosed;
 
-            IsToggleCloudSyncVisible = _settingsService.GetSetting<bool>(SettingsKeys.AreCloudServicesEnabled);
+            IsToggleCloudSyncVisible = _settingsService.GetSetting<bool>(SettingsKeys.IsCloudServicesEnabled);
             IsCloudSyncEnabled = _settingsService.GetSetting<bool>(SettingsKeys.IsCloudSyncEnabled);
             IsPaused = !_settingsService.GetSetting<bool>(SettingsKeys.IsClipboardTrackingEnabled);
 
@@ -102,9 +102,9 @@ namespace Clipbox.ViewModels
             {
                 IsPaused = !_settingsService.GetSetting<bool>(SettingsKeys.IsClipboardTrackingEnabled);
             }
-            else if (e.Key == SettingsKeys.AreCloudServicesEnabled)
+            else if (e.Key == SettingsKeys.IsCloudServicesEnabled)
             {
-                IsToggleCloudSyncVisible = _settingsService.GetSetting<bool>(SettingsKeys.AreCloudServicesEnabled);
+                IsToggleCloudSyncVisible = _settingsService.GetSetting<bool>(SettingsKeys.IsCloudServicesEnabled);
             }
         }
 

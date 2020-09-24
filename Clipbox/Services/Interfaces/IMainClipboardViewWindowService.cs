@@ -14,7 +14,7 @@ namespace Clipbox.Services.Interfaces
 
         event EventHandler<SetToClipboardEventArgs> SetItemsToClipboardRequested;
 
-        event EventHandler SettingsWindowOpenRequested;
+        event EventHandler<SettingsWindowEventArgs> SettingsWindowOpenRequested;
 
         event EventHandler RebuildIndexRequested;
 

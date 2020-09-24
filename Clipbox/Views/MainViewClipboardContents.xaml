@@ -521,6 +521,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="50" />
+                <RowDefinition Height="50" />
             </Grid.RowDefinitions>
             <Grid.Background>
                 <SolidColorBrush Opacity="0.6" Color="{DynamicResource TaskbarColor}" />
@@ -529,11 +530,15 @@
                 <infBeh:FrameworkElementDpiScalingBehavior />
             </i:Interaction.Behaviors>
 
+            <!--
+                show the cloud filter only when the cloud service is enabled (regardless of the cloud service error state
+                and regardless of whether cloud syncing is actually enabled at the moment)
+            -->
             <filterBand:FilterBand
                 x:Name="filterBand"
                 Grid.Row="0"
                 ClipboardItemsDataProvider="{Binding ClipboardItemsDataProvider}"
-                IsCloudSyncAvailable="{Binding IsCloudSyncAvailable, Mode=OneWay}"
+                IsCloudSyncServiceEnabled="{Binding IsCloudSyncServiceEnabled, Mode=OneWay}"
                 SearchTermsChanged="FilterBand_SearchTermsChanged"
                 ShouldParentBeEnabled="{Binding Path=IsEnabled, Mode=OneWayToSource, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type views:ClipboardViewControlBase}}}">
                 <filterBand:FilterBand.Style>
@@ -557,6 +562,17 @@
 
             <Button
                 Grid.Row="1"
+                VerticalAlignment="Bottom"
+                VerticalContentAlignment="Center"
+                Click="CloudErrorButton_Click"
+                Style="{DynamicResource IconButton}"
+                ToolTip="{loc:Localize TTP_MAINVIEW_BTN_CLOUD_ERROR}"
+                Visibility="{Binding IsCloudSyncSvcInErrorState, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <ContentControl Margin="15" Template="{DynamicResource CloudErrorIcon}" />
+            </Button>
+
+            <Button
+                Grid.Row="2"
                 VerticalAlignment="Bottom"
                 VerticalContentAlignment="Center"
                 Click="SettingsButton_Click"
@@ -702,7 +718,6 @@
                 CombinabilityCheckRequested="MainListView_CombinabilityCheckRequested"
                 DimNonFocusedItems="{Binding Path=DimNonFocusedItems, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}}"
                 GroupingComplete="MainListView_GroupingComplete"
-                IsCloudSyncAvailable="{Binding IsCloudSyncAvailable, Mode=OneWay}"
                 IsFadeInOfItemsEnabled="{Binding AreFadeAnimationsEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type views:MainViewClipboardContents}}}"
                 IsInnerGroupingEnabled="False"
                 ItemDeletionRequested="MainListView_ItemDeletionRequested"
@@ -715,7 +730,23 @@
                 SelectionChangeCompleted="MainListView_SelectionChangeCompleted"
                 ViewItemLoadingCancelRequested="MainListView_ViewItemLoadingCancelRequested"
                 ViewItemLoadingRequested="MainListView_ViewItemLoadingRequested"
-                ViewItemUnloadingRequested="MainListView_ViewItemUnloadingRequested" />
+                ViewItemUnloadingRequested="MainListView_ViewItemUnloadingRequested">
+                <lv:FullClipboardListView.IsCloudSyncAvailable>
+                    <!--
+                        hide all controls which allow cloud operations when the cloud state service is not available
+                        or is in error state
+                    -->
+                    <MultiBinding Converter="{StaticResource AndMultiValueConverter}">
+                        <MultiBinding.Bindings>
+                            <Binding Mode="OneWay" Path="IsCloudSyncAvailable" />
+                            <Binding
+                                Converter="{StaticResource InverseBooleanConverter}"
+                                Mode="OneWay"
+                                Path="IsCloudSyncSvcInErrorState" />
+                        </MultiBinding.Bindings>
+                    </MultiBinding>
+                </lv:FullClipboardListView.IsCloudSyncAvailable>
+            </lv:FullClipboardListView>
         </Grid>
     </Grid>
 </views:ClipboardViewControlBase>

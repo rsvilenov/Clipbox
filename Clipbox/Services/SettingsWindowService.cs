@@ -1,4 +1,6 @@
-﻿using Clipbox.Infrastructure.Extensibility.Containers;
+﻿using Clipbox.Core.Extensibility.Enums;
+using Clipbox.Infrastructure.Extensibility.Containers;
+using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Interfaces;
 using Clipbox.Views.Settings;
 using System;
@@ -31,9 +33,9 @@ namespace Clipbox.Services
             _extContainer = extContainer;
         }
 
-        private void _mainClipboardViewWindowService_SettingsWindowOpenRequested(object sender, EventArgs e)
+        private void _mainClipboardViewWindowService_SettingsWindowOpenRequested(object sender, SettingsWindowEventArgs e)
         {
-            OpenSettingsWindow();
+            OpenSettingsWindow(e.Category);
         }
 
         private void _mainClipboardViewWindowService_OpenMainWindowRequested(object sender, System.ComponentModel.CancelEventArgs e)
@@ -64,7 +66,7 @@ namespace Clipbox.Services
             }
         }
 
-        public void OpenSettingsWindow()
+        public void OpenSettingsWindow(SettingsCategory highlightCategory)
         {
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle,
                 new Action(() =>
@@ -81,6 +83,8 @@ namespace Clipbox.Services
                         _settingsWindow.Closing += _settingsWindow_Closing;
                         _settingsWindow.Show();
                     }
+
+                    _settingsWindow.HighlightCategory(highlightCategory);
                 }));
         }
 
