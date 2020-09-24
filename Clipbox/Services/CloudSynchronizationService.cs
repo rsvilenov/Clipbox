@@ -14,6 +14,7 @@ using Clipbox.Infrastructure.CloudSupport;
 using Clipbox.Infrastructure.Extensibility.Containers.Interfaces;
 using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.UI.Utils;
+using Clipbox.Services.Enums;
 using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Exceptions;
 using Clipbox.Services.Interfaces;
@@ -24,6 +25,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
+using System.Net.Sockets;
 using System.Runtime.ExceptionServices;
 using System.Text;
 using System.Threading;
@@ -51,7 +53,7 @@ namespace Clipbox.Services
         public event EventHandler NetworkAvailabilityChanged;
         public event EventHandler<AuthenticationStageEventArgs> AuthenticationStateChanged;
 
-        public event EventHandler<DetailedErrorEventArgs> ErrorOccurred;
+        public event EventHandler<ErrorStateEventArgs> ErrorStateChanged;
         public event EventHandler<SyncEventArgs> ItemSynced;
 
 
@@ -271,6 +273,7 @@ namespace Clipbox.Services
 
                 _cloudExtensionAuthMre.Set();
 
+                ClearError();
                 AppendError(e.Message, e.ToString());
                 AuthenticationStateChanged?.Invoke(this, new AuthenticationStageEventArgs(AuthenticationStage.AuthenticationError, e.Message, e.Details));
             }
@@ -292,7 +295,7 @@ namespace Clipbox.Services
             if (errorDetails != null)
             {
                 _errorDetailsSb.AppendLine(errorDetails);
-                _lastErrorDetails = _errorDetailsSb.ToString();
+                _lastErrorDetails = GetErrorDetails();
             }
         }
 
@@ -304,7 +307,14 @@ namespace Clipbox.Services
 
         private string GetErrorDetails()
         {
-            return _errorDetailsSb.ToString();
+            StringBuilder fullErrorSb = new StringBuilder();
+            fullErrorSb.AppendLine("Error:");
+            fullErrorSb.AppendLine(_errorSb.ToString());
+            fullErrorSb.AppendLine("Details:");
+            fullErrorSb.AppendLine(_errorDetailsSb.ToString());
+            fullErrorSb.AppendLine("Cloud support extension:");
+            fullErrorSb.AppendLine(_cloudSupportExt?.GetType()?.AssemblyQualifiedName ?? string.Empty);
+            return fullErrorSb.ToString();
         }
 
         private string GetError()
@@ -352,21 +362,39 @@ namespace Clipbox.Services
                     {
                         csi = _cloudSupportExt.GetCloudServiceInfo();
                     }
-                    catch (TimeoutException)
+                    catch (TimeoutException tx)
                     {
-                        continue;
-                    }
-
-                    if (csi.Exception is TimeoutException)
-                    {
-                        continue;
-                    }
-
-                    if (!csi.IsHealthy)
-                    {
-                        AppendError($"{csi.ServiceName} : {csi.FailureReason}");
-                        ErrorOccurred?.Invoke(this, new DetailedErrorEventArgs(GetError(), GetErrorDetails()));
+                        IsInErrorState = true;
                         ClearError();
+                        AppendError("Timeout.", tx.ToString());
+                        ErrorStateChanged?.Invoke(this, new ErrorStateEventArgs(ErrorState.Error, GetError(), GetErrorDetails()));
+                        
+                        continue;
+                    }
+
+                    if (csi.Exception is TimeoutException tex)
+                    {
+                        IsInErrorState = true;
+                        ClearError();
+                        AppendError("Timeout.", tex.ToString());
+                        ErrorStateChanged?.Invoke(this, new ErrorStateEventArgs(ErrorState.Error, GetError(), GetErrorDetails()));
+                        
+                        continue;
+                    }
+
+                    if (csi.IsHealthy)
+                    {
+                        ClearError();
+                        IsInErrorState = false;
+                        ErrorStateChanged?.Invoke(this, new ErrorStateEventArgs(ErrorState.Recovered));
+                    }
+                    else
+                    {
+                        IsInErrorState = true;
+                        ClearError();
+                        AppendError($"{csi.ServiceName} : {csi.FailureReason}");
+                        ErrorStateChanged?.Invoke(this, new ErrorStateEventArgs(ErrorState.Error, GetError(), GetErrorDetails()));
+                        
                         continue;
                     }
 
@@ -379,10 +407,16 @@ namespace Clipbox.Services
                     }
                     catch (Exception ex)
                     {
+                        ClearError();
                         AppendError("Error syncing content with cloud.");
                         AppendError(ex.Message, ex.ToString());
-                        ErrorOccurred?.Invoke(this, new DetailedErrorEventArgs(GetError(), GetErrorDetails()));
-                        ClearError();
+                        IsInErrorState = true;
+                        ErrorStateChanged?.Invoke(this, new ErrorStateEventArgs(ErrorState.Error, GetError(), GetErrorDetails()));
+
+                        if (ex is TimeoutException || ex is SocketException)
+                        {
+                            Thread.Sleep(5000);
+                        }
                     }
 
                 }
@@ -617,8 +651,6 @@ namespace Clipbox.Services
         {
             const int maxAuthAttempts = 3;
 
-            var syncContext = SynchronizationContext.Current;
-
             Task.Run(() =>
             {
                 if (IsAuthenticated)
@@ -627,10 +659,16 @@ namespace Clipbox.Services
                 }
 
                 _authTaskSemaphore.Wait();
-                
+
+                if (IsAuthenticated)
+                {
+                    return;
+                }
+
                 try
                 {
                     Authenticate();
+
                     if (!IsAuthenticated)
                     {
                         _numberOfAuthFailures++; 
@@ -638,9 +676,10 @@ namespace Clipbox.Services
                         {
                             _numberOfAuthFailures = 0;
                             IsInErrorState = true;
-                            AppendError("Could not authenticate after the maximum number of attempts.");
-                            ErrorOccurred?.Invoke(this, new DetailedErrorEventArgs(GetError(), GetErrorDetails()));
                             ClearError();
+                            AppendError("Could not authenticate after the maximum number of attempts.");
+                            ErrorStateChanged?.Invoke(this, new ErrorStateEventArgs(ErrorState.Error, GetError(), GetErrorDetails()));
+                            
                             return;
                         }
 
@@ -648,6 +687,10 @@ namespace Clipbox.Services
                     }
                     else
                     {
+                        IsInErrorState = true;
+                        ClearError();
+                        ErrorStateChanged?.Invoke(this, new ErrorStateEventArgs(ErrorState.Recovered));
+
                         _numberOfAuthFailures = 0;
                     }
                 }
@@ -658,10 +701,11 @@ namespace Clipbox.Services
                     {
                         _numberOfAuthFailures = 0;
                         IsInErrorState = true;
+                        ClearError();
                         AppendError("Could not authenticate after the maximum number of attempts.");
                         AppendError(ex.Message, ex.ToString());
-                        ErrorOccurred?.Invoke(this, new DetailedErrorEventArgs(GetError(), GetErrorDetails()));
-                        ClearError();
+                        ErrorStateChanged?.Invoke(this, new ErrorStateEventArgs(ErrorState.Error, GetError(), GetErrorDetails()));
+                        
                         return;
                     }
 
@@ -732,20 +776,26 @@ namespace Clipbox.Services
             {
                 StopSyncTask();
 
+                ClearError();
+                IsInErrorState = false;
+                ErrorStateChanged?.Invoke(this, new ErrorStateEventArgs(ErrorState.Recovered));
+
                 if (_cloudSupportExt.CheckCategoryExists(_cloudStorageCategoryName))
                 {
                     _cloudSupportExt.DeleteCategory(_cloudStorageCategoryName);
                     ResetClipboardItemsIsSynchronizedStatus();
                 }
-
-                StartSyncTask();
             }
             catch (Exception ex)
             {
                 AppendError("Error clearing the content in the cloud.");
                 AppendError(ex.Message, ex.ToString());
-                ErrorOccurred?.Invoke(this, new DetailedErrorEventArgs(GetError(), GetErrorDetails()));
-                ClearError();
+                IsInErrorState = true;
+                ErrorStateChanged?.Invoke(this, new ErrorStateEventArgs(ErrorState.Error, GetError(), GetErrorDetails()));
+            }
+            finally
+            {
+                StartSyncTask();
             }
         }
     }

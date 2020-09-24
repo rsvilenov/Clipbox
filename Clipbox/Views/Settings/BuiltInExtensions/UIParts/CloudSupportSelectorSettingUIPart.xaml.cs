@@ -1,9 +1,7 @@
 ﻿using Clipbox.Core;
 using Clipbox.Core.Extensibility.Attributes;
 using Clipbox.Core.Extensibility.Contracts;
-using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using Clipbox.Core.Extensibility.EventArgsClasses;
-using Clipbox.Infrastructure.Extensibility.Loading;
 using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.Extensibility;
 using Clipbox.Infrastructure.UI.ExtensionMethods;
@@ -61,7 +59,6 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
             ShowDetailsClicked = new DelegateCommand(ShowDetailsHandler);
             CopyDetailsToClipboardClicked = new DelegateCommand(CopyDetailsToClipboardHandler);
             ClearCloudDataClicked = new DelegateCommand(ClearCloudDataHandler);
-            Unloaded += CloudSupportSelectorSettingUIPart_Unloaded;
         }
 
         private void ClearCloudDataHandler()
@@ -315,33 +312,56 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
                 ErrorDetails = _cloudSyncSvc.GetLastErrorDetails();
             }
             else
-            if (!_cloudSyncSvc.IsNetworkAvailable)
             {
-                ConnectionState = CloudServiceConnectionState.NoNetwork;
-            }
-            else
-            if (_cloudSyncSvc.IsAuthenticated)
-            {
-                ConnectionState = CloudServiceConnectionState.Authenticated;
-            }
-            else
-            if (_cloudSyncSvc.IsAuthenticating)
-            {
-                ConnectionState = CloudServiceConnectionState.Authenticating;
+                ConnectionState = DetermineConnectionState();
             }
 
             _cloudSyncSvc.AuthenticationStateChanged += _cloudSyncSvc_AuthenticationStateChanged;
             _cloudSyncSvc.NetworkAvailabilityChanged += _cloudSyncSvc_NetworkAvailabilityChanged;
-            _cloudSyncSvc.ErrorOccurred += _cloudSyncSvc_ErrorOccurred;
+            _cloudSyncSvc.ErrorStateChanged += _cloudSyncSvc_ErrorStateChanged;
         }
 
-        private void _cloudSyncSvc_ErrorOccurred(object sender, DetailedErrorEventArgs e)
+        private CloudServiceConnectionState DetermineConnectionState()
+        {
+            if (!_cloudSyncSvc.IsNetworkAvailable)
+            {
+                return CloudServiceConnectionState.NoNetwork;
+            }
+            else
+                if (_cloudSyncSvc.IsAuthenticated)
+            {
+                return CloudServiceConnectionState.Authenticated;
+            }
+            else
+                if (_cloudSyncSvc.IsAuthenticating)
+            {
+                return CloudServiceConnectionState.Authenticating;
+            }
+            else 
+                if (_cloudSyncSvc.IsInErrorState)
+            {
+                return CloudServiceConnectionState.Error;
+            }
+            else
+            {
+                return CloudServiceConnectionState.Connecting;
+            }
+        }
+
+        private void _cloudSyncSvc_ErrorStateChanged(object sender, ErrorStateEventArgs e)
         {
             Dispatcher.Invoke(() =>
             {
-                ConnectionState = CloudServiceConnectionState.Error;
-                ErrorMessage = _cloudSyncSvc.GetLastError();
-                ErrorDetails = _cloudSyncSvc.GetLastErrorDetails();
+                if (e.State == Services.Enums.ErrorState.Error)
+                {
+                    ConnectionState = CloudServiceConnectionState.Error;
+                    ErrorMessage = e.Message;
+                    ErrorDetails = e.Details;
+                }
+                else
+                {
+                    ConnectionState = DetermineConnectionState();
+                }
             });
         }
 
@@ -389,20 +409,13 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
             });
         }
 
-        private void CloudSupportSelectorSettingUIPart_Unloaded(object sender, RoutedEventArgs e)
-        {
-            _cloudSyncSvc.AuthenticationStateChanged -= _cloudSyncSvc_AuthenticationStateChanged;
-            _cloudSyncSvc.NetworkAvailabilityChanged -= _cloudSyncSvc_NetworkAvailabilityChanged;
-            _cloudSyncSvc.ErrorOccurred -= _cloudSyncSvc_ErrorOccurred;
-        }
-
         public void Dispose()
         {
             if (_cloudSyncSvc != null && !_isDisposed)
             {
                 _cloudSyncSvc.AuthenticationStateChanged -= _cloudSyncSvc_AuthenticationStateChanged;
                 _cloudSyncSvc.NetworkAvailabilityChanged -= _cloudSyncSvc_NetworkAvailabilityChanged;
-                _cloudSyncSvc.ErrorOccurred -= _cloudSyncSvc_ErrorOccurred;
+                _cloudSyncSvc.ErrorStateChanged -= _cloudSyncSvc_ErrorStateChanged;
 
                 _isDisposed = true;
             }

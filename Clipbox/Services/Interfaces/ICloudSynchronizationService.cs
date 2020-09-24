@@ -37,7 +37,7 @@ namespace Clipbox.Services.Interfaces
 
         event EventHandler<AuthenticationStageEventArgs> AuthenticationStateChanged;
 
-        event EventHandler<DetailedErrorEventArgs> ErrorOccurred;
+        event EventHandler<ErrorStateEventArgs> ErrorStateChanged;
 
         event EventHandler<SyncEventArgs> ItemSynced;
     }

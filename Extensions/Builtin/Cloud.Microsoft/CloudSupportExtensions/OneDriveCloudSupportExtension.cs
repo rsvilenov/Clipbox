@@ -390,7 +390,7 @@ namespace Clipbox.Extensions.BuiltIn.Cloud.Microsoft.CloudSupportExtensions
                     failureReason = "The cloud service is unreachable.";
                 }
 
-                return new CloudServiceInfo("Google Drive",
+                return new CloudServiceInfo("OneDrive",
                     url,
                     IsAuthenticated,
                     isAvailable,
@@ -398,7 +398,7 @@ namespace Clipbox.Extensions.BuiltIn.Cloud.Microsoft.CloudSupportExtensions
             }
             catch (Exception ex)
             {
-                return new CloudServiceInfo("Google Drive",
+                return new CloudServiceInfo("OneDrive",
                    url,
                    IsAuthenticated,
                    isAvailable,
