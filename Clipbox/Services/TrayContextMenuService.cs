@@ -89,15 +89,12 @@ namespace Clipbox.Services
 
         private void _trayContextMenuViewModel_SettingsWindowOpenRequested(object sender, EventArgs e)
         {
-            if (!_settingsWindowService.IsSettingsWindowOpen)
+            if (_mainClipboardViewWindowService.IsOpen)
             {
-                if (_mainClipboardViewWindowService.IsOpen)
-                {
-                    _mainClipboardViewWindowService.Close();
-                }
-
-                _settingsWindowService.OpenSettingsWindow();
+                _mainClipboardViewWindowService.Close();
             }
+
+            _settingsWindowService.OpenSettingsWindow();
         }
 
         private void _trayContextMenu_Opened(object sender, EventArgs e)

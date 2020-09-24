@@ -54,6 +54,13 @@ namespace Clipbox.ViewModels
             set { SetField(ref _isMainWindowOpen, value); }
         }
 
+        private bool _isToggleCloudSyncVisible;
+        public bool IsToggleCloudSyncVisible
+        {
+            get { return _isToggleCloudSyncVisible; }
+            set { SetField(ref _isToggleCloudSyncVisible, value); }
+        }
+
         public TrayContextMenuViewModel(ISettingsService settingsService,
             IPauseService pauseService, 
             IMainClipboardViewWindowService mainClipboardViewWindowService)
@@ -65,6 +72,7 @@ namespace Clipbox.ViewModels
             _mainClipboardViewWindowService.MainWindowOpened += _mainClipboardViewWindowService_MainWindowOpened;
             _mainClipboardViewWindowService.MainWindowClosed += _mainClipboardViewWindowService_MainWindowClosed;
 
+            IsToggleCloudSyncVisible = _settingsService.GetSetting<bool>(SettingsKeys.AreCloudServicesEnabled);
             IsCloudSyncEnabled = _settingsService.GetSetting<bool>(SettingsKeys.IsCloudSyncEnabled);
             IsPaused = !_settingsService.GetSetting<bool>(SettingsKeys.IsClipboardTrackingEnabled);
 
@@ -93,6 +101,10 @@ namespace Clipbox.ViewModels
             if (e.Key == SettingsKeys.IsClipboardTrackingEnabled)
             {
                 IsPaused = !_settingsService.GetSetting<bool>(SettingsKeys.IsClipboardTrackingEnabled);
+            }
+            else if (e.Key == SettingsKeys.AreCloudServicesEnabled)
+            {
+                IsToggleCloudSyncVisible = _settingsService.GetSetting<bool>(SettingsKeys.AreCloudServicesEnabled);
             }
         }
 

@@ -31,22 +31,41 @@
                     <Image Source="pack://application:,,,/Resources/Images/OpenMainWindow.png" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem
-                Command="{Binding ToggleCloudSyncEnabled}"
-                Header="{loc:Localize LBL_CONTEXT_MENU_DISABLE_CLOUD_SYNC}"
-                Visibility="{Binding IsCloudSyncEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <MenuItem Command="{Binding ToggleCloudSyncEnabled}" Header="{loc:Localize LBL_CONTEXT_MENU_DISABLE_CLOUD_SYNC}">
                 <MenuItem.Icon>
                     <Image Source="pack://application:,,,/Resources/Images/SyncDisabled.png" />
                 </MenuItem.Icon>
+                <MenuItem.Style>
+                    <Style TargetType="MenuItem">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsCloudSyncEnabled}" Value="True">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsToggleCloudSyncVisible}" Value="False">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </MenuItem.Style>
             </MenuItem>
-            <MenuItem
-                Command="{Binding ToggleCloudSyncEnabled}"
-                Header="{loc:Localize LBL_CONTEXT_MENU_ENABLE_CLOUD_SYNC}"
-                IsEnabled="{Binding IsCloudSyncEnabled, Converter={StaticResource InverseBooleanConverter}}"
-                Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <MenuItem Command="{Binding ToggleCloudSyncEnabled}" Header="{loc:Localize LBL_CONTEXT_MENU_ENABLE_CLOUD_SYNC}">
                 <MenuItem.Icon>
                     <Image Source="pack://application:,,,/Resources/Images/Sync.png" />
                 </MenuItem.Icon>
+                <MenuItem.Style>
+                    <Style TargetType="MenuItem">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsCloudSyncEnabled}" Value="False">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding IsToggleCloudSyncVisible}" Value="False">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </MenuItem.Style>
             </MenuItem>
             <MenuItem
                 Header="{loc:Localize LBL_CONTEXT_MENU_PAUSE_FOR}"

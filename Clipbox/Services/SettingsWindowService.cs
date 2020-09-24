@@ -69,11 +69,18 @@ namespace Clipbox.Services
             Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle,
                 new Action(() =>
                 {
-                    _settingsWindow = new SettingsWindow(_settingsService, _cloudSyncService, _extContainer);
-                    // this event never fires
-                    //_settingsWindow.Closed += _settingsWindow_Closed;
-                    _settingsWindow.Closing += _settingsWindow_Closing;
-                    _settingsWindow.Show();
+                    if (IsSettingsWindowOpen)
+                    {
+                        BringSettingsWindowToFront();
+                    }
+                    else
+                    {
+                        _settingsWindow = new SettingsWindow(_settingsService, _cloudSyncService, _extContainer);
+                        // this event never fires
+                        //_settingsWindow.Closed += _settingsWindow_Closed;
+                        _settingsWindow.Closing += _settingsWindow_Closing;
+                        _settingsWindow.Show();
+                    }
                 }));
         }
 
