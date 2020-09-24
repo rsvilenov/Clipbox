@@ -44,7 +44,7 @@
                 x:Key="keepGeneratedItemToggleButton"
                 BasedOn="{StaticResource tglButton}"
                 TargetType="{x:Type ToggleButton}">
-                <Setter Property="Content" Value="{DynamicResource SaveIcon}" />
+                <Setter Property="Content" Value="{StaticResource SaveIcon}" />
                 <Setter Property="ToolTip" Value="{loc:Localize TTP_MAINVIEW_TGL_SAVE_MODIFIED_ITEM}" />
                 <Setter Property="Padding" Value="5" />
             </Style>
@@ -70,7 +70,7 @@
                                         Foreground="{Binding Path=Foreground, RelativeSource={RelativeSource TemplatedParent}}"
                                         Text="{TemplateBinding Content}" />
                                     <Border x:Name="btnIconBorder">
-                                        <ContentControl Margin="5" Template="{DynamicResource SetToSystemClipboardIcon}" />
+                                        <ContentControl Margin="5" Template="{StaticResource SetToSystemClipboardIcon}" />
                                     </Border>
                                 </StackPanel>
                             </Border>
@@ -122,7 +122,7 @@
                                         <ContentControl
                                             x:Name="btnIcon"
                                             Margin="5"
-                                            Template="{DynamicResource TrashIcon}" />
+                                            Template="{StaticResource TrashIcon}" />
                                     </Border>
                                 </StackPanel>
                             </Border>
@@ -257,13 +257,13 @@
                         Grid.Column="0"
                         Width="12"
                         HorizontalAlignment="Center"
-                        Style="{DynamicResource BtnArrowLeft}" />
+                        Style="{StaticResource BtnArrowLeft}" />
                     <Button
                         Name="scrollBtnRight"
                         Grid.Column="2"
                         Width="12"
                         HorizontalAlignment="Center"
-                        Style="{DynamicResource BtnArrowRight}" />
+                        Style="{StaticResource BtnArrowRight}" />
                     <ScrollViewer
                         Grid.Column="1"
                         HorizontalScrollBarVisibility="Hidden"
@@ -311,7 +311,7 @@
                                     Click="SetToClipboardButton_Click"
                                     Content="{loc:Localize BTN_MAINVIEW_SET_TO_CLIPBOARD}"
                                     FontSize="14"
-                                    Style="{DynamicResource SetToClipboardButton}"
+                                    Style="{StaticResource SetToClipboardButton}"
                                     ToolTip="{loc:Localize TTP_MAINVIEW_BTN_SET_TO_CLIPBOARD}" />
 
                             </StackPanel>
@@ -351,7 +351,7 @@
                                     Click="TrashBtn_Click"
                                     Content="{loc:Localize BTN_MAINVIEW_DELETE_SELECTED}"
                                     FontSize="14"
-                                    Style="{DynamicResource DeleteItemsButton}"
+                                    Style="{StaticResource DeleteItemsButton}"
                                     ToolTip="{loc:Localize TTP_MAINVIEW_BTN_DELETE_SELECTED}" />
 
 
@@ -560,15 +560,35 @@
                 </filterBand:FilterBand.Style>
             </filterBand:FilterBand>
 
+            <!--  Visibility="{Binding IsCloudSyncSvcInErrorState, Converter={StaticResource BooleanToVisibilityConverter}}"  -->
+
             <Button
                 Grid.Row="1"
                 VerticalAlignment="Bottom"
                 VerticalContentAlignment="Center"
                 Click="CloudErrorButton_Click"
-                Style="{DynamicResource IconButton}"
-                ToolTip="{loc:Localize TTP_MAINVIEW_BTN_CLOUD_ERROR}"
-                Visibility="{Binding IsCloudSyncSvcInErrorState, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <ContentControl Margin="15" Template="{DynamicResource CloudErrorIcon}" />
+                Foreground="{DynamicResource AlertBrush2}"
+                ToolTip="{loc:Localize TTP_MAINVIEW_BTN_CLOUD_ERROR}">
+                <Button.Style>
+                    <Style BasedOn="{StaticResource IconButton}" TargetType="Button">
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Path=AreFadeAnimationsEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type views:MainViewClipboardContents}}}" Value="True">
+                                <Setter Property="Content">
+                                    <Setter.Value>
+                                        <ContentControl Margin="15" Template="{StaticResource CloudErrorBlinkingIcon}" />
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Path=AreFadeAnimationsEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type views:MainViewClipboardContents}}}" Value="False">
+                                <Setter Property="Content">
+                                    <Setter.Value>
+                                        <ContentControl Margin="15" Template="{StaticResource CloudErrorIcon}" />
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
             </Button>
 
             <Button
@@ -576,9 +596,9 @@
                 VerticalAlignment="Bottom"
                 VerticalContentAlignment="Center"
                 Click="SettingsButton_Click"
-                Style="{DynamicResource IconButton}"
+                Style="{StaticResource IconButton}"
                 ToolTip="{loc:Localize TTP_MAINVIEW_BTN_SETTINGS}">
-                <ContentControl Margin="15" Template="{DynamicResource SettingsIcon}" />
+                <ContentControl Margin="15" Template="{StaticResource SettingsIcon}" />
             </Button>
 
         </Grid>
@@ -698,7 +718,7 @@
                     Click="RebuildIndexButton_Click"
                     Content="{loc:Localize BTN_MAINVIEW_REBUILD_SEARCH_INDEX}"
                     Foreground="{DynamicResource ControlForegroundBrush}"
-                    Style="{DynamicResource BtnRebuild}" />
+                    Style="{StaticResource BtnRebuild}" />
             </Grid>
 
             <!--  main list view  -->
