@@ -560,15 +560,14 @@
                 </filterBand:FilterBand.Style>
             </filterBand:FilterBand>
 
-            <!--  Visibility="{Binding IsCloudSyncSvcInErrorState, Converter={StaticResource BooleanToVisibilityConverter}}"  -->
-
             <Button
                 Grid.Row="1"
                 VerticalAlignment="Bottom"
                 VerticalContentAlignment="Center"
                 Click="CloudErrorButton_Click"
                 Foreground="{DynamicResource AlertBrush2}"
-                ToolTip="{loc:Localize TTP_MAINVIEW_BTN_CLOUD_ERROR}">
+                ToolTip="{loc:Localize TTP_MAINVIEW_BTN_CLOUD_ERROR}"
+                Visibility="{Binding IsCloudSyncSvcInErrorState, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <Button.Style>
                     <Style BasedOn="{StaticResource IconButton}" TargetType="Button">
                         <Style.Triggers>
