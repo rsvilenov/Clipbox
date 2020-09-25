@@ -45,6 +45,7 @@ namespace Clipbox.Extensions.BuiltIn.Cloud.Microsoft.CloudSupportExtensions
 
         private string _tokenCache;
         private CloudObjectCache _cloudObjectCache;
+        private bool _loginChangeRequested;
         public OneDriveCloudSupportExtension()
         {
             _cloudObjectCache = new CloudObjectCache();
@@ -68,6 +69,12 @@ namespace Clipbox.Extensions.BuiltIn.Cloud.Microsoft.CloudSupportExtensions
                     AuthenticationResult authResult = null;
                     try
                     {
+                        if (_loginChangeRequested)
+                        {
+                            // jump into the catch block, so that the openning of the login page will be forced
+                            throw new MsalUiRequiredException("forceReauth", "force the login page to appear");
+                        }
+
                         authResult = await app.AcquireTokenSilent(scopes, firstAccount)
                             .ExecuteAsync();
 
@@ -81,6 +88,7 @@ namespace Clipbox.Extensions.BuiltIn.Cloud.Microsoft.CloudSupportExtensions
                     {
                         try
                         {
+                            _loginChangeRequested = false;
                             IsAuthenticated = false;
                             AuthenticationStageChanged?.Invoke(this, new AuthenticationStageEventArgs(AuthenticationStage.Authenticating));
 
@@ -118,10 +126,11 @@ namespace Clipbox.Extensions.BuiltIn.Cloud.Microsoft.CloudSupportExtensions
 
         protected override void OnSettingUpdated(string settingName)
         {
-            if (settingName == ExtensionSettingNames.OneDriveClearTokenCacheRequested 
+            if (settingName == ExtensionSettingNames.OneDriveClearTokenCacheRequested
                 && GetSetting<bool>(ExtensionSettingNames.OneDriveClearTokenCacheRequested))
             {
                 _tokenCache = string.Empty;
+                _loginChangeRequested = true;
                 RequestSettingChange(ExtensionSettingNames.OneDriveDriveAuthTokenCache, _tokenCache);
 
                 RequestSettingChange(ExtensionSettingNames.OneDriveClearTokenCacheRequested, false);
@@ -158,9 +167,16 @@ namespace Clipbox.Extensions.BuiltIn.Cloud.Microsoft.CloudSupportExtensions
 
         public event EventHandler<AuthenticationStageEventArgs> AuthenticationStageChanged;
 
-        public void InitiateAuthentication(object loginInfo)
+        public void InitiateAuthentication()
         {
             _graphServiceClient.Me.Drive.Special.AppRoot.Request().GetAsync();
+        }
+
+        public void ChangeLogin()
+        {
+            _loginChangeRequested = true;
+
+            InitiateAuthentication();
         }
 
         #endregion

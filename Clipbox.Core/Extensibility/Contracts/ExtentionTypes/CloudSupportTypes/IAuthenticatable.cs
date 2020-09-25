@@ -9,7 +9,9 @@ namespace Clipbox.Infrastructure.CloudSupport
     /// </summary>
     public interface IAuthenticatable
     {
-        void InitiateAuthentication(object loginInfo);
+        void InitiateAuthentication();
+
+        void ChangeLogin();
 
         bool IsAuthenticated { get; }
 

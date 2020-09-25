@@ -39,7 +39,7 @@ namespace Clipbox.Extensions.BuiltIn.Cloud.Google.CloudSupportExtensions
 
         public event EventHandler<AuthenticationStageEventArgs> AuthenticationStageChanged;
 
-        public void InitiateAuthentication(object loginInfo)
+        public void InitiateAuthentication()
         {
             AuthenticationStageChanged?.Invoke(this, new AuthenticationStageEventArgs(AuthenticationStage.Authenticating));
 
@@ -51,6 +51,11 @@ namespace Clipbox.Extensions.BuiltIn.Cloud.Google.CloudSupportExtensions
                     AuthenticationStageChanged?.Invoke(this, new AuthenticationStageEventArgs(AuthenticationStage.Authenticated));
                 }
             });
+        }
+
+        public void ChangeLogin()
+        {
+            ChangeLoginInternal();
         }
 
         #endregion
@@ -92,18 +97,23 @@ namespace Clipbox.Extensions.BuiltIn.Cloud.Google.CloudSupportExtensions
             }
             else if (settingName == ExtensionSettingNames.GoogleDriveReauthRequested && GetSetting<bool>(ExtensionSettingNames.GoogleDriveReauthRequested))
             {
-                AuthenticationStageChanged?.Invoke(this, new AuthenticationStageEventArgs(AuthenticationStage.Authenticating));
-
-                RequestSettingChange(ExtensionSettingNames.GoogleDriveReauthRequested, false);
-                Authenticate(updatePermissions: true).ContinueWith(t =>
-                {
-                    if (_credential != null)
-                    {
-                        IsAuthenticated = true;
-                        AuthenticationStageChanged?.Invoke(this, new AuthenticationStageEventArgs(AuthenticationStage.Authenticated));
-                    }
-                });
+                ChangeLoginInternal();
             }
+        }
+
+        private void ChangeLoginInternal()
+        {
+            AuthenticationStageChanged?.Invoke(this, new AuthenticationStageEventArgs(AuthenticationStage.Authenticating));
+
+            RequestSettingChange(ExtensionSettingNames.GoogleDriveReauthRequested, false);
+            Authenticate(updatePermissions: true).ContinueWith(t =>
+            {
+                if (_credential != null)
+                {
+                    IsAuthenticated = true;
+                    AuthenticationStageChanged?.Invoke(this, new AuthenticationStageEventArgs(AuthenticationStage.Authenticated));
+                }
+            });
         }
 
         private void _dataStore_FetchDataRequested(object sender, StringDataTransferEventArgs e)

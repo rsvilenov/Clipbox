@@ -163,7 +163,26 @@ namespace Clipbox.Services
 
         public void RequestLoginChange()
         {
+            IsInErrorState = true;
+            ClearError();
 
+            Task.Run(() =>
+            {
+                try
+                {
+                    (_cloudSupportExt as IAuthenticatable)?.ChangeLogin();
+                }
+                catch (Exception ex)
+                {
+                    IsInErrorState = true;
+                    ClearError();
+                    AppendError("Could not change the login.");
+                    AppendError(ex.Message, ex.ToString());
+                    ErrorStateChanged?.Invoke(this, new ErrorStateEventArgs(ErrorState.Error, GetError(), GetErrorDetails()));
+
+                    return;
+                }
+            });
         }
 
         private void _settingsService_SettingChanged(object sender, SettingsEventArgs e)
@@ -738,7 +757,7 @@ namespace Clipbox.Services
                 int authAttemptTimeout = _settingsService.GetSetting<int>(SettingsKeys.CloudServiceAuthAttemptTimeout);
 
                 _cloudExtensionAuthMre.Reset();
-                authenticatable.InitiateAuthentication(null);
+                authenticatable.InitiateAuthentication();
                 _cloudExtensionAuthMre.WaitOne(authAttemptTimeout);
             }
             else
