@@ -280,47 +280,11 @@
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
-                            <!--  charge clipboard button  -->
-                            <StackPanel
-                                Grid.Column="0"
-                                Height="40"
-                                Orientation="Horizontal">
-                                <i:Interaction.Behaviors>
-                                    <infBeh:FrameworkElementDpiScalingBehavior />
-                                </i:Interaction.Behaviors>
-                                <StackPanel.Background>
-                                    <SolidColorBrush Opacity="0.5" Color="{DynamicResource TaskbarColor}" />
-                                </StackPanel.Background>
-                                <StackPanel.Style>
-                                    <Style TargetType="{x:Type StackPanel}">
-                                        <Setter Property="Visibility" Value="Collapsed" />
-                                        <Style.Triggers>
-                                            <MultiDataTrigger>
-                                                <MultiDataTrigger.Conditions>
-                                                    <Condition Binding="{Binding Path=AreAnyItemsSelected, ElementName=MainListView}" Value="True" />
-                                                    <Condition Binding="{Binding Path=AreSelectedItemsCombinable, ElementName=MainListView}" Value="True" />
-                                                    <Condition Binding="{Binding Path=IsShowingOfPostSelectionToolboxEnabled, RelativeSource={RelativeSource AncestorType={x:Type local:ClipboardViewControlBase}}}" Value="True" />
-                                                </MultiDataTrigger.Conditions>
-                                                <Setter Property="Visibility" Value="Visible" />
-                                            </MultiDataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </StackPanel.Style>
-                                <Button
-                                    x:Name="setToClipboardBtn"
-                                    Click="SetToClipboardButton_Click"
-                                    Content="{loc:Localize BTN_MAINVIEW_SET_TO_CLIPBOARD}"
-                                    FontSize="14"
-                                    Style="{StaticResource SetToClipboardButton}"
-                                    ToolTip="{loc:Localize TTP_MAINVIEW_BTN_SET_TO_CLIPBOARD}" />
-
-                            </StackPanel>
 
                             <!--  trash button and confirmation popups  -->
                             <StackPanel
-                                Grid.Column="1"
+                                Grid.Column="0"
                                 Height="40"
-                                Margin="10,0,0,0"
                                 Orientation="Horizontal">
                                 <StackPanel.Background>
                                     <SolidColorBrush Opacity="0.5" Color="{DynamicResource TaskbarColor}" />
@@ -399,7 +363,7 @@
 
                             <!--  text block for the "incompatible items" message  -->
                             <TextBlock
-                                Grid.Column="2"
+                                Grid.Column="1"
                                 Margin="15,0,0,0"
                                 VerticalAlignment="Center"
                                 Panel.ZIndex="100"
@@ -416,7 +380,7 @@
 
                             <!--  ui extension container and "keep generated item" toggle button  -->
                             <StackPanel
-                                Grid.Column="2"
+                                Grid.Column="1"
                                 Height="40"
                                 Margin="10,0,0,0"
                                 Orientation="Horizontal"
@@ -453,6 +417,44 @@
                                     Height="32"
                                     Margin="0,0,10,0"
                                     Style="{StaticResource keepGeneratedItemToggleButton}" />
+
+                            </StackPanel>
+
+
+                            <!--  charge clipboard button  -->
+                            <StackPanel
+                                Grid.Column="2"
+                                Height="40"
+                                Margin="10,0,0,0"
+                                Orientation="Horizontal">
+                                <i:Interaction.Behaviors>
+                                    <infBeh:FrameworkElementDpiScalingBehavior />
+                                </i:Interaction.Behaviors>
+                                <StackPanel.Background>
+                                    <SolidColorBrush Opacity="0.5" Color="{DynamicResource TaskbarColor}" />
+                                </StackPanel.Background>
+                                <StackPanel.Style>
+                                    <Style TargetType="{x:Type StackPanel}">
+                                        <Setter Property="Visibility" Value="Collapsed" />
+                                        <Style.Triggers>
+                                            <MultiDataTrigger>
+                                                <MultiDataTrigger.Conditions>
+                                                    <Condition Binding="{Binding Path=AreAnyItemsSelected, ElementName=MainListView}" Value="True" />
+                                                    <Condition Binding="{Binding Path=AreSelectedItemsCombinable, ElementName=MainListView}" Value="True" />
+                                                    <Condition Binding="{Binding Path=IsShowingOfPostSelectionToolboxEnabled, RelativeSource={RelativeSource AncestorType={x:Type local:ClipboardViewControlBase}}}" Value="True" />
+                                                </MultiDataTrigger.Conditions>
+                                                <Setter Property="Visibility" Value="Visible" />
+                                            </MultiDataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </StackPanel.Style>
+                                <Button
+                                    x:Name="setToClipboardBtn"
+                                    Click="SetToClipboardButton_Click"
+                                    Content="{loc:Localize BTN_MAINVIEW_SET_TO_CLIPBOARD}"
+                                    FontSize="14"
+                                    Style="{StaticResource SetToClipboardButton}"
+                                    ToolTip="{loc:Localize TTP_MAINVIEW_BTN_SET_TO_CLIPBOARD}" />
 
                             </StackPanel>
 
