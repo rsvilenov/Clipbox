@@ -409,7 +409,11 @@ namespace Clipbox.ExtendedClipboard
             var source = new ClipboardItemSource
             {
                 SourceWindowInfo = sourceWindowInfo,
-                UserName = Environment.UserName,
+                SourceSessionInfo = new SourceSessionInfo
+                {
+                    SessionUniqueId = SessionUtils.GetSessionUniqueId(),
+                    UserName = Environment.UserName
+                },
                 SourceMachineInfo = new SourceMachineInfo
                 {
                     MachineName = Environment.MachineName,
@@ -831,7 +835,11 @@ namespace Clipbox.ExtendedClipboard
             var source = new ClipboardItemSource
             {
                 SourceWindowInfo = GetOwnWindowInfo(),
-                UserName = Environment.UserName,
+                SourceSessionInfo = new SourceSessionInfo
+                {
+                    SessionUniqueId = SessionUtils.GetSessionUniqueId(),
+                    UserName = Environment.UserName
+                },
                 SourceMachineInfo = new SourceMachineInfo
                 {
                     MachineName = Environment.MachineName,
@@ -1008,9 +1016,9 @@ namespace Clipbox.ExtendedClipboard
         public IReadOnlyDictionary<IMachineInfo, string> GetAllSourceMachinesAndUsernames()
         {
             return _clipboardItems.Select(ci => ci.Source)
-                .GroupBy(smi => new { smi.SourceMachineInfo.MachineUniqueId, smi.UserName })
+                .GroupBy(smi => new { smi.SourceMachineInfo.MachineUniqueId, smi.SourceSessionInfo.UserName })
                 .Select(g => g.First())
-                .ToDictionary(k => k.SourceMachineInfo, v => v.UserName);
+                .ToDictionary(k => k.SourceMachineInfo, v => v.SourceSessionInfo.UserName);
         }
 
         #endregion

@@ -71,7 +71,7 @@ namespace Clipbox.ViewModels
             // TODO: maybe create a type for these properties, implementing IMachineInfo
             viewItem.SourceWindowMachineName = clipboardItem.Source.SourceMachineInfo.MachineName;
             viewItem.SourceMachineType = clipboardItem.Source.SourceMachineInfo.MachineType;
-            viewItem.SourceWindowUserName = clipboardItem.Source.UserName;
+            viewItem.SourceWindowUserName = clipboardItem.Source.SourceSessionInfo.UserName;
             viewItem.SourceWindowDescription = AppDescriptionFormatter.Format(clipboardItem.Source.SourceWindowInfo);
 
             viewItem.DateCreated = new DateTime(clipboardItem.TimestampInfo.EntryDateTicks);

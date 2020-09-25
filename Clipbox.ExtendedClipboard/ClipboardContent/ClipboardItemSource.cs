@@ -11,7 +11,7 @@ namespace Clipbox.ExtendedClipboard.ClipboardContent
 
         public IMachineInfo SourceMachineInfo { get; internal set; }
 
-        public string UserName { get; internal set; }
+        public ISessionInfo SourceSessionInfo { get; internal set; }
 
     }
 }

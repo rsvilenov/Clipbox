@@ -1,6 +1,5 @@
 ﻿using Clipbox.Win32.Native;
 using System;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 
 namespace Clipbox.Win32.LLHooks
@@ -26,7 +25,6 @@ namespace Clipbox.Win32.LLHooks
                 KeyboardAction?.Invoke(args);
                 if (args.CancelEvent)
                 {
-                    Debug.WriteLine("CANCELLED!!!");
                     return CallbackResult.FromIntPtr(new IntPtr(1));
                 }
             }

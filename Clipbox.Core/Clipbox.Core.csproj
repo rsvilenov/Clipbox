@@ -97,6 +97,7 @@
     <Compile Include="Extensibility\Contracts\ExtentionTypes\ISearchSupport.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\PersistenceTypes\PersistenceSupportExtension.cs" />
     <Compile Include="Extensibility\Contracts\ExtentionTypes\CloudSupportTypes\IAuthenticatable.cs" />
+    <Compile Include="Extensibility\Contracts\ISessionInfo.cs" />
     <Compile Include="Extensibility\Contracts\ISettingChangeRequestor.cs" />
     <Compile Include="Extensibility\Contracts\ISettingsUIComponent.cs" />
     <Compile Include="Extensibility\Contracts\PreviewParams.cs" />

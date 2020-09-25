@@ -8,6 +8,6 @@ namespace Clipbox.Core.ClipboardContent.Interfaces
 
         IMachineInfo SourceMachineInfo { get; }
 
-        string UserName { get; }
+        ISessionInfo SourceSessionInfo { get; }
     }
 }

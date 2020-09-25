@@ -70,6 +70,7 @@
     <Compile Include="ClipboardContent\SerializableIntermediateFormatMetadata.cs" />
     <Compile Include="ClipboardContent\SourceApplicationInfo.cs" />
     <Compile Include="ClipboardContent\SourceMachineInfo.cs" />
+    <Compile Include="ClipboardContent\SourceSessionInfo.cs" />
     <Compile Include="ClipboardContent\TimestampInfo.cs" />
     <Compile Include="ClipboardContent\TransferableClipboardDataObject.cs" />
     <Compile Include="ClipboardContent\TransferableClipboardItem.cs" />

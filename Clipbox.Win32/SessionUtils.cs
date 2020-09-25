@@ -2,8 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.DirectoryServices.AccountManagement;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Principal;
 
 namespace Clipbox.Win32
 {
@@ -48,12 +50,66 @@ namespace Clipbox.Win32
                 Select(si => si.SessionID);
         }
 
+        private static int _sessionId = -1;
         public static int GetCurrentSessionId()
         {
-            using (Process myProcess = Process.GetCurrentProcess())
+            if (_sessionId == -1)
             {
-                return myProcess.SessionId;
+                using (Process myProcess = Process.GetCurrentProcess())
+                {
+                    _sessionId = myProcess.SessionId;
+                }
+            }
+
+            return _sessionId;
+        }
+
+        private static string _sid;
+        /// <summary>
+        /// Returns the current sid of the user if the function succeeds,
+        /// or an empty string otherwise.
+        /// </summary>
+        /// <returns></returns>
+        public static string GetUserSid()
+        {
+            if (_sid == null)
+            {
+                try
+                {
+                    _sid = WindowsIdentity.GetCurrent()?.User?.Value
+                            ?? UserPrincipal.Current?.Sid?.Value
+                            ?? string.Empty;
+                }
+                catch
+                {
+                    _sid = string.Empty;
+                }
+            }
+
+            return _sid;
+        }
+
+        /// <summary>
+        /// Tries to construct a unique session id. This is not the logon sid, but a
+        /// custom id instead and there is no guarantee that it will be stable for 
+        /// the processess with different privileges. However, we are interested in
+        /// our current process which , so this doesn't matter.
+        /// </summary>
+        /// <returns></returns>
+        public static string GetSessionUniqueId()
+        {
+            int sessionId = GetCurrentSessionId();
+            string sid = GetUserSid();
+            if (sessionId > -1 && !string.IsNullOrEmpty(sid))
+            {
+                return $"{sessionId}:{sid}";
+            }
+            else
+            {
+                return string.Empty;
             }
         }
+
+        
     }
 }

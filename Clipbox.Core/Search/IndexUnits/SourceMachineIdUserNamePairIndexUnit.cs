@@ -21,7 +21,7 @@ namespace Clipbox.Core.Search.IndexUnits
         {
             return new string[]
             {
-                $"{clipboardItem.Source.UserName}@{clipboardItem.Source.SourceMachineInfo.MachineUniqueId}"
+                $"{clipboardItem.Source.SourceSessionInfo.UserName}@{clipboardItem.Source.SourceMachineInfo.MachineUniqueId}"
             };
         }
     }
