@@ -31,7 +31,8 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
 
         public ICommand OkClicked { get; }
         public ICommand CancelClicked { get; }
-        public ICommand ChangeClicked { get; }
+        public ICommand ChangeCloudClicked { get; }
+        public ICommand ChangeLoginClicked { get; }
         public ICommand RetryClicked { get; }
         public ICommand ShowDetailsClicked { get; }
         public ICommand CopyDetailsToClipboardClicked { get; }
@@ -54,11 +55,17 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
 
             OkClicked = new DelegateCommand(OkCommandHandler, () => AvailableCloudExtensions.Any() && SelectedCloudInfoDisplayData != null);
             CancelClicked = new DelegateCommand(CancelCommandHandler);
-            ChangeClicked = new DelegateCommand(ChangeClickedHandler, () => AvailableCloudExtensions.Any());
+            ChangeCloudClicked = new DelegateCommand(ChangeCloudClickedHandler, () => AvailableCloudExtensions.Any() && ConnectionState != CloudServiceConnectionState.Connecting);
+            ChangeLoginClicked = new DelegateCommand(ChangeLoginClickedHandler, () => ConnectionState == CloudServiceConnectionState.Authenticated || ConnectionState == CloudServiceConnectionState.Error);
             RetryClicked = new DelegateCommand(RetryClickedHandler);
             ShowDetailsClicked = new DelegateCommand(ShowDetailsHandler);
             CopyDetailsToClipboardClicked = new DelegateCommand(CopyDetailsToClipboardHandler);
-            ClearCloudDataClicked = new DelegateCommand(ClearCloudDataHandler);
+            ClearCloudDataClicked = new DelegateCommand(ClearCloudDataHandler, () => !IsClearDataRunning);
+        }
+
+        private void ChangeLoginClickedHandler()
+        {
+            _cloudSyncSvc.RequestLoginChange();
         }
 
         private void ClearCloudDataHandler()
@@ -99,7 +106,7 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
         {
             _cloudSyncSvc.RequestAuthentication();
         }
-        private void ChangeClickedHandler()
+        private void ChangeCloudClickedHandler()
         {
             cloudSelectorPopup.IsOpen = true;
         }
@@ -143,6 +150,10 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
                         CloudExtensionIcon = SelectedCloudInfoDisplayData.Icon;
                     }
                 }
+
+                // requery the CanExecute of the commands
+                ((DelegateCommand)OkClicked).RaiseCanExecuteChanged();
+                ((DelegateCommand)ChangeCloudClicked).RaiseCanExecuteChanged();
             }
         }
 
@@ -316,6 +327,10 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
                 ConnectionState = DetermineConnectionState();
             }
 
+            // requery the CanExecute of the commands
+            ((DelegateCommand)ChangeCloudClicked).RaiseCanExecuteChanged();
+            ((DelegateCommand)ChangeLoginClicked).RaiseCanExecuteChanged();
+
             _cloudSyncSvc.AuthenticationStateChanged += _cloudSyncSvc_AuthenticationStateChanged;
             _cloudSyncSvc.NetworkAvailabilityChanged += _cloudSyncSvc_NetworkAvailabilityChanged;
             _cloudSyncSvc.ErrorStateChanged += _cloudSyncSvc_ErrorStateChanged;
@@ -362,6 +377,10 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
                 {
                     ConnectionState = DetermineConnectionState();
                 }
+
+                // requery the CanExecute of the commands
+                ((DelegateCommand)ChangeCloudClicked).RaiseCanExecuteChanged();
+                ((DelegateCommand)ChangeLoginClicked).RaiseCanExecuteChanged();
             });
         }
 
@@ -391,6 +410,10 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
                 {
                     ConnectionState = CloudServiceConnectionState.NoNetwork;
                 }
+
+                // requery the CanExecute of the commands
+                ((DelegateCommand)ChangeCloudClicked).RaiseCanExecuteChanged();
+                ((DelegateCommand)ChangeLoginClicked).RaiseCanExecuteChanged();
             });
         }
 
@@ -406,6 +429,10 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
                 {
                     ConnectionState = CloudServiceConnectionState.Authenticating;
                 }
+
+                // requery the CanExecute of the commands
+                ((DelegateCommand)ChangeCloudClicked).RaiseCanExecuteChanged();
+                ((DelegateCommand)ChangeLoginClicked).RaiseCanExecuteChanged();
             });
         }
 

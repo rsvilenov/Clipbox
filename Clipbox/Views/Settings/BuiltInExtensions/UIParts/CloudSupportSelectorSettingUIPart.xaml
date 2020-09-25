@@ -91,8 +91,86 @@
                         RenderTransformOrigin="0.5,0.5"
                         Stretch="Uniform" />
                 </Viewbox>
-
             </ControlTemplate>
+
+            <ControlTemplate x:Key="ChangeCloudLoginIcon">
+                <Viewbox>
+                    <Path
+                        Width="128"
+                        Height="128"
+                        Data="M15.827007,0C20.406003,0 24.346007,3.1960449 24.346007,9.2930298 24.346007,13.259033 22.542005,17.289001 20.180997,19.791992L20.193005,19.791992C19.287,22.627014 20.736997,23.299011 20.966,23.376038 25.997008,25.090027 31.651002,28.317993 31.651002,31.626038L31.651002,32 0,32 0,31.626038C8.034749E-08,28.414001 5.6260008,25.161011 10.421,23.376038 10.766993,23.244995 12.422999,22.317017 11.497004,19.817993 9.1220035,17.321045 7.3279971,13.275024 7.3279971,9.2930298 7.3279971,3.1960449 11.245006,0 15.827007,0z"
+                        Fill="{TemplateBinding Foreground}"
+                        RenderTransformOrigin="0.5,0.5"
+                        Stretch="Uniform">
+                        <Path.RenderTransform>
+                            <TransformGroup>
+                                <TransformGroup.Children>
+                                    <RotateTransform Angle="0" />
+                                    <ScaleTransform ScaleX="1" ScaleY="1" />
+                                </TransformGroup.Children>
+                            </TransformGroup>
+                        </Path.RenderTransform>
+                    </Path>
+                </Viewbox>
+            </ControlTemplate>
+
+            <Style x:Key="BtnChangeCloudLogin" TargetType="{x:Type Button}">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type Button}">
+                            <Border
+                                Name="btnBorder"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                SnapsToDevicePixels="True">
+                                <Border
+                                    Name="selectionBorder"
+                                    BorderBrush="{DynamicResource accentDottedBrush}"
+                                    BorderThickness="0">
+                                    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock
+                                            Name="textBlock"
+                                            Grid.Column="0"
+                                            Margin="5,0,0,2"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Foreground="{TemplateBinding Foreground}"
+                                            Text="{TemplateBinding Content}" />
+                                        <ContentControl
+                                            Name="contentControl"
+                                            Grid.Column="1"
+                                            Margin="7"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Stretch"
+                                            Template="{StaticResource ChangeCloudLoginIcon}" />
+                                    </Grid>
+                                </Border>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="Button.IsPressed" Value="True">
+                                    <Setter TargetName="btnBorder" Property="Background" Value="{DynamicResource ControlPressedBrush}" />
+                                </Trigger>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="selectionBorder" Property="Background" Value="{DynamicResource ControlHighlightBackgroundBrush}" />
+
+                                </Trigger>
+                                <Trigger Property="Button.IsEnabled" Value="False">
+                                    <Setter TargetName="textBlock" Property="Foreground" Value="Gray" />
+                                    <Setter TargetName="contentControl" Property="Foreground" Value="Gray" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
 
             <Style x:Key="BtnClearCloudData" TargetType="{x:Type Button}">
                 <Setter Property="Background" Value="Transparent" />
@@ -127,7 +205,7 @@
                                         <ContentControl
                                             Name="contentControl"
                                             Grid.Column="1"
-                                            Margin="7,5,5,5"
+                                            Margin="6"
                                             HorizontalAlignment="Right"
                                             VerticalAlignment="Stretch"
                                             Template="{StaticResource ClearCloudDataIcon}" />
@@ -152,7 +230,7 @@
                 </Setter>
             </Style>
 
-            <Style x:Key="BtnChange" TargetType="{x:Type Button}">
+            <Style x:Key="BtnChangeCloud" TargetType="{x:Type Button}">
                 <Setter Property="Background" Value="Transparent" />
                 <Setter Property="BorderThickness" Value="1" />
                 <Setter Property="Foreground" Value="White" />
@@ -347,6 +425,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="60" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <TextBlock
                 Grid.Row="0"
@@ -358,7 +437,7 @@
 
             <StackPanel
                 Grid.Row="1"
-                Margin="0,10,0,0"
+                Margin="0,13,0,0"
                 Orientation="Horizontal">
 
                 <Image
@@ -372,20 +451,23 @@
                     MinWidth="100"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
-                    Command="{Binding ChangeClicked}"
+                    Command="{Binding ChangeCloudClicked}"
                     Content="{loc:Localize BTN_SETTINGS_CLOUD_CHANGE_EXTENSION,
                                            ResourceLookupMode=CurrentAssembly}"
-                    Foreground="{DynamicResource ControlForegroundBrush}">
-                    <Button.Style>
-                        <Style BasedOn="{StaticResource BtnChange}" TargetType="Button">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static local:CloudServiceConnectionState.Connecting}">
-                                    <Setter Property="IsEnabled" Value="False" />
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Button.Style>
-                </Button>
+                    Foreground="{DynamicResource ControlForegroundBrush}"
+                    Style="{StaticResource BtnChangeCloud}" />
+
+                <Button
+                    Height="30"
+                    MinWidth="100"
+                    Margin="10,0,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Command="{Binding ChangeLoginClicked}"
+                    Content="{loc:Localize BTN_SETTINGS_CLOUD_CHANGE_LOGIN,
+                                           ResourceLookupMode=CurrentAssembly}"
+                    Foreground="{DynamicResource ControlForegroundBrush}"
+                    Style="{StaticResource BtnChangeCloudLogin}" />
 
                 <Button
                     Height="30"
@@ -394,12 +476,13 @@
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center"
                     Command="{Binding ClearCloudDataClicked}"
-                    Content="{loc:Localize BTN_SETTINGS_CLOUD_CLEAR_DATA,
-                                           ResourceLookupMode=CurrentAssembly}"
-                    Foreground="{DynamicResource ControlForegroundBrush}">
+                    Foreground="{DynamicResource ControlForegroundBrush}"
+                    ToolTip="{loc:Localize TTP_SETTINGS_CLOUD_CLEAR_DATA,
+                                           ResourceLookupMode=CurrentAssembly}">
                     <Button.Style>
                         <Style BasedOn="{StaticResource BtnClearCloudData}" TargetType="Button">
                             <Setter Property="Visibility" Value="Collapsed" />
+                            <Setter Property="Content" Value="{loc:Localize BTN_SETTINGS_CLOUD_CLEAR_DATA, ResourceLookupMode=CurrentAssembly}" />
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static local:CloudServiceConnectionState.Authenticated}">
                                     <Setter Property="Visibility" Value="Visible" />
@@ -408,25 +491,17 @@
                                     <Setter Property="Visibility" Value="Collapsed" />
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding IsClearDataRunning}" Value="True">
-                                    <Setter Property="IsEnabled" Value="False" />
+                                    <Setter Property="Content" Value="{loc:Localize BTN_SETTINGS_CLOUD_CLEARING_DATA, ResourceLookupMode=CurrentAssembly}" />
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </Button.Style>
                 </Button>
 
-                <TextBlock
-                    Margin="10,0,0,0"
-                    VerticalAlignment="Center"
-                    FontSize="14"
-                    Text="{loc:Localize BTN_SETTINGS_CLOUD_CLEARING_DATA,
-                                        ResourceLookupMode=CurrentAssembly}"
-                    Visibility="{Binding IsClearDataRunning, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
             </StackPanel>
 
 
-            <Grid Grid.Row="2" Margin="0,10,0,0">
+            <Grid Grid.Row="2" Margin="0,15,0,0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
@@ -482,7 +557,7 @@
                     Margin="0,0,10,0"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
-                    Foreground="Red"
+                    Foreground="{DynamicResource AlertBrush2}"
                     Template="{DynamicResource ErrorIcon}">
                     <ContentControl.Style>
                         <Style TargetType="ContentControl">
@@ -537,18 +612,10 @@
                                 <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static local:CloudServiceConnectionState.Error}">
                                     <Setter Property="Content">
                                         <Setter.Value>
-                                            <Grid MaxHeight="150">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="260" />
-                                                    <ColumnDefinition Width="Auto" />
-                                                </Grid.ColumnDefinitions>
-                                                <ScrollViewer
-                                                    Grid.Column="0"
-                                                    HorizontalScrollBarVisibility="Disabled"
-                                                    VerticalScrollBarVisibility="Auto">
+                                            <Border MaxHeight="150">
+                                                <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
                                                     <TextBlock
-                                                        Grid.Column="1"
-                                                        Margin="0,0,10,0"
+                                                        Margin="0,10,20,0"
                                                         VerticalAlignment="Center"
                                                         TextWrapping="Wrap">
                                                         <Run Text="{loc:Localize LBL_SETTINGS_CLOUD_SVC_ERROR, ResourceLookupMode=CurrentAssembly}" />
@@ -556,33 +623,7 @@
                                                         <Run Text="{Binding ErrorMessage}" />
                                                     </TextBlock>
                                                 </ScrollViewer>
-                                                <Button
-                                                    Grid.Column="1"
-                                                    Width="Auto"
-                                                    Height="30"
-                                                    MinWidth="100"
-                                                    Margin="10,0,0,0"
-                                                    HorizontalAlignment="Left"
-                                                    VerticalAlignment="Center"
-                                                    Command="{Binding ShowDetailsClicked}"
-                                                    Content="{loc:Localize LBL_SETTINGS_CLOUD_ERROR_DETAILS,
-                                                                           ResourceLookupMode=CurrentAssembly}"
-                                                    Foreground="{DynamicResource ControlForegroundBrush}">
-                                                    <Button.Style>
-                                                        <Style BasedOn="{StaticResource BtnShowDetails}" TargetType="Button">
-                                                            <Setter Property="Visibility" Value="Visible" />
-                                                            <Style.Triggers>
-                                                                <DataTrigger Binding="{Binding ErrorDetails}" Value="{x:Null}">
-                                                                    <Setter Property="Visibility" Value="Collapsed" />
-                                                                </DataTrigger>
-                                                                <DataTrigger Binding="{Binding ErrorDetails}" Value="">
-                                                                    <Setter Property="Visibility" Value="Collapsed" />
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </Button.Style>
-                                                </Button>
-                                            </Grid>
+                                            </Border>
                                         </Setter.Value>
                                     </Setter>
                                 </DataTrigger>
@@ -602,8 +643,51 @@
                     </ContentControl.Style>
                 </ContentControl>
 
+            </Grid>
+            <StackPanel
+                Grid.Row="3"
+                Margin="0,10,0,0"
+                Orientation="Horizontal">
+                <StackPanel.Style>
+                    <Style TargetType="StackPanel">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static local:CloudServiceConnectionState.Error}">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static local:CloudServiceConnectionState.Error}">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </StackPanel.Style>
+
                 <Button
-                    Grid.Column="2"
+                    Width="Auto"
+                    Height="30"
+                    MinWidth="100"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Center"
+                    Command="{Binding ShowDetailsClicked}"
+                    Content="{loc:Localize LBL_SETTINGS_CLOUD_ERROR_DETAILS,
+                                           ResourceLookupMode=CurrentAssembly}"
+                    Foreground="{DynamicResource ControlForegroundBrush}">
+                    <Button.Style>
+                        <Style BasedOn="{StaticResource BtnShowDetails}" TargetType="Button">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding ErrorDetails}" Value="{x:Null}">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding ErrorDetails}" Value="">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+                <Button
                     Width="Auto"
                     Height="30"
                     MinWidth="100"
@@ -625,9 +709,7 @@
                         </Style>
                     </Button.Style>
                 </Button>
-
-            </Grid>
-
+            </StackPanel>
 
         </Grid>
 

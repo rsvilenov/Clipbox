@@ -25,6 +25,7 @@ namespace Clipbox.Services.Interfaces
 
         void RequestAuthentication();
 
+        void RequestLoginChange();
         void ClearSyncedData();
 
         /// <summary>

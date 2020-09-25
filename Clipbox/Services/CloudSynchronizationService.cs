@@ -161,6 +161,11 @@ namespace Clipbox.Services
             });
         }
 
+        public void RequestLoginChange()
+        {
+
+        }
+
         private void _settingsService_SettingChanged(object sender, SettingsEventArgs e)
         {
             if (e.Key == SettingsKeys.SelectedCloudSupportServiceName)
@@ -181,6 +186,8 @@ namespace Clipbox.Services
                     {
                         _isResetOfItemsSyncStatusRequested = true;
                     }
+
+                    _cloudSupportExt = newExtension;
 
                     SetUpSelectedCloudSupportExtension();
 

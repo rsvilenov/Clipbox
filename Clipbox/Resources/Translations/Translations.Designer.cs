@@ -160,7 +160,7 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Change.
+        ///   Looks up a localized string similar to Change service.
         /// </summary>
         internal static string BTN_SETTINGS_CLOUD_CHANGE_EXTENSION {
             get {
@@ -169,7 +169,16 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Clear cloud data.
+        ///   Looks up a localized string similar to Change user.
+        /// </summary>
+        internal static string BTN_SETTINGS_CLOUD_CHANGE_LOGIN {
+            get {
+                return ResourceManager.GetString("BTN_SETTINGS_CLOUD_CHANGE_LOGIN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clear data.
         /// </summary>
         internal static string BTN_SETTINGS_CLOUD_CLEAR_DATA {
             get {
@@ -1481,6 +1490,15 @@ namespace Clipbox.Resources.Translations {
         internal static string TTP_RMSELECTOR_SELECTED_DEVICES_OVERLAY {
             get {
                 return ResourceManager.GetString("TTP_RMSELECTOR_SELECTED_DEVICES_OVERLAY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete all the synced data in the cloud.
+        /// </summary>
+        internal static string TTP_SETTINGS_CLOUD_CLEAR_DATA {
+            get {
+                return ResourceManager.GetString("TTP_SETTINGS_CLOUD_CLEAR_DATA", resourceCulture);
             }
         }
         

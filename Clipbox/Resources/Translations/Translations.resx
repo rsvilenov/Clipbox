@@ -151,13 +151,16 @@
     <value>Retry</value>
   </data>
   <data name="BTN_SETTINGS_CLOUD_CHANGE_EXTENSION" xml:space="preserve">
-    <value>Change</value>
+    <value>Change service</value>
+  </data>
+  <data name="BTN_SETTINGS_CLOUD_CHANGE_LOGIN" xml:space="preserve">
+    <value>Change user</value>
   </data>
   <data name="BTN_SETTINGS_CLOUD_CLEARING_DATA" xml:space="preserve">
     <value>Clearing...</value>
   </data>
   <data name="BTN_SETTINGS_CLOUD_CLEAR_DATA" xml:space="preserve">
-    <value>Clear cloud data</value>
+    <value>Clear data</value>
   </data>
   <data name="BTN_SETTINGS_CLOUD_COPY_DETAILS" xml:space="preserve">
     <value>Copy to clipboard</value>
@@ -592,6 +595,9 @@ Warning: more rows means more RAM usage!</value>
   </data>
   <data name="TTP_RMSELECTOR_SELECTED_DEVICES_OVERLAY" xml:space="preserve">
     <value>Select devices from the list below</value>
+  </data>
+  <data name="TTP_SETTINGS_CLOUD_CLEAR_DATA" xml:space="preserve">
+    <value>Delete all the synced data in the cloud</value>
   </data>
   <data name="TTP_SETTINGS_DISABLE_EXTENSION" xml:space="preserve">
     <value>Disable the extension</value>
