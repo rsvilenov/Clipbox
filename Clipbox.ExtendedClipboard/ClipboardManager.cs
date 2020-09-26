@@ -184,7 +184,10 @@ namespace Clipbox.ExtendedClipboard
         /// Remove a clipboard item
         /// </summary>
         /// <param name="item"></param>
-        public void RemoveClipboardItem(string id, bool beSilent = false, bool removeFromSystemClipboard = false)
+        public void RemoveClipboardItem(string id, 
+            bool beSilent = false, 
+            bool removeFromSystemClipboard = false, 
+            bool throwOnNotFound = false)
         {
             ClipboardItem item = null;
 
@@ -193,7 +196,14 @@ namespace Clipbox.ExtendedClipboard
                 item = _clipboardItems.FirstOrDefault(it => it.Id == id);
                 if (item == null)
                 {
-                    throw new ArgumentException($"Could not find any item with this id: {id}");
+                    if (throwOnNotFound)
+                    {
+                        throw new ArgumentException($"Could not find any item with this id: {id}");
+                    }
+                    else
+                    {
+                        return;
+                    }
                 }
 
                 _clipboardItems.Remove(item);
@@ -923,7 +933,7 @@ namespace Clipbox.ExtendedClipboard
                 enable ? Enums.TypeOfItemChange.EnableSync : Enums.TypeOfItemChange.DisableSync));
         }
 
-        public void PinUnpinItemItem(string clipboardItemId, bool pin)
+        public void PinUnpinItem(string clipboardItemId, bool pin)
         {
             lock (_ioLockHandle)
             {
@@ -947,6 +957,32 @@ namespace Clipbox.ExtendedClipboard
 
             ItemChanged?.Invoke(this, new ItemChangedEventArgs(clipboardItemId, 
                 pin ? Enums.TypeOfItemChange.Pin : Enums.TypeOfItemChange.Unpin));
+        }
+
+        public void ProtectUnprotectItem(string clipboardItemId, bool protect)
+        {
+            lock (_ioLockHandle)
+            {
+                ClipboardItem item = _clipboardItems.Where(ci => ci.Id == clipboardItemId).FirstOrDefault();
+
+                if (item == null)
+                {
+                    throw new ArgumentException($"ClipboardItem with Id {clipboardItemId} was not found.");
+                }
+
+                item.BeginEdit();
+                // when we protect a temporary item, it is no longer temporary
+                item.IsTemporary = false;
+
+                item.IsProtected = protect;
+
+                item.EndEdit();
+
+                _persistenceHelper.StoreAndShrinkClipboardItem(item);
+            }
+
+            ItemChanged?.Invoke(this, new ItemChangedEventArgs(clipboardItemId,
+                protect ? Enums.TypeOfItemChange.Pin : Enums.TypeOfItemChange.Unpin));
         }
 
         public void RemoveClipbpardDataObjects(string clipboardItemId, int[] clipboardDataObjectIndices, bool beSilend = false)

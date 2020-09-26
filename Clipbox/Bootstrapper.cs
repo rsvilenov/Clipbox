@@ -3,7 +3,6 @@ using Clipbox.Core.Diagnostics;
 using Clipbox.Core.Enums;
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
-using Clipbox.Core.Extensibility.Exceptions;
 using Clipbox.ExtendedClipboard;
 using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.Configuration;
@@ -12,7 +11,6 @@ using Clipbox.Infrastructure.Encryption;
 using Clipbox.Infrastructure.Encryption.EncryptionProviders;
 using Clipbox.Infrastructure.Extensibility.Loading;
 using Clipbox.Infrastructure.Persistence;
-using Clipbox.Infrastructure.Persistence.FilesystemAccess;
 using Clipbox.Infrastructure.Persistence.PersistenceProviders;
 using Clipbox.Infrastructure.Search;
 using Clipbox.Infrastructure.Serialization;
@@ -29,9 +27,7 @@ using Clipbox.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Windows;
 
@@ -66,6 +62,7 @@ namespace Clipbox
         RebuildIndexWindowService _rebuildIndexWindowService;
         ISearchProviderSelectorService _searchProviderSelectorService;
         IGuardCommunicationService _guardCommunicationService;
+        AutoClearClipboardService _autoClearClipboardService;
 
         private int _shutdownSequenceCallCount;
 
@@ -231,6 +228,8 @@ namespace Clipbox
 
             _rebuildIndexWindowService = new RebuildIndexWindowService(_searchService, _mainClipboardViewWindowService, _clipboardManager);
 
+            _autoClearClipboardService = new AutoClearClipboardService(_clipboardManager, _settingsService);
+
             ThemeManager.TransparencySettingChanged += ThemeManager_TransparencySettingChanged;
         }
 
@@ -389,6 +388,7 @@ namespace Clipbox
                 TryDisposeObject(_trayContextMenuService);
                 TryDisposeObject(_rebuildIndexWindowService);
                 TryDisposeObject(_searchService);
+                TryDisposeObject(_autoClearClipboardService);
             }
         }
 

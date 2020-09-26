@@ -217,7 +217,7 @@ namespace Clipbox.ViewModels
                 throw new InvalidOperationException($"The view item for {clipboardItemId} is not loaded. Please load it first.");
             }
 
-            ClipboardManager.PinUnpinItemItem(clipboardItemId, !wrapper.ViewItem.IsPinned);
+            ClipboardManager.PinUnpinItem(clipboardItemId, !wrapper.ViewItem.IsPinned);
 
             wrapper.ViewItem.IsPinned = !wrapper.ViewItem.IsPinned;
 

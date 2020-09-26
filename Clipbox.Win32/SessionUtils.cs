@@ -96,20 +96,42 @@ namespace Clipbox.Win32
         /// our current process which , so this doesn't matter.
         /// </summary>
         /// <returns></returns>
+        private static string _sessionUniqueId;
         public static string GetSessionUniqueId()
         {
-            int sessionId = GetCurrentSessionId();
-            string sid = GetUserSid();
-            if (sessionId > -1 && !string.IsNullOrEmpty(sid))
+            if (_sessionUniqueId == null)
             {
-                return $"{sessionId}:{sid}";
+                int sessionId = GetCurrentSessionId();
+                string sid = GetUserSid();
+                if (sessionId > -1 && !string.IsNullOrEmpty(sid))
+                {
+                    _sessionUniqueId = $"{sessionId}:{sid}";
+                }
+                else
+                {
+                    _sessionUniqueId = string.Empty;
+                }
             }
-            else
-            {
-                return string.Empty;
-            }
+
+            return _sessionUniqueId;
         }
 
-        
+        public static double GetLastInputTime()
+        {
+            NativeStructures.LASTINPUTINFO lastInputInfo = new NativeStructures.LASTINPUTINFO();
+            lastInputInfo.cbSize = (uint)Marshal.SizeOf(lastInputInfo);
+            lastInputInfo.dwTime = 0;
+
+            if (!User32.GetLastInputInfo(ref lastInputInfo))
+                return 0;
+
+            var lastInputTick = lastInputInfo.dwTime;
+            var envTicks = (uint)Environment.TickCount;
+            var idleTimespan = new DateTime(envTicks) - new DateTime(lastInputTick);
+
+            return idleTimespan.TotalMilliseconds;
+        }
+
+
     }
 }

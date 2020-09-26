@@ -346,5 +346,14 @@ namespace Clipbox.Win32.Native
             /// </summary>
             public int ThreadCount;
         }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct LASTINPUTINFO
+        {
+            private static readonly int SizeOf = Marshal.SizeOf(typeof(LASTINPUTINFO));
+
+            [MarshalAs(UnmanagedType.U4)] public UInt32 cbSize;
+            [MarshalAs(UnmanagedType.U4)] public UInt32 dwTime;
+        }
     }
 }

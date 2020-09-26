@@ -10,6 +10,8 @@ namespace Clipbox.Core.ClipboardContent.Interfaces
         
         bool IsPinned { get; }
 
+        bool IsProtected { get; }
+
         bool IsTemporary { get; }
     }
 }

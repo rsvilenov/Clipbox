@@ -83,6 +83,11 @@ namespace Clipbox.ExtendedClipboard.ClipboardContent
         public bool IsPinned { get; set; }
 
         /// <summary>
+        /// <see cref="IClipboardItem.IsProtected"/>
+        /// </summary>
+        public bool IsProtected { get; set; }
+
+        /// <summary>
         /// <see cref="IClipboardItem.IsTemporary"/>
         /// </summary>
         public bool IsTemporary { get; internal set; }

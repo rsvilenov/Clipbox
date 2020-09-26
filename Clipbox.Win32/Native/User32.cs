@@ -284,5 +284,8 @@ namespace Clipbox.Win32.Native
         [DllImport(ExternDll.User32, SetLastError = false)]
         internal static extern IntPtr GetDesktopWindow();
 
+        [DllImport(ExternDll.User32)]
+        internal static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
+
     }
 }

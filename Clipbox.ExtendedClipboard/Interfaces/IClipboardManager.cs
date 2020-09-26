@@ -15,7 +15,9 @@ namespace Clipbox.ExtendedClipboard.Interfaces
 
         void EnableDisableSyncOfItem(string clipboardItemId, bool enable);
 
-        void PinUnpinItemItem(string clipboardItemId, bool pin);
+        void PinUnpinItem(string clipboardItemId, bool pin);
+
+        void ProtectUnprotectItem(string clipboardItemId, bool protect);
 
         void SuspendClipboardForwarding();
 
@@ -25,7 +27,7 @@ namespace Clipbox.ExtendedClipboard.Interfaces
 
         void ClearSystemClipboard();
 
-        void RemoveClipboardItem(string id, bool beSilent = false, bool removeFromSystemClipboard = false);
+        void RemoveClipboardItem(string id, bool beSilent = false, bool removeFromSystemClipboard = false, bool throwOnNotFound = false);
 
         void SetCurrentItem(string id);
 
