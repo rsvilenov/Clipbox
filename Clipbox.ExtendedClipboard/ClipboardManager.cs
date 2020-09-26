@@ -982,7 +982,7 @@ namespace Clipbox.ExtendedClipboard
             }
 
             ItemChanged?.Invoke(this, new ItemChangedEventArgs(clipboardItemId,
-                protect ? Enums.TypeOfItemChange.Pin : Enums.TypeOfItemChange.Unpin));
+                protect ? Enums.TypeOfItemChange.Protect : Enums.TypeOfItemChange.Unprotect));
         }
 
         public void RemoveClipbpardDataObjects(string clipboardItemId, int[] clipboardDataObjectIndices, bool beSilend = false)

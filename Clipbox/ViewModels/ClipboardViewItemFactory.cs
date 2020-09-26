@@ -80,7 +80,7 @@ namespace Clipbox.ViewModels
             IEnumerable<ClipboardContentClass> contentClasses = clipboardItem.ClipboardDataObjects.Select(cdo => cdo.IntermediateFormatMetadata.ContentClass).Distinct();
             viewItem.ContentClasses = new AsyncObservableCollection<ClipboardContentClass>(contentClasses);
             viewItem.IsPinned = clipboardItem.IsPinned;
-
+            viewItem.IsProtected = clipboardItem.IsProtected;
             viewItem.GeneratorExtensionTypeName = pdto.GeneratorExtensionTypeAssemblyQualifiedName;
 
             return viewItem;

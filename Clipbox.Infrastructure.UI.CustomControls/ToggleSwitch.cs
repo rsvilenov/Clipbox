@@ -184,7 +184,8 @@ namespace Clipbox.Infrastructure.UI.CustomControls
 
         private double GetThumbCurrentXPosInCanvas()
         {
-            return (double)_thumb.GetValue(Canvas.LeftProperty);
+            double pos = (double)_thumb.GetValue(Canvas.LeftProperty);
+            return pos == double.NaN ? 0 : pos;
         }
 
         private void SetThumbToOffPosition(bool useAnimation)

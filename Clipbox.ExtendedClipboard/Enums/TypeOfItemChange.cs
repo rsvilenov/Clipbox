@@ -6,6 +6,8 @@
         Pin,
         Unpin,
         EnableSync,
-        DisableSync
+        DisableSync,
+        Protect,
+        Unprotect
     }
 }

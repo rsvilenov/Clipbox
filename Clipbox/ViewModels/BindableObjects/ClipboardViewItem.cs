@@ -56,6 +56,14 @@ namespace Clipbox.ViewModels.BindableObjects
             set { SetField(ref _isPinned, value); }
         }
 
+        private bool _isProtected;
+
+        public bool IsProtected
+        {
+            get { return _isProtected; }
+            set { SetField(ref _isProtected, value); }
+        }
+
         private bool _isCloudItem;
         /// <summary>
         /// Indicates whether the item comes from the cloud and not from local computer.

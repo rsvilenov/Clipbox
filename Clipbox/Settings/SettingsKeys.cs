@@ -75,13 +75,15 @@ namespace Clipbox.Settings
 
         public static SettingKey<string> SelectedCloudSupportServiceName = new SettingKey<string>(nameof(SelectedCloudSupportServiceName), string.Empty);
 
-        public static SettingKey<bool> IsAutoClearSysClipboardEnabled = new SettingKey<bool>(nameof(IsAutoClearSysClipboardEnabled), false);
-
-        public static SettingKey<int> AutoClearSysClipboardAfterSeconds = new SettingKey<int>(nameof(AutoClearSysClipboardAfterSeconds), 120);
-
-        public static SettingKey<bool> IsAutoClearExtClipboardEnabled = new SettingKey<bool>(nameof(IsAutoClearExtClipboardEnabled), false);
-
-        public static SettingKey<int> AutoClearExtClipboardAfterSeconds = new SettingKey<int>(nameof(AutoClearExtClipboardAfterSeconds), 7200);
+        /// <summary>
+        /// Negative value means that the setting is disabled
+        /// </summary>
+        public static SettingKey<int> AutoClearSysClipboardAfterSeconds = new SettingKey<int>(nameof(AutoClearSysClipboardAfterSeconds), -120);
+        
+        /// <summary>
+        /// Negative value means that the setting is disabled
+        /// </summary>
+        public static SettingKey<int> AutoClearExtClipboardAfterSeconds = new SettingKey<int>(nameof(AutoClearExtClipboardAfterSeconds), -7200);
 
         public static SettingKey<bool> IsAutoClearExtClipboardUponLogoffEnabled = new SettingKey<bool>(nameof(IsAutoClearExtClipboardUponLogoffEnabled), false);
 

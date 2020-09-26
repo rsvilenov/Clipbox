@@ -37,11 +37,11 @@ namespace Clipbox.Services
             _settingsService = settingsService;
             _settingsService.SettingChanged += _settingsService_SettingChanged;
             
-            _isAutoClearSysClipboardEnabled = _settingsService.GetSetting(SettingsKeys.IsAutoClearSysClipboardEnabled);
             _clearSysClipboardAfterSecondsOfInactivity = _settingsService.GetSetting(SettingsKeys.AutoClearSysClipboardAfterSeconds);
-            
-            _isAutoClearExtClipboardEnabled = _settingsService.GetSetting(SettingsKeys.IsAutoClearExtClipboardEnabled);
+            _isAutoClearSysClipboardEnabled = _clearSysClipboardAfterSecondsOfInactivity > 0;
+
             _clearExtClipboardAfterSecondsOfInactivity = _settingsService.GetSetting(SettingsKeys.AutoClearExtClipboardAfterSeconds);
+            _isAutoClearExtClipboardEnabled = _clearExtClipboardAfterSecondsOfInactivity > 0;
 
             _isAutoClearExtClipboardUponLogoffEnabled = _settingsService.GetSetting(SettingsKeys.IsAutoClearExtClipboardUponLogoffEnabled);
             _isAutoClearExtClipboardUponLockScreenEnabled = _settingsService.GetSetting(SettingsKeys.IsAutoClearExtClipboardUponLockScreenEnabled);
@@ -55,22 +55,15 @@ namespace Clipbox.Services
         }
 
         private void _settingsService_SettingChanged(object sender, EventArgsClasses.SettingsEventArgs e)
-        {
-            if (e.Key == SettingsKeys.IsAutoClearSysClipboardEnabled)
-            {
-                _isAutoClearSysClipboardEnabled = (bool)e.Value;
-            }
-            else if (e.Key == SettingsKeys.AutoClearSysClipboardAfterSeconds)
+        {if (e.Key == SettingsKeys.AutoClearSysClipboardAfterSeconds)
             {
                 _clearSysClipboardAfterSecondsOfInactivity = (int)e.Value;
-            }
-            else if (e.Key == SettingsKeys.IsAutoClearExtClipboardEnabled)
-            {
-                _isAutoClearExtClipboardEnabled = (bool)e.Value;
+                _isAutoClearSysClipboardEnabled = _clearSysClipboardAfterSecondsOfInactivity > 0;
             }
             else if (e.Key == SettingsKeys.AutoClearExtClipboardAfterSeconds)
             {
                 _clearExtClipboardAfterSecondsOfInactivity = (int)e.Value;
+                _isAutoClearExtClipboardEnabled = _clearExtClipboardAfterSecondsOfInactivity > 0;
             }
             else if (e.Key == SettingsKeys.IsAutoClearExtClipboardUponLogoffEnabled)
             {

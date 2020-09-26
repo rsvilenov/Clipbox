@@ -300,6 +300,9 @@
     <Compile Include="Views\Settings\BuiltInExtensions\CloudBuiltInSettingsUIExtension.cs" />
     <Compile Include="Views\Settings\BuiltInExtensions\GeneralBuiltInSettingsUIExtension.cs" />
     <Compile Include="Views\Settings\BuiltInExtensions\PreviewsBuiltInSettingsUIExtension.cs" />
+    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\AutoClearExtClipboardSettingUIPart.xaml.cs">
+      <DependentUpon>AutoClearExtClipboardSettingUIPart.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\AutoCloudSyncPinnedItemsSettingUIPart.xaml.cs">
       <DependentUpon>AutoCloudSyncPinnedItemsSettingUIPart.xaml</DependentUpon>
     </Compile>
@@ -320,6 +323,9 @@
     </Compile>
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\DimNonFocusedItemsInQVSettingUIPart.xaml.cs">
       <DependentUpon>DimNonFocusedItemsInQVSettingUIPart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\AutoClearSysClipboardSettingUIPart.xaml.cs">
+      <DependentUpon>AutoClearSysClipboardSettingUIPart.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\HelperControls\BindableObjects\ExtensionDisplayInfo.cs" />
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\HelperControls\DepencentExtensionsConfirmation.xaml.cs">
@@ -401,6 +407,7 @@
     <Compile Include="Views\Settings\Interfaces\ICanRequestAppRestart.cs" />
     <Compile Include="Views\Settings\Interfaces\ICanResolveDependentExtensions.cs" />
     <Compile Include="Views\Settings\Interfaces\ICloudSyncServiceConsumer.cs" />
+    <Compile Include="Views\Settings\BuiltInExtensions\SecurityBuiltInSettingsUIExtension.cs" />
     <Compile Include="Views\Settings\SettingsWindow.xaml.cs">
       <DependentUpon>SettingsWindow.xaml</DependentUpon>
     </Compile>
@@ -519,6 +526,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Settings\BuiltInExtensions\UIParts\AutoClearExtClipboardSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Settings\BuiltInExtensions\UIParts\AutoCloudSyncPinnedItemsSettingUIPart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -548,6 +559,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\BuiltInExtensions\UIParts\DimNonFocusedItemsInQVSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\BuiltInExtensions\UIParts\AutoClearSysClipboardSettingUIPart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

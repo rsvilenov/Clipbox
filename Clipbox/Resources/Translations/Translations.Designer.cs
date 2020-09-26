@@ -583,6 +583,42 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Clear all stored clipboard entries, which are not pinned or synchronized with the cloud.
+        /// </summary>
+        internal static string LBL_SETTINGS_AUTO_CLEAR_EXT_CLIPBOARD_ENABLED {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_AUTO_CLEAR_EXT_CLIPBOARD_ENABLED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Interval in seconds:.
+        /// </summary>
+        internal static string LBL_SETTINGS_AUTO_CLEAR_EXT_CLIPBOARD_INTERVAL {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_AUTO_CLEAR_EXT_CLIPBOARD_INTERVAL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clear system clipboard after some time of user inactivity.
+        /// </summary>
+        internal static string LBL_SETTINGS_AUTO_CLEAR_SYS_CLIPBOARD_ENABLED {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_AUTO_CLEAR_SYS_CLIPBOARD_ENABLED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Interval in seconds:.
+        /// </summary>
+        internal static string LBL_SETTINGS_AUTO_CLEAR_SYS_CLIPBOARD_INTERVAL {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_AUTO_CLEAR_SYS_CLIPBOARD_INTERVAL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Automatically sync an item with the cloud the moment it gets pinned.
         /// </summary>
         internal static string LBL_SETTINGS_AUTO_CLOUD_SYNC_PINNED_ITEMS {

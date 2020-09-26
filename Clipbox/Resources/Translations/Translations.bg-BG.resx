@@ -291,6 +291,18 @@
   <data name="LBL_SETTINGS_ADVANCED_SHOW_SETTINGS" xml:space="preserve">
     <value>Покажи настройките</value>
   </data>
+  <data name="LBL_SETTINGS_AUTO_CLEAR_EXT_CLIPBOARD_ENABLED" xml:space="preserve">
+    <value>Изтрий всички клипборд записи, които не са закачени за някой прозорец и не са синхронизирани с облака</value>
+  </data>
+  <data name="LBL_SETTINGS_AUTO_CLEAR_EXT_CLIPBOARD_INTERVAL" xml:space="preserve">
+    <value>Интервал в секунди:</value>
+  </data>
+  <data name="LBL_SETTINGS_AUTO_CLEAR_SYS_CLIPBOARD_ENABLED" xml:space="preserve">
+    <value>Изчисти системния клипборд след определен период на потребителска неакивност</value>
+  </data>
+  <data name="LBL_SETTINGS_AUTO_CLEAR_SYS_CLIPBOARD_INTERVAL" xml:space="preserve">
+    <value>Интервал в секунди:</value>
+  </data>
   <data name="LBL_SETTINGS_AUTO_CLOUD_SYNC_PINNED_ITEMS" xml:space="preserve">
     <value>Автоматично го синхронизирай с облака всеки клипбоард елемент, щом бъде отбелязан като "закачен"</value>
   </data>

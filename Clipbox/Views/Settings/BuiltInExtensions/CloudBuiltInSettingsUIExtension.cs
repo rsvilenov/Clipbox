@@ -98,6 +98,7 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
             if (!_isDisposed)
             {
                 _cloudSupportSelectorSettingUIPart?.Dispose();
+                _isDisposed = true;
             }
         }
     }

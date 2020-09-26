@@ -291,6 +291,18 @@
   <data name="LBL_SETTINGS_ADVANCED_SHOW_SETTINGS" xml:space="preserve">
     <value>Show settings</value>
   </data>
+  <data name="LBL_SETTINGS_AUTO_CLEAR_EXT_CLIPBOARD_ENABLED" xml:space="preserve">
+    <value>Clear all stored clipboard entries, which are not pinned or synchronized with the cloud</value>
+  </data>
+  <data name="LBL_SETTINGS_AUTO_CLEAR_EXT_CLIPBOARD_INTERVAL" xml:space="preserve">
+    <value>Interval in seconds:</value>
+  </data>
+  <data name="LBL_SETTINGS_AUTO_CLEAR_SYS_CLIPBOARD_ENABLED" xml:space="preserve">
+    <value>Clear system clipboard after some time of user inactivity</value>
+  </data>
+  <data name="LBL_SETTINGS_AUTO_CLEAR_SYS_CLIPBOARD_INTERVAL" xml:space="preserve">
+    <value>Interval in seconds:</value>
+  </data>
   <data name="LBL_SETTINGS_AUTO_CLOUD_SYNC_PINNED_ITEMS" xml:space="preserve">
     <value>Automatically sync an item with the cloud the moment it gets pinned</value>
   </data>
