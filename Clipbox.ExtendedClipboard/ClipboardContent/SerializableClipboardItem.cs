@@ -18,6 +18,8 @@ namespace Clipbox.ExtendedClipboard.ClipboardContent
 
         public bool IsPinned { get; set; }
 
+        public bool IsProtected { get; set; }
+
         public ITimestampInfo TimestampInfo { get; set; }
     }
 }

@@ -197,6 +197,7 @@ namespace Clipbox.ExtendedClipboard
                     timestampInfo: tsInfo)
                 {
                     IsPinned = persistableClipboardItem.IsPinned,
+                    IsProtected = persistableClipboardItem.IsProtected,
                     CanTransfer = persistableClipboardItem.CanTransfer,
                     ShouldTransfer = persistableClipboardItem.ShouldTransfer,
                     IsSynchronizedWithCloud = persistableClipboardItem.IsSynchronizedWithCloud
@@ -332,6 +333,7 @@ namespace Clipbox.ExtendedClipboard
                     Source = clipboardItem.Source,
                     Id = clipboardItem.Id,
                     IsPinned = clipboardItem.IsPinned,
+                    IsProtected = clipboardItem.IsProtected,
                     PersistableClipboardDataObjects = persistableCdos,
                     TimestampInfo = clipboardItem.TimestampInfo,
                     CanTransfer = clipboardItem.CanTransfer,

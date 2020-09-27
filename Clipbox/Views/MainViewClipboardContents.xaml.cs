@@ -565,12 +565,10 @@ namespace Clipbox.Views
             _viewModel.EnbleDisableSyncOfClipboardEntry(e.ClipboardItemId);
         }
 
-        private void MainListView_ItemPinUnpinRequested(object sender, EventArgsClasses.ClipboardItemManipulationEventArgs e)
+        private void MainListView_ItemProtectUnprotectRequested(object sender, EventArgsClasses.ClipboardItemManipulationEventArgs e)
         {
-            _viewModel.PinUnpinClipboardEntry(e.ClipboardItemId);
+            _viewModel.ProtectUnprotectClipboardEntry(e.ClipboardItemId);
         }
-
-
 
         public DateTime GroupDateUndergoingDeletion
         {

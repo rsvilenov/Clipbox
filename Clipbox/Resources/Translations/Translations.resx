@@ -593,6 +593,9 @@ Warning: more rows means more RAM usage!</value>
   <data name="TTP_MAINVIEW_ICON_SYNC_COMPLETE" xml:space="preserve">
     <value>Sync complete</value>
   </data>
+  <data name="TTP_MAINVIEW_PROTECT_ITEM" xml:space="preserve">
+    <value>Pin the item to this window</value>
+  </data>
   <data name="TTP_MAINVIEW_SEARCHBOX_DISABLED_DUE_TO_ERRORS" xml:space="preserve">
     <value>The search box is disabled due to search index errors.</value>
   </data>
@@ -601,6 +604,21 @@ Warning: more rows means more RAM usage!</value>
   </data>
   <data name="TTP_MAINVIEW_TGL_SAVE_MODIFIED_ITEM" xml:space="preserve">
     <value>Save the combined/modified item, so it can be used in the future</value>
+  </data>
+  <data name="TTP_MAINVIEW_UNPROTECT_ITEM" xml:space="preserve">
+    <value>Unpin the item from this window</value>
+  </data>
+  <data name="TTP_QUICKVIEW_MAX_PINNED_ITEMS_REACHED" xml:space="preserve">
+    <value>Max pinned item limit is reached</value>
+  </data>
+  <data name="TTP_QUICKVIEW_PIN_ITEM" xml:space="preserve">
+    <value>Pin the item to this window</value>
+  </data>
+  <data name="TTP_QUICKVIEW_REMOVE_ITEM" xml:space="preserve">
+    <value>Hide the item from this view</value>
+  </data>
+  <data name="TTP_QUICKVIEW_UNPIN_ITEM" xml:space="preserve">
+    <value>Unpin the item from this window</value>
   </data>
   <data name="TTP_RMSELECTOR_BTN_SELECT" xml:space="preserve">
     <value>Select</value>

@@ -593,6 +593,9 @@
   <data name="TTP_MAINVIEW_ICON_SYNC_COMPLETE" xml:space="preserve">
     <value>Синхронизирането е завършено</value>
   </data>
+  <data name="TTP_MAINVIEW_PROTECT_ITEM" xml:space="preserve">
+    <value>Закачи записа за този прозорец</value>
+  </data>
   <data name="TTP_MAINVIEW_SEARCHBOX_DISABLED_DUE_TO_ERRORS" xml:space="preserve">
     <value>Полето за търсене е забранено поради грешки в индекса.</value>
   </data>
@@ -601,6 +604,21 @@
   </data>
   <data name="TTP_MAINVIEW_TGL_SAVE_MODIFIED_ITEM" xml:space="preserve">
     <value>Запази модифицирания/комбинирания запис за повторна употреба по-късно</value>
+  </data>
+  <data name="TTP_MAINVIEW_UNPROTECT_ITEM" xml:space="preserve">
+    <value>Откачи записа от този прозорец</value>
+  </data>
+  <data name="TTP_QUICKVIEW_MAX_PINNED_ITEMS_REACHED" xml:space="preserve">
+    <value>Максималният брой на закачени записи е достигнат</value>
+  </data>
+  <data name="TTP_QUICKVIEW_PIN_ITEM" xml:space="preserve">
+    <value>Закачи записа за този прозорец</value>
+  </data>
+  <data name="TTP_QUICKVIEW_REMOVE_ITEM" xml:space="preserve">
+    <value>Скрой записа от този прозорец</value>
+  </data>
+  <data name="TTP_QUICKVIEW_UNPIN_ITEM" xml:space="preserve">
+    <value>Откачи записа от този прозорец</value>
   </data>
   <data name="TTP_RMSELECTOR_BTN_SELECT" xml:space="preserve">
     <value>Избери</value>

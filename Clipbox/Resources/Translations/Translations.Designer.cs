@@ -1485,6 +1485,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Pin the item to this window.
+        /// </summary>
+        internal static string TTP_MAINVIEW_PROTECT_ITEM {
+            get {
+                return ResourceManager.GetString("TTP_MAINVIEW_PROTECT_ITEM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The search/filter functionality is disabled..
         /// </summary>
         internal static string TTP_MAINVIEW_SEARCH_FUNCTIONALITY_DISABLED {
@@ -1508,6 +1517,51 @@ namespace Clipbox.Resources.Translations {
         internal static string TTP_MAINVIEW_TGL_SAVE_MODIFIED_ITEM {
             get {
                 return ResourceManager.GetString("TTP_MAINVIEW_TGL_SAVE_MODIFIED_ITEM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unpin the item from this window.
+        /// </summary>
+        internal static string TTP_MAINVIEW_UNPROTECT_ITEM {
+            get {
+                return ResourceManager.GetString("TTP_MAINVIEW_UNPROTECT_ITEM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Max pinned item limit is reached.
+        /// </summary>
+        internal static string TTP_QUICKVIEW_MAX_PINNED_ITEMS_REACHED {
+            get {
+                return ResourceManager.GetString("TTP_QUICKVIEW_MAX_PINNED_ITEMS_REACHED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pin the item to this window.
+        /// </summary>
+        internal static string TTP_QUICKVIEW_PIN_ITEM {
+            get {
+                return ResourceManager.GetString("TTP_QUICKVIEW_PIN_ITEM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hide the item from this view.
+        /// </summary>
+        internal static string TTP_QUICKVIEW_REMOVE_ITEM {
+            get {
+                return ResourceManager.GetString("TTP_QUICKVIEW_REMOVE_ITEM", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unpin the item from this window.
+        /// </summary>
+        internal static string TTP_QUICKVIEW_UNPIN_ITEM {
+            get {
+                return ResourceManager.GetString("TTP_QUICKVIEW_UNPIN_ITEM", resourceCulture);
             }
         }
         

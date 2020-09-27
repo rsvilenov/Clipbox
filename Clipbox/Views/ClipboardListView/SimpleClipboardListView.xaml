@@ -7,6 +7,7 @@
     xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
     xmlns:infBeh="clr-namespace:Clipbox.Infrastructure.UI.Behaviors;assembly=Clipbox.Infrastructure.UI"
     xmlns:infConv="clr-namespace:Clipbox.Infrastructure.UI.Converters;assembly=Clipbox.Infrastructure.UI"
+    xmlns:loc="clr-namespace:Clipbox.Infrastructure.UI.Localization;assembly=Clipbox.Infrastructure.UI.Localization"
     xmlns:localBeh="clr-namespace:Clipbox.Behaviors"
     xmlns:localBindableObjects="clr-namespace:Clipbox.ViewModels.BindableObjects"
     xmlns:lv="clr-namespace:Clipbox.Views.ClipboardListView"
@@ -175,7 +176,7 @@
                                                             <ColumnDefinition Width="Auto" />
                                                         </Grid.ColumnDefinitions>
 
-                                                        <tile:ItemTypeIconBand
+                                                        <tile:ContentTypeIconBand
                                                             Grid.Column="0"
                                                             MaxHeight="30"
                                                             ContentClasses="{Binding ContentClasses}"
@@ -183,7 +184,7 @@
                                                             <i:Interaction.Behaviors>
                                                                 <infBeh:FrameworkElementDpiScalingBehavior />
                                                             </i:Interaction.Behaviors>
-                                                        </tile:ItemTypeIconBand>
+                                                        </tile:ContentTypeIconBand>
 
                                                         <!--<Rectangle HorizontalAlignment="Center" VerticalAlignment="Center" Width="1" Height="15" Fill="#e4e4e6" Margin="5,0,0,0" />
 
@@ -203,7 +204,7 @@
                                                                 Style="{DynamicResource ToggleBtnPin}">
                                                                 <i:Interaction.Behaviors>
                                                                     <infBeh:FrameworkElementDpiScalingBehavior />
-                                                                    <localBeh:ToggleButtonToolTipBehavior CheckedToolTipText="Unpin item" UncheckedToolTipText="Pin item" />
+                                                                    <localBeh:ToggleButtonToolTipBehavior CheckedToolTipText="{loc:Localize TTP_QUICKVIEW_UNPIN_ITEM}" UncheckedToolTipText="{loc:Localize TTP_QUICKVIEW_PIN_ITEM}" />
                                                                 </i:Interaction.Behaviors>
                                                             </ToggleButton>
 
@@ -224,7 +225,7 @@
                                                                 <Style TargetType="Grid">
                                                                     <Style.Triggers>
                                                                         <DataTrigger Binding="{Binding ElementName=tglBtn, Path=IsEnabled}" Value="False">
-                                                                            <Setter Property="ToolTip" Value="Max pinned item limit is reached" />
+                                                                            <Setter Property="ToolTip" Value="{loc:Localize TTP_QUICKVIEW_MAX_PINNED_ITEMS_REACHED}" />
                                                                         </DataTrigger>
                                                                     </Style.Triggers>
                                                                 </Style>
@@ -253,7 +254,7 @@
                                                                 Command="{Binding Path=ActionButtonsDataContext.RemoveClipboardEntry, RelativeSource={RelativeSource AncestorType={x:Type ListView}}}"
                                                                 CommandParameter="{Binding}"
                                                                 Style="{DynamicResource BtnXRemove}"
-                                                                ToolTip="Remove the item from view"
+                                                                ToolTip="{loc:Localize TTP_QUICKVIEW_REMOVE_ITEM}"
                                                                 Visibility="{Binding Path=IsManipulationEnabled, RelativeSource={RelativeSource AncestorType={x:Type Border}}, Converter={StaticResource BooleanToVisibilityConverter}}">
                                                                 <i:Interaction.Behaviors>
                                                                     <infBeh:FrameworkElementDpiScalingBehavior />

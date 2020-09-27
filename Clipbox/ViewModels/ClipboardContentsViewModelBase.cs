@@ -41,6 +41,71 @@ namespace Clipbox.ViewModels
             ClipboardViewItemWrappers = new AsyncObservableCollection<ClipboardViewItemWrapper>();
 
             ClipboardManager.ItemRemoved += ClipboardManager_ItemRemoved;
+            ClipboardManager.ItemChanged += ClipboardManager_ItemChanged;
+        }
+
+        private void ClipboardManager_ItemChanged(object sender, ItemChangedEventArgs e)
+        {
+            if (e.TypeOfChange == ExtendedClipboard.Enums.TypeOfItemChange.Unpin)
+            {
+                // the unpin may be automatic (due to change in MaxPinnedItems setting),
+                // so we have to make sure that the corresponding IsPinned property in 
+                // the wrapper is syncronized.
+                var viewItem = ClipboardViewItemWrappers
+                    .SingleOrDefault(w => w.Id == e.ItemId)
+                    ?.ViewItem;
+
+                if (viewItem != null)
+                {
+                    viewItem.IsPinned = false;
+                }
+
+                OnClipboardEntryPinnedUnpinned(e.ItemId);
+            }
+            else if (e.TypeOfChange == ExtendedClipboard.Enums.TypeOfItemChange.Pin)
+            {
+                var viewItem = ClipboardViewItemWrappers
+                       .SingleOrDefault(w => w.Id == e.ItemId)
+                       ?.ViewItem;
+
+                if (viewItem != null)
+                {
+                    viewItem.IsPinned = true;
+                }
+
+                if (SettingsService.GetSetting<bool>(SettingsKeys.IsAutomaticCloudSyncOfPinnedItemsEnabled))
+                {
+                    ClipboardManager.EnableDisableSyncOfItem(e.ItemId, true);
+                }
+
+                OnClipboardEntryPinnedUnpinned(e.ItemId);
+            }
+            if (e.TypeOfChange == ExtendedClipboard.Enums.TypeOfItemChange.Unprotect)
+            {
+                var viewItem = ClipboardViewItemWrappers
+                    .SingleOrDefault(w => w.Id == e.ItemId)
+                    ?.ViewItem;
+
+                if (viewItem != null)
+                {
+                    viewItem.IsProtected = false;
+                }
+
+                OnClipboardEntryProtectedUnprotected(e.ItemId);
+            }
+            else if (e.TypeOfChange == ExtendedClipboard.Enums.TypeOfItemChange.Protect)
+            {
+                var viewItem = ClipboardViewItemWrappers
+                       .SingleOrDefault(w => w.Id == e.ItemId)
+                       ?.ViewItem;
+
+                if (viewItem != null)
+                {
+                    viewItem.IsProtected = true;
+                }
+
+                OnClipboardEntryProtectedUnprotected(e.ItemId);
+            }
         }
 
         private void ClipboardManager_ItemRemoved(object sender, ClipboardManagerEventArgs e)
@@ -204,6 +269,26 @@ namespace Clipbox.ViewModels
         {
         }
 
+        protected virtual void OnClipboardEntryProtectedUnprotected(string clipboardItemId)
+        {
+        }
+
+        public void ProtectUnprotectClipboardEntry(string clipboardItemId)
+        {
+            ClipboardViewItemWrapper wrapper = ClipboardViewItemWrappers.FirstOrDefault(w => w.Id == clipboardItemId);
+            if (wrapper == null)
+            {
+                throw new KeyNotFoundException($"No clipboard item with id {clipboardItemId} was found.");
+            }
+
+            if (!wrapper.IsViewItemLoaded)
+            {
+                throw new InvalidOperationException($"The view item for {clipboardItemId} is not loaded. Please load it first.");
+            }
+
+            ClipboardManager.ProtectUnprotectItem(clipboardItemId, !wrapper.ViewItem.IsProtected);
+        }
+
         public void PinUnpinClipboardEntry(string clipboardItemId)
         {
             ClipboardViewItemWrapper wrapper = ClipboardViewItemWrappers.FirstOrDefault(w => w.Id == clipboardItemId);
@@ -218,16 +303,6 @@ namespace Clipbox.ViewModels
             }
 
             ClipboardManager.PinUnpinItem(clipboardItemId, !wrapper.ViewItem.IsPinned);
-
-            wrapper.ViewItem.IsPinned = !wrapper.ViewItem.IsPinned;
-
-            if (wrapper.ViewItem.IsPinned
-                && SettingsService.GetSetting<bool>(SettingsKeys.IsAutomaticCloudSyncOfPinnedItemsEnabled))
-            {
-                ClipboardManager.EnableDisableSyncOfItem(clipboardItemId, true);
-            }
-
-            OnClipboardEntryPinnedUnpinned(clipboardItemId);
         }
 
         public bool CanPinUnpinItem(string clipboardItemId)

@@ -44,6 +44,8 @@ namespace Clipbox.Views.ClipboardListView
 
         public event EventHandler<ClipboardItemManipulationEventArgs> ItemPinUnpinRequested;
 
+        public event EventHandler<ClipboardItemManipulationEventArgs> ItemProtectUnprotectRequested;
+
         public event EventHandler<ClipboardItemManipulationEventArgs> ItemEnableDisableSyncRequested;
 
         public event EventHandler<ClipboardItemManipulationCancelEventArgs> ItemCanPinRequested;
@@ -167,6 +169,8 @@ namespace Clipbox.Views.ClipboardListView
                 PinUnpinClipboardEntry = new DelegateCommand<ClipboardViewItem>(PinUnpinClipboardEntryHandler,
                     PinUnpinClipboardEntryCanExecuteHandler),
 
+                ProtectUnprotectClipboardEntry = new DelegateCommand<ClipboardViewItem>(ProtectUnprotectClipboardEntryHandler),
+
                 EnableDisableSyncOfClipboardEntry = new DelegateCommand<ClipboardViewItem>(EnableDisableSyncOfClipboardEntryHandler,
                     dispatcherPriority: DispatcherPriority.ContextIdle)
             };
@@ -233,6 +237,13 @@ namespace Clipbox.Views.ClipboardListView
             // wait for the togglebutton's state to change and then fire the event.
             Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => 
                 ItemPinUnpinRequested?.Invoke(this, new ClipboardItemManipulationEventArgs(parameter.ClipboardItemId))));
+        }
+
+        private void ProtectUnprotectClipboardEntryHandler(ClipboardViewItem parameter)
+        {
+            // wait for the togglebutton's state to change and then fire the event.
+            Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
+                ItemProtectUnprotectRequested?.Invoke(this, new ClipboardItemManipulationEventArgs(parameter.ClipboardItemId))));
         }
 
         private void DeleteClipboardEntryHandler(ClipboardViewItem parameter)
@@ -590,6 +601,7 @@ namespace Clipbox.Views.ClipboardListView
 
             public ICommand PinUnpinClipboardEntry { get; set; }
 
+            public ICommand ProtectUnprotectClipboardEntry { get; set; }
             public ICommand EnableDisableSyncOfClipboardEntry { get; set; }
         }
     }

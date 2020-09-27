@@ -126,23 +126,7 @@ namespace Clipbox.ViewModels
 
         private void ClipboardManager_ItemChanged(object sender, ItemChangedEventArgs e)
         {
-            if (e.TypeOfChange == ExtendedClipboard.Enums.TypeOfItemChange.Unpin)
-            {
-                // the unpin may be automatic (due to change in MaxPinnedItems setting),
-                // so we have to make sure that the corresponding IsPinned property in 
-                // the wrapper is syncronized.
-                var viewItem = ClipboardViewItemWrappers
-                    .SingleOrDefault(w => w.Id == e.ItemId)
-                    ?.ViewItem;
-
-                if (viewItem != null)
-                {
-                    viewItem.IsPinned = false;
-                }
-
-                return;
-            }
-            else if (e.TypeOfChange == ExtendedClipboard.Enums.TypeOfItemChange.RemoveCDOs)
+            if (e.TypeOfChange == ExtendedClipboard.Enums.TypeOfItemChange.RemoveCDOs)
             {
                 if (RemoveItemWrapper(e.ItemId))
                 {

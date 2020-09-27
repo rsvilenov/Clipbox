@@ -744,7 +744,7 @@
                 ItemDeletionRequested="MainListView_ItemDeletionRequested"
                 ItemEnableDisableSyncRequested="MainListView_ItemEnableDisableSyncRequested"
                 ItemGroupDeletionRequested="MainListView_ItemGroupDeletionRequested"
-                ItemPinUnpinRequested="MainListView_ItemPinUnpinRequested"
+                ItemProtectUnprotectRequested="MainListView_ItemProtectUnprotectRequested"
                 ItemsSource="{Binding Source={StaticResource ListViewSource}}"
                 LoadMoreItemsRequested="MainListView_LoadMoreItemsRequested"
                 NumOfNotYetVisibleRowsToPreload="{Binding Path=NumOfNotYetVisibleRowsToPreload, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:ClipboardViewControlBase}}}"
