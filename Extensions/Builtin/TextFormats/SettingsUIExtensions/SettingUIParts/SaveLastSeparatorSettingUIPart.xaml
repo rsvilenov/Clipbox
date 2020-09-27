@@ -29,7 +29,8 @@
             Grid.Row="0"
             VerticalAlignment="Center"
             Text="{loc:Localize LBL_SAVE_LAST_SEPARATOR,
-                                ResourceLookupMode=CurrentAssembly}" />
+                                ResourceLookupMode=CurrentAssembly}"
+            TextWrapping="Wrap" />
 
         <customControls:ToggleSwitch
             Grid.Row="1"

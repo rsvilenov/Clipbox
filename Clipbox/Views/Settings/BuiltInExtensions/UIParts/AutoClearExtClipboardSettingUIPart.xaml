@@ -50,7 +50,7 @@
 
         <StackPanel
             Grid.Row="2"
-            Margin="0,15,0,0"
+            Margin="0,15,0,10"
             HorizontalAlignment="Left"
             Orientation="Vertical"
             Visibility="{Binding ElementName=tglButton, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">

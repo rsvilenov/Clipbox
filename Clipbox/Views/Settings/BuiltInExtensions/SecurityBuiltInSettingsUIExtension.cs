@@ -17,15 +17,9 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
         protected override void RegisterSettingUIParts(IBuiltInSettingsUIBuilder builder)
         {
             builder.Add(SettingsKeys.AutoClearSysClipboardAfterSeconds, new AutoClearSysClipboardSettingUIPart())
-                .Add(SettingsKeys.AutoClearExtClipboardAfterSeconds, new AutoClearExtClipboardSettingUIPart());
-        }
-
-        protected override void OnSettingUpdated(ISettingKey settingKey)
-        {
-            if (settingKey == SettingsKeys.AutoClearSysClipboardAfterSeconds)
-            {
-
-            }
+                .Add(SettingsKeys.AutoClearExtClipboardAfterSeconds, new AutoClearExtClipboardSettingUIPart())
+                .Add(SettingsKeys.IsAutoClearExtClipboardUponLockScreenEnabled, new AutoClearExtClipboardUponLockScreenSettingUIPart())
+                .Add(SettingsKeys.IsAutoClearExtClipboardUponLogoffEnabled, new AutoClearExtClipboardUponLogoffSettingUIPart());
         }
     }
 }

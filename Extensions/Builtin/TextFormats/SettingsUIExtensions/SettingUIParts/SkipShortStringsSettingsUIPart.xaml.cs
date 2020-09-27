@@ -1,5 +1,4 @@
 ﻿using Clipbox.Infrastructure.UI.Extensibility;
-using System.Linq;
 using System.Windows;
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIParts
@@ -69,24 +68,6 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
             {
                 IsShipShortStringsToggled = true;
                 MinTextLength = value;
-            }
-        }
-
-        private void MaxTextLengthTextBox_PreviewTextInput(object sender, System.Windows.Input.TextCompositionEventArgs e)
-        {
-            if (e.Text != null 
-                && (e.Text.All(c => char.IsNumber(c)) == false 
-                    || (MinTextLength.HasValue && MinTextLength.ToString().Length + e.Text.Length > 2) /* 99 letters max */))
-            {
-                e.Handled = true;
-            }
-        }
-
-        private void MaxTextLengthTextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
-        {
-            if (MinTextLength == null)
-            {
-                MinTextLength = 0;
             }
         }
     }

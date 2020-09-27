@@ -49,7 +49,7 @@
 
         <StackPanel
             Grid.Row="2"
-            Margin="0,10,0,0"
+            Margin="0,20,0,0"
             VerticalAlignment="Center"
             Orientation="Horizontal"
             Visibility="{Binding IsShipShortStringsToggled, Converter={StaticResource BooleanToVisibilityHiddenConverter}}">
@@ -58,16 +58,18 @@
                 Text="{loc:Localize LBL_SKIP_SHORTER_THAN,
                                     ResourceLookupMode=CurrentAssembly}"
                 TextWrapping="Wrap" />
-            <TextBox
-                Width="30"
-                Margin="5,0,5,0"
+            <customControls:IntUpDown
+                Grid.Row="1"
+                Width="75"
+                Height="28"
+                Margin="10,0,10,0"
+                HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 Background="Transparent"
-                CaretBrush="White"
                 Foreground="White"
-                PreviewTextInput="MaxTextLengthTextBox_PreviewTextInput"
-                Text="{Binding MinTextLength, TargetNullValue='', FallbackValue=0, UpdateSourceTrigger=PropertyChanged}"
-                TextChanged="MaxTextLengthTextBox_TextChanged" />
+                Maximum="99"
+                Minimum="1"
+                Value="{Binding MinTextLength, TargetNullValue='', FallbackValue=0, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock
                 VerticalAlignment="Center"
                 Text="{loc:Localize LBL_SKIP_SHORTER_THAN_CHARS,

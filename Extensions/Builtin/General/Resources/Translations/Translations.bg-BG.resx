@@ -130,7 +130,8 @@
     <value>Приложения в черния списък:</value>
   </data>
   <data name="LBL_BLACKLISTED_APPS_HELP" xml:space="preserve">
-    <value>Нищо, копирано от тези приложения, няма да се запази.</value>
+    <value>Нищо, копирано от приложенията в горния списък, няма да се запази.
+За да видите или промените списъка, кликнете върху бутона "Промени".</value>
   </data>
   <data name="LBL_BLACKLISTED_APPS_INSTALLED_LIST" xml:space="preserve">
     <value>Инсталирани приложения</value>

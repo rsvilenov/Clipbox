@@ -130,7 +130,8 @@
     <value>Blacklisted applications:</value>
   </data>
   <data name="LBL_BLACKLISTED_APPS_HELP" xml:space="preserve">
-    <value>The data, copied from these applications will not be stored.</value>
+    <value>The data, copied from these applications will not be stored.
+To view or change the list, click "Change".</value>
   </data>
   <data name="LBL_BLACKLISTED_APPS_INSTALLED_LIST" xml:space="preserve">
     <value>Installed applications</value>

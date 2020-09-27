@@ -303,6 +303,12 @@
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\AutoClearExtClipboardSettingUIPart.xaml.cs">
       <DependentUpon>AutoClearExtClipboardSettingUIPart.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\AutoClearExtClipboardUponLockScreenSettingUIPart.xaml.cs">
+      <DependentUpon>AutoClearExtClipboardUponLockScreenSettingUIPart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\AutoClearExtClipboardUponLogoffSettingUIPart.xaml.cs">
+      <DependentUpon>AutoClearExtClipboardUponLogoffSettingUIPart.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\AutoCloudSyncPinnedItemsSettingUIPart.xaml.cs">
       <DependentUpon>AutoCloudSyncPinnedItemsSettingUIPart.xaml</DependentUpon>
     </Compile>
@@ -527,6 +533,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\BuiltInExtensions\UIParts\AutoClearExtClipboardSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\BuiltInExtensions\UIParts\AutoClearExtClipboardUponLockScreenSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\BuiltInExtensions\UIParts\AutoClearExtClipboardUponLogoffSettingUIPart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

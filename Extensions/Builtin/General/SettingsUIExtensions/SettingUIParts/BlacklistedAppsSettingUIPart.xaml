@@ -128,73 +128,57 @@
 
     </UserControl.Resources>
     <Grid x:Name="mainGrid">
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition />
-            <ColumnDefinition />
-            <ColumnDefinition Width="Auto" />
-        </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition />
+            <RowDefinition />
         </Grid.RowDefinitions>
-        <TextBlock
-            Grid.Row="0"
-            Grid.Column="0"
-            VerticalAlignment="Center"
-            Text="{loc:Localize LBL_BLACKLISTED_APPS,
-                                ResourceLookupMode=CurrentAssembly}"
-            TextWrapping="Wrap" />
+        <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <TextBlock
+                VerticalAlignment="Center"
+                Text="{loc:Localize LBL_BLACKLISTED_APPS,
+                                    ResourceLookupMode=CurrentAssembly}"
+                TextWrapping="Wrap" />
 
-        <TextBlock
-            Grid.Row="0"
-            Grid.Column="1"
-            Margin="10,0,0,0"
-            VerticalAlignment="Center"
-            Text="{loc:Localize LBL_BLACKLISTED_APPS_NONE,
-                                ResourceLookupMode=CurrentAssembly}"
-            TextWrapping="Wrap">
-            <TextBlock.Style>
-                <Style TargetType="TextBlock">
-                    <Setter Property="Visibility" Value="Collapsed" />
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding BlackListedProgramsCount}" Value="0">
-                            <Setter Property="Visibility" Value="Visible" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </TextBlock.Style>
-        </TextBlock>
+            <TextBlock
+                Grid.Row="0"
+                Margin="10,0,0,0"
+                VerticalAlignment="Center"
+                Text="{loc:Localize LBL_BLACKLISTED_APPS_NONE,
+                                    ResourceLookupMode=CurrentAssembly}"
+                TextWrapping="Wrap">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding BlackListedProgramsCount}" Value="0">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
 
-        <TextBlock
-            Grid.Row="0"
-            Grid.Column="1"
-            Margin="5,0,0,0"
-            VerticalAlignment="Center"
-            Text="{Binding BlackListedProgramsCount}"
-            TextWrapping="Wrap">
-            <TextBlock.Style>
-                <Style TargetType="TextBlock">
-                    <Setter Property="Visibility" Value="Visible" />
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding BlackListedProgramsCount}" Value="0">
-                            <Setter Property="Visibility" Value="Collapsed" />
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </TextBlock.Style>
-        </TextBlock>
+            <TextBlock
+                Grid.Row="0"
+                Margin="5,0,0,0"
+                VerticalAlignment="Center"
+                Text="{Binding BlackListedProgramsCount}"
+                TextWrapping="Wrap">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Visibility" Value="Visible" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding BlackListedProgramsCount}" Value="0">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+        </StackPanel>
 
 
-        <ContentControl
-            Grid.Column="2"
-            Width="23"
-            Height="23"
-            Margin="5,0,0,0"
-            Foreground="{DynamicResource ControlForegroundBrush}"
-            Template="{StaticResource HelpIcon}"
-            ToolTip="{loc:Localize LBL_BLACKLISTED_APPS_HELP,
-                                   ResourceLookupMode=CurrentAssembly}"
-            ToolTipService.ShowDuration="300000" />
         <Button
             Grid.Row="1"
             Grid.Column="0"
@@ -209,5 +193,14 @@
                                    ResourceLookupMode=CurrentAssembly}"
             Foreground="{DynamicResource ControlForegroundBrush}"
             Style="{StaticResource BtnManage}" />
+
+        <TextBlock
+            Grid.Row="2"
+            Grid.Column="0"
+            Margin="0,10,0,0"
+            VerticalAlignment="Center"
+            Text="{loc:Localize LBL_BLACKLISTED_APPS_HELP,
+                                ResourceLookupMode=CurrentAssembly}"
+            TextWrapping="Wrap" />
     </Grid>
 </infUI:SettingUIPart>

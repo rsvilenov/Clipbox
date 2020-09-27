@@ -50,6 +50,7 @@ namespace Clipbox.Extensions.BuiltIn.General.SettingsUIExtensions.SettingUIParts
             if (value != null)
             {
                 BlackListedPrograms = string.Empty;
+                BlackListedProgramsCount = 0;
 
                 string[] paths = value.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
                 foreach (string path in paths)

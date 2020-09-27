@@ -583,7 +583,7 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Clear all stored clipboard entries, which are not pinned or synchronized with the cloud.
+        ///   Looks up a localized string similar to After some time in which the computer is not used, clear all stored clipboard entries, which are not pinned or synchronized with the cloud.
         /// </summary>
         internal static string LBL_SETTINGS_AUTO_CLEAR_EXT_CLIPBOARD_ENABLED {
             get {
@@ -601,7 +601,7 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Clear system clipboard after some time of user inactivity.
+        ///   Looks up a localized string similar to After some time in which the computer is not used, clear the system clipboard.
         /// </summary>
         internal static string LBL_SETTINGS_AUTO_CLEAR_SYS_CLIPBOARD_ENABLED {
             get {
@@ -705,6 +705,24 @@ namespace Clipbox.Resources.Translations {
         internal static string LBL_SETTINGS_CATEGORY_SECURITY {
             get {
                 return ResourceManager.GetString("LBL_SETTINGS_CATEGORY_SECURITY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to When the user locks the screen, clear all stored clipboard entries, which are not pinned or synchronized.
+        /// </summary>
+        internal static string LBL_SETTINGS_CLEAR_EXT_CLIPBOARD_UPON_LOCKSCREEN {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_CLEAR_EXT_CLIPBOARD_UPON_LOCKSCREEN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to When the user logs off Windows, clear all stored clipboard entries, which are not pinned or synchronized.
+        /// </summary>
+        internal static string LBL_SETTINGS_CLEAR_EXT_CLIPBOARD_UPON_LOGOFF {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_CLEAR_EXT_CLIPBOARD_UPON_LOGOFF", resourceCulture);
             }
         }
         
