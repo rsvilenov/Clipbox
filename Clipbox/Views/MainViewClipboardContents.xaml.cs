@@ -605,9 +605,6 @@ namespace Clipbox.Views
             MainListView.UnselectAll();
             MainListView.UnselectMultiItemSubItems();
 
-            // disable the entire control
-            this.IsEnabled = false;
-
             // store the original border brush of the group
             //Brush oldBorderBrush = itemGroupItem.BorderBrush;
 
@@ -634,19 +631,35 @@ namespace Clipbox.Views
                     {
                         try
                         {
-                            List<string> itsToDelete = _viewModel
+                            IEnumerable<ClipboardViewItemWrapper> wrappers = _viewModel
                                 .ClipboardViewItemWrappers
                                 .Where(w => w.DateCreated.Date == e.Day)
+                                .Where(w => w.IsViewItemLoaded)
+                                .Where(w => !w.ViewItem.IsPinned && !w.ViewItem.IsProtected);
+
+                            // only the pinned items in the quick view use the property IsPinned.
+                            // those items in the mainview use IsProtected for pinning.
+                            bool isTherePinnedItemsInQuickView = wrappers.Any(w => w.ViewItem.IsPinned);
+
+                            List<string> idsToDelete = wrappers
                                 .Select(w => w.Id)
                                 .ToList();
 
                             PerformDisposeSafeOperation
                             (
-                                () => _viewModel.DeleteItems(itsToDelete)
+                                () => _viewModel.DeleteItems(idsToDelete)
                             );
 
                             // decrease the total number of items to load in all pages by the count of the deleted items
-                            Dispatcher.Invoke(() => AllPagesItemsCount -= itsToDelete.Count);
+                            Dispatcher.Invoke(() => AllPagesItemsCount -= idsToDelete.Count);
+                            Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
+                            {
+                                deleteGroupPinnedItemsNotificationPopup.PlacementTarget = this;
+                                deleteGroupPinnedItemsNotificationPopup.Placement = PlacementMode.Center;
+
+                                // open the popup
+                                deleteGroupPinnedItemsNotificationPopup.IsOpen = true;
+                            }));
                         }
                         finally
                         {
@@ -682,15 +695,6 @@ namespace Clipbox.Views
                 // unsubscribe from the event handlers
                 deleteGroupConfirmationPopup.DialogAnswered -= answerHandler;
                 this.IsVisibleChanged -= visHandler;
-
-                // if the view is still visible (if it is not being closed and we
-                // are not coming here from the event handler of IsVisibleChanged),
-                // then re-enable the entire control.
-                if (this.IsVisible)
-                {
-                    Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle,
-                        new Action(() => this.IsEnabled = true));
-                }
             });
         }
 

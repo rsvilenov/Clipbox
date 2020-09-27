@@ -255,6 +255,9 @@
   <data name="LBL_MAINVIEW_POPUP_DELETE_SINGLE_ITEM" xml:space="preserve">
     <value>Are you sure you want to delete this item?</value>
   </data>
+  <data name="LBL_MAINVIEW_POPUP_PINNED_ITEMS_NOT_DELETED" xml:space="preserve">
+    <value>Some items are pinned in the Quick View (the one that shows up upon long pressing Ctrl+V), so they were not deleted.</value>
+  </data>
   <data name="LBL_MAINVIEW_SEARCH_INDEX_BROKEN" xml:space="preserve">
     <value>The search index is broken.</value>
   </data>
@@ -263,6 +266,9 @@
   </data>
   <data name="LBL_OPEN_MAIN_VIEW_REQUESTED_POPUP" xml:space="preserve">
     <value>To open the fullscreen view, please close this window first.</value>
+  </data>
+  <data name="LBL_QUESTION_MARK" xml:space="preserve">
+    <value>?</value>
   </data>
   <data name="LBL_QV_INCOMPATIBLE_ITEMS" xml:space="preserve">
     <value>Incompatible items.</value>
@@ -564,7 +570,7 @@ Warning: more rows means more RAM usage!</value>
     <value>Cloud error. Click for details.</value>
   </data>
   <data name="TTP_MAINVIEW_BTN_DELETE_GROUP" xml:space="preserve">
-    <value>Delete all items from this group</value>
+    <value>Delete all items from this group, except the pinned ones</value>
   </data>
   <data name="TTP_MAINVIEW_BTN_DELETE_SELECTED" xml:space="preserve">
     <value>Delete the selected item(s)</value>
@@ -584,6 +590,9 @@ Warning: more rows means more RAM usage!</value>
   <data name="TTP_MAINVIEW_BTN_SYNC_NON_TRANSFERABLE_ITEM" xml:space="preserve">
     <value>This type of content cannot be stored in the cloud</value>
   </data>
+  <data name="TTP_MAINVIEW_DELETE_DISABLED_ITEM_PINNED_IN_QV" xml:space="preserve">
+    <value>The deletion is disabled because the item is pinned in the Quick View (the one that shows up upon long pressing Ctrl+V)</value>
+  </data>
   <data name="TTP_MAINVIEW_FILTERS_DISABLED_DUE_TO_ERRORS" xml:space="preserve">
     <value>The filters are disabled due to search index errors.</value>
   </data>
@@ -594,7 +603,7 @@ Warning: more rows means more RAM usage!</value>
     <value>Sync complete</value>
   </data>
   <data name="TTP_MAINVIEW_PROTECT_ITEM" xml:space="preserve">
-    <value>Pin the item to this window</value>
+    <value>Pin the item to this window, so it cannot be deleted</value>
   </data>
   <data name="TTP_MAINVIEW_SEARCHBOX_DISABLED_DUE_TO_ERRORS" xml:space="preserve">
     <value>The search box is disabled due to search index errors.</value>
@@ -606,7 +615,7 @@ Warning: more rows means more RAM usage!</value>
     <value>Save the combined/modified item, so it can be used in the future</value>
   </data>
   <data name="TTP_MAINVIEW_UNPROTECT_ITEM" xml:space="preserve">
-    <value>Unpin the item from this window</value>
+    <value>Unpin the item from this window and make the item deletable</value>
   </data>
   <data name="TTP_QUICKVIEW_MAX_PINNED_ITEMS_REACHED" xml:space="preserve">
     <value>Max pinned item limit is reached</value>

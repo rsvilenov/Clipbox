@@ -571,7 +571,7 @@
                                 </ToggleButton>
                             </ContentControl>
 
-                            <ContentControl Grid.Column="1">
+                            <ContentControl Grid.Column="1" ToolTipService.ShowOnDisabled="True">
                                 <ContentControl.Style>
                                     <Style TargetType="{x:Type ContentControl}">
                                         <!--  hidden by default  -->
@@ -597,6 +597,10 @@
                                             </MultiDataTrigger>
                                             <DataTrigger Binding="{Binding ViewItem.IsProtected}" Value="True">
                                                 <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding ViewItem.IsPinned}" Value="True">
+                                                <Setter Property="IsEnabled" Value="False" />
+                                                <Setter Property="ToolTip" Value="{loc:Localize TTP_MAINVIEW_DELETE_DISABLED_ITEM_PINNED_IN_QV}" />
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>

@@ -145,7 +145,7 @@
     <value>Зареди в клипборда</value>
   </data>
   <data name="BTN_QV_WIPE" xml:space="preserve">
-    <value>Скрий всички копирани клипборд елементи от този прозорец.</value>
+    <value>Скрий всички копирани клипборд записи от този прозорец.</value>
   </data>
   <data name="BTN_REBUILD_INDEX_RETRY" xml:space="preserve">
     <value>Опитай отново</value>
@@ -229,7 +229,7 @@
     <value>Настройки</value>
   </data>
   <data name="LBL_DATERANGESELECTOR_SHOW_ITEMS_FROM" xml:space="preserve">
-    <value>Покажи елементи от</value>
+    <value>Покажи записи от</value>
   </data>
   <data name="LBL_DATERANGESELECTOR_SHOW_ITEMS_TO" xml:space="preserve">
     <value>до</value>
@@ -241,19 +241,22 @@
     <value>вчера</value>
   </data>
   <data name="LBL_MAINVIEW_INCOMPATIBLE_ITEMS" xml:space="preserve">
-    <value>Несъвместими елементи.</value>
+    <value>Несъвместими записи.</value>
   </data>
   <data name="LBL_MAINVIEW_NO_ITEMS" xml:space="preserve">
     <value>Няма записи за показване.</value>
   </data>
   <data name="LBL_MAINVIEW_POPUP_DELETE_GROUP" xml:space="preserve">
-    <value>Сигурни ли сте, че искате да изтриете всички елементи от</value>
+    <value>Сигурни ли сте, че искате да изтриете всички записи от</value>
   </data>
   <data name="LBL_MAINVIEW_POPUP_DELETE_ITEMS" xml:space="preserve">
-    <value>Сигурни ли сте, че искате да изтриете избраните елементи?</value>
+    <value>Сигурни ли сте, че искате да изтриете избраните записи?</value>
   </data>
   <data name="LBL_MAINVIEW_POPUP_DELETE_SINGLE_ITEM" xml:space="preserve">
-    <value>Сигурни ли сте, че искате да изтриете избрания елемент?</value>
+    <value>Сигурни ли сте, че искате да изтриете избрания запис?</value>
+  </data>
+  <data name="LBL_MAINVIEW_POPUP_PINNED_ITEMS_NOT_DELETED" xml:space="preserve">
+    <value>Някои записи са закачени за бързия преглед (достъпен чрез задържане на Ctrl+V) и те не бяха изтрити.</value>
   </data>
   <data name="LBL_MAINVIEW_SEARCH_INDEX_BROKEN" xml:space="preserve">
     <value>Индексът за търсене е повреден.</value>
@@ -264,14 +267,17 @@
   <data name="LBL_OPEN_MAIN_VIEW_REQUESTED_POPUP" xml:space="preserve">
     <value>За да отворите прегледа на цял екран, моля първо затворете този прозорец.</value>
   </data>
+  <data name="LBL_QUESTION_MARK" xml:space="preserve">
+    <value>?</value>
+  </data>
   <data name="LBL_QV_INCOMPATIBLE_ITEMS" xml:space="preserve">
-    <value>Несъвместими елементи.</value>
+    <value>Несъвместими записи.</value>
   </data>
   <data name="LBL_QV_NO_CLIPBOARD_ITEMS" xml:space="preserve">
-    <value>Няма клипборд елементи за показване.</value>
+    <value>Няма клипборд записи за показване.</value>
   </data>
   <data name="LBL_REBUILD_INDEX_FAILED_MSG" xml:space="preserve">
-    <value>Някои съхранени клипборд елементи причиняват грешка при възстановяването на индексите. Ако натиснете "Опитай отново", тези записи ще бъдат изтрити, за да може да се възстанови индексът.</value>
+    <value>Някои съхранени клипборд данни причиняват грешка при възстановяването на индексите. Ако натиснете "Опитай отново", тези записи ще бъдат изтрити, за да може да се възстанови индексът.</value>
   </data>
   <data name="LBL_REBUILD_INDEX_TITLE_PART_FAILED" xml:space="preserve">
     <value>Грешка.</value>
@@ -304,7 +310,7 @@
     <value>Интервал в секунди:</value>
   </data>
   <data name="LBL_SETTINGS_AUTO_CLOUD_SYNC_PINNED_ITEMS" xml:space="preserve">
-    <value>Автоматично го синхронизирай с облака всеки клипбоард елемент, щом бъде отбелязан като "закачен"</value>
+    <value>Автоматично синхронизирай с облака всеки клипбоард запис, щом бъде отбелязан като "закачен"</value>
   </data>
   <data name="LBL_SETTINGS_AUTO_DETERMINE_MAX_PREVIEW_TASKS" xml:space="preserve">
     <value>Автоматично определяй максималния брой на едновременните задачи за генериране на прегледи</value>
@@ -412,16 +418,16 @@
     <value>Изпълнявай основният процес на програмата с висок приоритет</value>
   </data>
   <data name="LBL_SETTINGS_MAX_NON_PINNED_ENTRIES_IN_QV" xml:space="preserve">
-    <value>Максимален брой клипбоард елементи в Бързия преглед</value>
+    <value>Максимален брой клипбоард записи в Бързия преглед</value>
   </data>
   <data name="LBL_SETTINGS_MAX_NON_PINNED_ENTRIES_IN_QV_WRN" xml:space="preserve">
-    <value>Внимание: При намаляне на броя, най-старите елементи ще бъдеат премахнати от Бързия преглед</value>
+    <value>Внимание: При намаляне на броя, най-старите записи ще бъдеат премахнати от Бързия преглед</value>
   </data>
   <data name="LBL_SETTINGS_MAX_PINNED_ENTRIES" xml:space="preserve">
-    <value>Максимален брой закачени клиборд елементи</value>
+    <value>Максимален брой закачени клиборд записи</value>
   </data>
   <data name="LBL_SETTINGS_MAX_PINNED_ENTRIES_WRN" xml:space="preserve">
-    <value>Внимание: При намаляне на броя, най-старите закачени елементи ще бъдеат откачени.</value>
+    <value>Внимание: При намаляне на броя, най-старите закачени записи ще бъдеат откачени.</value>
   </data>
   <data name="LBL_SETTINGS_MAX_PREVIEW_ITEMS_IN_GROUP" xml:space="preserve">
     <value>Максимален брой прегледи в група (например при файлове, копирани наведнъж)</value>
@@ -433,8 +439,8 @@
     <value>Няма нито една услуга в списъка.</value>
   </data>
   <data name="LBL_SETTINGS_NUM_ITEMS_ON_PAGE" xml:space="preserve">
-    <value>Брой на клипбоард елементите, които се зареждат на една страница при преглед на цял екран (основния прозорец).
-Внимание: повече елементи означава повече използвана оперативна памет.</value>
+    <value>Брой на клипбоард записите, които се зареждат на една страница при преглед на цял екран (основния прозорец).
+Внимание: повече записи означава повече използвана оперативна памет.</value>
   </data>
   <data name="LBL_SETTINGS_NUM_ROWS_TO_PRELOAD" xml:space="preserve">
     <value>Брой на редовете, които ще се заредят, още преди да са станали видими при преглед на цял екран (основния прозорец).
@@ -444,13 +450,13 @@
     <value>Прикачи трей иконката към таскбара, за да не се крие никога</value>
   </data>
   <data name="LBL_SETTINGS_PREVIEW_CACHE_MAX_SIZE" xml:space="preserve">
-    <value>Максимален размер в мегабайти на кеша на генерирани прегледи на клипборд елементи</value>
+    <value>Максимален размер в мегабайти на кеша на генерирани прегледи на клипборд записи</value>
   </data>
   <data name="LBL_SETTINGS_PREVIEW_GENERATION_TIMEOUT" xml:space="preserve">
-    <value>Таймаут за генериране на преглед на клипборд елемент</value>
+    <value>Таймаут за генериране на преглед на клипборд запис</value>
   </data>
   <data name="LBL_SETTINGS_SCREEN_HEIGHT_ITEM_HEIGT_RATIO" xml:space="preserve">
-    <value>Съотношение между височината на екрана и височината на прегледите на клипборд елементи</value>
+    <value>Съотношение между височината на екрана и височината на прегледите на клипборд записи</value>
   </data>
   <data name="LBL_SETTINGS_SEARCH_ENABLED" xml:space="preserve">
     <value>Позволи функционалностите за търсене</value>
@@ -465,10 +471,10 @@
     <value>Автоматично настройване на размера на прегледи, бутони и текс според DPI настройките на системата</value>
   </data>
   <data name="LBL_SETTINGS_STORE_ITEM_TIMEOUT" xml:space="preserve">
-    <value>Таймаут при запазване на копиран в клипборда елемент</value>
+    <value>Таймаут при запазване на копиран в клипборда запис</value>
   </data>
   <data name="LBL_SETTINGS_STORE_MAX_TASKS_TIMEOUT" xml:space="preserve">
-    <value>Максимален брой едновременни процеси за запазване на клипборд елемент</value>
+    <value>Максимален брой едновременни процеси за запазване на клипборд данни</value>
   </data>
   <data name="LBL_SETTINGS_WINDOW_LOADING" xml:space="preserve">
     <value>Зареждане...</value>
@@ -522,7 +528,7 @@
     <value>където заглавието на прозореца съдържа</value>
   </data>
   <data name="TTP_FILTERBAND_FILTER_BY_APP_TOGGLED_PREFIX" xml:space="preserve">
-    <value>Показват се елементи, идващи от</value>
+    <value>Показват се записи, идващи от</value>
   </data>
   <data name="TTP_FILTERBAND_FILTER_BY_DATE" xml:space="preserve">
     <value>Филтрирай по дата</value>
@@ -534,16 +540,16 @@
     <value>до</value>
   </data>
   <data name="TTP_FILTERBAND_FILTER_BY_DEVICE" xml:space="preserve">
-    <value>Филтрирай по устройство/компютър, източник на клипборд елемента</value>
+    <value>Филтрирай по устройство/компютър, източник на клипборд записите</value>
   </data>
   <data name="TTP_FILTERBAND_FILTER_BY_DEVICE_CURRENT" xml:space="preserve">
-    <value>Показвай елементи, идващи от настоящия компютър</value>
+    <value>Показвай записи, идващи от настоящия компютър</value>
   </data>
   <data name="TTP_FILTERBAND_FILTER_BY_DEVICE_REMOTE" xml:space="preserve">
-    <value>Показвай елементи, идващи от други устройства</value>
+    <value>Показвай записи, идващи от други устройства</value>
   </data>
   <data name="TTP_FILTERBAND_FILTER_BY_DEVICE_REMOTE_TOGGLED_PREFIX" xml:space="preserve">
-    <value>Показвай елементи, идващи от</value>
+    <value>Показвай записи, идващи от</value>
   </data>
   <data name="TTP_FILTERBAND_FILTER_BY_TYPE" xml:space="preserve">
     <value>Филтрирай по тип на съдържанието</value>
@@ -552,10 +558,10 @@
     <value>Показвай изображения</value>
   </data>
   <data name="TTP_FILTERBAND_OTHER_ITEMS" xml:space="preserve">
-    <value>Показвай други елементи</value>
+    <value>Показвай други записи</value>
   </data>
   <data name="TTP_FILTERBAND_TEXT" xml:space="preserve">
-    <value>Показвай текстови елементи</value>
+    <value>Показвай текстови записи</value>
   </data>
   <data name="TTP_MAINVIEW_BTN_CANCEL_SYNC" xml:space="preserve">
     <value>Заявено е синхронизиране с облака. Кликнете, за да отмените заявката.</value>
@@ -564,25 +570,28 @@
     <value>Грешка с облака. Кликнете за подробности.</value>
   </data>
   <data name="TTP_MAINVIEW_BTN_DELETE_GROUP" xml:space="preserve">
-    <value>Изтрийте всички елементи от тази група</value>
+    <value>Изтрий всички записи от тази група освен закачените</value>
   </data>
   <data name="TTP_MAINVIEW_BTN_DELETE_SELECTED" xml:space="preserve">
-    <value>Изтрий избраните елементи</value>
+    <value>Изтрий избраните записи</value>
   </data>
   <data name="TTP_MAINVIEW_BTN_DELETE_THIS_ITEM" xml:space="preserve">
-    <value>Изтрийте този елемент</value>
+    <value>Изтрийте този запис</value>
   </data>
   <data name="TTP_MAINVIEW_BTN_SETTINGS" xml:space="preserve">
     <value>Настройки</value>
   </data>
   <data name="TTP_MAINVIEW_BTN_SET_TO_CLIPBOARD" xml:space="preserve">
-    <value>Зареди избраните елементи в системния клипборд</value>
+    <value>Зареди избраните записи в системния клипборд</value>
   </data>
   <data name="TTP_MAINVIEW_BTN_SYNC" xml:space="preserve">
-    <value>Кликнете тук, за да синхронизирате елемента с облака</value>
+    <value>Кликнете тук, за да синхронизирате записа с облака</value>
   </data>
   <data name="TTP_MAINVIEW_BTN_SYNC_NON_TRANSFERABLE_ITEM" xml:space="preserve">
     <value>Този вид съдържание не може да се съхранява в облака</value>
+  </data>
+  <data name="TTP_MAINVIEW_DELETE_DISABLED_ITEM_PINNED_IN_QV" xml:space="preserve">
+    <value>Изтриването е забранено, защото записът е закачен за бързия преглед (достъпен чрез задържане на Ctrl+V)</value>
   </data>
   <data name="TTP_MAINVIEW_FILTERS_DISABLED_DUE_TO_ERRORS" xml:space="preserve">
     <value>Филтрите са забранени поради грешки в индекса за търсене.</value>
@@ -594,7 +603,7 @@
     <value>Синхронизирането е завършено</value>
   </data>
   <data name="TTP_MAINVIEW_PROTECT_ITEM" xml:space="preserve">
-    <value>Закачи записа за този прозорец</value>
+    <value>Закачи записа за този прозорец, за да не може да бъде изтрит</value>
   </data>
   <data name="TTP_MAINVIEW_SEARCHBOX_DISABLED_DUE_TO_ERRORS" xml:space="preserve">
     <value>Полето за търсене е забранено поради грешки в индекса.</value>
@@ -606,7 +615,7 @@
     <value>Запази модифицирания/комбинирания запис за повторна употреба по-късно</value>
   </data>
   <data name="TTP_MAINVIEW_UNPROTECT_ITEM" xml:space="preserve">
-    <value>Откачи записа от този прозорец</value>
+    <value>Откачи записа от този прозорец и позволи възможността за изтриване</value>
   </data>
   <data name="TTP_QUICKVIEW_MAX_PINNED_ITEMS_REACHED" xml:space="preserve">
     <value>Максималният брой на закачени записи е достигнат</value>
@@ -663,12 +672,12 @@
     <value>Текст</value>
   </data>
   <data name="TTP_TILE_ITEM_PRESENTER_NO_GENERATOR_FOUND_SUFFIX" xml:space="preserve">
-    <value>не знае как да генерира преглед за този клипборд елемент.</value>
+    <value>не знае как да генерира преглед за този клипборд запис.</value>
   </data>
   <data name="TTP_TILE_ITEM_PRESENTER_SOMETHING_WRONG" xml:space="preserve">
     <value>Нещо се обърка.</value>
   </data>
   <data name="TTP_TILE_ITEM_PRESENTER_TIMEOUT" xml:space="preserve">
-    <value>Генерирането на преглед за този елемент отне твърде много време.</value>
+    <value>Генерирането на преглед за този запис отне твърде много време.</value>
   </data>
 </root>

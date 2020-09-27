@@ -325,17 +325,32 @@
                                     DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type views:ClipboardViewControlBase}}}"
                                     DefaultButton="No"
                                     DialogueType="YesNo"
+                                    DisableParentWindow="True"
                                     IsOpen="False"
                                     Placement="Bottom"
                                     PlacementTarget="{Binding ElementName=trashBtn}"
                                     ReturnFocusTo="{Binding ElementName=MainListView}">
                                     <localDialog:DialogPopup.Content>
-                                        <TextBlock Foreground="{DynamicResource ControlForegroundBrush}" TextWrapping="Wrap">
+                                        <TextBlock
+                                            FontSize="16"
+                                            Foreground="{DynamicResource ControlForegroundBrush}"
+                                            TextAlignment="Center"
+                                            TextWrapping="Wrap">
                                             <Run Text="{loc:Localize LBL_MAINVIEW_POPUP_DELETE_GROUP}" />
-                                            <Run Text="{Binding Path=DataContext.GroupDateUndergoingDeletion, Converter={StaticResource DateTimeToHumanReadableDateString}}" />
+                                            <Run Text="{Binding Path=DataContext.GroupDateUndergoingDeletion, Converter={StaticResource DateTimeToHumanReadableDateString}}" /><Run Text="{loc:Localize LBL_QUESTION_MARK}" />
                                         </TextBlock>
                                     </localDialog:DialogPopup.Content>
                                 </localDialog:DialogPopup>
+
+                                <localDialog:DialogPopup
+                                    x:Name="deleteGroupPinnedItemsNotificationPopup"
+                                    MaxWidth="400"
+                                    DialogText="{loc:Localize LBL_MAINVIEW_POPUP_PINNED_ITEMS_NOT_DELETED}"
+                                    DialogueType="Ok"
+                                    DisableParentWindow="True"
+                                    IsOpen="False"
+                                    Placement="Bottom"
+                                    ReturnFocusTo="{Binding ElementName=MainListView}" />
 
                                 <localDialog:DialogPopup
                                     x:Name="deleteConfirmationPopup"

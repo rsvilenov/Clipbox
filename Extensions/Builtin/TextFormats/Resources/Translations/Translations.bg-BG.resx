@@ -127,7 +127,7 @@
     <value>Пейстни каретата с интервал между тях</value>
   </data>
   <data name="LBL_SAVE_LAST_SEPARATOR" xml:space="preserve">
-    <value>При пействане на два или повече текстови елемента заедно, запазвай последно избрания сепаратор</value>
+    <value>При пействане на два или повече текстови записа заедно, запазвай последно избрания сепаратор</value>
   </data>
   <data name="STR_CHARACTER" xml:space="preserve">
     <value>символ</value>

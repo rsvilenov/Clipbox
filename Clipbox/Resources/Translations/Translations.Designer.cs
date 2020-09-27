@@ -475,6 +475,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Some items are pinned in the Quick View (the one that shows up upon long pressing Ctrl+V), so they were not deleted..
+        /// </summary>
+        internal static string LBL_MAINVIEW_POPUP_PINNED_ITEMS_NOT_DELETED {
+            get {
+                return ResourceManager.GetString("LBL_MAINVIEW_POPUP_PINNED_ITEMS_NOT_DELETED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The search index is broken..
         /// </summary>
         internal static string LBL_MAINVIEW_SEARCH_INDEX_BROKEN {
@@ -498,6 +507,15 @@ namespace Clipbox.Resources.Translations {
         internal static string LBL_OPEN_MAIN_VIEW_REQUESTED_POPUP {
             get {
                 return ResourceManager.GetString("LBL_OPEN_MAIN_VIEW_REQUESTED_POPUP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ?.
+        /// </summary>
+        internal static string LBL_QUESTION_MARK {
+            get {
+                return ResourceManager.GetString("LBL_QUESTION_MARK", resourceCulture);
             }
         }
         
@@ -1395,7 +1413,7 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete all items from this group.
+        ///   Looks up a localized string similar to Delete all items from this group, except the pinned ones.
         /// </summary>
         internal static string TTP_MAINVIEW_BTN_DELETE_GROUP {
             get {
@@ -1458,6 +1476,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The deletion is disabled because the item is pinned in the Quick View (the one that shows up upon long pressing Ctrl+V).
+        /// </summary>
+        internal static string TTP_MAINVIEW_DELETE_DISABLED_ITEM_PINNED_IN_QV {
+            get {
+                return ResourceManager.GetString("TTP_MAINVIEW_DELETE_DISABLED_ITEM_PINNED_IN_QV", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The filters are disabled due to search index errors..
         /// </summary>
         internal static string TTP_MAINVIEW_FILTERS_DISABLED_DUE_TO_ERRORS {
@@ -1485,7 +1512,7 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pin the item to this window.
+        ///   Looks up a localized string similar to Pin the item to this window, so it cannot be deleted.
         /// </summary>
         internal static string TTP_MAINVIEW_PROTECT_ITEM {
             get {
@@ -1521,7 +1548,7 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unpin the item from this window.
+        ///   Looks up a localized string similar to Unpin the item from this window and make the item deletable.
         /// </summary>
         internal static string TTP_MAINVIEW_UNPROTECT_ITEM {
             get {
