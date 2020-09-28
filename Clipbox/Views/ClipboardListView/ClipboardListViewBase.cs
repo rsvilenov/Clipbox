@@ -125,6 +125,25 @@ namespace Clipbox.Views.ClipboardListView
         }
 
 
+
+        private static readonly DependencyPropertyKey AreAnyDeletableItemsSelectedPropertyKey
+        = DependencyProperty.RegisterReadOnly(nameof(AreAnyDeletableItemsSelected), typeof(bool), typeof(ClipboardListViewBase),
+            new FrameworkPropertyMetadata(default(bool),
+                FrameworkPropertyMetadataOptions.None));
+
+        public static readonly DependencyProperty AreAnyDeletableItemsSelectedProperty
+            = AreAnyDeletableItemsSelectedPropertyKey.DependencyProperty;
+
+        /// <summary>
+        /// A read only DP, indicating whether there are any deletable items selected.
+        /// </summary>
+        public bool AreAnyDeletableItemsSelected
+        {
+            get { return (bool)GetValue(AreAnyDeletableItemsSelectedProperty); }
+            protected set { SetValue(AreAnyDeletableItemsSelectedPropertyKey, value); }
+        }
+
+
         /// <summary>
         /// Suppresses the post-selection logic implemented in <see cref="ClipboardListViewBase"/>
         /// and disables the following events:
@@ -481,6 +500,7 @@ namespace Clipbox.Views.ClipboardListView
 
             UpdateAreAnyItemsSelected();
             UpdateAreAnySubItemsSelected();
+            AreAnyDeletableItemsSelected = false;
 
             SelectionChangeCompleted?.Invoke(this, combinabilityEventArgs);
         }
@@ -562,6 +582,7 @@ namespace Clipbox.Views.ClipboardListView
 
             UpdateAreAnyItemsSelected();
             UpdateAreAnySubItemsSelected();
+            AreAnyDeletableItemsSelected = selectedItems.Any(w => w.IsViewItemLoaded && !w.ViewItem.IsPinned && !w.ViewItem.IsProtected);
 
             SelectionChangeCompleted?.Invoke(this, combinabilityEventArgs);
 

@@ -298,6 +298,7 @@
                                                 <MultiDataTrigger.Conditions>
                                                     <Condition Binding="{Binding Path=AreAnyItemsSelected, ElementName=MainListView}" Value="True" />
                                                     <Condition Binding="{Binding Path=AreAnySubItemsSelected, ElementName=MainListView}" Value="False" />
+                                                    <Condition Binding="{Binding Path=AreAnyDeletableItemsSelected, ElementName=MainListView}" Value="True" />
                                                     <Condition Binding="{Binding Path=IsShowingOfPostSelectionToolboxEnabled, RelativeSource={RelativeSource AncestorType={x:Type local:ClipboardViewControlBase}}}" Value="True" />
                                                 </MultiDataTrigger.Conditions>
                                                 <Setter Property="Visibility" Value="Visible" />
