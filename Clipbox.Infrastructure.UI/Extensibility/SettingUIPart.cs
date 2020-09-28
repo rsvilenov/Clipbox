@@ -6,8 +6,21 @@ using System.Windows.Threading;
 
 namespace Clipbox.Infrastructure.UI.Extensibility
 {
-    public abstract class SettingUIPart<TSettingValue> : UserControl, ISettingUIPart
+    public abstract class SettingUIPart<TSettingValue> : UserControl, ISettingUIPart, IDisposable
     {
+        private const int SETTING_CHANGE_NOTIFICATION_THROTTLE_MS = 500;
+        private SlidingTimer _notifySettingsModifiedSlidingTImer;
+        private bool _isDisposed;
+
+        public SettingUIPart()
+        {
+            _notifySettingsModifiedSlidingTImer = new SlidingTimer
+            {
+                IntervalMs = SETTING_CHANGE_NOTIFICATION_THROTTLE_MS
+            };
+            _notifySettingsModifiedSlidingTImer.Elapsed += _notifySettingsModifiedSlidingTImer_Elapsed;
+        }
+
         private event EventHandler _notifySettingModified;
         /// <summary>
         /// <see cref="ISettingUIPart.NotifySettingModified"/>
@@ -27,6 +40,11 @@ namespace Clipbox.Infrastructure.UI.Extensibility
         }
 
         protected void NotifySettingModified()
+        {
+            _notifySettingsModifiedSlidingTImer.Slide();
+        }
+
+        private void _notifySettingsModifiedSlidingTImer_Elapsed(object sender, EventArgs e)
         {
             _notifySettingModified?.Invoke(this, new EventArgs());
         }
@@ -56,6 +74,20 @@ namespace Clipbox.Infrastructure.UI.Extensibility
         public void SetIsVisible(bool isVisible)
         {
             Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            _notifySettingsModifiedSlidingTImer.Dispose();
+        }
+
+        public void Dispose()
+        {
+            if (!_isDisposed)
+            {
+                Dispose(disposing: true);
+                _isDisposed = true;
+            }
         }
     }
 }

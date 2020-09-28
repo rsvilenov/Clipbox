@@ -8,10 +8,8 @@ using System;
 
 namespace Clipbox.Views.Settings.BuiltInExtensions
 {
-    public class CloudBuiltInSettingsUIExtension : BuiltInSettingsUIExtension, ICloudSyncServiceConsumer, IDisposable
+    public class CloudBuiltInSettingsUIExtension : BuiltInSettingsUIExtension, ICloudSyncServiceConsumer
     {
-        private bool _isDisposed;
-
         private AutoCloudSyncPinnedItemsSettingUIPart _autoCloudSyncPinnedItemsSettingUIPart;
         private CloudSupportSelectorSettingUIPart _cloudSupportSelectorSettingUIPart;
         private IsCloudSyncEnabledSettingUIPart _isCloudSyncEnabledSettingUIPart;
@@ -93,13 +91,9 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
             _cloudSupportSelectorSettingUIPart.SetCloudSyncService(cloudSyncSvc);
         }
 
-        public void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            if (!_isDisposed)
-            {
-                _cloudSupportSelectorSettingUIPart?.Dispose();
-                _isDisposed = true;
-            }
+            _cloudSupportSelectorSettingUIPart?.Dispose();
         }
     }
 }

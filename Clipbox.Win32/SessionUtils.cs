@@ -116,7 +116,7 @@ namespace Clipbox.Win32
             return _sessionUniqueId;
         }
 
-        public static double GetLastInputTime()
+        public static double GetLastInputTimeInMs()
         {
             NativeStructures.LASTINPUTINFO lastInputInfo = new NativeStructures.LASTINPUTINFO();
             lastInputInfo.cbSize = (uint)Marshal.SizeOf(lastInputInfo);
@@ -125,11 +125,10 @@ namespace Clipbox.Win32
             if (!User32.GetLastInputInfo(ref lastInputInfo))
                 return 0;
 
-            var lastInputTick = lastInputInfo.dwTime;
-            var envTicks = (uint)Environment.TickCount;
-            var idleTimespan = new DateTime(envTicks) - new DateTime(lastInputTick);
-
-            return idleTimespan.TotalMilliseconds;
+            uint lastInputMs = lastInputInfo.dwTime;
+            // note: TickCount is in milliseconds, not in ticks!
+            // LASTINPUTINFO.dwTime is also in milliseconds.
+            return (uint)Environment.TickCount - lastInputMs;
         }
 
 

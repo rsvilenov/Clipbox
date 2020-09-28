@@ -7,10 +7,8 @@ using System;
 
 namespace Clipbox.Views.Settings.BuiltInExtensions
 {
-    public class AdvancedBuiltInSettingsUIExtension : BuiltInSettingsUIExtension, IDisposable
+    public class AdvancedBuiltInSettingsUIExtension : BuiltInSettingsUIExtension
     {
-        private bool _isDisposed;
-
         private ExternalSearchProcessSettingUIPart _extenralSearchProcessSettingUIPart;
         private MaxPreviewTasksSettingUIPart _maxPreviewTasksSettingUIPart;
 
@@ -99,12 +97,9 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
             }
         }
 
-        public void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            if (!_isDisposed)
-            {
-                _restartAppDialogSlidingTimer.Dispose();
-            }
+            _restartAppDialogSlidingTimer.Dispose();
         }
     }
 }

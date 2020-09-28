@@ -55,6 +55,17 @@ namespace Clipbox.Infrastructure.UI.CustomControls
                 PropertyChangedCallback = (s, args) =>
                 {
                     IntUpDown tb = (IntUpDown)s;
+                    if (args.NewValue != null)
+                    {
+                        if ((int)args.NewValue < tb.Minimum)
+                        {
+                            tb.Value = tb.Minimum;
+                        }
+                        else if ((int)args.NewValue > tb.Maximum)
+                        {
+                            tb.Value = tb.Maximum;
+                        }
+                    }
                     tb.SetUpDownButtonsEnabledDisabledStatus();
                     tb.RaiseValueChangedEvent(args);
                 }
@@ -78,9 +89,9 @@ namespace Clipbox.Infrastructure.UI.CustomControls
 
 
 
-        RepeatButton _btnUp;
-        RepeatButton _btnDown;
-        TextBox _textBox;
+        private RepeatButton _btnUp;
+        private RepeatButton _btnDown;
+        private TextBox _textBox;
         public override void OnApplyTemplate()
         {
             base.OnApplyTemplate();
@@ -145,17 +156,17 @@ namespace Clipbox.Infrastructure.UI.CustomControls
                         finalValue += tb.Text.Substring(tb.SelectionStart + tb.SelectionLength);
                     }
 
-                    newValue = int.Parse(finalValue);
+                    int.TryParse(finalValue, out newValue);
                 }
                 else
                 {
                     string finalValue = tb.Text.Trim().Insert(tb.CaretIndex, e.Text.Trim());
-                    newValue = int.Parse(finalValue);
+                    int.TryParse(finalValue, out newValue);
                 }
             }
             else
             {
-                newValue = int.Parse(e.Text);
+                int.TryParse(e.Text, out newValue);
             }
 
             if (newValue > Maximum

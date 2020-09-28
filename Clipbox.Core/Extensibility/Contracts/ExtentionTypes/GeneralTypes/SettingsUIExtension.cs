@@ -17,9 +17,11 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
         ISettingsUIComponent, 
         ISettingsRegistrator, 
         IConfigurationRecipient, 
-        ISettingChangeRequestor
+        ISettingChangeRequestor,
+        IDisposable
     {
         private readonly Dictionary<ISettingKey, ISettingUIPart> _settingKeyUIPartMapping;
+        private bool _isDisposed;
 
         public SettingsUIExtension()
         {
@@ -330,6 +332,27 @@ namespace Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes
         private Dictionary<ISettingKey, object> _settings = new Dictionary<ISettingKey, object>();
 
         private readonly object _lockObject = new object();
+
+        protected virtual void Dispose(bool disposing)
+        {
+        }
+
+        public void Dispose()
+        {
+            if (!_isDisposed)
+            {
+                foreach (ISettingUIPart settingUIPart in _settingKeyUIPartMapping.Values)
+                {
+                    if (settingUIPart is IDisposable disposableUIPart)
+                    {
+                        disposableUIPart.Dispose();
+                    }
+                }
+
+                Dispose(disposing: true);
+                _isDisposed = true;
+            }
+        }
 
         /// <summary>
         /// Allows creating of a SettingKey collection.

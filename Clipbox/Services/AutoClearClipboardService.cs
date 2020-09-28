@@ -49,6 +49,7 @@ namespace Clipbox.Services
             _inactivityDetectionTimer = new Timer(INACTIVITY_POLLING_INTERVAL_MS);
             _inactivityDetectionTimer.AutoReset = true;
             _inactivityDetectionTimer.Elapsed += _inactivityDetectionTimer_Elapsed;
+            _inactivityDetectionTimer.Start();
 
             Application.Current.SessionEnding += Current_SessionEnding;
             SystemEvents.SessionSwitch += SystemEvents_SessionSwitch;
@@ -102,7 +103,7 @@ namespace Clipbox.Services
         {
             if (_isAutoClearSysClipboardEnabled)
             {
-                if (SessionUtils.GetLastInputTime() > _clearSysClipboardAfterSecondsOfInactivity * 1000)
+                if (SessionUtils.GetLastInputTimeInMs() > _clearSysClipboardAfterSecondsOfInactivity * 1000)
                 {
                     _clipboardManager.ClearSystemClipboard();
                 }
@@ -110,7 +111,7 @@ namespace Clipbox.Services
 
             if (_isAutoClearExtClipboardEnabled)
             {
-                if (SessionUtils.GetLastInputTime() > _clearExtClipboardAfterSecondsOfInactivity * 1000)
+                if (SessionUtils.GetLastInputTimeInMs() > _clearExtClipboardAfterSecondsOfInactivity * 1000)
                 {
                     ClearStoredClipboardItemsForCurentSession();
                 }
