@@ -944,15 +944,25 @@ namespace Clipbox.ExtendedClipboard
                     throw new ArgumentException($"ClipboardItem with Id {clipboardItemId} was not found.");
                 }
 
-                item.BeginEdit();
+                
                 // when we pin a temporary item, it is no longer temporary
                 item.IsTemporary = false;
 
                 item.IsPinned = pin;
 
-                item.EndEdit();
 
-                _persistenceHelper.StoreAndShrinkClipboardItem(item);
+                // Do not use BeginEdit() and EndEdit() here
+                // as this will also change the timestamp
+                // of the item and the cloud service will think
+                // that the item has been modified and will
+                // upload it to the cloud again with the different
+                // timestamp.
+                // Make sure that we have told the persistence helper
+                // not to check whether the item has been modified before saving.
+                // The item's IsModified property will be "false" as the
+                // item's modification has not been made inside a 
+                // BeginEdit() and EndEdit() sequence.
+                _persistenceHelper.StoreAndShrinkClipboardItem(item, checkIsItemModified: false);
             }
 
             ItemChanged?.Invoke(this, new ItemChangedEventArgs(clipboardItemId, 
@@ -970,15 +980,23 @@ namespace Clipbox.ExtendedClipboard
                     throw new ArgumentException($"ClipboardItem with Id {clipboardItemId} was not found.");
                 }
 
-                item.BeginEdit();
                 // when we protect a temporary item, it is no longer temporary
                 item.IsTemporary = false;
 
                 item.IsProtected = protect;
 
-                item.EndEdit();
-
-                _persistenceHelper.StoreAndShrinkClipboardItem(item);
+                // Do not use BeginEdit() and EndEdit() here
+                // as this will also change the timestamp
+                // of the item and the cloud service will think
+                // that the item has been modified and will
+                // upload it to the cloud again with the different
+                // timestamp.
+                // Make sure that we have told the persistence helper
+                // not to check whether the item has been modified before saving.
+                // The item's IsModified property will be "false" as the
+                // item's modification has not been made inside a 
+                // BeginEdit() and EndEdit() sequence.
+                _persistenceHelper.StoreAndShrinkClipboardItem(item, checkIsItemModified: false);
             }
 
             ItemChanged?.Invoke(this, new ItemChangedEventArgs(clipboardItemId,

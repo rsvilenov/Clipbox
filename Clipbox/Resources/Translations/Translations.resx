@@ -591,7 +591,7 @@ Warning: more rows means more RAM usage!</value>
     <value>This type of content cannot be stored in the cloud</value>
   </data>
   <data name="TTP_MAINVIEW_DELETE_DISABLED_ITEM_PINNED_IN_QV" xml:space="preserve">
-    <value>The deletion is disabled because the item is pinned in the Quick View (the one that shows up upon long pressing Ctrl+V)</value>
+    <value>Deletion is disabled because the item is pinned in the Quick View (the one that shows up upon long pressing Ctrl+V)</value>
   </data>
   <data name="TTP_MAINVIEW_FILTERS_DISABLED_DUE_TO_ERRORS" xml:space="preserve">
     <value>The filters are disabled due to search index errors.</value>
