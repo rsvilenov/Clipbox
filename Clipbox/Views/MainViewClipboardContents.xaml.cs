@@ -393,16 +393,46 @@ namespace Clipbox.Views
                     try
                     {
                         PerformDisposeSafeOperation
-                        (
-                            () => _viewModel.DeleteItems(selectedItemIds)
-                        );
-
-                        Dispatcher.Invoke(() =>
+                        (() =>
                         {
+                            IEnumerable<ClipboardViewItemWrapper> wrappers = _viewModel
+                                    .ClipboardViewItemWrappers
+                                    .Where(w => selectedItemIds.Contains(w.Id))
+                                    .Where(w => w.IsViewItemLoaded);
+
+                            bool isTherePinnedOrProtectedItems = wrappers.Any(w => w.ViewItem.IsPinned || w.ViewItem.IsProtected);
+
+                            wrappers = wrappers
+                                .Where(w => !w.ViewItem.IsPinned && !w.ViewItem.IsProtected);
+
+                            List<string> idsToDelete = wrappers
+                                .Select(w => w.Id)
+                                .ToList();
+
+                            _viewModel.DeleteItems(idsToDelete);
+
+                            Dispatcher.Invoke(() =>
+                            {
                                 // decrease the total number of items to load in all pages
                                 // by the number of the deleted items.
-                                AllPagesItemsCount -= selectedItemIds.Count();
+                                AllPagesItemsCount -= idsToDelete.Count();
+                            });
+
+                            if (isTherePinnedOrProtectedItems)
+                            {
+                               
+
+                                Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
+                                {
+                                    // open the info popup
+                                    deleteGroupPinnedItemsNotificationPopup.PlacementTarget = this;
+                                    deleteGroupPinnedItemsNotificationPopup.Placement = PlacementMode.Center;
+                                    deleteGroupPinnedItemsNotificationPopup.IsOpen = true;
+                                }));
+                            }
                         });
+
+                        
                     }
                     finally
                     {
@@ -631,35 +661,42 @@ namespace Clipbox.Views
                     {
                         try
                         {
-                            IEnumerable<ClipboardViewItemWrapper> wrappers = _viewModel
-                                .ClipboardViewItemWrappers
-                                .Where(w => w.DateCreated.Date == e.Day)
-                                .Where(w => w.IsViewItemLoaded)
-                                .Where(w => !w.ViewItem.IsPinned && !w.ViewItem.IsProtected);
-
-                            // only the pinned items in the quick view use the property IsPinned.
-                            // those items in the mainview use IsProtected for pinning.
-                            bool isTherePinnedItemsInQuickView = wrappers.Any(w => w.ViewItem.IsPinned);
-
-                            List<string> idsToDelete = wrappers
-                                .Select(w => w.Id)
-                                .ToList();
-
                             PerformDisposeSafeOperation
-                            (
-                                () => _viewModel.DeleteItems(idsToDelete)
-                            );
-
-                            // decrease the total number of items to load in all pages by the count of the deleted items
-                            Dispatcher.Invoke(() => AllPagesItemsCount -= idsToDelete.Count);
-                            Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
+                            (() =>
                             {
-                                deleteGroupPinnedItemsNotificationPopup.PlacementTarget = this;
-                                deleteGroupPinnedItemsNotificationPopup.Placement = PlacementMode.Center;
+                                IEnumerable<ClipboardViewItemWrapper> wrappers = _viewModel
+                                    .ClipboardViewItemWrappers
+                                    .Where(w => w.DateCreated.Date == e.Day)
+                                    .Where(w => w.IsViewItemLoaded);
 
-                                // open the popup
-                                deleteGroupPinnedItemsNotificationPopup.IsOpen = true;
-                            }));
+                                bool isTherePinnedOrProtectedItems = wrappers.Any(w => w.ViewItem.IsPinned || w.ViewItem.IsProtected);
+
+                                wrappers = wrappers
+                                    .Where(w => !w.ViewItem.IsPinned && !w.ViewItem.IsProtected);
+
+                                List<string> idsToDelete = wrappers
+                                    .Select(w => w.Id)
+                                    .ToList();
+
+                                _viewModel.DeleteItems(idsToDelete);
+
+                                // decrease the total number of items to load in all pages by the count of the deleted items
+                                Dispatcher.Invoke(() =>
+                                {
+                                    AllPagesItemsCount -= idsToDelete.Count;
+                                });
+
+                                if (isTherePinnedOrProtectedItems)
+                                {
+                                    Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
+                                    {
+                                        // open the info popup
+                                        deleteGroupPinnedItemsNotificationPopup.PlacementTarget = this;
+                                        deleteGroupPinnedItemsNotificationPopup.Placement = PlacementMode.Center;
+                                        deleteGroupPinnedItemsNotificationPopup.IsOpen = true;
+                                    }));
+                                }
+                            });
                         }
                         finally
                         {
@@ -960,6 +997,12 @@ namespace Clipbox.Views
         private void RebuildIndexButton_Click(object sender, RoutedEventArgs e)
         {
             RebuildIndexRequested?.Invoke(this, new EventArgs());
+        }
+
+        private void DeleteGroupPinnedItemsNotificationPopup_DialogAnswered(object sender, DialogAnswerEventArgs e)
+        {
+            // unselect the pinned or protected items that were not deleted, but are still selected
+            Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => MainListView.UnselectAll()));
         }
     }
 }

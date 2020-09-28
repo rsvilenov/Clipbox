@@ -78,12 +78,20 @@ namespace Clipbox.Behaviors
 
         private void AssociatedObject_Unchecked(object sender, System.Windows.RoutedEventArgs e)
         {
-            Dispatcher.BeginInvoke(DispatcherPriority.Send, new Action(() => _toolTip.IsOpen = false));
+            Dispatcher.BeginInvoke(DispatcherPriority.Send, new Action(() =>
+            {
+                _toolTip.IsOpen = false;
+                _toolTip.Content = UncheckedToolTipText;
+            }));
         }
 
         private void AssociatedObject_Checked(object sender, System.Windows.RoutedEventArgs e)
         {
-            Dispatcher.BeginInvoke(DispatcherPriority.Send, new Action(() => _toolTip.IsOpen = false));
+            Dispatcher.BeginInvoke(DispatcherPriority.Send, new Action(() =>
+            {
+                _toolTip.IsOpen = false;
+                _toolTip.Content = CheckedToolTipText;
+            }));
         }
 
         protected override void OnDetaching()

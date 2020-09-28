@@ -1158,6 +1158,52 @@
         </Viewbox>
     </ControlTemplate>
 
+    <ControlTemplate x:Key="ProtectIcon">
+        <Viewbox>
+            <Grid Background="Transparent">
+                <Path
+                    Width="128"
+                    Height="128"
+                    Data="M3.3751188,9.1000014C3.5751288,13.200006 5.2751081,21.099996 14.975004,28.399995 24.674899,21.099996 26.474883,13.200006 26.574889,9.1000014 21.574941,9.9999953 16.174989,11.400003 16.074998,11.499994L14.975004,11.799997 13.875009,11.499994C13.875009,11.499994,8.375067,10.100001,3.3751188,9.1000014z M0.17515525,5.9999972C5.9750979,6.7000089 15.075009,9.1000014 15.075009,9.1000014 15.075009,9.1000014 24.074914,6.7000089 29.974847,5.9999972 29.974847,5.9999972 32.874812,20.299993 15.075009,31.999999 -2.7248084,20.299993 0.17515516,5.9999972 0.17515525,5.9999972z M1.7751446,0L15.075009,2.8000016 28.274867,0C28.774864,0.70001187,29.074863,2.1000052,29.274858,2.8000016L15.174999,5.8000002 15.075009,5.8000002 14.975004,5.8000002 0.97514967,2.8000016C1.2751497,2.1000052,1.4751447,0.70001187,1.7751446,0z"
+                    Fill="{TemplateBinding Foreground}"
+                    RenderTransformOrigin="0.5,0.5"
+                    Stretch="Uniform">
+                    <Path.RenderTransform>
+                        <TransformGroup>
+                            <TransformGroup.Children>
+                                <RotateTransform Angle="0" />
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                            </TransformGroup.Children>
+                        </TransformGroup>
+                    </Path.RenderTransform>
+                </Path>
+            </Grid>
+        </Viewbox>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="UnprotectIcon">
+        <Viewbox>
+            <Grid Background="Transparent">
+                <Path
+                    Width="128"
+                    Height="128"
+                    Data="M0.17515531,5.9999972C5.9750976,6.7000089 15.075009,9.1000014 15.075009,9.1000014 15.075009,9.1000014 24.074915,6.7000089 29.974848,5.9999972 29.974848,5.9999972 32.874812,20.299993 15.075009,31.999999 -2.7248085,20.299993 0.1751551,5.9999972 0.17515531,5.9999972z M1.7751447,0L15.075009,2.8000016 28.274868,0C28.774863,0.70001187,29.074862,2.1000052,29.274857,2.8000016L15.174999,5.8000002 15.075009,5.8000002 14.975004,5.8000002 0.97514974,2.8000016C1.2751497,2.1000052,1.4751446,0.70001187,1.7751447,0z"
+                    Fill="{TemplateBinding Foreground}"
+                    RenderTransformOrigin="0.5,0.5"
+                    Stretch="Uniform">
+                    <Path.RenderTransform>
+                        <TransformGroup>
+                            <TransformGroup.Children>
+                                <RotateTransform Angle="0" />
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                            </TransformGroup.Children>
+                        </TransformGroup>
+                    </Path.RenderTransform>
+                </Path>
+            </Grid>
+        </Viewbox>
+    </ControlTemplate>
+
     <ControlTemplate x:Key="MobileSourceIcon">
         <Viewbox>
             <Grid Background="Transparent">

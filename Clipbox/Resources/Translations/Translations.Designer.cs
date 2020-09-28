@@ -475,7 +475,7 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Some items are pinned in the Quick View (the one that shows up upon long pressing Ctrl+V), so they were not deleted..
+        ///   Looks up a localized string similar to Some items are protected or pinned in the Quick View (the one that shows up upon long pressing Ctrl+V), so they were not deleted..
         /// </summary>
         internal static string LBL_MAINVIEW_POPUP_PINNED_ITEMS_NOT_DELETED {
             get {
@@ -601,7 +601,7 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to After some time in which the computer is not used, clear all stored clipboard entries, which are not pinned or synchronized with the cloud.
+        ///   Looks up a localized string similar to After some time in which the computer is not used, clear all stored clipboard entries, which are not protected from deletion, pinned or synchronized with the cloud.
         /// </summary>
         internal static string LBL_SETTINGS_AUTO_CLEAR_EXT_CLIPBOARD_ENABLED {
             get {
@@ -727,7 +727,7 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to When the user locks the screen, clear all stored clipboard entries, which are not pinned or synchronized.
+        ///   Looks up a localized string similar to When the user locks the screen, clear all stored clipboard entries, which are not protected from deletion, pinned or synchronized.
         /// </summary>
         internal static string LBL_SETTINGS_CLEAR_EXT_CLIPBOARD_UPON_LOCKSCREEN {
             get {
@@ -736,7 +736,7 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to When the user logs off Windows, clear all stored clipboard entries, which are not pinned or synchronized.
+        ///   Looks up a localized string similar to When the user logs off Windows, clear all stored clipboard entries, which are not protected from deletion, pinned or synchronized.
         /// </summary>
         internal static string LBL_SETTINGS_CLEAR_EXT_CLIPBOARD_UPON_LOGOFF {
             get {
@@ -1512,7 +1512,7 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Pin the item to this window, so it cannot be deleted.
+        ///   Looks up a localized string similar to Protect the item, so it cannot be deleted.
         /// </summary>
         internal static string TTP_MAINVIEW_PROTECT_ITEM {
             get {
@@ -1548,7 +1548,7 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unpin the item from this window and make the item deletable.
+        ///   Looks up a localized string similar to Unprotect the item from this window and make the item deletable.
         /// </summary>
         internal static string TTP_MAINVIEW_UNPROTECT_ITEM {
             get {

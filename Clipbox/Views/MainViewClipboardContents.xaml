@@ -345,6 +345,7 @@
                                 <localDialog:DialogPopup
                                     x:Name="deleteGroupPinnedItemsNotificationPopup"
                                     MaxWidth="400"
+                                    DialogAnswered="DeleteGroupPinnedItemsNotificationPopup_DialogAnswered"
                                     DialogText="{loc:Localize LBL_MAINVIEW_POPUP_PINNED_ITEMS_NOT_DELETED}"
                                     DialogueType="Ok"
                                     DisableParentWindow="True"

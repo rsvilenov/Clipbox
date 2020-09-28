@@ -256,7 +256,7 @@
     <value>Сигурни ли сте, че искате да изтриете избрания запис?</value>
   </data>
   <data name="LBL_MAINVIEW_POPUP_PINNED_ITEMS_NOT_DELETED" xml:space="preserve">
-    <value>Някои записи са закачени за бързия преглед (достъпен чрез задържане на Ctrl+V) и те не бяха изтрити.</value>
+    <value>Някои записи са защитени от изтриване или са закачени за бързия преглед (достъпен чрез задържане на Ctrl+V) и те не бяха изтрити.</value>
   </data>
   <data name="LBL_MAINVIEW_SEARCH_INDEX_BROKEN" xml:space="preserve">
     <value>Индексът за търсене е повреден.</value>
@@ -298,7 +298,7 @@
     <value>Покажи настройките</value>
   </data>
   <data name="LBL_SETTINGS_AUTO_CLEAR_EXT_CLIPBOARD_ENABLED" xml:space="preserve">
-    <value>След определен период на потребителска неакивност изтрий всички клипборд записи, които не са закачени за някой прозорец и не са синхронизирани с облака</value>
+    <value>След определен период на потребителска неакивност изтрий всички клипборд записи, които не са защитени от изтриване, не са закачени и не са синхронизирани с облака</value>
   </data>
   <data name="LBL_SETTINGS_AUTO_CLEAR_EXT_CLIPBOARD_INTERVAL" xml:space="preserve">
     <value>Интервал в секунди:</value>
@@ -340,10 +340,10 @@
     <value>Сигурност</value>
   </data>
   <data name="LBL_SETTINGS_CLEAR_EXT_CLIPBOARD_UPON_LOCKSCREEN" xml:space="preserve">
-    <value>Когато потребителят заключи екрана, изтрий всички клипборд записи, които не са закачени за някой прозорец и не са синхронизирани с облака</value>
+    <value>Когато потребителят заключи екрана, изтрий всички клипборд записи, които не са защитени от изтриване, не са закачени и не са синхронизирани с облака</value>
   </data>
   <data name="LBL_SETTINGS_CLEAR_EXT_CLIPBOARD_UPON_LOGOFF" xml:space="preserve">
-    <value>Когато потребителят излезе от сесията си в Windows, изтрий всички клипборд записи, които не са закачени за някой прозорец и не са синхронизирани с облака</value>
+    <value>Когато потребителят излезе от сесията си в Windows, изтрий всички клипборд записи, които не са защитени от изтриване, не са закачени и не са синхронизирани с облака</value>
   </data>
   <data name="LBL_SETTINGS_CLIPBOARD_TRACKING" xml:space="preserve">
     <value>Следене на системния клипборд</value>
@@ -603,7 +603,7 @@
     <value>Синхронизирането е завършено</value>
   </data>
   <data name="TTP_MAINVIEW_PROTECT_ITEM" xml:space="preserve">
-    <value>Закачи записа за този прозорец, за да не може да бъде изтрит</value>
+    <value>Защити записа, за да не може да бъде изтрит</value>
   </data>
   <data name="TTP_MAINVIEW_SEARCHBOX_DISABLED_DUE_TO_ERRORS" xml:space="preserve">
     <value>Полето за търсене е забранено поради грешки в индекса.</value>
@@ -615,7 +615,7 @@
     <value>Запази модифицирания/комбинирания запис за повторна употреба по-късно</value>
   </data>
   <data name="TTP_MAINVIEW_UNPROTECT_ITEM" xml:space="preserve">
-    <value>Откачи записа от този прозорец и позволи възможността за изтриване</value>
+    <value>Премахни защитата от изтриване на записа</value>
   </data>
   <data name="TTP_QUICKVIEW_MAX_PINNED_ITEMS_REACHED" xml:space="preserve">
     <value>Максималният брой на закачени записи е достигнат</value>
