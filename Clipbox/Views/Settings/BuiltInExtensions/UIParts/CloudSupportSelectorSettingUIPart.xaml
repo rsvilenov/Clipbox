@@ -12,6 +12,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:popupDialog="clr-namespace:Clipbox.Views.Dialog"
     xmlns:settings="clr-namespace:Clipbox.Views.Settings"
+    xmlns:settingsEnums="clr-namespace:Clipbox.Views.Settings.Enums"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     d:DesignHeight="450"
     d:DesignWidth="800"
@@ -484,7 +485,7 @@
                             <Setter Property="Visibility" Value="Collapsed" />
                             <Setter Property="Content" Value="{loc:Localize BTN_SETTINGS_CLOUD_CLEAR_DATA, ResourceLookupMode=CurrentAssembly}" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static local:CloudServiceConnectionState.Authenticated}">
+                                <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static settingsEnums:CloudServiceConnectionState.Authenticated}">
                                     <Setter Property="Visibility" Value="Visible" />
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding IsInDebugMode}" Value="False">
@@ -519,10 +520,10 @@
                         <Style TargetType="ContentControl">
                             <Setter Property="Visibility" Value="Visible" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static local:CloudServiceConnectionState.Authenticated}">
+                                <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static settingsEnums:CloudServiceConnectionState.Authenticated}">
                                     <Setter Property="Visibility" Value="Collapsed" />
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static local:CloudServiceConnectionState.Error}">
+                                <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static settingsEnums:CloudServiceConnectionState.Error}">
                                     <Setter Property="Visibility" Value="Collapsed" />
                                 </DataTrigger>
                             </Style.Triggers>
@@ -543,7 +544,7 @@
                         <Style TargetType="ContentControl">
                             <Setter Property="Visibility" Value="Collapsed" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static local:CloudServiceConnectionState.Authenticated}">
+                                <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static settingsEnums:CloudServiceConnectionState.Authenticated}">
                                     <Setter Property="Visibility" Value="Visible" />
                                 </DataTrigger>
                             </Style.Triggers>
@@ -563,7 +564,7 @@
                         <Style TargetType="ContentControl">
                             <Setter Property="Visibility" Value="Collapsed" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static local:CloudServiceConnectionState.Error}">
+                                <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static settingsEnums:CloudServiceConnectionState.Error}">
                                     <Setter Property="Visibility" Value="Visible" />
                                 </DataTrigger>
                             </Style.Triggers>
@@ -576,7 +577,7 @@
                         <Style TargetType="ContentControl">
                             <Setter Property="Content" Value="" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static local:CloudServiceConnectionState.Connecting}">
+                                <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static settingsEnums:CloudServiceConnectionState.Connecting}">
                                     <Setter Property="Content">
                                         <Setter.Value>
                                             <TextBlock
@@ -587,7 +588,7 @@
                                         </Setter.Value>
                                     </Setter>
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static local:CloudServiceConnectionState.Authenticating}">
+                                <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static settingsEnums:CloudServiceConnectionState.Authenticating}">
                                     <Setter Property="Content">
                                         <Setter.Value>
                                             <TextBlock
@@ -598,7 +599,7 @@
                                         </Setter.Value>
                                     </Setter>
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static local:CloudServiceConnectionState.Authenticated}">
+                                <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static settingsEnums:CloudServiceConnectionState.Authenticated}">
                                     <Setter Property="Content">
                                         <Setter.Value>
                                             <TextBlock
@@ -609,7 +610,7 @@
                                         </Setter.Value>
                                     </Setter>
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static local:CloudServiceConnectionState.Error}">
+                                <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static settingsEnums:CloudServiceConnectionState.Error}">
                                     <Setter Property="Content">
                                         <Setter.Value>
                                             <Border MaxHeight="150">
@@ -627,7 +628,7 @@
                                         </Setter.Value>
                                     </Setter>
                                 </DataTrigger>
-                                <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static local:CloudServiceConnectionState.NoNetwork}">
+                                <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static settingsEnums:CloudServiceConnectionState.NoNetwork}">
                                     <Setter Property="Content">
                                         <Setter.Value>
                                             <TextBlock
@@ -652,10 +653,10 @@
                     <Style TargetType="StackPanel">
                         <Setter Property="Visibility" Value="Collapsed" />
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static local:CloudServiceConnectionState.Error}">
+                            <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static settingsEnums:CloudServiceConnectionState.Error}">
                                 <Setter Property="Visibility" Value="Visible" />
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static local:CloudServiceConnectionState.Error}">
+                            <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static settingsEnums:CloudServiceConnectionState.Error}">
                                 <Setter Property="Visibility" Value="Visible" />
                             </DataTrigger>
                         </Style.Triggers>
@@ -702,7 +703,7 @@
                         <Style BasedOn="{StaticResource BtnRetry}" TargetType="Button">
                             <Setter Property="Visibility" Value="Collapsed" />
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static local:CloudServiceConnectionState.Error}">
+                                <DataTrigger Binding="{Binding ConnectionState}" Value="{x:Static settingsEnums:CloudServiceConnectionState.Error}">
                                     <Setter Property="Visibility" Value="Visible" />
                                 </DataTrigger>
                             </Style.Triggers>

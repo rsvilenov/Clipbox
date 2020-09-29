@@ -404,6 +404,8 @@
       <DependentUpon>StoreMaxTasksSettingUIPart.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\BuiltInSettingsUIExtension.cs" />
+    <Compile Include="Views\Settings\Enums\CloudServiceConnectionState.cs" />
+    <Compile Include="Views\Settings\EventArgsClasses\CloudSvcConnStateEventArgs.cs" />
     <Compile Include="Views\Settings\EventArgsClasses\ConfirmationEventArgs.cs" />
     <Compile Include="Views\Settings\EventArgsClasses\EnabledExtensionsEventArgs.cs" />
     <Compile Include="Views\Settings\EventArgsClasses\SettingChangeRequestedEventArgs.cs" />

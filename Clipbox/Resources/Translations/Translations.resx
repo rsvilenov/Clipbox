@@ -310,7 +310,7 @@
     <value>After some time of user inactivity, clear the system clipboard</value>
   </data>
   <data name="LBL_SETTINGS_AUTO_CLEAR_SYS_CLIPBOARD_HELP" xml:space="preserve">
-    <value>By default, Windows keeps the last copied data in the clipboard forever (until something else is copied or the user logs off) and this data can be read by anyone. If you swith this option on, the system clipboard will be emptied after a specified number of seconds.</value>
+    <value>By default, Windows keeps the last copied data in the clipboard forever (until something else is copied or the user logs off) and this data can be read by anyone. If you swith this option on, the system clipboard will be emptied after a specified time of seconds of user inactivity.</value>
   </data>
   <data name="LBL_SETTINGS_AUTO_CLEAR_SYS_CLIPBOARD_INTERVAL" xml:space="preserve">
     <value>Interval in seconds:</value>
@@ -384,6 +384,9 @@
   <data name="LBL_SETTINGS_CLOUD_SYNC_ENABLED" xml:space="preserve">
     <value>Enable cloud sychronization of the clipboard contents</value>
   </data>
+  <data name="LBL_SETTINGS_CLOUD_SYNC_ENABLED_HELP" xml:space="preserve">
+    <value>When this option is turned off, no items will be downloaded from the cloud and you will not be able to upload any items from the current computer.</value>
+  </data>
   <data name="LBL_SETTINGS_CONFIRM_DISABLE_DEPENDENT_EXTENSION" xml:space="preserve">
     <value>Disabling this extension will disable the following extensions, which depend on it:</value>
   </data>
@@ -443,6 +446,9 @@
   </data>
   <data name="LBL_SETTINGS_MAX_PREVIEW_ITEMS_IN_GROUP" xml:space="preserve">
     <value>Maximum number of preview items in a group (i.e. for files, copied at once)</value>
+  </data>
+  <data name="LBL_SETTINGS_MAX_PREVIEW_ITEMS_IN_GROUP_HELP" xml:space="preserve">
+    <value>When you copy a group of items, say files, the program will create a thumbnail for the entire group. You can choose how many items you want to see in this thumbnail. The number is limited because generating preview images for a lot of files may be unacceptably slow.</value>
   </data>
   <data name="LBL_SETTINGS_MAX_PREVIEW_TASKS" xml:space="preserve">
     <value>Maximum number of simultaneous preview generation tasks</value>

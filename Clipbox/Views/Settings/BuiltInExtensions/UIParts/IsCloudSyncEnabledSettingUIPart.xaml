@@ -24,6 +24,7 @@
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition />
+            <RowDefinition />
         </Grid.RowDefinitions>
 
         <TextBlock
@@ -43,5 +44,15 @@
                                    ResourceLookupMode=CurrentAssembly}"
             OnText="{loc:Localize TGL_BTN_LBL_On,
                                   ResourceLookupMode=CurrentAssembly}" />
+
+        <TextBlock
+            Grid.Row="2"
+            Margin="0,10,0,0"
+            VerticalAlignment="Center"
+            Foreground="DarkGray"
+            Text="{loc:Localize LBL_SETTINGS_CLOUD_SYNC_ENABLED_HELP,
+                                ResourceLookupMode=CurrentAssembly}"
+            TextWrapping="Wrap" />
+
     </Grid>
 </infUI:SettingUIPart>

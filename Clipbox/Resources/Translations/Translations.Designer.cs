@@ -637,7 +637,7 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to By default, Windows keeps the last copied data in the clipboard forever (until something else is copied or the user logs off) and this data can be read by anyone. If you swith this option on, the system clipboard will be emptied after a specified number of seconds..
+        ///   Looks up a localized string similar to By default, Windows keeps the last copied data in the clipboard forever (until something else is copied or the user logs off) and this data can be read by anyone. If you swith this option on, the system clipboard will be emptied after a specified time of seconds of user inactivity..
         /// </summary>
         internal static string LBL_SETTINGS_AUTO_CLEAR_SYS_CLIPBOARD_HELP {
             get {
@@ -862,6 +862,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to When this option is turned off, no items will be downloaded from the cloud and you will not be able to upload any items from the current computer..
+        /// </summary>
+        internal static string LBL_SETTINGS_CLOUD_SYNC_ENABLED_HELP {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_CLOUD_SYNC_ENABLED_HELP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Disabling this extension will disable the following extensions, which depend on it:.
         /// </summary>
         internal static string LBL_SETTINGS_CONFIRM_DISABLE_DEPENDENT_EXTENSION {
@@ -1038,6 +1047,15 @@ namespace Clipbox.Resources.Translations {
         internal static string LBL_SETTINGS_MAX_PREVIEW_ITEMS_IN_GROUP {
             get {
                 return ResourceManager.GetString("LBL_SETTINGS_MAX_PREVIEW_ITEMS_IN_GROUP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to When you copy a group of items, say files, the program will create a thumbnail for the entire group. You can choose how many items you want to see in this thumbnail. The number is limited because generating preview images for a lot of files may be unacceptably slow..
+        /// </summary>
+        internal static string LBL_SETTINGS_MAX_PREVIEW_ITEMS_IN_GROUP_HELP {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_MAX_PREVIEW_ITEMS_IN_GROUP_HELP", resourceCulture);
             }
         }
         

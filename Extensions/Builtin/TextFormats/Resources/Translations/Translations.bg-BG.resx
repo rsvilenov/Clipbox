@@ -247,4 +247,19 @@
   <data name="TGL_BTN_LBL_On" xml:space="preserve">
     <value>Вкл.</value>
   </data>
+  <data name="BTN_LBL_Cancel" xml:space="preserve">
+    <value>Отмени</value>
+  </data>
+  <data name="BTN_LBL_Ok" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="LBL_STRETCH_BACKGROUND_HELP" xml:space="preserve">
+    <value>Височината на всички текстови прегледи ще бъде една и съща, без значение колко дълъг е текстът, който се показва.</value>
+  </data>
+  <data name="LBL_TEXT_PREVIEWS_HELP" xml:space="preserve">
+    <value>Настройките тук ви позволяват да контролирате как изглеждат прегледите на копиран текст. Можете да видите как всяка настройка ще се отрази на визията в областта за предварителен преглед.</value>
+  </data>
+  <data name="LBL_TEXT_PREVIEWS_TITLE" xml:space="preserve">
+    <value>Текстови прегледи</value>
+  </data>
 </root>

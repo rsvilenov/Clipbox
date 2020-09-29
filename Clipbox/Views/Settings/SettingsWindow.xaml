@@ -28,7 +28,7 @@
     CloseBtnToolTip="{loc:Localize TLP_WINDOW_CLOSE,
                                    ResourceLookupMode=CurrentAssembly}"
     FontSize="16"
-    Foreground="White"
+    Foreground="{DynamicResource ControlForegroundBrush}"
     Icon="pack://application:,,,/Clipbox.Infrastructure.UI;component/Resources/Images/Clip-WF.ico"
     MaximizeBtnToolTip="{loc:Localize TLP_WINDOW_MAXIMIZE,
                                       ResourceLookupMode=CurrentAssembly}"

@@ -61,6 +61,24 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cancel.
+        /// </summary>
+        internal static string BTN_LBL_Cancel {
+            get {
+                return ResourceManager.GetString("BTN_LBL_Cancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to OK.
+        /// </summary>
+        internal static string BTN_LBL_Ok {
+            get {
+                return ResourceManager.GetString("BTN_LBL_Ok", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Compactify the preview by removing empty space.
         /// </summary>
         internal static string LBL_COMPACTIFY {
@@ -277,11 +295,38 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unify text preview area height.
+        ///   Looks up a localized string similar to Unify the height of the text previews.
         /// </summary>
         internal static string LBL_STRETCH_BACKGROUND {
             get {
                 return ResourceManager.GetString("LBL_STRETCH_BACKGROUND", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The hight of all thumbnails will be the same regardless of the lenght of the text it shows..
+        /// </summary>
+        internal static string LBL_STRETCH_BACKGROUND_HELP {
+            get {
+                return ResourceManager.GetString("LBL_STRETCH_BACKGROUND_HELP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The settings below allow you to change the style of the thumbnails for copied text. You can see how each setting will affect the thumbnails in the preview area below..
+        /// </summary>
+        internal static string LBL_TEXT_PREVIEWS_HELP {
+            get {
+                return ResourceManager.GetString("LBL_TEXT_PREVIEWS_HELP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Text previews.
+        /// </summary>
+        internal static string LBL_TEXT_PREVIEWS_TITLE {
+            get {
+                return ResourceManager.GetString("LBL_TEXT_PREVIEWS_TITLE", resourceCulture);
             }
         }
         

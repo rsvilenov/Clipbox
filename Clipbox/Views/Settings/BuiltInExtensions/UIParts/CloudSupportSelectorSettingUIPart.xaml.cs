@@ -7,6 +7,8 @@ using Clipbox.Infrastructure.UI.Extensibility;
 using Clipbox.Infrastructure.UI.ExtensionMethods;
 using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Interfaces;
+using Clipbox.Views.Settings.Enums;
+using Clipbox.Views.Settings.EventArgsClasses;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -25,10 +27,8 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
     /// <summary>
     /// Interaction logic for CloudSupportSelectorSettingUIPart.xaml
     /// </summary>
-    public partial class CloudSupportSelectorSettingUIPart : SettingUIPart<string>, IDisposable
+    public partial class CloudSupportSelectorSettingUIPart : SettingUIPart<string>
     {
-        private bool _isDisposed;
-
         public ICommand OkClicked { get; }
         public ICommand CancelClicked { get; }
         public ICommand ChangeCloudClicked { get; }
@@ -39,6 +39,8 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
         public ICommand ClearCloudDataClicked { get; }
 
         private ICloudSynchronizationService _cloudSyncSvc;
+
+        public event EventHandler<CloudSvcConnStateEventArgs> CloudSvcConnStateChanged;
 
         public CloudSupportSelectorSettingUIPart()
         {
@@ -436,15 +438,13 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
             });
         }
 
-        public void Dispose()
+        protected override void Dispose(bool disposing)
         {
-            if (_cloudSyncSvc != null && !_isDisposed)
+            if(_cloudSyncSvc != null)
             {
                 _cloudSyncSvc.AuthenticationStateChanged -= _cloudSyncSvc_AuthenticationStateChanged;
                 _cloudSyncSvc.NetworkAvailabilityChanged -= _cloudSyncSvc_NetworkAvailabilityChanged;
                 _cloudSyncSvc.ErrorStateChanged -= _cloudSyncSvc_ErrorStateChanged;
-
-                _isDisposed = true;
             }
         }
 
@@ -489,16 +489,12 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
         }
 
         public static readonly DependencyProperty ConnectionStateProperty =
-            DependencyProperty.Register(nameof(ConnectionState), typeof(CloudServiceConnectionState), typeof(CloudSupportSelectorSettingUIPart), new PropertyMetadata(CloudServiceConnectionState.Connecting));
+            DependencyProperty.Register(nameof(ConnectionState), typeof(CloudServiceConnectionState), typeof(CloudSupportSelectorSettingUIPart), new PropertyMetadata(CloudServiceConnectionState.Connecting, ConnectionState_PropertyChanged));
 
-    }
-
-    public enum CloudServiceConnectionState
-    {
-        Connecting,
-        Authenticating,
-        Authenticated,
-        NoNetwork,
-        Error
+        private static void ConnectionState_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var self = (CloudSupportSelectorSettingUIPart)d;
+            self.CloudSvcConnStateChanged?.Invoke(d, new CloudSvcConnStateEventArgs((CloudServiceConnectionState)e.NewValue));
+        }
     }
 }

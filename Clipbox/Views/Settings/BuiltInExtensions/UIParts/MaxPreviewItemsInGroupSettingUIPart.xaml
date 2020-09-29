@@ -28,6 +28,7 @@
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="50" />
+            <RowDefinition />
         </Grid.RowDefinitions>
 
         <TextBlock
@@ -72,6 +73,15 @@
             TickFrequency="1"
             Value="{Binding MaxPreviewItemsInGroup}" />
 
+        <TextBlock
+            Grid.Row="2"
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            Margin="0,0,0,10"
+            Foreground="DarkGray"
+            Text="{loc:Localize LBL_SETTINGS_MAX_PREVIEW_ITEMS_IN_GROUP_HELP,
+                                ResourceLookupMode=CurrentAssembly}"
+            TextWrapping="Wrap" />
     </Grid>
 
 </infUI:SettingUIPart>

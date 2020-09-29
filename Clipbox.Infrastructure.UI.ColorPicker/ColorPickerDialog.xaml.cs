@@ -48,6 +48,30 @@ namespace Clipbox.Infrastructure.UI.ColorPicker
             Unloaded += ColorPickerDialog_Unloaded;
         }
 
+
+
+        public string OkButtonText
+        {
+            get { return (string)GetValue(OkButtonTextProperty); }
+            set { SetValue(OkButtonTextProperty, value); }
+        }
+
+        public static readonly DependencyProperty OkButtonTextProperty =
+            DependencyProperty.Register(nameof(OkButtonText), typeof(string), typeof(ColorPickerDialog), new PropertyMetadata(string.Empty));
+
+
+
+        public string CancelButtonText
+        {
+            get { return (string)GetValue(CancelButtonTextProperty); }
+            set { SetValue(CancelButtonTextProperty, value); }
+        }
+
+        public static readonly DependencyProperty CancelButtonTextProperty =
+            DependencyProperty.Register(nameof(CancelButtonText), typeof(string), typeof(ColorPickerDialog), new PropertyMetadata(string.Empty));
+
+
+
         private void ColorPickerDialog_Unloaded(object sender, RoutedEventArgs e)
         {
             if (_pmDpiWindow != null)

@@ -2,6 +2,7 @@
 using Clipbox.Infrastructure.UI.ColorPicker;
 using Clipbox.Infrastructure.UI.ColorPicker.EventArgsClasses;
 using Clipbox.Infrastructure.UI.Extensibility;
+using Clipbox.Infrastructure.UI.Localization;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -245,6 +246,11 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
             if (_colorPickerDialogPopup == null)
             {
                 _colorPickerDialog = new ColorPickerDialog(SelectedCustomColorBrush?.Color ?? Colors.Green);
+                _colorPickerDialog.OkButtonText = TranslationSourcePool.Instance
+                    .GetSource(GetType().Assembly).GetTranslation("BTN_LBL_Ok");
+                _colorPickerDialog.CancelButtonText = TranslationSourcePool.Instance
+                    .GetSource(GetType().Assembly).GetTranslation("BTN_LBL_Cancel");
+
                 _colorPickerDialog.ColorSelected += _colorPickerDialog_ColorSelected;
 
                 _colorPickerDialogPopup = new Popup

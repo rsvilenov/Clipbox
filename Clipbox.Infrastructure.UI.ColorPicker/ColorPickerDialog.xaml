@@ -97,7 +97,7 @@
                 Margin="0,25,0,0"
                 HorizontalAlignment="Left"
                 Command="{Binding OkClicked}"
-                Content="OK"
+                Content="{Binding OkButtonText}"
                 Foreground="{DynamicResource ControlForegroundBrush}"
                 Style="{DynamicResource BtnOk}" />
             <Button
@@ -108,7 +108,7 @@
                 Margin="0,25,0,0"
                 HorizontalAlignment="Right"
                 Command="{Binding CancelClicked}"
-                Content="Cancel"
+                Content="{Binding CancelButtonText}"
                 Foreground="{DynamicResource ControlForegroundBrush}"
                 Style="{DynamicResource BtnCancel}" />
 

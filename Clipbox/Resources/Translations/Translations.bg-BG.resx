@@ -310,7 +310,7 @@
     <value>След определен период на потребителска неакивност изчисти системния клипборд </value>
   </data>
   <data name="LBL_SETTINGS_AUTO_CLEAR_SYS_CLIPBOARD_HELP" xml:space="preserve">
-    <value>Windows пази последните копирани данни в клипборда завинаги (докато не се копират други неща или докато потребителят не излезе от сесията си). Тези данни могат да се прочетат от всеки. Ако включите тази опция, клипбордът ще се изчиства автоматично след определен брой секунди.</value>
+    <value>Windows пази последните копирани данни в клипборда завинаги (докато не се копират други неща или докато потребителят не излезе от сесията си). Тези данни могат да се прочетат от всеки. Ако включите тази опция, клипбордът ще се изчиства автоматично след определено време на потребителска неактивност.</value>
   </data>
   <data name="LBL_SETTINGS_AUTO_CLEAR_SYS_CLIPBOARD_INTERVAL" xml:space="preserve">
     <value>Интервал в секунди:</value>
@@ -384,6 +384,9 @@
   <data name="LBL_SETTINGS_CLOUD_SYNC_ENABLED" xml:space="preserve">
     <value>Облачна синхронизация на съдържанието на клипбоарда</value>
   </data>
+  <data name="LBL_SETTINGS_CLOUD_SYNC_ENABLED_HELP" xml:space="preserve">
+    <value>Когато тази опция е изключена, няма да се свалят никакви записи от облака, нито ще можете да качвате там записи от този компютър.</value>
+  </data>
   <data name="LBL_SETTINGS_CONFIRM_DISABLE_DEPENDENT_EXTENSION" xml:space="preserve">
     <value>Забраняването на това разширение ще забрани и следните зависими от него разширения:</value>
   </data>
@@ -443,6 +446,9 @@
   </data>
   <data name="LBL_SETTINGS_MAX_PREVIEW_ITEMS_IN_GROUP" xml:space="preserve">
     <value>Максимален брой прегледи в група (например при файлове, копирани наведнъж)</value>
+  </data>
+  <data name="LBL_SETTINGS_MAX_PREVIEW_ITEMS_IN_GROUP_HELP" xml:space="preserve">
+    <value>Когато копирате наведнъж група от неща, например файлове, програмата ще генерира общ преглед за тях. Можете да изберете колко от нещата да се показват в този преглед. Броят е ограничен, защото генерирането на прегледи на твърде много файлове може да е неприемливо бавно.</value>
   </data>
   <data name="LBL_SETTINGS_MAX_PREVIEW_TASKS" xml:space="preserve">
     <value>Максимален брой на едновременните задачи за генериране на прегледи</value>

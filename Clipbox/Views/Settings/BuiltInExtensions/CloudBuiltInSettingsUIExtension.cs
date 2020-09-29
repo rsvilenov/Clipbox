@@ -68,6 +68,8 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
             _cloudSupportSelectorSettingUIPart = new CloudSupportSelectorSettingUIPart();
             _isCloudSyncEnabledSettingUIPart = new IsCloudSyncEnabledSettingUIPart();
 
+            _cloudSupportSelectorSettingUIPart.CloudSvcConnStateChanged += _cloudSupportSelectorSettingUIPart_CloudSvcConnStateChanged;
+
             builder
                 .Add(SettingsKeys.IsCloudServicesEnabled, new AreCloudServicesEnabledSettingUIPart())
                 .Add(SettingsKeys.SelectedCloudSupportServiceName, _cloudSupportSelectorSettingUIPart)
@@ -75,14 +77,28 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
                 .Add(SettingsKeys.IsAutomaticCloudSyncOfPinnedItemsEnabled, _autoCloudSyncPinnedItemsSettingUIPart);
         }
 
+        private void _cloudSupportSelectorSettingUIPart_CloudSvcConnStateChanged(object sender, EventArgsClasses.CloudSvcConnStateEventArgs e)
+        {
+            if (e.State == Enums.CloudServiceConnectionState.Authenticated
+                && !GetSetting<bool>(SettingsKeys.IsCloudSyncEnabled))
+            {
+                RequestSettingChange(SettingsKeys.IsCloudSyncEnabled, true);
+            }
+        }
+
         private void ManageUIPartsVisibility(ISettingKey settingKey)
         {
-            bool areCloudSvcsEnabled = GetSetting<bool>(SettingsKeys.IsCloudServicesEnabled);
             if (settingKey == SettingsKeys.IsCloudServicesEnabled)
             {
+                bool areCloudSvcsEnabled = GetSetting<bool>(SettingsKeys.IsCloudServicesEnabled);
                 _isCloudSyncEnabledSettingUIPart.SetIsVisible(areCloudSvcsEnabled);
                 _cloudSupportSelectorSettingUIPart.SetIsVisible(areCloudSvcsEnabled);
                 _autoCloudSyncPinnedItemsSettingUIPart?.SetIsVisible(areCloudSvcsEnabled);
+            }
+            else if (settingKey == SettingsKeys.IsCloudSyncEnabled)
+            {
+                bool isCloudSyncEnabled = GetSetting<bool>(SettingsKeys.IsCloudSyncEnabled);
+                _autoCloudSyncPinnedItemsSettingUIPart?.SetIsVisible(isCloudSyncEnabled);
             }
         }
 
@@ -93,7 +109,12 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
 
         protected override void Dispose(bool disposing)
         {
-            _cloudSupportSelectorSettingUIPart?.Dispose();
+            if (_cloudSupportSelectorSettingUIPart != null)
+            {
+                _cloudSupportSelectorSettingUIPart.CloudSvcConnStateChanged -= _cloudSupportSelectorSettingUIPart_CloudSvcConnStateChanged;
+                _cloudSupportSelectorSettingUIPart?.Dispose();
+                _cloudSupportSelectorSettingUIPart = null;
+            }
         }
     }
 }

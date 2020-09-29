@@ -181,7 +181,7 @@
     <value>Recommended colors</value>
   </data>
   <data name="LBL_STRETCH_BACKGROUND" xml:space="preserve">
-    <value>Unify text preview area height</value>
+    <value>Unify the height of the text previews</value>
   </data>
   <data name="LBL_SKIP_SHORT_STRINGS" xml:space="preserve">
     <value>Do not store short words and phrases</value>
@@ -246,5 +246,20 @@ it may mask other numbers as well, or break some formatted text...</value>
   </data>
   <data name="TGL_BTN_LBL_On" xml:space="preserve">
     <value>On</value>
+  </data>
+  <data name="BTN_LBL_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="BTN_LBL_Ok" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="LBL_STRETCH_BACKGROUND_HELP" xml:space="preserve">
+    <value>The hight of all thumbnails will be the same regardless of the lenght of the text it shows.</value>
+  </data>
+  <data name="LBL_TEXT_PREVIEWS_HELP" xml:space="preserve">
+    <value>The settings below allow you to change the style of the thumbnails for copied text. You can see how each setting will affect the thumbnails in the preview area below.</value>
+  </data>
+  <data name="LBL_TEXT_PREVIEWS_TITLE" xml:space="preserve">
+    <value>Text previews</value>
   </data>
 </root>
