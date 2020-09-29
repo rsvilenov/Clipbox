@@ -6,6 +6,7 @@ using Clipbox.Win32;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Timers;
 using System.Windows;
@@ -30,6 +31,8 @@ namespace Clipbox.Services
         private bool _isAutoClearExtClipboardUponLockScreenEnabled;
 
         private bool _isDisposed;
+        private bool _clearSysClipboardInactivityIntervalReached;
+        private bool _clearExtClipboardInactivityIntervalReached;
 
         public AutoClearClipboardService(IClipboardManager clipboardManager, ISettingsService settingsService)
         {
@@ -101,19 +104,32 @@ namespace Clipbox.Services
 
         private void _inactivityDetectionTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
+            double lastInputTimeMs = SessionUtils.GetLastInputTimeInMs();
             if (_isAutoClearSysClipboardEnabled)
             {
-                if (SessionUtils.GetLastInputTimeInMs() > _clearSysClipboardAfterSecondsOfInactivity * 1000)
+                if (lastInputTimeMs > _clearSysClipboardAfterSecondsOfInactivity * 1000
+                    && !_clearSysClipboardInactivityIntervalReached)
                 {
-                    _clipboardManager.ClearSystemClipboard();
+                    try { _clipboardManager.ClearSystemClipboard(); } catch { }
+                    _clearSysClipboardInactivityIntervalReached = true;
+                }
+                else if (_clearSysClipboardInactivityIntervalReached && lastInputTimeMs < INACTIVITY_POLLING_INTERVAL_MS + 500)
+                {
+                    _clearSysClipboardInactivityIntervalReached = false;
                 }
             }
 
             if (_isAutoClearExtClipboardEnabled)
             {
-                if (SessionUtils.GetLastInputTimeInMs() > _clearExtClipboardAfterSecondsOfInactivity * 1000)
+                if (lastInputTimeMs > _clearExtClipboardAfterSecondsOfInactivity * 1000
+                    && !_clearExtClipboardInactivityIntervalReached)
                 {
                     ClearStoredClipboardItemsForCurentSession();
+                    _clearExtClipboardInactivityIntervalReached = true;
+                }
+                else if (_clearExtClipboardInactivityIntervalReached && lastInputTimeMs < INACTIVITY_POLLING_INTERVAL_MS + 500)
+                {
+                    _clearExtClipboardInactivityIntervalReached = false;
                 }
             }
         }
@@ -134,7 +150,7 @@ namespace Clipbox.Services
                 _clipboardManager.RemoveClipboardItem(id, beSilent: false, removeFromSystemClipboard: true);
             }
 
-            _clipboardManager.ClearSystemClipboard();
+            try { _clipboardManager.ClearSystemClipboard(); } catch { }
         }
 
         public void Dispose()

@@ -69,7 +69,7 @@
                 VerticalAlignment="Bottom"
                 Background="Transparent"
                 Foreground="White"
-                Minimum="1"
+                Minimum="10"
                 Value="{Binding AutoClearSysClipboardAfterSeconds}" />
 
         </StackPanel>
