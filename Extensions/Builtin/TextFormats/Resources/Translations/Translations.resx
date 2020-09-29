@@ -148,7 +148,7 @@
     <value>Compactify the preview by removing empty space</value>
   </data>
   <data name="TTP_PRESERVE_ORIG_FONT_PROPS" xml:space="preserve">
-    <value>To to show the preview with the original formatting of the text</value>
+    <value>Try to show the preview with the original formatting of the text</value>
   </data>
   <data name="LBL_FONT_SIZE" xml:space="preserve">
     <value>Font size</value>
@@ -206,7 +206,7 @@ It may slow the program down,
 it may mask other numbers as well, or break some formatted text...</value>
   </data>
   <data name="LBL_INCLUDE_TEXT_ANNOTATIONS" xml:space="preserve">
-    <value>Include annotation to the text preview</value>
+    <value>Show short annotation at the bottom of the text preview</value>
   </data>
   <data name="LBL_SKIP_PASSWORDS" xml:space="preserve">
     <value>Do not store copied passwords (experimental)</value>

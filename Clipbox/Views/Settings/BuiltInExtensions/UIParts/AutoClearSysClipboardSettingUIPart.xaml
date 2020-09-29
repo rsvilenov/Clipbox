@@ -27,6 +27,7 @@
             <RowDefinition />
             <RowDefinition />
             <RowDefinition />
+            <RowDefinition />
         </Grid.RowDefinitions>
 
         <TextBlock
@@ -50,7 +51,7 @@
 
         <StackPanel
             Grid.Row="2"
-            Margin="0,15,0,10"
+            Margin="0,15,0,0"
             HorizontalAlignment="Left"
             Orientation="Vertical"
             Visibility="{Binding ElementName=tglButton, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -73,5 +74,14 @@
                 Value="{Binding AutoClearSysClipboardAfterSeconds}" />
 
         </StackPanel>
+
+        <TextBlock
+            Grid.Row="3"
+            Margin="0,10,0,10"
+            VerticalAlignment="Center"
+            Foreground="DarkGray"
+            Text="{loc:Localize LBL_SETTINGS_AUTO_CLEAR_SYS_CLIPBOARD_HELP,
+                                ResourceLookupMode=CurrentAssembly}"
+            TextWrapping="Wrap" />
     </Grid>
 </infUI:SettingUIPart>

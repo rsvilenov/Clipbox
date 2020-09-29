@@ -19,7 +19,7 @@
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </UserControl.Resources>
-    <Grid x:Name="mainGrid" Margin="0,30,0,0">
+    <Grid x:Name="mainGrid" Margin="0,15,0,0">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto" />
             <ColumnDefinition />
@@ -28,6 +28,7 @@
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition Height="50" />
+            <RowDefinition />
             <RowDefinition />
         </Grid.RowDefinitions>
         <TextBlock
@@ -74,6 +75,14 @@
         <TextBlock
             Grid.Row="2"
             Grid.ColumnSpan="3"
+            Foreground="DarkGray"
+            Text="{loc:Localize LBL_SETTINGS_MAX_PINNED_ENTRIES_HELP,
+                                ResourceLookupMode=CurrentAssembly}"
+            TextWrapping="Wrap" />
+        <TextBlock
+            Grid.Row="3"
+            Grid.ColumnSpan="3"
+            Foreground="DarkGray"
             Text="{loc:Localize LBL_SETTINGS_MAX_PINNED_ENTRIES_WRN,
                                 ResourceLookupMode=CurrentAssembly}"
             TextWrapping="Wrap" />

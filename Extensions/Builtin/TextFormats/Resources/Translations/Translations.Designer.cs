@@ -79,7 +79,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Include annotation to the text preview.
+        ///   Looks up a localized string similar to Show short annotation at the bottom of the text preview.
         /// </summary>
         internal static string LBL_INCLUDE_TEXT_ANNOTATIONS {
             get {
@@ -394,7 +394,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to To to show the preview with the original formatting of the text.
+        ///   Looks up a localized string similar to Try to show the preview with the original formatting of the text.
         /// </summary>
         internal static string TTP_PRESERVE_ORIG_FONT_PROPS {
             get {

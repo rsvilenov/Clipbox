@@ -601,11 +601,20 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to After some time in which the computer is not used, clear all stored clipboard entries, which are not protected from deletion, pinned or synchronized with the cloud.
+        ///   Looks up a localized string similar to After some time of user inactivity, clear all unprotoected clipboard entries, saved since the last login.
         /// </summary>
         internal static string LBL_SETTINGS_AUTO_CLEAR_EXT_CLIPBOARD_ENABLED {
             get {
                 return ResourceManager.GetString("LBL_SETTINGS_AUTO_CLEAR_EXT_CLIPBOARD_ENABLED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to All entries that are pinned, protected or syncronized with the cloud will not be deleted. This is so for the next two options as well. .
+        /// </summary>
+        internal static string LBL_SETTINGS_AUTO_CLEAR_EXT_CLIPBOARD_HELP {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_AUTO_CLEAR_EXT_CLIPBOARD_HELP", resourceCulture);
             }
         }
         
@@ -619,11 +628,20 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to After some time in which the computer is not used, clear the system clipboard.
+        ///   Looks up a localized string similar to After some time of user inactivity, clear the system clipboard.
         /// </summary>
         internal static string LBL_SETTINGS_AUTO_CLEAR_SYS_CLIPBOARD_ENABLED {
             get {
                 return ResourceManager.GetString("LBL_SETTINGS_AUTO_CLEAR_SYS_CLIPBOARD_ENABLED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to By default, Windows keeps the last copied data in the clipboard forever (until something else is copied or the user logs off) and this data can be read by anyone. If you swith this option on, the system clipboard will be emptied after a specified number of seconds..
+        /// </summary>
+        internal static string LBL_SETTINGS_AUTO_CLEAR_SYS_CLIPBOARD_HELP {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_AUTO_CLEAR_SYS_CLIPBOARD_HELP", resourceCulture);
             }
         }
         
@@ -727,7 +745,7 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to When the user locks the screen, clear all stored clipboard entries, which are not protected from deletion, pinned or synchronized.
+        ///   Looks up a localized string similar to When the user locks the screen, clear all unprotected clipboard entries, saved since the last login.
         /// </summary>
         internal static string LBL_SETTINGS_CLEAR_EXT_CLIPBOARD_UPON_LOCKSCREEN {
             get {
@@ -736,7 +754,7 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to When the user logs off Windows, clear all stored clipboard entries, which are not protected from deletion, pinned or synchronized.
+        ///   Looks up a localized string similar to When the user logs off Windows, clear all unprotected clipboard entries, saved since the last login.
         /// </summary>
         internal static string LBL_SETTINGS_CLEAR_EXT_CLIPBOARD_UPON_LOGOFF {
             get {
@@ -750,6 +768,15 @@ namespace Clipbox.Resources.Translations {
         internal static string LBL_SETTINGS_CLIPBOARD_TRACKING {
             get {
                 return ResourceManager.GetString("LBL_SETTINGS_CLIPBOARD_TRACKING", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to If you switch this option off, no further copied data will be saved..
+        /// </summary>
+        internal static string LBL_SETTINGS_CLIPBOARD_TRACKING_HELP {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_CLIPBOARD_TRACKING_HELP", resourceCulture);
             }
         }
         
@@ -984,6 +1011,15 @@ namespace Clipbox.Resources.Translations {
         internal static string LBL_SETTINGS_MAX_PINNED_ENTRIES {
             get {
                 return ResourceManager.GetString("LBL_SETTINGS_MAX_PINNED_ENTRIES", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Items can only be pinned to the Quick View. The Quick View is the overlay window which appears when you press and hold Ctrl+V..
+        /// </summary>
+        internal static string LBL_SETTINGS_MAX_PINNED_ENTRIES_HELP {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_MAX_PINNED_ENTRIES_HELP", resourceCulture);
             }
         }
         

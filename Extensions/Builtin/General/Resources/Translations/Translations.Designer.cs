@@ -107,7 +107,7 @@ namespace Clipbox.Extensions.BuiltIn.General.Resources.Translations {
         
         /// <summary>
         ///   Looks up a localized string similar to The data, copied from these applications will not be stored.
-        ///To view or change the list, click &quot;Change&quot;..
+        ///To view or change the list, click &quot;Manage&quot;..
         /// </summary>
         internal static string LBL_BLACKLISTED_APPS_HELP {
             get {

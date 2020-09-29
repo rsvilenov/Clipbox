@@ -199,6 +199,7 @@
             Grid.Column="0"
             Margin="0,10,0,0"
             VerticalAlignment="Center"
+            Foreground="DarkGray"
             Text="{loc:Localize LBL_BLACKLISTED_APPS_HELP,
                                 ResourceLookupMode=CurrentAssembly}"
             TextWrapping="Wrap" />

@@ -298,13 +298,19 @@
     <value>Покажи настройките</value>
   </data>
   <data name="LBL_SETTINGS_AUTO_CLEAR_EXT_CLIPBOARD_ENABLED" xml:space="preserve">
-    <value>След определен период на потребителска неакивност изтрий всички клипборд записи, които не са защитени от изтриване, не са закачени и не са синхронизирани с облака</value>
+    <value>След определен период на потребителска неакивност изтрий всички незащитени клипборд записи, направени след последния логин</value>
+  </data>
+  <data name="LBL_SETTINGS_AUTO_CLEAR_EXT_CLIPBOARD_HELP" xml:space="preserve">
+    <value>Всички записи, които са закачени, защитени или синхронизирани с облака няма да бъдат изтрити. Това е валидно и за следващите две опции.</value>
   </data>
   <data name="LBL_SETTINGS_AUTO_CLEAR_EXT_CLIPBOARD_INTERVAL" xml:space="preserve">
     <value>Интервал в секунди:</value>
   </data>
   <data name="LBL_SETTINGS_AUTO_CLEAR_SYS_CLIPBOARD_ENABLED" xml:space="preserve">
     <value>След определен период на потребителска неакивност изчисти системния клипборд </value>
+  </data>
+  <data name="LBL_SETTINGS_AUTO_CLEAR_SYS_CLIPBOARD_HELP" xml:space="preserve">
+    <value>Windows пази последните копирани данни в клипборда завинаги (докато не се копират други неща или докато потребителят не излезе от сесията си). Тези данни могат да се прочетат от всеки. Ако включите тази опция, клипбордът ще се изчиства автоматично след определен брой секунди.</value>
   </data>
   <data name="LBL_SETTINGS_AUTO_CLEAR_SYS_CLIPBOARD_INTERVAL" xml:space="preserve">
     <value>Интервал в секунди:</value>
@@ -340,13 +346,16 @@
     <value>Сигурност</value>
   </data>
   <data name="LBL_SETTINGS_CLEAR_EXT_CLIPBOARD_UPON_LOCKSCREEN" xml:space="preserve">
-    <value>Когато потребителят заключи екрана, изтрий всички клипборд записи, които не са защитени от изтриване, не са закачени и не са синхронизирани с облака</value>
+    <value>Когато потребителят заключи екрана, изтрий всички незащитени клипборд записи, направени след последния логин</value>
   </data>
   <data name="LBL_SETTINGS_CLEAR_EXT_CLIPBOARD_UPON_LOGOFF" xml:space="preserve">
-    <value>Когато потребителят излезе от сесията си в Windows, изтрий всички клипборд записи, които не са защитени от изтриване, не са закачени и не са синхронизирани с облака</value>
+    <value>Когато потребителят излезе от сесията си в Windows, изтрий всички незащитени клипборд записи, направени след последния логин</value>
   </data>
   <data name="LBL_SETTINGS_CLIPBOARD_TRACKING" xml:space="preserve">
     <value>Следене на системния клипборд</value>
+  </data>
+  <data name="LBL_SETTINGS_CLIPBOARD_TRACKING_HELP" xml:space="preserve">
+    <value>Ако изключите тази опция, повече няма да се записват копираните данни.</value>
   </data>
   <data name="LBL_SETTINGS_CLOUD_AUTH_TIMEOUT" xml:space="preserve">
     <value>Таймаут за вписване в облака</value>
@@ -425,6 +434,9 @@
   </data>
   <data name="LBL_SETTINGS_MAX_PINNED_ENTRIES" xml:space="preserve">
     <value>Максимален брой закачени клиборд записи</value>
+  </data>
+  <data name="LBL_SETTINGS_MAX_PINNED_ENTRIES_HELP" xml:space="preserve">
+    <value>Записите могат да бъдат закачани само за Бързия преглед. Бързия преглед е прозорецът, който се появява, когато натиснете и задържите Ctrl+V.</value>
   </data>
   <data name="LBL_SETTINGS_MAX_PINNED_ENTRIES_WRN" xml:space="preserve">
     <value>Внимание: При намаляне на броя, най-старите закачени записи ще бъдеат откачени.</value>

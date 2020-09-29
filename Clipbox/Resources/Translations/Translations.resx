@@ -298,13 +298,19 @@
     <value>Show settings</value>
   </data>
   <data name="LBL_SETTINGS_AUTO_CLEAR_EXT_CLIPBOARD_ENABLED" xml:space="preserve">
-    <value>After some time in which the computer is not used, clear all stored clipboard entries, which are not protected from deletion, pinned or synchronized with the cloud</value>
+    <value>After some time of user inactivity, clear all unprotoected clipboard entries, saved since the last login</value>
+  </data>
+  <data name="LBL_SETTINGS_AUTO_CLEAR_EXT_CLIPBOARD_HELP" xml:space="preserve">
+    <value>All entries that are pinned, protected or syncronized with the cloud will not be deleted. This is so for the next two options as well. </value>
   </data>
   <data name="LBL_SETTINGS_AUTO_CLEAR_EXT_CLIPBOARD_INTERVAL" xml:space="preserve">
     <value>Interval in seconds:</value>
   </data>
   <data name="LBL_SETTINGS_AUTO_CLEAR_SYS_CLIPBOARD_ENABLED" xml:space="preserve">
-    <value>After some time in which the computer is not used, clear the system clipboard</value>
+    <value>After some time of user inactivity, clear the system clipboard</value>
+  </data>
+  <data name="LBL_SETTINGS_AUTO_CLEAR_SYS_CLIPBOARD_HELP" xml:space="preserve">
+    <value>By default, Windows keeps the last copied data in the clipboard forever (until something else is copied or the user logs off) and this data can be read by anyone. If you swith this option on, the system clipboard will be emptied after a specified number of seconds.</value>
   </data>
   <data name="LBL_SETTINGS_AUTO_CLEAR_SYS_CLIPBOARD_INTERVAL" xml:space="preserve">
     <value>Interval in seconds:</value>
@@ -340,13 +346,16 @@
     <value>Security</value>
   </data>
   <data name="LBL_SETTINGS_CLEAR_EXT_CLIPBOARD_UPON_LOCKSCREEN" xml:space="preserve">
-    <value>When the user locks the screen, clear all stored clipboard entries, which are not protected from deletion, pinned or synchronized</value>
+    <value>When the user locks the screen, clear all unprotected clipboard entries, saved since the last login</value>
   </data>
   <data name="LBL_SETTINGS_CLEAR_EXT_CLIPBOARD_UPON_LOGOFF" xml:space="preserve">
-    <value>When the user logs off Windows, clear all stored clipboard entries, which are not protected from deletion, pinned or synchronized</value>
+    <value>When the user logs off Windows, clear all unprotected clipboard entries, saved since the last login</value>
   </data>
   <data name="LBL_SETTINGS_CLIPBOARD_TRACKING" xml:space="preserve">
     <value>Enable system clipboard tracking</value>
+  </data>
+  <data name="LBL_SETTINGS_CLIPBOARD_TRACKING_HELP" xml:space="preserve">
+    <value>If you switch this option off, no further copied data will be saved.</value>
   </data>
   <data name="LBL_SETTINGS_CLOUD_AUTH_TIMEOUT" xml:space="preserve">
     <value>Cloud authentication timeout</value>
@@ -425,6 +434,9 @@
   </data>
   <data name="LBL_SETTINGS_MAX_PINNED_ENTRIES" xml:space="preserve">
     <value>Maximum number of pinned clipboard entries</value>
+  </data>
+  <data name="LBL_SETTINGS_MAX_PINNED_ENTRIES_HELP" xml:space="preserve">
+    <value>Items can only be pinned to the Quick View. The Quick View is the overlay window which appears when you press and hold Ctrl+V.</value>
   </data>
   <data name="LBL_SETTINGS_MAX_PINNED_ENTRIES_WRN" xml:space="preserve">
     <value>Note: when the number is decreased, the older of the pinned entries will be unpinned to match the maxumum count.</value>
