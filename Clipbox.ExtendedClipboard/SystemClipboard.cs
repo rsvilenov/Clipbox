@@ -109,12 +109,6 @@ namespace Clipbox.ExtendedClipboard
         {
             DoClipboardOperation<object>(() =>
             {
-                // EmptyClipboard sets the clipboard owner to the hwnd, passed to OpenClipboard
-                if (!User32.EmptyClipboard())
-                {
-                    throw new Win32Exception();
-                }
-
                 if (!User32.SetClipboardData(format, dataPtr))
                 {
                     throw new Win32Exception();
