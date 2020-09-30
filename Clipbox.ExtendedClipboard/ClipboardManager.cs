@@ -433,6 +433,13 @@ namespace Clipbox.ExtendedClipboard
                 }
             };
 
+            if (source.SourceWindowInfo
+                .ApplicationInfo?.ApplicationPath?.Equals(
+                    Assembly.GetEntryAssembly().Location, StringComparison.OrdinalIgnoreCase) == true)
+            {
+                return;
+            }
+
             var itemFetchingEventArgs = new ItemFetchingEventArgs(source.SourceWindowInfo);
 
             ItemFetching?.Invoke(this, itemFetchingEventArgs);
