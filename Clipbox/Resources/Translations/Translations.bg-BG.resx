@@ -145,7 +145,8 @@
     <value>Зареди в клипборда</value>
   </data>
   <data name="BTN_QV_WIPE" xml:space="preserve">
-    <value>Скрий всички копирани клипборд записи от този прозорец.</value>
+    <value>Скрий всички копирани клипборд записи
+от този прозорец без закачените.</value>
   </data>
   <data name="BTN_REBUILD_INDEX_RETRY" xml:space="preserve">
     <value>Опитай отново</value>

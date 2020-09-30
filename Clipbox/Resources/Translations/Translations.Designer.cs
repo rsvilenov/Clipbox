@@ -142,7 +142,8 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Hide all copied clipboard entries from this window..
+        ///   Looks up a localized string similar to Hide all copied clipboard entries 
+        ///from this window except the pinned ones..
         /// </summary>
         internal static string BTN_QV_WIPE {
             get {

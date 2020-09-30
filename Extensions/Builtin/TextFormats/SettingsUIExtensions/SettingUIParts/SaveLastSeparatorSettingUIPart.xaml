@@ -24,6 +24,7 @@
         <Grid.RowDefinitions>
             <RowDefinition />
             <RowDefinition />
+            <RowDefinition />
         </Grid.RowDefinitions>
         <TextBlock
             Grid.Row="0"
@@ -41,5 +42,14 @@
                                    ResourceLookupMode=CurrentAssembly}"
             OnText="{loc:Localize TGL_BTN_LBL_On,
                                   ResourceLookupMode=CurrentAssembly}" />
+
+        <TextBlock
+            Grid.Row="2"
+            Margin="0,10,0,0"
+            VerticalAlignment="Center"
+            Foreground="DarkGray"
+            Text="{loc:Localize LBL_SAVE_LAST_SEPARATOR_HELP,
+                                ResourceLookupMode=CurrentAssembly}"
+            TextWrapping="Wrap" />
     </Grid>
 </infUI:SettingUIPart>

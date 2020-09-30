@@ -145,7 +145,8 @@
     <value>Charge clipboard</value>
   </data>
   <data name="BTN_QV_WIPE" xml:space="preserve">
-    <value>Hide all copied clipboard entries from this window.</value>
+    <value>Hide all copied clipboard entries 
+from this window except the pinned ones.</value>
   </data>
   <data name="BTN_REBUILD_INDEX_RETRY" xml:space="preserve">
     <value>Retry</value>

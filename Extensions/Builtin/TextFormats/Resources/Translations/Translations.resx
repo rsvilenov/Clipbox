@@ -195,10 +195,8 @@
   <data name="LBL_PROCESS_CC_NUMBERS" xml:space="preserve">
     <value>Skip/mask credit card numbers (experimental)</value>
   </data>
-  <data name="TTP_PROCESS_CC_NUMBERS_INFO" xml:space="preserve">
-    <value>If the whole copied string is a credit card number, 
-the program will not store it; if the text contains credit card numbers, 
-the program will replace them with 'X' characters.</value>
+  <data name="LBL_PROCESS_CC_NUMBERS_INFO" xml:space="preserve">
+    <value>If the whole copied string is a credit card number, the program will not store it; if the text contains credit card numbers, the program will replace them with 'X' characters.</value>
   </data>
   <data name="TTP_PROCESS_CC_NUMBERS_WARNING" xml:space="preserve">
     <value>Experimental feature! 
@@ -252,6 +250,9 @@ it may mask other numbers as well, or break some formatted text...</value>
   </data>
   <data name="BTN_LBL_Ok" xml:space="preserve">
     <value>OK</value>
+  </data>
+  <data name="LBL_SAVE_LAST_SEPARATOR_HELP" xml:space="preserve">
+    <value>You can select multiple text items and paste them together. How they will be separated is controlled by the small toggle buttons that appear in the window (either the Quick View or the Main View) where the items are selected. If the option above is on, the program will keep the last clicked button toggled, so upon each subsequent paste operation the separator will be the same untill the user clicks another button. Otherwise, the separator will be reset to that selected here. </value>
   </data>
   <data name="LBL_STRETCH_BACKGROUND_HELP" xml:space="preserve">
     <value>The hight of all thumbnails will be the same regardless of the lenght of the text it shows.</value>

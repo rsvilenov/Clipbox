@@ -26,9 +26,13 @@ namespace Clipbox.Infrastructure.UI.CustomControls
         }
 
         public readonly static DependencyProperty MaximumProperty =
-            DependencyProperty.Register(nameof(Maximum), typeof(int), typeof(IntUpDown), new PropertyMetadata(int.MaxValue));
+            DependencyProperty.Register(nameof(Maximum), typeof(int), typeof(IntUpDown), new PropertyMetadata(int.MaxValue, Maximum_PropertyChanged));
 
-
+        private static void Maximum_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            IntUpDown self = (IntUpDown)d;
+            self.SetUpDownButtonsEnabledDisabledStatus();
+        }
 
         public int Minimum
         {
@@ -37,8 +41,13 @@ namespace Clipbox.Infrastructure.UI.CustomControls
         }
 
         public readonly static DependencyProperty MinimumProperty =
-            DependencyProperty.Register(nameof(Minimum), typeof(int), typeof(IntUpDown), new PropertyMetadata(int.MinValue));
+            DependencyProperty.Register(nameof(Minimum), typeof(int), typeof(IntUpDown), new PropertyMetadata(int.MinValue, Minumum_PropertyChanged));
 
+        private static void Minumum_PropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            IntUpDown self = (IntUpDown)d;
+            self.SetUpDownButtonsEnabledDisabledStatus();
+        }
 
         public int? Value
         {
@@ -54,20 +63,20 @@ namespace Clipbox.Infrastructure.UI.CustomControls
                 DefaultUpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
                 PropertyChangedCallback = (s, args) =>
                 {
-                    IntUpDown tb = (IntUpDown)s;
+                    IntUpDown self = (IntUpDown)s;
                     if (args.NewValue != null)
                     {
-                        if ((int)args.NewValue < tb.Minimum)
+                        if ((int)args.NewValue < self.Minimum)
                         {
-                            tb.Value = tb.Minimum;
+                            self.Value = self.Minimum;
                         }
-                        else if ((int)args.NewValue > tb.Maximum)
+                        else if ((int)args.NewValue > self.Maximum)
                         {
-                            tb.Value = tb.Maximum;
+                            self.Value = self.Maximum;
                         }
                     }
-                    tb.SetUpDownButtonsEnabledDisabledStatus();
-                    tb.RaiseValueChangedEvent(args);
+                    self.SetUpDownButtonsEnabledDisabledStatus();
+                    self.RaiseValueChangedEvent(args);
                 }
             });
 

@@ -169,11 +169,29 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to If the whole copied string is a credit card number, the program will not store it; if the text contains credit card numbers, the program will replace them with &apos;X&apos; characters..
+        /// </summary>
+        internal static string LBL_PROCESS_CC_NUMBERS_INFO {
+            get {
+                return ResourceManager.GetString("LBL_PROCESS_CC_NUMBERS_INFO", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to When pasting two or more text items together, save the last chosen separator.
         /// </summary>
         internal static string LBL_SAVE_LAST_SEPARATOR {
             get {
                 return ResourceManager.GetString("LBL_SAVE_LAST_SEPARATOR", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You can select multiple text items and paste them together. How they will be separated is controlled by the small toggle buttons that appear in the window (either the Quick View or the Main View) where the items are selected. If the option above is on, the program will keep the last clicked button toggled, so upon each subsequent paste operation the separator will be the same untill the user clicks another button. Otherwise, the separator will be reset to that selected here. .
+        /// </summary>
+        internal static string LBL_SAVE_LAST_SEPARATOR_HELP {
+            get {
+                return ResourceManager.GetString("LBL_SAVE_LAST_SEPARATOR_HELP", resourceCulture);
             }
         }
         
@@ -444,17 +462,6 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.Resources.Translations {
         internal static string TTP_PRESERVE_ORIG_FONT_PROPS {
             get {
                 return ResourceManager.GetString("TTP_PRESERVE_ORIG_FONT_PROPS", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to If the whole copied string is a credit card number, 
-        ///the program will not store it; if the text contains credit card numbers, 
-        ///the program will replace them with &apos;X&apos; characters..
-        /// </summary>
-        internal static string TTP_PROCESS_CC_NUMBERS_INFO {
-            get {
-                return ResourceManager.GetString("TTP_PROCESS_CC_NUMBERS_INFO", resourceCulture);
             }
         }
         
