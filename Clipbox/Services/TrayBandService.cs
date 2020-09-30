@@ -15,21 +15,17 @@ namespace Clipbox.Services
     {
         private const string CMD_LEFT_CLICK = "LC";
         private const string CMD_RIGHT_CLICK = "RC";
+        private const string CLIPBAND_NAME = "ClipBox"; //ProductConstants.PRODUCT_NAME;
 
         private readonly Guid _deskbandGuid = new Guid("3C6D5961-E6C7-44F6-A522-A20DE33D2DAC");
 
-        private const string CLIPBAND_NAME = "ClipBox"; //ProductConstants.PRODUCT_NAME;
+        private readonly NamedPipesServer _namedPipeServer;
+        private readonly TrayContextMenuHelper _trayContextMenuHelper;
 
-        private NamedPipesServer _namedPipeServer;
+        private readonly IMainClipboardViewWindowService _mainClipboardViewWindowService;
+        private readonly ITrayContextMenuService _trayContextMenuService;
+        private readonly ISettingsService _settingsService;
 
-        private TrayContextMenuHelper _trayContextMenuHelper;
-        
-        private ISettingsService _settingsService;
-
-        private ITrayContextMenuService _trayContextMenuService;
-
-        private IMainClipboardViewWindowService _mainClipboardViewWindowService;
-        
         public TrayBandService(IMainClipboardViewWindowService mainClipboardViewWindowService,
             ITrayContextMenuService trayContextMenuService,
             ISettingsService settingsService)

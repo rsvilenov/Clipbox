@@ -6,7 +6,6 @@ using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.ViewModels;
 using Clipbox.ViewModels.BindableObjects;
-using Clipbox.ViewModels.Enums;
 using Clipbox.Views.ClipboardViewItemTile;
 using Clipbox.Views.Enums.ClipboardViewItemTile;
 using Clipbox.Views.EventArgsClasses;
@@ -25,12 +24,10 @@ namespace Clipbox.Views
     /// </summary>
     public partial class QuickViewClipboardContents : ClipboardViewControlBase
     {
-        private QuickViewkClipboardContentsViewModel _viewModel;
-        
+        private readonly QuickViewkClipboardContentsViewModel _viewModel;
+        private readonly ISettingsService _settingsService;
+
         private MonitorDimensions _oldMonitorDimensions;
-
-        private ISettingsService _settingsService;
-
         private bool _isDisposing;
 
         public QuickViewClipboardContents(QuickViewkClipboardContentsViewModel vm, UIExtensionContainer container, ISettingsService settingsService)

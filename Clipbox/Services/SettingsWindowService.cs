@@ -12,10 +12,10 @@ namespace Clipbox.Services
     internal class SettingsWindowService : ISettingsWindowService, IDisposable
     {
         private readonly ISettingsService _settingsService;
+        private readonly IMainClipboardViewWindowService _mainClipboardViewWindowService;
         private readonly ICloudSynchronizationService _cloudSyncService;
         private readonly SettingsUIExtensionContainer _extContainer;
 
-        IMainClipboardViewWindowService _mainClipboardViewWindowService;
         private SettingsWindow _settingsWindow;
 
         public SettingsWindowService(ISettingsService settingsService,

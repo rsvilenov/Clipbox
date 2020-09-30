@@ -8,13 +8,11 @@ namespace Clipbox.Services
 {
     internal class LowLevelKeyboardService : ILowLevelKeyboardService, IDisposable
     {
-        private KeyboardLLHook _keyboardHook;
-
         public event EventHandler<CancelEventArgs> ControlKeyUp;
-
         public event EventHandler<CancelEventArgs> VKeyUp;
-
         public event EventHandler<CancelEventArgs> CtrlVHotkeyDown;
+
+        private readonly KeyboardLLHook _keyboardHook;
 
         private bool _simulatingCtrlV = false;
 

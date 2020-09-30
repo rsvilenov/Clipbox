@@ -12,16 +12,12 @@ namespace Clipbox.Services
     {
         const int DRAWCLIPBOARD_WM_PREVENT_REPETITION_DELAY_MS = 20;
 
-        private HwndSource _hWndSource;
+        private readonly HwndSource _hWndSource;
+        private readonly Timer _msgDelayTimer;
 
         private IntPtr _nextClipBoardViewerHwnd;
-
-        private Timer _msgDelayTimer;
-
         private bool _isWithinRepetitionInterval;
-
         private bool _isClipboardViewerAlreadyRemoved;
-
         private bool _isDisposed;
 
         public ClipboardListenerService()

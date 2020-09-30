@@ -23,28 +23,23 @@ namespace Clipbox.Views
 {
     public abstract class ClipboardViewControlBase : UserControl, IDisposable
     {
+        private readonly ISettingsService _settingsService;
+        private readonly UIExtensionContainer _container;
+
+        private readonly object _loadedExtensionsLockHandle = new object();
+        private readonly object _extensionLoadingLockHandle = new object();
+        private readonly List<IFlowUIExtension> _loadedExtensions;
+
+        private double _currentDisplayDpiCalibratedHeight;
+        private Panel _uiExtensionContainer;
+
         public Dictionary<string, string> Parameters { get; private set; }
 
         public event EventHandler<CombinabilityEventArgs> CombinabilityCheckRequested;
-        
         public event EventHandler<HousekeepingEventArgs> HousekeepingRequested;
 
-        private UIExtensionContainer _container;
-
-        private ISettingsService _settingsService;
-
-        private readonly List<IFlowUIExtension> _loadedExtensions;
-
-        private readonly object _loadedExtensionsLockHandle = new object();
-
-        private double _currentDisplayDpiCalibratedHeight;
-        
         protected MonitorDimensions MonitorDimensions { get; private set; }
-        
-        private Panel _uiExtensionContainer;
 
-        private readonly object _extensionLoadingLockHandle = new object();
-        
         public double ClipboardViewItemMaxHeight
         {
             get { return (double)GetValue(ClipboardViewItemHeightProperty); }

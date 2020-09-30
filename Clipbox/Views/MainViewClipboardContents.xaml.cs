@@ -11,13 +11,11 @@ using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.ViewModels;
 using Clipbox.ViewModels.BindableObjects;
-using Clipbox.Views.ClipboardListView;
 using Clipbox.Views.ClipboardViewItemTile;
 using Clipbox.Views.Dialog.EventArgsClasses;
 using Clipbox.Views.Enums.ClipboardViewItemTile;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -25,7 +23,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
-using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
@@ -37,63 +34,14 @@ namespace Clipbox.Views
     /// </summary>
     public partial class MainViewClipboardContents : ClipboardViewControlBase, IDisposable
     {
-        private MainViewClipboardContentsViewModel _viewModel;
-        
         private readonly ISettingsService _settingsService;
 
-        public event EventHandler<SetToClipboardEventArgs> SetItemsToClipboardRequested;
-
-        public event EventHandler CloseMainWindowRequested;
-
-        public event EventHandler<SettingsWindowEventArgs> SettingsWindowOpenRequested;
-
-        public event EventHandler RebuildIndexRequested;
-
-        public bool AreFadeAnimationsEnabled
-        {
-            get { return (bool)GetValue(AreFadeAnimationsEnabledProperty); }
-            set { SetValue(AreFadeAnimationsEnabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty AreFadeAnimationsEnabledProperty =
-            DependencyProperty.Register(nameof(AreFadeAnimationsEnabled), typeof(bool), typeof(MainViewClipboardContents), new PropertyMetadata(false));
-
-        public bool IsShowingOfPostSelectionToolboxEnabled
-        {
-            get { return (bool)GetValue(IsLoadingOfPostSelectionToolboxEnabledProperty); }
-            set { SetValue(IsLoadingOfPostSelectionToolboxEnabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty IsLoadingOfPostSelectionToolboxEnabledProperty =
-            DependencyProperty.Register(nameof(IsShowingOfPostSelectionToolboxEnabled), typeof(bool), typeof(MainViewClipboardContents), new PropertyMetadata(false));
-
-
-        public int NumOfNotYetVisibleRowsToPreload
-        {
-            get { return (int)GetValue(NumOfNotYetVisibleRowsToPreloadProperty); }
-            set { SetValue(NumOfNotYetVisibleRowsToPreloadProperty, value); }
-        }
-
-        public static readonly DependencyProperty NumOfNotYetVisibleRowsToPreloadProperty =
-            DependencyProperty.Register(nameof(NumOfNotYetVisibleRowsToPreload), typeof(int), typeof(MainViewClipboardContents), new PropertyMetadata(0));
-
-        public int AllPagesItemsCount
-        {
-            get { return (int)GetValue(AllPagesItemsCountProperty); }
-            set { SetValue(AllPagesItemsCountProperty, value); }
-        }
-
-        public static readonly DependencyProperty AllPagesItemsCountProperty =
-            DependencyProperty.Register(nameof(AllPagesItemsCount), typeof(int), typeof(MainViewClipboardContents), new PropertyMetadata(0));
-
-
         private readonly int _maxNumOfItemsToLoadAtOnce;
-
         private readonly List<ISearchTerm> _searchTerms;
+        private readonly CancellableTaskManager _cancellableTaskManager;
+        private readonly SlidingTimer _uiExtensionGenerationSlidingTimer;
 
-        private CancellableTaskManager _cancellableTaskManager;
-
-        private SlidingTimer _uiExtensionGenerationSlidingTimer;
+        private MainViewClipboardContentsViewModel _viewModel;
 
         /// <summary>
         /// This field provides not a nice solution to the problem of
@@ -101,6 +49,11 @@ namespace Clipbox.Views
         /// destroyed by Dispose(), which run after the Dispose() has started...
         /// </summary>
         private volatile bool _isDisposing;
+
+        public event EventHandler<SetToClipboardEventArgs> SetItemsToClipboardRequested;
+        public event EventHandler CloseMainWindowRequested;
+        public event EventHandler<SettingsWindowEventArgs> SettingsWindowOpenRequested;
+        public event EventHandler RebuildIndexRequested;
 
         public MainViewClipboardContents(MainViewClipboardContentsViewModel vm,
             UIExtensionContainer container,
@@ -152,6 +105,45 @@ namespace Clipbox.Views
             _viewModel.RequestCloseOfMainWindow += _viewModel_RequestCloseOfMainWindow;
             _settingsService.SettingChanged += SettingsService_SettingChanged;
         }
+
+
+        public bool AreFadeAnimationsEnabled
+        {
+            get { return (bool)GetValue(AreFadeAnimationsEnabledProperty); }
+            set { SetValue(AreFadeAnimationsEnabledProperty, value); }
+        }
+
+        public static readonly DependencyProperty AreFadeAnimationsEnabledProperty =
+            DependencyProperty.Register(nameof(AreFadeAnimationsEnabled), typeof(bool), typeof(MainViewClipboardContents), new PropertyMetadata(false));
+
+        public bool IsShowingOfPostSelectionToolboxEnabled
+        {
+            get { return (bool)GetValue(IsLoadingOfPostSelectionToolboxEnabledProperty); }
+            set { SetValue(IsLoadingOfPostSelectionToolboxEnabledProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsLoadingOfPostSelectionToolboxEnabledProperty =
+            DependencyProperty.Register(nameof(IsShowingOfPostSelectionToolboxEnabled), typeof(bool), typeof(MainViewClipboardContents), new PropertyMetadata(false));
+
+
+        public int NumOfNotYetVisibleRowsToPreload
+        {
+            get { return (int)GetValue(NumOfNotYetVisibleRowsToPreloadProperty); }
+            set { SetValue(NumOfNotYetVisibleRowsToPreloadProperty, value); }
+        }
+
+        public static readonly DependencyProperty NumOfNotYetVisibleRowsToPreloadProperty =
+            DependencyProperty.Register(nameof(NumOfNotYetVisibleRowsToPreload), typeof(int), typeof(MainViewClipboardContents), new PropertyMetadata(0));
+
+        public int AllPagesItemsCount
+        {
+            get { return (int)GetValue(AllPagesItemsCountProperty); }
+            set { SetValue(AllPagesItemsCountProperty, value); }
+        }
+
+        public static readonly DependencyProperty AllPagesItemsCountProperty =
+            DependencyProperty.Register(nameof(AllPagesItemsCount), typeof(int), typeof(MainViewClipboardContents), new PropertyMetadata(0));
+
 
         private void _viewModel_RequestCloseOfMainWindow(object sender, EventArgs e)
         {

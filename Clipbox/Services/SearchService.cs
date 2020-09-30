@@ -22,28 +22,27 @@ namespace Clipbox.Services
         IProvideProgressInfo, 
         IDisposable
     {
+        private const int STORE_INTERVAL_MS = 3000;
+
         private readonly ISearchSupportExtensionContainer _extensionContainer;
         private readonly IClipboardManager _clipboardManager;
         private readonly ISearchProvider _searchProvider;
 
         private readonly SlidingTimer _clipboardItemsChangeSlidingTimer;
+        private readonly ManualResetEvent _pendingModifyOperationsMre;
 
         private readonly List<string> _clipboardItemIdsScheduledForRemoval;
         private readonly List<string> _clipboardItemIdsScheduledForAdd;
 
-        private readonly object _listLockHandle = new object();
+        private readonly SynchronizationContext _mainSyncContext;
 
-        private const int STORE_INTERVAL_MS = 3000;
-        
-        private ManualResetEvent _pendingModifyOperationsMre;
+        private readonly object _listLockHandle = new object();
 
         private HashSet<string> _allClipboardItemIds;
 
         public event EventHandler<ProgressEventArgs> ProgressChanged;
 
         public bool AreIndicesHealthy { get; private set; }
-
-        private readonly SynchronizationContext _mainSyncContext;
 
         public SearchService(ISearchSupportExtensionContainer extensionContainer,
             IClipboardManager clipboardManager,

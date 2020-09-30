@@ -19,7 +19,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
-using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -44,36 +43,20 @@ namespace Clipbox.Views
         private readonly IPreviewGenerationService _previewGenerationService;
         private readonly ICloudSynchronizationService _cloudSyncService;
 
+        private readonly MainClipboardViewBackgroundRenderMode _backgroundRenderMode;
+        private readonly MainViewClipboardContents _mainViewClipboardContents;
+
         private bool _isProperCloseInitiated;
-        
         private WallpaperWindow _wallpaperWindow;
 
-        private MainClipboardViewBackgroundRenderMode _backgroundRenderMode;
-
-        private MainViewClipboardContents _mainViewClipboardContents;
-
         public event EventHandler<CombinabilityEventArgs> ClipbardItemsCombinabilityCheckRequested;
-
         public event EventHandler<SetToClipboardEventArgs> SetItemsToClipboardRequested;
-
         public event EventHandler<HousekeepingEventArgs> HousekeepingRequested;
-
         public event EventHandler CloseRequested;
-
         public event EventHandler<SettingsWindowEventArgs> SettingsWindowOpenRequested;
-
         public event EventHandler RebuildIndexRequested;
 
-        public bool AreFadeAnimationsEnabled
-        {
-            get { return (bool)GetValue(AreFadeAnimationsEnabledProperty); }
-            set { SetValue(AreFadeAnimationsEnabledProperty, value); }
-        }
-
-        public static readonly DependencyProperty AreFadeAnimationsEnabledProperty =
-            DependencyProperty.Register(nameof(AreFadeAnimationsEnabled), typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
-
-
+        
         /// <summary>
         /// A static constructor, used solely for overriding metadata
         /// </summary>
@@ -176,6 +159,16 @@ namespace Clipbox.Views
 
             AreFadeAnimationsEnabled = _settingsService.GetSetting<bool>(SettingsKeys.AreFadeAnimationsEnabled);
         }
+
+        public bool AreFadeAnimationsEnabled
+        {
+            get { return (bool)GetValue(AreFadeAnimationsEnabledProperty); }
+            set { SetValue(AreFadeAnimationsEnabledProperty, value); }
+        }
+
+        public static readonly DependencyProperty AreFadeAnimationsEnabledProperty =
+            DependencyProperty.Register(nameof(AreFadeAnimationsEnabled), typeof(bool), typeof(MainWindow), new PropertyMetadata(false));
+
 
         private void _mainViewClipboardContents_RebuildIndexRequested(object sender, EventArgs e)
         {
@@ -384,10 +377,13 @@ namespace Clipbox.Views
             return _mainViewClipboardContents.GetFlowParameters();
         }
 
+#if DEBUG
         ~MainWindow()
         {
             Debug.WriteLine("GC MainWindow");
         }
+#endif
+
     }
     
 }

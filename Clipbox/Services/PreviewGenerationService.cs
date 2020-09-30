@@ -73,8 +73,6 @@ namespace Clipbox.Services
 
         private bool _disposeBegun;
 
-         
-        
         public PreviewGenerationService(
             IClipboardManager clipboardManager,
             IPreviewGeneratorExtensionContainer clipboardFormatPreviewExtContainer, 

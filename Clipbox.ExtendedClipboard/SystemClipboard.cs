@@ -1,11 +1,9 @@
 ﻿using Clipbox.ExtendedClipboard.OleInftastructure;
 using Clipbox.Infrastructure.Threading;
-using Clipbox.Win32;
 using Clipbox.Win32.Native;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;

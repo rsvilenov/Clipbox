@@ -23,16 +23,13 @@ namespace Clipbox.Services
     public class FlowExtensionExecutorService : IFlowExtensionExecutorService, IDisposable
     {
         private List<FlowExtension> _flowExtensions;
-
         private Dictionary<IHouseKeepingTask, FlowExtension> _housekeepingTasks;
 
         // TODO: find a better way to store the extension, which can perform the concatenation
         private FlowExtension _lastExtensionForModification;
 
-        private ISettingsService _settingsService;
-
+        private readonly ISettingsService _settingsService;
         private readonly SemaphoreSlim _maxItemStoringTasksSemaphore;
-
         private readonly int _onItemStoringFlowExtensionsTimeoutMs;
 
         public FlowExtensionExecutorService(FlowExtensionContainer flowExtensionContainer, ISettingsService settingsService)

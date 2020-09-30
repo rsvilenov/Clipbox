@@ -19,15 +19,12 @@ namespace Clipbox.Services
 {
     public class QuickClipboardViewWindowService : ClipboardViewWindowServiceBase, IQuickClipboardViewWindowService, IDisposable
     {
-        private NonFocusableInteractiveWindow _quickViewWindow;
-
-        private QuickViewClipboardContents _previewControl;
+        private readonly NonFocusableInteractiveWindow _quickViewWindow;
+        private readonly QuickViewClipboardContents _previewControl;
+        private readonly SlidingTimer _sizeChangedSligingTimer;
+        private readonly ISettingsService _settingsService;
 
         private MonitorUtils.DisplayMonitor _currentMonitor;
-
-        private SlidingTimer _sizeChangedSligingTimer;
-
-        private ISettingsService _settingsService;
 
         // used for storing the original window's opacity when preloading the window (it gets shown with Opacity=0.0)
         private double _quickViewWindowOpacity;

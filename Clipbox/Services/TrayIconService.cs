@@ -1,10 +1,11 @@
 ﻿using Clipbox.Core;
 using Clipbox.Infrastructure.ExtensionMethods;
+using Clipbox.Infrastructure.Persistence.FilesystemAccess;
+using Clipbox.Infrastructure.UI.Resources;
 using Clipbox.Services.Enums;
+using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
-using Clipbox.Views;
-using Clipbox.Views.Interfaces;
 using Clipbox.Win32;
 using Clipbox.Win32.Native;
 using Hardcodet.Wpf.TaskbarNotification;
@@ -13,30 +14,23 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
-using Clipbox.Services.EventArgsClasses;
-using Clipbox.Infrastructure.UI.Resources;
-using System.IO;
-using Clipbox.Infrastructure.Persistence.FilesystemAccess;
 
 namespace Clipbox.Services
 {
     public class TrayIconService : ITrayIconService, IDisposable
     {
-        private TaskbarIcon _taskbarIcon;
-
-        private string _currentProcessName;
-
-        public event EventHandler TrayIconClicked;
-
+        private readonly TaskbarIcon _taskbarIcon;
+        private readonly string _currentProcessName;
+        
         // TODO: create a lightweight implementation of a message-only window
         // (a child of HWND_MESSAGE) and get rid of the HwndSource here as well as everywhere else
-        private HwndSource _msgOnlyWindow;
-
-        private uint _taskbarCreatedMessageId;
+        private readonly HwndSource _msgOnlyWindow;
+        private readonly uint _taskbarCreatedMessageId;
 
         private bool _isClipboardTrackingPaused;
         
@@ -44,6 +38,8 @@ namespace Clipbox.Services
         private readonly ITrayContextMenuService _trayContextMenuService;
         private readonly ISettingsService _settingsService;
         private readonly IPauseService _pauseService;
+
+        public event EventHandler TrayIconClicked;
 
         public TrayIconService(IMainClipboardViewWindowService mainClipboardViewWindowService, 
             ITrayContextMenuService trayContextMenuService,

@@ -12,10 +12,13 @@ namespace Clipbox.Views
     public partial class ExpandableSearchBox : UserControl
     {
         public event EventHandler Expanded;
-
         public event EventHandler<SearchRequestEventArgs> SearchRequested;
 
-
+        public ExpandableSearchBox()
+        {
+            InitializeComponent();
+            this.Expander.DataContext = this;
+        }
 
         public string SearchText
         {
@@ -37,12 +40,6 @@ namespace Clipbox.Views
         public static readonly DependencyProperty TextBoxExpandedWidthProperty =
             DependencyProperty.Register(nameof(TextBoxExpandedWidth), typeof(double), typeof(ExpandableSearchBox), new PropertyMetadata(200d));
 
-        
-        public ExpandableSearchBox()
-        {
-            InitializeComponent();
-            this.Expander.DataContext = this;
-        }
 
         private void SearchTextBox_SearchRequested(object sender, RoutedEventArgs e)
         {
