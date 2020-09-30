@@ -5,7 +5,6 @@ using Clipbox.Infrastructure.UI.Extensibility;
 using Clipbox.Infrastructure.UI.Localization;
 using System;
 using System.ComponentModel;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
@@ -14,7 +13,7 @@ using System.Windows.Media;
 namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIParts
 {
     /// <summary>
-    /// Interaction logic for CompactifySettingUIPart.xaml
+    /// Interaction logic for PreferredColorSettingUIPart.xaml
     /// </summary>
     public partial class PreferredColorSettingUIPart : SettingUIPart<string>
     {

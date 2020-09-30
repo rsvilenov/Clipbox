@@ -5,7 +5,7 @@ using System.Windows;
 namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
 {
     /// <summary>
-    /// Interaction logic for PreviewGenerationTimeoutSettingUIPart.xaml
+    /// Interaction logic for MaxPreviewTasksSettingUIPart.xaml
     /// </summary>
     public partial class MaxPreviewTasksSettingUIPart : SettingUIPart<int>
     {

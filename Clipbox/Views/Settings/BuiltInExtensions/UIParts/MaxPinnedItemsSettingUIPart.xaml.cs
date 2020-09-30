@@ -6,7 +6,7 @@ using System.Windows.Input;
 namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
 {
     /// <summary>
-    /// Interaction logic for TextScaleSettingUIPart.xaml
+    /// Interaction logic for MaxPinnedItemsSettingUIPart.xaml
     /// </summary>
     public partial class MaxPinnedItemsSettingUIPart : SettingUIPart<int>
     {

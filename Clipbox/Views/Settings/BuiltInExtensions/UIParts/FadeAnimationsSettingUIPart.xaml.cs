@@ -4,7 +4,7 @@ using System.Windows;
 namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
 {
     /// <summary>
-    /// Interaction logic for ClipboardTrackingSettingUIPart.xaml
+    /// Interaction logic for FadeAnimationsSettingUIPart.xaml
     /// </summary>
     public partial class FadeAnimationsSettingUIPart : SettingUIPart<bool>
     {

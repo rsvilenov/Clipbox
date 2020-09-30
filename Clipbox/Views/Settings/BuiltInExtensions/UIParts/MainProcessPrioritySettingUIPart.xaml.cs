@@ -4,7 +4,7 @@ using System.Windows;
 namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
 {
     /// <summary>
-    /// Interaction logic for ClipboardTrackingSettingUIPart.xaml
+    /// Interaction logic for MainProcessPrioritySettingUIPart.xaml
     /// </summary>
     public partial class MainProcessPrioritySettingUIPart : SettingUIPart<bool>
     {

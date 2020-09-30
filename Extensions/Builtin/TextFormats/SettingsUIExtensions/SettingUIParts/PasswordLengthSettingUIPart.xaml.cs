@@ -6,7 +6,7 @@ using System.Windows;
 namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIParts
 {
     /// <summary>
-    /// Interaction logic for SkipShortStringsSettingsUIPart.xaml
+    /// Interaction logic for PasswordLengthSettingUIPart.xaml
     /// </summary>
     public partial class PasswordLengthSettingUIPart : SettingUIPart<string>
     {

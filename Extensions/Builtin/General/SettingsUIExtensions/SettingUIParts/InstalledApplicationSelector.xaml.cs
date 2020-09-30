@@ -2,12 +2,10 @@
 using Clipbox.Extensions.BuiltIn.General.SettingsUIExtensions.SettingUIParts.EventArgsClasses;
 using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.ExtensionMethods;
-using Clipbox.Infrastructure.UI.Utils;
 using Clipbox.Win32;
 using Clipbox.Win32.Native;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,13 +13,12 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Interop;
-using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 
 namespace Clipbox.Extensions.BuiltIn.General.SettingsUIExtensions.SettingUIParts
 {
     /// <summary>
-    /// Interaction logic for ApplicationSelector.xaml
+    /// Interaction logic for InstalledApplicationSelector.xaml
     /// </summary>
     public partial class InstalledApplicationSelector : UserControl
     {

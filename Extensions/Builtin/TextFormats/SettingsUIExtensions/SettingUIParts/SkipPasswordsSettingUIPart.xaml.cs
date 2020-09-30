@@ -4,7 +4,7 @@ using System.Windows;
 namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIParts
 {
     /// <summary>
-    /// Interaction logic for PreserveFontPropsSettingUIPart.xaml
+    /// Interaction logic for SkipPasswordsSettingUIPart.xaml
     /// </summary>
     public partial class SkipPasswordsSettingUIPart : SettingUIPart<bool>
     {

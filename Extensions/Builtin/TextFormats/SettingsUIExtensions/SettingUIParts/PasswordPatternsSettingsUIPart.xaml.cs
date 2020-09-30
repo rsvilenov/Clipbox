@@ -6,7 +6,7 @@ using System.Windows;
 namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIParts
 {
     /// <summary>
-    /// Interaction logic for PreserveFontPropsSettingUIPart.xaml
+    /// Interaction logic for PasswordPatternsSettingsUIPart.xaml
     /// </summary>
     public partial class PasswordPatternsSettingsUIPart : SettingUIPart<int>
     {

@@ -4,7 +4,7 @@ using System.Windows;
 namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIParts
 {
     /// <summary>
-    /// Interaction logic for CompactifySettingUIPart.xaml
+    /// Interaction logic for StretchBackgroundSettingUIPart.xaml
     /// </summary>
     public partial class StretchBackgroundSettingUIPart : SettingUIPart<bool>
     {

@@ -4,7 +4,7 @@ using System.Windows;
 namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
 {
     /// <summary>
-    /// Interaction logic for PreviewGenerationTimeoutSettingUIPart.xaml
+    /// Interaction logic for NumOfRowsToPreloadSettingUIPart.xaml
     /// </summary>
     public partial class NumOfRowsToPreloadSettingUIPart : SettingUIPart<int>
     {

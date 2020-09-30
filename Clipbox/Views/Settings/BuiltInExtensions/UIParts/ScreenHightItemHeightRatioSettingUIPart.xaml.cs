@@ -6,7 +6,7 @@ using System.Windows.Input;
 namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
 {
     /// <summary>
-    /// Interaction logic for TextScaleSettingUIPart.xaml
+    /// Interaction logic for PinTaskbarIconSettingUIPart.xaml
     /// </summary>
     public partial class ScreenHightItemHeightRatioSettingUIPart : SettingUIPart<double>
     {

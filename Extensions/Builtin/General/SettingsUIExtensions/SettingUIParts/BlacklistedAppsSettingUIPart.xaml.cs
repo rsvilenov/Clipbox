@@ -9,7 +9,7 @@ using System.Windows.Controls.Primitives;
 namespace Clipbox.Extensions.BuiltIn.General.SettingsUIExtensions.SettingUIParts
 {
     /// <summary>
-    /// Interaction logic for ExcludedAppsSettingUIParts.xaml
+    /// Interaction logic for BlacklistedAppsSettingUIPart.xaml
     /// </summary>
     public partial class BlacklistedAppsSettingUIPart : SettingUIPart<string>
     {

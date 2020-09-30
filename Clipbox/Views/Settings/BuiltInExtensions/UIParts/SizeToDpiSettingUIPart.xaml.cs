@@ -4,7 +4,7 @@ using System.Windows;
 namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
 {
     /// <summary>
-    /// Interaction logic for ClipboardTrackingSettingUIPart.xaml
+    /// Interaction logic for SizeToDpiSettingUIPart.xaml
     /// </summary>
     public partial class SizeToDpiSettingUIPart : SettingUIPart<bool>
     {
