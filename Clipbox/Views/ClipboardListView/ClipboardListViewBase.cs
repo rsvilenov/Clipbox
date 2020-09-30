@@ -144,6 +144,24 @@ namespace Clipbox.Views.ClipboardListView
         }
 
 
+
+        private static readonly DependencyPropertyKey SelectedItemsCountPropertyKey
+         = DependencyProperty.RegisterReadOnly(nameof(SelectedItemsCount), typeof(int), typeof(ClipboardListViewBase),
+             new FrameworkPropertyMetadata(default(int),
+                 FrameworkPropertyMetadataOptions.None));
+
+        public static readonly DependencyProperty SelectedItemsCountProperty
+            = SelectedItemsCountPropertyKey.DependencyProperty;
+
+        /// <summary>
+        /// A read only DP, showing the number of selected items.
+        /// </summary>
+        public int SelectedItemsCount
+        {
+            get { return (int)GetValue(SelectedItemsCountProperty); }
+            protected set { SetValue(SelectedItemsCountPropertyKey, value); }
+        }
+
         /// <summary>
         /// Suppresses the post-selection logic implemented in <see cref="ClipboardListViewBase"/>
         /// and disables the following events:
@@ -336,14 +354,11 @@ namespace Clipbox.Views.ClipboardListView
         }
 
 
-        private void UpdateAreAnyItemsSelected()
+        private void UpdateSelectionInfoPropDps()
         {
             AreAnyItemsSelected = SelectedItemIds.Any() || SelectedMultiItemsIds.Any();
-        }
-
-        private void UpdateAreAnySubItemsSelected()
-        {
             AreAnySubItemsSelected = SelectedMultiItemsIds.Any();
+            SelectedItemsCount = SelectedItemIds.Count;
         }
 
         /// <summary>
@@ -498,8 +513,7 @@ namespace Clipbox.Views.ClipboardListView
                 }
             }
 
-            UpdateAreAnyItemsSelected();
-            UpdateAreAnySubItemsSelected();
+            UpdateSelectionInfoPropDps();
             AreAnyDeletableItemsSelected = false;
 
             SelectionChangeCompleted?.Invoke(this, combinabilityEventArgs);
@@ -580,8 +594,7 @@ namespace Clipbox.Views.ClipboardListView
             //    lastSelectedItem.IsSelected = true;
             //}
 
-            UpdateAreAnyItemsSelected();
-            UpdateAreAnySubItemsSelected();
+            UpdateSelectionInfoPropDps();
             AreAnyDeletableItemsSelected = selectedItems.Any(w => w.IsViewItemLoaded && !w.ViewItem.IsPinned && !w.ViewItem.IsProtected);
 
             SelectionChangeCompleted?.Invoke(this, combinabilityEventArgs);

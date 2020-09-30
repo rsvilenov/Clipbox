@@ -78,6 +78,16 @@ namespace Clipbox.Views
             DependencyProperty.Register(nameof(AreAnyUIExtensionsLoaded), typeof(bool), typeof(ClipboardViewControlBase), new PropertyMetadata(false));
 
 
+        public bool IsAnyUIExtensionParameterChanged
+        {
+            get { return (bool)GetValue(IsAnyUIExtensionParameterChangedProperty); }
+            set { SetValue(IsAnyUIExtensionParameterChangedProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsAnyUIExtensionParameterChangedProperty =
+            DependencyProperty.Register(nameof(IsAnyUIExtensionParameterChanged), typeof(bool), typeof(ClipboardViewControlBase), new PropertyMetadata(false));
+
+
         protected double LoadingOfUIExtensionsDelayMs { get; set; } = 200d;
 
         /// <summary>
@@ -164,6 +174,7 @@ namespace Clipbox.Views
                 if (_loadedExtensions.Any())
                 {
                     ShutDownExtensions(_loadedExtensions);
+                    IsAnyUIExtensionParameterChanged = false;
                 }
 
                 if (_loadedExtensions.Any())
@@ -181,6 +192,8 @@ namespace Clipbox.Views
 
                     try { extensionUIControl = extension.CreateExtensionUI(selectedClipboardItems, _uiExtensionContainer.MaxWidth, _uiExtensionContainer.MaxHeight); }
                     catch (Exception ex) { throw new ClipboxExtensionException(nameof(extension.CreateExtensionUI), extension.GetType(), ex); }
+
+                    WireUpExtensionEvents(extension);
 
                     UIElement extensionUIElement = extensionUIControl as UIElement;
                     if (extensionUIElement == null)
@@ -218,16 +231,29 @@ namespace Clipbox.Views
                     }
                 }
 
-                if (extension is ISettingChangeRequestor settingChangeRequestor)
-                {
-                    settingChangeRequestor.RequestSettingChange += ConfRequestor_RequestSettingChange;
-                }
-
                 lock (_loadedExtensionsLockHandle)
                 {
                     _loadedExtensions.Add(extension);
                 }
             }
+        }
+
+        private void WireUpExtensionEvents(IFlowUIExtension extension)
+        {
+            if (extension is ISettingChangeRequestor settingChangeRequestor)
+            {
+                settingChangeRequestor.RequestSettingChange += ConfRequestor_RequestSettingChange;
+            }
+
+            if (extension is ParametrizedExtension parametrizedExtension)
+            {
+                parametrizedExtension.ParametersChanged += ParametrizedExtension_ParametersChanged;
+            }
+        }
+
+        private void ParametrizedExtension_ParametersChanged(object sender, FlowParametersChangedEventArgs e)
+        {
+            IsAnyUIExtensionParameterChanged = !e.AreParametersSetToInitialState;
         }
 
         private void ShutDownExtensions(IEnumerable<IFlowUIExtension> extensions)
@@ -237,6 +263,11 @@ namespace Clipbox.Views
                 if (extension is ISettingChangeRequestor settingChangeRequestor)
                 {
                     settingChangeRequestor.RequestSettingChange -= ConfRequestor_RequestSettingChange;
+                }
+
+                if (extension is ParametrizedExtension parametrizedExtension)
+                {
+                    parametrizedExtension.ParametersChanged -= ParametrizedExtension_ParametersChanged;
                 }
 
                 lock (_loadedExtensionsLockHandle)

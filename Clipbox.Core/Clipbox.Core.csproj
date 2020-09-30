@@ -111,6 +111,7 @@
     <Compile Include="Extensibility\Enums\AuthenticationStage.cs" />
     <Compile Include="Extensibility\Enums\SettingsCategory.cs" />
     <Compile Include="Extensibility\EventArgsClasses\AuthenticationStageEventArgs.cs" />
+    <Compile Include="Extensibility\EventArgsClasses\FlowParametersChangedEventArgs.cs" />
     <Compile Include="Extensibility\EventArgsClasses\RequestSettingChangeEventArgs.cs" />
     <Compile Include="ICloudInfo.cs" />
     <Compile Include="Search\Enums\SearchCategory.cs" />
