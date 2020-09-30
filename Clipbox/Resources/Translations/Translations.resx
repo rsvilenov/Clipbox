@@ -407,7 +407,7 @@ from this window except the pinned ones.</value>
     <value>Enable/disable extensions</value>
   </data>
   <data name="LBL_SETTINGS_ENABLED_EXTENSIONS_HELP" xml:space="preserve">
-    <value>Many functions of this program are implemented as extensions. You can enable or disable them here.</value>
+    <value>Many functions of this program are implemented as extensions. When you install a new extension, you will not be able to use it until it is enabled. To enable a newly installed extension or disable an existing one, click the button above.</value>
   </data>
   <data name="LBL_SETTINGS_ENABLED_EXTENSIONS_LIST" xml:space="preserve">
     <value>Enabled extensions</value>

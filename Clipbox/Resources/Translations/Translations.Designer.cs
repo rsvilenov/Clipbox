@@ -935,7 +935,7 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Many functions of this program are implemented as extensions. You can enable or disable them here..
+        ///   Looks up a localized string similar to Many functions of this program are implemented as extensions. When you install a new extension, you will not be able to use it until it is enabled. To enable a newly installed extension or disable an existing one, click the button above..
         /// </summary>
         internal static string LBL_SETTINGS_ENABLED_EXTENSIONS_HELP {
             get {
