@@ -347,6 +347,7 @@ namespace Clipbox.ViewModels
             if (!disposedValue)
             {
                 ClipboardManager.ItemRemoved -= ClipboardManager_ItemRemoved;
+                ClipboardManager.ItemChanged -= ClipboardManager_ItemChanged;
                 disposedValue = true;
             }
         }

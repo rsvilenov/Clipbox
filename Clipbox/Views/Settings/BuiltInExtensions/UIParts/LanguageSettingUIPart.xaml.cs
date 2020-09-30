@@ -16,7 +16,6 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
         {
             InitializeComponent();
             PopulateAvailableCultures();
-            TranslateCultureNames();
 
             this.mainGrid.DataContext = this;
         }
@@ -66,7 +65,6 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
         {
             var self = (LanguageSettingUIPart)d;
             self.NotifySettingModified();
-            self.TranslateCultureNames();
         }
 
         public override string GetSettingValue()
@@ -77,6 +75,7 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts
         public override void SetSettingValue(string value)
         {
             SelectedCulture = value;
+            TranslateCultureNames();
         }
 
         private class Culture : BindableObject

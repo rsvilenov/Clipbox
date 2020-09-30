@@ -300,6 +300,7 @@ namespace Clipbox.ViewModels
             // which is the same as the lifetime of the program.
             _cloudSyncService.AuthenticationStateChanged -= _cloudSyncService_AuthenticationStateChanged;
             _cloudSyncService.ItemSynced -= _cloudSyncService_ItemSynced;
+            _cloudSyncService.ErrorStateChanged -= _cloudSyncService_ErrorStateChanged;
 
             _clipboardManager.ItemAdded -= ClipboardManager_ItemAdded;
 

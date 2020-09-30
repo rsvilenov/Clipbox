@@ -78,13 +78,14 @@ namespace Clipbox.Infrastructure.UI.Extensibility
 
         protected virtual void Dispose(bool disposing)
         {
-            _notifySettingsModifiedSlidingTImer.Dispose();
         }
 
         public void Dispose()
         {
             if (!_isDisposed)
             {
+                _notifySettingsModifiedSlidingTImer.Dispose();
+
                 Dispose(disposing: true);
                 _isDisposed = true;
             }
