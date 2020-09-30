@@ -77,6 +77,33 @@ namespace Clipbox.Infrastructure.UI.CustomControls
                     }
                     self.SetUpDownButtonsEnabledDisabledStatus();
                     self.RaiseValueChangedEvent(args);
+                    if (self.ValueInternal != self.Value)
+                    {
+                        self.ValueInternal = self.Value;
+                    }
+                }
+            });
+
+        public int? ValueInternal
+        {
+            get { return (int?)GetValue(ValueInternalProperty); }
+            set { SetCurrentValue(ValueInternalProperty, value); }
+        }
+
+        public readonly static DependencyProperty ValueInternalProperty =
+            DependencyProperty.Register(nameof(ValueInternal), typeof(int?), typeof(IntUpDown), new FrameworkPropertyMetadata
+            {
+                DefaultValue = 0,
+                BindsTwoWayByDefault = true,
+                DefaultUpdateSourceTrigger = UpdateSourceTrigger.PropertyChanged,
+                PropertyChangedCallback = (s, args) =>
+                {
+                    IntUpDown self = (IntUpDown)s;
+                    self.SetUpDownButtonsEnabledDisabledStatus();
+                    if (self.Value != self.ValueInternal)
+                    {
+                        self.Value = self.ValueInternal;
+                    }
                 }
             });
 

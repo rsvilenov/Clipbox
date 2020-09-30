@@ -55,7 +55,7 @@
                             Background="{TemplateBinding Background}"
                             CaretBrush="{TemplateBinding Foreground}"
                             Foreground="{TemplateBinding Foreground}"
-                            Text="{Binding Value, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:IntUpDown}}}" />
+                            Text="{Binding ValueInternal, Mode=TwoWay, NotifyOnSourceUpdated=True, NotifyOnValidationError=True, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:IntUpDown}}}" />
                         <RepeatButton
                             Name="PART_BtnUp"
                             Grid.Row="0"

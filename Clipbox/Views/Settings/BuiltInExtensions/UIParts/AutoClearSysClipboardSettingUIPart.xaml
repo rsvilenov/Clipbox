@@ -62,6 +62,7 @@
                                     ResourceLookupMode=CurrentAssembly}"
                 TextWrapping="Wrap" />
 
+            <!--  Maximum="86400" in milliseconds is one day  -->
             <customControls:IntUpDown
                 Width="75"
                 Height="28"
@@ -70,6 +71,7 @@
                 VerticalAlignment="Bottom"
                 Background="Transparent"
                 Foreground="White"
+                Maximum="86400"
                 Minimum="10"
                 Value="{Binding AutoClearSysClipboardAfterSeconds}" />
 
