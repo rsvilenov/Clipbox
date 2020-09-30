@@ -127,8 +127,6 @@ namespace Clipbox
             _settingsService.RegisterSettings(SettingsKeys.GetAllSettings());
             _settingsService.SettingChanged += _settingsService_SettingChanged;
 
-            SetInitialSettings();
-
             // Load extension containers
             _extensionLoader = new ExtensionLoader();
             _extensionLoader.SetEnabledExtensions(GetEnabledExtensions());
@@ -290,33 +288,6 @@ namespace Clipbox
             }
         }
 
-        private void SetInitialSettings()
-        {
-            _settingsService.SetSetting(SettingsKeys.PreviewItemHeightRatio, 0.13d);
-            _settingsService.SetSetting(SettingsKeys.MaxPreviewItemsInGroupItem, 5);
-            _settingsService.SetSetting(SettingsKeys.ResizeAccordingToMonitorOrSystemDpi, true);
-            _settingsService.SetSetting(SettingsKeys.DimNonFocusedItemsInQuickView, true);
-            _settingsService.SetSetting(SettingsKeys.DimNonFocusedItemsInMainView, false);
-            _settingsService.SetSetting(SettingsKeys.IsDeskBandEnabled, true);
-            _settingsService.SetSetting(SettingsKeys.IsTrayIconEnabled, true);
-            _settingsService.SetSetting(SettingsKeys.IsCloudSyncEnabled, false);
-            _settingsService.SetSetting(SettingsKeys.MainClipboardViewBackgroundRenderMode, (int)MainClipboardViewBackgroundRenderMode.ImageBrush);
-            _settingsService.SetSetting(SettingsKeys.IsBackgroundPreviewGenerationEnabled, true);
-            _settingsService.SetSetting(SettingsKeys.AreFadeAnimationsEnabled, true);
-            _settingsService.SetSetting(SettingsKeys.IsAutomaticCloudSyncOfPinnedItemsEnabled, true);
-            _settingsService.SetSetting(SettingsKeys.MaxNonPinnedItemsInQuickView, 5);
-
-            _settingsService.SetSetting(SettingsKeys.NumOfNotYetVisibleRowsToPreload, 0);
-
-            // changing of these requires restrat for the change to take effect
-            _settingsService.SetSetting(SettingsKeys.PreviewGenerationTimeout, 6000);
-            _settingsService.SetSetting(SettingsKeys.PreviewCacheMaxSize, 10485760);
-            _settingsService.SetSetting(SettingsKeys.MaxSimultaneousPreviewTasks, 5);
-
-            // overrides MaxSimultaneousPreviewTasks
-            _settingsService.SetSetting(SettingsKeys.AutoDetermineMaxSimultaneousPreviewTasks, false);
-        }
-
         private void ThemeManager_TransparencySettingChanged(object sender, EventArgs e)
         {
             if (ThemeManager.IsAcryllicTransparencyEnabled && _settingsService.GetSetting<int>(SettingsKeys.MainClipboardViewBackgroundRenderMode) == (int)MainClipboardViewBackgroundRenderMode.Acryllic)
@@ -337,13 +308,6 @@ namespace Clipbox
                 else
                 {
                     _clipboardManager.IsClipboardTrackingEnabled = false;
-                }
-            }
-            else if (e.Key == SettingsKeys.IsCloudSyncEnabled)
-            {
-                if (_cloudSyncService != null)
-                {
-                    _cloudSyncService.IsEnabled = (bool)e.Value;
                 }
             }
         }

@@ -28,7 +28,7 @@ namespace Clipbox.ExtendedClipboard
 {
     public sealed class ClipboardManager : IClipboardManager, IDisposable
     {
-        private const int MAX_CLIPBOARD_ITEMS_TO_KEEP = 1000;
+        private const int MAX_CLIPBOARD_ITEMS_TO_KEEP = -1; // -1 means no limit
 
         // the maximum time an extension is allowed to lock the system clipboard
         private const int FORMAT_SUPPORT_EXTENSION_TIMEOUT = 1000;
@@ -123,7 +123,8 @@ namespace Clipbox.ExtendedClipboard
                 .ReadStoredClipboardItems(unshrink: false)
                 .OrderByDescending(ci => ci.TimestampInfo.EntryDateTicks))
             {
-                if (++itemNumber > MAX_CLIPBOARD_ITEMS_TO_KEEP)
+                if (MAX_CLIPBOARD_ITEMS_TO_KEEP != -1 
+                    && ++itemNumber > MAX_CLIPBOARD_ITEMS_TO_KEEP)
                 {
                     _persistenceHelper.DeleteClipboardItemFromStorage(item.Id);
                 }
@@ -483,7 +484,8 @@ namespace Clipbox.ExtendedClipboard
                 {
                     _clipboardItems.Add(currentItem);
 
-                    if (_clipboardItems.Count > MAX_CLIPBOARD_ITEMS_TO_KEEP)
+                    if (MAX_CLIPBOARD_ITEMS_TO_KEEP != -1 
+                        && _clipboardItems.Count > MAX_CLIPBOARD_ITEMS_TO_KEEP)
                     {
                         DiscardLastClipboardItem();
                     }

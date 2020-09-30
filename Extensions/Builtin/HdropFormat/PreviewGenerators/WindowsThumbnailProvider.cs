@@ -39,17 +39,31 @@ namespace Clipbox.Extensions.BuiltIn.HdropFormat.PreviewGenerators
         
         public static Bitmap GetThumbnail(string fileName, int width, int height, ThumbnailOptions options)
         {
-            var hBitmap = GetHBitmap(Path.GetFullPath(fileName), width, height, options);
-
             try
             {
-                // return a System.Drawing.Bitmap from the hBitmap
-                return GetBitmapFromHBitmap(hBitmap);
+                var hBitmap = GetHBitmap(Path.GetFullPath(fileName), width, height, options);
+
+                if (hBitmap != IntPtr.Zero)
+                {
+                    try
+                    {
+                        // return a System.Drawing.Bitmap from the hBitmap
+                        return GetBitmapFromHBitmap(hBitmap);
+                    }
+                    finally
+                    {
+                        // delete HBitmap to avoid memory leaks
+                        Gdi32.DeleteObject(hBitmap);
+                    }
+                }
+                else
+                {
+                    return null;
+                }
             }
-            finally
+            catch(COMException)
             {
-                // delete HBitmap to avoid memory leaks
-                Gdi32.DeleteObject(hBitmap);
+                return null;
             }
         }
 
