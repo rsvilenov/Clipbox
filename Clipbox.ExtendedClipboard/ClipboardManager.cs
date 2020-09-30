@@ -30,53 +30,35 @@ namespace Clipbox.ExtendedClipboard
     {
         private const int MAX_CLIPBOARD_ITEMS_TO_KEEP = -1; // -1 means no limit
 
-        // the maximum time an extension is allowed to lock the system clipboard
-        private const int FORMAT_SUPPORT_EXTENSION_TIMEOUT = 1000;
-
-#if DEBUG
-        private const int CLIPBOARD_LISTENING_SUSPEND_INTERVAL_MS = 3000;
-#else
-        private const int CLIPBOARD_LISTENING_SUSPEND_INTERVAL_MS = 50;
-#endif    
+        // the constants below are default values, which are used if no other value is passed to the constructor
+        private const int FORMAT_SUPPORT_EXTENSION_TIMEOUT = 1000; // the maximum time an extension is allowed to lock the system clipboard
+        private const int CLIPBOARD_LISTENING_THROTTLE_INTERVAL_MS = 50;
 
         private bool _isClipboardForwardingSuspended;
-
         private bool _isClipboardListeningSuspended;
-
-        private Timer _clipboardListeningSuspTimer;
-
-        private List<ClipboardItem> _clipboardItems;
-
-        private List<string> _deletedSyncedClipboardItemIds;
 
         private string _currentItemId;
 
         private readonly IClipboardFormatExtensionContainer _formatExtensionContainer;
-
         private readonly IPersistenceSupportExtensionContainer _persistenceExtensionContainer;
-
         private readonly IClipboardEventProvider _clipboardEventProvider;
-
         private readonly IPersistenceProvider _persistenceProvider;
-
         private readonly IEncryptionProvider _encryptionProvider;
-
         // TODO: this should be mock-able
-        private SystemClipboard _systemClipboard;
+        private readonly PersistenceHelper _persistenceHelper;
 
-        private PersistenceHelper _persistenceHelper;
+        private readonly SystemClipboard _systemClipboard; 
+        private readonly System.Timers.Timer _clipboardListeningSuspTimer;
+        private readonly List<ClipboardItem> _clipboardItems;
+        private readonly List<string> _deletedSyncedClipboardItemIds;
+        private readonly object _ioLockHandle = new object();
+        private readonly int _formatSupportExtTimeoutMs;
 
         public event EventHandler<ItemFetchingEventArgs> ItemFetching;
-
         public event EventHandler<ItemStoringEventArgs> ItemStoring;
-
         public event EventHandler<ItemAddedEventArgs> ItemAdded;
-
         public event EventHandler<ClipboardManagerEventArgs> ItemRemoved;
-
         public event EventHandler<ItemChangedEventArgs> ItemChanged;
-
-        private readonly object _ioLockHandle = new object();
 
         /// <summary>
         /// Creates an instance of ClipboardManager
@@ -85,7 +67,10 @@ namespace Clipbox.ExtendedClipboard
             IClipboardFormatExtensionContainer formatExtensionContainer,
             IPersistenceSupportExtensionContainer persistenceExtensionContainer,
             IPersistenceProvider persistenceProvider,
-            IEncryptionProvider encryptionProvider)
+            IEncryptionProvider encryptionProvider,
+            int formatSupportExtTimeoutMs = FORMAT_SUPPORT_EXTENSION_TIMEOUT,
+            int clipboardListenningThrottleIntervalMs = CLIPBOARD_LISTENING_THROTTLE_INTERVAL_MS,
+            int clipboardOpenningTimeoutMs = SystemClipboard.CLIPBOARD_OPENNING_ATTEMPT_INTERVAL_MS)
         {
             _formatExtensionContainer = formatExtensionContainer;
             _persistenceExtensionContainer = persistenceExtensionContainer;
@@ -93,17 +78,38 @@ namespace Clipbox.ExtendedClipboard
             _persistenceProvider = persistenceProvider;
             _encryptionProvider = encryptionProvider;
 
+            if (formatSupportExtTimeoutMs <= 0)
+            {
+                throw new ArgumentException($"{nameof(formatSupportExtTimeoutMs)} cannot be equal or less than 0");
+            }
+
+            if (clipboardListenningThrottleIntervalMs <= 0)
+            {
+                throw new ArgumentException($"{nameof(clipboardListenningThrottleIntervalMs)} cannot be equal or less than 0");
+            }
+
+            if (clipboardOpenningTimeoutMs <= 0)
+            {
+                throw new ArgumentException($"{nameof(clipboardOpenningTimeoutMs)} cannot be equal or less than 0");
+            }
+
+#if DEBUG
+            clipboardListenningThrottleIntervalMs += 3000;
+#endif
+
+            _formatSupportExtTimeoutMs = formatSupportExtTimeoutMs;
+
             _clipboardItems = new List<ClipboardItem>();
             _deletedSyncedClipboardItemIds = new List<string>();
 
-            _systemClipboard = new SystemClipboard(clipboardEventProvider.GetEventWindowHandle());
+            _systemClipboard = new SystemClipboard(clipboardEventProvider.GetEventWindowHandle(), clipboardOpenningTimeoutMs);
             _persistenceHelper = new PersistenceHelper(_persistenceExtensionContainer,
                 _persistenceProvider,
                 _encryptionProvider);
 
             LoadFromDisk();
 
-            _clipboardListeningSuspTimer = new Timer(CLIPBOARD_LISTENING_SUSPEND_INTERVAL_MS);
+            _clipboardListeningSuspTimer = new Timer(clipboardListenningThrottleIntervalMs);
             _clipboardListeningSuspTimer.AutoReset = false;
             _clipboardListeningSuspTimer.Elapsed += (sender, args) =>
                 _isClipboardListeningSuspended = false;
@@ -715,7 +721,7 @@ namespace Clipbox.ExtendedClipboard
                         catch (Exception ex) { throw new ClipboxExtensionException(nameof(formatSupportExtension.PtrToIntermediateFormat), formatSupportExtension.GetType(), ex); }
 
                     })
-                    .Wait(FORMAT_SUPPORT_EXTENSION_TIMEOUT);
+                    .Wait(_formatSupportExtTimeoutMs);
 
                     if (intermediateFormatObj != null)
                     {

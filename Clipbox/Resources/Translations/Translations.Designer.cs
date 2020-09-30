@@ -764,6 +764,33 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Execution timeout of clipboard format extensions (in milliseconds).
+        /// </summary>
+        internal static string LBL_SETTINGS_CLIPBOARD_FORMAT_EXT_TIMEOUT {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_CLIPBOARD_FORMAT_EXT_TIMEOUT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Interval in milliseconds for temporarily suspending the listenning for clipboard events after an event has been recieved.
+        /// </summary>
+        internal static string LBL_SETTINGS_CLIPBOARD_LISTENNING_THROTTLE_INTERVAL {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_CLIPBOARD_LISTENNING_THROTTLE_INTERVAL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Timeout in milliseconds for openning of the system clipboard (it may be temporarily locked by some other application and has to be awaited).
+        /// </summary>
+        internal static string LBL_SETTINGS_CLIPBOARD_OPENNING_TIMEOUT {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_CLIPBOARD_OPENNING_TIMEOUT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enable system clipboard tracking.
         /// </summary>
         internal static string LBL_SETTINGS_CLIPBOARD_TRACKING {

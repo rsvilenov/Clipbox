@@ -352,6 +352,15 @@ from this window except the pinned ones.</value>
   <data name="LBL_SETTINGS_CLEAR_EXT_CLIPBOARD_UPON_LOGOFF" xml:space="preserve">
     <value>When the user logs off Windows, clear all unprotected clipboard entries, saved since the last login</value>
   </data>
+  <data name="LBL_SETTINGS_CLIPBOARD_FORMAT_EXT_TIMEOUT" xml:space="preserve">
+    <value>Execution timeout of clipboard format extensions (in milliseconds)</value>
+  </data>
+  <data name="LBL_SETTINGS_CLIPBOARD_LISTENNING_THROTTLE_INTERVAL" xml:space="preserve">
+    <value>Interval in milliseconds for temporarily suspending the listenning for clipboard events after an event has been recieved</value>
+  </data>
+  <data name="LBL_SETTINGS_CLIPBOARD_OPENNING_TIMEOUT" xml:space="preserve">
+    <value>Timeout in milliseconds for openning of the system clipboard (it may be temporarily locked by some other application and has to be awaited)</value>
+  </data>
   <data name="LBL_SETTINGS_CLIPBOARD_TRACKING" xml:space="preserve">
     <value>Enable system clipboard tracking</value>
   </data>

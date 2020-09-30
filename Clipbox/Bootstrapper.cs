@@ -169,7 +169,14 @@ namespace Clipbox
             _clipboardListenerService = new ClipboardListenerService();
 
             // Initialize the clipboard manager
-            _clipboardManager = new ClipboardManager(_clipboardListenerService, _extensionLoader.FormatsContainer, _extensionLoader.PersistenceSupportExtensionContainer, _persistenceProvider, encryptionProvider)
+            _clipboardManager = new ClipboardManager(_clipboardListenerService,
+                _extensionLoader.FormatsContainer,
+                _extensionLoader.PersistenceSupportExtensionContainer,
+                _persistenceProvider,
+                encryptionProvider,
+                _settingsService.GetSetting(SettingsKeys.ClipboardFormatSupportExtTimeout),
+                _settingsService.GetSetting(SettingsKeys.ClipboardListenningThrottleInterval),
+                _settingsService.GetSetting(SettingsKeys.ClipboardOpenningTimeoutMs))
             {
                 IsClipboardTrackingEnabled = _settingsService.GetSetting(SettingsKeys.IsClipboardTrackingEnabled)
             };

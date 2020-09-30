@@ -318,6 +318,12 @@
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\BackgroundPreviewGenerationSettingUIPart.xaml.cs">
       <DependentUpon>BackgroundPreviewGenerationSettingUIPart.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\ClipboardFormatSupportExtTimeoutSettingUIPart.xaml.cs">
+      <DependentUpon>ClipboardFormatSupportExtTimeoutSettingUIPart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\ClipboardListenningThrottleIntervalSettingUIPart.xaml.cs">
+      <DependentUpon>ClipboardListenningThrottleIntervalSettingUIPart.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\CloudAuthTimeoutSettingUIPart.xaml.cs">
       <DependentUpon>CloudAuthTimeoutSettingUIPart.xaml</DependentUpon>
     </Compile>
@@ -381,6 +387,9 @@
     </Compile>
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\NumOfRowsToPreloadSettingUIPart.xaml.cs">
       <DependentUpon>NumOfRowsToPreloadSettingUIPart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\ClipboardOpeningTimeoutSettingUIPart.xaml.cs">
+      <DependentUpon>ClipboardOpeningTimeoutSettingUIPart.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\PinTaskbarIconSettingUIPart.xaml.cs">
       <DependentUpon>PinTaskbarIconSettingUIPart.xaml</DependentUpon>
@@ -558,6 +567,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\Settings\BuiltInExtensions\UIParts\ClipboardFormatSupportExtTimeoutSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\BuiltInExtensions\UIParts\ClipboardListenningThrottleIntervalSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Settings\BuiltInExtensions\UIParts\ClipboardTrackingSettingUIPart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -643,6 +660,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\BuiltInExtensions\UIParts\NumOfRowsToPreloadSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\BuiltInExtensions\UIParts\ClipboardOpeningTimeoutSettingUIPart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

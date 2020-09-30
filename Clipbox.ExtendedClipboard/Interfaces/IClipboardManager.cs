@@ -1,7 +1,5 @@
-﻿using Clipbox.Core.ClipboardContent;
-using Clipbox.Core.ClipboardContent.Interfaces;
+﻿using Clipbox.Core.ClipboardContent.Interfaces;
 using Clipbox.ExtendedClipboard.EventArgs;
-using Clipbox.Infrastructure.Persistence;
 using System;
 using System.Collections.Generic;
 

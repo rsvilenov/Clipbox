@@ -90,6 +90,13 @@ namespace Clipbox.Settings
         public static SettingKey<bool> IsAutoClearExtClipboardUponLockScreenEnabled = new SettingKey<bool>(nameof(IsAutoClearExtClipboardUponLockScreenEnabled), false);
 
 
+        public static SettingKey<int> ClipboardFormatSupportExtTimeout = new SettingKey<int>(nameof(ClipboardFormatSupportExtTimeout), 1000);
+        
+        public static SettingKey<int> ClipboardListenningThrottleInterval = new SettingKey<int>(nameof(ClipboardListenningThrottleInterval), 150);
+        
+        public static SettingKey<int> ClipboardOpenningTimeoutMs = new SettingKey<int>(nameof(ClipboardOpenningTimeoutMs), 500);
+
+
         /// <summary>
         /// This is a special key - it is false only upon the first start of the application. It should not be resettable by the user.
         /// </summary>

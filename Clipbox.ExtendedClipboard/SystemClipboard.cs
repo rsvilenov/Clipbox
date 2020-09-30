@@ -15,7 +15,8 @@ namespace Clipbox.ExtendedClipboard
     {
         const int OPEN_CLIPBOARD_ATTEMPTS = 5;
 
-        const int OPEN_CLIPBOARD_ATTEMPT_INTERVAL_MS = 300;
+        // this is a default value and is used only after no other value has been passed to the constructor
+        public const int CLIPBOARD_OPENNING_ATTEMPT_INTERVAL_MS = 300;
 
         /// <summary>
         /// This is the error code that the clipboard api returns when
@@ -32,15 +33,18 @@ namespace Clipbox.ExtendedClipboard
         private static object _openClipboardLockHandle = new object();
         
         private bool _isClipboardLockedOpen;
+        private int _openClipboardTimeoutMs;
 
         private readonly IntPtr _hWndToBeClipboardOwner;
-        public SystemClipboard(IntPtr hWndToBeClipboardOwner)
+        public SystemClipboard(IntPtr hWndToBeClipboardOwner, 
+            int openningClipboardTimeoutMs = CLIPBOARD_OPENNING_ATTEMPT_INTERVAL_MS)
         {
             if (hWndToBeClipboardOwner == IntPtr.Zero)
             {
                 throw new ArgumentException("The hWnd is 0.", nameof(hWndToBeClipboardOwner));
             }
 
+            _openClipboardTimeoutMs = openningClipboardTimeoutMs;
             _hWndToBeClipboardOwner = hWndToBeClipboardOwner;
             _clipboardDispatcher = new SimpleDispatcher();
             _oleDispatcher = new OleDispatcher(_clipboardDispatcher);
@@ -278,7 +282,7 @@ namespace Clipbox.ExtendedClipboard
                 
                 if (!success)
                 {
-                    Thread.Sleep(OPEN_CLIPBOARD_ATTEMPT_INTERVAL_MS);
+                    Thread.Sleep(_openClipboardTimeoutMs);
                 }
                 else
                 {

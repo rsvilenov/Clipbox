@@ -49,7 +49,10 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
                 || settingKey == SettingsKeys.PreviewCacheMaxSize
                 || settingKey == SettingsKeys.MaxSimultaneousPreviewTasks
                 || settingKey == SettingsKeys.OnItemStoringFlowExtensionsTimeoutMs
-                || settingKey == SettingsKeys.OnItemStoringFlowExtensionsMaxTasks)
+                || settingKey == SettingsKeys.OnItemStoringFlowExtensionsMaxTasks
+                || settingKey == SettingsKeys.ClipboardFormatSupportExtTimeout
+                || settingKey == SettingsKeys.ClipboardListenningThrottleInterval
+                || settingKey == SettingsKeys.ClipboardOpenningTimeoutMs)
             {
                 _restartAppDialogSlidingTimer.Slide();
             }
@@ -82,7 +85,9 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
                 .Add(SettingsKeys.OnItemStoringFlowExtensionsTimeoutMs, new StoreItemTimeoutSettingUIPart())
                 .Add(SettingsKeys.OnItemStoringFlowExtensionsMaxTasks, new StoreMaxTasksSettingUIPart())
                 .Add(SettingsKeys.AreFadeAnimationsEnabled, new FadeAnimationsSettingUIPart())
-                .Add(SettingsKeys.CloudServiceAuthAttemptTimeout, new CloudAuthTimeoutSettingUIPart());
+                .Add(SettingsKeys.CloudServiceAuthAttemptTimeout, new CloudAuthTimeoutSettingUIPart())
+                .Add(SettingsKeys.ClipboardFormatSupportExtTimeout, new ClipboardFormatSupportExtTimeoutSettingUIPart())
+                .Add(SettingsKeys.ClipboardOpenningTimeoutMs, new ClipboardOpeningTimeoutSettingUIPart());
         }
 
         private void ManageUIPartsVisibility(ISettingKey settingKey)

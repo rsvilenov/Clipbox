@@ -352,6 +352,15 @@
   <data name="LBL_SETTINGS_CLEAR_EXT_CLIPBOARD_UPON_LOGOFF" xml:space="preserve">
     <value>Когато потребителят излезе от сесията си в Windows, изтрий всички незащитени клипборд записи, направени след последния логин</value>
   </data>
+  <data name="LBL_SETTINGS_CLIPBOARD_FORMAT_EXT_TIMEOUT" xml:space="preserve">
+    <value>Таймаут за изпълнение на разширенията за подръжка на клипборд формати (в милисекунди)</value>
+  </data>
+  <data name="LBL_SETTINGS_CLIPBOARD_LISTENNING_THROTTLE_INTERVAL" xml:space="preserve">
+    <value>Интервал в милисекунди за временно прекъсване на следенето на системния клипборд, след като е получено съобщение за промяна в него</value>
+  </data>
+  <data name="LBL_SETTINGS_CLIPBOARD_OPENNING_TIMEOUT" xml:space="preserve">
+    <value>Таймаут в милисекунди за отваряне на системния клипборд (той може да е временно заключен от друго приложение и трябва да се изчака)</value>
+  </data>
   <data name="LBL_SETTINGS_CLIPBOARD_TRACKING" xml:space="preserve">
     <value>Следене на системния клипборд</value>
   </data>
