@@ -29,16 +29,21 @@ namespace Clipbox.ExtendedClipboard
         const int CLIPBOARD_OPERATION_ATTEMPTS = 5;
 
 
-        private OleDispatcher _oleDispatcher;
-
-        private SimpleDispatcher _clipboardDispatcher;
-
+        private readonly OleDispatcher _oleDispatcher;
+        private readonly SimpleDispatcher _clipboardDispatcher;
         private static object _openClipboardLockHandle = new object();
         
         private bool _isClipboardLockedOpen;
 
-        public SystemClipboard()
+        private readonly IntPtr _hWndToBeClipboardOwner;
+        public SystemClipboard(IntPtr hWndToBeClipboardOwner)
         {
+            if (hWndToBeClipboardOwner == IntPtr.Zero)
+            {
+                throw new ArgumentException("The hWnd is 0.", nameof(hWndToBeClipboardOwner));
+            }
+
+            _hWndToBeClipboardOwner = hWndToBeClipboardOwner;
             _clipboardDispatcher = new SimpleDispatcher();
             _oleDispatcher = new OleDispatcher(_clipboardDispatcher);
         }
@@ -102,8 +107,13 @@ namespace Clipbox.ExtendedClipboard
         {
             DoClipboardOperation<object>(() =>
             {
-                bool success = User32.SetClipboardData(format, dataPtr);
-                if (!success)
+                // EmptyClipboard sets the clipboard owner to the hwnd, passed to OpenClipboard
+                if (!User32.EmptyClipboard())
+                {
+                    throw new Win32Exception();
+                }
+
+                if (!User32.SetClipboardData(format, dataPtr))
                 {
                     throw new Win32Exception();
                 }
@@ -255,22 +265,19 @@ namespace Clipbox.ExtendedClipboard
             return result;
         }
 
-        private static void TryCloseClipboard()
+        private void TryCloseClipboard()
         {
             // TODO: maybe check status and retry
             User32.CloseClipboard();
         }
 
-        private static void TryOpenClipboard()
+        private void TryOpenClipboard()
         {
             bool success = false;
             for (int attempt = 0; attempt < OPEN_CLIPBOARD_ATTEMPTS; attempt++)
             {
-                using (var currentProcess = System.Diagnostics.Process.GetCurrentProcess())
-                {
-                    success = User32.OpenClipboard(currentProcess.MainWindowHandle);
-                }
-
+                success = User32.OpenClipboard(_hWndToBeClipboardOwner);
+                
                 if (!success)
                 {
                     Thread.Sleep(OPEN_CLIPBOARD_ATTEMPT_INTERVAL_MS);

@@ -6,5 +6,7 @@ namespace Clipbox.ExtendedClipboard.Interfaces
     public interface IClipboardEventProvider
     {
         event EventHandler<ClipboardEventArgs> ClipboardContentChanged;
+
+        IntPtr GetEventWindowHandle();
     }
 }

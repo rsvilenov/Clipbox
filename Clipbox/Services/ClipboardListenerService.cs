@@ -22,6 +22,8 @@ namespace Clipbox.Services
 
         private bool _isClipboardViewerAlreadyRemoved;
 
+        private bool _isDisposed;
+
         public ClipboardListenerService()
         {
             _msgDelayTimer = new Timer(DRAWCLIPBOARD_WM_PREVENT_REPETITION_DELAY_MS);
@@ -47,6 +49,15 @@ namespace Clipbox.Services
 
         public event EventHandler<ClipboardEventArgs> ClipboardContentChanged;
 
+        public IntPtr GetEventWindowHandle()
+        {
+            if (_isDisposed)
+            {
+                throw new ObjectDisposedException(GetType().FullName);
+            }
+
+            return _hWndSource.Handle;
+        }
 
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
@@ -57,6 +68,13 @@ namespace Clipbox.Services
                     // We may receive this message multiple times for a single change
                     // https://stackoverflow.com/questions/18895865/getclipboarddata-on-a-delay-rendered-data-inside-a-clipboard-viewer-causes-recur
                     if (_isWithinRepetitionInterval)
+                    {
+                        Win32.Native.User32.SendMessage(_nextClipBoardViewerHwnd, msg, wParam, lParam);
+                        return IntPtr.Zero;
+                    }
+
+                    // do not fire the event for clipboard entries, comming from our own process
+                    if (Win32.Native.User32.GetClipboardOwner() == _hWndSource.Handle)
                     {
                         Win32.Native.User32.SendMessage(_nextClipBoardViewerHwnd, msg, wParam, lParam);
                         return IntPtr.Zero;
@@ -104,20 +122,25 @@ namespace Clipbox.Services
 
         public void Dispose()
         {
-            // remove the window from the clipboard chain
-            try
+            if (!_isDisposed)
             {
-                if (!_isClipboardViewerAlreadyRemoved)
+                // remove the window from the clipboard chain
+                try
                 {
-                    Win32.Native.User32.ChangeClipboardChain(_hWndSource.Handle, _nextClipBoardViewerHwnd);
-                    MarshalExt.ThrowOnWin32Error();
-                    _isClipboardViewerAlreadyRemoved = true;
+                    if (!_isClipboardViewerAlreadyRemoved)
+                    {
+                        Win32.Native.User32.ChangeClipboardChain(_hWndSource.Handle, _nextClipBoardViewerHwnd);
+                        MarshalExt.ThrowOnWin32Error();
+                        _isClipboardViewerAlreadyRemoved = true;
+                    }
                 }
-            }
-            finally
-            {
-                try { _hWndSource.RemoveHook(WndProc); }
-                finally { _hWndSource.Dispose(); }
+                finally
+                {
+                    try { _hWndSource.RemoveHook(WndProc); }
+                    finally { _hWndSource.Dispose(); }
+                }
+
+                _isDisposed = true;
             }
             
         }

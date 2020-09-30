@@ -81,7 +81,6 @@ namespace Clipbox.ExtendedClipboard
         /// <summary>
         /// Creates an instance of ClipboardManager
         /// </summary>
-        /// <param name="hWnd">Main program window's handle</param>
         public ClipboardManager(IClipboardEventProvider clipboardEventProvider,
             IClipboardFormatExtensionContainer formatExtensionContainer,
             IPersistenceSupportExtensionContainer persistenceExtensionContainer,
@@ -97,7 +96,7 @@ namespace Clipbox.ExtendedClipboard
             _clipboardItems = new List<ClipboardItem>();
             _deletedSyncedClipboardItemIds = new List<string>();
 
-            _systemClipboard = new SystemClipboard();
+            _systemClipboard = new SystemClipboard(clipboardEventProvider.GetEventWindowHandle());
             _persistenceHelper = new PersistenceHelper(_persistenceExtensionContainer,
                 _persistenceProvider,
                 _encryptionProvider);
@@ -433,13 +432,6 @@ namespace Clipbox.ExtendedClipboard
                 }
             };
 
-            if (source.SourceWindowInfo
-                .ApplicationInfo?.ApplicationPath?.Equals(
-                    Assembly.GetEntryAssembly().Location, StringComparison.OrdinalIgnoreCase) == true)
-            {
-                return;
-            }
-
             var itemFetchingEventArgs = new ItemFetchingEventArgs(source.SourceWindowInfo);
 
             ItemFetching?.Invoke(this, itemFetchingEventArgs);
@@ -691,7 +683,6 @@ namespace Clipbox.ExtendedClipboard
 
             try
             {
-
                 foreach (KeyValuePair<uint, string> format in _systemClipboard.GetAvailableFormats())
                 {
                     var formatExtension = _formatExtensionContainer.ResolveClipboardFormatSupport(format.Value);
