@@ -317,7 +317,7 @@
                                                         PreviewContainerBackgroundColor="{DynamicResource TaskbarColor}"
                                                         ThumbnailAreaMaxHeight="{Binding Path=ClipboardViewItemMaxHeight, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type lv:ClipboardListViewBase}}}"
                                                         ThumbnailAreaMinHeight="{Binding Path=ThumbnailAreaMaxHeight, RelativeSource={RelativeSource Mode=Self}}"
-                                                        ViewItemWrapper="{Binding Mode=OneTime, RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}, Path=DataContext}">
+                                                        ViewItemWrapper="{Binding Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}, Path=DataContext}">
                                                         <tile:SingleItemPresenter.IsDimmed>
                                                             <MultiBinding Converter="{StaticResource AndMultiValueConverter}">
                                                                 <Binding
@@ -347,7 +347,7 @@
                                                         IsLoadingIndicatorFadeInEnabled="True"
                                                         IsShownIntoView="False"
                                                         PreviewContainerBackgroundColor="{DynamicResource TaskbarColor}"
-                                                        ViewItemWrapper="{Binding Mode=OneTime, RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}, Path=DataContext}">
+                                                        ViewItemWrapper="{Binding Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}, Path=DataContext}">
 
                                                         <tile:MultiItemPresenter.Height>
                                                             <MultiBinding Converter="{StaticResource MathAddConverter}">

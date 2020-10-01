@@ -285,16 +285,16 @@
                                             -->
                                             <ControlTemplate>
                                                 <Image
-                                                    Width="{Binding Path=Image.Width, Mode=OneTime}"
+                                                    Width="{Binding Path=Image.Width, Mode=OneWay}"
                                                     RenderOptions.BitmapScalingMode="LowQuality"
-                                                    Source="{Binding Path=Image, Mode=OneTime}" />
+                                                    Source="{Binding Path=Image, Mode=OneWay}" />
                                             </ControlTemplate>
 
                                         </Setter.Value>
                                     </Setter>
                                     <Setter Property="ToolTip">
                                         <Setter.Value>
-                                            <TextBlock Text="{Binding Description, Mode=OneTime}">
+                                            <TextBlock Text="{Binding Description, Mode=OneWay}">
                                                 <i:Interaction.Behaviors>
                                                     <infBeh:FrameworkElementDpiScalingBehavior />
                                                 </i:Interaction.Behaviors>
@@ -341,7 +341,7 @@
                 VerticalAlignment="Center"
                 FontSize="12"
                 Foreground="White"
-                Text="{Binding ViewItem.PreviewItem.Text, Mode=OneTime}"
+                Text="{Binding ViewItem.PreviewItem.Text, Mode=OneWay}"
                 TextBlock.TextTrimming="CharacterEllipsis"
                 ToolTipService.Placement="Center">
                 <i:Interaction.Behaviors>
@@ -351,7 +351,7 @@
                     <!--  the tooltip won't scale with the textblock, probably because it is not part of its visual tree  -->
                     <ToolTip>
                         <ToolTip.Content>
-                            <TextBlock FontSize="12" Text="{Binding ViewItem.PreviewItem.Text, Mode=OneTime}">
+                            <TextBlock FontSize="12" Text="{Binding ViewItem.PreviewItem.Text, Mode=OneWay}">
                                 <!--<TextBlock.LayoutTransform>
                                                                                                 <ScaleTransform CenterX="0" CenterY="0" ScaleX="{Binding Path=ScaleFactor, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=infWindows:PerMonitorDpiWindow}}" ScaleY="{Binding}" />
                                                                                             </TextBlock.LayoutTransform>-->
