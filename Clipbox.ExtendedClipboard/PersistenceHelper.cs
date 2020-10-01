@@ -8,9 +8,11 @@ using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.Serialization;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.ExceptionServices;
+using System.Runtime.Serialization;
 
 namespace Clipbox.ExtendedClipboard
 {
@@ -22,6 +24,9 @@ namespace Clipbox.ExtendedClipboard
         /// The category under which the implementation of IPersistenceProvider will store our data.
         /// </summary>
         private const string CACHE_PERSISTENCE_CATEGORY = "ClipboardDataCache";
+        private const string CLIPBOARD_MANAGER_DATA_PERSISTENCE_CATEGORY = "ClipboardManagerData";
+        private const string DELETED_SYNCED_CLIPBOARD_ITEM_IDS_KEY = "DeletedSyncedClipboardItemIds";
+
 
         private readonly IPersistenceSupportExtensionContainer _persistenceExtensionContainer;
         private readonly IPersistenceProvider _persistenceProvider;
@@ -38,6 +43,11 @@ namespace Clipbox.ExtendedClipboard
             if (!_persistenceProvider.CheckIfCategoryExists(CACHE_PERSISTENCE_CATEGORY))
             {
                 _persistenceProvider.CreateCategory(CACHE_PERSISTENCE_CATEGORY);
+            }
+
+            if (!_persistenceProvider.CheckIfCategoryExists(CLIPBOARD_MANAGER_DATA_PERSISTENCE_CATEGORY))
+            {
+                _persistenceProvider.CreateCategory(CLIPBOARD_MANAGER_DATA_PERSISTENCE_CATEGORY);
             }
         }
         
@@ -292,7 +302,17 @@ namespace Clipbox.ExtendedClipboard
         {
             clipboardItem = null;
 
-            var transferableClipboardItem = BinaryFormatterSerialization.DeserializeObject<TransferableClipboardItem>(ByteArrayCompressor.Decompress(itemData));
+            TransferableClipboardItem transferableClipboardItem = null;
+            try
+            {
+                BinaryFormatterSerialization.DeserializeObject<TransferableClipboardItem>(ByteArrayCompressor.Decompress(itemData));
+            }
+            catch (SerializationException)
+            {
+                // TODO: what to do here? just ignore? but what about errors, caused by contract inconsistency?
+                Debug.WriteLine("error deserializing a cloud item");
+                return false;
+            }
 
             List<ClipboardDataObject> clipboardDataObjects = new List<ClipboardDataObject>();
 
@@ -432,6 +452,31 @@ namespace Clipbox.ExtendedClipboard
                 };
 
             }
+        }
+
+        public void StoreDeletedSyncedClipboardItemIds(List<string> itemIds)
+        {
+            _persistenceProvider.Write(DELETED_SYNCED_CLIPBOARD_ITEM_IDS_KEY, ByteArrayCompressor.Compress(BinaryFormatterSerialization.SerializeObject(itemIds)), CLIPBOARD_MANAGER_DATA_PERSISTENCE_CATEGORY);
+        }
+
+        public List<string> ReadDeletedSyncedClipboardItemIds()
+        {
+            try
+            {
+                if (_persistenceProvider.CheckIfKeyExists(DELETED_SYNCED_CLIPBOARD_ITEM_IDS_KEY, CLIPBOARD_MANAGER_DATA_PERSISTENCE_CATEGORY))
+                {
+                    byte[] compressedBytes = _persistenceProvider.ReadBytes(DELETED_SYNCED_CLIPBOARD_ITEM_IDS_KEY, CLIPBOARD_MANAGER_DATA_PERSISTENCE_CATEGORY);
+                    return BinaryFormatterSerialization.DeserializeObject<List<string>>(ByteArrayCompressor.Decompress(compressedBytes));
+                }
+            }
+            catch (SerializationException)
+            {
+                // ignore the deserialization error and delete the record
+                try { _persistenceProvider.Delete(CLIPBOARD_MANAGER_DATA_PERSISTENCE_CATEGORY, DELETED_SYNCED_CLIPBOARD_ITEM_IDS_KEY); }
+                catch { }
+            }
+
+            return null;
         }
     }
 }

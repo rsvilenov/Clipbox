@@ -138,8 +138,14 @@ namespace Clipbox.ExtendedClipboard
                     _clipboardItems.Add(item);
                 }
             }
+
+            List<string> storedIdsForCloudDeletion = _persistenceHelper.ReadDeletedSyncedClipboardItemIds();
+            if (storedIdsForCloudDeletion != null)
+            {
+                _deletedSyncedClipboardItemIds.AddRange(storedIdsForCloudDeletion);
+            }
         }
-        
+
         /// <summary>
         /// Do not let other applications know that a clipboard change has occurred
         /// </summary>
@@ -226,6 +232,7 @@ namespace Clipbox.ExtendedClipboard
                     if (item.IsSynchronizedWithCloud)
                     {
                         _deletedSyncedClipboardItemIds.Add(item.Id);
+                        _persistenceHelper.StoreDeletedSyncedClipboardItemIds(_deletedSyncedClipboardItemIds);
                     }
                 }
             }
@@ -748,6 +755,7 @@ namespace Clipbox.ExtendedClipboard
             if (_deletedSyncedClipboardItemIds.Contains(id))
             {
                 _deletedSyncedClipboardItemIds.Remove(id);
+                _persistenceHelper.StoreDeletedSyncedClipboardItemIds(_deletedSyncedClipboardItemIds);
             }
             else
             {

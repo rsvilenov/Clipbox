@@ -29,7 +29,7 @@ namespace Clipbox.Extensions.BuiltIn.ImageFormats.IntermediateFormats
             return new IntermediateFormatMetadata(
                 formatGuid: "{CFCA3819-C2EF-4F94-B9B7-49D402CA0652}",
                 contentClass: ClipboardContentClass.Image,
-                isTransferable: false);
+                isTransferable: true);
         }
     }
 }
