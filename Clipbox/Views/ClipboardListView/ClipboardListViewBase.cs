@@ -189,6 +189,7 @@ namespace Clipbox.Views.ClipboardListView
             Unloaded += ClipboardListViewBase_Unloaded;
 
             MouseDown += ClipboardListViewBase_MouseDown;
+            PreviewMouseDown += ClipboardListViewBase_PreviewMouseDown;
 
             ActionButtonsDataContext = new ActionButtonsDataContextClass
             {
@@ -211,6 +212,35 @@ namespace Clipbox.Views.ClipboardListView
                 EnableDisableSyncOfClipboardEntry = new DelegateCommand<ClipboardViewItem>(EnableDisableSyncOfClipboardEntryHandler,
                     dispatcherPriority: DispatcherPriority.ContextIdle)
             };
+        }
+
+        private void ClipboardListViewBase_PreviewMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            // Change the default behaviour of the listview. By default, when multiple items
+            // are selected and the user clicks one of them, but without holding Ctrl key anymore,
+            // only the clicked item gets deselected. The others remain selected.
+            // To me, this is counterintuitive. In Windows Explorer, for example, the behavior
+            // is as follows: when many items are selected and one of them is clicked (with Ctrl released),
+            // only this item gets SELECTED, and the others - deselected. So, I decided to mimic this behavior here.
+            if (!KeyboardUtils.IsKeyPressed(Win32.Native.NativeEnums.Keys.LeftControl)
+                && !KeyboardUtils.IsKeyPressed(Win32.Native.NativeEnums.Keys.RightContol)
+                && SelectedItems.Count > 1)
+            {
+                HitTestResult r = VisualTreeHelper.HitTest(this, e.GetPosition(this));
+                ListViewItem clickedLvi = r.VisualHit as ListViewItem;
+                if (clickedLvi == null && r.VisualHit is UIElement ue)
+                {
+                    clickedLvi = Traversing.FindParent<ListViewItem>(ue);
+                }
+
+                if (clickedLvi != null)
+                {
+                    this.UnselectAll();
+                    clickedLvi.IsSelected = true;
+
+                    e.Handled = true;
+                }
+            }
         }
 
         private void DeleteClipboardEntryGroupHandler(ClipboardViewItem parameter)
@@ -312,7 +342,7 @@ namespace Clipbox.Views.ClipboardListView
             return new ReadOnlyDictionary<string, IReadOnlyCollection<int>>
                 (SelectedMultiItemsIds.ToDictionary(k => k.Key, v => (IReadOnlyCollection<int>)v.Value.ToList().AsReadOnly()));
         }
-        
+
 
         protected override void OnSelectionChanged(SelectionChangedEventArgs e)
         {
