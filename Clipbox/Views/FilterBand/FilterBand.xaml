@@ -211,7 +211,7 @@
 
                 <Expander
                     x:Name="TypeExpander"
-                    Margin="0,10,1,0"
+                    Margin="1,0,1,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     Collapsed="TypeExpander_Collapsed"
@@ -222,21 +222,24 @@
                     Template="{StaticResource VerticalStretchyExpander}"
                     ToolTip="{loc:Localize TTP_FILTERBAND_FILTER_BY_TYPE}">
 
-                    <StackPanel Margin="0,5" Orientation="Vertical">
+                    <StackPanel
+                        Margin="0,5"
+                        Orientation="Vertical"
+                        SnapsToDevicePixels="True">
                         <ToggleButton
-                            Margin="5,3"
+                            Margin="3"
                             IsChecked="{Binding TextTypeSelected}"
                             Style="{StaticResource textToggleButton}" />
                         <ToggleButton
-                            Margin="5,3"
+                            Margin="3"
                             IsChecked="{Binding ImageTypeSelected}"
                             Style="{StaticResource imageToggleButton}" />
                         <ToggleButton
-                            Margin="5,3"
+                            Margin="3"
                             IsChecked="{Binding FileTypeSelected}"
                             Style="{StaticResource fileToggleButton}" />
                         <ToggleButton
-                            Margin="5,3"
+                            Margin="3"
                             IsChecked="{Binding GeneralTypeSelected}"
                             Style="{StaticResource generalToggleButton}" />
                     </StackPanel>
@@ -245,7 +248,7 @@
 
                 <Expander
                     x:Name="SourceMachineExpander"
-                    Margin="0,10,1,0"
+                    Margin="1,10,1,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     Collapsed="SourceMachineExpander_Collapsed"
@@ -257,13 +260,16 @@
                     ToolTip="{loc:Localize TTP_FILTERBAND_FILTER_BY_DEVICE}"
                     Visibility="{Binding IsCloudSyncServiceEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
 
-                    <StackPanel Margin="0,5" Orientation="Vertical">
+                    <StackPanel
+                        Margin="0,5"
+                        Orientation="Vertical"
+                        SnapsToDevicePixels="True">
                         <ToggleButton
-                            Margin="5,3"
+                            Margin="3"
                             IsChecked="{Binding LocalMachineSourceToggled}"
                             Style="{StaticResource myMachineToggleButton}" />
                         <ToggleButton
-                            Margin="5,3"
+                            Margin="3"
                             IsChecked="{Binding RemoteMachineSourceToggled}"
                             PreviewMouseDown="ToggleRemoteDeviceSelectionButton_PreviewMouseDown"
                             Style="{StaticResource remoteDeviceToggleButton}" />
@@ -272,12 +278,12 @@
                 </Expander>
 
                 <ToggleButton
-                    Margin="5,10"
+                    Margin="4,10"
                     IsChecked="{Binding AppSelectorToggled}"
                     PreviewMouseDown="ToggleApplicationSelectionButton_PreviewMouseDown"
                     Style="{StaticResource applicationSelectionToggleButton}" />
                 <ToggleButton
-                    Margin="5,10"
+                    Margin="4,10"
                     IsChecked="{Binding DateRangeToggled}"
                     PreviewMouseDown="ToggleDateRangeSelectionButton_PreviewMouseDown"
                     Style="{StaticResource dateRangeSelectionToggleButton}" />
