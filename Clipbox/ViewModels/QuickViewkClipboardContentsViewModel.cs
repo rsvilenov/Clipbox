@@ -88,6 +88,13 @@ namespace Clipbox.ViewModels
             {
                 RemoveOldItemWrappersExceedingLimit();
             }
+            else if (e.Key == SettingsKeys.PreviewItemHeightRatio)
+            {
+                // reload all the items with previews, generated for the new ratio
+                base.ClipboardViewItemWrappers
+                    .ToList()
+                    .ForEach(w => LoadViewItem(w.Id, _lastUsedMonitorDimensions));
+            }
             else if (e.Key.TargetComponentType != null)
             {
                 Type extType = e.Key.TargetComponentType;
