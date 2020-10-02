@@ -211,7 +211,7 @@
 
                 <Expander
                     x:Name="TypeExpander"
-                    Margin="0,10"
+                    Margin="0,10,1,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     Collapsed="TypeExpander_Collapsed"
@@ -245,7 +245,7 @@
 
                 <Expander
                     x:Name="SourceMachineExpander"
-                    Margin="0,10"
+                    Margin="0,10,1,0"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
                     Collapsed="SourceMachineExpander_Collapsed"

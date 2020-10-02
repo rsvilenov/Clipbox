@@ -9,6 +9,7 @@ using Clipbox.Win32;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -384,7 +385,7 @@ namespace Clipbox.Views.FilterBand
 
         private void UncheckChildToggleButtons(Expander sender)
         {
-            Dispatcher.BeginInvoke(DispatcherPriority.Background,
+            Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle,
                 new Action(() =>
                 {
                     
@@ -394,19 +395,30 @@ namespace Clipbox.Views.FilterBand
                     // search term collection and firing the SearchTermsChanged event
                     _suppressRebuildSearchTermCollection = true;
 
+                    bool wereAnyTglButtonsChecked = false;
+
                     foreach (UIElement child in toggleButtons)
                     {
                         if (child is ToggleButton tglBtn && tglBtn.IsChecked == true)
                         {
-                            tglBtn.IsChecked = false;
+                            if (tglBtn.IsChecked == true)
+                            {
+                                tglBtn.IsChecked = false;
+                                wereAnyTglButtonsChecked = true;
+                            }
                         }
                     }
 
                     _suppressRebuildSearchTermCollection = false;
 
-                    // when all ui state modifications are complete,
-                    // rebuild the collection and fire SearchTermsChanged
-                    RebuildSearchTermCollection();
+                    if (wereAnyTglButtonsChecked)
+                    {
+                        // wait for the ui state modifications (animations, etc.) to complete.
+                        // TODO: devise a better way of awaiting the animation.
+                        Task.Delay(500)
+                        .ContinueWith((t) =>
+                        Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(() => RebuildSearchTermCollection())));
+                    }
                 }));
         }
 
