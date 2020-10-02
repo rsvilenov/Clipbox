@@ -136,6 +136,11 @@ namespace Clipbox.Views
             ShowActivated = false;
             ResizeMode = ResizeMode.NoResize;
             WindowStartupLocation = WindowStartupLocation.Manual;
+
+#if RELEASE
+            Topmost = true;
+#endif
+
             if (_backgroundRenderMode == MainClipboardViewBackgroundRenderMode.GDI)
             {
                 AllowsTransparency = true;
