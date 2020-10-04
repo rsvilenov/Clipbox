@@ -8,6 +8,10 @@ namespace Clipbox.Core
 
         public const double PRODUCT_VERSION = 1.0;
 
+        public const string PRODUCT_GUID = "95A2CB1E-AD54-41F4-B1F0-D1E7876A7437";
+
+        public const string COMPANY_NAME = "MyCompany";
+
         public const string MAIN_PROCESS_EXE_NAME = "Clipbox.exe";
 
         public const string GUARD_EXE_NAME = "ClipboxGuard.exe";
