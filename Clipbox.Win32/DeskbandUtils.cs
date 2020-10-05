@@ -194,6 +194,14 @@ namespace Clipbox.Win32
             return isShown;
         }
 
+        // This below is the older api, relying on TrayBandSiteService.
+        // The advantage of using it is that it does now show any
+        // confirmation messages upon showing the deskband. These messages
+        // are a problem, because Explorer does not show them always on top
+        // and there is a high chance that the user does not see them...
+        // If a message should be shown, it should dim the entire screen
+        // behind it or use some other way to make it clearly visible.
+
         [ComImport]
         [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
         [Guid("4CF504B0-DE96-11D0-8B3F-00A0C911E8E5")]
