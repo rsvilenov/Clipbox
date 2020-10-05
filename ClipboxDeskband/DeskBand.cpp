@@ -215,7 +215,7 @@ STDMETHODIMP CDeskBand::GetBandInfo(DWORD dwBandID, DWORD, DESKBANDINFO *pdbi)
         if (pdbi->dwMask & DBIM_TITLE)
         {
             // Don't show title by removing this flag.
-            pdbi->dwMask &= ~DBIM_TITLE;
+			pdbi->dwMask &= ~DBIM_TITLE;
         }
 
         if (pdbi->dwMask & DBIM_MODEFLAGS)
@@ -563,6 +563,7 @@ LRESULT CALLBACK CDeskBand::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 	HMONITOR mon;
 	UINT dpiX, dpiY;
 
+
     CDeskBand *pDeskBand = reinterpret_cast<CDeskBand *>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
     switch (uMsg)
     {
@@ -581,6 +582,7 @@ LRESULT CALLBACK CDeskBand::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 		g_toolTip.Initialize(hwnd, TOOLTIP_TEXT);
 
 		SetTimer(hwnd, g_TickTimerID, CHECK_ENABLED_INTERVAL, NULL);
+
 		break;
 
 	case WM_DESTROY:
@@ -673,7 +675,7 @@ LRESULT CALLBACK CDeskBand::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 		break;
 	case WM_MOUSEHOVER:
 		g_mouseOver = true;
-
+		g_Logger->LogText("Mouse hover");
 		// start the tooltip timer
 		SetTimer(hwnd, g_ToolTipDelayTimerID, TOOLTIP_DELAY_MS, NULL);
 
@@ -688,7 +690,7 @@ LRESULT CALLBACK CDeskBand::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 		break;
 	case WM_MOUSELEAVE:
 		g_mouseOver = false;
-
+		g_Logger->LogText("Mouse Leave");
 		// redraw the icon to its original state (unhighlighted)
 		RedrawWindow(hwnd, NULL, NULL, RDW_INVALIDATE);
 

@@ -75,7 +75,7 @@ namespace Clipbox.Win32
                 {
                     hWndButton = User32.FindWindow(CONFIRMATION_POPUP_CLASS_NAME, deskBandName);
 
-                    if ((DateTime.Now - startTime).TotalSeconds > 10)
+                    if ((DateTime.Now - startTime).TotalSeconds > 60)
                     {
                         return false;
                     }
@@ -90,7 +90,7 @@ namespace Clipbox.Win32
                 startTime = DateTime.Now;
                 while(!User32.IsWindowVisible(hWndButton))
                 {
-                    if ((DateTime.Now - startTime).TotalSeconds > 10)
+                    if ((DateTime.Now - startTime).TotalSeconds > 60)
                     {
                         return false;
                     }
@@ -192,6 +192,29 @@ namespace Clipbox.Win32
             }
 
             return isShown;
+        }
+
+        [ComImport]
+        [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+        [Guid("4CF504B0-DE96-11D0-8B3F-00A0C911E8E5")]
+        public interface IBandSite
+        {
+            [PreserveSig]
+            uint AddBand([In, MarshalAs(UnmanagedType.IUnknown)] Object pUnkSite);
+            [PreserveSig]
+            void RemoveBand(uint dwBandID);
+        }
+
+
+        public static uint AddDeskbandToTrayUsingUndocumentedTrayBandSiteService(Guid deskbandGuid)
+        {
+            // this is the guid of the undocumented TrayBandSiteService, which implements the IBandSite interface.
+            Guid trayBandSiteServiceGuid = new Guid("{F60AD0A0-E5E1-45cb-B51A-E15B9F8B2934}");
+
+            Type trayBandSiteServiceTypee = Type.GetTypeFromCLSID(trayBandSiteServiceGuid, true);
+            IBandSite bandSite = Activator.CreateInstance(trayBandSiteServiceTypee) as IBandSite;
+            object deskbandObject = Activator.CreateInstance(Type.GetTypeFromCLSID(deskbandGuid));
+            return bandSite.AddBand(deskbandObject);
         }
     }
 }

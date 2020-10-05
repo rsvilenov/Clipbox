@@ -58,7 +58,6 @@ protected:
     void OnFocus(const BOOL fFocus);
     void OnPaint(const HDC hdcIn);
 private:
-
 	void DrawIcons(const HDC hdc, const RECT area);
 	void InitializeLogger();
 	void RefreshClipboxDisabledOrPausedState();

@@ -109,7 +109,7 @@ namespace ClipboxGuard.Services
                             errorWindow = new ErrorWindow(analysis.ErrorDetails, 
                                 analysis.ErrorOrigin,
                                 showRestartOption);
-                            errorWindow.Closed += (e, a) => mainWindowWaitMre.Set();
+                            errorWindow.Closing += (e, a) => mainWindowWaitMre.Set();
                             errorWindow.ShowDialog();
                         }));
 

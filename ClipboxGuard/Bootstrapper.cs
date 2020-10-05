@@ -9,6 +9,7 @@ using Clipbox.Infrastructure.Serialization;
 using Clipbox.Infrastructure.UI.Localization;
 using Clipbox.Infrastructure.UI.Localization.LozalizationProviders;
 using Clipbox.Win32;
+using Clipbox.Win32.Native;
 using ClipboxGuard.Enums;
 using ClipboxGuard.Services;
 using ClipboxGuard.Services.Common;
@@ -42,7 +43,7 @@ namespace ClipboxGuard
             _isStartedFromSvc = startupArgs.Any(arg => arg == ProductConstants.STARTED_FROM_SERVICE_ARG);
             bool isStartedFromWindowsScheduler = startupArgs.Any(arg => arg == ProductConstants.STARTED_FROM_SCHEDULER_ARG);
             bool isStartedFromGuard = startupArgs.Any(arg => arg == ProductConstants.STARTED_FROM_GUARD_ARG);
-
+            
             if (!_isStartedFromSvc && !isStartedFromWindowsScheduler && !isStartedFromGuard)
             {
                 int mySessionId = SessionUtils.GetCurrentSessionId();

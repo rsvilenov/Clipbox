@@ -18,11 +18,17 @@ namespace Clipbox.Core
 
         public const string SERVICE_EXE_NAME = "ClipboxSvc.exe";
 
+        public const string DESKBAND_SHELL_EXT_DLL_NAME = "ClipboxDeskband.dll";
+
+        public const string DESKBAND_SHELL_EXT_GUID = "3C6D5961-E6C7-44F6-A522-A20DE33D2DAC";
+
         public const string STARTED_FROM_SERVICE_ARG = "svc";
 
         public const string STARTED_FROM_SCHEDULER_ARG = "sched";
 
         public const string STARTED_FROM_GUARD_ARG = "guard";
+
+        public const string SHELL_NOTIFY_ARG = "shnotify";
 
         public const string RUN_WITH_HIGH_PRIORITY_FLAG_KEY = "_hp";
 

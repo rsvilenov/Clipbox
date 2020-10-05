@@ -24,6 +24,7 @@ using Clipbox.Settings.Enums;
 using Clipbox.ViewModels;
 using Clipbox.Views;
 using Clipbox.Win32;
+using Clipbox.Win32.Native;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -271,6 +272,11 @@ namespace Clipbox
 
                 string xml = XmlSerialization.Serialize(enabledExtensionInfo);
                 _settingsService.SetSetting(SettingsKeys.EnabledExtensions, xml);
+                
+                // tell explorer that there is a new extension
+                Shell32.SHChangeNotify(NativeEnums.SHCNE.SHCNE_ASSOCCHANGED, NativeEnums.SHChangeNotifyFlags.SHCNF_IDLIST, IntPtr.Zero, IntPtr.Zero);
+                System.Threading.Thread.Sleep(1000);
+                
                 _settingsService.SetSetting(SettingsKeys.IsInitialConfigurationDone, true);
             }
             else

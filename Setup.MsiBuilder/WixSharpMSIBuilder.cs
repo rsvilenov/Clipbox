@@ -2,13 +2,13 @@
 using Clipbox.Win32.Native;
 using Microsoft.Deployment.WindowsInstaller;
 using System;
-using System.Diagnostics;
 using WixSharp;
 
 namespace Setup.MsiBuilder
 {
     public static class WixSharpMSIBuilder
     {
+        private static readonly string INSTALL_DIRECTORY = $@"%ProgramFiles%\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}";
         public static void CreateMSI()
         {
             int majorVersion = (int)Math.Floor(ProductConstants.PRODUCT_VERSION);
@@ -18,7 +18,7 @@ namespace Setup.MsiBuilder
 #elif RELEASE
             string releaseDirectory = @"..\Build\Release\"
 #endif
-            string installDirectory = $@"%ProgramFiles%\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}";
+            
 
             File service = new File(System.IO.Path.Combine(releaseDirectory, ProductConstants.SERVICE_EXE_NAME))
             {
@@ -31,24 +31,44 @@ namespace Setup.MsiBuilder
                     FirstFailureActionType = FailureActionType.restart,
                     SecondFailureActionType = FailureActionType.restart,
                     ThirdFailureActionType = FailureActionType.none,
-                    DelayedAutoStart = false
+                    DelayedAutoStart = false,
+                    Vital = true
                 }
             };
 
             File guard = new File(System.IO.Path.Combine(releaseDirectory, ProductConstants.GUARD_EXE_NAME),
                             new FileShortcut(ProductConstants.PRODUCT_NAME, $@"%ProgramMenu%\{ProductConstants.PRODUCT_NAME}"));
 
+#if PLATFORM_X64
+            ExeFileShortcut uninstaller = new ExeFileShortcut($"Uninstall {ProductConstants.PRODUCT_NAME}", "[System64Folder]msiexec.exe", "/x [ProductCode]");
+#else
+            ExeFileShortcut uninstaller = new ExeFileShortcut($"Uninstall {ProductConstants.PRODUCT_NAME}", "[SystemFolder]msiexec.exe", "/x [ProductCode]");
+#endif
+
+            File shellExtension = new File(System.IO.Path.Combine(releaseDirectory, ProductConstants.DESKBAND_SHELL_EXT_DLL_NAME));
+            
             var project =
                 new Project(ProductConstants.PRODUCT_NAME,
                     new Dir(new Id("INSTALLDIR"),
-                    installDirectory,
-                    new Files($@"{releaseDirectory}\*", excludePath => !excludePath.EndsWith(ProductConstants.GUARD_EXE_NAME) && !excludePath.EndsWith(ProductConstants.SERVICE_EXE_NAME)), service, guard),
-                    new ElevatedManagedAction(CustomActions.InstallDeskband, Return.check, When.After, Step.InstallFiles, Condition.NOT_Installed),
+                    INSTALL_DIRECTORY,
+                        new Files($@"{releaseDirectory}\*", f => 
+                            !f.EndsWith(ProductConstants.GUARD_EXE_NAME) 
+                            && !f.EndsWith(ProductConstants.SERVICE_EXE_NAME)
+                            && !f.EndsWith(".pdb") 
+                            && !f.EndsWith(".msi")
+                            && !f.EndsWith(ProductConstants.DESKBAND_SHELL_EXT_DLL_NAME)),
+                        guard,
+                        shellExtension,
+                        uninstaller,
+                        service),
+                    new ElevatedManagedAction(CustomActions.InstallDeskband, Return.check, When.Before, Step.StartServices, Condition.NOT_Installed),
                     new ElevatedManagedAction(CustomActions.UnInstallDeskband, Return.check, When.Before, Step.RemoveFiles, Condition.BeingUninstalled))
                 {
                     Version = new Version(majorVersion, minorVersion),
                     GUID = new Guid(ProductConstants.PRODUCT_GUID),
-                    InstallScope = InstallScope.perMachine
+                    InstallScope = InstallScope.perMachine,
+                    UI = WUI.WixUI_Minimal,
+                    InstallPrivileges = InstallPrivileges.elevated
                 };
 
 #if PLATFORM_X64
@@ -66,10 +86,7 @@ namespace Setup.MsiBuilder
                 return session.HandleErrors(() =>
                 {
                     var dll = System.IO.Path.Combine(session.Property("INSTALLDIR"), "ClipboxDeskband.dll");
-                    Process.Start("regsvr32.exe", $"/s \"{dll}\"").WaitForExit();
-
-                    // notify Windows Explorer for the change, so that the extension can be loaded immediately
-                    Shell32.SHChangeNotify(NativeEnums.SHCNE.SHCNE_ASSOCCHANGED, NativeEnums.SHChangeNotifyFlags.SHCNF_IDLIST, IntPtr.Zero, IntPtr.Zero);
+                    System.Diagnostics.Process.Start("regsvr32.exe", $"/s \"{dll}\"").WaitForExit();
                 });
             }
 
@@ -79,10 +96,7 @@ namespace Setup.MsiBuilder
                 return session.HandleErrors(() =>
                 {
                     var dll = System.IO.Path.Combine(session.Property("INSTALLDIR"), "ClipboxDeskband.dll");
-                    Process.Start("regsvr32.exe", $"/s /u \"{dll}\"").WaitForExit();
-
-                    // notify Windows Explorer for the change
-                    Shell32.SHChangeNotify(NativeEnums.SHCNE.SHCNE_ASSOCCHANGED, NativeEnums.SHChangeNotifyFlags.SHCNF_IDLIST, IntPtr.Zero, IntPtr.Zero);
+                    System.Diagnostics.Process.Start("regsvr32.exe", $"/s /u \"{dll}\"").WaitForExit();
                 });
             }
         }

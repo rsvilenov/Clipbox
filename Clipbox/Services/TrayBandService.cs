@@ -4,8 +4,11 @@ using Clipbox.Infrastructure.UI;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.Win32;
+using Clipbox.Win32.Native;
 using System;
+using System.ComponentModel;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Windows;
 
 namespace Clipbox.Services
@@ -44,7 +47,29 @@ namespace Clipbox.Services
 
             if (_settingsService.GetSetting<bool>(SettingsKeys.IsDeskBandEnabled))
             {
-                ShowDeskBand();
+                for (int i = 1; i <= 10; i++)
+                {
+                    try
+                    {
+                        ShowDeskBand();
+                        break;
+                    }
+                    catch (Exception ex)
+                    {
+                        if (ex is COMException || ex is Win32Exception)
+                        {
+                            if (i == 10)
+                            {
+                                _settingsService.SetSetting(SettingsKeys.IsDeskBandEnabled, false);
+                                _settingsService.SetSetting(SettingsKeys.IsTrayIconEnabled, true);
+                                throw;
+                            }
+
+                            Shell32.SHChangeNotify(NativeEnums.SHCNE.SHCNE_ASSOCCHANGED, NativeEnums.SHChangeNotifyFlags.SHCNF_IDLIST, IntPtr.Zero, IntPtr.Zero);
+                            System.Threading.Thread.Sleep(500);
+                        }
+                    }
+                }
             }
 
             _settingsService.SettingChanged += _settingsService_SettingChanged;
@@ -57,9 +82,18 @@ namespace Clipbox.Services
 
         private void ShowDeskBand()
         {
+            
             if (!DeskbandUtils.IsTaskBandShown(_deskbandGuid))
             {
-                DeskbandUtils.ShowDeskBand(_deskbandGuid, CLIPBAND_NAME, true);
+                DeskbandUtils.AddDeskbandToTrayUsingUndocumentedTrayBandSiteService(_deskbandGuid);
+
+                // The method below triggers a confirmation dialog, shown by Windows Explorer.
+                // This condifmation dialog is not always on top of other windows, so the user
+                // may not see it. I tried to add auto-confirmation function of the method ShowDeskBandd
+                // but it does not always work, so I cannot rely on it. In the end it turns out that
+                // relying on the undocumented interface TrayBandSiteService is more reliable
+                // than using the official way, which causes this "not-always-easily-visible" dialog to appear.
+                //DeskbandUtils.ShowDeskBand(_deskbandGuid, CLIPBAND_NAME, true);
             }
         }
 

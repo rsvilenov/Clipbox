@@ -33,6 +33,7 @@ bool ToolTip::Show()
 
 	SendMessage(_tipHwnd, TTM_TRACKPOSITION, 0, (LPARAM)(DWORD)MAKELONG(p.x, p.y));
 	SendMessage(_tipHwnd, TTM_TRACKACTIVATE, true, (LPARAM)(LPTOOLINFO)&_toolInfo);
+	
 
 	return true;
 }

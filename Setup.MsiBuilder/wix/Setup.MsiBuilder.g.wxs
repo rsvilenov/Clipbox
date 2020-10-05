@@ -7,18 +7,32 @@
 -->
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Product Id="95a2cb1e-ad54-41f4-b1f0-d1e7977a7437" Name="Clipbox" Language="1033" Codepage="Windows-1252" Version="1.0" UpgradeCode="95a2cb1e-ad54-41f4-b1f0-d1e7876a7437" Manufacturer="rosen">
-    <Package InstallerVersion="200" Compressed="yes" SummaryCodepage="Windows-1252" InstallScope="perMachine" Languages="1033" />
+    <Package InstallerVersion="200" Compressed="yes" Platform="x64" SummaryCodepage="Windows-1252" InstallPrivileges="elevated" InstallScope="perMachine" Languages="1033" />
     <Media Id="1" Cabinet="Clipbox.cab" EmbedCab="yes" />
 
     <Directory Id="TARGETDIR" Name="SourceDir">
-      <Directory Id="ProgramFilesFolder" Name="ProgramFilesFolder">
-        <Directory Id="ProgramFilesFolder.MyCompany" Name="MyCompany">
+      <Directory Id="ProgramFiles64Folder" Name="ProgramFiles64Folder">
+        <Directory Id="ProgramFiles64Folder.MyCompany" Name="MyCompany">
           <Directory Id="INSTALLDIR" Name="Clipbox">
 
-            <Component Id="Component.ClipboxSvc.exe_430128050" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7b0f349f0">
-              <File Id="ClipboxSvc.exe_430128050" Source="..\Build\Debug\ClipboxSvc.exe" />
+            <Component Id="Component.ClipboxGuard.exe_568895162" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7da911a09" Win64="yes">
+              <File Id="ClipboxGuard.exe_568895162" Source="..\Build\Debug\ClipboxGuard.exe">
+                <Shortcut Id="Shortcut.ClipboxGuard.exe_568895162.Clipbox_" WorkingDirectory="INSTALLDIR" Directory="ProgramMenuFolder.Clipbox" Name="Clipbox.lnk" />
+              </File>
 
-              <ServiceInstall Id="Clipbox.Svc" Name="Clipbox.Svc" DisplayName="Clipbox.Svc" Description="Clipbox.Svc" Type="ownProcess" Start="auto" ErrorControl="normal">
+              <RegistryKey Root="HKCU" Key="Software\WixSharp\Used">
+                <RegistryValue Value="0" Type="string" KeyPath="yes" />
+              </RegistryKey>
+            </Component>
+
+            <Component Id="Component.ClipboxDeskband.dll_2699476228" Guid="95a2cb1e-ad54-41f4-b1f0-d1e76a21db23" Win64="yes">
+              <File Id="ClipboxDeskband.dll_2699476228" Source="..\Build\Debug\ClipboxDeskband.dll" />
+            </Component>
+
+            <Component Id="Component.ClipboxSvc.exe_759699309" Guid="95a2cb1e-ad54-41f4-b1f0-d1e755d9a4e1" Win64="yes">
+              <File Id="ClipboxSvc.exe_759699309" Source="..\Build\Debug\ClipboxSvc.exe" />
+
+              <ServiceInstall Id="Clipbox.Svc" Name="Clipbox.Svc" DisplayName="Clipbox.Svc" Description="Clipbox.Svc" Type="ownProcess" Start="auto" ErrorControl="normal" Vital="yes">
                 <ServiceConfig DelayedAutoStart="no" OnInstall="yes" OnReinstall="no" OnUninstall="no" />
                 <ServiceConfig FirstFailureActionType="restart" SecondFailureActionType="restart" ThirdFailureActionType="none" xmlns="http://schemas.microsoft.com/wix/UtilExtension" />
               </ServiceInstall>
@@ -28,983 +42,840 @@
               <ServiceControl Id="RemoveClipbox.Svc" Name="Clipbox.Svc" Remove="uninstall" Wait="yes" />
             </Component>
 
-            <Component Id="Component.ClipboxGuard.exe_4029493911" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7e0ff41ed">
-              <File Id="ClipboxGuard.exe_4029493911" Source="..\Build\Debug\ClipboxGuard.exe">
-                <Shortcut Id="Shortcut.ClipboxGuard.exe_4029493911.Clipbox_" WorkingDirectory="INSTALLDIR" Directory="ProgramMenuFolder.Clipbox" Name="Clipbox.lnk" />
-              </File>
+            <Component Id="Component.Azure.Core.dll_2297618219" Guid="95a2cb1e-ad54-41f4-b1f0-d1e791a30364" Win64="yes">
+              <File Id="Azure.Core.dll_2297618219" Source="..\Build\Debug\Azure.Core.dll" />
+            </Component>
+
+            <Component Id="Component.Azure.Core.xml_3023132271" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7f4e04be0" Win64="yes">
+              <File Id="Azure.Core.xml_3023132271" Source="..\Build\Debug\Azure.Core.xml" />
+            </Component>
+
+            <Component Id="Component.BootstrapperCore.dll_601158734" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7e25ac50c" Win64="yes">
+              <File Id="BootstrapperCore.dll_601158734" Source="..\Build\Debug\BootstrapperCore.dll" />
+            </Component>
+
+            <Component Id="Component.BootstrapperCore.xml_601093194" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7a4b8a3df" Win64="yes">
+              <File Id="BootstrapperCore.xml_601093194" Source="..\Build\Debug\BootstrapperCore.xml" />
+            </Component>
+
+            <Component Id="Component.Clipbox.CloudServices.dll_1145625823" Guid="95a2cb1e-ad54-41f4-b1f0-d1e714933de0" Win64="yes">
+              <File Id="Clipbox.CloudServices.dll_1145625823" Source="..\Build\Debug\Clipbox.CloudServices.dll" />
+            </Component>
+
+            <Component Id="Component.Clipbox.Core.dll_510263521" Guid="95a2cb1e-ad54-41f4-b1f0-d1e73155e5b2" Win64="yes">
+              <File Id="Clipbox.Core.dll_510263521" Source="..\Build\Debug\Clipbox.Core.dll" />
+            </Component>
+
+            <Component Id="Component.Clipbox.exe_1054431092" Guid="95a2cb1e-ad54-41f4-b1f0-d1e79de6f0cc" Win64="yes">
+              <File Id="Clipbox.exe_1054431092" Source="..\Build\Debug\Clipbox.exe" />
+            </Component>
+
+            <Component Id="Component.Clipbox.exe.config_921290496" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7b939c67e" Win64="yes">
+              <File Id="Clipbox.exe.config_921290496" Source="..\Build\Debug\Clipbox.exe.config" />
+            </Component>
+
+            <Component Id="Component.Clipbox.ExtendedClipboard.dll_1453776137" Guid="95a2cb1e-ad54-41f4-b1f0-d1e701b5424d" Win64="yes">
+              <File Id="Clipbox.ExtendedClipboard.dll_1453776137" Source="..\Build\Debug\Clipbox.ExtendedClipboard.dll" />
+            </Component>
+
+            <Component Id="Component.Clipbox.Extensions.BuiltIn.General.Cloud.Google.dll_1351094576" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7ec827ce9" Win64="yes">
+              <File Id="Clipbox.Extensions.BuiltIn.General.Cloud.Google.dll_1351094576" Source="..\Build\Debug\Clipbox.Extensions.BuiltIn.General.Cloud.Google.dll" />
+            </Component>
+
+            <Component Id="Component.Clipbox.Extensions.BuiltIn.General.Cloud.Microsoft.dll_1177427538" Guid="95a2cb1e-ad54-41f4-b1f0-d1e768c0b6c6" Win64="yes">
+              <File Id="Clipbox.Extensions.BuiltIn.General.Cloud.Microsoft.dll_1177427538" Source="..\Build\Debug\Clipbox.Extensions.BuiltIn.General.Cloud.Microsoft.dll" />
+            </Component>
+
+            <Component Id="Component.Clipbox.Extensions.BuiltIn.General.Cloud.Microsoft.dll.config_4254095204" Guid="95a2cb1e-ad54-41f4-b1f0-d1e79d985da6" Win64="yes">
+              <File Id="Clipbox.Extensions.BuiltIn.General.Cloud.Microsoft.dll.config_4254095204" Source="..\Build\Debug\Clipbox.Extensions.BuiltIn.General.Cloud.Microsoft.dll.config" />
+            </Component>
+
+            <Component Id="Component.Clipbox.Extensions.BuiltIn.General.dll_1757239487" Guid="95a2cb1e-ad54-41f4-b1f0-d1e74a0ce0fb" Win64="yes">
+              <File Id="Clipbox.Extensions.BuiltIn.General.dll_1757239487" Source="..\Build\Debug\Clipbox.Extensions.BuiltIn.General.dll" />
+            </Component>
+
+            <Component Id="Component.Clipbox.Extensions.BuiltIn.General.dll.config_3160329846" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7d8e1e335" Win64="yes">
+              <File Id="Clipbox.Extensions.BuiltIn.General.dll.config_3160329846" Source="..\Build\Debug\Clipbox.Extensions.BuiltIn.General.dll.config" />
+            </Component>
+
+            <Component Id="Component.Clipbox.Extensions.BuiltIn.HdropFormat.dll_1867492354" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7a29702b5" Win64="yes">
+              <File Id="Clipbox.Extensions.BuiltIn.HdropFormat.dll_1867492354" Source="..\Build\Debug\Clipbox.Extensions.BuiltIn.HdropFormat.dll" />
+            </Component>
+
+            <Component Id="Component.Clipbox.Extensions.BuiltIn.ImageFormats.dll_2780435217" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7f62478f9" Win64="yes">
+              <File Id="Clipbox.Extensions.BuiltIn.ImageFormats.dll_2780435217" Source="..\Build\Debug\Clipbox.Extensions.BuiltIn.ImageFormats.dll" />
+            </Component>
+
+            <Component Id="Component.Clipbox.Extensions.BuiltIn.TextFormats.dll_3212653461" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7bc2f6e86" Win64="yes">
+              <File Id="Clipbox.Extensions.BuiltIn.TextFormats.dll_3212653461" Source="..\Build\Debug\Clipbox.Extensions.BuiltIn.TextFormats.dll" />
+            </Component>
+
+            <Component Id="Component.Clipbox.Infrastructure.CloudSupport.dll_652301559" Guid="95a2cb1e-ad54-41f4-b1f0-d1e737032276" Win64="yes">
+              <File Id="Clipbox.Infrastructure.CloudSupport.dll_652301559" Source="..\Build\Debug\Clipbox.Infrastructure.CloudSupport.dll" />
+            </Component>
+
+            <Component Id="Component.Clipbox.Infrastructure.Configuration.dll_2374661936" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7bf542c0c" Win64="yes">
+              <File Id="Clipbox.Infrastructure.Configuration.dll_2374661936" Source="..\Build\Debug\Clipbox.Infrastructure.Configuration.dll" />
+            </Component>
+
+            <Component Id="Component.Clipbox.Infrastructure.dll_852773007" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7c6b344a3" Win64="yes">
+              <File Id="Clipbox.Infrastructure.dll_852773007" Source="..\Build\Debug\Clipbox.Infrastructure.dll" />
+            </Component>
+
+            <Component Id="Component.Clipbox.Infrastructure.Encryption.dll_1211838618" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7084b0f73" Win64="yes">
+              <File Id="Clipbox.Infrastructure.Encryption.dll_1211838618" Source="..\Build\Debug\Clipbox.Infrastructure.Encryption.dll" />
+            </Component>
+
+            <Component Id="Component.Clipbox.Infrastructure.Persistence.dll_2764446150" Guid="95a2cb1e-ad54-41f4-b1f0-d1e70d4d319d" Win64="yes">
+              <File Id="Clipbox.Infrastructure.Persistence.dll_2764446150" Source="..\Build\Debug\Clipbox.Infrastructure.Persistence.dll" />
+            </Component>
+
+            <Component Id="Component.Clipbox.Infrastructure.Search.dll_2534045340" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7c0394522" Win64="yes">
+              <File Id="Clipbox.Infrastructure.Search.dll_2534045340" Source="..\Build\Debug\Clipbox.Infrastructure.Search.dll" />
+            </Component>
+
+            <Component Id="Component.Clipbox.Infrastructure.Search.dll.config_960207720" Guid="95a2cb1e-ad54-41f4-b1f0-d1e79140b05d" Win64="yes">
+              <File Id="Clipbox.Infrastructure.Search.dll.config_960207720" Source="..\Build\Debug\Clipbox.Infrastructure.Search.dll.config" />
+            </Component>
+
+            <Component Id="Component.Clipbox.Infrastructure.Search.Lucene.dll_1627730366" Guid="95a2cb1e-ad54-41f4-b1f0-d1e73b722699" Win64="yes">
+              <File Id="Clipbox.Infrastructure.Search.Lucene.dll_1627730366" Source="..\Build\Debug\Clipbox.Infrastructure.Search.Lucene.dll" />
+            </Component>
+
+            <Component Id="Component.Clipbox.Infrastructure.Tests.dll_75558219" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7fa167c8e" Win64="yes">
+              <File Id="Clipbox.Infrastructure.Tests.dll_75558219" Source="..\Build\Debug\Clipbox.Infrastructure.Tests.dll" />
+            </Component>
+
+            <Component Id="Component.Clipbox.Infrastructure.UI.ColorPicker.dll_590863787" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7e6b5650d" Win64="yes">
+              <File Id="Clipbox.Infrastructure.UI.ColorPicker.dll_590863787" Source="..\Build\Debug\Clipbox.Infrastructure.UI.ColorPicker.dll" />
+            </Component>
+
+            <Component Id="Component.Clipbox.Infrastructure.UI.CustomControls.dll_3026384809" Guid="95a2cb1e-ad54-41f4-b1f0-d1e78e6f2a6b" Win64="yes">
+              <File Id="Clipbox.Infrastructure.UI.CustomControls.dll_3026384809" Source="..\Build\Debug\Clipbox.Infrastructure.UI.CustomControls.dll" />
+            </Component>
+
+            <Component Id="Component.Clipbox.Infrastructure.UI.dll_502196439" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7e21adadb" Win64="yes">
+              <File Id="Clipbox.Infrastructure.UI.dll_502196439" Source="..\Build\Debug\Clipbox.Infrastructure.UI.dll" />
+            </Component>
+
+            <Component Id="Component.Clipbox.Infrastructure.UI.Localization.dll_759776910" Guid="95a2cb1e-ad54-41f4-b1f0-d1e791302c79" Win64="yes">
+              <File Id="Clipbox.Infrastructure.UI.Localization.dll_759776910" Source="..\Build\Debug\Clipbox.Infrastructure.UI.Localization.dll" />
+            </Component>
+
+            <Component Id="Component.Clipbox.Infrastructure.UI.Tests.dll_3987088290" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7e45b7e60" Win64="yes">
+              <File Id="Clipbox.Infrastructure.UI.Tests.dll_3987088290" Source="..\Build\Debug\Clipbox.Infrastructure.UI.Tests.dll" />
+            </Component>
+
+            <Component Id="Component.Clipbox.SearchProvider.dll_2222754467" Guid="95a2cb1e-ad54-41f4-b1f0-d1e70a72ce39" Win64="yes">
+              <File Id="Clipbox.SearchProvider.dll_2222754467" Source="..\Build\Debug\Clipbox.SearchProvider.dll" />
+            </Component>
+
+            <Component Id="Component.Clipbox.SearchProvider.dll.config_1921956474" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7cc18ccce" Win64="yes">
+              <File Id="Clipbox.SearchProvider.dll.config_1921956474" Source="..\Build\Debug\Clipbox.SearchProvider.dll.config" />
+            </Component>
+
+            <Component Id="Component.Clipbox.Win32.dll_733738051" Guid="95a2cb1e-ad54-41f4-b1f0-d1e759bbbec7" Win64="yes">
+              <File Id="Clipbox.Win32.dll_733738051" Source="..\Build\Debug\Clipbox.Win32.dll" />
+            </Component>
+
+            <Component Id="Component.ClipboxDeskband.exp_1784615943" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7b95a37a9" Win64="yes">
+              <File Id="ClipboxDeskband.exp_1784615943" Source="..\Build\Debug\ClipboxDeskband.exp" />
+            </Component>
+
+            <Component Id="Component.ClipboxDeskband.ilk_4078965747" Guid="95a2cb1e-ad54-41f4-b1f0-d1e777bbbbf5" Win64="yes">
+              <File Id="ClipboxDeskband.ilk_4078965747" Source="..\Build\Debug\ClipboxDeskband.ilk" />
+            </Component>
+
+            <Component Id="Component.ClipboxDeskband.lib_976229368" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7d45a7c06" Win64="yes">
+              <File Id="ClipboxDeskband.lib_976229368" Source="..\Build\Debug\ClipboxDeskband.lib" />
+            </Component>
+
+            <Component Id="Component.ClipboxGuard.exe.config_3768915141" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7c8a7dbad" Win64="yes">
+              <File Id="ClipboxGuard.exe.config_3768915141" Source="..\Build\Debug\ClipboxGuard.exe.config" />
+            </Component>
+
+            <Component Id="Component.ClipboxSearch.exe_3938580811" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7952536bd" Win64="yes">
+              <File Id="ClipboxSearch.exe_3938580811" Source="..\Build\Debug\ClipboxSearch.exe" />
+            </Component>
+
+            <Component Id="Component.ClipboxSearch.exe.config_3964199237" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7e750b1c2" Win64="yes">
+              <File Id="ClipboxSearch.exe.config_3964199237" Source="..\Build\Debug\ClipboxSearch.exe.config" />
+            </Component>
+
+            <Component Id="Component.ClipboxSvc.exe.config_2465481347" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7208aa042" Win64="yes">
+              <File Id="ClipboxSvc.exe.config_2465481347" Source="..\Build\Debug\ClipboxSvc.exe.config" />
+            </Component>
+
+            <Component Id="Component.ClipboxSvc.Tests.exe_3822601771" Guid="95a2cb1e-ad54-41f4-b1f0-d1e714067a17" Win64="yes">
+              <File Id="ClipboxSvc.Tests.exe_3822601771" Source="..\Build\Debug\ClipboxSvc.Tests.exe" />
+            </Component>
+
+            <Component Id="Component.ClipboxSvc.Tests.exe.config_3729415421" Guid="95a2cb1e-ad54-41f4-b1f0-d1e72365743c" Win64="yes">
+              <File Id="ClipboxSvc.Tests.exe.config_3729415421" Source="..\Build\Debug\ClipboxSvc.Tests.exe.config" />
+            </Component>
+
+            <Component Id="Component.Google.Apis.Auth.dll_2273737658" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7dc6509f0" Win64="yes">
+              <File Id="Google.Apis.Auth.dll_2273737658" Source="..\Build\Debug\Google.Apis.Auth.dll" />
+            </Component>
+
+            <Component Id="Component.Google.Apis.Auth.PlatformServices.dll_1004826226" Guid="95a2cb1e-ad54-41f4-b1f0-d1e736d8e725" Win64="yes">
+              <File Id="Google.Apis.Auth.PlatformServices.dll_1004826226" Source="..\Build\Debug\Google.Apis.Auth.PlatformServices.dll" />
+            </Component>
+
+            <Component Id="Component.Google.Apis.Auth.xml_2273803198" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7884a0de7" Win64="yes">
+              <File Id="Google.Apis.Auth.xml_2273803198" Source="..\Build\Debug\Google.Apis.Auth.xml" />
+            </Component>
+
+            <Component Id="Component.Google.Apis.Core.dll_341711149" Guid="95a2cb1e-ad54-41f4-b1f0-d1e79a9b0f03" Win64="yes">
+              <File Id="Google.Apis.Core.dll_341711149" Source="..\Build\Debug\Google.Apis.Core.dll" />
+            </Component>
+
+            <Component Id="Component.Google.Apis.Core.xml_341776705" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7487b1237" Win64="yes">
+              <File Id="Google.Apis.Core.xml_341776705" Source="..\Build\Debug\Google.Apis.Core.xml" />
+            </Component>
+
+            <Component Id="Component.Google.Apis.dll_721766124" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7b4547f20" Win64="yes">
+              <File Id="Google.Apis.dll_721766124" Source="..\Build\Debug\Google.Apis.dll" />
+            </Component>
+
+            <Component Id="Component.Google.Apis.Drive.v3.dll_39417797" Guid="95a2cb1e-ad54-41f4-b1f0-d1e70d66ba06" Win64="yes">
+              <File Id="Google.Apis.Drive.v3.dll_39417797" Source="..\Build\Debug\Google.Apis.Drive.v3.dll" />
+            </Component>
+
+            <Component Id="Component.Google.Apis.Drive.v3.xml_39483329" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7e4474064" Win64="yes">
+              <File Id="Google.Apis.Drive.v3.xml_39483329" Source="..\Build\Debug\Google.Apis.Drive.v3.xml" />
+            </Component>
+
+            <Component Id="Component.Google.Apis.PlatformServices.dll_2613179113" Guid="95a2cb1e-ad54-41f4-b1f0-d1e77f2abf1c" Win64="yes">
+              <File Id="Google.Apis.PlatformServices.dll_2613179113" Source="..\Build\Debug\Google.Apis.PlatformServices.dll" />
+            </Component>
+
+            <Component Id="Component.Google.Apis.xml_1193363179" Guid="95a2cb1e-ad54-41f4-b1f0-d1e776e605c7" Win64="yes">
+              <File Id="Google.Apis.xml_1193363179" Source="..\Build\Debug\Google.Apis.xml" />
+            </Component>
+
+            <Component Id="Component.Hardcodet.Wpf.TaskbarNotification.dll_12605698" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7dc524be2" Win64="yes">
+              <File Id="Hardcodet.Wpf.TaskbarNotification.dll_12605698" Source="..\Build\Debug\Hardcodet.Wpf.TaskbarNotification.dll" />
+            </Component>
+
+            <Component Id="Component.Hardcodet.Wpf.TaskbarNotification.xml_1579476071" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7d0847247" Win64="yes">
+              <File Id="Hardcodet.Wpf.TaskbarNotification.xml_1579476071" Source="..\Build\Debug\Hardcodet.Wpf.TaskbarNotification.xml" />
+            </Component>
+
+            <Component Id="Component.Lucene.Net.Contrib.Regex.dll_4050439407" Guid="95a2cb1e-ad54-41f4-b1f0-d1e74f814184" Win64="yes">
+              <File Id="Lucene.Net.Contrib.Regex.dll_4050439407" Source="..\Build\Debug\Lucene.Net.Contrib.Regex.dll" />
+            </Component>
+
+            <Component Id="Component.Lucene.Net.Contrib.Regex.xml_4050373867" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7b99d8824" Win64="yes">
+              <File Id="Lucene.Net.Contrib.Regex.xml_4050373867" Source="..\Build\Debug\Lucene.Net.Contrib.Regex.xml" />
+            </Component>
+
+            <Component Id="Component.Lucene.Net.dll_623750523" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7d5e5a36c" Win64="yes">
+              <File Id="Lucene.Net.dll_623750523" Source="..\Build\Debug\Lucene.Net.dll" />
+            </Component>
+
+            <Component Id="Component.Lucene.Net.xml_4193203767" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7fbfdf888" Win64="yes">
+              <File Id="Lucene.Net.xml_4193203767" Source="..\Build\Debug\Lucene.Net.xml" />
+            </Component>
+
+            <Component Id="Component.Microsoft.Bcl.AsyncInterfaces.dll_3268846831" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7429cb9d4" Win64="yes">
+              <File Id="Microsoft.Bcl.AsyncInterfaces.dll_3268846831" Source="..\Build\Debug\Microsoft.Bcl.AsyncInterfaces.dll" />
+            </Component>
+
+            <Component Id="Component.Microsoft.Bcl.AsyncInterfaces.xml_539701332" Guid="95a2cb1e-ad54-41f4-b1f0-d1e750c5a2d6" Win64="yes">
+              <File Id="Microsoft.Bcl.AsyncInterfaces.xml_539701332" Source="..\Build\Debug\Microsoft.Bcl.AsyncInterfaces.xml" />
+            </Component>
+
+            <Component Id="Component.Microsoft.Deployment.WindowsInstaller.dll_1799239748" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7c677fa27" Win64="yes">
+              <File Id="Microsoft.Deployment.WindowsInstaller.dll_1799239748" Source="..\Build\Debug\Microsoft.Deployment.WindowsInstaller.dll" />
+            </Component>
+
+            <Component Id="Component.Microsoft.Deployment.WindowsInstaller.xml_233417951" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7a1187446" Win64="yes">
+              <File Id="Microsoft.Deployment.WindowsInstaller.xml_233417951" Source="..\Build\Debug\Microsoft.Deployment.WindowsInstaller.xml" />
+            </Component>
+
+            <Component Id="Component.Microsoft.Graph.Core.dll_2973564645" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7b606af30" Win64="yes">
+              <File Id="Microsoft.Graph.Core.dll_2973564645" Source="..\Build\Debug\Microsoft.Graph.Core.dll" />
+            </Component>
+
+            <Component Id="Component.Microsoft.Graph.Core.xml_2973630161" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7adcf8617" Win64="yes">
+              <File Id="Microsoft.Graph.Core.xml_2973630161" Source="..\Build\Debug\Microsoft.Graph.Core.xml" />
+            </Component>
+
+            <Component Id="Component.Microsoft.Graph.dll_369037177" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7dc3fdad7" Win64="yes">
+              <File Id="Microsoft.Graph.dll_369037177" Source="..\Build\Debug\Microsoft.Graph.dll" />
+            </Component>
+
+            <Component Id="Component.Microsoft.Graph.xml_1426788218" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7387b1d92" Win64="yes">
+              <File Id="Microsoft.Graph.xml_1426788218" Source="..\Build\Debug\Microsoft.Graph.xml" />
+            </Component>
+
+            <Component Id="Component.Microsoft.Identity.Client.dll_2205178707" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7f9db8dd9" Win64="yes">
+              <File Id="Microsoft.Identity.Client.dll_2205178707" Source="..\Build\Debug\Microsoft.Identity.Client.dll" />
+            </Component>
+
+            <Component Id="Component.Microsoft.Identity.Client.xml_3773097656" Guid="95a2cb1e-ad54-41f4-b1f0-d1e79bd1b7d1" Win64="yes">
+              <File Id="Microsoft.Identity.Client.xml_3773097656" Source="..\Build\Debug\Microsoft.Identity.Client.xml" />
+            </Component>
+
+            <Component Id="Component.Microsoft.Win32.Primitives.dll_2673881685" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7fba3808f" Win64="yes">
+              <File Id="Microsoft.Win32.Primitives.dll_2673881685" Source="..\Build\Debug\Microsoft.Win32.Primitives.dll" />
+            </Component>
+
+            <Component Id="Component.nbsbuilder.exe_2800783335" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7e6d9f28a" Win64="yes">
+              <File Id="nbsbuilder.exe_2800783335" Source="..\Build\Debug\nbsbuilder.exe" />
+            </Component>
+
+            <Component Id="Component.netstandard.dll_392052505" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7c01059e4" Win64="yes">
+              <File Id="netstandard.dll_392052505" Source="..\Build\Debug\netstandard.dll" />
+            </Component>
+
+            <Component Id="Component.Newtonsoft.Json.dll_2800247981" Guid="95a2cb1e-ad54-41f4-b1f0-d1e740fed07a" Win64="yes">
+              <File Id="Newtonsoft.Json.dll_2800247981" Source="..\Build\Debug\Newtonsoft.Json.dll" />
+            </Component>
+
+            <Component Id="Component.Newtonsoft.Json.xml_2328650924" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7b8dba11e" Win64="yes">
+              <File Id="Newtonsoft.Json.xml_2328650924" Source="..\Build\Debug\Newtonsoft.Json.xml" />
+            </Component>
+
+            <Component Id="Component.nunit.framework.dll_491852580" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7c058cfba" Win64="yes">
+              <File Id="nunit.framework.dll_491852580" Source="..\Build\Debug\nunit.framework.dll" />
+            </Component>
+
+            <Component Id="Component.nunit.framework.xml_963449637" Guid="95a2cb1e-ad54-41f4-b1f0-d1e71b694492" Win64="yes">
+              <File Id="nunit.framework.xml_963449637" Source="..\Build\Debug\nunit.framework.xml" />
+            </Component>
+
+            <Component Id="Component.nunit_random_seed.tmp_2729409707" Guid="95a2cb1e-ad54-41f4-b1f0-d1e74f04fe5e" Win64="yes">
+              <File Id="nunit_random_seed.tmp_2729409707" Source="..\Build\Debug\nunit_random_seed.tmp" />
+            </Component>
+
+            <Component Id="Component.Setup.exe_2995059987" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7f77fa7ba" Win64="yes">
+              <File Id="Setup.exe_2995059987" Source="..\Build\Debug\Setup.exe" />
+            </Component>
+
+            <Component Id="Component.Setup.exe.config_603492329" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7b79e2f05" Win64="yes">
+              <File Id="Setup.exe.config_603492329" Source="..\Build\Debug\Setup.exe.config" />
+            </Component>
+
+            <Component Id="Component.System.AppContext.dll_1239922989" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7e065aba3" Win64="yes">
+              <File Id="System.AppContext.dll_1239922989" Source="..\Build\Debug\System.AppContext.dll" />
+            </Component>
+
+            <Component Id="Component.System.Buffers.dll_823948365" Guid="95a2cb1e-ad54-41f4-b1f0-d1e749b2c3c6" Win64="yes">
+              <File Id="System.Buffers.dll_823948365" Source="..\Build\Debug\System.Buffers.dll" />
+            </Component>
+
+            <Component Id="Component.System.Buffers.xml_1549462417" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7d1edc15c" Win64="yes">
+              <File Id="System.Buffers.xml_1549462417" Source="..\Build\Debug\System.Buffers.xml" />
+            </Component>
+
+            <Component Id="Component.System.Collections.Concurrent.dll_2186171819" Guid="95a2cb1e-ad54-41f4-b1f0-d1e70a6a9389" Win64="yes">
+              <File Id="System.Collections.Concurrent.dll_2186171819" Source="..\Build\Debug\System.Collections.Concurrent.dll" />
+            </Component>
+
+            <Component Id="Component.System.Collections.dll_237804366" Guid="95a2cb1e-ad54-41f4-b1f0-d1e79b702990" Win64="yes">
+              <File Id="System.Collections.dll_237804366" Source="..\Build\Debug\System.Collections.dll" />
+            </Component>
+
+            <Component Id="Component.System.Collections.NonGeneric.dll_244413274" Guid="95a2cb1e-ad54-41f4-b1f0-d1e75f3f62fd" Win64="yes">
+              <File Id="System.Collections.NonGeneric.dll_244413274" Source="..\Build\Debug\System.Collections.NonGeneric.dll" />
+            </Component>
+
+            <Component Id="Component.System.Collections.Specialized.dll_2130281948" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7c41d1b80" Win64="yes">
+              <File Id="System.Collections.Specialized.dll_2130281948" Source="..\Build\Debug\System.Collections.Specialized.dll" />
+            </Component>
+
+            <Component Id="Component.System.ComponentModel.dll_3038758445" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7f257533d" Win64="yes">
+              <File Id="System.ComponentModel.dll_3038758445" Source="..\Build\Debug\System.ComponentModel.dll" />
+            </Component>
+
+            <Component Id="Component.System.ComponentModel.EventBasedAsync.dll_2009295668" Guid="95a2cb1e-ad54-41f4-b1f0-d1e792d87f68" Win64="yes">
+              <File Id="System.ComponentModel.EventBasedAsync.dll_2009295668" Source="..\Build\Debug\System.ComponentModel.EventBasedAsync.dll" />
+            </Component>
+
+            <Component Id="Component.System.ComponentModel.Primitives.dll_1508796560" Guid="95a2cb1e-ad54-41f4-b1f0-d1e716785653" Win64="yes">
+              <File Id="System.ComponentModel.Primitives.dll_1508796560" Source="..\Build\Debug\System.ComponentModel.Primitives.dll" />
+            </Component>
+
+            <Component Id="Component.System.ComponentModel.TypeConverter.dll_2561801765" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7c982fbef" Win64="yes">
+              <File Id="System.ComponentModel.TypeConverter.dll_2561801765" Source="..\Build\Debug\System.ComponentModel.TypeConverter.dll" />
+            </Component>
+
+            <Component Id="Component.System.Console.dll_167516138" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7e84a493f" Win64="yes">
+              <File Id="System.Console.dll_167516138" Source="..\Build\Debug\System.Console.dll" />
+            </Component>
+
+            <Component Id="Component.System.Data.Common.dll_877256805" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7db857595" Win64="yes">
+              <File Id="System.Data.Common.dll_877256805" Source="..\Build\Debug\System.Data.Common.dll" />
+            </Component>
+
+            <Component Id="Component.System.Diagnostics.Contracts.dll_4137516403" Guid="95a2cb1e-ad54-41f4-b1f0-d1e798bd8121" Win64="yes">
+              <File Id="System.Diagnostics.Contracts.dll_4137516403" Source="..\Build\Debug\System.Diagnostics.Contracts.dll" />
+            </Component>
+
+            <Component Id="Component.System.Diagnostics.Debug.dll_840483730" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7d41e571b" Win64="yes">
+              <File Id="System.Diagnostics.Debug.dll_840483730" Source="..\Build\Debug\System.Diagnostics.Debug.dll" />
+            </Component>
+
+            <Component Id="Component.System.Diagnostics.DiagnosticSource.dll_3175087778" Guid="95a2cb1e-ad54-41f4-b1f0-d1e700fdcbea" Win64="yes">
+              <File Id="System.Diagnostics.DiagnosticSource.dll_3175087778" Source="..\Build\Debug\System.Diagnostics.DiagnosticSource.dll" />
+            </Component>
+
+            <Component Id="Component.System.Diagnostics.DiagnosticSource.xml_2117336737" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7273c3783" Win64="yes">
+              <File Id="System.Diagnostics.DiagnosticSource.xml_2117336737" Source="..\Build\Debug\System.Diagnostics.DiagnosticSource.xml" />
+            </Component>
+
+            <Component Id="Component.System.Diagnostics.FileVersionInfo.dll_2417202944" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7c0c48489" Win64="yes">
+              <File Id="System.Diagnostics.FileVersionInfo.dll_2417202944" Source="..\Build\Debug\System.Diagnostics.FileVersionInfo.dll" />
+            </Component>
+
+            <Component Id="Component.System.Diagnostics.Process.dll_4191919484" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7afb5fb5c" Win64="yes">
+              <File Id="System.Diagnostics.Process.dll_4191919484" Source="..\Build\Debug\System.Diagnostics.Process.dll" />
+            </Component>
+
+            <Component Id="Component.System.Diagnostics.StackTrace.dll_3022112287" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7c0ff4cc2" Win64="yes">
+              <File Id="System.Diagnostics.StackTrace.dll_3022112287" Source="..\Build\Debug\System.Diagnostics.StackTrace.dll" />
+            </Component>
+
+            <Component Id="Component.System.Diagnostics.TextWriterTraceListener.dll_3843378334" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7e3ab7786" Win64="yes">
+              <File Id="System.Diagnostics.TextWriterTraceListener.dll_3843378334" Source="..\Build\Debug\System.Diagnostics.TextWriterTraceListener.dll" />
+            </Component>
+
+            <Component Id="Component.System.Diagnostics.Tools.dll_3328399585" Guid="95a2cb1e-ad54-41f4-b1f0-d1e79855715d" Win64="yes">
+              <File Id="System.Diagnostics.Tools.dll_3328399585" Source="..\Build\Debug\System.Diagnostics.Tools.dll" />
+            </Component>
+
+            <Component Id="Component.System.Diagnostics.TraceSource.dll_213049162" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7778fc8ad" Win64="yes">
+              <File Id="System.Diagnostics.TraceSource.dll_213049162" Source="..\Build\Debug\System.Diagnostics.TraceSource.dll" />
+            </Component>
+
+            <Component Id="Component.System.Diagnostics.Tracing.dll_1544130890" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7ab43be42" Win64="yes">
+              <File Id="System.Diagnostics.Tracing.dll_1544130890" Source="..\Build\Debug\System.Diagnostics.Tracing.dll" />
+            </Component>
+
+            <Component Id="Component.System.Drawing.Primitives.dll_2820388584" Guid="95a2cb1e-ad54-41f4-b1f0-d1e78c841be4" Win64="yes">
+              <File Id="System.Drawing.Primitives.dll_2820388584" Source="..\Build\Debug\System.Drawing.Primitives.dll" />
+            </Component>
+
+            <Component Id="Component.System.Dynamic.Runtime.dll_1305322505" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7f42e5df8" Win64="yes">
+              <File Id="System.Dynamic.Runtime.dll_1305322505" Source="..\Build\Debug\System.Dynamic.Runtime.dll" />
+            </Component>
+
+            <Component Id="Component.System.Globalization.Calendars.dll_3337109329" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7f5fd51c9" Win64="yes">
+              <File Id="System.Globalization.Calendars.dll_3337109329" Source="..\Build\Debug\System.Globalization.Calendars.dll" />
+            </Component>
+
+            <Component Id="Component.System.Globalization.dll_1950826211" Guid="95a2cb1e-ad54-41f4-b1f0-d1e75e92e017" Win64="yes">
+              <File Id="System.Globalization.dll_1950826211" Source="..\Build\Debug\System.Globalization.dll" />
+            </Component>
+
+            <Component Id="Component.System.Globalization.Extensions.dll_272099161" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7f016b7ba" Win64="yes">
+              <File Id="System.Globalization.Extensions.dll_272099161" Source="..\Build\Debug\System.Globalization.Extensions.dll" />
+            </Component>
+
+            <Component Id="Component.System.IO.Compression.dll_2602890577" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7658d6df3" Win64="yes">
+              <File Id="System.IO.Compression.dll_2602890577" Source="..\Build\Debug\System.IO.Compression.dll" />
+            </Component>
+
+            <Component Id="Component.System.IO.Compression.ZipFile.dll_1052046581" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7a77839e0" Win64="yes">
+              <File Id="System.IO.Compression.ZipFile.dll_1052046581" Source="..\Build\Debug\System.IO.Compression.ZipFile.dll" />
+            </Component>
+
+            <Component Id="Component.System.IO.dll_1269419110" Guid="95a2cb1e-ad54-41f4-b1f0-d1e74d45de32" Win64="yes">
+              <File Id="System.IO.dll_1269419110" Source="..\Build\Debug\System.IO.dll" />
+            </Component>
+
+            <Component Id="Component.System.IO.FileSystem.dll_3504999113" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7f4439ec7" Win64="yes">
+              <File Id="System.IO.FileSystem.dll_3504999113" Source="..\Build\Debug\System.IO.FileSystem.dll" />
+            </Component>
+
+            <Component Id="Component.System.IO.FileSystem.DriveInfo.dll_2045714200" Guid="95a2cb1e-ad54-41f4-b1f0-d1e713980ea3" Win64="yes">
+              <File Id="System.IO.FileSystem.DriveInfo.dll_2045714200" Source="..\Build\Debug\System.IO.FileSystem.DriveInfo.dll" />
+            </Component>
+
+            <Component Id="Component.System.IO.FileSystem.Primitives.dll_3954603068" Guid="95a2cb1e-ad54-41f4-b1f0-d1e754190201" Win64="yes">
+              <File Id="System.IO.FileSystem.Primitives.dll_3954603068" Source="..\Build\Debug\System.IO.FileSystem.Primitives.dll" />
+            </Component>
+
+            <Component Id="Component.System.IO.FileSystem.Watcher.dll_2806615032" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7a549197d" Win64="yes">
+              <File Id="System.IO.FileSystem.Watcher.dll_2806615032" Source="..\Build\Debug\System.IO.FileSystem.Watcher.dll" />
+            </Component>
+
+            <Component Id="Component.System.IO.IsolatedStorage.dll_3062695543" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7736821ad" Win64="yes">
+              <File Id="System.IO.IsolatedStorage.dll_3062695543" Source="..\Build\Debug\System.IO.IsolatedStorage.dll" />
+            </Component>
+
+            <Component Id="Component.System.IO.MemoryMappedFiles.dll_805634981" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7b555dd11" Win64="yes">
+              <File Id="System.IO.MemoryMappedFiles.dll_805634981" Source="..\Build\Debug\System.IO.MemoryMappedFiles.dll" />
+            </Component>
+
+            <Component Id="Component.System.IO.Pipes.dll_1374783732" Guid="95a2cb1e-ad54-41f4-b1f0-d1e77c702717" Win64="yes">
+              <File Id="System.IO.Pipes.dll_1374783732" Source="..\Build\Debug\System.IO.Pipes.dll" />
+            </Component>
+
+            <Component Id="Component.System.IO.UnmanagedMemoryStream.dll_1794088502" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7f2d8810f" Win64="yes">
+              <File Id="System.IO.UnmanagedMemoryStream.dll_1794088502" Source="..\Build\Debug\System.IO.UnmanagedMemoryStream.dll" />
+            </Component>
+
+            <Component Id="Component.System.Linq.dll_3243930403" Guid="95a2cb1e-ad54-41f4-b1f0-d1e745db4bfc" Win64="yes">
+              <File Id="System.Linq.dll_3243930403" Source="..\Build\Debug\System.Linq.dll" />
+            </Component>
+
+            <Component Id="Component.System.Linq.Expressions.dll_917630098" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7741ab4d5" Win64="yes">
+              <File Id="System.Linq.Expressions.dll_917630098" Source="..\Build\Debug\System.Linq.Expressions.dll" />
+            </Component>
+
+            <Component Id="Component.System.Linq.Parallel.dll_3124794270" Guid="95a2cb1e-ad54-41f4-b1f0-d1e790315bcd" Win64="yes">
+              <File Id="System.Linq.Parallel.dll_3124794270" Source="..\Build\Debug\System.Linq.Parallel.dll" />
+            </Component>
+
+            <Component Id="Component.System.Linq.Queryable.dll_3039627962" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7543822dc" Win64="yes">
+              <File Id="System.Linq.Queryable.dll_3039627962" Source="..\Build\Debug\System.Linq.Queryable.dll" />
+            </Component>
+
+            <Component Id="Component.System.Memory.dll_1443768611" Guid="95a2cb1e-ad54-41f4-b1f0-d1e721591374" Win64="yes">
+              <File Id="System.Memory.dll_1443768611" Source="..\Build\Debug\System.Memory.dll" />
+            </Component>
+
+            <Component Id="Component.System.Memory.xml_4172389822" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7b554fa5c" Win64="yes">
+              <File Id="System.Memory.xml_4172389822" Source="..\Build\Debug\System.Memory.xml" />
+            </Component>
+
+            <Component Id="Component.System.Net.Http.dll_1793795324" Guid="95a2cb1e-ad54-41f4-b1f0-d1e71fa7be69" Win64="yes">
+              <File Id="System.Net.Http.dll_1793795324" Source="..\Build\Debug\System.Net.Http.dll" />
+            </Component>
+
+            <Component Id="Component.System.Net.NameResolution.dll_1570867139" Guid="95a2cb1e-ad54-41f4-b1f0-d1e792c806f7" Win64="yes">
+              <File Id="System.Net.NameResolution.dll_1570867139" Source="..\Build\Debug\System.Net.NameResolution.dll" />
+            </Component>
+
+            <Component Id="Component.System.Net.NetworkInformation.dll_210548803" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7149b88be" Win64="yes">
+              <File Id="System.Net.NetworkInformation.dll_210548803" Source="..\Build\Debug\System.Net.NetworkInformation.dll" />
+            </Component>
+
+            <Component Id="Component.System.Net.Ping.dll_2943457946" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7788c1a76" Win64="yes">
+              <File Id="System.Net.Ping.dll_2943457946" Source="..\Build\Debug\System.Net.Ping.dll" />
+            </Component>
+
+            <Component Id="Component.System.Net.Primitives.dll_2796685639" Guid="95a2cb1e-ad54-41f4-b1f0-d1e78f1760a4" Win64="yes">
+              <File Id="System.Net.Primitives.dll_2796685639" Source="..\Build\Debug\System.Net.Primitives.dll" />
+            </Component>
+
+            <Component Id="Component.System.Net.Requests.dll_3910370552" Guid="95a2cb1e-ad54-41f4-b1f0-d1e786090d05" Win64="yes">
+              <File Id="System.Net.Requests.dll_3910370552" Source="..\Build\Debug\System.Net.Requests.dll" />
+            </Component>
+
+            <Component Id="Component.System.Net.Security.dll_1883346220" Guid="95a2cb1e-ad54-41f4-b1f0-d1e787ce605f" Win64="yes">
+              <File Id="System.Net.Security.dll_1883346220" Source="..\Build\Debug\System.Net.Security.dll" />
+            </Component>
+
+            <Component Id="Component.System.Net.Sockets.dll_642379276" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7b8815d94" Win64="yes">
+              <File Id="System.Net.Sockets.dll_642379276" Source="..\Build\Debug\System.Net.Sockets.dll" />
+            </Component>
+
+            <Component Id="Component.System.Net.WebHeaderCollection.dll_854520776" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7b7b8db19" Win64="yes">
+              <File Id="System.Net.WebHeaderCollection.dll_854520776" Source="..\Build\Debug\System.Net.WebHeaderCollection.dll" />
+            </Component>
+
+            <Component Id="Component.System.Net.WebSockets.Client.dll_2021800921" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7750caca0" Win64="yes">
+              <File Id="System.Net.WebSockets.Client.dll_2021800921" Source="..\Build\Debug\System.Net.WebSockets.Client.dll" />
+            </Component>
+
+            <Component Id="Component.System.Net.WebSockets.dll_824483999" Guid="95a2cb1e-ad54-41f4-b1f0-d1e74982044c" Win64="yes">
+              <File Id="System.Net.WebSockets.dll_824483999" Source="..\Build\Debug\System.Net.WebSockets.dll" />
+            </Component>
+
+            <Component Id="Component.System.Numerics.Vectors.dll_1778477523" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7f75a4059" Win64="yes">
+              <File Id="System.Numerics.Vectors.dll_1778477523" Source="..\Build\Debug\System.Numerics.Vectors.dll" />
+            </Component>
+
+            <Component Id="Component.System.Numerics.Vectors.xml_1306880466" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7d0949ca4" Win64="yes">
+              <File Id="System.Numerics.Vectors.xml_1306880466" Source="..\Build\Debug\System.Numerics.Vectors.xml" />
+            </Component>
+
+            <Component Id="Component.System.ObjectModel.dll_2839997844" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7fe929359" Win64="yes">
+              <File Id="System.ObjectModel.dll_2839997844" Source="..\Build\Debug\System.ObjectModel.dll" />
+            </Component>
+
+            <Component Id="Component.System.Reflection.dll_1024203938" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7b57a6520" Win64="yes">
+              <File Id="System.Reflection.dll_1024203938" Source="..\Build\Debug\System.Reflection.dll" />
+            </Component>
+
+            <Component Id="Component.System.Reflection.Extensions.dll_443289458" Guid="95a2cb1e-ad54-41f4-b1f0-d1e794c1fec0" Win64="yes">
+              <File Id="System.Reflection.Extensions.dll_443289458" Source="..\Build\Debug\System.Reflection.Extensions.dll" />
+            </Component>
+
+            <Component Id="Component.System.Reflection.Primitives.dll_3689145788" Guid="95a2cb1e-ad54-41f4-b1f0-d1e72df187eb" Win64="yes">
+              <File Id="System.Reflection.Primitives.dll_3689145788" Source="..\Build\Debug\System.Reflection.Primitives.dll" />
+            </Component>
+
+            <Component Id="Component.System.Resources.Reader.dll_3005589480" Guid="95a2cb1e-ad54-41f4-b1f0-d1e707ed7568" Win64="yes">
+              <File Id="System.Resources.Reader.dll_3005589480" Source="..\Build\Debug\System.Resources.Reader.dll" />
+            </Component>
+
+            <Component Id="Component.System.Resources.ResourceManager.dll_88866065" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7e4dec20a" Win64="yes">
+              <File Id="System.Resources.ResourceManager.dll_88866065" Source="..\Build\Debug\System.Resources.ResourceManager.dll" />
+            </Component>
+
+            <Component Id="Component.System.Resources.Writer.dll_311922753" Guid="95a2cb1e-ad54-41f4-b1f0-d1e72f3d158b" Win64="yes">
+              <File Id="System.Resources.Writer.dll_311922753" Source="..\Build\Debug\System.Resources.Writer.dll" />
+            </Component>
+
+            <Component Id="Component.System.Runtime.CompilerServices.Unsafe.dll_1269007930" Guid="95a2cb1e-ad54-41f4-b1f0-d1e73782bfd4" Win64="yes">
+              <File Id="System.Runtime.CompilerServices.Unsafe.dll_1269007930" Source="..\Build\Debug\System.Runtime.CompilerServices.Unsafe.dll" />
+            </Component>
+
+            <Component Id="Component.System.Runtime.CompilerServices.Unsafe.xml_187263518" Guid="95a2cb1e-ad54-41f4-b1f0-d1e79146113f" Win64="yes">
+              <File Id="System.Runtime.CompilerServices.Unsafe.xml_187263518" Source="..\Build\Debug\System.Runtime.CompilerServices.Unsafe.xml" />
+            </Component>
+
+            <Component Id="Component.System.Runtime.CompilerServices.VisualC.dll_1394953854" Guid="95a2cb1e-ad54-41f4-b1f0-d1e792608640" Win64="yes">
+              <File Id="System.Runtime.CompilerServices.VisualC.dll_1394953854" Source="..\Build\Debug\System.Runtime.CompilerServices.VisualC.dll" />
+            </Component>
+
+            <Component Id="Component.System.Runtime.dll_2355302123" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7eb522194" Win64="yes">
+              <File Id="System.Runtime.dll_2355302123" Source="..\Build\Debug\System.Runtime.dll" />
+            </Component>
+
+            <Component Id="Component.System.Runtime.Extensions.dll_2283670808" Guid="95a2cb1e-ad54-41f4-b1f0-d1e71f05e2c5" Win64="yes">
+              <File Id="System.Runtime.Extensions.dll_2283670808" Source="..\Build\Debug\System.Runtime.Extensions.dll" />
+            </Component>
+
+            <Component Id="Component.System.Runtime.Handles.dll_3347659943" Guid="95a2cb1e-ad54-41f4-b1f0-d1e72670f5f2" Win64="yes">
+              <File Id="System.Runtime.Handles.dll_3347659943" Source="..\Build\Debug\System.Runtime.Handles.dll" />
+            </Component>
+
+            <Component Id="Component.System.Runtime.InteropServices.dll_4145233969" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7e02a579f" Win64="yes">
+              <File Id="System.Runtime.InteropServices.dll_4145233969" Source="..\Build\Debug\System.Runtime.InteropServices.dll" />
+            </Component>
+
+            <Component Id="Component.System.Runtime.InteropServices.RuntimeInformation.dll_104629154" Guid="95a2cb1e-ad54-41f4-b1f0-d1e799bb44ae" Win64="yes">
+              <File Id="System.Runtime.InteropServices.RuntimeInformation.dll_104629154" Source="..\Build\Debug\System.Runtime.InteropServices.RuntimeInformation.dll" />
+            </Component>
+
+            <Component Id="Component.System.Runtime.Numerics.dll_2955063169" Guid="95a2cb1e-ad54-41f4-b1f0-d1e79dba6dd9" Win64="yes">
+              <File Id="System.Runtime.Numerics.dll_2955063169" Source="..\Build\Debug\System.Runtime.Numerics.dll" />
+            </Component>
+
+            <Component Id="Component.System.Runtime.Serialization.Formatters.dll_727863919" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7911167a6" Win64="yes">
+              <File Id="System.Runtime.Serialization.Formatters.dll_727863919" Source="..\Build\Debug\System.Runtime.Serialization.Formatters.dll" />
+            </Component>
+
+            <Component Id="Component.System.Runtime.Serialization.Json.dll_1417368393" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7ea029566" Win64="yes">
+              <File Id="System.Runtime.Serialization.Json.dll_1417368393" Source="..\Build\Debug\System.Runtime.Serialization.Json.dll" />
+            </Component>
+
+            <Component Id="Component.System.Runtime.Serialization.Primitives.dll_4082257730" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7f7e467a7" Win64="yes">
+              <File Id="System.Runtime.Serialization.Primitives.dll_4082257730" Source="..\Build\Debug\System.Runtime.Serialization.Primitives.dll" />
+            </Component>
+
+            <Component Id="Component.System.Runtime.Serialization.Xml.dll_1125110966" Guid="95a2cb1e-ad54-41f4-b1f0-d1e70f0102e7" Win64="yes">
+              <File Id="System.Runtime.Serialization.Xml.dll_1125110966" Source="..\Build\Debug\System.Runtime.Serialization.Xml.dll" />
+            </Component>
+
+            <Component Id="Component.System.Security.Claims.dll_2045532363" Guid="95a2cb1e-ad54-41f4-b1f0-d1e73451cb8b" Win64="yes">
+              <File Id="System.Security.Claims.dll_2045532363" Source="..\Build\Debug\System.Security.Claims.dll" />
+            </Component>
+
+            <Component Id="Component.System.Security.Cryptography.Algorithms.dll_3032159949" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7bfaac362" Win64="yes">
+              <File Id="System.Security.Cryptography.Algorithms.dll_3032159949" Source="..\Build\Debug\System.Security.Cryptography.Algorithms.dll" />
+            </Component>
+
+            <Component Id="Component.System.Security.Cryptography.Csp.dll_2301489808" Guid="95a2cb1e-ad54-41f4-b1f0-d1e78283cd89" Win64="yes">
+              <File Id="System.Security.Cryptography.Csp.dll_2301489808" Source="..\Build\Debug\System.Security.Cryptography.Csp.dll" />
+            </Component>
+
+            <Component Id="Component.System.Security.Cryptography.Encoding.dll_2001803578" Guid="95a2cb1e-ad54-41f4-b1f0-d1e70e5b8df7" Win64="yes">
+              <File Id="System.Security.Cryptography.Encoding.dll_2001803578" Source="..\Build\Debug\System.Security.Cryptography.Encoding.dll" />
+            </Component>
+
+            <Component Id="Component.System.Security.Cryptography.Primitives.dll_506903063" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7bd343df0" Win64="yes">
+              <File Id="System.Security.Cryptography.Primitives.dll_506903063" Source="..\Build\Debug\System.Security.Cryptography.Primitives.dll" />
+            </Component>
+
+            <Component Id="Component.System.Security.Cryptography.X509Certificates.dll_3121859080" Guid="95a2cb1e-ad54-41f4-b1f0-d1e73ceb8e2f" Win64="yes">
+              <File Id="System.Security.Cryptography.X509Certificates.dll_3121859080" Source="..\Build\Debug\System.Security.Cryptography.X509Certificates.dll" />
+            </Component>
+
+            <Component Id="Component.System.Security.Principal.dll_1621139652" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7ac0527da" Win64="yes">
+              <File Id="System.Security.Principal.dll_1621139652" Source="..\Build\Debug\System.Security.Principal.dll" />
+            </Component>
+
+            <Component Id="Component.System.Security.SecureString.dll_768543457" Guid="95a2cb1e-ad54-41f4-b1f0-d1e70cdc9f8a" Win64="yes">
+              <File Id="System.Security.SecureString.dll_768543457" Source="..\Build\Debug\System.Security.SecureString.dll" />
+            </Component>
+
+            <Component Id="Component.System.Text.Encoding.dll_1555416769" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7a4ba6837" Win64="yes">
+              <File Id="System.Text.Encoding.dll_1555416769" Source="..\Build\Debug\System.Text.Encoding.dll" />
+            </Component>
+
+            <Component Id="Component.System.Text.Encoding.Extensions.dll_3670241310" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7ad3e3278" Win64="yes">
+              <File Id="System.Text.Encoding.Extensions.dll_3670241310" Source="..\Build\Debug\System.Text.Encoding.Extensions.dll" />
+            </Component>
+
+            <Component Id="Component.System.Text.Encodings.Web.dll_3662987455" Guid="95a2cb1e-ad54-41f4-b1f0-d1e721b5e56b" Win64="yes">
+              <File Id="System.Text.Encodings.Web.dll_3662987455" Source="..\Build\Debug\System.Text.Encodings.Web.dll" />
+            </Component>
+
+            <Component Id="Component.System.Text.Encodings.Web.xml_2096641370" Guid="95a2cb1e-ad54-41f4-b1f0-d1e71597b5b2" Win64="yes">
+              <File Id="System.Text.Encodings.Web.xml_2096641370" Source="..\Build\Debug\System.Text.Encodings.Web.xml" />
+            </Component>
+
+            <Component Id="Component.System.Text.Json.dll_2511745238" Guid="95a2cb1e-ad54-41f4-b1f0-d1e71a042d44" Win64="yes">
+              <File Id="System.Text.Json.dll_2511745238" Source="..\Build\Debug\System.Text.Json.dll" />
+            </Component>
+
+            <Component Id="Component.System.Text.Json.xml_2511679714" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7c9a5b3a5" Win64="yes">
+              <File Id="System.Text.Json.xml_2511679714" Source="..\Build\Debug\System.Text.Json.xml" />
+            </Component>
+
+            <Component Id="Component.System.Text.RegularExpressions.dll_3614938788" Guid="95a2cb1e-ad54-41f4-b1f0-d1e77b31304d" Win64="yes">
+              <File Id="System.Text.RegularExpressions.dll_3614938788" Source="..\Build\Debug\System.Text.RegularExpressions.dll" />
+            </Component>
+
+            <Component Id="Component.System.Threading.dll_2700410247" Guid="95a2cb1e-ad54-41f4-b1f0-d1e71a768438" Win64="yes">
+              <File Id="System.Threading.dll_2700410247" Source="..\Build\Debug\System.Threading.dll" />
+            </Component>
+
+            <Component Id="Component.System.Threading.Overlapped.dll_2867325095" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7a42b5f83" Win64="yes">
+              <File Id="System.Threading.Overlapped.dll_2867325095" Source="..\Build\Debug\System.Threading.Overlapped.dll" />
+            </Component>
+
+            <Component Id="Component.System.Threading.Tasks.dll_3974761937" Guid="95a2cb1e-ad54-41f4-b1f0-d1e75dda7ccd" Win64="yes">
+              <File Id="System.Threading.Tasks.dll_3974761937" Source="..\Build\Debug\System.Threading.Tasks.dll" />
+            </Component>
+
+            <Component Id="Component.System.Threading.Tasks.Extensions.dll_2592611227" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7826b2aaa" Win64="yes">
+              <File Id="System.Threading.Tasks.Extensions.dll_2592611227" Source="..\Build\Debug\System.Threading.Tasks.Extensions.dll" />
+            </Component>
+
+            <Component Id="Component.System.Threading.Tasks.Extensions.xml_4157908736" Guid="95a2cb1e-ad54-41f4-b1f0-d1e78c635bc0" Win64="yes">
+              <File Id="System.Threading.Tasks.Extensions.xml_4157908736" Source="..\Build\Debug\System.Threading.Tasks.Extensions.xml" />
+            </Component>
+
+            <Component Id="Component.System.Threading.Tasks.Parallel.dll_2016057162" Guid="95a2cb1e-ad54-41f4-b1f0-d1e769633296" Win64="yes">
+              <File Id="System.Threading.Tasks.Parallel.dll_2016057162" Source="..\Build\Debug\System.Threading.Tasks.Parallel.dll" />
+            </Component>
+
+            <Component Id="Component.System.Threading.Thread.dll_4008043386" Guid="95a2cb1e-ad54-41f4-b1f0-d1e759a9e71b" Win64="yes">
+              <File Id="System.Threading.Thread.dll_4008043386" Source="..\Build\Debug\System.Threading.Thread.dll" />
+            </Component>
+
+            <Component Id="Component.System.Threading.ThreadPool.dll_3403119388" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7a7b1d6f4" Win64="yes">
+              <File Id="System.Threading.ThreadPool.dll_3403119388" Source="..\Build\Debug\System.Threading.ThreadPool.dll" />
+            </Component>
+
+            <Component Id="Component.System.Threading.Timer.dll_2931723098" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7a88d4f7b" Win64="yes">
+              <File Id="System.Threading.Timer.dll_2931723098" Source="..\Build\Debug\System.Threading.Timer.dll" />
+            </Component>
+
+            <Component Id="Component.System.ValueTuple.dll_674618787" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7a9a624cb" Win64="yes">
+              <File Id="System.ValueTuple.dll_674618787" Source="..\Build\Debug\System.ValueTuple.dll" />
+            </Component>
+
+            <Component Id="Component.System.ValueTuple.xml_3403764286" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7596c39df" Win64="yes">
+              <File Id="System.ValueTuple.xml_3403764286" Source="..\Build\Debug\System.ValueTuple.xml" />
+            </Component>
+
+            <Component Id="Component.System.Windows.Interactivity.dll_349590530" Guid="95a2cb1e-ad54-41f4-b1f0-d1e702e99529" Win64="yes">
+              <File Id="System.Windows.Interactivity.dll_349590530" Source="..\Build\Debug\System.Windows.Interactivity.dll" />
+            </Component>
+
+            <Component Id="Component.System.Xml.ReaderWriter.dll_2275960602" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7aa95c272" Win64="yes">
+              <File Id="System.Xml.ReaderWriter.dll_2275960602" Source="..\Build\Debug\System.Xml.ReaderWriter.dll" />
+            </Component>
+
+            <Component Id="Component.System.Xml.XDocument.dll_215400529" Guid="95a2cb1e-ad54-41f4-b1f0-d1e780b70a60" Win64="yes">
+              <File Id="System.Xml.XDocument.dll_215400529" Source="..\Build\Debug\System.Xml.XDocument.dll" />
+            </Component>
+
+            <Component Id="Component.System.Xml.XmlDocument.dll_2558886454" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7819eeb76" Win64="yes">
+              <File Id="System.Xml.XmlDocument.dll_2558886454" Source="..\Build\Debug\System.Xml.XmlDocument.dll" />
+            </Component>
+
+            <Component Id="Component.System.Xml.XmlSerializer.dll_2046813584" Guid="95a2cb1e-ad54-41f4-b1f0-d1e735e54d54" Win64="yes">
+              <File Id="System.Xml.XmlSerializer.dll_2046813584" Source="..\Build\Debug\System.Xml.XmlSerializer.dll" />
+            </Component>
+
+            <Component Id="Component.System.Xml.XPath.dll_3447449657" Guid="95a2cb1e-ad54-41f4-b1f0-d1e743f1c517" Win64="yes">
+              <File Id="System.Xml.XPath.dll_3447449657" Source="..\Build\Debug\System.Xml.XPath.dll" />
+            </Component>
+
+            <Component Id="Component.System.Xml.XPath.XDocument.dll_3935561105" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7ad4b4126" Win64="yes">
+              <File Id="System.Xml.XPath.XDocument.dll_3935561105" Source="..\Build\Debug\System.Xml.XPath.XDocument.dll" />
+            </Component>
+
+            <Component Id="Component.WixSharp.dll_2517291052" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7d1e5bb2f" Win64="yes">
+              <File Id="WixSharp.dll_2517291052" Source="..\Build\Debug\WixSharp.dll" />
+            </Component>
+
+            <Component Id="Component.WixSharp.Msi.dll_3454574149" Guid="95a2cb1e-ad54-41f4-b1f0-d1e739b43f87" Win64="yes">
+              <File Id="WixSharp.Msi.dll_3454574149" Source="..\Build\Debug\WixSharp.Msi.dll" />
+            </Component>
+
+            <Component Id="Component.WixSharp.Msi.xml_3454639665" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7ea9b6417" Win64="yes">
+              <File Id="WixSharp.Msi.xml_3454639665" Source="..\Build\Debug\WixSharp.Msi.xml" />
+            </Component>
+
+            <Component Id="Component.WixSharp.UI.dll_2166900824" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7fb0f65e7" Win64="yes">
+              <File Id="WixSharp.UI.dll_2166900824" Source="..\Build\Debug\WixSharp.UI.dll" />
+            </Component>
+
+            <Component Id="Component.WixSharp.UI.xml_2931574871" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7d77e6ecf" Win64="yes">
+              <File Id="WixSharp.UI.xml_2931574871" Source="..\Build\Debug\WixSharp.UI.xml" />
+            </Component>
+
+            <Component Id="Component.WixSharp.xml_2517225504" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7fafb52b2" Win64="yes">
+              <File Id="WixSharp.xml_2517225504" Source="..\Build\Debug\WixSharp.xml" />
+            </Component>
+
+            <Component Id="Component.Uninstall_Clipbox" Guid="95a2cb1e-ad54-41f4-b1f0-d1e71b9fdd00" Win64="yes">
+              <Shortcut Id="INSTALLDIR.Uninstall_Clipbox" WorkingDirectory="System64Folder" Target="[System64Folder]msiexec.exe" Arguments="/x [ProductCode]" Name="Uninstall Clipbox.lnk" />
+
+              <CreateFolder />
+              <RemoveFolder Id="INSTALLDIR" On="uninstall" />
 
               <RegistryKey Root="HKCU" Key="Software\WixSharp\Used">
                 <RegistryValue Value="0" Type="string" KeyPath="yes" />
               </RegistryKey>
             </Component>
 
-            <Component Id="Component.Azure.Core.dll_279374916" Guid="95a2cb1e-ad54-41f4-b1f0-d1e76878c68f">
-              <File Id="Azure.Core.dll_279374916" Source="..\Build\Debug\Azure.Core.dll" />
-            </Component>
-
-            <Component Id="Component.Azure.Core.xml_279440464" Guid="95a2cb1e-ad54-41f4-b1f0-d1e73e007f89">
-              <File Id="Azure.Core.xml_279440464" Source="..\Build\Debug\Azure.Core.xml" />
-            </Component>
-
-            <Component Id="Component.BootstrapperCore.dll_1566934227" Guid="95a2cb1e-ad54-41f4-b1f0-d1e756d05bc5">
-              <File Id="BootstrapperCore.dll_1566934227" Source="..\Build\Debug\BootstrapperCore.dll" />
-            </Component>
-
-            <Component Id="Component.BootstrapperCore.xml_1223757199" Guid="95a2cb1e-ad54-41f4-b1f0-d1e712815783">
-              <File Id="BootstrapperCore.xml_1223757199" Source="..\Build\Debug\BootstrapperCore.xml" />
-            </Component>
-
-            <Component Id="Component.Clipbox.CloudServices.dll_3322979218" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7d05e0130">
-              <File Id="Clipbox.CloudServices.dll_3322979218" Source="..\Build\Debug\Clipbox.CloudServices.dll" />
-            </Component>
-
-            <Component Id="Component.Clipbox.CloudServices.pdb_1028039578" Guid="95a2cb1e-ad54-41f4-b1f0-d1e73bbae0d9">
-              <File Id="Clipbox.CloudServices.pdb_1028039578" Source="..\Build\Debug\Clipbox.CloudServices.pdb" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Core.dll_3624576136" Guid="95a2cb1e-ad54-41f4-b1f0-d1e78b38ae30">
-              <File Id="Clipbox.Core.dll_3624576136" Source="..\Build\Debug\Clipbox.Core.dll" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Core.pdb_3708366158" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7987e3239">
-              <File Id="Clipbox.Core.pdb_3708366158" Source="..\Build\Debug\Clipbox.Core.pdb" />
-            </Component>
-
-            <Component Id="Component.Clipbox.exe_3946753102" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7090e29e3">
-              <File Id="Clipbox.exe_3946753102" Source="..\Build\Debug\Clipbox.exe" />
-            </Component>
-
-            <Component Id="Component.Clipbox.exe.config_351205236" Guid="95a2cb1e-ad54-41f4-b1f0-d1e760b049de">
-              <File Id="Clipbox.exe.config_351205236" Source="..\Build\Debug\Clipbox.exe.config" />
-            </Component>
-
-            <Component Id="Component.Clipbox.ExtendedClipboard.dll_1116462821" Guid="95a2cb1e-ad54-41f4-b1f0-d1e72c7c8fa7">
-              <File Id="Clipbox.ExtendedClipboard.dll_1116462821" Source="..\Build\Debug\Clipbox.ExtendedClipboard.dll" />
-            </Component>
-
-            <Component Id="Component.Clipbox.ExtendedClipboard.pdb_3118063341" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7302b0048">
-              <File Id="Clipbox.ExtendedClipboard.pdb_3118063341" Source="..\Build\Debug\Clipbox.ExtendedClipboard.pdb" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Extensions.BuiltIn.General.Cloud.Google.dll_2029445750" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7849b013a">
-              <File Id="Clipbox.Extensions.BuiltIn.General.Cloud.Google.dll_2029445750" Source="..\Build\Debug\Clipbox.Extensions.BuiltIn.General.Cloud.Google.dll" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Extensions.BuiltIn.General.Cloud.Google.pdb_3704654" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7864a4cee">
-              <File Id="Clipbox.Extensions.BuiltIn.General.Cloud.Google.pdb_3704654" Source="..\Build\Debug\Clipbox.Extensions.BuiltIn.General.Cloud.Google.pdb" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Extensions.BuiltIn.General.Cloud.Microsoft.dll_507861500" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7671195c5">
-              <File Id="Clipbox.Extensions.BuiltIn.General.Cloud.Microsoft.dll_507861500" Source="..\Build\Debug\Clipbox.Extensions.BuiltIn.General.Cloud.Microsoft.dll" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Extensions.BuiltIn.General.Cloud.Microsoft.dll.config_2029306315" Guid="95a2cb1e-ad54-41f4-b1f0-d1e78668b24a">
-              <File Id="Clipbox.Extensions.BuiltIn.General.Cloud.Microsoft.dll.config_2029306315" Source="..\Build\Debug\Clipbox.Extensions.BuiltIn.General.Cloud.Microsoft.dll.config" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Extensions.BuiltIn.General.Cloud.Microsoft.pdb_1670136606" Guid="95a2cb1e-ad54-41f4-b1f0-d1e72fd289c7">
-              <File Id="Clipbox.Extensions.BuiltIn.General.Cloud.Microsoft.pdb_1670136606" Source="..\Build\Debug\Clipbox.Extensions.BuiltIn.General.Cloud.Microsoft.pdb" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Extensions.BuiltIn.General.dll_1469626002" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7e57d0e1a">
-              <File Id="Clipbox.Extensions.BuiltIn.General.dll_1469626002" Source="..\Build\Debug\Clipbox.Extensions.BuiltIn.General.dll" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Extensions.BuiltIn.General.dll.config_1895342041" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7fd1dbc65">
-              <File Id="Clipbox.Extensions.BuiltIn.General.dll.config_1895342041" Source="..\Build\Debug\Clipbox.Extensions.BuiltIn.General.dll.config" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Extensions.BuiltIn.General.pdb_4246087800" Guid="95a2cb1e-ad54-41f4-b1f0-d1e754aad287">
-              <File Id="Clipbox.Extensions.BuiltIn.General.pdb_4246087800" Source="..\Build\Debug\Clipbox.Extensions.BuiltIn.General.pdb" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Extensions.BuiltIn.HdropFormat.dll_1463917462" Guid="95a2cb1e-ad54-41f4-b1f0-d1e774fb4e1e">
-              <File Id="Clipbox.Extensions.BuiltIn.HdropFormat.dll_1463917462" Source="..\Build\Debug\Clipbox.Extensions.BuiltIn.HdropFormat.dll" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Extensions.BuiltIn.HdropFormat.pdb_1014103044" Guid="95a2cb1e-ad54-41f4-b1f0-d1e74794905d">
-              <File Id="Clipbox.Extensions.BuiltIn.HdropFormat.pdb_1014103044" Source="..\Build\Debug\Clipbox.Extensions.BuiltIn.HdropFormat.pdb" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Extensions.BuiltIn.ImageFormats.dll_1918303009" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7b6dc345d">
-              <File Id="Clipbox.Extensions.BuiltIn.ImageFormats.dll_1918303009" Source="..\Build\Debug\Clipbox.Extensions.BuiltIn.ImageFormats.dll" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Extensions.BuiltIn.ImageFormats.pdb_2710394441" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7c405db89">
-              <File Id="Clipbox.Extensions.BuiltIn.ImageFormats.pdb_2710394441" Source="..\Build\Debug\Clipbox.Extensions.BuiltIn.ImageFormats.pdb" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Extensions.BuiltIn.TextFormats.dll_4164225452" Guid="95a2cb1e-ad54-41f4-b1f0-d1e73d665a93">
-              <File Id="Clipbox.Extensions.BuiltIn.TextFormats.dll_4164225452" Source="..\Build\Debug\Clipbox.Extensions.BuiltIn.TextFormats.dll" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Extensions.BuiltIn.TextFormats.pdb_3001950306" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7543640a8">
-              <File Id="Clipbox.Extensions.BuiltIn.TextFormats.pdb_3001950306" Source="..\Build\Debug\Clipbox.Extensions.BuiltIn.TextFormats.pdb" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Infrastructure.CloudSupport.dll_379183216" Guid="95a2cb1e-ad54-41f4-b1f0-d1e76b707062">
-              <File Id="Clipbox.Infrastructure.CloudSupport.dll_379183216" Source="..\Build\Debug\Clipbox.Infrastructure.CloudSupport.dll" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Infrastructure.CloudSupport.pdb_3882059080" Guid="95a2cb1e-ad54-41f4-b1f0-d1e703ff919c">
-              <File Id="Clipbox.Infrastructure.CloudSupport.pdb_3882059080" Source="..\Build\Debug\Clipbox.Infrastructure.CloudSupport.pdb" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Infrastructure.Configuration.dll_2001702081" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7526036a4">
-              <File Id="Clipbox.Infrastructure.Configuration.dll_2001702081" Source="..\Build\Debug\Clipbox.Infrastructure.Configuration.dll" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Infrastructure.Configuration.pdb_2085492079" Guid="95a2cb1e-ad54-41f4-b1f0-d1e77d046676">
-              <File Id="Clipbox.Infrastructure.Configuration.pdb_2085492079" Source="..\Build\Debug\Clipbox.Infrastructure.Configuration.pdb" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Infrastructure.dll_596741585" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7c3ec7b61">
-              <File Id="Clipbox.Infrastructure.dll_596741585" Source="..\Build\Debug\Clipbox.Infrastructure.dll" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Infrastructure.Encryption.dll_3369530357" Guid="95a2cb1e-ad54-41f4-b1f0-d1e741eb33e7">
-              <File Id="Clipbox.Infrastructure.Encryption.dll_3369530357" Source="..\Build\Debug\Clipbox.Infrastructure.Encryption.dll" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Infrastructure.Encryption.pdb_1368454141" Guid="95a2cb1e-ad54-41f4-b1f0-d1e73ebf085e">
-              <File Id="Clipbox.Infrastructure.Encryption.pdb_1368454141" Source="..\Build\Debug\Clipbox.Infrastructure.Encryption.pdb" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Infrastructure.pdb_4084615519" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7dc444082">
-              <File Id="Clipbox.Infrastructure.pdb_4084615519" Source="..\Build\Debug\Clipbox.Infrastructure.pdb" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Infrastructure.Persistence.dll_608346977" Guid="95a2cb1e-ad54-41f4-b1f0-d1e746261a52">
-              <File Id="Clipbox.Infrastructure.Persistence.dll_608346977" Source="..\Build\Debug\Clipbox.Infrastructure.Persistence.dll" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Infrastructure.Persistence.pdb_1415440339" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7eea98c03">
-              <File Id="Clipbox.Infrastructure.Persistence.pdb_1415440339" Source="..\Build\Debug\Clipbox.Infrastructure.Persistence.pdb" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Infrastructure.Search.dll_3465413091" Guid="95a2cb1e-ad54-41f4-b1f0-d1e785551bd5">
-              <File Id="Clipbox.Infrastructure.Search.dll_3465413091" Source="..\Build\Debug\Clipbox.Infrastructure.Search.dll" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Infrastructure.Search.dll.config_705473695" Guid="95a2cb1e-ad54-41f4-b1f0-d1e771323160">
-              <File Id="Clipbox.Infrastructure.Search.dll.config_705473695" Source="..\Build\Debug\Clipbox.Infrastructure.Search.dll.config" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Infrastructure.Search.Lucene.dll_3675567923" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7cfb7f2d1">
-              <File Id="Clipbox.Infrastructure.Search.Lucene.dll_3675567923" Source="..\Build\Debug\Clipbox.Infrastructure.Search.Lucene.dll" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Infrastructure.Search.Lucene.pdb_889312073" Guid="95a2cb1e-ad54-41f4-b1f0-d1e794c60f06">
-              <File Id="Clipbox.Infrastructure.Search.Lucene.pdb_889312073" Source="..\Build\Debug\Clipbox.Infrastructure.Search.Lucene.pdb" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Infrastructure.Search.pdb_2993160667" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7824c2346">
-              <File Id="Clipbox.Infrastructure.Search.pdb_2993160667" Source="..\Build\Debug\Clipbox.Infrastructure.Search.pdb" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Infrastructure.Tests.dll_230277424" Guid="95a2cb1e-ad54-41f4-b1f0-d1e72374e033">
-              <File Id="Clipbox.Infrastructure.Tests.dll_230277424" Source="..\Build\Debug\Clipbox.Infrastructure.Tests.dll" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Infrastructure.Tests.pdb_502717762" Guid="95a2cb1e-ad54-41f4-b1f0-d1e785bb9514">
-              <File Id="Clipbox.Infrastructure.Tests.pdb_502717762" Source="..\Build\Debug\Clipbox.Infrastructure.Tests.pdb" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Infrastructure.UI.ColorPicker.dll_284475375" Guid="95a2cb1e-ad54-41f4-b1f0-d1e79d33427b">
-              <File Id="Clipbox.Infrastructure.UI.ColorPicker.dll_284475375" Source="..\Build\Debug\Clipbox.Infrastructure.UI.ColorPicker.dll" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Infrastructure.UI.ColorPicker.pdb_756465655" Guid="95a2cb1e-ad54-41f4-b1f0-d1e70f95b1ba">
-              <File Id="Clipbox.Infrastructure.UI.ColorPicker.pdb_756465655" Source="..\Build\Debug\Clipbox.Infrastructure.UI.ColorPicker.pdb" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Infrastructure.UI.CustomControls.dll_1720203144" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7e1b8fa14">
-              <File Id="Clipbox.Infrastructure.UI.CustomControls.dll_1720203144" Source="..\Build\Debug\Clipbox.Infrastructure.UI.CustomControls.dll" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Infrastructure.UI.CustomControls.pdb_1992643486" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7f6d66a5d">
-              <File Id="Clipbox.Infrastructure.UI.CustomControls.pdb_1992643486" Source="..\Build\Debug\Clipbox.Infrastructure.UI.CustomControls.pdb" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Infrastructure.UI.dll_213963574" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7c66b2486">
-              <File Id="Clipbox.Infrastructure.UI.dll_213963574" Source="..\Build\Debug\Clipbox.Infrastructure.UI.dll" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Infrastructure.UI.Localization.dll_81542856" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7cb046c2f">
-              <File Id="Clipbox.Infrastructure.UI.Localization.dll_81542856" Source="..\Build\Debug\Clipbox.Infrastructure.UI.Localization.dll" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Infrastructure.UI.Localization.pdb_888636178" Guid="95a2cb1e-ad54-41f4-b1f0-d1e731dba568">
-              <File Id="Clipbox.Infrastructure.UI.Localization.pdb_888636178" Source="..\Build\Debug\Clipbox.Infrastructure.UI.Localization.pdb" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Infrastructure.UI.pdb_4037727022" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7b0f8c7de">
-              <File Id="Clipbox.Infrastructure.UI.pdb_4037727022" Source="..\Build\Debug\Clipbox.Infrastructure.UI.pdb" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Infrastructure.UI.Tests.dll_483073744" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7f11776d5">
-              <File Id="Clipbox.Infrastructure.UI.Tests.dll_483073744" Source="..\Build\Debug\Clipbox.Infrastructure.UI.Tests.dll" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Infrastructure.UI.Tests.pdb_2039314936" Guid="95a2cb1e-ad54-41f4-b1f0-d1e79e59b9ed">
-              <File Id="Clipbox.Infrastructure.UI.Tests.pdb_2039314936" Source="..\Build\Debug\Clipbox.Infrastructure.UI.Tests.pdb" />
-            </Component>
-
-            <Component Id="Component.Clipbox.instr.pdb_4154746429" Guid="95a2cb1e-ad54-41f4-b1f0-d1e762af1dcd">
-              <File Id="Clipbox.instr.pdb_4154746429" Source="..\Build\Debug\Clipbox.instr.pdb" />
-            </Component>
-
-            <Component Id="Component.Clipbox.pdb_2510154586" Guid="95a2cb1e-ad54-41f4-b1f0-d1e710efd8a4">
-              <File Id="Clipbox.pdb_2510154586" Source="..\Build\Debug\Clipbox.pdb" />
-            </Component>
-
-            <Component Id="Component.Clipbox.SearchProvider.dll_1542078865" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7af744d1c">
-              <File Id="Clipbox.SearchProvider.dll_1542078865" Source="..\Build\Debug\Clipbox.SearchProvider.dll" />
-            </Component>
-
-            <Component Id="Component.Clipbox.SearchProvider.dll.config_1201122265" Guid="95a2cb1e-ad54-41f4-b1f0-d1e737f5dbdd">
-              <File Id="Clipbox.SearchProvider.dll.config_1201122265" Source="..\Build\Debug\Clipbox.SearchProvider.dll.config" />
-            </Component>
-
-            <Component Id="Component.Clipbox.SearchProvider.pdb_2348123619" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7478ca5e3">
-              <File Id="Clipbox.SearchProvider.pdb_2348123619" Source="..\Build\Debug\Clipbox.SearchProvider.pdb" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Win32.dll_1037454990" Guid="95a2cb1e-ad54-41f4-b1f0-d1e74249e629">
-              <File Id="Clipbox.Win32.dll_1037454990" Source="..\Build\Debug\Clipbox.Win32.dll" />
-            </Component>
-
-            <Component Id="Component.Clipbox.Win32.pdb_3330821782" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7ec17499b">
-              <File Id="Clipbox.Win32.pdb_3330821782" Source="..\Build\Debug\Clipbox.Win32.pdb" />
-            </Component>
-
-            <Component Id="Component.ClipboxGuard.exe.config_2512418286" Guid="95a2cb1e-ad54-41f4-b1f0-d1e74852caef">
-              <File Id="ClipboxGuard.exe.config_2512418286" Source="..\Build\Debug\ClipboxGuard.exe.config" />
-            </Component>
-
-            <Component Id="Component.ClipboxGuard.pdb_3161055701" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7de9ffecd">
-              <File Id="ClipboxGuard.pdb_3161055701" Source="..\Build\Debug\ClipboxGuard.pdb" />
-            </Component>
-
-            <Component Id="Component.ClipboxSearch.exe_2123728956" Guid="95a2cb1e-ad54-41f4-b1f0-d1e712775ea9">
-              <File Id="ClipboxSearch.exe_2123728956" Source="..\Build\Debug\ClipboxSearch.exe" />
-            </Component>
-
-            <Component Id="Component.ClipboxSearch.exe.config_1608055541" Guid="95a2cb1e-ad54-41f4-b1f0-d1e772d75c86">
-              <File Id="ClipboxSearch.exe.config_1608055541" Source="..\Build\Debug\ClipboxSearch.exe.config" />
-            </Component>
-
-            <Component Id="Component.ClipboxSearch.pdb_3990587472" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7ccff9bd0">
-              <File Id="ClipboxSearch.pdb_3990587472" Source="..\Build\Debug\ClipboxSearch.pdb" />
-            </Component>
-
-            <Component Id="Component.ClipboxSvc.exe.config_2498361767" Guid="95a2cb1e-ad54-41f4-b1f0-d1e70e09b7d8">
-              <File Id="ClipboxSvc.exe.config_2498361767" Source="..\Build\Debug\ClipboxSvc.exe.config" />
-            </Component>
-
-            <Component Id="Component.ClipboxSvc.pdb_1465054226" Guid="95a2cb1e-ad54-41f4-b1f0-d1e773ac84b5">
-              <File Id="ClipboxSvc.pdb_1465054226" Source="..\Build\Debug\ClipboxSvc.pdb" />
-            </Component>
-
-            <Component Id="Component.ClipboxSvc.Tests.exe_3600101937" Guid="95a2cb1e-ad54-41f4-b1f0-d1e75b907e37">
-              <File Id="ClipboxSvc.Tests.exe_3600101937" Source="..\Build\Debug\ClipboxSvc.Tests.exe" />
-            </Component>
-
-            <Component Id="Component.ClipboxSvc.Tests.exe.config_3501352657" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7571bd931">
-              <File Id="ClipboxSvc.Tests.exe.config_3501352657" Source="..\Build\Debug\ClipboxSvc.Tests.exe.config" />
-            </Component>
-
-            <Component Id="Component.ClipboxSvc.Tests.pdb_2495296723" Guid="95a2cb1e-ad54-41f4-b1f0-d1e705da3eb3">
-              <File Id="ClipboxSvc.Tests.pdb_2495296723" Source="..\Build\Debug\ClipboxSvc.Tests.pdb" />
-            </Component>
-
-            <Component Id="Component.Google.Apis.Auth.dll_1781248213" Guid="95a2cb1e-ad54-41f4-b1f0-d1e743650b47">
-              <File Id="Google.Apis.Auth.dll_1781248213" Source="..\Build\Debug\Google.Apis.Auth.dll" />
-            </Component>
-
-            <Component Id="Component.Google.Apis.Auth.pdb_272536747" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7af4b1c87">
-              <File Id="Google.Apis.Auth.pdb_272536747" Source="..\Build\Debug\Google.Apis.Auth.pdb" />
-            </Component>
-
-            <Component Id="Component.Google.Apis.Auth.PlatformServices.dll_1871995779" Guid="95a2cb1e-ad54-41f4-b1f0-d1e73e521347">
-              <File Id="Google.Apis.Auth.PlatformServices.dll_1871995779" Source="..\Build\Debug\Google.Apis.Auth.PlatformServices.dll" />
-            </Component>
-
-            <Component Id="Component.Google.Apis.Auth.xml_1055734161" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7205826f9">
-              <File Id="Google.Apis.Auth.xml_1055734161" Source="..\Build\Debug\Google.Apis.Auth.xml" />
-            </Component>
-
-            <Component Id="Component.Google.Apis.Core.dll_3878553906" Guid="95a2cb1e-ad54-41f4-b1f0-d1e773ee15f1">
-              <File Id="Google.Apis.Core.dll_3878553906" Source="..\Build\Debug\Google.Apis.Core.dll" />
-            </Component>
-
-            <Component Id="Component.Google.Apis.Core.pdb_4150994268" Guid="95a2cb1e-ad54-41f4-b1f0-d1e757f94d6b">
-              <File Id="Google.Apis.Core.pdb_4150994268" Source="..\Build\Debug\Google.Apis.Core.pdb" />
-            </Component>
-
-            <Component Id="Component.Google.Apis.Core.xml_639224358" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7f3f4bc82">
-              <File Id="Google.Apis.Core.xml_639224358" Source="..\Build\Debug\Google.Apis.Core.xml" />
-            </Component>
-
-            <Component Id="Component.Google.Apis.dll_4283196286" Guid="95a2cb1e-ad54-41f4-b1f0-d1e704ec9408">
-              <File Id="Google.Apis.dll_4283196286" Source="..\Build\Debug\Google.Apis.dll" />
-            </Component>
-
-            <Component Id="Component.Google.Apis.Drive.v3.dll_1291965972" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7058af596">
-              <File Id="Google.Apis.Drive.v3.dll_1291965972" Source="..\Build\Debug\Google.Apis.Drive.v3.dll" />
-            </Component>
-
-            <Component Id="Component.Google.Apis.Drive.v3.pdb_2800677410" Guid="95a2cb1e-ad54-41f4-b1f0-d1e71018e18c">
-              <File Id="Google.Apis.Drive.v3.pdb_2800677410" Source="..\Build\Debug\Google.Apis.Drive.v3.pdb" />
-            </Component>
-
-            <Component Id="Component.Google.Apis.Drive.v3.xml_2347603720" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7585294a8">
-              <File Id="Google.Apis.Drive.v3.xml_2347603720" Source="..\Build\Debug\Google.Apis.Drive.v3.xml" />
-            </Component>
-
-            <Component Id="Component.Google.Apis.pdb_2780741286" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7e79d2f39">
-              <File Id="Google.Apis.pdb_2780741286" Source="..\Build\Debug\Google.Apis.pdb" />
-            </Component>
-
-            <Component Id="Component.Google.Apis.PlatformServices.dll_2900542282" Guid="95a2cb1e-ad54-41f4-b1f0-d1e736a60f21">
-              <File Id="Google.Apis.PlatformServices.dll_2900542282" Source="..\Build\Debug\Google.Apis.PlatformServices.dll" />
-            </Component>
-
-            <Component Id="Component.Google.Apis.xml_2717374489" Guid="95a2cb1e-ad54-41f4-b1f0-d1e71c23dbdc">
-              <File Id="Google.Apis.xml_2717374489" Source="..\Build\Debug\Google.Apis.xml" />
-            </Component>
-
-            <Component Id="Component.Hardcodet.Wpf.TaskbarNotification.dll_955008357" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7bc48f76a">
-              <File Id="Hardcodet.Wpf.TaskbarNotification.dll_955008357" Source="..\Build\Debug\Hardcodet.Wpf.TaskbarNotification.dll" />
-            </Component>
-
-            <Component Id="Component.Hardcodet.Wpf.TaskbarNotification.pdb_3248899437" Guid="95a2cb1e-ad54-41f4-b1f0-d1e753bc5829">
-              <File Id="Hardcodet.Wpf.TaskbarNotification.pdb_3248899437" Source="..\Build\Debug\Hardcodet.Wpf.TaskbarNotification.pdb" />
-            </Component>
-
-            <Component Id="Component.Hardcodet.Wpf.TaskbarNotification.xml_1719682406" Guid="95a2cb1e-ad54-41f4-b1f0-d1e73bfee6f8">
-              <File Id="Hardcodet.Wpf.TaskbarNotification.xml_1719682406" Source="..\Build\Debug\Hardcodet.Wpf.TaskbarNotification.xml" />
-            </Component>
-
-            <Component Id="Component.Lucene.Net.Contrib.Regex.dll_1250100425" Guid="95a2cb1e-ad54-41f4-b1f0-d1e77adc38a5">
-              <File Id="Lucene.Net.Contrib.Regex.dll_1250100425" Source="..\Build\Debug\Lucene.Net.Contrib.Regex.dll" />
-            </Component>
-
-            <Component Id="Component.Lucene.Net.Contrib.Regex.pdb_1522540767" Guid="95a2cb1e-ad54-41f4-b1f0-d1e73bdca42b">
-              <File Id="Lucene.Net.Contrib.Regex.pdb_1522540767" Source="..\Build\Debug\Lucene.Net.Contrib.Regex.pdb" />
-            </Component>
-
-            <Component Id="Component.Lucene.Net.Contrib.Regex.xml_1975614477" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7a7dee3b6">
-              <File Id="Lucene.Net.Contrib.Regex.xml_1975614477" Source="..\Build\Debug\Lucene.Net.Contrib.Regex.xml" />
-            </Component>
-
-            <Component Id="Component.Lucene.Net.dll_3937052549" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7d46d20d1">
-              <File Id="Lucene.Net.dll_3937052549" Source="..\Build\Debug\Lucene.Net.dll" />
-            </Component>
-
-            <Component Id="Component.Lucene.Net.pdb_2774777435" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7fab83326">
-              <File Id="Lucene.Net.pdb_2774777435" Source="..\Build\Debug\Lucene.Net.pdb" />
-            </Component>
-
-            <Component Id="Component.Lucene.Net.xml_3936987033" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7ceae2bc2">
-              <File Id="Lucene.Net.xml_3936987033" Source="..\Build\Debug\Lucene.Net.xml" />
-            </Component>
-
-            <Component Id="Component.Microsoft.Bcl.AsyncInterfaces.dll_3017653227" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7a75c8491">
-              <File Id="Microsoft.Bcl.AsyncInterfaces.dll_3017653227" Source="..\Build\Debug\Microsoft.Bcl.AsyncInterfaces.dll" />
-            </Component>
-
-            <Component Id="Component.Microsoft.Bcl.AsyncInterfaces.xml_3489250284" Guid="95a2cb1e-ad54-41f4-b1f0-d1e775f0d936">
-              <File Id="Microsoft.Bcl.AsyncInterfaces.xml_3489250284" Source="..\Build\Debug\Microsoft.Bcl.AsyncInterfaces.xml" />
-            </Component>
-
-            <Component Id="Component.Microsoft.Deployment.WindowsInstaller.dll_2302410649" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7f94aaa48">
-              <File Id="Microsoft.Deployment.WindowsInstaller.dll_2302410649" Source="..\Build\Debug\Microsoft.Deployment.WindowsInstaller.dll" />
-            </Component>
-
-            <Component Id="Component.Microsoft.Deployment.WindowsInstaller.xml_3067084698" Guid="95a2cb1e-ad54-41f4-b1f0-d1e72a99c11c">
-              <File Id="Microsoft.Deployment.WindowsInstaller.xml_3067084698" Source="..\Build\Debug\Microsoft.Deployment.WindowsInstaller.xml" />
-            </Component>
-
-            <Component Id="Component.Microsoft.Graph.Core.dll_1370450774" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7750cf614">
-              <File Id="Microsoft.Graph.Core.dll_1370450774" Source="..\Build\Debug\Microsoft.Graph.Core.dll" />
-            </Component>
-
-            <Component Id="Component.Microsoft.Graph.Core.xml_1739734466" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7a4b0b0df">
-              <File Id="Microsoft.Graph.Core.xml_1739734466" Source="..\Build\Debug\Microsoft.Graph.Core.xml" />
-            </Component>
-
-            <Component Id="Component.Microsoft.Graph.dll_3939169436" Guid="95a2cb1e-ad54-41f4-b1f0-d1e71699273b">
-              <File Id="Microsoft.Graph.dll_3939169436" Source="..\Build\Debug\Microsoft.Graph.dll" />
-            </Component>
-
-            <Component Id="Component.Microsoft.Graph.xml_1208451073" Guid="95a2cb1e-ad54-41f4-b1f0-d1e753c1a62a">
-              <File Id="Microsoft.Graph.xml_1208451073" Source="..\Build\Debug\Microsoft.Graph.xml" />
-            </Component>
-
-            <Component Id="Component.Microsoft.Identity.Client.dll_2197863522" Guid="95a2cb1e-ad54-41f4-b1f0-d1e725a0f74e">
-              <File Id="Microsoft.Identity.Client.dll_2197863522" Source="..\Build\Debug\Microsoft.Identity.Client.dll" />
-            </Component>
-
-            <Component Id="Component.Microsoft.Identity.Client.xml_1433189475" Guid="95a2cb1e-ad54-41f4-b1f0-d1e77d4913bc">
-              <File Id="Microsoft.Identity.Client.xml_1433189475" Source="..\Build\Debug\Microsoft.Identity.Client.xml" />
-            </Component>
-
-            <Component Id="Component.Microsoft.Win32.Primitives.dll_3333690435" Guid="95a2cb1e-ad54-41f4-b1f0-d1e711309a77">
-              <File Id="Microsoft.Win32.Primitives.dll_3333690435" Source="..\Build\Debug\Microsoft.Win32.Primitives.dll" />
-            </Component>
-
-            <Component Id="Component.nbsbuilder.exe_3921458507" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7201cb6e2">
-              <File Id="nbsbuilder.exe_3921458507" Source="..\Build\Debug\nbsbuilder.exe" />
-            </Component>
-
-            <Component Id="Component.netstandard.dll_2652293533" Guid="95a2cb1e-ad54-41f4-b1f0-d1e75ddf365f">
-              <File Id="netstandard.dll_2652293533" Source="..\Build\Debug\netstandard.dll" />
-            </Component>
-
-            <Component Id="Component.Newtonsoft.Json.dll_1900671045" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7054d8a43">
-              <File Id="Newtonsoft.Json.dll_1900671045" Source="..\Build\Debug\Newtonsoft.Json.dll" />
-            </Component>
-
-            <Component Id="Component.Newtonsoft.Json.xml_3466492842" Guid="95a2cb1e-ad54-41f4-b1f0-d1e74df46721">
-              <File Id="Newtonsoft.Json.xml_3466492842" Source="..\Build\Debug\Newtonsoft.Json.xml" />
-            </Component>
-
-            <Component Id="Component.nunit.framework.dll_1224848831" Guid="95a2cb1e-ad54-41f4-b1f0-d1e79e616e9d">
-              <File Id="nunit.framework.dll_1224848831" Source="..\Build\Debug\nunit.framework.dll" />
-            </Component>
-
-            <Component Id="Component.nunit.framework.pdb_485495015" Guid="95a2cb1e-ad54-41f4-b1f0-d1e761234200">
-              <File Id="nunit.framework.pdb_485495015" Source="..\Build\Debug\nunit.framework.pdb" />
-            </Component>
-
-            <Component Id="Component.nunit.framework.xml_2790670628" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7ba9b54e2">
-              <File Id="nunit.framework.xml_2790670628" Source="..\Build\Debug\nunit.framework.xml" />
-            </Component>
-
-            <Component Id="Component.nunit_random_seed.tmp_269103215" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7fe1b66f7">
-              <File Id="nunit_random_seed.tmp_269103215" Source="..\Build\Debug\nunit_random_seed.tmp" />
-            </Component>
-
-            <Component Id="Component.Setup.exe_2026296744" Guid="95a2cb1e-ad54-41f4-b1f0-d1e77c82ec1a">
-              <File Id="Setup.exe_2026296744" Source="..\Build\Debug\Setup.exe" />
-            </Component>
-
-            <Component Id="Component.Setup.exe.config_2675712206" Guid="95a2cb1e-ad54-41f4-b1f0-d1e77f01eee9">
-              <File Id="Setup.exe.config_2675712206" Source="..\Build\Debug\Setup.exe.config" />
-            </Component>
-
-            <Component Id="Component.Setup.pdb_1981601164" Guid="95a2cb1e-ad54-41f4-b1f0-d1e71178fd9e">
-              <File Id="Setup.pdb_1981601164" Source="..\Build\Debug\Setup.pdb" />
-            </Component>
-
-            <Component Id="Component.System.AppContext.dll_1823886648" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7e9496f6b">
-              <File Id="System.AppContext.dll_1823886648" Source="..\Build\Debug\System.AppContext.dll" />
-            </Component>
-
-            <Component Id="Component.System.Buffers.dll_27867" Guid="95a2cb1e-ad54-41f4-b1f0-d1e77f02078e">
-              <File Id="System.Buffers.dll_27867" Source="..\Build\Debug\System.Buffers.dll" />
-            </Component>
-
-            <Component Id="Component.System.Buffers.xml_4294929639" Guid="95a2cb1e-ad54-41f4-b1f0-d1e783ffb0d9">
-              <File Id="System.Buffers.xml_4294929639" Source="..\Build\Debug\System.Buffers.xml" />
-            </Component>
-
-            <Component Id="Component.System.Collections.Concurrent.dll_362876694" Guid="95a2cb1e-ad54-41f4-b1f0-d1e773390efa">
-              <File Id="System.Collections.Concurrent.dll_362876694" Source="..\Build\Debug\System.Collections.Concurrent.dll" />
-            </Component>
-
-            <Component Id="Component.System.Collections.dll_539009382" Guid="95a2cb1e-ad54-41f4-b1f0-d1e77f8b2d3b">
-              <File Id="System.Collections.dll_539009382" Source="..\Build\Debug\System.Collections.dll" />
-            </Component>
-
-            <Component Id="Component.System.Collections.NonGeneric.dll_2649980006" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7d4454c1f">
-              <File Id="System.Collections.NonGeneric.dll_2649980006" Source="..\Build\Debug\System.Collections.NonGeneric.dll" />
-            </Component>
-
-            <Component Id="Component.System.Collections.Specialized.dll_418694299" Guid="95a2cb1e-ad54-41f4-b1f0-d1e75e9cb95c">
-              <File Id="System.Collections.Specialized.dll_418694299" Source="..\Build\Debug\System.Collections.Specialized.dll" />
-            </Component>
-
-            <Component Id="Component.System.ComponentModel.dll_1031559613" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7b9f7d6e3">
-              <File Id="System.ComponentModel.dll_1031559613" Source="..\Build\Debug\System.ComponentModel.dll" />
-            </Component>
-
-            <Component Id="Component.System.ComponentModel.EventBasedAsync.dll_2280359252" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7b0feb6b2">
-              <File Id="System.ComponentModel.EventBasedAsync.dll_2280359252" Source="..\Build\Debug\System.ComponentModel.EventBasedAsync.dll" />
-            </Component>
-
-            <Component Id="Component.System.ComponentModel.Primitives.dll_2026736588" Guid="95a2cb1e-ad54-41f4-b1f0-d1e700b35a44">
-              <File Id="System.ComponentModel.Primitives.dll_2026736588" Source="..\Build\Debug\System.ComponentModel.Primitives.dll" />
-            </Component>
-
-            <Component Id="Component.System.ComponentModel.TypeConverter.dll_308386108" Guid="95a2cb1e-ad54-41f4-b1f0-d1e72f1ded02">
-              <File Id="System.ComponentModel.TypeConverter.dll_308386108" Source="..\Build\Debug\System.ComponentModel.TypeConverter.dll" />
-            </Component>
-
-            <Component Id="Component.System.Console.dll_4113714670" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7a01f4518">
-              <File Id="System.Console.dll_4113714670" Source="..\Build\Debug\System.Console.dll" />
-            </Component>
-
-            <Component Id="Component.System.Data.Common.dll_467006720" Guid="95a2cb1e-ad54-41f4-b1f0-d1e770f45614">
-              <File Id="System.Data.Common.dll_467006720" Source="..\Build\Debug\System.Data.Common.dll" />
-            </Component>
-
-            <Component Id="Component.System.Diagnostics.Contracts.dll_2670341612" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7d32f7d2f">
-              <File Id="System.Diagnostics.Contracts.dll_2670341612" Source="..\Build\Debug\System.Diagnostics.Contracts.dll" />
-            </Component>
-
-            <Component Id="Component.System.Diagnostics.Debug.dll_3930439701" Guid="95a2cb1e-ad54-41f4-b1f0-d1e738771cdb">
-              <File Id="System.Diagnostics.Debug.dll_3930439701" Source="..\Build\Debug\System.Diagnostics.Debug.dll" />
-            </Component>
-
-            <Component Id="Component.System.Diagnostics.DiagnosticSource.dll_561120649" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7a5c6c34f">
-              <File Id="System.Diagnostics.DiagnosticSource.dll_561120649" Source="..\Build\Debug\System.Diagnostics.DiagnosticSource.dll" />
-            </Component>
-
-            <Component Id="Component.System.Diagnostics.DiagnosticSource.xml_2125893870" Guid="95a2cb1e-ad54-41f4-b1f0-d1e78928dc5a">
-              <File Id="System.Diagnostics.DiagnosticSource.xml_2125893870" Source="..\Build\Debug\System.Diagnostics.DiagnosticSource.xml" />
-            </Component>
-
-            <Component Id="Component.System.Diagnostics.FileVersionInfo.dll_2610217768" Guid="95a2cb1e-ad54-41f4-b1f0-d1e756b735cd">
-              <File Id="System.Diagnostics.FileVersionInfo.dll_2610217768" Source="..\Build\Debug\System.Diagnostics.FileVersionInfo.dll" />
-            </Component>
-
-            <Component Id="Component.System.Diagnostics.Process.dll_954834439" Guid="95a2cb1e-ad54-41f4-b1f0-d1e777694d76">
-              <File Id="System.Diagnostics.Process.dll_954834439" Source="..\Build\Debug\System.Diagnostics.Process.dll" />
-            </Component>
-
-            <Component Id="Component.System.Diagnostics.StackTrace.dll_445283630" Guid="95a2cb1e-ad54-41f4-b1f0-d1e793c83369">
-              <File Id="System.Diagnostics.StackTrace.dll_445283630" Source="..\Build\Debug\System.Diagnostics.StackTrace.dll" />
-            </Component>
-
-            <Component Id="Component.System.Diagnostics.TextWriterTraceListener.dll_3396427858" Guid="95a2cb1e-ad54-41f4-b1f0-d1e780bf7599">
-              <File Id="System.Diagnostics.TextWriterTraceListener.dll_3396427858" Source="..\Build\Debug\System.Diagnostics.TextWriterTraceListener.dll" />
-            </Component>
-
-            <Component Id="Component.System.Diagnostics.Tools.dll_3921109530" Guid="95a2cb1e-ad54-41f4-b1f0-d1e727c8267e">
-              <File Id="System.Diagnostics.Tools.dll_3921109530" Source="..\Build\Debug\System.Diagnostics.Tools.dll" />
-            </Component>
-
-            <Component Id="Component.System.Diagnostics.TraceSource.dll_479033998" Guid="95a2cb1e-ad54-41f4-b1f0-d1e72d436a77">
-              <File Id="System.Diagnostics.TraceSource.dll_479033998" Source="..\Build\Debug\System.Diagnostics.TraceSource.dll" />
-            </Component>
-
-            <Component Id="Component.System.Diagnostics.Tracing.dll_1293154057" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7b443f2af">
-              <File Id="System.Diagnostics.Tracing.dll_1293154057" Source="..\Build\Debug\System.Diagnostics.Tracing.dll" />
-            </Component>
-
-            <Component Id="Component.System.Drawing.Primitives.dll_1389980064" Guid="95a2cb1e-ad54-41f4-b1f0-d1e753d852b7">
-              <File Id="System.Drawing.Primitives.dll_1389980064" Source="..\Build\Debug\System.Drawing.Primitives.dll" />
-            </Component>
-
-            <Component Id="Component.System.Dynamic.Runtime.dll_802357356" Guid="95a2cb1e-ad54-41f4-b1f0-d1e747a8187a">
-              <File Id="System.Dynamic.Runtime.dll_802357356" Source="..\Build\Debug\System.Dynamic.Runtime.dll" />
-            </Component>
-
-            <Component Id="Component.System.Globalization.Calendars.dll_2997350603" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7905976fa">
-              <File Id="System.Globalization.Calendars.dll_2997350603" Source="..\Build\Debug\System.Globalization.Calendars.dll" />
-            </Component>
-
-            <Component Id="Component.System.Globalization.dll_3659927666" Guid="95a2cb1e-ad54-41f4-b1f0-d1e74d08046e">
-              <File Id="System.Globalization.dll_3659927666" Source="..\Build\Debug\System.Globalization.dll" />
-            </Component>
-
-            <Component Id="Component.System.Globalization.Extensions.dll_3993719497" Guid="95a2cb1e-ad54-41f4-b1f0-d1e76c73fcc8">
-              <File Id="System.Globalization.Extensions.dll_3993719497" Source="..\Build\Debug\System.Globalization.Extensions.dll" />
-            </Component>
-
-            <Component Id="Component.System.IO.Compression.dll_767474777" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7f8d51afd">
-              <File Id="System.IO.Compression.dll_767474777" Source="..\Build\Debug\System.IO.Compression.dll" />
-            </Component>
-
-            <Component Id="Component.System.IO.Compression.ZipFile.dll_3292693159" Guid="95a2cb1e-ad54-41f4-b1f0-d1e74af45b64">
-              <File Id="System.IO.Compression.ZipFile.dll_3292693159" Source="..\Build\Debug\System.IO.Compression.ZipFile.dll" />
-            </Component>
-
-            <Component Id="Component.System.IO.dll_3118806403" Guid="95a2cb1e-ad54-41f4-b1f0-d1e756b3b4c4">
-              <File Id="System.IO.dll_3118806403" Source="..\Build\Debug\System.IO.dll" />
-            </Component>
-
-            <Component Id="Component.System.IO.FileSystem.dll_351721141" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7afff2716">
-              <File Id="System.IO.FileSystem.dll_351721141" Source="..\Build\Debug\System.IO.FileSystem.dll" />
-            </Component>
-
-            <Component Id="Component.System.IO.FileSystem.DriveInfo.dll_1238310828" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7182aa372">
-              <File Id="System.IO.FileSystem.DriveInfo.dll_1238310828" Source="..\Build\Debug\System.IO.FileSystem.DriveInfo.dll" />
-            </Component>
-
-            <Component Id="Component.System.IO.FileSystem.Primitives.dll_3038048411" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7ca2c13e3">
-              <File Id="System.IO.FileSystem.Primitives.dll_3038048411" Source="..\Build\Debug\System.IO.FileSystem.Primitives.dll" />
-            </Component>
-
-            <Component Id="Component.System.IO.FileSystem.Watcher.dll_572284936" Guid="95a2cb1e-ad54-41f4-b1f0-d1e752e8ab09">
-              <File Id="System.IO.FileSystem.Watcher.dll_572284936" Source="..\Build\Debug\System.IO.FileSystem.Watcher.dll" />
-            </Component>
-
-            <Component Id="Component.System.IO.IsolatedStorage.dll_1810540645" Guid="95a2cb1e-ad54-41f4-b1f0-d1e76ddb28f7">
-              <File Id="System.IO.IsolatedStorage.dll_1810540645" Source="..\Build\Debug\System.IO.IsolatedStorage.dll" />
-            </Component>
-
-            <Component Id="Component.System.IO.MemoryMappedFiles.dll_833741630" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7d2a5a7ec">
-              <File Id="System.IO.MemoryMappedFiles.dll_833741630" Source="..\Build\Debug\System.IO.MemoryMappedFiles.dll" />
-            </Component>
-
-            <Component Id="Component.System.IO.Pipes.dll_1516558928" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7b58ef143">
-              <File Id="System.IO.Pipes.dll_1516558928" Source="..\Build\Debug\System.IO.Pipes.dll" />
-            </Component>
-
-            <Component Id="Component.System.IO.UnmanagedMemoryStream.dll_3905802431" Guid="95a2cb1e-ad54-41f4-b1f0-d1e77e855215">
-              <File Id="System.IO.UnmanagedMemoryStream.dll_3905802431" Source="..\Build\Debug\System.IO.UnmanagedMemoryStream.dll" />
-            </Component>
-
-            <Component Id="Component.System.Linq.dll_3928805365" Guid="95a2cb1e-ad54-41f4-b1f0-d1e747ae9128">
-              <File Id="System.Linq.dll_3928805365" Source="..\Build\Debug\System.Linq.dll" />
-            </Component>
-
-            <Component Id="Component.System.Linq.Expressions.dll_806311948" Guid="95a2cb1e-ad54-41f4-b1f0-d1e74f777398">
-              <File Id="System.Linq.Expressions.dll_806311948" Source="..\Build\Debug\System.Linq.Expressions.dll" />
-            </Component>
-
-            <Component Id="Component.System.Linq.Parallel.dll_2003910348" Guid="95a2cb1e-ad54-41f4-b1f0-d1e78ccabcec">
-              <File Id="System.Linq.Parallel.dll_2003910348" Source="..\Build\Debug\System.Linq.Parallel.dll" />
-            </Component>
-
-            <Component Id="Component.System.Linq.Queryable.dll_1834977374" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7b0f41cac">
-              <File Id="System.Linq.Queryable.dll_1834977374" Source="..\Build\Debug\System.Linq.Queryable.dll" />
-            </Component>
-
-            <Component Id="Component.System.Memory.dll_1502531184" Guid="95a2cb1e-ad54-41f4-b1f0-d1e79c9919a2">
-              <File Id="System.Memory.dll_1502531184" Source="..\Build\Debug\System.Memory.dll" />
-            </Component>
-
-            <Component Id="Component.System.Memory.xml_3503476335" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7949d224b">
-              <File Id="System.Memory.xml_3503476335" Source="..\Build\Debug\System.Memory.xml" />
-            </Component>
-
-            <Component Id="Component.System.Net.Http.dll_1661688654" Guid="95a2cb1e-ad54-41f4-b1f0-d1e77a5e958d">
-              <File Id="System.Net.Http.dll_1661688654" Source="..\Build\Debug\System.Net.Http.dll" />
-            </Component>
-
-            <Component Id="Component.System.Net.NameResolution.dll_4096106803" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7387c8d64">
-              <File Id="System.Net.NameResolution.dll_4096106803" Source="..\Build\Debug\System.Net.NameResolution.dll" />
-            </Component>
-
-            <Component Id="Component.System.Net.NetworkInformation.dll_3246366803" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7aaa05d27">
-              <File Id="System.Net.NetworkInformation.dll_3246366803" Source="..\Build\Debug\System.Net.NetworkInformation.dll" />
-            </Component>
-
-            <Component Id="Component.System.Net.Ping.dll_3334282444" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7953ba2cf">
-              <File Id="System.Net.Ping.dll_3334282444" Source="..\Build\Debug\System.Net.Ping.dll" />
-            </Component>
-
-            <Component Id="Component.System.Net.Primitives.dll_916349963" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7fb0838b4">
-              <File Id="System.Net.Primitives.dll_916349963" Source="..\Build\Debug\System.Net.Primitives.dll" />
-            </Component>
-
-            <Component Id="Component.System.Net.Requests.dll_4143650596" Guid="95a2cb1e-ad54-41f4-b1f0-d1e742d3ce3a">
-              <File Id="System.Net.Requests.dll_4143650596" Source="..\Build\Debug\System.Net.Requests.dll" />
-            </Component>
-
-            <Component Id="Component.System.Net.Security.dll_934827182" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7e7220f5f">
-              <File Id="System.Net.Security.dll_934827182" Source="..\Build\Debug\System.Net.Security.dll" />
-            </Component>
-
-            <Component Id="Component.System.Net.Sockets.dll_4143411646" Guid="95a2cb1e-ad54-41f4-b1f0-d1e792e1afb6">
-              <File Id="System.Net.Sockets.dll_4143411646" Source="..\Build\Debug\System.Net.Sockets.dll" />
-            </Component>
-
-            <Component Id="Component.System.Net.WebHeaderCollection.dll_2157543162" Guid="95a2cb1e-ad54-41f4-b1f0-d1e71e90f92d">
-              <File Id="System.Net.WebHeaderCollection.dll_2157543162" Source="..\Build\Debug\System.Net.WebHeaderCollection.dll" />
-            </Component>
-
-            <Component Id="Component.System.Net.WebSockets.Client.dll_1845482075" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7b1e49bf5">
-              <File Id="System.Net.WebSockets.Client.dll_1845482075" Source="..\Build\Debug\System.Net.WebSockets.Client.dll" />
-            </Component>
-
-            <Component Id="Component.System.Net.WebSockets.dll_277574089" Guid="95a2cb1e-ad54-41f4-b1f0-d1e752dffb3f">
-              <File Id="System.Net.WebSockets.dll_277574089" Source="..\Build\Debug\System.Net.WebSockets.dll" />
-            </Component>
-
-            <Component Id="Component.System.Numerics.Vectors.dll_2779214466" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7879858e7">
-              <File Id="System.Numerics.Vectors.dll_2779214466" Source="..\Build\Debug\System.Numerics.Vectors.dll" />
-            </Component>
-
-            <Component Id="Component.System.Numerics.Vectors.xml_51117543" Guid="95a2cb1e-ad54-41f4-b1f0-d1e748eb3d49">
-              <File Id="System.Numerics.Vectors.xml_51117543" Source="..\Build\Debug\System.Numerics.Vectors.xml" />
-            </Component>
-
-            <Component Id="Component.System.ObjectModel.dll_2169802046" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7a8309db7">
-              <File Id="System.ObjectModel.dll_2169802046" Source="..\Build\Debug\System.ObjectModel.dll" />
-            </Component>
-
-            <Component Id="Component.System.Reflection.dll_58949138" Guid="95a2cb1e-ad54-41f4-b1f0-d1e757b47f83">
-              <File Id="System.Reflection.dll_58949138" Source="..\Build\Debug\System.Reflection.dll" />
-            </Component>
-
-            <Component Id="Component.System.Reflection.Extensions.dll_3762013288" Guid="95a2cb1e-ad54-41f4-b1f0-d1e788c1a049">
-              <File Id="System.Reflection.Extensions.dll_3762013288" Source="..\Build\Debug\System.Reflection.Extensions.dll" />
-            </Component>
-
-            <Component Id="Component.System.Reflection.Primitives.dll_1409552038" Guid="95a2cb1e-ad54-41f4-b1f0-d1e73f100427">
-              <File Id="System.Reflection.Primitives.dll_1409552038" Source="..\Build\Debug\System.Reflection.Primitives.dll" />
-            </Component>
-
-            <Component Id="Component.System.Resources.Reader.dll_2892290324" Guid="95a2cb1e-ad54-41f4-b1f0-d1e76c13cfd0">
-              <File Id="System.Resources.Reader.dll_2892290324" Source="..\Build\Debug\System.Resources.Reader.dll" />
-            </Component>
-
-            <Component Id="Component.System.Resources.ResourceManager.dll_1228235790" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7992f3645">
-              <File Id="System.Resources.ResourceManager.dll_1228235790" Source="..\Build\Debug\System.Resources.ResourceManager.dll" />
-            </Component>
-
-            <Component Id="Component.System.Resources.Writer.dll_3501392053" Guid="95a2cb1e-ad54-41f4-b1f0-d1e791ee8285">
-              <File Id="System.Resources.Writer.dll_3501392053" Source="..\Build\Debug\System.Resources.Writer.dll" />
-            </Component>
-
-            <Component Id="Component.System.Runtime.CompilerServices.Unsafe.dll_1775079528" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7e3660d30">
-              <File Id="System.Runtime.CompilerServices.Unsafe.dll_1775079528" Source="..\Build\Debug\System.Runtime.CompilerServices.Unsafe.dll" />
-            </Component>
-
-            <Component Id="Component.System.Runtime.CompilerServices.Unsafe.xml_1775014004" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7850559fc">
-              <File Id="System.Runtime.CompilerServices.Unsafe.xml_1775014004" Source="..\Build\Debug\System.Runtime.CompilerServices.Unsafe.xml" />
-            </Component>
-
-            <Component Id="Component.System.Runtime.CompilerServices.VisualC.dll_859513700" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7de87a6ef">
-              <File Id="System.Runtime.CompilerServices.VisualC.dll_859513700" Source="..\Build\Debug\System.Runtime.CompilerServices.VisualC.dll" />
-            </Component>
-
-            <Component Id="Component.System.Runtime.dll_3898772665" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7e15a345e">
-              <File Id="System.Runtime.dll_3898772665" Source="..\Build\Debug\System.Runtime.dll" />
-            </Component>
-
-            <Component Id="Component.System.Runtime.Extensions.dll_3222395502" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7bafc4108">
-              <File Id="System.Runtime.Extensions.dll_3222395502" Source="..\Build\Debug\System.Runtime.Extensions.dll" />
-            </Component>
-
-            <Component Id="Component.System.Runtime.Handles.dll_209922753" Guid="95a2cb1e-ad54-41f4-b1f0-d1e73dc89c76">
-              <File Id="System.Runtime.Handles.dll_209922753" Source="..\Build\Debug\System.Runtime.Handles.dll" />
-            </Component>
-
-            <Component Id="Component.System.Runtime.InteropServices.dll_362084161" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7eb126d2a">
-              <File Id="System.Runtime.InteropServices.dll_362084161" Source="..\Build\Debug\System.Runtime.InteropServices.dll" />
-            </Component>
-
-            <Component Id="Component.System.Runtime.InteropServices.RuntimeInformation.dll_3680630847" Guid="95a2cb1e-ad54-41f4-b1f0-d1e77450c5ca">
-              <File Id="System.Runtime.InteropServices.RuntimeInformation.dll_3680630847" Source="..\Build\Debug\System.Runtime.InteropServices.RuntimeInformation.dll" />
-            </Component>
-
-            <Component Id="Component.System.Runtime.Numerics.dll_1506232664" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7f2d7ed86">
-              <File Id="System.Runtime.Numerics.dll_1506232664" Source="..\Build\Debug\System.Runtime.Numerics.dll" />
-            </Component>
-
-            <Component Id="Component.System.Runtime.Serialization.Formatters.dll_165410396" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7bc30859c">
-              <File Id="System.Runtime.Serialization.Formatters.dll_165410396" Source="..\Build\Debug\System.Runtime.Serialization.Formatters.dll" />
-            </Component>
-
-            <Component Id="Component.System.Runtime.Serialization.Json.dll_273020912" Guid="95a2cb1e-ad54-41f4-b1f0-d1e78cdb0c6e">
-              <File Id="System.Runtime.Serialization.Json.dll_273020912" Source="..\Build\Debug\System.Runtime.Serialization.Json.dll" />
-            </Component>
-
-            <Component Id="Component.System.Runtime.Serialization.Primitives.dll_447013016" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7bfeb8c8b">
-              <File Id="System.Runtime.Serialization.Primitives.dll_447013016" Source="..\Build\Debug\System.Runtime.Serialization.Primitives.dll" />
-            </Component>
-
-            <Component Id="Component.System.Runtime.Serialization.Xml.dll_487499091" Guid="95a2cb1e-ad54-41f4-b1f0-d1e75d51f573">
-              <File Id="System.Runtime.Serialization.Xml.dll_487499091" Source="..\Build\Debug\System.Runtime.Serialization.Xml.dll" />
-            </Component>
-
-            <Component Id="Component.System.Security.Claims.dll_3112270516" Guid="95a2cb1e-ad54-41f4-b1f0-d1e75a60876a">
-              <File Id="System.Security.Claims.dll_3112270516" Source="..\Build\Debug\System.Security.Claims.dll" />
-            </Component>
-
-            <Component Id="Component.System.Security.Cryptography.Algorithms.dll_2605947186" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7f9d0ecf4">
-              <File Id="System.Security.Cryptography.Algorithms.dll_2605947186" Source="..\Build\Debug\System.Security.Cryptography.Algorithms.dll" />
-            </Component>
-
-            <Component Id="Component.System.Security.Cryptography.Csp.dll_1989728466" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7c7d0b04b">
-              <File Id="System.Security.Cryptography.Csp.dll_1989728466" Source="..\Build\Debug\System.Security.Cryptography.Csp.dll" />
-            </Component>
-
-            <Component Id="Component.System.Security.Cryptography.Encoding.dll_1822026083" Guid="95a2cb1e-ad54-41f4-b1f0-d1e76029ec1a">
-              <File Id="System.Security.Cryptography.Encoding.dll_1822026083" Source="..\Build\Debug\System.Security.Cryptography.Encoding.dll" />
-            </Component>
-
-            <Component Id="Component.System.Security.Cryptography.Primitives.dll_1184820649" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7d7203c39">
-              <File Id="System.Security.Cryptography.Primitives.dll_1184820649" Source="..\Build\Debug\System.Security.Cryptography.Primitives.dll" />
-            </Component>
-
-            <Component Id="Component.System.Security.Cryptography.X509Certificates.dll_3312830099" Guid="95a2cb1e-ad54-41f4-b1f0-d1e79a3d79e6">
-              <File Id="System.Security.Cryptography.X509Certificates.dll_3312830099" Source="..\Build\Debug\System.Security.Cryptography.X509Certificates.dll" />
-            </Component>
-
-            <Component Id="Component.System.Security.Principal.dll_687739500" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7ceb2a048">
-              <File Id="System.Security.Principal.dll_687739500" Source="..\Build\Debug\System.Security.Principal.dll" />
-            </Component>
-
-            <Component Id="Component.System.Security.SecureString.dll_3170242445" Guid="95a2cb1e-ad54-41f4-b1f0-d1e73ee3f516">
-              <File Id="System.Security.SecureString.dll_3170242445" Source="..\Build\Debug\System.Security.SecureString.dll" />
-            </Component>
-
-            <Component Id="Component.System.Text.Encoding.dll_2697985844" Guid="95a2cb1e-ad54-41f4-b1f0-d1e78ae8dbcd">
-              <File Id="System.Text.Encoding.dll_2697985844" Source="..\Build\Debug\System.Text.Encoding.dll" />
-            </Component>
-
-            <Component Id="Component.System.Text.Encoding.Extensions.dll_1635623618" Guid="95a2cb1e-ad54-41f4-b1f0-d1e72adc631c">
-              <File Id="System.Text.Encoding.Extensions.dll_1635623618" Source="..\Build\Debug\System.Text.Encoding.Extensions.dll" />
-            </Component>
-
-            <Component Id="Component.System.Text.Encodings.Web.dll_720711790" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7259914ed">
-              <File Id="System.Text.Encodings.Web.dll_720711790" Source="..\Build\Debug\System.Text.Encodings.Web.dll" />
-            </Component>
-
-            <Component Id="Component.System.Text.Encodings.Web.xml_1778462831" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7a6b2f6f8">
-              <File Id="System.Text.Encodings.Web.xml_1778462831" Source="..\Build\Debug\System.Text.Encodings.Web.xml" />
-            </Component>
-
-            <Component Id="Component.System.Text.Json.dll_1948557587" Guid="95a2cb1e-ad54-41f4-b1f0-d1e74f2b9572">
-              <File Id="System.Text.Json.dll_1948557587" Source="..\Build\Debug\System.Text.Json.dll" />
-            </Component>
-
-            <Component Id="Component.System.Text.Json.xml_1961610919" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7e06fc55c">
-              <File Id="System.Text.Json.xml_1961610919" Source="..\Build\Debug\System.Text.Json.xml" />
-            </Component>
-
-            <Component Id="Component.System.Text.RegularExpressions.dll_2465012799" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7680de625">
-              <File Id="System.Text.RegularExpressions.dll_2465012799" Source="..\Build\Debug\System.Text.RegularExpressions.dll" />
-            </Component>
-
-            <Component Id="Component.System.Threading.dll_2406737785" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7a3d17f18">
-              <File Id="System.Threading.dll_2406737785" Source="..\Build\Debug\System.Threading.dll" />
-            </Component>
-
-            <Component Id="Component.System.Threading.Overlapped.dll_2079365925" Guid="95a2cb1e-ad54-41f4-b1f0-d1e74030a302">
-              <File Id="System.Threading.Overlapped.dll_2079365925" Source="..\Build\Debug\System.Threading.Overlapped.dll" />
-            </Component>
-
-            <Component Id="Component.System.Threading.Tasks.dll_1934924703" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7475d2f57">
-              <File Id="System.Threading.Tasks.dll_1934924703" Source="..\Build\Debug\System.Threading.Tasks.dll" />
-            </Component>
-
-            <Component Id="Component.System.Threading.Tasks.Extensions.dll_2112213961" Guid="95a2cb1e-ad54-41f4-b1f0-d1e78879001c">
-              <File Id="System.Threading.Tasks.Extensions.dll_2112213961" Source="..\Build\Debug\System.Threading.Tasks.Extensions.dll" />
-            </Component>
-
-            <Component Id="Component.System.Threading.Tasks.Extensions.xml_111268808" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7c26c8fcf">
-              <File Id="System.Threading.Tasks.Extensions.xml_111268808" Source="..\Build\Debug\System.Threading.Tasks.Extensions.xml" />
-            </Component>
-
-            <Component Id="Component.System.Threading.Tasks.Parallel.dll_3201247983" Guid="95a2cb1e-ad54-41f4-b1f0-d1e76dbe8b94">
-              <File Id="System.Threading.Tasks.Parallel.dll_3201247983" Source="..\Build\Debug\System.Threading.Tasks.Parallel.dll" />
-            </Component>
-
-            <Component Id="Component.System.Threading.Thread.dll_3016382848" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7a00605d9">
-              <File Id="System.Threading.Thread.dll_3016382848" Source="..\Build\Debug\System.Threading.Thread.dll" />
-            </Component>
-
-            <Component Id="Component.System.Threading.ThreadPool.dll_4087169874" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7a4cb3676">
-              <File Id="System.Threading.ThreadPool.dll_4087169874" Source="..\Build\Debug\System.Threading.ThreadPool.dll" />
-            </Component>
-
-            <Component Id="Component.System.Threading.Timer.dll_99318536" Guid="95a2cb1e-ad54-41f4-b1f0-d1e72b7a95ee">
-              <File Id="System.Threading.Timer.dll_99318536" Source="..\Build\Debug\System.Threading.Timer.dll" />
-            </Component>
-
-            <Component Id="Component.System.ValueTuple.dll_3163559350" Guid="95a2cb1e-ad54-41f4-b1f0-d1e75bf016de">
-              <File Id="System.ValueTuple.dll_3163559350" Source="..\Build\Debug\System.ValueTuple.dll" />
-            </Component>
-
-            <Component Id="Component.System.ValueTuple.xml_2398885303" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7e3af6c3d">
-              <File Id="System.ValueTuple.xml_2398885303" Source="..\Build\Debug\System.ValueTuple.xml" />
-            </Component>
-
-            <Component Id="Component.System.Windows.Interactivity.dll_879505535" Guid="95a2cb1e-ad54-41f4-b1f0-d1e710b69687">
-              <File Id="System.Windows.Interactivity.dll_879505535" Source="..\Build\Debug\System.Windows.Interactivity.dll" />
-            </Component>
-
-            <Component Id="Component.System.Xml.ReaderWriter.dll_3808793759" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7c348784e">
-              <File Id="System.Xml.ReaderWriter.dll_3808793759" Source="..\Build\Debug\System.Xml.ReaderWriter.dll" />
-            </Component>
-
-            <Component Id="Component.System.Xml.XDocument.dll_4031305266" Guid="95a2cb1e-ad54-41f4-b1f0-d1e72f745df7">
-              <File Id="System.Xml.XDocument.dll_4031305266" Source="..\Build\Debug\System.Xml.XDocument.dll" />
-            </Component>
-
-            <Component Id="Component.System.Xml.XmlDocument.dll_1129661641" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7f0fca07a">
-              <File Id="System.Xml.XmlDocument.dll_1129661641" Source="..\Build\Debug\System.Xml.XmlDocument.dll" />
-            </Component>
-
-            <Component Id="Component.System.Xml.XmlSerializer.dll_1999968830" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7f9ede036">
-              <File Id="System.Xml.XmlSerializer.dll_1999968830" Source="..\Build\Debug\System.Xml.XmlSerializer.dll" />
-            </Component>
-
-            <Component Id="Component.System.Xml.XPath.dll_224826998" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7b9d250d1">
-              <File Id="System.Xml.XPath.dll_224826998" Source="..\Build\Debug\System.Xml.XPath.dll" />
-            </Component>
-
-            <Component Id="Component.System.Xml.XPath.XDocument.dll_1841246465" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7193602c7">
-              <File Id="System.Xml.XPath.XDocument.dll_1841246465" Source="..\Build\Debug\System.Xml.XPath.XDocument.dll" />
-            </Component>
-
-            <Component Id="Component.WixSharp.dll_3009559781" Guid="95a2cb1e-ad54-41f4-b1f0-d1e71aa96582">
-              <File Id="WixSharp.dll_3009559781" Source="..\Build\Debug\WixSharp.dll" />
-            </Component>
-
-            <Component Id="Component.WixSharp.Msi.dll_3631877011" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7cef9c1bf">
-              <File Id="WixSharp.Msi.dll_3631877011" Source="..\Build\Debug\WixSharp.Msi.dll" />
-            </Component>
-
-            <Component Id="Component.WixSharp.Msi.xml_36317103" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7b87994cf">
-              <File Id="WixSharp.Msi.xml_36317103" Source="..\Build\Debug\WixSharp.Msi.xml" />
-            </Component>
-
-            <Component Id="Component.WixSharp.UI.dll_1116535735" Guid="95a2cb1e-ad54-41f4-b1f0-d1e75d18e759">
-              <File Id="WixSharp.UI.dll_1116535735" Source="..\Build\Debug\WixSharp.UI.dll" />
-            </Component>
-
-            <Component Id="Component.WixSharp.UI.xml_3844108370" Guid="95a2cb1e-ad54-41f4-b1f0-d1e78e86cc59">
-              <File Id="WixSharp.UI.xml_3844108370" Source="..\Build\Debug\WixSharp.UI.xml" />
-            </Component>
-
-            <Component Id="Component.WixSharp.xml_2666382753" Guid="95a2cb1e-ad54-41f4-b1f0-d1e78006fbeb">
-              <File Id="WixSharp.xml_2666382753" Source="..\Build\Debug\WixSharp.xml" />
-            </Component>
-
             <Directory Id="bg_BG" Name="bg-BG">
 
-              <Component Id="Component.Clipbox.Extensions.BuiltIn.General.Cloud.Google.resources.dll_1614528002" Guid="95a2cb1e-ad54-41f4-b1f0-d1e71f7eb546">
-                <File Id="Clipbox.Extensions.BuiltIn.General.Cloud.Google.resources.dll_1614528002" Source="..\Build\Debug\bg-BG\Clipbox.Extensions.BuiltIn.General.Cloud.Google.resources.dll" />
+              <Component Id="Component.Clipbox.Extensions.BuiltIn.General.Cloud.Google.resources.dll_3552653002" Guid="95a2cb1e-ad54-41f4-b1f0-d1e732849066" Win64="yes">
+                <File Id="Clipbox.Extensions.BuiltIn.General.Cloud.Google.resources.dll_3552653002" Source="..\Build\Debug\bg-BG\Clipbox.Extensions.BuiltIn.General.Cloud.Google.resources.dll" />
               </Component>
 
-              <Component Id="Component.Clipbox.Extensions.BuiltIn.General.Cloud.Microsoft.resources.dll_2929408265" Guid="95a2cb1e-ad54-41f4-b1f0-d1e762c90807">
-                <File Id="Clipbox.Extensions.BuiltIn.General.Cloud.Microsoft.resources.dll_2929408265" Source="..\Build\Debug\bg-BG\Clipbox.Extensions.BuiltIn.General.Cloud.Microsoft.resources.dll" />
+              <Component Id="Component.Clipbox.Extensions.BuiltIn.General.Cloud.Microsoft.resources.dll_1417032707" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7dede9ab2" Win64="yes">
+                <File Id="Clipbox.Extensions.BuiltIn.General.Cloud.Microsoft.resources.dll_1417032707" Source="..\Build\Debug\bg-BG\Clipbox.Extensions.BuiltIn.General.Cloud.Microsoft.resources.dll" />
               </Component>
 
-              <Component Id="Component.Clipbox.Extensions.BuiltIn.General.resources.dll_1524231511" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7d35d64b6">
-                <File Id="Clipbox.Extensions.BuiltIn.General.resources.dll_1524231511" Source="..\Build\Debug\bg-BG\Clipbox.Extensions.BuiltIn.General.resources.dll" />
+              <Component Id="Component.Clipbox.Extensions.BuiltIn.General.resources.dll_1440744863" Guid="95a2cb1e-ad54-41f4-b1f0-d1e79692f78b" Win64="yes">
+                <File Id="Clipbox.Extensions.BuiltIn.General.resources.dll_1440744863" Source="..\Build\Debug\bg-BG\Clipbox.Extensions.BuiltIn.General.resources.dll" />
               </Component>
 
-              <Component Id="Component.Clipbox.Extensions.BuiltIn.TextFormats.resources.dll_1067002952" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7ceebbf1d">
-                <File Id="Clipbox.Extensions.BuiltIn.TextFormats.resources.dll_1067002952" Source="..\Build\Debug\bg-BG\Clipbox.Extensions.BuiltIn.TextFormats.resources.dll" />
+              <Component Id="Component.Clipbox.Extensions.BuiltIn.TextFormats.resources.dll_1150467103" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7b1fe34fe" Win64="yes">
+                <File Id="Clipbox.Extensions.BuiltIn.TextFormats.resources.dll_1150467103" Source="..\Build\Debug\bg-BG\Clipbox.Extensions.BuiltIn.TextFormats.resources.dll" />
               </Component>
 
-              <Component Id="Component.Clipbox.Infrastructure.UI.Localization.resources.dll_2687375912" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7b3e9496a">
-                <File Id="Clipbox.Infrastructure.UI.Localization.resources.dll_2687375912" Source="..\Build\Debug\bg-BG\Clipbox.Infrastructure.UI.Localization.resources.dll" />
+              <Component Id="Component.Clipbox.Infrastructure.UI.Localization.resources.dll_2650348852" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7a250e071" Win64="yes">
+                <File Id="Clipbox.Infrastructure.UI.Localization.resources.dll_2650348852" Source="..\Build\Debug\bg-BG\Clipbox.Infrastructure.UI.Localization.resources.dll" />
               </Component>
 
-              <Component Id="Component.Clipbox.resources.dll_4294112278" Guid="95a2cb1e-ad54-41f4-b1f0-d1e773358d71">
-                <File Id="Clipbox.resources.dll_4294112278" Source="..\Build\Debug\bg-BG\Clipbox.resources.dll" />
+              <Component Id="Component.Clipbox.resources.dll_2203031759" Guid="95a2cb1e-ad54-41f4-b1f0-d1e79e89382e" Win64="yes">
+                <File Id="Clipbox.resources.dll_2203031759" Source="..\Build\Debug\bg-BG\Clipbox.resources.dll" />
               </Component>
 
-              <Component Id="Component.ClipboxGuard.resources.dll_97225961" Guid="95a2cb1e-ad54-41f4-b1f0-d1e77ca201b0">
-                <File Id="ClipboxGuard.resources.dll_97225961" Source="..\Build\Debug\bg-BG\ClipboxGuard.resources.dll" />
+              <Component Id="Component.ClipboxGuard.resources.dll_3159112721" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7e8792e4f" Win64="yes">
+                <File Id="ClipboxGuard.resources.dll_3159112721" Source="..\Build\Debug\bg-BG\ClipboxGuard.resources.dll" />
               </Component>
 
             </Directory>
 
             <Directory Id="CloudCredentials" Name="CloudCredentials">
 
-              <Component Id="Component.CloudCredentials.EmptyDirectory" Guid="95a2cb1e-ad54-41f4-b1f0-d1e70ce71363" KeyPath="yes">
+              <Component Id="Component.CloudCredentials.EmptyDirectory" Guid="95a2cb1e-ad54-41f4-b1f0-d1e70ce71363" KeyPath="yes" Win64="yes">
                 <CreateFolder />
                 <RemoveFolder Id="CloudCredentials" On="uninstall" />
               </Component>
@@ -1013,7 +884,7 @@
 
             <Directory Id="Newtonsoft.Json.6.0.1_" Name="Newtonsoft.Json.6.0.1">
 
-              <Component Id="Component.Newtonsoft.Json.6.0.1_.EmptyDirectory" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7cd413780" KeyPath="yes">
+              <Component Id="Component.Newtonsoft.Json.6.0.1_.EmptyDirectory" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7cd413780" KeyPath="yes" Win64="yes">
                 <CreateFolder />
                 <RemoveFolder Id="Newtonsoft.Json.6.0.1_" On="uninstall" />
               </Component>
@@ -1023,7 +894,7 @@
             <Directory Id="Resources" Name="Resources">
               <Directory Id="Credentials" Name="Credentials">
 
-                <Component Id="Component.Credentials.EmptyDirectory" Guid="95a2cb1e-ad54-41f4-b1f0-d1e725d90898" KeyPath="yes">
+                <Component Id="Component.Credentials.EmptyDirectory" Guid="95a2cb1e-ad54-41f4-b1f0-d1e725d90898" KeyPath="yes" Win64="yes">
                   <CreateFolder />
                   <RemoveFolder Id="Credentials" On="uninstall" />
                 </Component>
@@ -1032,25 +903,25 @@
 
               <Directory Id="dephell" Name="dephell">
 
-                <Component Id="Component.Newtonsoft.Json.12.0.3.dll_3573378661" Guid="95a2cb1e-ad54-41f4-b1f0-d1e732107025">
-                  <File Id="Newtonsoft.Json.12.0.3.dll_3573378661" Source="..\Build\Debug\Resources\dephell\Newtonsoft.Json.12.0.3.dll" />
+                <Component Id="Component.Newtonsoft.Json.12.0.3.dll_2015167579" Guid="95a2cb1e-ad54-41f4-b1f0-d1e782c302fc" Win64="yes">
+                  <File Id="Newtonsoft.Json.12.0.3.dll_2015167579" Source="..\Build\Debug\Resources\dephell\Newtonsoft.Json.12.0.3.dll" />
                 </Component>
 
-                <Component Id="Component.Newtonsoft.Json.6.0.0.0.dll_3832429853" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7885ab546">
-                  <File Id="Newtonsoft.Json.6.0.0.0.dll_3832429853" Source="..\Build\Debug\Resources\dephell\Newtonsoft.Json.6.0.0.0.dll" />
+                <Component Id="Component.Newtonsoft.Json.6.0.0.0.dll_835391177" Guid="95a2cb1e-ad54-41f4-b1f0-d1e724cde856" Win64="yes">
+                  <File Id="Newtonsoft.Json.6.0.0.0.dll_835391177" Source="..\Build\Debug\Resources\dephell\Newtonsoft.Json.6.0.0.0.dll" />
                 </Component>
 
               </Directory>
 
               <Directory Id="Formats" Name="Formats">
 
-                <Component Id="Component.ApplicationDescriptionFormats.xml_1268080934" Guid="95a2cb1e-ad54-41f4-b1f0-d1e74f011adb">
-                  <File Id="ApplicationDescriptionFormats.xml_1268080934" Source="..\Build\Debug\Resources\Formats\ApplicationDescriptionFormats.xml" />
+                <Component Id="Component.ApplicationDescriptionFormats.xml_2776843126" Guid="95a2cb1e-ad54-41f4-b1f0-d1e726be8d67" Win64="yes">
+                  <File Id="ApplicationDescriptionFormats.xml_2776843126" Source="..\Build\Debug\Resources\Formats\ApplicationDescriptionFormats.xml" />
                 </Component>
 
               </Directory>
 
-              <Component Id="Resources" Guid="95a2cb1e-ad54-41f4-b1f0-d1e720d00b1c" KeyPath="yes">
+              <Component Id="Resources" Guid="95a2cb1e-ad54-41f4-b1f0-d1e720d00b1c" KeyPath="yes" Win64="yes">
                 <CreateFolder />
                 <RemoveFolder Id="Resources" On="uninstall" />
               </Component>
@@ -1059,32 +930,24 @@
 
             <Directory Id="Win32_" Name="Win32">
 
-              <Component Id="Component.ClipboxDeskband.dll_4236857583" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7bcf8e82c">
-                <File Id="ClipboxDeskband.dll_4236857583" Source="..\Build\Debug\Win32\ClipboxDeskband.dll" />
+              <Component Id="Component.ClipboxDeskband.exp_554562264" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7c3c5b4ba" Win64="yes">
+                <File Id="ClipboxDeskband.exp_554562264" Source="..\Build\Debug\Win32\ClipboxDeskband.exp" />
               </Component>
 
-              <Component Id="Component.ClipboxDeskband.exp_329631795" Guid="95a2cb1e-ad54-41f4-b1f0-d1e70a447302">
-                <File Id="ClipboxDeskband.exp_329631795" Source="..\Build\Debug\Win32\ClipboxDeskband.exp" />
+              <Component Id="Component.ClipboxDeskband.ilk_2555835108" Guid="95a2cb1e-ad54-41f4-b1f0-d1e733bd2719" Win64="yes">
+                <File Id="ClipboxDeskband.ilk_2555835108" Source="..\Build\Debug\Win32\ClipboxDeskband.ilk" />
               </Component>
 
-              <Component Id="Component.ClipboxDeskband.ilk_1897877743" Guid="95a2cb1e-ad54-41f4-b1f0-d1e72be41c71">
-                <File Id="ClipboxDeskband.ilk_1897877743" Source="..\Build\Debug\Win32\ClipboxDeskband.ilk" />
-              </Component>
-
-              <Component Id="Component.ClipboxDeskband.lib_1491661598" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7c56dd946">
-                <File Id="ClipboxDeskband.lib_1491661598" Source="..\Build\Debug\Win32\ClipboxDeskband.lib" />
-              </Component>
-
-              <Component Id="Component.ClipboxDeskband.pdb_731884567" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7f8507ac8">
-                <File Id="ClipboxDeskband.pdb_731884567" Source="..\Build\Debug\Win32\ClipboxDeskband.pdb" />
+              <Component Id="Component.ClipboxDeskband.lib_982446825" Guid="95a2cb1e-ad54-41f4-b1f0-d1e779daab62" Win64="yes">
+                <File Id="ClipboxDeskband.lib_982446825" Source="..\Build\Debug\Win32\ClipboxDeskband.lib" />
               </Component>
 
             </Directory>
           </Directory>
 
-          <Component Id="ProgramFilesFolder.MyCompany" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7df27efa4" KeyPath="yes">
+          <Component Id="ProgramFiles64Folder.MyCompany" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7d8a0c4ad" KeyPath="yes" Win64="yes">
             <CreateFolder />
-            <RemoveFolder Id="ProgramFilesFolder.MyCompany" On="uninstall" />
+            <RemoveFolder Id="ProgramFiles64Folder.MyCompany" On="uninstall" />
           </Component>
 
         </Directory>
@@ -1093,7 +956,7 @@
       <Directory Id="ProgramMenuFolder" Name="ProgramMenuFolder">
         <Directory Id="ProgramMenuFolder.Clipbox" Name="Clipbox">
 
-          <Component Id="Component.ProgramMenuFolder.Clipbox.EmptyDirectory" Guid="95a2cb1e-ad54-41f4-b1f0-d1e71ae7914d">
+          <Component Id="Component.ProgramMenuFolder.Clipbox.EmptyDirectory" Guid="95a2cb1e-ad54-41f4-b1f0-d1e71ae7914d" Win64="yes">
             <CreateFolder />
             <RemoveFolder Id="ProgramMenuFolder.Clipbox" On="uninstall" />
 
@@ -1119,266 +982,230 @@
     <UIRef Id="WixUI_ErrorProgressText" />
 
     <Feature Id="Complete" Title="Complete" Absent="allow" Level="1">
-      <ComponentRef Id="Component.ClipboxSvc.exe_430128050" />
-      <ComponentRef Id="Component.ClipboxGuard.exe_4029493911" />
-      <ComponentRef Id="Component.Azure.Core.dll_279374916" />
-      <ComponentRef Id="Component.Azure.Core.xml_279440464" />
-      <ComponentRef Id="Component.BootstrapperCore.dll_1566934227" />
-      <ComponentRef Id="Component.BootstrapperCore.xml_1223757199" />
-      <ComponentRef Id="Component.Clipbox.CloudServices.dll_3322979218" />
-      <ComponentRef Id="Component.Clipbox.CloudServices.pdb_1028039578" />
-      <ComponentRef Id="Component.Clipbox.Core.dll_3624576136" />
-      <ComponentRef Id="Component.Clipbox.Core.pdb_3708366158" />
-      <ComponentRef Id="Component.Clipbox.exe_3946753102" />
-      <ComponentRef Id="Component.Clipbox.exe.config_351205236" />
-      <ComponentRef Id="Component.Clipbox.ExtendedClipboard.dll_1116462821" />
-      <ComponentRef Id="Component.Clipbox.ExtendedClipboard.pdb_3118063341" />
-      <ComponentRef Id="Component.Clipbox.Extensions.BuiltIn.General.Cloud.Google.dll_2029445750" />
-      <ComponentRef Id="Component.Clipbox.Extensions.BuiltIn.General.Cloud.Google.pdb_3704654" />
-      <ComponentRef Id="Component.Clipbox.Extensions.BuiltIn.General.Cloud.Microsoft.dll_507861500" />
-      <ComponentRef Id="Component.Clipbox.Extensions.BuiltIn.General.Cloud.Microsoft.dll.config_2029306315" />
-      <ComponentRef Id="Component.Clipbox.Extensions.BuiltIn.General.Cloud.Microsoft.pdb_1670136606" />
-      <ComponentRef Id="Component.Clipbox.Extensions.BuiltIn.General.dll_1469626002" />
-      <ComponentRef Id="Component.Clipbox.Extensions.BuiltIn.General.dll.config_1895342041" />
-      <ComponentRef Id="Component.Clipbox.Extensions.BuiltIn.General.pdb_4246087800" />
-      <ComponentRef Id="Component.Clipbox.Extensions.BuiltIn.HdropFormat.dll_1463917462" />
-      <ComponentRef Id="Component.Clipbox.Extensions.BuiltIn.HdropFormat.pdb_1014103044" />
-      <ComponentRef Id="Component.Clipbox.Extensions.BuiltIn.ImageFormats.dll_1918303009" />
-      <ComponentRef Id="Component.Clipbox.Extensions.BuiltIn.ImageFormats.pdb_2710394441" />
-      <ComponentRef Id="Component.Clipbox.Extensions.BuiltIn.TextFormats.dll_4164225452" />
-      <ComponentRef Id="Component.Clipbox.Extensions.BuiltIn.TextFormats.pdb_3001950306" />
-      <ComponentRef Id="Component.Clipbox.Infrastructure.CloudSupport.dll_379183216" />
-      <ComponentRef Id="Component.Clipbox.Infrastructure.CloudSupport.pdb_3882059080" />
-      <ComponentRef Id="Component.Clipbox.Infrastructure.Configuration.dll_2001702081" />
-      <ComponentRef Id="Component.Clipbox.Infrastructure.Configuration.pdb_2085492079" />
-      <ComponentRef Id="Component.Clipbox.Infrastructure.dll_596741585" />
-      <ComponentRef Id="Component.Clipbox.Infrastructure.Encryption.dll_3369530357" />
-      <ComponentRef Id="Component.Clipbox.Infrastructure.Encryption.pdb_1368454141" />
-      <ComponentRef Id="Component.Clipbox.Infrastructure.pdb_4084615519" />
-      <ComponentRef Id="Component.Clipbox.Infrastructure.Persistence.dll_608346977" />
-      <ComponentRef Id="Component.Clipbox.Infrastructure.Persistence.pdb_1415440339" />
-      <ComponentRef Id="Component.Clipbox.Infrastructure.Search.dll_3465413091" />
-      <ComponentRef Id="Component.Clipbox.Infrastructure.Search.dll.config_705473695" />
-      <ComponentRef Id="Component.Clipbox.Infrastructure.Search.Lucene.dll_3675567923" />
-      <ComponentRef Id="Component.Clipbox.Infrastructure.Search.Lucene.pdb_889312073" />
-      <ComponentRef Id="Component.Clipbox.Infrastructure.Search.pdb_2993160667" />
-      <ComponentRef Id="Component.Clipbox.Infrastructure.Tests.dll_230277424" />
-      <ComponentRef Id="Component.Clipbox.Infrastructure.Tests.pdb_502717762" />
-      <ComponentRef Id="Component.Clipbox.Infrastructure.UI.ColorPicker.dll_284475375" />
-      <ComponentRef Id="Component.Clipbox.Infrastructure.UI.ColorPicker.pdb_756465655" />
-      <ComponentRef Id="Component.Clipbox.Infrastructure.UI.CustomControls.dll_1720203144" />
-      <ComponentRef Id="Component.Clipbox.Infrastructure.UI.CustomControls.pdb_1992643486" />
-      <ComponentRef Id="Component.Clipbox.Infrastructure.UI.dll_213963574" />
-      <ComponentRef Id="Component.Clipbox.Infrastructure.UI.Localization.dll_81542856" />
-      <ComponentRef Id="Component.Clipbox.Infrastructure.UI.Localization.pdb_888636178" />
-      <ComponentRef Id="Component.Clipbox.Infrastructure.UI.pdb_4037727022" />
-      <ComponentRef Id="Component.Clipbox.Infrastructure.UI.Tests.dll_483073744" />
-      <ComponentRef Id="Component.Clipbox.Infrastructure.UI.Tests.pdb_2039314936" />
-      <ComponentRef Id="Component.Clipbox.instr.pdb_4154746429" />
-      <ComponentRef Id="Component.Clipbox.pdb_2510154586" />
-      <ComponentRef Id="Component.Clipbox.SearchProvider.dll_1542078865" />
-      <ComponentRef Id="Component.Clipbox.SearchProvider.dll.config_1201122265" />
-      <ComponentRef Id="Component.Clipbox.SearchProvider.pdb_2348123619" />
-      <ComponentRef Id="Component.Clipbox.Win32.dll_1037454990" />
-      <ComponentRef Id="Component.Clipbox.Win32.pdb_3330821782" />
-      <ComponentRef Id="Component.ClipboxGuard.exe.config_2512418286" />
-      <ComponentRef Id="Component.ClipboxGuard.pdb_3161055701" />
-      <ComponentRef Id="Component.ClipboxSearch.exe_2123728956" />
-      <ComponentRef Id="Component.ClipboxSearch.exe.config_1608055541" />
-      <ComponentRef Id="Component.ClipboxSearch.pdb_3990587472" />
-      <ComponentRef Id="Component.ClipboxSvc.exe.config_2498361767" />
-      <ComponentRef Id="Component.ClipboxSvc.pdb_1465054226" />
-      <ComponentRef Id="Component.ClipboxSvc.Tests.exe_3600101937" />
-      <ComponentRef Id="Component.ClipboxSvc.Tests.exe.config_3501352657" />
-      <ComponentRef Id="Component.ClipboxSvc.Tests.pdb_2495296723" />
-      <ComponentRef Id="Component.Google.Apis.Auth.dll_1781248213" />
-      <ComponentRef Id="Component.Google.Apis.Auth.pdb_272536747" />
-      <ComponentRef Id="Component.Google.Apis.Auth.PlatformServices.dll_1871995779" />
-      <ComponentRef Id="Component.Google.Apis.Auth.xml_1055734161" />
-      <ComponentRef Id="Component.Google.Apis.Core.dll_3878553906" />
-      <ComponentRef Id="Component.Google.Apis.Core.pdb_4150994268" />
-      <ComponentRef Id="Component.Google.Apis.Core.xml_639224358" />
-      <ComponentRef Id="Component.Google.Apis.dll_4283196286" />
-      <ComponentRef Id="Component.Google.Apis.Drive.v3.dll_1291965972" />
-      <ComponentRef Id="Component.Google.Apis.Drive.v3.pdb_2800677410" />
-      <ComponentRef Id="Component.Google.Apis.Drive.v3.xml_2347603720" />
-      <ComponentRef Id="Component.Google.Apis.pdb_2780741286" />
-      <ComponentRef Id="Component.Google.Apis.PlatformServices.dll_2900542282" />
-      <ComponentRef Id="Component.Google.Apis.xml_2717374489" />
-      <ComponentRef Id="Component.Hardcodet.Wpf.TaskbarNotification.dll_955008357" />
-      <ComponentRef Id="Component.Hardcodet.Wpf.TaskbarNotification.pdb_3248899437" />
-      <ComponentRef Id="Component.Hardcodet.Wpf.TaskbarNotification.xml_1719682406" />
-      <ComponentRef Id="Component.Lucene.Net.Contrib.Regex.dll_1250100425" />
-      <ComponentRef Id="Component.Lucene.Net.Contrib.Regex.pdb_1522540767" />
-      <ComponentRef Id="Component.Lucene.Net.Contrib.Regex.xml_1975614477" />
-      <ComponentRef Id="Component.Lucene.Net.dll_3937052549" />
-      <ComponentRef Id="Component.Lucene.Net.pdb_2774777435" />
-      <ComponentRef Id="Component.Lucene.Net.xml_3936987033" />
-      <ComponentRef Id="Component.Microsoft.Bcl.AsyncInterfaces.dll_3017653227" />
-      <ComponentRef Id="Component.Microsoft.Bcl.AsyncInterfaces.xml_3489250284" />
-      <ComponentRef Id="Component.Microsoft.Deployment.WindowsInstaller.dll_2302410649" />
-      <ComponentRef Id="Component.Microsoft.Deployment.WindowsInstaller.xml_3067084698" />
-      <ComponentRef Id="Component.Microsoft.Graph.Core.dll_1370450774" />
-      <ComponentRef Id="Component.Microsoft.Graph.Core.xml_1739734466" />
-      <ComponentRef Id="Component.Microsoft.Graph.dll_3939169436" />
-      <ComponentRef Id="Component.Microsoft.Graph.xml_1208451073" />
-      <ComponentRef Id="Component.Microsoft.Identity.Client.dll_2197863522" />
-      <ComponentRef Id="Component.Microsoft.Identity.Client.xml_1433189475" />
-      <ComponentRef Id="Component.Microsoft.Win32.Primitives.dll_3333690435" />
-      <ComponentRef Id="Component.nbsbuilder.exe_3921458507" />
-      <ComponentRef Id="Component.netstandard.dll_2652293533" />
-      <ComponentRef Id="Component.Newtonsoft.Json.dll_1900671045" />
-      <ComponentRef Id="Component.Newtonsoft.Json.xml_3466492842" />
-      <ComponentRef Id="Component.nunit.framework.dll_1224848831" />
-      <ComponentRef Id="Component.nunit.framework.pdb_485495015" />
-      <ComponentRef Id="Component.nunit.framework.xml_2790670628" />
-      <ComponentRef Id="Component.nunit_random_seed.tmp_269103215" />
-      <ComponentRef Id="Component.Setup.exe_2026296744" />
-      <ComponentRef Id="Component.Setup.exe.config_2675712206" />
-      <ComponentRef Id="Component.Setup.pdb_1981601164" />
-      <ComponentRef Id="Component.System.AppContext.dll_1823886648" />
-      <ComponentRef Id="Component.System.Buffers.dll_27867" />
-      <ComponentRef Id="Component.System.Buffers.xml_4294929639" />
-      <ComponentRef Id="Component.System.Collections.Concurrent.dll_362876694" />
-      <ComponentRef Id="Component.System.Collections.dll_539009382" />
-      <ComponentRef Id="Component.System.Collections.NonGeneric.dll_2649980006" />
-      <ComponentRef Id="Component.System.Collections.Specialized.dll_418694299" />
-      <ComponentRef Id="Component.System.ComponentModel.dll_1031559613" />
-      <ComponentRef Id="Component.System.ComponentModel.EventBasedAsync.dll_2280359252" />
-      <ComponentRef Id="Component.System.ComponentModel.Primitives.dll_2026736588" />
-      <ComponentRef Id="Component.System.ComponentModel.TypeConverter.dll_308386108" />
-      <ComponentRef Id="Component.System.Console.dll_4113714670" />
-      <ComponentRef Id="Component.System.Data.Common.dll_467006720" />
-      <ComponentRef Id="Component.System.Diagnostics.Contracts.dll_2670341612" />
-      <ComponentRef Id="Component.System.Diagnostics.Debug.dll_3930439701" />
-      <ComponentRef Id="Component.System.Diagnostics.DiagnosticSource.dll_561120649" />
-      <ComponentRef Id="Component.System.Diagnostics.DiagnosticSource.xml_2125893870" />
-      <ComponentRef Id="Component.System.Diagnostics.FileVersionInfo.dll_2610217768" />
-      <ComponentRef Id="Component.System.Diagnostics.Process.dll_954834439" />
-      <ComponentRef Id="Component.System.Diagnostics.StackTrace.dll_445283630" />
-      <ComponentRef Id="Component.System.Diagnostics.TextWriterTraceListener.dll_3396427858" />
-      <ComponentRef Id="Component.System.Diagnostics.Tools.dll_3921109530" />
-      <ComponentRef Id="Component.System.Diagnostics.TraceSource.dll_479033998" />
-      <ComponentRef Id="Component.System.Diagnostics.Tracing.dll_1293154057" />
-      <ComponentRef Id="Component.System.Drawing.Primitives.dll_1389980064" />
-      <ComponentRef Id="Component.System.Dynamic.Runtime.dll_802357356" />
-      <ComponentRef Id="Component.System.Globalization.Calendars.dll_2997350603" />
-      <ComponentRef Id="Component.System.Globalization.dll_3659927666" />
-      <ComponentRef Id="Component.System.Globalization.Extensions.dll_3993719497" />
-      <ComponentRef Id="Component.System.IO.Compression.dll_767474777" />
-      <ComponentRef Id="Component.System.IO.Compression.ZipFile.dll_3292693159" />
-      <ComponentRef Id="Component.System.IO.dll_3118806403" />
-      <ComponentRef Id="Component.System.IO.FileSystem.dll_351721141" />
-      <ComponentRef Id="Component.System.IO.FileSystem.DriveInfo.dll_1238310828" />
-      <ComponentRef Id="Component.System.IO.FileSystem.Primitives.dll_3038048411" />
-      <ComponentRef Id="Component.System.IO.FileSystem.Watcher.dll_572284936" />
-      <ComponentRef Id="Component.System.IO.IsolatedStorage.dll_1810540645" />
-      <ComponentRef Id="Component.System.IO.MemoryMappedFiles.dll_833741630" />
-      <ComponentRef Id="Component.System.IO.Pipes.dll_1516558928" />
-      <ComponentRef Id="Component.System.IO.UnmanagedMemoryStream.dll_3905802431" />
-      <ComponentRef Id="Component.System.Linq.dll_3928805365" />
-      <ComponentRef Id="Component.System.Linq.Expressions.dll_806311948" />
-      <ComponentRef Id="Component.System.Linq.Parallel.dll_2003910348" />
-      <ComponentRef Id="Component.System.Linq.Queryable.dll_1834977374" />
-      <ComponentRef Id="Component.System.Memory.dll_1502531184" />
-      <ComponentRef Id="Component.System.Memory.xml_3503476335" />
-      <ComponentRef Id="Component.System.Net.Http.dll_1661688654" />
-      <ComponentRef Id="Component.System.Net.NameResolution.dll_4096106803" />
-      <ComponentRef Id="Component.System.Net.NetworkInformation.dll_3246366803" />
-      <ComponentRef Id="Component.System.Net.Ping.dll_3334282444" />
-      <ComponentRef Id="Component.System.Net.Primitives.dll_916349963" />
-      <ComponentRef Id="Component.System.Net.Requests.dll_4143650596" />
-      <ComponentRef Id="Component.System.Net.Security.dll_934827182" />
-      <ComponentRef Id="Component.System.Net.Sockets.dll_4143411646" />
-      <ComponentRef Id="Component.System.Net.WebHeaderCollection.dll_2157543162" />
-      <ComponentRef Id="Component.System.Net.WebSockets.Client.dll_1845482075" />
-      <ComponentRef Id="Component.System.Net.WebSockets.dll_277574089" />
-      <ComponentRef Id="Component.System.Numerics.Vectors.dll_2779214466" />
-      <ComponentRef Id="Component.System.Numerics.Vectors.xml_51117543" />
-      <ComponentRef Id="Component.System.ObjectModel.dll_2169802046" />
-      <ComponentRef Id="Component.System.Reflection.dll_58949138" />
-      <ComponentRef Id="Component.System.Reflection.Extensions.dll_3762013288" />
-      <ComponentRef Id="Component.System.Reflection.Primitives.dll_1409552038" />
-      <ComponentRef Id="Component.System.Resources.Reader.dll_2892290324" />
-      <ComponentRef Id="Component.System.Resources.ResourceManager.dll_1228235790" />
-      <ComponentRef Id="Component.System.Resources.Writer.dll_3501392053" />
-      <ComponentRef Id="Component.System.Runtime.CompilerServices.Unsafe.dll_1775079528" />
-      <ComponentRef Id="Component.System.Runtime.CompilerServices.Unsafe.xml_1775014004" />
-      <ComponentRef Id="Component.System.Runtime.CompilerServices.VisualC.dll_859513700" />
-      <ComponentRef Id="Component.System.Runtime.dll_3898772665" />
-      <ComponentRef Id="Component.System.Runtime.Extensions.dll_3222395502" />
-      <ComponentRef Id="Component.System.Runtime.Handles.dll_209922753" />
-      <ComponentRef Id="Component.System.Runtime.InteropServices.dll_362084161" />
-      <ComponentRef Id="Component.System.Runtime.InteropServices.RuntimeInformation.dll_3680630847" />
-      <ComponentRef Id="Component.System.Runtime.Numerics.dll_1506232664" />
-      <ComponentRef Id="Component.System.Runtime.Serialization.Formatters.dll_165410396" />
-      <ComponentRef Id="Component.System.Runtime.Serialization.Json.dll_273020912" />
-      <ComponentRef Id="Component.System.Runtime.Serialization.Primitives.dll_447013016" />
-      <ComponentRef Id="Component.System.Runtime.Serialization.Xml.dll_487499091" />
-      <ComponentRef Id="Component.System.Security.Claims.dll_3112270516" />
-      <ComponentRef Id="Component.System.Security.Cryptography.Algorithms.dll_2605947186" />
-      <ComponentRef Id="Component.System.Security.Cryptography.Csp.dll_1989728466" />
-      <ComponentRef Id="Component.System.Security.Cryptography.Encoding.dll_1822026083" />
-      <ComponentRef Id="Component.System.Security.Cryptography.Primitives.dll_1184820649" />
-      <ComponentRef Id="Component.System.Security.Cryptography.X509Certificates.dll_3312830099" />
-      <ComponentRef Id="Component.System.Security.Principal.dll_687739500" />
-      <ComponentRef Id="Component.System.Security.SecureString.dll_3170242445" />
-      <ComponentRef Id="Component.System.Text.Encoding.dll_2697985844" />
-      <ComponentRef Id="Component.System.Text.Encoding.Extensions.dll_1635623618" />
-      <ComponentRef Id="Component.System.Text.Encodings.Web.dll_720711790" />
-      <ComponentRef Id="Component.System.Text.Encodings.Web.xml_1778462831" />
-      <ComponentRef Id="Component.System.Text.Json.dll_1948557587" />
-      <ComponentRef Id="Component.System.Text.Json.xml_1961610919" />
-      <ComponentRef Id="Component.System.Text.RegularExpressions.dll_2465012799" />
-      <ComponentRef Id="Component.System.Threading.dll_2406737785" />
-      <ComponentRef Id="Component.System.Threading.Overlapped.dll_2079365925" />
-      <ComponentRef Id="Component.System.Threading.Tasks.dll_1934924703" />
-      <ComponentRef Id="Component.System.Threading.Tasks.Extensions.dll_2112213961" />
-      <ComponentRef Id="Component.System.Threading.Tasks.Extensions.xml_111268808" />
-      <ComponentRef Id="Component.System.Threading.Tasks.Parallel.dll_3201247983" />
-      <ComponentRef Id="Component.System.Threading.Thread.dll_3016382848" />
-      <ComponentRef Id="Component.System.Threading.ThreadPool.dll_4087169874" />
-      <ComponentRef Id="Component.System.Threading.Timer.dll_99318536" />
-      <ComponentRef Id="Component.System.ValueTuple.dll_3163559350" />
-      <ComponentRef Id="Component.System.ValueTuple.xml_2398885303" />
-      <ComponentRef Id="Component.System.Windows.Interactivity.dll_879505535" />
-      <ComponentRef Id="Component.System.Xml.ReaderWriter.dll_3808793759" />
-      <ComponentRef Id="Component.System.Xml.XDocument.dll_4031305266" />
-      <ComponentRef Id="Component.System.Xml.XmlDocument.dll_1129661641" />
-      <ComponentRef Id="Component.System.Xml.XmlSerializer.dll_1999968830" />
-      <ComponentRef Id="Component.System.Xml.XPath.dll_224826998" />
-      <ComponentRef Id="Component.System.Xml.XPath.XDocument.dll_1841246465" />
-      <ComponentRef Id="Component.WixSharp.dll_3009559781" />
-      <ComponentRef Id="Component.WixSharp.Msi.dll_3631877011" />
-      <ComponentRef Id="Component.WixSharp.Msi.xml_36317103" />
-      <ComponentRef Id="Component.WixSharp.UI.dll_1116535735" />
-      <ComponentRef Id="Component.WixSharp.UI.xml_3844108370" />
-      <ComponentRef Id="Component.WixSharp.xml_2666382753" />
-      <ComponentRef Id="Component.Clipbox.Extensions.BuiltIn.General.Cloud.Google.resources.dll_1614528002" />
-      <ComponentRef Id="Component.Clipbox.Extensions.BuiltIn.General.Cloud.Microsoft.resources.dll_2929408265" />
-      <ComponentRef Id="Component.Clipbox.Extensions.BuiltIn.General.resources.dll_1524231511" />
-      <ComponentRef Id="Component.Clipbox.Extensions.BuiltIn.TextFormats.resources.dll_1067002952" />
-      <ComponentRef Id="Component.Clipbox.Infrastructure.UI.Localization.resources.dll_2687375912" />
-      <ComponentRef Id="Component.Clipbox.resources.dll_4294112278" />
-      <ComponentRef Id="Component.ClipboxGuard.resources.dll_97225961" />
+      <ComponentRef Id="Component.ClipboxGuard.exe_568895162" />
+      <ComponentRef Id="Component.ClipboxDeskband.dll_2699476228" />
+      <ComponentRef Id="Component.ClipboxSvc.exe_759699309" />
+      <ComponentRef Id="Component.Azure.Core.dll_2297618219" />
+      <ComponentRef Id="Component.Azure.Core.xml_3023132271" />
+      <ComponentRef Id="Component.BootstrapperCore.dll_601158734" />
+      <ComponentRef Id="Component.BootstrapperCore.xml_601093194" />
+      <ComponentRef Id="Component.Clipbox.CloudServices.dll_1145625823" />
+      <ComponentRef Id="Component.Clipbox.Core.dll_510263521" />
+      <ComponentRef Id="Component.Clipbox.exe_1054431092" />
+      <ComponentRef Id="Component.Clipbox.exe.config_921290496" />
+      <ComponentRef Id="Component.Clipbox.ExtendedClipboard.dll_1453776137" />
+      <ComponentRef Id="Component.Clipbox.Extensions.BuiltIn.General.Cloud.Google.dll_1351094576" />
+      <ComponentRef Id="Component.Clipbox.Extensions.BuiltIn.General.Cloud.Microsoft.dll_1177427538" />
+      <ComponentRef Id="Component.Clipbox.Extensions.BuiltIn.General.Cloud.Microsoft.dll.config_4254095204" />
+      <ComponentRef Id="Component.Clipbox.Extensions.BuiltIn.General.dll_1757239487" />
+      <ComponentRef Id="Component.Clipbox.Extensions.BuiltIn.General.dll.config_3160329846" />
+      <ComponentRef Id="Component.Clipbox.Extensions.BuiltIn.HdropFormat.dll_1867492354" />
+      <ComponentRef Id="Component.Clipbox.Extensions.BuiltIn.ImageFormats.dll_2780435217" />
+      <ComponentRef Id="Component.Clipbox.Extensions.BuiltIn.TextFormats.dll_3212653461" />
+      <ComponentRef Id="Component.Clipbox.Infrastructure.CloudSupport.dll_652301559" />
+      <ComponentRef Id="Component.Clipbox.Infrastructure.Configuration.dll_2374661936" />
+      <ComponentRef Id="Component.Clipbox.Infrastructure.dll_852773007" />
+      <ComponentRef Id="Component.Clipbox.Infrastructure.Encryption.dll_1211838618" />
+      <ComponentRef Id="Component.Clipbox.Infrastructure.Persistence.dll_2764446150" />
+      <ComponentRef Id="Component.Clipbox.Infrastructure.Search.dll_2534045340" />
+      <ComponentRef Id="Component.Clipbox.Infrastructure.Search.dll.config_960207720" />
+      <ComponentRef Id="Component.Clipbox.Infrastructure.Search.Lucene.dll_1627730366" />
+      <ComponentRef Id="Component.Clipbox.Infrastructure.Tests.dll_75558219" />
+      <ComponentRef Id="Component.Clipbox.Infrastructure.UI.ColorPicker.dll_590863787" />
+      <ComponentRef Id="Component.Clipbox.Infrastructure.UI.CustomControls.dll_3026384809" />
+      <ComponentRef Id="Component.Clipbox.Infrastructure.UI.dll_502196439" />
+      <ComponentRef Id="Component.Clipbox.Infrastructure.UI.Localization.dll_759776910" />
+      <ComponentRef Id="Component.Clipbox.Infrastructure.UI.Tests.dll_3987088290" />
+      <ComponentRef Id="Component.Clipbox.SearchProvider.dll_2222754467" />
+      <ComponentRef Id="Component.Clipbox.SearchProvider.dll.config_1921956474" />
+      <ComponentRef Id="Component.Clipbox.Win32.dll_733738051" />
+      <ComponentRef Id="Component.ClipboxDeskband.exp_1784615943" />
+      <ComponentRef Id="Component.ClipboxDeskband.ilk_4078965747" />
+      <ComponentRef Id="Component.ClipboxDeskband.lib_976229368" />
+      <ComponentRef Id="Component.ClipboxGuard.exe.config_3768915141" />
+      <ComponentRef Id="Component.ClipboxSearch.exe_3938580811" />
+      <ComponentRef Id="Component.ClipboxSearch.exe.config_3964199237" />
+      <ComponentRef Id="Component.ClipboxSvc.exe.config_2465481347" />
+      <ComponentRef Id="Component.ClipboxSvc.Tests.exe_3822601771" />
+      <ComponentRef Id="Component.ClipboxSvc.Tests.exe.config_3729415421" />
+      <ComponentRef Id="Component.Google.Apis.Auth.dll_2273737658" />
+      <ComponentRef Id="Component.Google.Apis.Auth.PlatformServices.dll_1004826226" />
+      <ComponentRef Id="Component.Google.Apis.Auth.xml_2273803198" />
+      <ComponentRef Id="Component.Google.Apis.Core.dll_341711149" />
+      <ComponentRef Id="Component.Google.Apis.Core.xml_341776705" />
+      <ComponentRef Id="Component.Google.Apis.dll_721766124" />
+      <ComponentRef Id="Component.Google.Apis.Drive.v3.dll_39417797" />
+      <ComponentRef Id="Component.Google.Apis.Drive.v3.xml_39483329" />
+      <ComponentRef Id="Component.Google.Apis.PlatformServices.dll_2613179113" />
+      <ComponentRef Id="Component.Google.Apis.xml_1193363179" />
+      <ComponentRef Id="Component.Hardcodet.Wpf.TaskbarNotification.dll_12605698" />
+      <ComponentRef Id="Component.Hardcodet.Wpf.TaskbarNotification.xml_1579476071" />
+      <ComponentRef Id="Component.Lucene.Net.Contrib.Regex.dll_4050439407" />
+      <ComponentRef Id="Component.Lucene.Net.Contrib.Regex.xml_4050373867" />
+      <ComponentRef Id="Component.Lucene.Net.dll_623750523" />
+      <ComponentRef Id="Component.Lucene.Net.xml_4193203767" />
+      <ComponentRef Id="Component.Microsoft.Bcl.AsyncInterfaces.dll_3268846831" />
+      <ComponentRef Id="Component.Microsoft.Bcl.AsyncInterfaces.xml_539701332" />
+      <ComponentRef Id="Component.Microsoft.Deployment.WindowsInstaller.dll_1799239748" />
+      <ComponentRef Id="Component.Microsoft.Deployment.WindowsInstaller.xml_233417951" />
+      <ComponentRef Id="Component.Microsoft.Graph.Core.dll_2973564645" />
+      <ComponentRef Id="Component.Microsoft.Graph.Core.xml_2973630161" />
+      <ComponentRef Id="Component.Microsoft.Graph.dll_369037177" />
+      <ComponentRef Id="Component.Microsoft.Graph.xml_1426788218" />
+      <ComponentRef Id="Component.Microsoft.Identity.Client.dll_2205178707" />
+      <ComponentRef Id="Component.Microsoft.Identity.Client.xml_3773097656" />
+      <ComponentRef Id="Component.Microsoft.Win32.Primitives.dll_2673881685" />
+      <ComponentRef Id="Component.nbsbuilder.exe_2800783335" />
+      <ComponentRef Id="Component.netstandard.dll_392052505" />
+      <ComponentRef Id="Component.Newtonsoft.Json.dll_2800247981" />
+      <ComponentRef Id="Component.Newtonsoft.Json.xml_2328650924" />
+      <ComponentRef Id="Component.nunit.framework.dll_491852580" />
+      <ComponentRef Id="Component.nunit.framework.xml_963449637" />
+      <ComponentRef Id="Component.nunit_random_seed.tmp_2729409707" />
+      <ComponentRef Id="Component.Setup.exe_2995059987" />
+      <ComponentRef Id="Component.Setup.exe.config_603492329" />
+      <ComponentRef Id="Component.System.AppContext.dll_1239922989" />
+      <ComponentRef Id="Component.System.Buffers.dll_823948365" />
+      <ComponentRef Id="Component.System.Buffers.xml_1549462417" />
+      <ComponentRef Id="Component.System.Collections.Concurrent.dll_2186171819" />
+      <ComponentRef Id="Component.System.Collections.dll_237804366" />
+      <ComponentRef Id="Component.System.Collections.NonGeneric.dll_244413274" />
+      <ComponentRef Id="Component.System.Collections.Specialized.dll_2130281948" />
+      <ComponentRef Id="Component.System.ComponentModel.dll_3038758445" />
+      <ComponentRef Id="Component.System.ComponentModel.EventBasedAsync.dll_2009295668" />
+      <ComponentRef Id="Component.System.ComponentModel.Primitives.dll_1508796560" />
+      <ComponentRef Id="Component.System.ComponentModel.TypeConverter.dll_2561801765" />
+      <ComponentRef Id="Component.System.Console.dll_167516138" />
+      <ComponentRef Id="Component.System.Data.Common.dll_877256805" />
+      <ComponentRef Id="Component.System.Diagnostics.Contracts.dll_4137516403" />
+      <ComponentRef Id="Component.System.Diagnostics.Debug.dll_840483730" />
+      <ComponentRef Id="Component.System.Diagnostics.DiagnosticSource.dll_3175087778" />
+      <ComponentRef Id="Component.System.Diagnostics.DiagnosticSource.xml_2117336737" />
+      <ComponentRef Id="Component.System.Diagnostics.FileVersionInfo.dll_2417202944" />
+      <ComponentRef Id="Component.System.Diagnostics.Process.dll_4191919484" />
+      <ComponentRef Id="Component.System.Diagnostics.StackTrace.dll_3022112287" />
+      <ComponentRef Id="Component.System.Diagnostics.TextWriterTraceListener.dll_3843378334" />
+      <ComponentRef Id="Component.System.Diagnostics.Tools.dll_3328399585" />
+      <ComponentRef Id="Component.System.Diagnostics.TraceSource.dll_213049162" />
+      <ComponentRef Id="Component.System.Diagnostics.Tracing.dll_1544130890" />
+      <ComponentRef Id="Component.System.Drawing.Primitives.dll_2820388584" />
+      <ComponentRef Id="Component.System.Dynamic.Runtime.dll_1305322505" />
+      <ComponentRef Id="Component.System.Globalization.Calendars.dll_3337109329" />
+      <ComponentRef Id="Component.System.Globalization.dll_1950826211" />
+      <ComponentRef Id="Component.System.Globalization.Extensions.dll_272099161" />
+      <ComponentRef Id="Component.System.IO.Compression.dll_2602890577" />
+      <ComponentRef Id="Component.System.IO.Compression.ZipFile.dll_1052046581" />
+      <ComponentRef Id="Component.System.IO.dll_1269419110" />
+      <ComponentRef Id="Component.System.IO.FileSystem.dll_3504999113" />
+      <ComponentRef Id="Component.System.IO.FileSystem.DriveInfo.dll_2045714200" />
+      <ComponentRef Id="Component.System.IO.FileSystem.Primitives.dll_3954603068" />
+      <ComponentRef Id="Component.System.IO.FileSystem.Watcher.dll_2806615032" />
+      <ComponentRef Id="Component.System.IO.IsolatedStorage.dll_3062695543" />
+      <ComponentRef Id="Component.System.IO.MemoryMappedFiles.dll_805634981" />
+      <ComponentRef Id="Component.System.IO.Pipes.dll_1374783732" />
+      <ComponentRef Id="Component.System.IO.UnmanagedMemoryStream.dll_1794088502" />
+      <ComponentRef Id="Component.System.Linq.dll_3243930403" />
+      <ComponentRef Id="Component.System.Linq.Expressions.dll_917630098" />
+      <ComponentRef Id="Component.System.Linq.Parallel.dll_3124794270" />
+      <ComponentRef Id="Component.System.Linq.Queryable.dll_3039627962" />
+      <ComponentRef Id="Component.System.Memory.dll_1443768611" />
+      <ComponentRef Id="Component.System.Memory.xml_4172389822" />
+      <ComponentRef Id="Component.System.Net.Http.dll_1793795324" />
+      <ComponentRef Id="Component.System.Net.NameResolution.dll_1570867139" />
+      <ComponentRef Id="Component.System.Net.NetworkInformation.dll_210548803" />
+      <ComponentRef Id="Component.System.Net.Ping.dll_2943457946" />
+      <ComponentRef Id="Component.System.Net.Primitives.dll_2796685639" />
+      <ComponentRef Id="Component.System.Net.Requests.dll_3910370552" />
+      <ComponentRef Id="Component.System.Net.Security.dll_1883346220" />
+      <ComponentRef Id="Component.System.Net.Sockets.dll_642379276" />
+      <ComponentRef Id="Component.System.Net.WebHeaderCollection.dll_854520776" />
+      <ComponentRef Id="Component.System.Net.WebSockets.Client.dll_2021800921" />
+      <ComponentRef Id="Component.System.Net.WebSockets.dll_824483999" />
+      <ComponentRef Id="Component.System.Numerics.Vectors.dll_1778477523" />
+      <ComponentRef Id="Component.System.Numerics.Vectors.xml_1306880466" />
+      <ComponentRef Id="Component.System.ObjectModel.dll_2839997844" />
+      <ComponentRef Id="Component.System.Reflection.dll_1024203938" />
+      <ComponentRef Id="Component.System.Reflection.Extensions.dll_443289458" />
+      <ComponentRef Id="Component.System.Reflection.Primitives.dll_3689145788" />
+      <ComponentRef Id="Component.System.Resources.Reader.dll_3005589480" />
+      <ComponentRef Id="Component.System.Resources.ResourceManager.dll_88866065" />
+      <ComponentRef Id="Component.System.Resources.Writer.dll_311922753" />
+      <ComponentRef Id="Component.System.Runtime.CompilerServices.Unsafe.dll_1269007930" />
+      <ComponentRef Id="Component.System.Runtime.CompilerServices.Unsafe.xml_187263518" />
+      <ComponentRef Id="Component.System.Runtime.CompilerServices.VisualC.dll_1394953854" />
+      <ComponentRef Id="Component.System.Runtime.dll_2355302123" />
+      <ComponentRef Id="Component.System.Runtime.Extensions.dll_2283670808" />
+      <ComponentRef Id="Component.System.Runtime.Handles.dll_3347659943" />
+      <ComponentRef Id="Component.System.Runtime.InteropServices.dll_4145233969" />
+      <ComponentRef Id="Component.System.Runtime.InteropServices.RuntimeInformation.dll_104629154" />
+      <ComponentRef Id="Component.System.Runtime.Numerics.dll_2955063169" />
+      <ComponentRef Id="Component.System.Runtime.Serialization.Formatters.dll_727863919" />
+      <ComponentRef Id="Component.System.Runtime.Serialization.Json.dll_1417368393" />
+      <ComponentRef Id="Component.System.Runtime.Serialization.Primitives.dll_4082257730" />
+      <ComponentRef Id="Component.System.Runtime.Serialization.Xml.dll_1125110966" />
+      <ComponentRef Id="Component.System.Security.Claims.dll_2045532363" />
+      <ComponentRef Id="Component.System.Security.Cryptography.Algorithms.dll_3032159949" />
+      <ComponentRef Id="Component.System.Security.Cryptography.Csp.dll_2301489808" />
+      <ComponentRef Id="Component.System.Security.Cryptography.Encoding.dll_2001803578" />
+      <ComponentRef Id="Component.System.Security.Cryptography.Primitives.dll_506903063" />
+      <ComponentRef Id="Component.System.Security.Cryptography.X509Certificates.dll_3121859080" />
+      <ComponentRef Id="Component.System.Security.Principal.dll_1621139652" />
+      <ComponentRef Id="Component.System.Security.SecureString.dll_768543457" />
+      <ComponentRef Id="Component.System.Text.Encoding.dll_1555416769" />
+      <ComponentRef Id="Component.System.Text.Encoding.Extensions.dll_3670241310" />
+      <ComponentRef Id="Component.System.Text.Encodings.Web.dll_3662987455" />
+      <ComponentRef Id="Component.System.Text.Encodings.Web.xml_2096641370" />
+      <ComponentRef Id="Component.System.Text.Json.dll_2511745238" />
+      <ComponentRef Id="Component.System.Text.Json.xml_2511679714" />
+      <ComponentRef Id="Component.System.Text.RegularExpressions.dll_3614938788" />
+      <ComponentRef Id="Component.System.Threading.dll_2700410247" />
+      <ComponentRef Id="Component.System.Threading.Overlapped.dll_2867325095" />
+      <ComponentRef Id="Component.System.Threading.Tasks.dll_3974761937" />
+      <ComponentRef Id="Component.System.Threading.Tasks.Extensions.dll_2592611227" />
+      <ComponentRef Id="Component.System.Threading.Tasks.Extensions.xml_4157908736" />
+      <ComponentRef Id="Component.System.Threading.Tasks.Parallel.dll_2016057162" />
+      <ComponentRef Id="Component.System.Threading.Thread.dll_4008043386" />
+      <ComponentRef Id="Component.System.Threading.ThreadPool.dll_3403119388" />
+      <ComponentRef Id="Component.System.Threading.Timer.dll_2931723098" />
+      <ComponentRef Id="Component.System.ValueTuple.dll_674618787" />
+      <ComponentRef Id="Component.System.ValueTuple.xml_3403764286" />
+      <ComponentRef Id="Component.System.Windows.Interactivity.dll_349590530" />
+      <ComponentRef Id="Component.System.Xml.ReaderWriter.dll_2275960602" />
+      <ComponentRef Id="Component.System.Xml.XDocument.dll_215400529" />
+      <ComponentRef Id="Component.System.Xml.XmlDocument.dll_2558886454" />
+      <ComponentRef Id="Component.System.Xml.XmlSerializer.dll_2046813584" />
+      <ComponentRef Id="Component.System.Xml.XPath.dll_3447449657" />
+      <ComponentRef Id="Component.System.Xml.XPath.XDocument.dll_3935561105" />
+      <ComponentRef Id="Component.WixSharp.dll_2517291052" />
+      <ComponentRef Id="Component.WixSharp.Msi.dll_3454574149" />
+      <ComponentRef Id="Component.WixSharp.Msi.xml_3454639665" />
+      <ComponentRef Id="Component.WixSharp.UI.dll_2166900824" />
+      <ComponentRef Id="Component.WixSharp.UI.xml_2931574871" />
+      <ComponentRef Id="Component.WixSharp.xml_2517225504" />
+      <ComponentRef Id="Component.Uninstall_Clipbox" />
+      <ComponentRef Id="Component.Clipbox.Extensions.BuiltIn.General.Cloud.Google.resources.dll_3552653002" />
+      <ComponentRef Id="Component.Clipbox.Extensions.BuiltIn.General.Cloud.Microsoft.resources.dll_1417032707" />
+      <ComponentRef Id="Component.Clipbox.Extensions.BuiltIn.General.resources.dll_1440744863" />
+      <ComponentRef Id="Component.Clipbox.Extensions.BuiltIn.TextFormats.resources.dll_1150467103" />
+      <ComponentRef Id="Component.Clipbox.Infrastructure.UI.Localization.resources.dll_2650348852" />
+      <ComponentRef Id="Component.Clipbox.resources.dll_2203031759" />
+      <ComponentRef Id="Component.ClipboxGuard.resources.dll_3159112721" />
       <ComponentRef Id="Component.CloudCredentials.EmptyDirectory" />
       <ComponentRef Id="Component.Newtonsoft.Json.6.0.1_.EmptyDirectory" />
       <ComponentRef Id="Component.Credentials.EmptyDirectory" />
-      <ComponentRef Id="Component.Newtonsoft.Json.12.0.3.dll_3573378661" />
-      <ComponentRef Id="Component.Newtonsoft.Json.6.0.0.0.dll_3832429853" />
-      <ComponentRef Id="Component.ApplicationDescriptionFormats.xml_1268080934" />
-      <ComponentRef Id="Component.ClipboxDeskband.dll_4236857583" />
-      <ComponentRef Id="Component.ClipboxDeskband.exp_329631795" />
-      <ComponentRef Id="Component.ClipboxDeskband.ilk_1897877743" />
-      <ComponentRef Id="Component.ClipboxDeskband.lib_1491661598" />
-      <ComponentRef Id="Component.ClipboxDeskband.pdb_731884567" />
+      <ComponentRef Id="Component.Newtonsoft.Json.12.0.3.dll_2015167579" />
+      <ComponentRef Id="Component.Newtonsoft.Json.6.0.0.0.dll_835391177" />
+      <ComponentRef Id="Component.ApplicationDescriptionFormats.xml_2776843126" />
+      <ComponentRef Id="Component.ClipboxDeskband.exp_554562264" />
+      <ComponentRef Id="Component.ClipboxDeskband.ilk_2555835108" />
+      <ComponentRef Id="Component.ClipboxDeskband.lib_982446825" />
       <ComponentRef Id="Component.ProgramMenuFolder.Clipbox.EmptyDirectory" />
-      <ComponentRef Id="ProgramFilesFolder.MyCompany" />
+      <ComponentRef Id="ProgramFiles64Folder.MyCompany" />
       <ComponentRef Id="Resources" />
     </Feature>
 
     <InstallExecuteSequence>
-      <Custom Action="Set_InstallDeskband_Props" After="InstallFiles" />
+      <Custom Action="Set_InstallDeskband_Props" Before="StartServices" />
       <Custom Action="InstallDeskband" After="Set_InstallDeskband_Props"> (NOT Installed) </Custom>
       <Custom Action="Set_UnInstallDeskband_Props" Before="RemoveFiles" />
       <Custom Action="UnInstallDeskband" After="Set_UnInstallDeskband_Props"> (REMOVE="ALL") </Custom>
