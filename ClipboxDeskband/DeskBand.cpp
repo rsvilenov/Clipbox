@@ -4,9 +4,13 @@
 #include "DeskBand.h"
 #include "resource.h"
 #include "ToolTip.h"
-#include "Logger.h"
-#include "NamedPipeClient.h"
+
 #include "shlwapi.h"
+
+#include "../ClipboxDeskband.Infrastructure/Logger.h"
+#include "../ClipboxDeskband.Infrastructure/NamedPipeClient.h"
+#include "../ClipboxDeskband.Infrastructure/ClipboxProductConstants.h"
+#pragma comment(lib, "ClipboxDeskband.Infrastructure.lib")
 
 // GetDpiForMonitor 
 #include "shellscalingapi.h"
@@ -21,8 +25,6 @@
 
 extern long        g_cDllRef;
 extern HINSTANCE    g_hInst;
-
-extern CLSID CLSID_ClipboxDeskBand;
 
 static const WCHAR g_szDeskBandClass[] = L"ClipboxDeskBandClass";
 

@@ -2,9 +2,13 @@
 //
 
 #include "framework.h"
-#include "ClipboxDeskbandOwner.h"
 
 #include <shlobj.h> 
+
+#include "ClipboxDeskbandOwner.h"
+
+#include "../ClipboxDeskband.Infrastructure/ClipboxProductConstants.h"
+#pragma comment(lib, "ClipboxDeskband.Infrastructure.lib")
 
 HINSTANCE           g_hInstance;
 BOOL                LoadDeskband();
@@ -47,9 +51,7 @@ BOOL LoadDeskband()
    CoInitialize(nullptr);
    IDeskBand2* pDeskbandInterface = NULL;
 
-   CLSID CLSID_ClipboxDeskBand =
-   { 0x3c6d5961, 0xe6c7, 0x44f6,{ 0xa5, 0x22, 0xa2, 0xd, 0xe3, 0x3d, 0x2d, 0xac } };
-
+   // CLSID_ClipboxDeskBand is defined in ClipboxProductConstants.h (ClipboxDeskband.Infrastructure)
    HRESULT  hResult = CoCreateInstance(CLSID_ClipboxDeskBand, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pDeskbandInterface));
    
    if (SUCCEEDED(hResult))
