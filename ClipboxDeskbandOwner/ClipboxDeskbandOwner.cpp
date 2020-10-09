@@ -6,17 +6,22 @@
 #include <shlobj.h> 
 #include <tlhelp32.h>
 #include <map>
+#include <vector>
 
 #include "ClipboxDeskbandOwner.h"
 
 #include "../ClipboxDeskband.Infrastructure/ClipboxProductConstants.h"
 #pragma comment(lib, "ClipboxDeskband.Infrastructure.lib")
 
+static const UINT_PTR WAIT_SHELL_START_TIMER_ID = 1;
+const int CHECK_SHELL_INTERVAL = 1000;
+
 HINSTANCE           g_hInstance;
 HWND                g_msgWindowHwnd;
 BOOL                LoadDeskband(); 
 BOOL CreateMsgWindow();
 bool RegisterWaitEventsForExplorerProcesses(int sessionId);
+bool RegisterWaitEventsForShellProcess();
 
 struct SHELL_WND_DATA 
 {
@@ -38,13 +43,18 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     g_hInstance = hInstance;
 
-    DWORD currentSessionId;
-    ProcessIdToSessionId(GetCurrentProcessId(), &currentSessionId);
-    RegisterWaitEventsForExplorerProcesses(currentSessionId);
-
-    if (!(CreateMsgWindow() && LoadDeskband()))
+    if (!CreateMsgWindow())
     {
         return FALSE;
+    }
+
+    if (!RegisterWaitEventsForShellProcess())
+    {
+        SetTimer(g_msgWindowHwnd, WAIT_SHELL_START_TIMER_ID, CHECK_SHELL_INTERVAL, NULL);
+    }
+    else
+    {
+        LoadDeskband();
     }
 
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_CLIPBOXDESKBANDOWNER));
@@ -76,6 +86,18 @@ BOOL CreateMsgWindow()
     {
         switch (message)
         {
+            case WM_TIMER:
+            {
+                if (wParam == WAIT_SHELL_START_TIMER_ID)
+                {
+                    if (RegisterWaitEventsForShellProcess() && LoadDeskband())
+                    {
+                        KillTimer(hWnd, WAIT_SHELL_START_TIMER_ID);
+                    }
+                }
+
+                break;
+            }
             case WM_APP:
             {
                 SHELL_WND_DATA* shData = (SHELL_WND_DATA*)wParam;
@@ -88,10 +110,11 @@ BOOL CreateMsgWindow()
                 g_explorerDataMapForCurrentSession.erase(shData->processId);
                 if (g_explorerDataMapForCurrentSession.size() == 0)
                 {
-
+                    SetTimer(g_msgWindowHwnd, WAIT_SHELL_START_TIMER_ID, CHECK_SHELL_INTERVAL, NULL);
                 }
+
+                break;
             }
-            break;
             case WM_DESTROY:
                 PostQuitMessage(0);
                 break;
@@ -108,6 +131,7 @@ BOOL CreateMsgWindow()
 }
 
 
+
 BOOL LoadDeskband()
 {
    CoInitialize(nullptr);
@@ -116,26 +140,74 @@ BOOL LoadDeskband()
    // CLSID_ClipboxDeskBand is defined in ClipboxProductConstants.h (ClipboxDeskband.Infrastructure)
    HRESULT  hResult = CoCreateInstance(CLSID_ClipboxDeskBand, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pDeskbandInterface));
    
+   HRESULT hr = S_OK;
    if (SUCCEEDED(hResult))
-    {        
+   {        
         IBandSite* pBandSite = NULL;
 
         hResult = CoCreateInstance(CLSID_TrayBandSiteService, NULL, CLSCTX_ALL, IID_PPV_ARGS(&pBandSite));
         if (SUCCEEDED(hResult))
         {
-            pBandSite->AddBand(pDeskbandInterface);
+            hr = pBandSite->AddBand(pDeskbandInterface);
             pBandSite->Release();
         }
         pDeskbandInterface->Release();
     }
 
-   return TRUE;
+   return hr == S_OK;
 }
 
 static void CALLBACK OnExited(void* context, BOOLEAN isTimeOut)
 {
     SHELL_WND_DATA* shData = g_explorerDataMapForCurrentSession[reinterpret_cast<int>(context)];
     PostMessage(g_msgWindowHwnd, WM_APP, (WPARAM)shData, 0);
+}
+
+
+bool RegisterWaitEventsForShellProcess()
+{
+    HWND hWndDesktop = GetDesktopWindow();
+
+    HWND hShellTray = FindWindowEx(hWndDesktop, NULL, _T("Shell_TrayWnd"), NULL);
+    HWND hReBar = FindWindowEx(hShellTray, NULL, _T("ReBarWindow32"), NULL);
+
+    if (hShellTray != nullptr && hReBar != nullptr)
+    {
+        DWORD processID;
+        GetWindowThreadProcessId(hReBar, &processID);
+
+        HANDLE hProc = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | SYNCHRONIZE, FALSE, processID);
+        if (hProc)
+        {
+            HANDLE hWait;
+            if (RegisterWaitForSingleObject(&hWait, hProc, &OnExited, reinterpret_cast<void*>(processID), INFINITE, WT_EXECUTEONLYONCE))
+            {
+                g_explorerDataMapForCurrentSession[processID] = new SHELL_WND_DATA
+                {
+                    hWait,
+                    processID,
+                    hProc
+                };
+
+                return TRUE;
+            }
+        }
+        else
+        {
+            CloseHandle(hProc);
+        }
+    }
+    else
+    {
+
+        DWORD currentSessionId;
+
+        return ProcessIdToSessionId(GetCurrentProcessId(), &currentSessionId) && 
+            RegisterWaitEventsForExplorerProcesses(currentSessionId);
+    }
+    
+
+    return FALSE;
 }
 
 bool RegisterWaitEventsForExplorerProcesses(int sessionId)
