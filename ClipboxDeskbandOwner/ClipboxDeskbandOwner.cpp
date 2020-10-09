@@ -4,6 +4,8 @@
 #include "framework.h"
 
 #include <shlobj.h> 
+#include <tlhelp32.h>
+#include <map>
 
 #include "ClipboxDeskbandOwner.h"
 
@@ -11,7 +13,20 @@
 #pragma comment(lib, "ClipboxDeskband.Infrastructure.lib")
 
 HINSTANCE           g_hInstance;
-BOOL                LoadDeskband();
+HWND                g_msgWindowHwnd;
+BOOL                LoadDeskband(); 
+BOOL CreateMsgWindow();
+bool RegisterWaitEventsForExplorerProcesses(int sessionId);
+
+struct SHELL_WND_DATA 
+{
+    HANDLE waitHandle;
+    DWORD processId;
+    HANDLE processHandle;
+};
+
+
+std::map<int, SHELL_WND_DATA*> g_explorerDataMapForCurrentSession;
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -23,7 +38,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     g_hInstance = hInstance;
 
-    if (!LoadDeskband())
+    DWORD currentSessionId;
+    ProcessIdToSessionId(GetCurrentProcessId(), &currentSessionId);
+    RegisterWaitEventsForExplorerProcesses(currentSessionId);
+
+    if (!(CreateMsgWindow() && LoadDeskband()))
     {
         return FALSE;
     }
@@ -43,6 +62,49 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     }
 
     return (int) msg.wParam;
+}
+
+BOOL CreateMsgWindow()
+{
+    WNDCLASSW wc{};
+    wc.hInstance = g_hInstance;
+    wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
+    wc.hbrBackground = reinterpret_cast<HBRUSH>(GetStockObject(WHITE_BRUSH));
+    wc.lpszClassName = L"ClipboxDeskbandHelperWindowClass";
+    wc.cbWndExtra = sizeof(LONG_PTR);
+    wc.lpfnWndProc = [](HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+    {
+        switch (message)
+        {
+            case WM_APP:
+            {
+                SHELL_WND_DATA* shData = (SHELL_WND_DATA*)wParam;
+                // UnregisterWait shouldn't be called directly 
+                // from within RegisterWaitForSingleObject's callback
+                UnregisterWait(shData->waitHandle);
+                // we should not close the process handle before the wait is finished,
+                // otherwise some strange things will start to happen...
+                CloseHandle(shData->processHandle);
+                g_explorerDataMapForCurrentSession.erase(shData->processId);
+                if (g_explorerDataMapForCurrentSession.size() == 0)
+                {
+
+                }
+            }
+            break;
+            case WM_DESTROY:
+                PostQuitMessage(0);
+                break;
+        }
+        return DefWindowProc(hWnd, message, wParam, lParam);
+    };
+
+    RegisterClassW(&wc);
+
+    g_msgWindowHwnd = CreateWindowExW(0, wc.lpszClassName, L"ClipboxDeskbandHelperWindow", 0,
+        CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, HWND_MESSAGE, nullptr, g_hInstance, nullptr);
+    
+    return g_msgWindowHwnd != nullptr;
 }
 
 
@@ -68,4 +130,57 @@ BOOL LoadDeskband()
     }
 
    return TRUE;
+}
+
+static void CALLBACK OnExited(void* context, BOOLEAN isTimeOut)
+{
+    SHELL_WND_DATA* shData = g_explorerDataMapForCurrentSession[reinterpret_cast<int>(context)];
+    PostMessage(g_msgWindowHwnd, WM_APP, (WPARAM)shData, 0);
+}
+
+bool RegisterWaitEventsForExplorerProcesses(int sessionId)
+{
+    DWORD pid = 0;
+
+    g_explorerDataMapForCurrentSession = std::map<int, SHELL_WND_DATA*>();
+
+    // Create toolhelp snapshot.
+    HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+    PROCESSENTRY32 process;
+    ZeroMemory(&process, sizeof(process));
+    process.dwSize = sizeof(process);
+
+    // Walkthrough all processes.
+    if (Process32First(snapshot, &process))
+    {
+        do
+        {
+            DWORD sessionId;
+            if (ProcessIdToSessionId(process.th32ProcessID, &sessionId) == sessionId
+                && _wcsicmp(process.szExeFile, L"explorer.exe") == 0)
+            {
+                // the handle, returned by OpenProcess is closed by the WM_APP message handler,
+                // when the wait handle for the process is also closed.
+                // It needs to be open in order for RegisterWaitForSingleObject to work properly.
+                HANDLE hProcHandle = OpenProcess(SYNCHRONIZE, FALSE, process.th32ProcessID);
+                if (hProcHandle)
+                {
+                    HANDLE hWaitHandle;
+                    if (RegisterWaitForSingleObject(&hWaitHandle, hProcHandle, &OnExited, reinterpret_cast<void*>(process.th32ProcessID), INFINITE, WT_EXECUTEONLYONCE))
+                    {
+                        g_explorerDataMapForCurrentSession[process.th32ProcessID] = new SHELL_WND_DATA
+                        {
+                            hWaitHandle,
+                            process.th32ProcessID,
+                            hProcHandle
+                        };
+                    }
+                }
+            }
+        } while (Process32Next(snapshot, &process));
+    }
+
+    CloseHandle(snapshot);
+
+    return g_explorerDataMapForCurrentSession.size() > 0;
 }
