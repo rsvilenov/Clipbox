@@ -18,6 +18,7 @@ const int CHECK_SHELL_INTERVAL = 1000;
 
 HINSTANCE           g_hInstance;
 HWND                g_msgWindowHwnd;
+BOOL                IsDeskbandShown();
 BOOL                LoadDeskband(); 
 BOOL CreateMsgWindow();
 bool RegisterWaitEventsForExplorerProcesses(int sessionId);
@@ -52,7 +53,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     {
         SetTimer(g_msgWindowHwnd, WAIT_SHELL_START_TIMER_ID, CHECK_SHELL_INTERVAL, NULL);
     }
-    else
+    else if (!IsDeskbandShown())
     {
         LoadDeskband();
     }
@@ -90,7 +91,9 @@ BOOL CreateMsgWindow()
             {
                 if (wParam == WAIT_SHELL_START_TIMER_ID)
                 {
-                    if (RegisterWaitEventsForShellProcess() && LoadDeskband())
+                    if (IsDeskbandShown()
+                        || (RegisterWaitEventsForShellProcess()
+                             && LoadDeskband()))
                     {
                         KillTimer(hWnd, WAIT_SHELL_START_TIMER_ID);
                     }
@@ -131,22 +134,44 @@ BOOL CreateMsgWindow()
 }
 
 
+BOOL IsDeskbandShown()
+{
+    BOOL success = FALSE;
+
+    CoInitialize(nullptr);
+    ITrayDeskBand* pTrayDeskBand = NULL;
+    HRESULT hr = CoCreateInstance(CLSID_TrayDeskBand, NULL, CLSCTX_ALL, IID_PPV_ARGS(&pTrayDeskBand));
+
+    if (SUCCEEDED(hr))
+    {
+        hr = pTrayDeskBand->IsDeskBandShown(CLSID_ClipboxDeskBand);
+        if (SUCCEEDED(hr) && (S_OK == hr))
+        {
+            success = true;
+        }
+
+        pTrayDeskBand->Release();
+    }
+
+    return success;
+}
 
 BOOL LoadDeskband()
 {
    CoInitialize(nullptr);
+
    IDeskBand2* pDeskbandInterface = NULL;
 
-   // CLSID_ClipboxDeskBand is defined in ClipboxProductConstants.h (ClipboxDeskband.Infrastructure)
-   HRESULT  hResult = CoCreateInstance(CLSID_ClipboxDeskBand, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pDeskbandInterface));
-   
    HRESULT hr = S_OK;
-   if (SUCCEEDED(hResult))
+
+   // CLSID_ClipboxDeskBand is defined in ClipboxProductConstants.h (ClipboxDeskband.Infrastructure)
+   hr = CoCreateInstance(CLSID_ClipboxDeskBand, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pDeskbandInterface));
+   if (SUCCEEDED(hr))
    {        
         IBandSite* pBandSite = NULL;
 
-        hResult = CoCreateInstance(CLSID_TrayBandSiteService, NULL, CLSCTX_ALL, IID_PPV_ARGS(&pBandSite));
-        if (SUCCEEDED(hResult))
+        hr = CoCreateInstance(CLSID_TrayBandSiteService, NULL, CLSCTX_ALL, IID_PPV_ARGS(&pBandSite));
+        if (SUCCEEDED(hr))
         {
             hr = pBandSite->AddBand(pDeskbandInterface);
             pBandSite->Release();
