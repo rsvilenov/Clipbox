@@ -3,6 +3,9 @@
 
 #include "framework.h"
 
+#include "shlwapi.h"
+#pragma comment(lib, "shlwapi.lib")
+
 #include <shlobj.h> 
 #include <tlhelp32.h>
 #include <map>
@@ -11,28 +14,33 @@
 #include "ClipboxDeskbandOwner.h"
 
 #include "../ClipboxDeskband.Infrastructure/ClipboxProductConstants.h"
+#include "../ClipboxDeskband.Infrastructure/Logger.h"
 #pragma comment(lib, "ClipboxDeskband.Infrastructure.lib")
 
 static const UINT_PTR WAIT_SHELL_START_TIMER_ID = 1;
 const int CHECK_SHELL_INTERVAL = 1000;
+LPCWSTR APPDATA_SUBFOLDER = L"Clipbox";
 
-HINSTANCE           g_hInstance;
-HWND                g_msgWindowHwnd;
-BOOL                IsDeskbandShown();
-BOOL                LoadDeskband(); 
-BOOL CreateMsgWindow();
-bool RegisterWaitEventsForExplorerProcesses(int sessionId);
-bool RegisterWaitEventsForShellProcess();
-
-struct SHELL_WND_DATA 
+struct SHELL_WND_DATA
 {
     HANDLE waitHandle;
     DWORD processId;
     HANDLE processHandle;
 };
 
-
+HINSTANCE           g_hInstance;
+HWND                g_msgWindowHwnd;
+Logger*              g_logger;
 std::map<int, SHELL_WND_DATA*> g_explorerDataMapForCurrentSession;
+
+void                InitializeLogger();
+BOOL                IsDeskbandShown();
+BOOL                LoadDeskband(); 
+BOOL                CreateMsgWindow();
+BOOL                RegisterWaitEventsForExplorerProcesses(int sessionId);
+BOOL                RegisterWaitEventsForShellProcess();
+BOOL                TryRemoveDeskband();
+BOOL                ShowDeskband();
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -44,6 +52,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     g_hInstance = hInstance;
 
+    InitializeLogger();
+
     if (!CreateMsgWindow())
     {
         return FALSE;
@@ -53,8 +63,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     {
         SetTimer(g_msgWindowHwnd, WAIT_SHELL_START_TIMER_ID, CHECK_SHELL_INTERVAL, NULL);
     }
-    else if (!IsDeskbandShown())
+    else
     {
+        TryRemoveDeskband();
         LoadDeskband();
     }
 
@@ -75,6 +86,18 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     return (int) msg.wParam;
 }
 
+void InitializeLogger()
+{
+    WCHAR szAppData[MAX_PATH];
+    HRESULT hr = SHGetFolderPath(NULL, CSIDL_APPDATA, NULL, 0, szAppData);
+    if (SUCCEEDED(hr))
+    {
+        PathAppendW(szAppData, APPDATA_SUBFOLDER);
+        PathAppendW(szAppData, L"deskbandOwner.log");
+        g_logger = new Logger(szAppData);
+    }
+}
+
 BOOL CreateMsgWindow()
 {
     WNDCLASSW wc{};
@@ -91,9 +114,9 @@ BOOL CreateMsgWindow()
             {
                 if (wParam == WAIT_SHELL_START_TIMER_ID)
                 {
-                    if (IsDeskbandShown()
-                        || (RegisterWaitEventsForShellProcess()
-                             && LoadDeskband()))
+                    TryRemoveDeskband();
+                    if (RegisterWaitEventsForShellProcess()
+                             && LoadDeskband())
                     {
                         KillTimer(hWnd, WAIT_SHELL_START_TIMER_ID);
                     }
@@ -110,6 +133,7 @@ BOOL CreateMsgWindow()
                 // we should not close the process handle before the wait is finished,
                 // otherwise some strange things will start to happen...
                 CloseHandle(shData->processHandle);
+
                 g_explorerDataMapForCurrentSession.erase(shData->processId);
                 if (g_explorerDataMapForCurrentSession.size() == 0)
                 {
@@ -144,7 +168,7 @@ BOOL IsDeskbandShown()
 
     if (SUCCEEDED(hr))
     {
-        hr = pTrayDeskBand->IsDeskBandShown(CLSID_ClipboxDeskBand);
+        hr = pTrayDeskBand->IsDeskBandShown(PRODCONST_CLSID_ClipboxDeskBand);
         if (SUCCEEDED(hr) && (S_OK == hr))
         {
             success = true;
@@ -153,19 +177,104 @@ BOOL IsDeskbandShown()
         pTrayDeskBand->Release();
     }
 
+    CoUninitialize();
+
+    return success;
+}
+
+BOOL ShowDeskband()
+{
+    BOOL success = FALSE;
+
+    CoInitialize(nullptr);
+    ITrayDeskBand* pTrayDeskBand = NULL;
+    HRESULT hr = CoCreateInstance(CLSID_TrayDeskBand, NULL, CLSCTX_ALL, IID_PPV_ARGS(&pTrayDeskBand));
+
+    if (SUCCEEDED(hr))
+    {
+        hr = pTrayDeskBand->ShowDeskBand(PRODCONST_CLSID_ClipboxDeskBand);
+        if (SUCCEEDED(hr) && (S_OK == hr))
+        {
+            success = true;
+        }
+
+        pTrayDeskBand->Release();
+    }
+
+    CoUninitialize();
+
+    return success;
+}
+
+
+BOOL TryRemoveDeskband()
+{
+    BOOL success = FALSE;
+
+    CoInitialize(NULL);
+    HRESULT hr;
+
+    IBandSite* pBandSite;
+    hr = CoCreateInstance(CLSID_TrayBandSiteService, NULL, CLSCTX_SERVER, IID_IBandSite, (LPVOID*)&pBandSite);
+
+    if (SUCCEEDED(hr))
+    {
+        HRESULT hr;
+
+        IDeskBand* pBand = 0;
+        DWORD bandID = 0;
+
+        int i = 0;
+        while (SUCCEEDED(pBandSite->EnumBands(i, &bandID)))
+        {
+            i++;
+
+            hr = pBandSite->GetBandObject(bandID, IID_IDeskBand, (void**)&pBand);
+            if (FAILED(hr))
+            {
+                continue;
+            }
+
+            IPersist* pPersist = 0;
+            if (SUCCEEDED(pBand->QueryInterface(IID_IPersist, (void**)&pPersist)))
+            {
+                CLSID clsid = CLSID_NULL;
+                if (SUCCEEDED(pPersist->GetClassID(&clsid)))
+                {
+                    if (clsid == PRODCONST_CLSID_ClipboxDeskBand)
+                    {
+                        //HRESULT hr = pBandSite->SetBandState(bandID, BSSF_VISIBLE, UINT_MAX);
+                        HRESULT hr = pBandSite->RemoveBand(bandID);
+                        success = SUCCEEDED(hr);
+                        //break;
+                    }
+                }
+                pPersist->Release();
+
+            }
+
+            pBand->Release();
+        }
+
+        pBandSite->Release();
+    }
+
+
+    CoUninitialize();
+
     return success;
 }
 
 BOOL LoadDeskband()
 {
-   CoInitialize(nullptr);
+    CoInitialize(nullptr);
 
    IDeskBand2* pDeskbandInterface = NULL;
 
    HRESULT hr = S_OK;
 
    // CLSID_ClipboxDeskBand is defined in ClipboxProductConstants.h (ClipboxDeskband.Infrastructure)
-   hr = CoCreateInstance(CLSID_ClipboxDeskBand, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pDeskbandInterface));
+   hr = CoCreateInstance(PRODCONST_CLSID_ClipboxDeskBand, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pDeskbandInterface));
    if (SUCCEEDED(hr))
    {        
         IBandSite* pBandSite = NULL;
@@ -176,10 +285,18 @@ BOOL LoadDeskband()
             hr = pBandSite->AddBand(pDeskbandInterface);
             pBandSite->Release();
         }
+
         pDeskbandInterface->Release();
     }
 
-   return hr == S_OK;
+   if (FAILED(hr) && hr != REGDB_E_CLASSNOTREG)
+   {
+       g_logger->LogHR(hr);
+   }
+   
+   CoUninitialize();
+
+   return SUCCEEDED(hr);
 }
 
 static void CALLBACK OnExited(void* context, BOOLEAN isTimeOut)
@@ -189,17 +306,27 @@ static void CALLBACK OnExited(void* context, BOOLEAN isTimeOut)
 }
 
 
-bool RegisterWaitEventsForShellProcess()
+BOOL RegisterWaitEventsForShellProcess()
 {
     HWND hWndDesktop = GetDesktopWindow();
+    if (!hWndDesktop)
+    {
+        return FALSE;
+    }
 
     HWND hShellTray = FindWindowEx(hWndDesktop, NULL, _T("Shell_TrayWnd"), NULL);
     HWND hReBar = FindWindowEx(hShellTray, NULL, _T("ReBarWindow32"), NULL);
 
-    if (hShellTray != nullptr && hReBar != nullptr)
+    if (hShellTray && hReBar)
     {
         DWORD processID;
         GetWindowThreadProcessId(hReBar, &processID);
+
+        if (g_explorerDataMapForCurrentSession.count(processID) > 0)
+        {
+            // the wait is already registered
+            return TRUE;
+        }
 
         HANDLE hProc = OpenProcess(PROCESS_QUERY_INFORMATION | PROCESS_VM_READ | SYNCHRONIZE, FALSE, processID);
         if (hProc)
@@ -222,27 +349,36 @@ bool RegisterWaitEventsForShellProcess()
             CloseHandle(hProc);
         }
     }
-    else
+    /*else
     {
+        g_logger->LogLastWin32Error();
+        g_logger->LogText("Resorting to using RegisterWaitEventsForExplorerProcesses()");
 
         DWORD currentSessionId;
 
         return ProcessIdToSessionId(GetCurrentProcessId(), &currentSessionId) && 
             RegisterWaitEventsForExplorerProcesses(currentSessionId);
-    }
+    }*/
     
 
     return FALSE;
 }
 
-bool RegisterWaitEventsForExplorerProcesses(int sessionId)
+BOOL RegisterWaitEventsForExplorerProcesses(int sessionId)
 {
     DWORD pid = 0;
 
     g_explorerDataMapForCurrentSession = std::map<int, SHELL_WND_DATA*>();
 
-    // Create toolhelp snapshot.
+    // create a toolhelp snapshot
     HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+    if (!snapshot)
+    {
+        g_logger->LogLastWin32Error();
+        g_logger->LogText("Failed to create a toolhelp snapshot");
+        return FALSE;
+    }
+
     PROCESSENTRY32 process;
     ZeroMemory(&process, sizeof(process));
     process.dwSize = sizeof(process);
@@ -272,6 +408,11 @@ bool RegisterWaitEventsForExplorerProcesses(int sessionId)
                             hProcHandle
                         };
                     }
+                }
+                else
+                {
+                    g_logger->LogLastWin32Error();
+                    g_logger->LogText("Failed to open the explorer's process wihch hosts the taskbar (RegisterWaitEventsForExplorerProcesses).");
                 }
             }
         } while (Process32Next(snapshot, &process));

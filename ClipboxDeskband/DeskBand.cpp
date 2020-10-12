@@ -38,8 +38,8 @@ const int TOOLTIP_DELAY_MS = 500;
 const char* CMD_LEFT_CLICK = "LC";
 const char* CMD_RIGHT_CLICK = "RC";
 
-LPCWSTR APPDATA_SUBFOLDER = L"Clipbox";
-LPCWSTR TOOLTIP_TEXT = L"Clipbox";
+LPCWSTR APPDATA_SUBFOLDER = PRODCONST_ProductName;
+LPCWSTR TOOLTIP_TEXT = PRODCONST_ProductName;
 
 BOOL g_mouseOver = false;
 BOOL g_fMouseTracking = false;
@@ -269,7 +269,7 @@ STDMETHODIMP CDeskBand::GetCompositionState(BOOL *pfCompositionEnabled)
 //
 STDMETHODIMP CDeskBand::GetClassID(CLSID *pclsid)
 {
-    *pclsid = CLSID_ClipboxDeskBand;
+    *pclsid = PRODCONST_CLSID_ClipboxDeskBand;
     return S_OK;
 }
 

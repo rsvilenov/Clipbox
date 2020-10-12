@@ -7,7 +7,7 @@
 #include "../ClipboxDeskband.Infrastructure/ClipboxProductConstants.h"
 #pragma comment(lib, "ClipboxDeskband.Infrastructure.lib")
 
-WCHAR const g_szName[] = L"ClipBox";
+WCHAR const g_szName[] = L"Clipbox";
 
 HINSTANCE   g_hInst     = NULL;
 long        g_cDllRef   = 0;
@@ -26,7 +26,7 @@ STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, void **ppv)
 {
     HRESULT hr = CLASS_E_CLASSNOTAVAILABLE;
 
-    if (IsEqualCLSID(CLSID_ClipboxDeskBand, rclsid))
+    if (IsEqualCLSID(PRODCONST_CLSID_ClipboxDeskBand, rclsid))
     {
         hr = E_OUTOFMEMORY;
 
@@ -49,7 +49,7 @@ STDAPI DllCanUnloadNow()
 HRESULT RegisterServer()
 {
     WCHAR szCLSID[MAX_PATH];
-    StringFromGUID2(CLSID_ClipboxDeskBand, szCLSID, ARRAYSIZE(szCLSID));
+    StringFromGUID2(PRODCONST_CLSID_ClipboxDeskBand, szCLSID, ARRAYSIZE(szCLSID));
 
     WCHAR szSubkey[MAX_PATH];
     HKEY hKey;
@@ -119,7 +119,7 @@ HRESULT RegisterComCat()
     if (SUCCEEDED(hr))
     {
         CATID catid = CATID_DeskBand;
-        hr = pcr->RegisterClassImplCategories(CLSID_ClipboxDeskBand, 1, &catid);
+        hr = pcr->RegisterClassImplCategories(PRODCONST_CLSID_ClipboxDeskBand, 1, &catid);
         pcr->Release();
     }
     return hr;
@@ -141,7 +141,7 @@ STDAPI DllRegisterServer()
 STDAPI DllUnregisterServer()
 {
     WCHAR szCLSID[MAX_PATH];
-    StringFromGUID2(CLSID_ClipboxDeskBand, szCLSID, ARRAYSIZE(szCLSID));
+    StringFromGUID2(PRODCONST_CLSID_ClipboxDeskBand, szCLSID, ARRAYSIZE(szCLSID));
 
     WCHAR szSubkey[MAX_PATH];
     HRESULT hr = StringCchPrintfW(szSubkey, ARRAYSIZE(szSubkey), L"CLSID\\%s", szCLSID);

@@ -91,6 +91,13 @@ namespace ClipboxGuard.Services
                 errorOrigin |= ErrorOrigin.Deskband;
             }
 
+            if (_persistenceProvider.CheckIfKeyExists(ProductConstants.DESKBAND_OWNER_LOG_APPDATA_FILENAME))
+            {
+                errorDetailsStringBuilder.AppendLine("Deskband owner process errors:");
+                errorDetailsStringBuilder.Append(_persistenceProvider.ReadText(ProductConstants.DESKBAND_OWNER_LOG_APPDATA_FILENAME));
+                errorOrigin |= ErrorOrigin.DeskbandOwner;
+            }
+
             int flagsCount = Enum.GetValues(typeof(ErrorOrigin))
                 .Cast<ErrorOrigin>()
                 .Count(v => errorOrigin.HasFlag(v));

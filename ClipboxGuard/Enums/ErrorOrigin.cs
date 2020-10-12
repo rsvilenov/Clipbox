@@ -21,7 +21,10 @@ namespace ClipboxGuard.Enums
         [Description("Deskband")]
         Deskband = 16,
 
+        [Description("DeskbandOwner")]
+        DeskbandOwner = 32,
+
         [Description("Unknown")]
-        Unknown = 32
+        Unknown = 64
     }
 }
