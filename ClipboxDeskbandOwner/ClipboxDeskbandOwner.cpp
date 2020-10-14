@@ -52,10 +52,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     InitializeLogger();
     g_deskbandController = new DeskbandController(PRODCONST_CLSID_ClipboxDeskBand);
+    HRESULT hr = g_deskbandController->Initialize();
+    if (FAILED(hr))
+    {
+        g_logger->LogHR(hr);
+        return 1;
+    }
 
     if (!CreateMsgWindow())
     {
-        return FALSE;
+        return 1;
     }
 
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_CLIPBOXDESKBANDOWNER));

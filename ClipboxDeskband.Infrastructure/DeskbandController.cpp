@@ -11,10 +11,19 @@ DeskbandController::DeskbandController(CLSID deskbandClsId)
 	_deskbandClsId = deskbandClsId;
 }
 
+HRESULT DeskbandController::Initialize()
+{
+    return CoInitialize(nullptr);
+}
+
+DeskbandController::~DeskbandController()
+{
+    CoUninitialize();
+}
 
 HRESULT DeskbandController::NotiryDeskbandRegistrationChange()
 {
-    HRESULT hr = CoInitialize(nullptr);
+    HRESULT hr = S_OK;
     ITrayDeskBand* pTrayDeskBand = NULL;
     hr = CoCreateInstance(CLSID_TrayDeskBand, NULL, CLSCTX_ALL, IID_PPV_ARGS(&pTrayDeskBand));
 
@@ -24,8 +33,6 @@ HRESULT DeskbandController::NotiryDeskbandRegistrationChange()
         pTrayDeskBand->Release();
     }
 
-    CoUninitialize();
-
     return hr;
 }
 
@@ -33,7 +40,7 @@ HRESULT DeskbandController::IsDeskbandShown(bool* isShown)
 {
     *isShown = false;
 
-    HRESULT hr = CoInitialize(nullptr);
+    HRESULT hr = S_OK;
     ITrayDeskBand* pTrayDeskBand = NULL;
     hr = CoCreateInstance(CLSID_TrayDeskBand, NULL, CLSCTX_ALL, IID_PPV_ARGS(&pTrayDeskBand));
 
@@ -48,14 +55,12 @@ HRESULT DeskbandController::IsDeskbandShown(bool* isShown)
         pTrayDeskBand->Release();
     }
 
-    CoUninitialize();
-
     return hr;
 }
 
 HRESULT DeskbandController::ShowDeskband()
 {
-    HRESULT hr = CoInitialize(nullptr);
+    HRESULT hr = S_OK;
     ITrayDeskBand* pTrayDeskBand = NULL;
     hr = CoCreateInstance(CLSID_TrayDeskBand, NULL, CLSCTX_ALL, IID_PPV_ARGS(&pTrayDeskBand));
 
@@ -73,8 +78,6 @@ HRESULT DeskbandController::ShowDeskband()
         pTrayDeskBand->Release();
     }
 
-    CoUninitialize();
-
     return hr;
 }
 
@@ -83,11 +86,7 @@ HRESULT DeskbandController::TryRemoveDeskband(bool* removeSuccess)
 {
     *removeSuccess = false;
 
-    HRESULT hr = CoInitialize(NULL);
-    if (FAILED(hr))
-    {
-        return hr;
-    }
+    HRESULT hr = S_OK;
 
     IBandSite* pBandSite;
     hr = CoCreateInstance(CLSID_TrayBandSiteService, NULL, CLSCTX_SERVER, IID_IBandSite, (LPVOID*)&pBandSite);
@@ -134,9 +133,6 @@ HRESULT DeskbandController::TryRemoveDeskband(bool* removeSuccess)
         pBandSite->Release();
     }
 
-
-    CoUninitialize();
-
     return hr;
 }
 
@@ -147,7 +143,6 @@ HRESULT DeskbandController::LoadDeskband(bool* isDeskbandRegistered)
     *isDeskbandRegistered = false;
     HRESULT hr = S_OK;
 
-    hr = CoInitialize(nullptr);
     if (FAILED(hr))
     {
         return hr;
@@ -171,8 +166,6 @@ HRESULT DeskbandController::LoadDeskband(bool* isDeskbandRegistered)
 
         pDeskbandInterface->Release();
     }
-
-    CoUninitialize();
 
     return hr;
 }

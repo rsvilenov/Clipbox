@@ -59,11 +59,19 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     InitializeLogger();
     g_deskbandController = new DeskbandController(PRODCONST_CLSID_ClipboxDeskBand);
+    HRESULT hr = g_deskbandController->Initialize();
+    if (FAILED(hr))
+    {
+        g_logger->LogHR(hr);
+        return (int)EXIT_CODES::UNKNOWN;
+    }
+
     g_nowait = wcscmp(lpCmdLine, ARG_NOWAIT) == 0;
 
     if (!CreateMsgWindow())
     {
-        return FALSE;
+        g_logger->LogText("Failed to create main window");
+        return (int)EXIT_CODES::UNKNOWN;
     }
 
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_CLIPBOXDESKBANDCONTROL));

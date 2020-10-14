@@ -9,7 +9,9 @@ private:
 
 public:
 	DeskbandController(CLSID _deskbandClsId);
+	~DeskbandController();
 
+	HRESULT				Initialize();
 	HRESULT				TryRemoveDeskband(bool* removeSuccess);
 	HRESULT             IsDeskbandShown(bool* isShown);
 	HRESULT             LoadDeskband(bool* isDeskbandRegistered);
