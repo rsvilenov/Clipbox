@@ -7,6 +7,8 @@ using Clipbox.Win32;
 using Clipbox.Win32.Native;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows;
@@ -47,32 +49,16 @@ namespace Clipbox.Services
 
             if (_settingsService.GetSetting<bool>(SettingsKeys.IsDeskBandEnabled))
             {
-                for (int i = 1; i <= 10; i++)
-                {
-                    try
-                    {
-                        ShowDeskBand();
-                        break;
-                    }
-                    catch (Exception ex)
-                    {
-                        if (ex is COMException || ex is Win32Exception)
-                        {
-                            if (i == 10)
-                            {
-                                _settingsService.SetSetting(SettingsKeys.IsDeskBandEnabled, false);
-                                _settingsService.SetSetting(SettingsKeys.IsTrayIconEnabled, true);
-                                throw;
-                            }
-
-                            Shell32.SHChangeNotify(NativeEnums.SHCNE.SHCNE_ASSOCCHANGED, NativeEnums.SHChangeNotifyFlags.SHCNF_IDLIST, IntPtr.Zero, IntPtr.Zero);
-                            System.Threading.Thread.Sleep(500);
-                        }
-                    }
-                }
+                ShowDeskBand(autoConfirm: true);
             }
 
             _settingsService.SettingChanged += _settingsService_SettingChanged;
+        }
+
+        private void DisableDeskband()
+        {
+            _settingsService.SetSetting(SettingsKeys.IsDeskBandEnabled, false);
+            _settingsService.SetSetting(SettingsKeys.IsTrayIconEnabled, true);
         }
 
         private void _namedPipeServer_ErrorOccurred(object sender, NamedPipeErrorEventArgs e)
@@ -80,20 +66,47 @@ namespace Clipbox.Services
             throw e.Exception;
         }
 
-        private void ShowDeskBand()
-        {
-            
-            if (!DeskbandUtils.IsTaskBandShown(_deskbandGuid))
+        private void ShowDeskBand(bool autoConfirm)
+        {   
+            string deskbandCtrlProcessPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ProductConstants.DESKBAND_CTRL_EXE_NAME);
+            if (File.Exists(deskbandCtrlProcessPath))
             {
-                DeskbandUtils.AddDeskbandToTrayUsingUndocumentedTrayBandSiteService(_deskbandGuid);
+                using (Process deskbandCtlProcess = new Process
+                {
+                    StartInfo = new ProcessStartInfo
+                    {
+                        FileName = deskbandCtrlProcessPath,
+                        Arguments = autoConfirm ? "nowait" : string.Empty
+                    }
+                })
+                {
+                    deskbandCtlProcess.Start();
+                    deskbandCtlProcess.WaitForExit();
 
-                // The method below triggers a confirmation dialog, shown by Windows Explorer.
-                // This condifmation dialog is not always on top of other windows, so the user
-                // may not see it. I tried to add auto-confirmation function of the method ShowDeskBandd
-                // but it does not always work, so I cannot rely on it. In the end it turns out that
-                // relying on the undocumented interface TrayBandSiteService is more reliable
-                // than using the official way, which causes this "not-always-easily-visible" dialog to appear.
-                //DeskbandUtils.ShowDeskBand(_deskbandGuid, CLIPBAND_NAME, true);
+                    if (deskbandCtlProcess.ExitCode != (int)DeskbandCtrlProcessExitCodes.OK)
+                    {
+                        DisableDeskband();
+                    }
+                }
+            }
+            else
+            {
+                try
+                {
+                    if (!DeskbandUtils.IsTaskBandShown(_deskbandGuid))
+                    {
+                        //DeskbandUtils.AddDeskbandToTrayUsingUndocumentedTrayBandSiteService(_deskbandGuid);
+                        DeskbandUtils.ShowDeskBand(_deskbandGuid, CLIPBAND_NAME, autoConfirm);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (ex is COMException || ex is Win32Exception)
+                    {
+                        DisableDeskband();
+                        throw;
+                    }
+                }
             }
         }
 
@@ -111,7 +124,7 @@ namespace Clipbox.Services
             {
                 if ((bool)e.Value)
                 {
-                    ShowDeskBand();
+                    ShowDeskBand(autoConfirm: true);
                 }
                 else
                 {
@@ -246,5 +259,17 @@ namespace Clipbox.Services
             }
         }
 
+
+        /// <summary>
+        /// Process exit codes of ClipboxDeskbandControl.exe
+        /// The same enum exists in ClipboxDeskbandControl.cpp
+        /// </summary>
+        public enum DeskbandCtrlProcessExitCodes
+        {
+            OK,
+            DeskbandNotRegistered,
+            DeskbandFailedToShow,
+            Unknown
+        }
     }
 }

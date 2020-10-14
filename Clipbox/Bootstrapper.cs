@@ -28,6 +28,7 @@ using Clipbox.Win32.Native;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows;
@@ -130,6 +131,7 @@ namespace Clipbox
 
             // Load extension containers
             _extensionLoader = new ExtensionLoader();
+            PerformInitialConfiguration(_extensionLoader, _settingsService);
             _extensionLoader.SetEnabledExtensions(GetEnabledExtensions());
             _extensionLoader.LoadContainers();
 
@@ -241,9 +243,13 @@ namespace Clipbox
 
         private List<PersistableExtensionInfo> GetEnabledExtensions()
         {
-            List<PersistableExtensionInfo> enabledExtensionInfo;
-            if (!_settingsService.GetSetting<bool>(SettingsKeys.IsInitialConfigurationDone))
-            {
+            string xml = _settingsService.GetSetting<string>(SettingsKeys.EnabledExtensions);
+            return XmlSerialization.Deserialize<List<PersistableExtensionInfo>>(xml);
+        }
+
+        private void PerformInitialConfiguration(ExtensionLoader extensionLoader, ISettingsService settingsService)
+        {
+
 #if RELEASE
                 MessageBox.Show("Put the strong names!!!");
                 List<string> buildInExtensionAssemblyFullNames = new List<string>
@@ -255,37 +261,39 @@ namespace Clipbox
                     "Clipbox.Extensions.BuiltIn.TextFormats, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
                 };
 #endif
-                enabledExtensionInfo = new List<PersistableExtensionInfo>();
-
-                foreach (PersistableExtensionInfo availableExtension  in  _extensionLoader
-                    .GetAllAvailableExtensions()
-                    .Select(ei => ei.PersistableExtensionInfo)
-                    .ToList())
-                {
+            List<PersistableExtensionInfo> enabledExtensionInfo = new List<PersistableExtensionInfo>();
+            foreach (PersistableExtensionInfo availableExtension in extensionLoader
+                .GetAllAvailableExtensions()
+                .Select(ei => ei.PersistableExtensionInfo)
+                .ToList())
+            {
 #if RELEASE
                     if (buildInExtensionAssemblyFullNames.Contains(availableExtension.AssemblyFullName))
 #endif
-                    {
-                        enabledExtensionInfo.Add(availableExtension);
-                    }
+                {
+                    enabledExtensionInfo.Add(availableExtension);
                 }
+            }
 
-                string xml = XmlSerialization.Serialize(enabledExtensionInfo);
-                _settingsService.SetSetting(SettingsKeys.EnabledExtensions, xml);
-                
-                // tell explorer that there is a new extension
-                Shell32.SHChangeNotify(NativeEnums.SHCNE.SHCNE_ASSOCCHANGED, NativeEnums.SHChangeNotifyFlags.SHCNF_IDLIST, IntPtr.Zero, IntPtr.Zero);
-                System.Threading.Thread.Sleep(1000);
-                
-                _settingsService.SetSetting(SettingsKeys.IsInitialConfigurationDone, true);
+            string xml = XmlSerialization.Serialize(enabledExtensionInfo);
+            settingsService.SetSetting(SettingsKeys.EnabledExtensions, xml);
+
+            if (File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ProductConstants.DESKBAND_INSTALL_FAILURE_FLAG_FILENAME)))
+            {
+                settingsService.SetSetting(SettingsKeys.IsDeskBandEnabled, false);
+                settingsService.SetSetting(SettingsKeys.IsTrayIconEnabled, true);
             }
             else
             {
-                string xml = _settingsService.GetSetting<string>(SettingsKeys.EnabledExtensions);
-                enabledExtensionInfo = XmlSerialization.Deserialize<List<PersistableExtensionInfo>>(xml);
+                settingsService.SetSetting(SettingsKeys.IsDeskBandEnabled, true);
+                settingsService.SetSetting(SettingsKeys.IsTrayIconEnabled, false);
             }
 
-            return enabledExtensionInfo;
+            // tell explorer that there is a new extension
+            Shell32.SHChangeNotify(NativeEnums.SHCNE.SHCNE_ASSOCCHANGED, NativeEnums.SHChangeNotifyFlags.SHCNF_IDLIST, IntPtr.Zero, IntPtr.Zero);
+            System.Threading.Thread.Sleep(1000);
+
+            settingsService.SetSetting(SettingsKeys.IsInitialConfigurationDone, true);
         }
 
         private void ClearLastExceptionInfo()

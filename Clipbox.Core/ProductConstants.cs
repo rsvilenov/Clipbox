@@ -18,6 +18,8 @@ namespace Clipbox.Core
 
         public const string SERVICE_EXE_NAME = "ClipboxSvc.exe";
 
+        public const string DESKBAND_CTRL_EXE_NAME = "ClipboxDeskbandControl.exe";
+
         public const string DESKBAND_SHELL_EXT_DLL_NAME = "ClipboxDeskband.dll";
 
         public const string DESKBAND_SHELL_EXT_GUID = "3C6D5961-E6C7-44F6-A522-A20DE33D2DAC";
@@ -60,6 +62,8 @@ namespace Clipbox.Core
         public const string MAIN_CRASHFILE_PERSISTENCE_KEY = "mainCrash.log";
 
         public const string SEARCH_CRASHFILE_PERSISTENCE_KEY = "searchCrash.log";
+
+        public const string DESKBAND_INSTALL_FAILURE_FLAG_FILENAME = "noband";
 
         // corresponds to the log file, created in DeskBand.cpp
         // TODO: maybe set it in the registry

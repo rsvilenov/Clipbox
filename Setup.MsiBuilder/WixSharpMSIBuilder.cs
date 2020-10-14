@@ -2,6 +2,7 @@
 using Clipbox.Win32.Native;
 using Microsoft.Deployment.WindowsInstaller;
 using System;
+using System.Diagnostics;
 using WixSharp;
 
 namespace Setup.MsiBuilder
@@ -45,8 +46,6 @@ namespace Setup.MsiBuilder
             ExeFileShortcut uninstaller = new ExeFileShortcut($"Uninstall {ProductConstants.PRODUCT_NAME}", "[SystemFolder]msiexec.exe", "/x [ProductCode]");
 #endif
 
-            File shellExtension = new File(System.IO.Path.Combine(releaseDirectory, ProductConstants.DESKBAND_SHELL_EXT_DLL_NAME));
-            
             var project =
                 new Project(ProductConstants.PRODUCT_NAME,
                     new Dir(new Id("INSTALLDIR"),
@@ -55,10 +54,8 @@ namespace Setup.MsiBuilder
                             !f.EndsWith(ProductConstants.GUARD_EXE_NAME) 
                             && !f.EndsWith(ProductConstants.SERVICE_EXE_NAME)
                             && !f.EndsWith(".pdb") 
-                            && !f.EndsWith(".msi")
-                            && !f.EndsWith(ProductConstants.DESKBAND_SHELL_EXT_DLL_NAME)),
+                            && !f.EndsWith(".msi")),
                         guard,
-                        shellExtension,
                         uninstaller,
                         service),
                     new ElevatedManagedAction(CustomActions.InstallDeskband, Return.check, When.Before, Step.StartServices, Condition.NOT_Installed),
@@ -85,8 +82,18 @@ namespace Setup.MsiBuilder
             {
                 return session.HandleErrors(() =>
                 {
-                    var dll = System.IO.Path.Combine(session.Property("INSTALLDIR"), "ClipboxDeskband.dll");
-                    System.Diagnostics.Process.Start("regsvr32.exe", $"/s \"{dll}\"").WaitForExit();
+                    var dll = System.IO.Path.Combine(session.Property("INSTALLDIR"), ProductConstants.DESKBAND_SHELL_EXT_DLL_NAME);
+                    Process.Start("regsvr32.exe", $"/s \"{dll}\"").WaitForExit();
+
+                    var deskbandCtrlExe = System.IO.Path.Combine(session.Property("INSTALLDIR"), ProductConstants.DESKBAND_CTRL_EXE_NAME);
+                    using (Process deskbandCtlProcess = Process.Start(deskbandCtrlExe, "nowait"))
+                    {
+                        deskbandCtlProcess.WaitForExit();
+                        if (deskbandCtlProcess.ExitCode != 0)
+                        {
+                            System.IO.File.Create(System.IO.Path.Combine(session.Property("INSTALLDIR"), ProductConstants.DESKBAND_INSTALL_FAILURE_FLAG_FILENAME));
+                        }
+                    }
                 });
             }
 
@@ -95,8 +102,8 @@ namespace Setup.MsiBuilder
             {
                 return session.HandleErrors(() =>
                 {
-                    var dll = System.IO.Path.Combine(session.Property("INSTALLDIR"), "ClipboxDeskband.dll");
-                    System.Diagnostics.Process.Start("regsvr32.exe", $"/s /u \"{dll}\"").WaitForExit();
+                    var dll = System.IO.Path.Combine(session.Property("INSTALLDIR"), ProductConstants.DESKBAND_SHELL_EXT_DLL_NAME);
+                    Process.Start("regsvr32.exe", $"/s /u \"{dll}\"").WaitForExit();
                 });
             }
         }

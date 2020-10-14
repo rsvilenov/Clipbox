@@ -25,10 +25,6 @@
               </RegistryKey>
             </Component>
 
-            <Component Id="Component.ClipboxDeskband.dll_2699476228" Guid="95a2cb1e-ad54-41f4-b1f0-d1e76a21db23" Win64="yes">
-              <File Id="ClipboxDeskband.dll_2699476228" Source="..\Build\Debug\ClipboxDeskband.dll" />
-            </Component>
-
             <Component Id="Component.ClipboxSvc.exe_759699309" Guid="95a2cb1e-ad54-41f4-b1f0-d1e755d9a4e1" Win64="yes">
               <File Id="ClipboxSvc.exe_759699309" Source="..\Build\Debug\ClipboxSvc.exe" />
 
@@ -178,6 +174,10 @@
               <File Id="Clipbox.Win32.dll_733738051" Source="..\Build\Debug\Clipbox.Win32.dll" />
             </Component>
 
+            <Component Id="Component.ClipboxDeskband.dll_3741717491" Guid="95a2cb1e-ad54-41f4-b1f0-d1e768deae62" Win64="yes">
+              <File Id="ClipboxDeskband.dll_3741717491" Source="..\Build\Debug\ClipboxDeskband.dll" />
+            </Component>
+
             <Component Id="Component.ClipboxDeskband.exp_1784615943" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7b95a37a9" Win64="yes">
               <File Id="ClipboxDeskband.exp_1784615943" Source="..\Build\Debug\ClipboxDeskband.exp" />
             </Component>
@@ -186,8 +186,28 @@
               <File Id="ClipboxDeskband.ilk_4078965747" Source="..\Build\Debug\ClipboxDeskband.ilk" />
             </Component>
 
+            <Component Id="Component.ClipboxDeskband.Infrastructure.lib_3717220547" Guid="95a2cb1e-ad54-41f4-b1f0-d1e71fad74db" Win64="yes">
+              <File Id="ClipboxDeskband.Infrastructure.lib_3717220547" Source="..\Build\Debug\ClipboxDeskband.Infrastructure.lib" />
+            </Component>
+
             <Component Id="Component.ClipboxDeskband.lib_976229368" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7d45a7c06" Win64="yes">
               <File Id="ClipboxDeskband.lib_976229368" Source="..\Build\Debug\ClipboxDeskband.lib" />
+            </Component>
+
+            <Component Id="Component.ClipboxDeskbandControl.exe_213439682" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7a965cad7" Win64="yes">
+              <File Id="ClipboxDeskbandControl.exe_213439682" Source="..\Build\Debug\ClipboxDeskbandControl.exe" />
+            </Component>
+
+            <Component Id="Component.ClipboxDeskbandControl.ilk_4183753308" Guid="95a2cb1e-ad54-41f4-b1f0-d1e73ec8c64e" Win64="yes">
+              <File Id="ClipboxDeskbandControl.ilk_4183753308" Source="..\Build\Debug\ClipboxDeskbandControl.ilk" />
+            </Component>
+
+            <Component Id="Component.ClipboxDeskbandOwner.exe_1348539793" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7d4a35942" Win64="yes">
+              <File Id="ClipboxDeskbandOwner.exe_1348539793" Source="..\Build\Debug\ClipboxDeskbandOwner.exe" />
+            </Component>
+
+            <Component Id="Component.ClipboxDeskbandOwner.ilk_541184295" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7c0af9d30" Win64="yes">
+              <File Id="ClipboxDeskbandOwner.ilk_541184295" Source="..\Build\Debug\ClipboxDeskbandOwner.ilk" />
             </Component>
 
             <Component Id="Component.ClipboxGuard.exe.config_3768915141" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7c8a7dbad" Win64="yes">
@@ -930,6 +950,10 @@
 
             <Directory Id="Win32_" Name="Win32">
 
+              <Component Id="Component.ClipboxDeskband.dll_2511139556" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7f97280c1" Win64="yes">
+                <File Id="ClipboxDeskband.dll_2511139556" Source="..\Build\Debug\Win32\ClipboxDeskband.dll" />
+              </Component>
+
               <Component Id="Component.ClipboxDeskband.exp_554562264" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7c3c5b4ba" Win64="yes">
                 <File Id="ClipboxDeskband.exp_554562264" Source="..\Build\Debug\Win32\ClipboxDeskband.exp" />
               </Component>
@@ -983,7 +1007,6 @@
 
     <Feature Id="Complete" Title="Complete" Absent="allow" Level="1">
       <ComponentRef Id="Component.ClipboxGuard.exe_568895162" />
-      <ComponentRef Id="Component.ClipboxDeskband.dll_2699476228" />
       <ComponentRef Id="Component.ClipboxSvc.exe_759699309" />
       <ComponentRef Id="Component.Azure.Core.dll_2297618219" />
       <ComponentRef Id="Component.Azure.Core.xml_3023132271" />
@@ -1019,9 +1042,15 @@
       <ComponentRef Id="Component.Clipbox.SearchProvider.dll_2222754467" />
       <ComponentRef Id="Component.Clipbox.SearchProvider.dll.config_1921956474" />
       <ComponentRef Id="Component.Clipbox.Win32.dll_733738051" />
+      <ComponentRef Id="Component.ClipboxDeskband.dll_3741717491" />
       <ComponentRef Id="Component.ClipboxDeskband.exp_1784615943" />
       <ComponentRef Id="Component.ClipboxDeskband.ilk_4078965747" />
+      <ComponentRef Id="Component.ClipboxDeskband.Infrastructure.lib_3717220547" />
       <ComponentRef Id="Component.ClipboxDeskband.lib_976229368" />
+      <ComponentRef Id="Component.ClipboxDeskbandControl.exe_213439682" />
+      <ComponentRef Id="Component.ClipboxDeskbandControl.ilk_4183753308" />
+      <ComponentRef Id="Component.ClipboxDeskbandOwner.exe_1348539793" />
+      <ComponentRef Id="Component.ClipboxDeskbandOwner.ilk_541184295" />
       <ComponentRef Id="Component.ClipboxGuard.exe.config_3768915141" />
       <ComponentRef Id="Component.ClipboxSearch.exe_3938580811" />
       <ComponentRef Id="Component.ClipboxSearch.exe.config_3964199237" />
@@ -1196,6 +1225,7 @@
       <ComponentRef Id="Component.Newtonsoft.Json.12.0.3.dll_2015167579" />
       <ComponentRef Id="Component.Newtonsoft.Json.6.0.0.0.dll_835391177" />
       <ComponentRef Id="Component.ApplicationDescriptionFormats.xml_2776843126" />
+      <ComponentRef Id="Component.ClipboxDeskband.dll_2511139556" />
       <ComponentRef Id="Component.ClipboxDeskband.exp_554562264" />
       <ComponentRef Id="Component.ClipboxDeskband.ilk_2555835108" />
       <ComponentRef Id="Component.ClipboxDeskband.lib_982446825" />
