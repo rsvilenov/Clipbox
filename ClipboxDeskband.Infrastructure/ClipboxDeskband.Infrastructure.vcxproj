@@ -155,10 +155,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ClipboxProductConstants.h" />
+    <ClInclude Include="DeskbandController.h" />
     <ClInclude Include="Logger.h" />
     <ClInclude Include="NamedPipeClient.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DeskbandController.cpp" />
     <ClCompile Include="Logger.cpp" />
     <ClCompile Include="NamedPipeClient.cpp" />
   </ItemGroup>

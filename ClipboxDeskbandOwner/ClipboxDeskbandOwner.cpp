@@ -14,6 +14,7 @@
 #include "ClipboxDeskbandOwner.h"
 
 #include "../ClipboxDeskband.Infrastructure/ClipboxProductConstants.h"
+#include "../ClipboxDeskband.Infrastructure/DeskbandController.h"
 #include "../ClipboxDeskband.Infrastructure/Logger.h"
 #pragma comment(lib, "ClipboxDeskband.Infrastructure.lib")
 
@@ -30,17 +31,14 @@ struct SHELL_WND_DATA
 
 HINSTANCE           g_hInstance;
 HWND                g_msgWindowHwnd;
-Logger*              g_logger;
+Logger*             g_logger;
+DeskbandController*  g_deskbandController;
 std::map<int, SHELL_WND_DATA*> g_explorerDataMapForCurrentSession;
 
 void                InitializeLogger();
-BOOL                IsDeskbandShown();
-BOOL                LoadDeskband(); 
 BOOL                CreateMsgWindow();
 BOOL                RegisterWaitEventsForExplorerProcesses(int sessionId);
 BOOL                RegisterWaitEventsForShellProcess();
-BOOL                TryRemoveDeskband();
-BOOL                ShowDeskband();
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -53,20 +51,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     g_hInstance = hInstance;
 
     InitializeLogger();
+    g_deskbandController = new DeskbandController(PRODCONST_CLSID_ClipboxDeskBand);
 
     if (!CreateMsgWindow())
     {
         return FALSE;
-    }
-
-    if (!RegisterWaitEventsForShellProcess())
-    {
-        SetTimer(g_msgWindowHwnd, WAIT_SHELL_START_TIMER_ID, CHECK_SHELL_INTERVAL, NULL);
-    }
-    else
-    {
-        TryRemoveDeskband();
-        LoadDeskband();
     }
 
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_CLIPBOXDESKBANDOWNER));
@@ -104,21 +93,72 @@ BOOL CreateMsgWindow()
     wc.hInstance = g_hInstance;
     wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
     wc.hbrBackground = reinterpret_cast<HBRUSH>(GetStockObject(WHITE_BRUSH));
-    wc.lpszClassName = L"ClipboxDeskbandHelperWindowClass";
+    wc.lpszClassName = L"ClipboxDeskbandOwnerWindowClass";
     wc.cbWndExtra = sizeof(LONG_PTR);
     wc.lpfnWndProc = [](HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
         switch (message)
         {
+            case WM_CREATE:
+            {
+                if (!RegisterWaitEventsForShellProcess())
+                {
+                    SetTimer(g_msgWindowHwnd, WAIT_SHELL_START_TIMER_ID, CHECK_SHELL_INTERVAL, NULL);
+                }
+                else
+                {
+                    bool isRemoved;
+                    HRESULT hr = g_deskbandController->TryRemoveDeskband(&isRemoved);
+                    if (SUCCEEDED(hr))
+                    {
+                        bool isRegistered;
+                        hr = g_deskbandController->LoadDeskband(&isRegistered);
+                        if (FAILED(hr))
+                        {
+                            g_logger->LogHR(hr);
+                            if (!isRegistered)
+                            {
+                                g_logger->LogText("The deskband is not registered");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        g_logger->LogHR(hr);
+                    }
+                }
+                break;
+            }
             case WM_TIMER:
             {
                 if (wParam == WAIT_SHELL_START_TIMER_ID)
                 {
-                    TryRemoveDeskband();
-                    if (RegisterWaitEventsForShellProcess()
-                             && LoadDeskband())
+
+                    bool _;
+                    HRESULT hr = g_deskbandController->TryRemoveDeskband(&_);
+                    if (SUCCEEDED(hr))
                     {
-                        KillTimer(hWnd, WAIT_SHELL_START_TIMER_ID);
+                        if (RegisterWaitEventsForShellProcess())
+                        {
+                            bool isRegistered;
+                            hr = g_deskbandController->LoadDeskband(&isRegistered);
+                            if (SUCCEEDED(hr))
+                            {
+                                KillTimer(hWnd, WAIT_SHELL_START_TIMER_ID);
+                            }
+                            else
+                            {
+                                g_logger->LogHR(hr);
+                                if (!isRegistered)
+                                {
+                                    g_logger->LogText("The deskband is not registered");
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        g_logger->LogHR(hr);
                     }
                 }
 
@@ -155,148 +195,6 @@ BOOL CreateMsgWindow()
         CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, HWND_MESSAGE, nullptr, g_hInstance, nullptr);
     
     return g_msgWindowHwnd != nullptr;
-}
-
-
-BOOL IsDeskbandShown()
-{
-    BOOL success = FALSE;
-
-    CoInitialize(nullptr);
-    ITrayDeskBand* pTrayDeskBand = NULL;
-    HRESULT hr = CoCreateInstance(CLSID_TrayDeskBand, NULL, CLSCTX_ALL, IID_PPV_ARGS(&pTrayDeskBand));
-
-    if (SUCCEEDED(hr))
-    {
-        hr = pTrayDeskBand->IsDeskBandShown(PRODCONST_CLSID_ClipboxDeskBand);
-        if (SUCCEEDED(hr) && (S_OK == hr))
-        {
-            success = true;
-        }
-
-        pTrayDeskBand->Release();
-    }
-
-    CoUninitialize();
-
-    return success;
-}
-
-BOOL ShowDeskband()
-{
-    BOOL success = FALSE;
-
-    CoInitialize(nullptr);
-    ITrayDeskBand* pTrayDeskBand = NULL;
-    HRESULT hr = CoCreateInstance(CLSID_TrayDeskBand, NULL, CLSCTX_ALL, IID_PPV_ARGS(&pTrayDeskBand));
-
-    if (SUCCEEDED(hr))
-    {
-        hr = pTrayDeskBand->ShowDeskBand(PRODCONST_CLSID_ClipboxDeskBand);
-        if (SUCCEEDED(hr) && (S_OK == hr))
-        {
-            success = true;
-        }
-
-        pTrayDeskBand->Release();
-    }
-
-    CoUninitialize();
-
-    return success;
-}
-
-
-BOOL TryRemoveDeskband()
-{
-    BOOL success = FALSE;
-
-    CoInitialize(NULL);
-    HRESULT hr;
-
-    IBandSite* pBandSite;
-    hr = CoCreateInstance(CLSID_TrayBandSiteService, NULL, CLSCTX_SERVER, IID_IBandSite, (LPVOID*)&pBandSite);
-
-    if (SUCCEEDED(hr))
-    {
-        HRESULT hr;
-
-        IDeskBand* pBand = 0;
-        DWORD bandID = 0;
-
-        int i = 0;
-        while (SUCCEEDED(pBandSite->EnumBands(i, &bandID)))
-        {
-            i++;
-
-            hr = pBandSite->GetBandObject(bandID, IID_IDeskBand, (void**)&pBand);
-            if (FAILED(hr))
-            {
-                continue;
-            }
-
-            IPersist* pPersist = 0;
-            if (SUCCEEDED(pBand->QueryInterface(IID_IPersist, (void**)&pPersist)))
-            {
-                CLSID clsid = CLSID_NULL;
-                if (SUCCEEDED(pPersist->GetClassID(&clsid)))
-                {
-                    if (clsid == PRODCONST_CLSID_ClipboxDeskBand)
-                    {
-                        //HRESULT hr = pBandSite->SetBandState(bandID, BSSF_VISIBLE, UINT_MAX);
-                        HRESULT hr = pBandSite->RemoveBand(bandID);
-                        success = SUCCEEDED(hr);
-                        //break;
-                    }
-                }
-                pPersist->Release();
-
-            }
-
-            pBand->Release();
-        }
-
-        pBandSite->Release();
-    }
-
-
-    CoUninitialize();
-
-    return success;
-}
-
-BOOL LoadDeskband()
-{
-    CoInitialize(nullptr);
-
-   IDeskBand2* pDeskbandInterface = NULL;
-
-   HRESULT hr = S_OK;
-
-   // CLSID_ClipboxDeskBand is defined in ClipboxProductConstants.h (ClipboxDeskband.Infrastructure)
-   hr = CoCreateInstance(PRODCONST_CLSID_ClipboxDeskBand, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pDeskbandInterface));
-   if (SUCCEEDED(hr))
-   {        
-        IBandSite* pBandSite = NULL;
-
-        hr = CoCreateInstance(CLSID_TrayBandSiteService, NULL, CLSCTX_ALL, IID_PPV_ARGS(&pBandSite));
-        if (SUCCEEDED(hr))
-        {
-            hr = pBandSite->AddBand(pDeskbandInterface);
-            pBandSite->Release();
-        }
-
-        pDeskbandInterface->Release();
-    }
-
-   if (FAILED(hr) && hr != REGDB_E_CLASSNOTREG)
-   {
-       g_logger->LogHR(hr);
-   }
-   
-   CoUninitialize();
-
-   return SUCCEEDED(hr);
 }
 
 static void CALLBACK OnExited(void* context, BOOLEAN isTimeOut)
