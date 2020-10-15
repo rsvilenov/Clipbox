@@ -4,7 +4,6 @@ using Clipbox.Infrastructure.UI;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.Win32;
-using Clipbox.Win32.Native;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -20,9 +19,9 @@ namespace Clipbox.Services
     {
         private const string CMD_LEFT_CLICK = "LC";
         private const string CMD_RIGHT_CLICK = "RC";
-        private const string CLIPBAND_NAME = "ClipBox"; //ProductConstants.PRODUCT_NAME;
+        private const string CLIPBAND_NAME = "Clipbox"; //ProductConstants.PRODUCT_NAME;
 
-        private readonly Guid _deskbandGuid = new Guid("3C6D5961-E6C7-44F6-A522-A20DE33D2DAC");
+        private readonly Guid _deskbandGuid = new Guid(ProductConstants.DESKBAND_SHELL_EXT_GUID);
 
         private readonly NamedPipesServer _namedPipeServer;
         private readonly TrayContextMenuHelper _trayContextMenuHelper;

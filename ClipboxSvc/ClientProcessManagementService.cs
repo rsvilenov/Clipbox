@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.ServiceProcess;
-using System.Threading;
 
 namespace ClipboxSvc
 {
@@ -28,10 +27,10 @@ namespace ClipboxSvc
 
         public void OnDebug()
         {
-            OnStart(null);
-            new ManualResetEvent(false).WaitOne();
+            //OnStart(null);
+            //new ManualResetEvent(false).WaitOne();
             //System.Threading.Thread.Sleep(20000);
-            //OnStop();
+            OnStop();
         }
 
         protected override void OnStart(string[] args)
@@ -74,15 +73,38 @@ namespace ClipboxSvc
 
         private void KillClientProcess(int sessionId)
         {
-            IEnumerable<int> allProcIds = ProcessUtils.GetProcessIdsByPathAndSessionId(Path.Combine(InstallationPath, ProductConstants.MAIN_PROCESS_EXE_NAME), sessionId);
+            const int WAIT_FOR_EXIT_TIMEOUT_MS = 10000;
+
+            IEnumerable<int> allProcIds = ProcessUtils.GetProcessIdsByPathAndSessionId(Path.Combine(InstallationPath, ProductConstants.GUARD_EXE_NAME), sessionId);
 
             if (allProcIds.Any())
             {
                 using (Process guardProcessForSession = Process.GetProcessById(allProcIds.First()))
                 {
-                    if (!guardProcessForSession.HasExited)
+                    try
                     {
-                        guardProcessForSession.Kill();
+                        NamedPipesClient pipeClient = new NamedPipesClient($"{ProductConstants.GUARD_NAMED_PIPE_PREFIX}.{sessionId}");
+                        pipeClient.SendMessage(ProductConstants.PIPE_COMMAND_QUIT, (answer) => { });
+
+                        guardProcessForSession.WaitForExit(WAIT_FOR_EXIT_TIMEOUT_MS);
+                        if (!guardProcessForSession.HasExited)
+                        {
+                            throw new System.TimeoutException();
+                        }
+                    }
+                    catch
+                    {
+                        if (!guardProcessForSession.HasExited)
+                        {
+                            try
+                            {
+                                guardProcessForSession.Kill();
+                            }
+                            catch (InvalidOperationException)
+                            {
+                                // the process has exitted
+                            }
+                        }
                     }
                 }
             }

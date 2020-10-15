@@ -25,8 +25,10 @@ namespace ClipboxGuard.Services
         private readonly string _installationPath;
         private readonly int _sessionId;
         private readonly NamedPipesClient _pipeClient;
+        private readonly NamedPipesServer _pipeServer;
         
         private Process _mainProcess;
+        private bool _isMainProcessExitRequested;
 
         public event EventHandler<RestartFatalErrorEventArgs> FatalErrorOccurred;
 
@@ -41,7 +43,25 @@ namespace ClipboxGuard.Services
             _sessionId = sessionId;
 
             _pipeClient = new NamedPipesClient($"{ProductConstants.MAINPROC_GUARD_COMM_NAMED_PIPE_PREFIX}.{sessionId}");
-            
+
+            _pipeServer = new NamedPipesServer($"{ProductConstants.GUARD_NAMED_PIPE_PREFIX}.{sessionId}");
+            _pipeServer.GotMessage += (s, args) =>
+            {
+                // when the guard recieves QUIT command, it should stop the main process as well
+                if (args.ReceivedMessage == ProductConstants.PIPE_COMMAND_QUIT)
+                {
+                    StopMainProcess();
+
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        Application.Current.Shutdown
+                          (
+                                   (int)ProcessExitCodes.Ok
+                          );
+                    });
+                }
+            };
+
             _searchProcessKeeperService.RestartOfMainProcessRequested += _searchProcessKeeperService_RestartOfMainProcessRequested;
         }
 
@@ -62,6 +82,8 @@ namespace ClipboxGuard.Services
 
         private void StartMainProcess(bool stopFirstIfRunning)
         {
+            _isMainProcessExitRequested = false;
+
             string mainProcessPath = Path.Combine(_installationPath, ProductConstants.MAIN_PROCESS_EXE_NAME);
             if (!File.Exists(mainProcessPath))
             {
@@ -104,6 +126,11 @@ namespace ClipboxGuard.Services
 
         private void _mainProcess_Exited(object sender, EventArgs e)
         {
+            if (_isMainProcessExitRequested)
+            {
+                return;
+            }
+
             _mainProcess.Exited -= _mainProcess_Exited;
             
             int exitCode = _mainProcess.ExitCode;
@@ -173,6 +200,8 @@ namespace ClipboxGuard.Services
 
         public void StopMainProcess()
         {
+            _isMainProcessExitRequested = true;
+
             if (!CheckIsMainProcessRunning())
             {
                 return;
@@ -190,6 +219,7 @@ namespace ClipboxGuard.Services
                     return;
                 }
             }
+
             try
             {
                 if (_mainProcess == null)
@@ -206,14 +236,34 @@ namespace ClipboxGuard.Services
                             // they may have received QUIT message from the named pipe call above.
                             mp.WaitForExit(MAIN_PROCESS_EXIT_TIMEOUT_MS);
                             // if they fail to quit in a timely manner, kill them.
-                            mp.Kill();
+                            if (!mp.HasExited)
+                            {
+                                try
+                                {
+                                    mp.Kill();
+                                }
+                                catch (InvalidOperationException)
+                                {
+                                    // the process has exitted
+                                }
+                            }
                         }
                     }
                 }
                 else
                 {
                     _mainProcess.WaitForExit(MAIN_PROCESS_EXIT_TIMEOUT_MS);
-                    _mainProcess.Kill();
+                    if (!_mainProcess.HasExited)
+                    {
+                        try
+                        {
+                            _mainProcess.Kill();
+                        }
+                        catch(InvalidOperationException)
+                        {
+                            // the process has exitted
+                        }
+                    }
 
                     _mainProcess.Dispose();
                 }
@@ -236,11 +286,17 @@ namespace ClipboxGuard.Services
             {
                 _mainProcess?.Dispose();
             }
+
+            try
+            {
+                HideDeskBand();
+            }
+            catch { }
         }
 
         private static void HideDeskBand()
         {
-            Guid _deskbandGuid = new Guid("3C6D5961-E6C7-44F6-A522-A20DE33D2DAC");
+            Guid _deskbandGuid = new Guid(ProductConstants.DESKBAND_SHELL_EXT_GUID);
 
             if (DeskbandUtils.IsTaskBandShown(_deskbandGuid))
             {

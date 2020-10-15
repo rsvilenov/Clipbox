@@ -1,6 +1,8 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.IO.Pipes;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Clipbox.Infrastructure.IPC
 {
@@ -21,11 +23,22 @@ namespace Clipbox.Infrastructure.IPC
             _pipeName = pipeName;
         }
 
+        /// <summary>
+        /// Sends a message and waits for the server to process it
+        /// </summary>
+        /// <param name="msg">The message</param>
+        /// <returns>True if the call succeeded</returns>
         public bool SendMessage(string msg)
         {
             return SendMessage(msg, out _);
         }
 
+        /// <summary>
+        /// Sends a message and waits for the answer
+        /// </summary>
+        /// <param name="msg">The message</param>
+        /// <param name="answer">The answer</param>
+        /// <returns>True if the call succeeded</returns>
         public bool SendMessage(string msg, out string answer)
         {
             bool success = false;
@@ -55,6 +68,49 @@ namespace Clipbox.Infrastructure.IPC
             }
 
             return success;
+        }
+
+        /// <summary>
+        /// Sends a message without waiting for the answer
+        /// </summary>
+        /// <param name="msg">The message</param>
+        /// <param name="answerCallback">When the answer is ready, this delegate will be invoked</param>
+        public void SendMessage(string msg, Action<string> answerCallback)
+        {
+            var client = new NamedPipeClientStream(_pipeName);
+
+            client.Connect(CONNECT_TIMEOUT_MS);
+
+            using (StreamWriter writer = new StreamWriter(client, Encoding.ASCII, 512, leaveOpen: true))
+            {
+                writer.WriteLine(msg);
+                writer.Flush();
+            }
+
+            Task.Run(() =>
+            {
+                try
+                {
+                    client.WaitForPipeDrain();
+
+                    using (StreamReader reader = new StreamReader(client, Encoding.ASCII, false, 512, leaveOpen: true))
+                    {
+                        var line = reader.ReadLine();
+
+                        string answer = null;
+                        if (line == SUCCESS_RESPONSE)
+                        {
+                            answer = reader.ReadToEnd()?.TrimEnd(new char[] { '\r', '\n' });
+                        }
+
+                        answerCallback?.Invoke(answer);
+                    }
+                }
+                finally
+                {
+                    client.Dispose();
+                }
+            });
         }
     }
 }

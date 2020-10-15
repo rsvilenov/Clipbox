@@ -4,7 +4,9 @@ using Clipbox.Infrastructure.IPC;
 using Clipbox.Infrastructure.Persistence;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
+using System;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace Clipbox.Services
 {
@@ -41,7 +43,11 @@ namespace Clipbox.Services
         {
             if (e.ReceivedMessage == ProductConstants.PIPE_COMMAND_QUIT)
             {
-                Application.Current.Shutdown((int)ProcessExitCodes.Ok);
+                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle,
+                    new Action(() =>
+                    {
+                        Application.Current.Shutdown((int)ProcessExitCodes.Ok);
+                    }));
             }
             else if (e.ReceivedMessage == ProductConstants.PIPE_COMMAND_DISABLE_SEARCH)
             {

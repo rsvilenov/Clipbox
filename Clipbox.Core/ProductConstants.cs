@@ -39,6 +39,8 @@ namespace Clipbox.Core
 
         public const string MAINPROC_GUARD_COMM_NAMED_PIPE_PREFIX = "ClipboxMainProcGuardCommPipe";
 
+        public const string GUARD_NAMED_PIPE_PREFIX = "ClipboxServiceGuardCommPipe";
+
         public const string PIPE_COMMAND_QUIT = "Quit";
 
         public const string PIPE_COMMAND_DISABLE_SEARCH = "DisableSearch";

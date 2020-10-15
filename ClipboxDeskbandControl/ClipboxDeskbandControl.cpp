@@ -129,7 +129,7 @@ BOOL CreateMsgWindow()
             {
                 // wait for the confirimation dialog, shown by the shell (Windows Explorer)
                 // to appear...
-                SetTimer(hWnd, WAIT_CONFIRM_DIALOG_TIMER_ID, g_nowait ? 1 : TIMERS_INTERVAL, NULL);
+                SetTimer(hWnd, WAIT_CONFIRM_DIALOG_TIMER_ID, g_nowait ? 50 : TIMERS_INTERVAL, NULL);
             }
             else
             {
@@ -185,11 +185,12 @@ BOOL CreateMsgWindow()
                     HWND confirmDialogHwnd = FindWindow(L"#32770", PRODCONST_ProductName);
                     if (confirmDialogHwnd)
                     {
-                        g_confirmDialogHasAlreadbyBeenShown = true;
                         // bring the window to front and make it stay there, so 
                         // the user can see it (sometimes it appears somewhere behind the other windows)
                         if (SetWindowPos(confirmDialogHwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE))
                         {
+                            g_confirmDialogHasAlreadbyBeenShown = true;
+
                             KillTimer(hWnd, WAIT_CONFIRM_DIALOG_TIMER_ID);
                             // wait for the user to answer the dialog
                             SetTimer(hWnd, WAIT_CONFIRM_DIALOG_ANSWERED_TIMER_ID, g_nowait ? 1 : TIMERS_INTERVAL, NULL);
