@@ -226,12 +226,12 @@ namespace Clipbox
             //Application.Current.MainWindow = _mainWindow;
 
             
-            _trayService = new TrayIconService(_mainClipboardViewWindowService, _trayContextMenuService, _settingsService, _pauseService);
-
             _settingsWindowService = new SettingsWindowService(_settingsService, _mainClipboardViewWindowService, _cloudSyncService, _extensionLoader.SettingsUIExtensionContainer);
 
             _trayContextMenuService = new TrayContextMenuService(_settingsService, _pauseService, _mainClipboardViewWindowService, _settingsWindowService);
-            
+
+            _trayService = new TrayIconService(_mainClipboardViewWindowService, _trayContextMenuService, _settingsService, _pauseService);
+
             _trayBandService = new TrayBandService(_mainClipboardViewWindowService, _trayContextMenuService, _settingsService);
 
             _rebuildIndexWindowService = new RebuildIndexWindowService(_searchService, _mainClipboardViewWindowService, _clipboardManager);
