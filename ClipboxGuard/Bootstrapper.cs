@@ -43,19 +43,38 @@ namespace ClipboxGuard
             _isStartedFromSvc = startupArgs.Any(arg => arg == ProductConstants.STARTED_FROM_SERVICE_ARG);
             bool isStartedFromWindowsScheduler = startupArgs.Any(arg => arg == ProductConstants.STARTED_FROM_SCHEDULER_ARG);
             bool isStartedFromGuard = startupArgs.Any(arg => arg == ProductConstants.STARTED_FROM_GUARD_ARG);
+            bool isStartedFromShortcut = startupArgs.Any(arg => arg == ProductConstants.STARTED_FROM_SHORTCUT);
+
             
-            if (!_isStartedFromSvc && !isStartedFromWindowsScheduler && !isStartedFromGuard)
+            if (isStartedFromShortcut)
             {
                 int mySessionId = SessionUtils.GetCurrentSessionId();
 
-                if (ProcessUtils.CheckProcessExists(Path.GetFileNameWithoutExtension(ProductConstants.SERVICE_EXE_NAME)))
+                int myPid = 0;
+                using (Process p = Process.GetCurrentProcess())
+                {
+                    myPid = p.Id;
+                }
+
+                if (ProcessUtils.CheckProcessExistsInSession(Path.GetFileNameWithoutExtension(ProductConstants.GUARD_EXE_NAME), mySessionId, new int[] { myPid }))
+                {
+                    AskMainProcessToOpenMainWindow(mySessionId);
+                }
+                else if (ProcessUtils.CheckProcessExists(Path.GetFileNameWithoutExtension(ProductConstants.SERVICE_EXE_NAME)))
                 {
                     DemandStartFromService(mySessionId);
                 }
                 else
                 {
-                    MessageBox.Show("This executable is not meant to be started by the user.");
+                    MessageBox.Show($"{ProductConstants.SERVICE_SC_NAME} is not running.", ProductConstants.PRODUCT_NAME, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
+
+                Application.Current.Shutdown((int)ProcessExitCodes.Ok);
+                return;
+            }
+            else if (!_isStartedFromSvc && !isStartedFromWindowsScheduler && !isStartedFromGuard)
+            {
+                MessageBox.Show("This executable is not meant to be started by the user.");
 
                 Application.Current.Shutdown((int)ProcessExitCodes.Ok);
                 return;
@@ -180,7 +199,13 @@ namespace ClipboxGuard
             NamedPipesClient npClient = new NamedPipesClient(ProductConstants.SERVICE_NAMED_PIPE);
             npClient.SendMessage(mySessionId.ToString());
         }
-        
+
+        private void AskMainProcessToOpenMainWindow(int sessionId)
+        {
+            NamedPipesClient npClient = new NamedPipesClient($"{ProductConstants.MAINPROC_GUARD_COMM_NAMED_PIPE_PREFIX}.{sessionId}");
+            npClient.SendMessage(ProductConstants.PIPE_COMMAND_OPEN_MAIN_WINDOW);
+        }
+
         private void TryDisposeObject(IDisposable obj)
         {
             if (obj != null)

@@ -63,7 +63,7 @@ namespace Clipbox
         IPersistenceProvider _persistenceProvider;
         RebuildIndexWindowService _rebuildIndexWindowService;
         ISearchProviderSelectorService _searchProviderSelectorService;
-        IGuardCommunicationService _guardCommunicationService;
+        GuardCommunicationService _guardCommunicationService;
         AutoClearClipboardService _autoClearClipboardService;
 
         private int _shutdownSequenceCallCount;
@@ -166,6 +166,8 @@ namespace Clipbox
 
 
             int sessionId = SessionUtils.GetCurrentSessionId();
+
+            // init this as early as possible
             _guardCommunicationService = new GuardCommunicationService(_persistenceProvider, _settingsService, sessionId);
 
 
@@ -221,6 +223,7 @@ namespace Clipbox
                 _searchService,
                 _cloudSyncService);
 
+            _guardCommunicationService.SetMainClipboardViewWindowService(_mainClipboardViewWindowService);
 
             // Initialize the flow controller
             _flowController = new FlowController(_clipboardManager, _keyboardService, _flowExtensionExecutorService, _previewWindowService, _mainClipboardViewWindowService);

@@ -16,26 +16,20 @@
           <Directory Id="INSTALLDIR" Name="Clipbox">
 
             <Component Id="Component.ClipboxGuard.exe_568895162" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7da911a09" Win64="yes">
-              <File Id="ClipboxGuard.exe_568895162" Source="..\Build\Debug\ClipboxGuard.exe">
-                <Shortcut Id="Shortcut.ClipboxGuard.exe_568895162.Clipbox_" WorkingDirectory="INSTALLDIR" Directory="ProgramMenuFolder.Clipbox" Name="Clipbox.lnk" />
-              </File>
-
-              <RegistryKey Root="HKCU" Key="Software\WixSharp\Used">
-                <RegistryValue Value="0" Type="string" KeyPath="yes" />
-              </RegistryKey>
+              <File Id="ClipboxGuard.exe_568895162" Source="..\Build\Debug\ClipboxGuard.exe" />
             </Component>
 
             <Component Id="Component.ClipboxSvc.exe_759699309" Guid="95a2cb1e-ad54-41f4-b1f0-d1e755d9a4e1" Win64="yes">
               <File Id="ClipboxSvc.exe_759699309" Source="..\Build\Debug\ClipboxSvc.exe" />
 
-              <ServiceInstall Id="Clipbox.Svc" Name="Clipbox.Svc" DisplayName="Clipbox.Svc" Description="Clipbox.Svc" Type="ownProcess" Start="auto" ErrorControl="normal" Vital="yes">
+              <ServiceInstall Id="Clipbox_Service" Name="Clipbox Service" DisplayName="Clipbox Service" Description="Clipbox Service" Type="ownProcess" Start="auto" ErrorControl="normal">
                 <ServiceConfig DelayedAutoStart="no" OnInstall="yes" OnReinstall="no" OnUninstall="no" />
                 <ServiceConfig FirstFailureActionType="restart" SecondFailureActionType="restart" ThirdFailureActionType="none" xmlns="http://schemas.microsoft.com/wix/UtilExtension" />
               </ServiceInstall>
 
-              <ServiceControl Id="StopClipbox.Svc" Name="Clipbox.Svc" Stop="both" Wait="yes" />
-              <ServiceControl Id="StartClipbox.Svc" Name="Clipbox.Svc" Start="install" Wait="no" />
-              <ServiceControl Id="RemoveClipbox.Svc" Name="Clipbox.Svc" Remove="uninstall" Wait="yes" />
+              <ServiceControl Id="StopClipbox_Service" Name="Clipbox Service" Stop="both" Wait="yes" />
+              <ServiceControl Id="StartClipbox_Service" Name="Clipbox Service" Start="install" Wait="no" />
+              <ServiceControl Id="RemoveClipbox_Service" Name="Clipbox Service" Remove="uninstall" Wait="yes" />
             </Component>
 
             <Component Id="Component.Azure.Core.dll_2297618219" Guid="95a2cb1e-ad54-41f4-b1f0-d1e791a30364" Win64="yes">
@@ -861,7 +855,7 @@
               </RegistryKey>
             </Component>
 
-            <Directory Id="bg_BG" Name="bg-BG">
+            <Directory Id="INSTALLDIR.bg_BG" Name="bg-BG">
 
               <Component Id="Component.Clipbox.Extensions.BuiltIn.General.Cloud.Google.resources.dll_3552653002" Guid="95a2cb1e-ad54-41f4-b1f0-d1e732849066" Win64="yes">
                 <File Id="Clipbox.Extensions.BuiltIn.General.Cloud.Google.resources.dll_3552653002" Source="..\Build\Debug\bg-BG\Clipbox.Extensions.BuiltIn.General.Cloud.Google.resources.dll" />
@@ -893,35 +887,35 @@
 
             </Directory>
 
-            <Directory Id="CloudCredentials" Name="CloudCredentials">
+            <Directory Id="INSTALLDIR.CloudCredentials" Name="CloudCredentials">
 
-              <Component Id="Component.CloudCredentials.EmptyDirectory" Guid="95a2cb1e-ad54-41f4-b1f0-d1e70ce71363" KeyPath="yes" Win64="yes">
+              <Component Id="Component.INSTALLDIR.CloudCredentials.EmptyDirectory" Guid="95a2cb1e-ad54-41f4-b1f0-d1e797384167" KeyPath="yes" Win64="yes">
                 <CreateFolder />
-                <RemoveFolder Id="CloudCredentials" On="uninstall" />
+                <RemoveFolder Id="INSTALLDIR.CloudCredentials" On="uninstall" />
               </Component>
 
             </Directory>
 
-            <Directory Id="Newtonsoft.Json.6.0.1_" Name="Newtonsoft.Json.6.0.1">
+            <Directory Id="INSTALLDIR.Newtonsoft.Json.6.0.1" Name="Newtonsoft.Json.6.0.1">
 
-              <Component Id="Component.Newtonsoft.Json.6.0.1_.EmptyDirectory" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7cd413780" KeyPath="yes" Win64="yes">
+              <Component Id="Component.INSTALLDIR.Newtonsoft.Json.6.0.1.EmptyDirectory" Guid="95a2cb1e-ad54-41f4-b1f0-d1e753362b0f" KeyPath="yes" Win64="yes">
                 <CreateFolder />
-                <RemoveFolder Id="Newtonsoft.Json.6.0.1_" On="uninstall" />
+                <RemoveFolder Id="INSTALLDIR.Newtonsoft.Json.6.0.1" On="uninstall" />
               </Component>
 
             </Directory>
 
-            <Directory Id="Resources" Name="Resources">
-              <Directory Id="Credentials" Name="Credentials">
+            <Directory Id="INSTALLDIR.Resources" Name="Resources">
+              <Directory Id="INSTALLDIR.Resources.Credentials" Name="Credentials">
 
-                <Component Id="Component.Credentials.EmptyDirectory" Guid="95a2cb1e-ad54-41f4-b1f0-d1e725d90898" KeyPath="yes" Win64="yes">
+                <Component Id="Component.INSTALLDIR.Resources.Credentials.EmptyDirectory" Guid="95a2cb1e-ad54-41f4-b1f0-d1e792b31020" KeyPath="yes" Win64="yes">
                   <CreateFolder />
-                  <RemoveFolder Id="Credentials" On="uninstall" />
+                  <RemoveFolder Id="INSTALLDIR.Resources.Credentials" On="uninstall" />
                 </Component>
 
               </Directory>
 
-              <Directory Id="dephell" Name="dephell">
+              <Directory Id="INSTALLDIR.Resources.dephell" Name="dephell">
 
                 <Component Id="Component.Newtonsoft.Json.12.0.3.dll_2015167579" Guid="95a2cb1e-ad54-41f4-b1f0-d1e782c302fc" Win64="yes">
                   <File Id="Newtonsoft.Json.12.0.3.dll_2015167579" Source="..\Build\Debug\Resources\dephell\Newtonsoft.Json.12.0.3.dll" />
@@ -933,7 +927,7 @@
 
               </Directory>
 
-              <Directory Id="Formats" Name="Formats">
+              <Directory Id="INSTALLDIR.Resources.Formats" Name="Formats">
 
                 <Component Id="Component.ApplicationDescriptionFormats.xml_2776843126" Guid="95a2cb1e-ad54-41f4-b1f0-d1e726be8d67" Win64="yes">
                   <File Id="ApplicationDescriptionFormats.xml_2776843126" Source="..\Build\Debug\Resources\Formats\ApplicationDescriptionFormats.xml" />
@@ -941,14 +935,14 @@
 
               </Directory>
 
-              <Component Id="Resources" Guid="95a2cb1e-ad54-41f4-b1f0-d1e720d00b1c" KeyPath="yes" Win64="yes">
+              <Component Id="INSTALLDIR.Resources" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7712b8cf0" KeyPath="yes" Win64="yes">
                 <CreateFolder />
-                <RemoveFolder Id="Resources" On="uninstall" />
+                <RemoveFolder Id="INSTALLDIR.Resources" On="uninstall" />
               </Component>
 
             </Directory>
 
-            <Directory Id="Win32_" Name="Win32">
+            <Directory Id="INSTALLDIR.Win32" Name="Win32">
 
               <Component Id="Component.ClipboxDeskband.dll_2511139556" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7f97280c1" Win64="yes">
                 <File Id="ClipboxDeskband.dll_2511139556" Source="..\Build\Debug\Win32\ClipboxDeskband.dll" />
@@ -978,19 +972,23 @@
       </Directory>
 
       <Directory Id="ProgramMenuFolder" Name="ProgramMenuFolder">
-        <Directory Id="ProgramMenuFolder.Clipbox" Name="Clipbox">
 
-          <Component Id="Component.ProgramMenuFolder.Clipbox.EmptyDirectory" Guid="95a2cb1e-ad54-41f4-b1f0-d1e71ae7914d" Win64="yes">
-            <CreateFolder />
-            <RemoveFolder Id="ProgramMenuFolder.Clipbox" On="uninstall" />
+        <Component Id="Component.Clipbox_" Guid="95a2cb1e-ad54-41f4-b1f0-d1e79540e70c" Win64="yes">
+          <Shortcut Id="ProgramMenuFolder.Clipbox_" WorkingDirectory="ProgramMenuFolder.Clipbox_.WorkDir" Target="[INSTALLDIR]\ClipboxGuard.exe" Arguments="scut" Name="Clipbox.lnk" />
 
-            <RegistryKey Root="HKCU" Key="Software\WixSharp\Used">
-              <RegistryValue Value="0" Type="string" KeyPath="yes" />
-            </RegistryKey>
-          </Component>
+          <CreateFolder />
 
-        </Directory>
+          <RegistryKey Root="HKCU" Key="Software\WixSharp\Used">
+            <RegistryValue Value="0" Type="string" KeyPath="yes" />
+          </RegistryKey>
+        </Component>
+
       </Directory>
+
+      <Component Id="TARGETDIR" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7fa3ae4aa" KeyPath="yes" Win64="yes">
+        <RemoveFolder Id="TARGETDIR" On="uninstall" />
+      </Component>
+
     </Directory>
 
     <UI />
@@ -1004,6 +1002,8 @@
 
     <UIRef Id="WixUI_Minimal" />
     <UIRef Id="WixUI_ErrorProgressText" />
+
+    <Property Id="ProgramMenuFolder.Clipbox_.WorkDir" Value="INSTALLDIR\" />
 
     <Feature Id="Complete" Title="Complete" Absent="allow" Level="1">
       <ComponentRef Id="Component.ClipboxGuard.exe_568895162" />
@@ -1219,9 +1219,9 @@
       <ComponentRef Id="Component.Clipbox.Infrastructure.UI.Localization.resources.dll_2650348852" />
       <ComponentRef Id="Component.Clipbox.resources.dll_2203031759" />
       <ComponentRef Id="Component.ClipboxGuard.resources.dll_3159112721" />
-      <ComponentRef Id="Component.CloudCredentials.EmptyDirectory" />
-      <ComponentRef Id="Component.Newtonsoft.Json.6.0.1_.EmptyDirectory" />
-      <ComponentRef Id="Component.Credentials.EmptyDirectory" />
+      <ComponentRef Id="Component.INSTALLDIR.CloudCredentials.EmptyDirectory" />
+      <ComponentRef Id="Component.INSTALLDIR.Newtonsoft.Json.6.0.1.EmptyDirectory" />
+      <ComponentRef Id="Component.INSTALLDIR.Resources.Credentials.EmptyDirectory" />
       <ComponentRef Id="Component.Newtonsoft.Json.12.0.3.dll_2015167579" />
       <ComponentRef Id="Component.Newtonsoft.Json.6.0.0.0.dll_835391177" />
       <ComponentRef Id="Component.ApplicationDescriptionFormats.xml_2776843126" />
@@ -1229,9 +1229,10 @@
       <ComponentRef Id="Component.ClipboxDeskband.exp_554562264" />
       <ComponentRef Id="Component.ClipboxDeskband.ilk_2555835108" />
       <ComponentRef Id="Component.ClipboxDeskband.lib_982446825" />
-      <ComponentRef Id="Component.ProgramMenuFolder.Clipbox.EmptyDirectory" />
+      <ComponentRef Id="Component.Clipbox_" />
       <ComponentRef Id="ProgramFiles64Folder.MyCompany" />
-      <ComponentRef Id="Resources" />
+      <ComponentRef Id="INSTALLDIR.Resources" />
+      <ComponentRef Id="TARGETDIR" />
     </Feature>
 
     <InstallExecuteSequence>

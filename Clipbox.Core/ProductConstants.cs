@@ -18,6 +18,8 @@ namespace Clipbox.Core
 
         public const string SERVICE_EXE_NAME = "ClipboxSvc.exe";
 
+        public const string SERVICE_SC_NAME = "Clipbox Service";
+
         public const string DESKBAND_CTRL_EXE_NAME = "ClipboxDeskbandControl.exe";
 
         public const string DESKBAND_SHELL_EXT_DLL_NAME = "ClipboxDeskband.dll";
@@ -30,7 +32,9 @@ namespace Clipbox.Core
 
         public const string STARTED_FROM_GUARD_ARG = "guard";
 
-        public const string SHELL_NOTIFY_ARG = "shnotify";
+        public const string OPEN_MAIN_WINDOW_ARG = "main";
+
+        public const string STARTED_FROM_SHORTCUT = "scut";
 
         public const string RUN_WITH_HIGH_PRIORITY_FLAG_KEY = "_hp";
 
@@ -44,6 +48,8 @@ namespace Clipbox.Core
         public const string PIPE_COMMAND_QUIT = "Quit";
 
         public const string PIPE_COMMAND_DISABLE_SEARCH = "DisableSearch";
+
+        public const string PIPE_COMMAND_OPEN_MAIN_WINDOW = "OpenMainWindow";
 
         public const string SEARCH_SERVICE_NAMED_PIPE_PREFIX = "ClipboxSearchPipe";
 

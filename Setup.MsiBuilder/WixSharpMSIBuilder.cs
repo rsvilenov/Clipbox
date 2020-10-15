@@ -25,20 +25,18 @@ namespace Setup.MsiBuilder
             {
                 ServiceInstaller = new ServiceInstaller
                 {
-                    Name = $"{ProductConstants.PRODUCT_NAME}.Svc",
+                    Name = ProductConstants.SERVICE_SC_NAME,
                     StartOn = SvcEvent.Install,
                     StopOn = SvcEvent.InstallUninstall_Wait,
                     RemoveOn = SvcEvent.Uninstall_Wait,
                     FirstFailureActionType = FailureActionType.restart,
                     SecondFailureActionType = FailureActionType.restart,
                     ThirdFailureActionType = FailureActionType.none,
-                    DelayedAutoStart = false,
-                    Vital = true
+                    DelayedAutoStart = false
                 }
             };
 
-            File guard = new File(System.IO.Path.Combine(releaseDirectory, ProductConstants.GUARD_EXE_NAME),
-                            new FileShortcut(ProductConstants.PRODUCT_NAME, $@"%ProgramMenu%\{ProductConstants.PRODUCT_NAME}"));
+            File guard = new File(System.IO.Path.Combine(releaseDirectory, ProductConstants.GUARD_EXE_NAME));
 
 #if PLATFORM_X64
             ExeFileShortcut uninstaller = new ExeFileShortcut($"Uninstall {ProductConstants.PRODUCT_NAME}", "[System64Folder]msiexec.exe", "/x [ProductCode]");
@@ -58,6 +56,8 @@ namespace Setup.MsiBuilder
                         guard,
                         uninstaller,
                         service),
+                    new Dir(@"%ProgramMenu%",
+                        new ExeFileShortcut(ProductConstants.PRODUCT_NAME, System.IO.Path.Combine("[INSTALLDIR]", ProductConstants.GUARD_EXE_NAME), arguments: ProductConstants.STARTED_FROM_SHORTCUT)),
                     new ElevatedManagedAction(CustomActions.InstallDeskband, Return.check, When.Before, Step.StartServices, Condition.NOT_Installed),
                     new ElevatedManagedAction(CustomActions.UnInstallDeskband, Return.check, When.Before, Step.RemoveFiles, Condition.BeingUninstalled))
                 {

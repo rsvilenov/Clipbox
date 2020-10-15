@@ -4,6 +4,7 @@ using Clipbox.Infrastructure.IPC;
 using Clipbox.Infrastructure.Persistence;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
+using Clipbox.Win32;
 using System;
 using System.Windows;
 using System.Windows.Threading;
@@ -16,6 +17,7 @@ namespace Clipbox.Services
         private readonly IPersistenceProvider _persistenceProvider;
         private readonly ISettingsService _settingsService;
 
+        private IMainClipboardViewWindowService _mainClipboardViewWindowService;
         public GuardCommunicationService(
             IPersistenceProvider persistenceProvider,
             ISettingsService settingsService,
@@ -29,6 +31,11 @@ namespace Clipbox.Services
 
             _pipeServer = new NamedPipesServer($"{ProductConstants.MAINPROC_GUARD_COMM_NAMED_PIPE_PREFIX}.{sessionId}");
             _pipeServer.GotMessage += _pipeServer_GotMessage;
+        }
+
+        public void SetMainClipboardViewWindowService(IMainClipboardViewWindowService svc)
+        {
+            _mainClipboardViewWindowService = svc;
         }
 
         private void _settingsService_SettingChanged(object sender, EventArgsClasses.SettingsEventArgs e)
@@ -52,6 +59,10 @@ namespace Clipbox.Services
             else if (e.ReceivedMessage == ProductConstants.PIPE_COMMAND_DISABLE_SEARCH)
             {
                 _settingsService.SetSetting(SettingsKeys.IsSearchEnabled, false);
+            }
+            else if (e.ReceivedMessage == ProductConstants.PIPE_COMMAND_OPEN_MAIN_WINDOW)
+            {
+                _mainClipboardViewWindowService?.OpenOnMonitor(MonitorUtils.GetByCurrentMousePosition());
             }
         }
 

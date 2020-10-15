@@ -393,7 +393,7 @@ namespace Clipbox.Win32
         /// <returns></returns>
         public static bool CheckProcessExists(string processName)
         {
-            return CheckProcessExistsInSessionInternal(processName, SESSION_ID_ALL_SESSIONS);
+            return CheckProcessExistsInSessionInternal(processName, SESSION_ID_ALL_SESSIONS, new int[] { });
         }
 
         /// <summary>
@@ -403,12 +403,12 @@ namespace Clipbox.Win32
         /// <param name="processName">The name of the process</param>
         /// <param name="sessionId">The session id</param>
         /// <returns></returns>
-        public static bool CheckProcessExistsInSession(string processName, int sessionId)
+        public static bool CheckProcessExistsInSession(string processName, int sessionId, int[] pidsToSkip)
         {
-            return CheckProcessExistsInSessionInternal(processName, sessionId);
+            return CheckProcessExistsInSessionInternal(processName, sessionId, pidsToSkip);
         }
 
-        private static bool CheckProcessExistsInSessionInternal(string processName, int sessionId)
+        private static bool CheckProcessExistsInSessionInternal(string processName, int sessionId, int[] pidsToSkip)
         {
             var procs = Process.GetProcessesByName(processName);
             foreach (Process proc in procs)
@@ -420,6 +420,11 @@ namespace Clipbox.Win32
 
                 try
                 {
+                    if (pidsToSkip.Contains(proc.Id))
+                    {
+                        continue;
+                    }
+
                     if (proc.SessionId == sessionId)
                     {
                         return true;
