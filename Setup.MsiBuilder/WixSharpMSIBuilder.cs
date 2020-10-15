@@ -26,6 +26,7 @@ namespace Setup.MsiBuilder
                 ServiceInstaller = new ServiceInstaller
                 {
                     Name = ProductConstants.SERVICE_SC_NAME,
+                    Description = ProductConstants.SERVICE_SC_DESCRIPTION,
                     StartOn = SvcEvent.Install,
                     StopOn = SvcEvent.InstallUninstall_Wait,
                     RemoveOn = SvcEvent.Uninstall_Wait,
@@ -35,8 +36,6 @@ namespace Setup.MsiBuilder
                     DelayedAutoStart = false
                 }
             };
-
-            File guard = new File(System.IO.Path.Combine(releaseDirectory, ProductConstants.GUARD_EXE_NAME));
 
 #if PLATFORM_X64
             ExeFileShortcut uninstaller = new ExeFileShortcut($"Uninstall {ProductConstants.PRODUCT_NAME}", "[System64Folder]msiexec.exe", "/x [ProductCode]");
@@ -49,11 +48,9 @@ namespace Setup.MsiBuilder
                     new Dir(new Id("INSTALLDIR"),
                     INSTALL_DIRECTORY,
                         new Files($@"{releaseDirectory}\*", f => 
-                            !f.EndsWith(ProductConstants.GUARD_EXE_NAME) 
-                            && !f.EndsWith(ProductConstants.SERVICE_EXE_NAME)
+                            !f.EndsWith(ProductConstants.SERVICE_EXE_NAME)
                             && !f.EndsWith(".pdb") 
                             && !f.EndsWith(".msi")),
-                        guard,
                         uninstaller,
                         service),
                     new Dir(@"%ProgramMenu%",

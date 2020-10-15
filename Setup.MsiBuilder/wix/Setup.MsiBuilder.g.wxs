@@ -15,14 +15,10 @@
         <Directory Id="ProgramFiles64Folder.MyCompany" Name="MyCompany">
           <Directory Id="INSTALLDIR" Name="Clipbox">
 
-            <Component Id="Component.ClipboxGuard.exe_568895162" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7da911a09" Win64="yes">
-              <File Id="ClipboxGuard.exe_568895162" Source="..\Build\Debug\ClipboxGuard.exe" />
-            </Component>
-
             <Component Id="Component.ClipboxSvc.exe_759699309" Guid="95a2cb1e-ad54-41f4-b1f0-d1e755d9a4e1" Win64="yes">
               <File Id="ClipboxSvc.exe_759699309" Source="..\Build\Debug\ClipboxSvc.exe" />
 
-              <ServiceInstall Id="Clipbox_Service" Name="Clipbox Service" DisplayName="Clipbox Service" Description="Clipbox Service" Type="ownProcess" Start="auto" ErrorControl="normal">
+              <ServiceInstall Id="Clipbox_Service" Name="Clipbox Service" DisplayName="Clipbox Service" Description="This service is vital to the proper functionning of Clipbox." Type="ownProcess" Start="auto" ErrorControl="normal">
                 <ServiceConfig DelayedAutoStart="no" OnInstall="yes" OnReinstall="no" OnUninstall="no" />
                 <ServiceConfig FirstFailureActionType="restart" SecondFailureActionType="restart" ThirdFailureActionType="none" xmlns="http://schemas.microsoft.com/wix/UtilExtension" />
               </ServiceInstall>
@@ -202,6 +198,10 @@
 
             <Component Id="Component.ClipboxDeskbandOwner.ilk_541184295" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7c0af9d30" Win64="yes">
               <File Id="ClipboxDeskbandOwner.ilk_541184295" Source="..\Build\Debug\ClipboxDeskbandOwner.ilk" />
+            </Component>
+
+            <Component Id="Component.ClipboxGuard.exe_3488801308" Guid="95a2cb1e-ad54-41f4-b1f0-d1e73ffc05de" Win64="yes">
+              <File Id="ClipboxGuard.exe_3488801308" Source="..\Build\Debug\ClipboxGuard.exe" />
             </Component>
 
             <Component Id="Component.ClipboxGuard.exe.config_3768915141" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7c8a7dbad" Win64="yes">
@@ -1006,7 +1006,6 @@
     <Property Id="ProgramMenuFolder.Clipbox_.WorkDir" Value="INSTALLDIR\" />
 
     <Feature Id="Complete" Title="Complete" Absent="allow" Level="1">
-      <ComponentRef Id="Component.ClipboxGuard.exe_568895162" />
       <ComponentRef Id="Component.ClipboxSvc.exe_759699309" />
       <ComponentRef Id="Component.Azure.Core.dll_2297618219" />
       <ComponentRef Id="Component.Azure.Core.xml_3023132271" />
@@ -1051,6 +1050,7 @@
       <ComponentRef Id="Component.ClipboxDeskbandControl.ilk_4183753308" />
       <ComponentRef Id="Component.ClipboxDeskbandOwner.exe_1348539793" />
       <ComponentRef Id="Component.ClipboxDeskbandOwner.ilk_541184295" />
+      <ComponentRef Id="Component.ClipboxGuard.exe_3488801308" />
       <ComponentRef Id="Component.ClipboxGuard.exe.config_3768915141" />
       <ComponentRef Id="Component.ClipboxSearch.exe_3938580811" />
       <ComponentRef Id="Component.ClipboxSearch.exe.config_3964199237" />
