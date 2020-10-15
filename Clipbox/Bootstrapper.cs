@@ -131,7 +131,10 @@ namespace Clipbox
 
             // Load extension containers
             _extensionLoader = new ExtensionLoader();
-            PerformInitialConfiguration(_extensionLoader, _settingsService);
+            if (!_settingsService.GetSetting<bool>(SettingsKeys.IsInitialConfigurationDone))
+            {
+                PerformInitialConfiguration(_extensionLoader, _settingsService);
+            }
             _extensionLoader.SetEnabledExtensions(GetEnabledExtensions());
             _extensionLoader.LoadContainers();
 

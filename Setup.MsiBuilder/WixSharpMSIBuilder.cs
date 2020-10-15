@@ -104,6 +104,12 @@ namespace Setup.MsiBuilder
                 {
                     var dll = System.IO.Path.Combine(session.Property("INSTALLDIR"), ProductConstants.DESKBAND_SHELL_EXT_DLL_NAME);
                     Process.Start("regsvr32.exe", $"/s /u \"{dll}\"").WaitForExit();
+
+                    string deskbandInstallErrorFlagFilePath = System.IO.Path.Combine(session.Property("INSTALLDIR"), ProductConstants.DESKBAND_INSTALL_FAILURE_FLAG_FILENAME);
+                    if (System.IO.File.Exists(deskbandInstallErrorFlagFilePath))
+                    {
+                        System.IO.File.Delete(deskbandInstallErrorFlagFilePath);
+                    }
                 });
             }
         }
