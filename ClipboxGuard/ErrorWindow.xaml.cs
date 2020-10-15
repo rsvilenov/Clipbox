@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -40,13 +41,14 @@ namespace ClipboxGuard
 
             ErrorText = errorDetails;
             ShowRestartOption = showRestartOption;
+            IsRestartRequested = true;
+            IsReportErrorRequested = NetworkInterface.GetIsNetworkAvailable();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             Close();
         }
-
         
         private string ErrorText
         {

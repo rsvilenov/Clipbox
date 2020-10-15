@@ -51,6 +51,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     g_hInstance = hInstance;
 
     InitializeLogger();
+    g_logger->LogText("Started.");
+
     g_deskbandController = new DeskbandController(PRODCONST_CLSID_ClipboxDeskBand);
     HRESULT hr = g_deskbandController->Initialize();
     if (FAILED(hr))

@@ -137,9 +137,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Clip-WF.ico" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Clip-WF-black-bg.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

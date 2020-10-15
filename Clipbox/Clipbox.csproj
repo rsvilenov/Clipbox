@@ -59,7 +59,7 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Clip-WF-black-bg.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\Images\Clip-WF-black-bg.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Hardcodet.Wpf.TaskbarNotification, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
@@ -851,7 +851,7 @@
     <EmbeddedResource Include="Resources\Images\TrayIcon\Slash.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Clip-WF-black-bg.ico" />
+    <Resource Include="Resources\Images\Clip-WF-black-bg.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

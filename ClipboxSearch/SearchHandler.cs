@@ -31,6 +31,8 @@ namespace ClipboxSearch
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
+            ClearLastExceptionInfo();
+
             _encryptionProvider = new AesEncryptionProvider(_persistenceProvider);
             _searchProvider = new LuceneSearch(_encryptionProvider, _persistenceProvider);
 
@@ -38,6 +40,14 @@ namespace ClipboxSearch
             _remoteSearch = new RemoteSearch($"{ProductConstants.SEARCH_SERVICE_NAMED_PIPE_PREFIX}.{sessionId}", false, _searchProvider);
 
             _remoteSearch.QuitRequested += _remoteSearch_QuitRequested;
+        }
+
+        private void ClearLastExceptionInfo()
+        {
+            if (_persistenceProvider.CheckIfKeyExists(ProductConstants.SEARCH_PROCESS_FAILURE_XML_PERSISTENCE_KEY))
+            {
+                _persistenceProvider.Delete(ProductConstants.SEARCH_PROCESS_FAILURE_XML_PERSISTENCE_KEY);
+            }
         }
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)

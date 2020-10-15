@@ -86,16 +86,38 @@ namespace ClipboxGuard.Services
 
             if (_persistenceProvider.CheckIfKeyExists(ProductConstants.DESKBAND_LOG_APPDATA_FILENAME))
             {
-                errorDetailsStringBuilder.AppendLine("Deskband errors:");
-                errorDetailsStringBuilder.Append(_persistenceProvider.ReadText(ProductConstants.DESKBAND_LOG_APPDATA_FILENAME));
-                errorOrigin |= ErrorOrigin.Deskband;
+                string deskbandLogText = _persistenceProvider.ReadText(ProductConstants.DESKBAND_LOG_APPDATA_FILENAME);
+                if (!string.IsNullOrWhiteSpace(deskbandLogText)
+                    && deskbandLogText.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries).Length > 3) // the first three lines are the "started" part, which is always there
+                {
+                    errorDetailsStringBuilder.AppendLine("Deskband errors:");
+                    errorDetailsStringBuilder.Append(deskbandLogText);
+                    errorOrigin |= ErrorOrigin.Deskband;
+                }
             }
 
             if (_persistenceProvider.CheckIfKeyExists(ProductConstants.DESKBAND_OWNER_LOG_APPDATA_FILENAME))
             {
-                errorDetailsStringBuilder.AppendLine("Deskband owner process errors:");
-                errorDetailsStringBuilder.Append(_persistenceProvider.ReadText(ProductConstants.DESKBAND_OWNER_LOG_APPDATA_FILENAME));
-                errorOrigin |= ErrorOrigin.DeskbandOwner;
+                string deskbandOwnerLogText = _persistenceProvider.ReadText(ProductConstants.DESKBAND_OWNER_LOG_APPDATA_FILENAME);
+                if (!string.IsNullOrWhiteSpace(deskbandOwnerLogText)
+                    && deskbandOwnerLogText.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries).Length > 3)
+                {
+                    errorDetailsStringBuilder.AppendLine("Deskband owner process errors:");
+                    errorDetailsStringBuilder.Append(deskbandOwnerLogText);
+                    errorOrigin |= ErrorOrigin.DeskbandOwner;
+                }
+            }
+
+            if (_persistenceProvider.CheckIfKeyExists(ProductConstants.DESKBAND_CONTROL_LOG_APPDATA_FILENAME))
+            {
+                string deskbandControlLogText = _persistenceProvider.ReadText(ProductConstants.DESKBAND_CONTROL_LOG_APPDATA_FILENAME);
+                if (!string.IsNullOrWhiteSpace(deskbandControlLogText)
+                    && deskbandControlLogText.Split(new char[] { '\n' }, StringSplitOptions.RemoveEmptyEntries).Length > 3)
+                {
+                    errorDetailsStringBuilder.AppendLine("Deskband control process errors:");
+                    errorDetailsStringBuilder.Append(deskbandControlLogText);
+                    errorOrigin |= ErrorOrigin.DeskbandControl;
+                }
             }
 
             int flagsCount = Enum.GetValues(typeof(ErrorOrigin))

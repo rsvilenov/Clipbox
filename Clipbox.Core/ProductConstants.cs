@@ -73,6 +73,8 @@ namespace Clipbox.Core
 
         public const string DESKBAND_OWNER_LOG_APPDATA_FILENAME = "deskbandOwner.log";
 
+        public const string DESKBAND_CONTROL_LOG_APPDATA_FILENAME = "deskbandControl.log";
+
         public const string SHELL_EXTENSION_NAMED_PIPE_PREFIX = "ClipboxShExPipe";
         
         public static readonly IReadOnlyList<byte> CLIENT_EXE_HASH = new byte[] { 0 };

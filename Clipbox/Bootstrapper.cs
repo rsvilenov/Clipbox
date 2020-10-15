@@ -310,6 +310,16 @@ namespace Clipbox
             {
                 _persistenceProvider.Delete(ProductConstants.MAIN_CRASHFILE_PERSISTENCE_KEY);
             }
+
+            if (_persistenceProvider.CheckIfKeyExists(ProductConstants.SEARCH_PROCESS_FAILURE_XML_PERSISTENCE_KEY))
+            {
+                _persistenceProvider.Delete(ProductConstants.SEARCH_PROCESS_FAILURE_XML_PERSISTENCE_KEY);
+            }
+
+            if (_persistenceProvider.CheckIfKeyExists(ProductConstants.SEARCH_CRASHFILE_PERSISTENCE_KEY))
+            {
+                _persistenceProvider.Delete(ProductConstants.SEARCH_CRASHFILE_PERSISTENCE_KEY);
+            }
         }
 
         private void ThemeManager_TransparencySettingChanged(object sender, EventArgs e)
