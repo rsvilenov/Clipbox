@@ -2,10 +2,11 @@
     x:Class="Setup.WixSetup.View.InstallWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Width="400"
-    Height="400"
+    xmlns:shell="http://schemas.microsoft.com/netfx/2009/xaml/presentation"
+    Width="1012"
+    Height="674"
     AllowsTransparency="True"
-    Background="White"
+    Background="#2d364c"
     WindowStartupLocation="CenterScreen"
     WindowStyle="None">
     <Window.Resources>
@@ -13,6 +14,100 @@
     </Window.Resources>
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid
+            Grid.Row="0"
+            Background="Transparent"
+            MouseDown="Grid_MouseDown"
+            MouseMove="Grid_MouseMove">
+            <TextBlock
+                Margin="10,0,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                FontSize="16"
+                Foreground="White"
+                Text="Clipbox Installer" />
+        </Grid>
+        <Viewbox Grid.Row="1" Height="100">
+            <Grid>
+                <Path
+                    Data="M6,0L16,0C16.551987,0,17,0.44799805,17,1L17,25C17,25.309998,16.856995,25.602005,16.612,25.791L8.8619995,31.791C8.6819916,31.931 8.4659882,32 8.25,32 8.022995,32 7.7969971,31.923004 7.6119995,31.771011L0.36199951,25.771011C0.13299561,25.581009,0,25.298004,0,25L0,5 2,5 2,24.529999 8.2709961,29.719009 15,24.51001 15,2 7,2 7,22.520004 8.5,23.719009 10,22.520004 10,9 12,9 12,23C12,23.304001,11.862,23.591003,11.625,23.781006L9.125,25.781006C8.7589874,26.072998,8.2409973,26.072998,7.875,25.781006L5.375,23.781006C5.1380005,23.591003,5,23.304001,5,23L5,1C5,0.44799805,5.447998,0,6,0z"
+                    Fill="#FFFFFFFF"
+                    RenderTransformOrigin="0.5,0.5"
+                    Stretch="Uniform">
+                    <Path.RenderTransform>
+                        <TransformGroup>
+                            <TransformGroup.Children>
+                                <RotateTransform Angle="0" />
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                            </TransformGroup.Children>
+                        </TransformGroup>
+                    </Path.RenderTransform>
+                </Path>
+            </Grid>
+        </Viewbox>
+        <Grid
+            Grid.Row="2"
+            Margin="0,50,0,0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBlock
+                Grid.Row="0"
+                Margin="0,0,0,20"
+                HorizontalAlignment="Center"
+                FontSize="46"
+                Foreground="White"
+                Text="Clipbox" />
+            <TextBlock
+                Grid.Row="1"
+                FontSize="16"
+                Foreground="White"
+                TextAlignment="Center">
+                <Run Text="By installing or using the product, you agree to its" />
+                <LineBreak />
+                <Run
+                    Hyperlink.Click="Run_Click"
+                    Text="End User License Agreement"
+                    TextDecorations="Underline" />
+                <Run Text="and" />
+                <Run
+                    Hyperlink.Click="Run_Click"
+                    Text="Privacy Policy"
+                    TextDecorations="Underline" />
+            </TextBlock>
+
+            <Button
+                Grid.Row="2"
+                Width="180"
+                Height="50"
+                Margin="0,30,0,0"
+                Background="#0cb754"
+                BorderThickness="0"
+                Content="INSTALL"
+                FontSize="18"
+                Foreground="#dcffc9" />
+
+            <TextBlock
+                Grid.Row="3"
+                Margin="0,10,0,0"
+                FontSize="18"
+                Foreground="White"
+                Text="Customize"
+                TextAlignment="Center"
+                TextDecorations="Underline" />
+
+        </Grid>
+
         <!--<Grid Margin="15" VerticalAlignment="Stretch">
             <Grid.RowDefinitions>
                 <RowDefinition Height="1*" />

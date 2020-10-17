@@ -26,5 +26,26 @@ namespace Setup.WixSetup.View
             InitializeComponent();
             this.DataContext = vm;
         }
+
+        private void Run_Click(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private void Grid_MouseMove(object sender, MouseEventArgs e)
+        {
+            //if (Mouse.LeftButton != MouseButtonState.Pressed)
+            //{
+            //    return;
+            //}
+
+            //DragMove();
+        }
+
+        private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+                DragMove();
+        }
     }
 }
