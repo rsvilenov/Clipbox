@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension" xmlns:bal="http://schemas.microsoft.com/wix/BalExtension">
+  <Bundle Name="Clipbox_Setup" UpgradeCode="21e791c2-9796-4397-8e72-b28e3104b6d4" Version="1.0" >
+    <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.HyperlinkLicense">
+      <bal:WixStandardBootstrapperApplication LicenseUrl="" />
+    </BootstrapperApplicationRef>
+
+    <Chain>
+      <PackageGroupRef Id="NetFx462Redist" />
+
+      <ExePackage Name=" Microsoft Visual C++ Redistributable for Visual Studio 2015, 2017 and 2019." InstallCommand="/install /quiet /norestart /ChainingPackage &quot;[Clipbox]&quot;" PerMachine="yes" DetectCondition="VCPlusPlus2015_64 &gt;= VCPlusPlus2015_64_RequiredVersion" Permanent="yes" SourceFile="redist\VC_redist.x64.exe" Compressed="yes" Vital="yes" />
+
+      <MsiPackage DisplayInternalUI="yes" Visible="yes" SourceFile="Clipbox.msi">
+        <MsiProperty Name="WIXBUNDLEORIGINALSOURCE" Value="[WixBundleOriginalSource]" />
+      </MsiPackage>
+    </Chain>
+  </Bundle>
+</Wix>
+

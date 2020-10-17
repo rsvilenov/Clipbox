@@ -18,7 +18,7 @@
             <Component Id="Component.ClipboxSvc.exe_759699309" Guid="95a2cb1e-ad54-41f4-b1f0-d1e755d9a4e1" Win64="yes">
               <File Id="ClipboxSvc.exe_759699309" Source="..\Build\Debug\ClipboxSvc.exe" />
 
-              <ServiceInstall Id="Clipbox_Service" Name="Clipbox Service" DisplayName="Clipbox Service" Description="This service is vital to the proper functionning of Clipbox." Type="ownProcess" Start="auto" ErrorControl="normal">
+              <ServiceInstall Id="Clipbox_Service" Name="Clipbox Service" DisplayName="Clipbox Service" Description="This service is vital to the proper functionning of Clipbox." Type="ownProcess" Start="auto" ErrorControl="normal" Vital="yes">
                 <ServiceConfig DelayedAutoStart="no" OnInstall="yes" OnReinstall="no" OnUninstall="no" />
                 <ServiceConfig FirstFailureActionType="restart" SecondFailureActionType="restart" ThirdFailureActionType="none" xmlns="http://schemas.microsoft.com/wix/UtilExtension" />
               </ServiceInstall>
@@ -997,12 +997,16 @@
     <CustomAction Id="InstallDeskband" BinaryKey="InstallDeskband_File" DllEntry="InstallDeskband" Return="check" Impersonate="no" Execute="deferred" />
     <CustomAction Id="Set_UnInstallDeskband_Props" Property="UnInstallDeskband" Value="INSTALLDIR=[INSTALLDIR];INSTALLDIR=[INSTALLDIR];UILevel=[UILevel];ProductCode=[ProductCode];ADDLOCAL=[ADDLOCAL];ADDFEATURES=[ADDFEATURES]" />
     <CustomAction Id="UnInstallDeskband" BinaryKey="InstallDeskband_File" DllEntry="UnInstallDeskband" Return="check" Impersonate="no" Execute="deferred" />
+    <CustomAction Id="WixSharp_InitRuntime_Action" BinaryKey="WixSharp_InitRuntime_Action_File" DllEntry="WixSharp_InitRuntime_Action" Return="check" Execute="immediate" />
+    <CustomAction Id="WixSharp_BeforeInstall_Action" BinaryKey="WixSharp_InitRuntime_Action_File" DllEntry="WixSharp_BeforeInstall_Action" Return="check" Execute="immediate" />
 
     <Binary Id="InstallDeskband_File" SourceFile="%this%.CA.dll" />
+    <Binary Id="WixSharp_InitRuntime_Action_File" SourceFile="WixSharp.CA.dll" />
 
     <UIRef Id="WixUI_Minimal" />
     <UIRef Id="WixUI_ErrorProgressText" />
 
+    <Property Id="WixSharp_BeforeInstall_Handlers" Value="Setup.MsiBuilder, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Setup.MsiBuilder.WixSharpMSIBuilder+&lt;&gt;c|&lt;CreateMSI&gt;b__1_0" />
     <Property Id="ProgramMenuFolder.Clipbox_.WorkDir" Value="INSTALLDIR\" />
 
     <Feature Id="Complete" Title="Complete" Absent="allow" Level="1">
@@ -1240,6 +1244,8 @@
       <Custom Action="InstallDeskband" After="Set_InstallDeskband_Props"> (NOT Installed) </Custom>
       <Custom Action="Set_UnInstallDeskband_Props" Before="RemoveFiles" />
       <Custom Action="UnInstallDeskband" After="Set_UnInstallDeskband_Props"> (REMOVE="ALL") </Custom>
+      <Custom Action="WixSharp_InitRuntime_Action" Before="AppSearch"> (1) </Custom>
+      <Custom Action="WixSharp_BeforeInstall_Action" Before="InstallFiles">1</Custom>
     </InstallExecuteSequence>
 
   </Product>

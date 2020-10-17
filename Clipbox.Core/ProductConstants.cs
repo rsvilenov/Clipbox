@@ -10,6 +10,8 @@ namespace Clipbox.Core
 
         public const string PRODUCT_GUID = "95A2CB1E-AD54-41F4-B1F0-D1E7876A7437";
 
+        public const string WIX_BUNDLE_UPGRADE_CODE = "555C5BB0-4DFA-4559-871F-1408F39A2987";
+
         public const string COMPANY_NAME = "MyCompany";
 
         public const string MAIN_PROCESS_EXE_NAME = "Clipbox.exe";
@@ -19,6 +21,8 @@ namespace Clipbox.Core
         public const string SERVICE_EXE_NAME = "ClipboxSvc.exe";
 
         public const string SERVICE_SC_NAME = "Clipbox Service";
+
+        public static string SERVICE_SC_DESCRIPTION = "This service is vital to the proper functionning of Clipbox.";
 
         public const string DESKBAND_CTRL_EXE_NAME = "ClipboxDeskbandControl.exe";
 
