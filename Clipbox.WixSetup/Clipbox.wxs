@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension" xmlns:bal="http://schemas.microsoft.com/wix/BalExtension" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension" xmlns:dep="http://schemas.microsoft.com/wix/DependencyExtension">
+  <Bundle Name="Clipbox" Manufacturer="MyCompany" UpgradeCode="555c5bb0-4dfa-4559-871f-1408f39a2987" Version="1.0" dep:ProviderKey="01234567-8901-2345-6789-012345678901" >
+    <BootstrapperApplicationRef Id="ManagedBootstrapperApplicationHost">
+      <Payload SourceFile="Clipbox.WixSetup.exe" />
+      <Payload SourceFile="BootstrapperCore.config" />
+      <Payload SourceFile="bin\Debug\Microsoft.Deployment.WindowsInstaller.dll" />
+    </BootstrapperApplicationRef>
+
+    <Variable Name="VCPlusPlus2015_x64_RequiredVersion" Value="14.27.29112" Persisted="yes" Type="version" />
+    <Variable Name="VCPlusPlus2015_x86_RequiredVersion" Value="14.27.29112" Persisted="yes" Type="version" />
+    <Variable Name="Netfx4FullVersion_RequiredVersion" Value="4.7.2" Persisted="yes" Type="version" />
+
+    <Chain>
+      <PackageGroupRef Id="NetFx461Redist" />
+
+      <ExePackage Name="Microsoft Visual C++ Redistributable for Visual Studio 2015, 2017 and 2019." InstallCommand="/install /quiet /norestart /ChainingPackage &quot;[Clipbox]&quot;" PerMachine="yes" DetectCondition="VCPlusPlus2015_x64 &gt;= VCPlusPlus2015_x64_RequiredVersion" Permanent="yes" SourceFile="redist\VC_redist.x64.exe" Compressed="yes" Vital="yes" />
+
+      <MsiPackage Id="ClipboxPackageId" DisplayInternalUI="no" Visible="no" SourceFile="Clipbox.msi" Vital="yes">
+        <MsiProperty Name="WIXBUNDLEORIGINALSOURCE" Value="[WixBundleOriginalSource]" />
+      </MsiPackage>
+    </Chain>
+
+    <util:RegistrySearchRef Id="RegistrySearch1" />
+
+    <util:ProductSearchRef Id="ProductSearch1" />
+    <util:ProductSearchRef Id="ProductSearch2" />
+  </Bundle>
+
+  <Fragment >
+    <util:RegistrySearch Key="SOFTWARE\Microsoft\Net Framework Setup\NDP\v4\Full" Value="Version" Variable="Netfx4FullVersion" Root="HKLM" Id="RegistrySearch1" />
+
+    <util:ProductSearch UpgradeCode="{36F68A90-239C-34DF-B58C-64B30153CE35}" Variable="VCPlusPlus2015_x64" Result="version" Id="ProductSearch1" />
+    <util:ProductSearch UpgradeCode="{65E5BD06-6392-3027-8C26-853107D3CF1A}" Variable="VCPlusPlus2015_x86" Result="version" Id="ProductSearch2" />
+  </Fragment>
+</Wix>
+
