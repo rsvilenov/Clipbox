@@ -11,104 +11,366 @@
     WindowStyle="None">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <ControlTemplate x:Key="ArrowBack">
+
+            <Viewbox>
+                <Grid Background="Transparent">
+                    <Path
+                        Width="92"
+                        Height="92"
+                        Margin="0,0,0,0"
+                        Data="M15.500015,0L20.800008,0 32.000001,10.700012 29.400021,13.200012 20.700002,21.5 15.599991,21.5 15.500015,21.400009 24.900018,12.400009 0,12.400009 0,8.900009 24.900018,8.900009z"
+                        Fill="{TemplateBinding Foreground}"
+                        RenderTransformOrigin="0.5,0.5"
+                        Stretch="Uniform">
+                        <Path.RenderTransform>
+                            <TransformGroup>
+                                <TransformGroup.Children>
+                                    <RotateTransform Angle="180" />
+                                    <ScaleTransform ScaleX="1" ScaleY="1" />
+                                </TransformGroup.Children>
+                            </TransformGroup>
+                        </Path.RenderTransform>
+                    </Path>
+                </Grid>
+            </Viewbox>
+        </ControlTemplate>
+        <ControlTemplate x:Key="Logo">
+            <Viewbox>
+                <Grid>
+                    <Path
+                        Data="M6,0L16,0C16.551987,0,17,0.44799805,17,1L17,25C17,25.309998,16.856995,25.602005,16.612,25.791L8.8619995,31.791C8.6819916,31.931 8.4659882,32 8.25,32 8.022995,32 7.7969971,31.923004 7.6119995,31.771011L0.36199951,25.771011C0.13299561,25.581009,0,25.298004,0,25L0,5 2,5 2,24.529999 8.2709961,29.719009 15,24.51001 15,2 7,2 7,22.520004 8.5,23.719009 10,22.520004 10,9 12,9 12,23C12,23.304001,11.862,23.591003,11.625,23.781006L9.125,25.781006C8.7589874,26.072998,8.2409973,26.072998,7.875,25.781006L5.375,23.781006C5.1380005,23.591003,5,23.304001,5,23L5,1C5,0.44799805,5.447998,0,6,0z"
+                        Fill="{TemplateBinding Foreground}"
+                        RenderTransformOrigin="0.5,0.5"
+                        Stretch="Uniform">
+                        <Path.RenderTransform>
+                            <TransformGroup>
+                                <TransformGroup.Children>
+                                    <RotateTransform Angle="0" />
+                                    <ScaleTransform ScaleX="1" ScaleY="1" />
+                                </TransformGroup.Children>
+                            </TransformGroup>
+                        </Path.RenderTransform>
+                    </Path>
+                </Grid>
+            </Viewbox>
+        </ControlTemplate>
+        <ControlTemplate x:Key="CloseIcon">
+            <Viewbox>
+                <Grid Background="Transparent">
+                    <Grid Visibility="Visible">
+                        <Rectangle Fill="Transparent" Visibility="Visible" />
+                        <Ellipse Fill="#FF000000" Visibility="Collapsed" />
+                        <Path
+                            Data="M50.5,4.7500001C25.232973,4.75 4.75,25.232973 4.7500001,50.5 4.75,75.767029 25.232973,96.25 50.5,96.25 75.767029,96.25 96.25,75.767029 96.25,50.5 96.25,25.232973 75.767029,4.75 50.5,4.7500001z M50.5,0C78.390381,0 101,22.609621 101,50.5 101,78.390381 78.390381,101 50.5,101 22.609621,101 0,78.390381 0,50.5 0,22.609621 22.609621,0 50.5,0z"
+                            Fill="#FF000000"
+                            Stretch="Fill"
+                            Visibility="Collapsed" />
+                    </Grid>
+                    <Path
+                        Width="64"
+                        Height="64"
+                        Margin="0,0,0,0"
+                        Data="M2.999979,0C3.8000264,0,4.4999763,0.30000305,5.1000115,0.90000927L15.999954,11.700012 26.899959,0.90000927C28.099967,-0.29998779 29.999927,-0.29998779 31.099961,0.90000927 32.299972,2.1000061 32.299972,4 31.099961,5.1000061L20.199958,16 31.099961,26.900009C32.299972,28.100006 32.299972,30 31.099961,31.100006 29.899951,32.300003 27.999931,32.300003 26.899959,31.100006L15.999954,20.200012 5.1000115,31.100006C3.9000017,32.300003 1.9999809,32.300003 0.90000743,31.100006 -0.30000248,29.900009 -0.30000248,28 0.90000743,26.900009L11.800011,16 0.90000743,5.1000061C-0.30000248,3.9000092 -0.30000248,2 0.90000743,0.90000927 1.4999818,0.30000305 2.1999928,0 2.999979,0z"
+                        Fill="{TemplateBinding Foreground}"
+                        RenderTransformOrigin="0.5,0.5"
+                        Stretch="Uniform">
+                        <Path.RenderTransform>
+                            <TransformGroup>
+                                <TransformGroup.Children>
+                                    <RotateTransform Angle="0" />
+                                    <ScaleTransform ScaleX="1" ScaleY="1" />
+                                </TransformGroup.Children>
+                            </TransformGroup>
+                        </Path.RenderTransform>
+                    </Path>
+                </Grid>
+            </Viewbox>
+        </ControlTemplate>
+
+        <Style x:Key="BtnClose" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Foreground" Value="White" />
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border
+                            Name="btnBorder"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}">
+                            <ContentControl
+                                Margin="5"
+                                Foreground="{TemplateBinding Foreground}"
+                                Template="{DynamicResource CloseIcon}" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="#b71000" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Foreground" Value="Red" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="BtnBack" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="#0cb754" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Foreground" Value="White" />
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border
+                            Name="btnBorder"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}">
+                            <ContentControl
+                                Margin="5"
+                                Foreground="{TemplateBinding Foreground}"
+                                Template="{DynamicResource ArrowBack}" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="White" />
+                    <Setter Property="Background" Value="#0ec45a" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Foreground" Value="White" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="BtnInstall" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="#0cb754" />
+            <Setter Property="BorderBrush" Value="Transparent" />
+            <Setter Property="Foreground" Value="White" />
+
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border
+                            Name="btnBorder"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}">
+                            <ContentControl
+                                Margin="5"
+                                HorizontalContentAlignment="Center"
+                                VerticalContentAlignment="Center"
+                                Content="{TemplateBinding Content}"
+                                Foreground="{TemplateBinding Foreground}" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Foreground" Value="White" />
+                    <Setter Property="Background" Value="#0ec45a" />
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Foreground" Value="White" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
     </Window.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition />
         </Grid.RowDefinitions>
+
+        <!--  title bar  -->
         <Grid
             Grid.Row="0"
             Background="Transparent"
-            MouseDown="Grid_MouseDown"
-            MouseMove="Grid_MouseMove">
-            <TextBlock
+            MouseDown="CaptionGrid_MouseDown">
+            <StackPanel
+                Height="24"
                 Margin="10,0,0,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center"
-                FontSize="16"
-                Foreground="White"
-                Text="Clipbox Installer" />
-        </Grid>
-        <Viewbox Grid.Row="1" Height="100">
-            <Grid>
-                <Path
-                    Data="M6,0L16,0C16.551987,0,17,0.44799805,17,1L17,25C17,25.309998,16.856995,25.602005,16.612,25.791L8.8619995,31.791C8.6819916,31.931 8.4659882,32 8.25,32 8.022995,32 7.7969971,31.923004 7.6119995,31.771011L0.36199951,25.771011C0.13299561,25.581009,0,25.298004,0,25L0,5 2,5 2,24.529999 8.2709961,29.719009 15,24.51001 15,2 7,2 7,22.520004 8.5,23.719009 10,22.520004 10,9 12,9 12,23C12,23.304001,11.862,23.591003,11.625,23.781006L9.125,25.781006C8.7589874,26.072998,8.2409973,26.072998,7.875,25.781006L5.375,23.781006C5.1380005,23.591003,5,23.304001,5,23L5,1C5,0.44799805,5.447998,0,6,0z"
-                    Fill="#FFFFFFFF"
-                    RenderTransformOrigin="0.5,0.5"
-                    Stretch="Uniform">
-                    <Path.RenderTransform>
-                        <TransformGroup>
-                            <TransformGroup.Children>
-                                <RotateTransform Angle="0" />
-                                <ScaleTransform ScaleX="1" ScaleY="1" />
-                            </TransformGroup.Children>
-                        </TransformGroup>
-                    </Path.RenderTransform>
-                </Path>
-            </Grid>
-        </Viewbox>
-        <Grid
-            Grid.Row="2"
-            Margin="0,50,0,0"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center">
-            <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-                <RowDefinition />
-            </Grid.RowDefinitions>
-            <TextBlock
-                Grid.Row="0"
-                Margin="0,0,0,20"
-                HorizontalAlignment="Center"
-                FontSize="46"
-                Foreground="White"
-                Text="Clipbox" />
-            <TextBlock
-                Grid.Row="1"
-                FontSize="16"
-                Foreground="White"
-                TextAlignment="Center">
-                <Run Text="By installing or using the product, you agree to its" />
-                <LineBreak />
-                <Run
-                    Hyperlink.Click="Run_Click"
-                    Text="End User License Agreement"
-                    TextDecorations="Underline" />
-                <Run Text="and" />
-                <Run
-                    Hyperlink.Click="Run_Click"
-                    Text="Privacy Policy"
-                    TextDecorations="Underline" />
-            </TextBlock>
+                Orientation="Horizontal">
+                <ContentControl
+                    Height="24"
+                    Foreground="#f0f0f0"
+                    Template="{StaticResource Logo}" />
+                <TextBlock
+                    Margin="10,0,0,0"
+                    FontSize="16"
+                    Foreground="#f0f0f0"
+                    Text="Clipbox Installer" />
+            </StackPanel>
 
+            <Button
+                Name="BtnCloseWindow"
+                Width="24"
+                Height="24"
+                Margin="0,0,10,0"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Click="BtnCloseWindow_Click"
+                Style="{StaticResource BtnClose}" />
+        </Grid>
+
+
+        <!--  first page  -->
+        <Grid
+            Name="FirstPage"
+            Grid.Row="1"
+            Visibility="Collapsed">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <ContentControl
+                Grid.Row="0"
+                Height="100"
+                Margin="0,70,0,0"
+                Foreground="White"
+                Template="{StaticResource Logo}" />
+            <Grid
+                Grid.Row="1"
+                Margin="0,50,0,0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <TextBlock
+                    Grid.Row="0"
+                    Margin="0,0,0,30"
+                    HorizontalAlignment="Center"
+                    FontSize="46"
+                    Foreground="White"
+                    Text="Clipbox" />
+                <TextBlock
+                    Grid.Row="1"
+                    FontSize="16"
+                    Foreground="White"
+                    TextAlignment="Center">
+                    <Run Text="By installing or using the product, you agree to its" />
+                    <LineBreak />
+                    <Run
+                        Cursor="Hand"
+                        Hyperlink.Click="Run_Click"
+                        Text="End User License Agreement"
+                        TextDecorations="Underline" />
+                    <Run Text="and" />
+                    <Run
+                        Cursor="Hand"
+                        Hyperlink.Click="Run_Click"
+                        Text="Privacy Policy"
+                        TextDecorations="Underline" />
+                </TextBlock>
+
+                <Button
+                    Grid.Row="2"
+                    Width="180"
+                    Height="50"
+                    Margin="0,30,0,0"
+                    BorderThickness="0"
+                    Content="INSTALL"
+                    FontSize="18"
+                    Style="{StaticResource BtnInstall}" />
+
+                <TextBlock
+                    Grid.Row="3"
+                    Width="Auto"
+                    Margin="0,10,0,0"
+                    Cursor="Hand"
+                    FontSize="18"
+                    Foreground="White"
+                    MouseLeftButtonUp="Customize_MouseLeftButtonUp"
+                    Text="Customize"
+                    TextAlignment="Center"
+                    TextDecorations="Underline" />
+
+            </Grid>
+        </Grid>
+
+        <!--  custom install  -->
+        <Grid
+            Name="CustomInstallPage"
+            Grid.Row="1"
+            VerticalAlignment="Stretch"
+            Visibility="Visible">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="100" />
+            </Grid.RowDefinitions>
+            <StackPanel
+                Grid.Row="0"
+                Margin="10,0,0,0"
+                Orientation="Horizontal">
+                <Button
+                    Name="BtnInstalloptionsBack"
+                    Width="50"
+                    Height="40"
+                    Click="BtnInstalloptionsBack_Click"
+                    Style="{StaticResource BtnBack}" />
+                <TextBlock
+                    Margin="20,0,0,0"
+                    VerticalAlignment="Center"
+                    FontSize="30"
+                    Foreground="White"
+                    Text="Install options"
+                    TextAlignment="Left" />
+            </StackPanel>
+            <Grid Grid.Row="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock
+                    Grid.Row="0"
+                    Margin="80,80,0,0"
+                    FontSize="16"
+                    Foreground="#f0f0bd"
+                    Text="Clipbox will install into" />
+                <TextBox
+                    Grid.Row="1"
+                    Height="40"
+                    Margin="80,10"
+                    HorizontalAlignment="Stretch"
+                    Background="Transparent"
+                    BorderBrush="#f0f0bd"
+                    BorderThickness="1"
+                    Foreground="#f0f0bd" />
+            </Grid>
             <Button
                 Grid.Row="2"
                 Width="180"
                 Height="50"
-                Margin="0,30,0,0"
-                Background="#0cb754"
+                Margin="15"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
                 BorderThickness="0"
                 Content="INSTALL"
                 FontSize="18"
-                Foreground="#dcffc9" />
-
-            <TextBlock
-                Grid.Row="3"
-                Margin="0,10,0,0"
-                FontSize="18"
-                Foreground="White"
-                Text="Customize"
-                TextAlignment="Center"
-                TextDecorations="Underline" />
-
+                Style="{StaticResource BtnInstall}" />
         </Grid>
 
-        <!--<Grid Margin="15" VerticalAlignment="Stretch">
+    </Grid>
+    <!--<Grid Margin="15" VerticalAlignment="Stretch">
             <Grid.RowDefinitions>
                 <RowDefinition Height="1*" />
                 <RowDefinition Height="1*" />
@@ -168,9 +430,9 @@
 
 
 
-        -->
-        <!--  Install  -->
-        <!--
+    -->
+    <!--  Install  -->
+    <!--
             <Button
                 Grid.Row="1"
                 Grid.Column="0"
@@ -191,17 +453,17 @@
                 Visibility="{Binding ProgressEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
 
-        -->
-        <!--  Uninstall  -->
-        <!--
+    -->
+    <!--  Uninstall  -->
+    <!--
             <Button
                 Grid.Row="1"
                 Grid.Column="0"
                 Command="{Binding UninstallCommand}"
                 Content="{Binding InstallText}"
                 Visibility="{Binding UninstallEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
-        -->
-        <!--<Image Grid.Row= " 1 " Grid.Column= " 0 " Source= " ..\resources\gear.png "   Visibility= " {Binding UninstallEnabled, Converter={StaticResource BooleanToVisibilityConverter}} " />- ->
+    -->
+    <!--<Image Grid.Row= " 1 " Grid.Column= " 0 " Source= " ..\resources\gear.png "   Visibility= " {Binding UninstallEnabled, Converter={StaticResource BooleanToVisibilityConverter}} " />- ->
 
             <Image Grid.Row= " 1 " Grid.Column= " 0 " Source= " ..\resources\gear.png "    Visibility= " {Binding UninstallEnabled, Converter={StaticResource BooleanToVisibilityConverter}} " >
                 <Image.RenderTransform>
@@ -217,11 +479,11 @@
                     </EventTrigger>
                 </Image.Triggers>
             </Image>
-        -->
+    -->
 
 
-        <!--  Repair  -->
-        <!--
+    <!--  Repair  -->
+    <!--
             <Button
                 Grid.Row="1"
                 Grid.Column="1"
@@ -230,9 +492,9 @@
                 Content=" Repair "
                 Visibility="{Binding RepairEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-        -->
-        <!--  Complete  -->
-        <!--
+    -->
+    <!--  Complete  -->
+    <!--
             <Button
                 Grid.Row="1"
                 Grid.Column="0"
@@ -252,15 +514,15 @@
 
 
 
-        -->
-        <!--  Failed  -->
-        <!--<Button Grid.Row= " 1 " Grid.ColumnSpan= " 3 " Grid.Column= " 0 " Background= " #33CCFF "    Command= " {Binding TryAgainCommand} " Visibility= " {Binding TryAgainEnabled, Converter= {StaticResource BooleanToVisibilityConverter}} " >Failed. Try Again?</Button>
+    -->
+    <!--  Failed  -->
+    <!--<Button Grid.Row= " 1 " Grid.ColumnSpan= " 3 " Grid.Column= " 0 " Background= " #33CCFF "    Command= " {Binding TryAgainCommand} " Visibility= " {Binding TryAgainEnabled, Converter= {StaticResource BooleanToVisibilityConverter}} " >Failed. Try Again?</Button>
             <TextBlock Grid.Row= " 1 " Grid.Column= " 2 " HorizontalAlignment= " Center " VerticalAlignment= " Center " FontSize= " 60 " Foreground= " White " IsHitTestVisible= " False "     Visibility= " {Binding TryAgainEnabled, Converter= {StaticResource BooleanToVisibilityConverter}} " >X</TextBlock>-->
 
 
 
-        <!--  Cancel  -->
-        <!--
+    <!--  Cancel  -->
+    <!--
             <Button
                 Grid.Row="0"
                 Grid.Column="2"
@@ -280,9 +542,9 @@
                 X
             </TextBlock>
 
-        -->
-        <!--  Exit  -->
-        <!--
+    -->
+    <!--  Exit  -->
+    <!--
             <Button
                 Name="Exit"
                 Grid.Row="0"
@@ -293,7 +555,7 @@
 
         </Grid>-->
 
-        <!--<StackPanel>
+    <!--<StackPanel>
             <Label Content= " {Binding Message} " />
             <Label Content= " {Binding PackageId} " />
             <Button Command= " {Binding InstallCommand} " >Install</Button>
@@ -305,7 +567,6 @@
             <Label Content= " {Binding Progress} " />
             <ProgressBar Width= " 200 " Height= " 30 " Value= " {Binding Progress} " Minimum= " 0 " Maximum= " 100 " />
         </StackPanel>-->
-    </Grid>
 
 
 </Window>

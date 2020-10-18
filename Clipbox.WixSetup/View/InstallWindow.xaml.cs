@@ -25,6 +25,12 @@ namespace Setup.WixSetup.View
         {
             InitializeComponent();
             this.DataContext = vm;
+            Closed += InstallWindow_Closed;
+        }
+
+        private void InstallWindow_Closed(object sender, EventArgs e)
+        {
+            Application.Current.Shutdown();
         }
 
         private void Run_Click(object sender, RoutedEventArgs e)
@@ -32,20 +38,29 @@ namespace Setup.WixSetup.View
             
         }
 
-        private void Grid_MouseMove(object sender, MouseEventArgs e)
-        {
-            //if (Mouse.LeftButton != MouseButtonState.Pressed)
-            //{
-            //    return;
-            //}
-
-            //DragMove();
-        }
-
-        private void Grid_MouseDown(object sender, MouseButtonEventArgs e)
+        private void CaptionGrid_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)
+            {
                 DragMove();
+            }
+        }
+
+        private void BtnCloseWindow_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        private void BtnInstalloptionsBack_Click(object sender, RoutedEventArgs e)
+        {
+            FirstPage.Visibility = Visibility.Visible;
+            CustomInstallPage.Visibility = Visibility.Collapsed;
+        }
+
+        private void Customize_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            FirstPage.Visibility = Visibility.Collapsed;
+            CustomInstallPage.Visibility = Visibility.Visible;
         }
     }
 }
