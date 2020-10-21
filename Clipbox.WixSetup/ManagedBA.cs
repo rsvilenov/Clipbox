@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -36,13 +37,15 @@ namespace Clipbox.WixSetup
             // Engine.Quit(0);
 
 
+
             var model = new BootstrapperApplicationModel(this);
             var viewModel = new InstallViewModel(model);
             InstallWindow View = new InstallWindow(viewModel);
             model.SetWindowHandle(View);
             this.Engine.Detect();
-            View.Show();
+            View.ShowDialog(); 
             System.Windows.Threading.Dispatcher.Run();
+
             this.Engine.Quit(model.FinalResult);
         }
     }

@@ -548,6 +548,11 @@ namespace Setup.WixSetup.ViewModel
         }
         #endregion
 
+        public void QuitInstaller()
+        {
+            model.QuitInstaller(0);
+        }
+
 
     }
 

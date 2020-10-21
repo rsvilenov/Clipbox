@@ -20,6 +20,10 @@ namespace Clipbox.WixSetup.Model
 
         public int FinalResult { get; set; }
 
+        public void QuitInstaller(int exitCode)
+        {
+            BootstrapperApplication.Engine.Quit(exitCode);
+        }
         public void SetWindowHandle(Window view)
         {
             hWnd = new WindowInteropHelper(view).Handle;

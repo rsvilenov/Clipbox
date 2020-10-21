@@ -44,18 +44,28 @@
                     Margin="10,0,0,0"
                     FontSize="16"
                     Foreground="#f0f0f0"
-                    Text="Clipbox Installer" />
+                    Text="{DynamicResource TrWindowTitle}" />
             </StackPanel>
 
-            <Button
-                Name="BtnCloseWindow"
-                Width="24"
-                Height="24"
-                Margin="0,0,10,0"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Center"
-                Click="BtnCloseWindow_Click"
-                Style="{StaticResource BtnClose}" />
+            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
+                <ComboBox
+                    Name="ComboBoxLanguage"
+                    Background="Transparent"
+                    SelectionChanged="ComboBoxLanguage_SelectionChanged"
+                    Style="{StaticResource FlatComboBoxStyle}">
+                    <ComboBoxItem Content="English" Tag="en-US" />
+                    <ComboBoxItem Content="Bulgarian" Tag="bg-BG" />
+                </ComboBox>
+                <Button
+                    Name="BtnCloseWindow"
+                    Width="24"
+                    Height="24"
+                    Margin="10,0,10,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Click="BtnCloseWindow_Click"
+                    Style="{StaticResource BtnClose}" />
+            </StackPanel>
         </Grid>
 
 

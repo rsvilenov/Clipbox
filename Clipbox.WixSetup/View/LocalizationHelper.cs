@@ -7,41 +7,37 @@ namespace Clipbox.WixSetup.View
 {
     public class LocalizationHelper
     {
-        private static LocalizationHelper _instance;
         private readonly Dictionary<string, ResourceDictionary> _resourceDictionaries;
-        private string currentLangCode;
-        public static LocalizationHelper Instance
-        {
-            get
-            {
-                if (_instance == null)
-                {
-                    _instance = new LocalizationHelper();
-                }
+        private readonly Window _currentWindow;
 
-                return _instance;
-            }
+        private string _currentLangCode;
+
+        public LocalizationHelper(Window wnd)
+        {
+            _currentWindow = wnd;
+
+            _resourceDictionaries = new Dictionary<string, ResourceDictionary>();
+            LoadTranslationResourceDictionaries();
         }
 
         public void SetLanguage(string langCode)
         {
             if (_resourceDictionaries.ContainsKey(langCode))
             {
-                if (_resourceDictionaries.ContainsKey(currentLangCode)
-                    && Application.Current.Resources.MergedDictionaries.Contains(_resourceDictionaries[currentLangCode]))
+                if (_resourceDictionaries.ContainsKey(_currentLangCode)
+                    && _currentWindow.Resources.MergedDictionaries.Contains(_resourceDictionaries[_currentLangCode]))
                 {
-                    Application.Current.Resources.MergedDictionaries.Remove(_resourceDictionaries[currentLangCode]);
+                    _currentWindow.Resources.MergedDictionaries.Remove(_resourceDictionaries[_currentLangCode]);
                 }
-                Application.Current.Resources.MergedDictionaries.Add(_resourceDictionaries[langCode]);
-                currentLangCode = langCode;
+                _currentWindow.Resources.MergedDictionaries.Add(_resourceDictionaries[langCode]);
+                _currentLangCode = langCode;
             }
         }
 
-        private LocalizationHelper()
+        private void LoadTranslationResourceDictionaries()
         {
             const string translationXamlPrefix = "Translations_";
-            currentLangCode = "en-US";
-            _resourceDictionaries = new Dictionary<string, ResourceDictionary>();
+            _currentLangCode = "en-US";
 
             Assembly myAsm = Assembly
                 .GetExecutingAssembly();

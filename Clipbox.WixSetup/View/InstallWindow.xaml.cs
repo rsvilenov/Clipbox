@@ -1,4 +1,5 @@
-﻿using Setup.WixSetup.ViewModel;
+﻿using Clipbox.WixSetup.View;
+using Setup.WixSetup.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,16 +22,26 @@ namespace Setup.WixSetup.View
     /// </summary>
     public partial class InstallWindow : Window
     {
+        private const string DEFAULT_LANG_CODE = "en-US";
+
+        private readonly LocalizationHelper _localizationHelper;
+        private readonly InstallViewModel _viewModel;
+
         public InstallWindow(InstallViewModel vm)
         {
             InitializeComponent();
+
+            _viewModel = vm;
+
+            _localizationHelper = new LocalizationHelper(this);
+            _localizationHelper.SetLanguage(DEFAULT_LANG_CODE);
             this.DataContext = vm;
             Closed += InstallWindow_Closed;
         }
 
         private void InstallWindow_Closed(object sender, EventArgs e)
         {
-            Application.Current.Shutdown();
+            _viewModel.QuitInstaller();
         }
 
         private void Run_Click(object sender, RoutedEventArgs e)
@@ -71,6 +82,12 @@ namespace Setup.WixSetup.View
             {
 
             }
+        }
+
+        private void ComboBoxLanguage_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string newLanguageCode = ((ComboBoxItem)ComboBoxLanguage.SelectedItem).Tag as string;
+            _localizationHelper.SetLanguage(newLanguageCode);
         }
     }
 }

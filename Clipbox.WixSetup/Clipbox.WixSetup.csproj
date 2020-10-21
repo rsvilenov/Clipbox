@@ -45,6 +45,7 @@
     </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="PresentationFramework.Aero" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.ServiceProcess" />
@@ -125,14 +126,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Resources\Translations\Translations_bg-BG.xaml">
+    <EmbeddedResource Include="Resources\Translations\Translations_bg-BG.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Resources\Translations\Translations_en-US.xaml">
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\Translations\Translations_en-US.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
+    </EmbeddedResource>
     <Page Include="View\InstallWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
