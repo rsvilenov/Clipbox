@@ -7,11 +7,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Clipbox.WixSetup
 {
     public class ManagedBA : BootstrapperApplication
     {
+        public ManagedBA()
+        {
+            // this is crucial! without it the resource dictionaries will not laod...
+            if (Application.ResourceAssembly == null)
+            {
+                Application.ResourceAssembly = typeof(MainWindow).Assembly;
+            }
+        }
+
         /// <summary>
         /// Entry point that is called when the bootstrapper application is ready to run.
         /// </summary>
