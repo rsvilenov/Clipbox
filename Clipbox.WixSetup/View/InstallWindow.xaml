@@ -166,7 +166,7 @@
                     Text="Install options"
                     TextAlignment="Left" />
             </StackPanel>
-            <Grid Grid.Row="1">
+            <Grid Grid.Row="1" Margin="80,80">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
@@ -175,19 +175,52 @@
 
                 <TextBlock
                     Grid.Row="0"
-                    Margin="80,80,0,0"
                     FontSize="16"
                     Foreground="#f0f0bd"
                     Text="Clipbox will install into" />
-                <TextBox
+
+                <Grid
                     Grid.Row="1"
-                    Height="40"
-                    Margin="80,10"
-                    HorizontalAlignment="Stretch"
-                    Background="Transparent"
-                    BorderBrush="#f0f0bd"
-                    BorderThickness="1"
-                    Foreground="#f0f0bd" />
+                    Height="50"
+                    HorizontalAlignment="Stretch">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="120" />
+                    </Grid.ColumnDefinitions>
+                    <TextBox
+                        Grid.Column="0"
+                        Height="40"
+                        Padding="5"
+                        VerticalContentAlignment="Center"
+                        Background="Transparent"
+                        BorderBrush="#f0f0bd"
+                        BorderThickness="1"
+                        FontSize="18"
+                        Foreground="#f0f0bd"
+                        Text="some text" />
+                    <Button
+                        Name="BtnChangeInstallDirectory"
+                        Grid.Column="1"
+                        Width="100"
+                        Height="40"
+                        Margin="10,0,0,0"
+                        VerticalContentAlignment="Center"
+                        Click="BtnChangeInstallDirectory_Click"
+                        Content="Change"
+                        FontSize="16"
+                        Style="{StaticResource BtnBrowse}" />
+                </Grid>
+
+                <ToggleButton
+                    Grid.Row="3"
+                    Height="30"
+                    Margin="0,30,0,0"
+                    HorizontalAlignment="Left"
+                    Content="Create a desktop icon"
+                    FontSize="16"
+                    Foreground="#f0f0bd"
+                    Style="{StaticResource CheckBox}" />
+
             </Grid>
             <Button
                 Grid.Row="2"

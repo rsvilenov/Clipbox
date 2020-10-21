@@ -62,5 +62,15 @@ namespace Setup.WixSetup.View
             FirstPage.Visibility = Visibility.Collapsed;
             CustomInstallPage.Visibility = Visibility.Visible;
         }
+
+        private void BtnChangeInstallDirectory_Click(object sender, RoutedEventArgs e)
+        {
+            System.Windows.Forms.FolderBrowserDialog fbd = new System.Windows.Forms.FolderBrowserDialog();
+            fbd.SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+            if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+
+            }
+        }
     }
 }
