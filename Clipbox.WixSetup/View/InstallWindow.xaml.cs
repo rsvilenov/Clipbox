@@ -1,19 +1,9 @@
 ﻿using Clipbox.WixSetup.View;
 using Setup.WixSetup.ViewModel;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Setup.WixSetup.View
 {
@@ -32,10 +22,11 @@ namespace Setup.WixSetup.View
             InitializeComponent();
 
             _viewModel = vm;
+            this.DataContext = vm;
 
             _localizationHelper = new LocalizationHelper(this);
             _localizationHelper.SetLanguage(DEFAULT_LANG_CODE);
-            this.DataContext = vm;
+
             Closed += InstallWindow_Closed;
         }
 
@@ -49,6 +40,11 @@ namespace Setup.WixSetup.View
             
         }
 
+        private void BtnConfirmQuit_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
         private void CaptionGrid_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (e.ChangedButton == MouseButton.Left)
@@ -59,7 +55,9 @@ namespace Setup.WixSetup.View
 
         private void BtnCloseWindow_Click(object sender, RoutedEventArgs e)
         {
-            Close();
+            DisableCurtain.Visibility = Visibility.Visible;
+            ConfirmQuitPopup.IsOpen = true;
+            //Close();
         }
 
         private void BtnInstalloptionsBack_Click(object sender, RoutedEventArgs e)

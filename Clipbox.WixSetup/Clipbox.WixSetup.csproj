@@ -85,6 +85,7 @@
     <Compile Include="ViewModel\Enums\InstallState.cs" />
     <Compile Include="ViewModel\Enums\UpdateState.cs" />
     <Compile Include="ViewModel\InstallViewModel.cs" />
+    <Compile Include="ViewModel\InstallViewModel_old.cs" />
     <Compile Include="View\InstallWindow.xaml.cs">
       <DependentUpon>InstallWindow.xaml</DependentUpon>
     </Compile>
