@@ -127,14 +127,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <EmbeddedResource Include="Resources\Translations\Translations_bg-BG.xaml">
+    <Page Include="Resources\Translations\Translations_bg-BG.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resources\Translations\Translations_en-US.xaml">
+    </Page>
+    <Page Include="Resources\Translations\Translations_en-US.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
+    </Page>
     <Page Include="View\InstallWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

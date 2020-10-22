@@ -3,4 +3,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:sys="clr-namespace:System;assembly=mscorlib">
     <sys:String x:Key="TrWindowTitle">Clipbox Installer</sys:String>
+    <sys:String x:Key="TrLangBG">Bulgarian</sys:String>
+    <sys:String x:Key="TrLangEN">English</sys:String>
+    <sys:String x:Key="TrBtnInstall">INSTALL</sys:String>
+    <sys:String x:Key="TrLnkCustomInstall">Customize</sys:String>
+    <sys:String x:Key="TrLblInstallOptions">Install options</sys:String>
 </ResourceDictionary>

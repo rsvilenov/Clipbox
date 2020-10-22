@@ -36,17 +36,24 @@ namespace Clipbox.WixSetup
             // mainWindow.ShowDialog();
             // Engine.Quit(0);
 
+            BootstrapperApplicationModel model = null;
+            try
+            {
 
-
-            var model = new BootstrapperApplicationModel(this);
-            var viewModel = new InstallViewModel(model);
-            InstallWindow View = new InstallWindow(viewModel);
-            model.SetWindowHandle(View);
-            this.Engine.Detect();
-            View.ShowDialog(); 
-            System.Windows.Threading.Dispatcher.Run();
-
-            this.Engine.Quit(model.FinalResult);
+                model = new BootstrapperApplicationModel(this);
+                var viewModel = new InstallViewModel(model);
+                InstallWindow View = new InstallWindow(viewModel);
+                model.SetWindowHandle(View);
+                this.Engine.Detect();
+                View.ShowDialog();
+                System.Windows.Threading.Dispatcher.Run();
+                this.Engine.Quit(model?.FinalResult ?? 1);
+            }
+            catch(Exception ex)
+            {
+                MessageBox.Show(ex.ToString()); 
+                this.Engine.Quit(1);
+            }
         }
     }
 }

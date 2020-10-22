@@ -1,6 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Resources;
+using System.Linq;
 using System.Windows;
 
 namespace Clipbox.WixSetup.View
@@ -42,33 +46,83 @@ namespace Clipbox.WixSetup.View
             Assembly myAsm = Assembly
                 .GetExecutingAssembly();
 
-            foreach (string translationDicName in
+            foreach (string resName in
                 myAsm.GetManifestResourceNames())
             {
-                if (translationDicName.Contains($".{translationXamlPrefix}"))
+                if (resName.Contains($".{translationXamlPrefix}"))
                 {
-                    ManifestResourceInfo info = myAsm.GetManifestResourceInfo(translationDicName);
+                    ManifestResourceInfo info = myAsm.GetManifestResourceInfo(resName);
                     if (info.ResourceLocation != ResourceLocation.ContainedInAnotherAssembly)
                     {
-                        Stream resourceStream = myAsm.GetManifestResourceStream(translationDicName);
-                        if (System.Windows.Markup.XamlReader.Load(resourceStream) is ResourceDictionary resDic)
+                        using (Stream resourceStream = myAsm.GetManifestResourceStream(resName))
                         {
-                            string cultureCode = "en-US";
-                            int startIdx = translationDicName.IndexOf(translationXamlPrefix) + translationXamlPrefix.Length;
-                            int endIdx = translationDicName.IndexOf(".xaml");
-
-                            if (startIdx > -1)
+                            if (System.Windows.Markup.XamlReader.Load(resourceStream) is ResourceDictionary resDic)
                             {
-                                cultureCode = translationDicName.Substring(startIdx, endIdx - startIdx);
+                                string cultureCode = "en-US";
+                                int prefixStartIdx = resName.IndexOf(translationXamlPrefix);
+                                if (prefixStartIdx == -1)
+                                {
+                                    prefixStartIdx = 0;
+                                }
+                                int startIdx = prefixStartIdx + translationXamlPrefix.Length;
+                                int endIdx = resName.IndexOf(".xaml");
+
+                                if (startIdx > -1)
+                                {
+                                    cultureCode = resName.Substring(startIdx, endIdx - startIdx);
+                                }
+
+                                _resourceDictionaries.Add(cultureCode, resDic);
                             }
-
-                            _resourceDictionaries.Add(cultureCode, resDic);
                         }
+                    }
+                }
+                else if (resName.EndsWith("g.resources"))
+                {
+                    using (Stream resourceStream = myAsm.GetManifestResourceStream(resName))
+                    using (ResourceReader reader = new ResourceReader(resourceStream))
+                    {
+                        foreach (DictionaryEntry entry in reader)
+                        {
+                            if (entry.Key.ToString().IndexOf($"/{translationXamlPrefix}", StringComparison.OrdinalIgnoreCase) > -1)
+                            {
+                                string pathToResDic = entry.Key.ToString().Replace(".baml", ".xaml");
+                                if (Application.LoadComponent(new Uri(pathToResDic, UriKind.Relative)) is ResourceDictionary resDic)
+                                {
+                                    string xamlFileName = pathToResDic.Substring(pathToResDic.LastIndexOf('/') + 1);
+                                    string cultureCode = "en-US";
+                                    int prefixStartIdx = xamlFileName.IndexOf(translationXamlPrefix);
+                                    if (prefixStartIdx == -1)
+                                    {
+                                        prefixStartIdx = 0;
+                                    }
+                                    int startIdx = prefixStartIdx + translationXamlPrefix.Length;
+                                    int endIdx = xamlFileName.IndexOf(".xaml");
 
+                                    if (startIdx > -1)
+                                    {
+                                        cultureCode = xamlFileName.Substring(startIdx, endIdx - startIdx);
+                                        string[] codeParts = cultureCode.Split('-');
+                                        if (codeParts.Length != 2)
+                                        {
+                                            continue;
+                                        }
+
+                                        if (!codeParts[1].All(c => char.IsUpper(c)))
+                                        {
+                                            cultureCode = $"{codeParts[0]}-{codeParts[1].ToUpperInvariant()}";
+                                        }
+                                    }
+
+                                    _resourceDictionaries.Add(cultureCode, resDic);
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
+
     }
 }
 

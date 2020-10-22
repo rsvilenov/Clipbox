@@ -14,6 +14,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Resources/Styles/Style.xaml" />
+                <ResourceDictionary Source="/Resources/Translations/Translations_en-US.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
         </ResourceDictionary>
@@ -84,16 +85,18 @@
             <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                 <ComboBox
                     Name="ComboBoxLanguage"
-                    Margin="0,7,10,7"
+                    Margin="0,6,10,6"
+                    FontSize="14"
                     SelectionChanged="ComboBoxLanguage_SelectionChanged"
                     Style="{StaticResource FlatComboBoxStyle}">
                     <ComboBoxItem
                         Background="#2d364c"
-                        Content="English"
+                        Content="{DynamicResource TrLangEN}"
+                        IsSelected="True"
                         Tag="en-US" />
                     <ComboBoxItem
                         Background="#2d364c"
-                        Content="Bulgarian"
+                        Content="{DynamicResource TrLangBG}"
                         Tag="bg-BG" />
                 </ComboBox>
                 <Button
@@ -168,7 +171,7 @@
                     Height="50"
                     Margin="0,30,0,0"
                     BorderThickness="0"
-                    Content="INSTALL"
+                    Content="{DynamicResource TrBtnInstall}"
                     FontSize="18"
                     Style="{StaticResource BtnInstall}" />
 
@@ -180,7 +183,7 @@
                     FontSize="18"
                     Foreground="White"
                     MouseLeftButtonUp="Customize_MouseLeftButtonUp"
-                    Text="Customize"
+                    Text="{DynamicResource TrLnkCustomInstall}"
                     TextAlignment="Center"
                     TextDecorations="Underline" />
 
@@ -218,7 +221,7 @@
                     VerticalAlignment="Center"
                     FontSize="30"
                     Foreground="White"
-                    Text="Install options"
+                    Text="{DynamicResource TrLblInstallOptions}"
                     TextAlignment="Left" />
             </StackPanel>
             <Grid

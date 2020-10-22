@@ -84,8 +84,11 @@ namespace Setup.WixSetup.View
 
         private void ComboBoxLanguage_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            string newLanguageCode = ((ComboBoxItem)ComboBoxLanguage.SelectedItem).Tag as string;
-            _localizationHelper.SetLanguage(newLanguageCode);
+            string newLanguageCode = (ComboBoxLanguage?.SelectedItem as ComboBoxItem)?.Tag as string;
+            if (newLanguageCode != null)
+            {
+                _localizationHelper.SetLanguage(newLanguageCode);
+            }
         }
     }
 }
