@@ -1,13 +1,8 @@
 ﻿using Clipbox.WixSetup.Model;
+using Clipbox.WixSetup.ViewModel;
 using Microsoft.Tools.WindowsInstallerXml.Bootstrapper;
 using Setup.WixSetup.View;
-using Setup.WixSetup.ViewModel;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace Clipbox.WixSetup
@@ -47,11 +42,14 @@ namespace Clipbox.WixSetup
                 this.Engine.Detect();
                 View.ShowDialog();
                 System.Windows.Threading.Dispatcher.Run();
-                this.Engine.Quit(model?.FinalResult ?? 1);
+                this.Engine.Quit(model.FinalResult);
             }
             catch(Exception ex)
             {
-                MessageBox.Show(ex.ToString()); 
+#if DEBUG
+                MessageBox.Show(ex.ToString());
+#endif
+                this.Engine.Log(LogLevel.Error, ex.ToString());
                 this.Engine.Quit(1);
             }
         }

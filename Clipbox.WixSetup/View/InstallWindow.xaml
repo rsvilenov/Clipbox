@@ -36,28 +36,73 @@
             Visibility="Collapsed" />
         <Popup
             Name="ConfirmQuitPopup"
-            Width="300"
-            Height="150"
+            Width="380"
+            Height="200"
             Panel.ZIndex="101"
             Placement="Center"
             PlacementTarget="{Binding ElementName=MainGrid}"
             Visibility="Collapsed">
             <Border
-                Padding="20"
                 Background="White"
                 BorderBrush="#808080"
-                BorderThickness="1">
-                <StackPanel Orientation="Vertical">
+                BorderThickness="2">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30" />
+                        <RowDefinition />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Border
+                        Grid.Row="0"
+                        Grid.ColumnSpan="2"
+                        Background="#2d364c">
+                        <Button
+                            Width="24"
+                            Height="24"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Click="BtnConfirmQuitNo_Click"
+                            Style="{StaticResource BtnClose}" />
+                    </Border>
+
                     <TextBlock
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        Margin="20"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
                         FontSize="16"
                         Foreground="Black"
-                        Text="Are you sure you want to stop the installation?"
+                        Text="{DynamicResource TrLblQuitConfirmation}"
                         TextWrapping="Wrap" />
                     <Button
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        Width="55"
+                        Height="35"
                         Margin="10"
-                        Click="BtnConfirmQuit_Click"
-                        Content="OK" />
-                </StackPanel>
+                        HorizontalAlignment="Right"
+                        Click="BtnConfirmQuitYes_Click"
+                        Content="{DynamicResource TrBtnYes}"
+                        FontSize="16"
+                        Style="{StaticResource BtnDefaultAction}" />
+                    <Button
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        Width="55"
+                        Height="35"
+                        Margin="10"
+                        HorizontalAlignment="Left"
+                        Click="BtnConfirmQuitNo_Click"
+                        Content="{DynamicResource TrBtnNo}"
+                        FontSize="16"
+                        Style="{StaticResource BtnActionLight}" />
+                </Grid>
             </Border>
         </Popup>
         <!--  title bar  -->
@@ -87,6 +132,7 @@
                     Name="ComboBoxLanguage"
                     Margin="0,6,10,6"
                     FontSize="14"
+                    FontWeight="Light"
                     SelectionChanged="ComboBoxLanguage_SelectionChanged"
                     Style="{StaticResource FlatComboBoxStyle}">
                     <ComboBoxItem
@@ -106,7 +152,7 @@
                     Margin="10,0,10,0"
                     HorizontalAlignment="Right"
                     VerticalAlignment="Center"
-                    Click="BtnCloseWindow_Click"
+                    Command="{Binding CloseInstallWindowCommand}"
                     Style="{StaticResource BtnClose}" />
             </StackPanel>
         </Grid>
@@ -173,7 +219,7 @@
                     BorderThickness="0"
                     Content="{DynamicResource TrBtnInstall}"
                     FontSize="18"
-                    Style="{StaticResource BtnInstall}" />
+                    Style="{StaticResource BtnDefaultAction}" />
 
                 <TextBlock
                     Grid.Row="3"
@@ -258,6 +304,7 @@
                         BorderThickness="1"
                         FontSize="18"
                         Foreground="#f0f0bd"
+                        Style="{StaticResource DefaultTextBox}"
                         Text="some text" />
                     <Button
                         Name="BtnChangeInstallDirectory"
@@ -269,7 +316,7 @@
                         Click="BtnChangeInstallDirectory_Click"
                         Content="Change"
                         FontSize="16"
-                        Style="{StaticResource BtnBrowse}" />
+                        Style="{StaticResource BtnActionDark}" />
                 </Grid>
 
                 <ToggleButton
@@ -294,7 +341,7 @@
                 BorderThickness="0"
                 Content="INSTALL"
                 FontSize="18"
-                Style="{StaticResource BtnInstall}" />
+                Style="{StaticResource BtnDefaultAction}" />
         </Grid>
 
     </Grid>

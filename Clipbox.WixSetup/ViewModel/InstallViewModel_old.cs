@@ -9,7 +9,7 @@ using System.Windows.Input;
 
 namespace Setup.WixSetup.ViewModel
 {
-    public class InstallViewModel : BindableObject
+    public class InstallViewModelOld : BindableObject
     {
 
         ///  <summary> 
@@ -252,7 +252,7 @@ namespace Setup.WixSetup.ViewModel
         /// constructor
         ///  </summary> 
         ///  <param name="_model"></param> 
-        public InstallViewModel(BootstrapperApplicationModel _model)
+        public InstallViewModelOld(BootstrapperApplicationModel _model)
         {
             model = _model;
             executingPackageOrderIndex = new Dictionary<string, int>();

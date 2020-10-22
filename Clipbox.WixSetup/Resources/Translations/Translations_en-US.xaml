@@ -8,4 +8,7 @@
     <sys:String x:Key="TrBtnInstall">INSTALL</sys:String>
     <sys:String x:Key="TrLnkCustomInstall">Customize</sys:String>
     <sys:String x:Key="TrLblInstallOptions">Install options</sys:String>
+    <sys:String x:Key="TrBtnYes">Yes</sys:String>
+    <sys:String x:Key="TrBtnNo">No</sys:String>
+    <sys:String x:Key="TrLblQuitConfirmation">Are you sure you want to stop the installation?</sys:String>
 </ResourceDictionary>

@@ -8,4 +8,7 @@
     <sys:String x:Key="TrBtnInstall">ИНСТАЛИРАЙ</sys:String>
     <sys:String x:Key="TrLnkCustomInstall">Персонализирай</sys:String>
     <sys:String x:Key="TrLblInstallOptions">Персонализиране на инсталацията</sys:String>
+    <sys:String x:Key="TrBtnYes">Да</sys:String>
+    <sys:String x:Key="TrBtnNo">Не</sys:String>
+    <sys:String x:Key="TrLblQuitConfirmation">Сигурни ли сте, че искате да спрете инсталацията?</sys:String>
 </ResourceDictionary>
