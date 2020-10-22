@@ -11,4 +11,5 @@
     <sys:String x:Key="TrBtnYes">Да</sys:String>
     <sys:String x:Key="TrBtnNo">Не</sys:String>
     <sys:String x:Key="TrLblQuitConfirmation">Сигурни ли сте, че искате да спрете инсталацията?</sys:String>
+    <sys:String x:Key="TrChkBoxDesktopShortcut">Създай иконка на десктопа</sys:String>
 </ResourceDictionary>

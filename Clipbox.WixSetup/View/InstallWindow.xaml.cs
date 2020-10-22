@@ -1,4 +1,5 @@
-﻿using Clipbox.WixSetup.View;
+﻿using Clipbox.WixSetup;
+using Clipbox.WixSetup.View;
 using Clipbox.WixSetup.ViewModel;
 using System;
 using System.Threading;
@@ -110,7 +111,7 @@ namespace Setup.WixSetup.View
             fbd.SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
             if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-
+                _viewModel.InstallationDirectory = System.IO.Path.Combine(fbd.SelectedPath, ProductConstants.COMPANY_NAME, ProductConstants.PRODUCT_NAME);
             }
         }
 
@@ -119,6 +120,7 @@ namespace Setup.WixSetup.View
             if ((ComboBoxLanguage?.SelectedItem as ComboBoxItem)?.Tag is string newLanguageCode)
             {
                 _localizationHelper.SetLanguage(newLanguageCode);
+                _viewModel.LanguageCode = newLanguageCode;
             }
         }
     }

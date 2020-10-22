@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq.Expressions;
 using System.Runtime.CompilerServices;
 
 namespace Setup.WixSetup.ViewModel
@@ -16,5 +18,19 @@ namespace Setup.WixSetup.ViewModel
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
             return true;
         }
+
+
+        protected bool SetField<T>(ref T field, T value, Expression<Func<T>> propertyExpression)
+        {
+            if (EqualityComparer<T>.Default.Equals(field, value))
+                return false;
+
+            field = value;
+
+            var body = propertyExpression.Body as MemberExpression;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(body.Member.Name));
+            return true;
+        }
+        
     }
 }

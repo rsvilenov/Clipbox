@@ -305,7 +305,7 @@
                         FontSize="18"
                         Foreground="#f0f0bd"
                         Style="{StaticResource DefaultTextBox}"
-                        Text="some text" />
+                        Text="{Binding InstallationDirectory}" />
                     <Button
                         Name="BtnChangeInstallDirectory"
                         Grid.Column="1"
@@ -324,9 +324,10 @@
                     Height="30"
                     Margin="0,30,0,0"
                     HorizontalAlignment="Left"
-                    Content="Create a desktop icon"
+                    Content="{DynamicResource TrChkBoxDesktopShortcut}"
                     FontSize="16"
                     Foreground="#f0f0bd"
+                    IsChecked="{Binding CreateDesktopShortcut}"
                     Style="{StaticResource CheckBox}" />
 
             </Grid>
