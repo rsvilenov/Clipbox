@@ -196,18 +196,18 @@
                     FontSize="16"
                     Foreground="White"
                     TextAlignment="Center">
-                    <Run Text="By installing or using the product, you agree to its" />
+                    <Run Text="{DynamicResource TrLblAgreementIntro}" />
                     <LineBreak />
                     <Run
                         Cursor="Hand"
                         Hyperlink.Click="Run_Click"
-                        Text="End User License Agreement"
+                        Text="{DynamicResource TrLblAgreementEULA}"
                         TextDecorations="Underline" />
-                    <Run Text="and" />
+                    <Run Text="{DynamicResource TrLblAgreementAnd}" />
                     <Run
                         Cursor="Hand"
                         Hyperlink.Click="Run_Click"
-                        Text="Privacy Policy"
+                        Text="{DynamicResource TrLblAgreementPrivacyPolicy}"
                         TextDecorations="Underline" />
                 </TextBlock>
 
@@ -241,7 +241,7 @@
             Name="CustomInstallPage"
             Grid.Row="1"
             VerticalAlignment="Stretch"
-            Visibility="Visible">
+            Visibility="Collapsed">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="931*" />
                 <ColumnDefinition Width="81*" />
@@ -284,7 +284,7 @@
                     Grid.Row="0"
                     FontSize="16"
                     Foreground="#f0f0bd"
-                    Text="Clipbox will install into" />
+                    Text="{DynamicResource TrLblInstallLocation}" />
 
                 <Grid
                     Grid.Row="1"
@@ -343,6 +343,62 @@
                 Content="INSTALL"
                 FontSize="18"
                 Style="{StaticResource BtnDefaultAction}" />
+        </Grid>
+
+        <Grid
+            Name="ProgressPage"
+            Grid.Row="1"
+            Visibility="Visible">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <ContentControl
+                Grid.Row="0"
+                Height="80"
+                Margin="0,70,0,0"
+                Foreground="#f0f0f0"
+                Template="{StaticResource LogoIcon}" />
+            <TextBlock
+                Grid.Row="1"
+                Margin="0,30,0,0"
+                HorizontalAlignment="Center"
+                FontSize="20"
+                FontWeight="Medium"
+                Foreground="#fefefe"
+                Text="{DynamicResource TrLblInstalling}" />
+
+            <ProgressBar
+                Grid.Row="2"
+                Height="10"
+                Margin="50,70,50,0"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Center"
+                Style="{StaticResource DefaultProgressBar}"
+                Value="10" />
+            <TextBlock
+                Grid.Row="3"
+                Margin="0,15,0,0"
+                HorizontalAlignment="Center"
+                FontSize="16"
+                FontWeight="Thin"
+                Foreground="#fefefe"
+                Text="{DynamicResource TrLblInstallingWarning}" />
+            <Button
+                Grid.Row="4"
+                Width="180"
+                Height="40"
+                Margin="20,20,50,20"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Bottom"
+                BorderBrush="Gray"
+                BorderThickness="1"
+                Content="{DynamicResource TrBtnCancel}"
+                FontSize="18"
+                Style="{StaticResource BtnActionDark}" />
         </Grid>
 
     </Grid>

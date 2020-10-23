@@ -6,10 +6,18 @@
     <sys:String x:Key="TrLangBG">Български</sys:String>
     <sys:String x:Key="TrLangEN">Английски</sys:String>
     <sys:String x:Key="TrBtnInstall">ИНСТАЛИРАЙ</sys:String>
+    <sys:String x:Key="TrBtnCancel">Прекрати</sys:String>
     <sys:String x:Key="TrLnkCustomInstall">Персонализирай</sys:String>
     <sys:String x:Key="TrLblInstallOptions">Персонализиране на инсталацията</sys:String>
     <sys:String x:Key="TrBtnYes">Да</sys:String>
     <sys:String x:Key="TrBtnNo">Не</sys:String>
     <sys:String x:Key="TrLblQuitConfirmation">Сигурни ли сте, че искате да спрете инсталацията?</sys:String>
     <sys:String x:Key="TrChkBoxDesktopShortcut">Създай иконка на десктопа</sys:String>
+    <sys:String x:Key="TrLblInstallLocation">Clipbox ще се инсталира тук</sys:String>
+    <sys:String x:Key="TrLblAgreementIntro">Инсталирайки или използвайки продукта, Вие се съгласявате с неговите</sys:String>
+    <sys:String x:Key="TrLblAgreementEULA">Лицензионно споразумение с крайния потребител</sys:String>
+    <sys:String x:Key="TrLblAgreementPrivacyPolicy">Политика за поверителност</sys:String>
+    <sys:String x:Key="TrLblAgreementAnd">и</sys:String>
+    <sys:String x:Key="TrLblInstalling">Clipbox се инсталира</sys:String>
+    <sys:String x:Key="TrLblInstallingWarning">Не изключвайте компютъра си</sys:String>
 </ResourceDictionary>

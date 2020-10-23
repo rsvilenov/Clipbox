@@ -6,10 +6,18 @@
     <sys:String x:Key="TrLangBG">Bulgarian</sys:String>
     <sys:String x:Key="TrLangEN">English</sys:String>
     <sys:String x:Key="TrBtnInstall">INSTALL</sys:String>
+    <sys:String x:Key="TrBtnCancel">Cancel</sys:String>
     <sys:String x:Key="TrLnkCustomInstall">Customize</sys:String>
     <sys:String x:Key="TrLblInstallOptions">Install options</sys:String>
     <sys:String x:Key="TrBtnYes">Yes</sys:String>
     <sys:String x:Key="TrBtnNo">No</sys:String>
     <sys:String x:Key="TrLblQuitConfirmation">Are you sure you want to stop the installation?</sys:String>
     <sys:String x:Key="TrChkBoxDesktopShortcut">Create a desktop icon</sys:String>
+    <sys:String x:Key="TrLblInstallLocation">Clipbox will install into</sys:String>
+    <sys:String x:Key="TrLblAgreementIntro">By installing or using the product, you agree to its</sys:String>
+    <sys:String x:Key="TrLblAgreementEULA">End User License Agreement</sys:String>
+    <sys:String x:Key="TrLblAgreementPrivacyPolicy">Privacy Policy</sys:String>
+    <sys:String x:Key="TrLblAgreementAnd">and</sys:String>
+    <sys:String x:Key="TrLblInstalling">Clipbox is being installed</sys:String>
+    <sys:String x:Key="TrLblInstallingWarning">Do not shut down your computer</sys:String>
 </ResourceDictionary>

@@ -6,6 +6,7 @@
         <ResourceDictionary Source="CheckBox.xaml" />
         <ResourceDictionary Source="ComboBox.xaml" />
         <ResourceDictionary Source="TextBox.xaml" />
+        <ResourceDictionary Source="ProgressBar.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
 </ResourceDictionary>
