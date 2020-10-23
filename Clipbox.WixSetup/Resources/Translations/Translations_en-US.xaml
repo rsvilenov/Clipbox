@@ -24,4 +24,8 @@
     <sys:String x:Key="TrLblInstallReadyAnnotation1">Now you can start using the program.</sys:String>
     <sys:String x:Key="TrLblInstallReadyAnnotation2">Press and hold Ctrl+V to view your clipboard contents.</sys:String>
     <sys:String x:Key="TrBtnInstallReady">OK</sys:String>
+    <sys:String x:Key="TrLblInstallError">Error :(</sys:String>
+    <sys:String x:Key="TrBtnRetry">Retry</sys:String>
+    <sys:String x:Key="TrBtnQuit">Quit</sys:String>
+    <sys:String x:Key="TrLblErrorTitle">Error message:</sys:String>
 </ResourceDictionary>

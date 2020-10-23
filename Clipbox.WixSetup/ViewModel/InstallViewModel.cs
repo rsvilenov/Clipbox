@@ -51,6 +51,13 @@ namespace Clipbox.WixSetup.ViewModel
             set { SetField(ref _createDesktopShortcut, value, () => CreateDesktopShortcut); }
         }
 
+        private string _errorMessage;
+        public string ErrorMessage
+        {
+            get { return _errorMessage; }
+            set { SetField(ref _errorMessage, value, () => ErrorMessage); }
+        }
+
         private void CloseInstallWindowCommandHandler()
         {
             QuitInstallerInternal(errorCode: 0);

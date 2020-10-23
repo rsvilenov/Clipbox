@@ -402,10 +402,11 @@
                 Style="{StaticResource BtnActionDark}" />
         </Grid>
 
+        <!--  ready page  -->
         <Grid
             Name="ReadyPage"
             Grid.Row="1"
-            Visibility="Visible">
+            Visibility="Collapsed">
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition />
@@ -453,6 +454,71 @@
                 Content="{DynamicResource TrBtnInstallReady}"
                 FontSize="16"
                 Style="{StaticResource BtnDefaultAction}" />
+        </Grid>
+
+        <Grid
+            Name="ErrorPage"
+            Grid.Row="1"
+            Visibility="Visible">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBlock
+                Grid.Row="0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontSize="30"
+                FontWeight="Thin"
+                Foreground="White"
+                Text="{DynamicResource TrLblInstallError}" />
+            <ContentControl
+                Grid.Row="1"
+                Width="60"
+                Foreground="Red"
+                Template="{StaticResource ErrorIcon}" />
+            <Ellipse
+                Grid.Row="1"
+                Width="150"
+                Height="150"
+                Stroke="#8a9ed3"
+                StrokeThickness="3" />
+            <TextBlock
+                Grid.Row="2"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontSize="16"
+                FontWeight="Thin"
+                Foreground="White"
+                TextAlignment="Center">
+                <Run Text="{DynamicResource TrLblErrorTitle}" />
+                <LineBreak />
+                <Run Text="{Binding ErrorMessage, TargetNullValue=(none)}" />
+            </TextBlock>
+            <StackPanel
+                Grid.Row="3"
+                Grid.Column="0"
+                HorizontalAlignment="Center"
+                Orientation="Horizontal">
+                <Button
+                    Width="170"
+                    Height="45"
+                    Margin="10"
+                    Content="{DynamicResource TrBtnRetry}"
+                    FontSize="16"
+                    Style="{StaticResource BtnActionDark}" />
+                <Button
+                    Width="170"
+                    Height="45"
+                    Margin="10"
+                    Command="{Binding QuitCommand}"
+                    Content="{DynamicResource TrBtnQuit}"
+                    FontSize="16"
+                    Style="{StaticResource BtnActionDark}" />
+            </StackPanel>
+
         </Grid>
 
     </Grid>
