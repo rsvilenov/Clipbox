@@ -314,7 +314,7 @@
                         Margin="10,0,0,0"
                         VerticalContentAlignment="Center"
                         Click="BtnChangeInstallDirectory_Click"
-                        Content="Change"
+                        Content="{DynamicResource TrBtnChangeInstallDir}"
                         FontSize="16"
                         Style="{StaticResource BtnActionDark}" />
                 </Grid>
@@ -459,7 +459,7 @@
         <Grid
             Name="ErrorPage"
             Grid.Row="1"
-            Visibility="Visible">
+            Visibility="Collapsed">
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition />
@@ -518,6 +518,169 @@
                     FontSize="16"
                     Style="{StaticResource BtnActionDark}" />
             </StackPanel>
+
+        </Grid>
+
+        <Grid
+            Name="UninstallModifyPage"
+            Grid.Row="1"
+            Visibility="Visible">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1.5*" />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBlock
+                Grid.Row="0"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                Margin="0,50,0,0"
+                HorizontalAlignment="Center"
+                FontSize="26"
+                Foreground="#dedee1"
+                Text="{DynamicResource TrLblConfigure}" />
+            <Grid
+                Grid.Row="1"
+                Grid.Column="0"
+                Margin="0,80,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <ContentControl
+                    Grid.Row="0"
+                    Height="64"
+                    Foreground="#dedee1"
+                    Template="{StaticResource LogoIcon}" />
+                <TextBlock
+                    Grid.Row="1"
+                    Margin="0,50,0,0"
+                    HorizontalAlignment="Center"
+                    FontSize="26"
+                    Foreground="#dedee1"
+                    Text="{DynamicResource TrLblDisable}" />
+                <TextBlock
+                    Grid.Row="2"
+                    Margin="40,20,40,0"
+                    HorizontalAlignment="Center"
+                    FontSize="16"
+                    Foreground="#b2b2b2"
+                    Text="{DynamicResource TrLblDisableInfo}"
+                    TextAlignment="Center"
+                    TextWrapping="Wrap" />
+                <Button
+                    Grid.Row="3"
+                    Width="255"
+                    Height="35"
+                    Margin="50"
+                    HorizontalAlignment="Center"
+                    Content="{DynamicResource TrBtnDisable}"
+                    FontSize="16"
+                    Style="{StaticResource BtnDefaultAction}" />
+            </Grid>
+            <Border
+                Grid.Row="1"
+                Grid.Column="1"
+                Margin="0,80,0,80"
+                BorderBrush="#495268"
+                BorderThickness="1,0,0,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <TextBlock
+                        Grid.Row="0"
+                        Margin="40,0,40,40"
+                        HorizontalAlignment="Center"
+                        FontSize="16"
+                        Foreground="#b2b2b2"
+                        Text="{DynamicResource TrLblModifyInfo}"
+                        TextAlignment="Center"
+                        TextWrapping="Wrap" />
+                    <Button
+                        Grid.Row="1"
+                        Width="150"
+                        Height="40"
+                        Margin="10,0,0,20"
+                        HorizontalContentAlignment="Left"
+                        VerticalContentAlignment="Center"
+                        FontSize="16"
+                        Style="{StaticResource BtnActionDark}">
+                        <StackPanel Orientation="Horizontal">
+                            <ContentControl Margin="8" Template="{StaticResource UpdateIcon}" />
+                            <TextBlock
+                                Margin="5"
+                                VerticalAlignment="Center"
+                                Text="{DynamicResource TrBtnUpdate}" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button
+                        Grid.Row="2"
+                        Width="150"
+                        Height="40"
+                        Margin="10,0,0,20"
+                        HorizontalContentAlignment="Left"
+                        VerticalContentAlignment="Center"
+                        FontSize="16"
+                        Style="{StaticResource BtnActionDark}">
+                        <StackPanel Orientation="Horizontal">
+                            <ContentControl Margin="8" Template="{StaticResource RepairIcon}" />
+                            <TextBlock
+                                Margin="5"
+                                VerticalAlignment="Center"
+                                Text="{DynamicResource TrBtnRepair}" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button
+                        Grid.Row="3"
+                        Width="150"
+                        Height="40"
+                        Margin="10,0,0,20"
+                        HorizontalContentAlignment="Left"
+                        VerticalContentAlignment="Center"
+                        FontSize="16"
+                        Style="{StaticResource BtnActionDark}">
+                        <StackPanel Orientation="Horizontal">
+                            <ContentControl Margin="8" Template="{StaticResource ModifyIcon}" />
+                            <TextBlock
+                                Margin="5"
+                                VerticalAlignment="Center"
+                                Text="{DynamicResource TrBtnModify}" />
+                        </StackPanel>
+                    </Button>
+
+                    <Button
+                        Grid.Row="4"
+                        Width="150"
+                        Height="40"
+                        Margin="10,30,0,0"
+                        HorizontalContentAlignment="Left"
+                        VerticalContentAlignment="Center"
+                        FontSize="16"
+                        Style="{StaticResource BtnActionDark}">
+                        <StackPanel Orientation="Horizontal">
+                            <ContentControl Margin="8" Template="{StaticResource UninstallIcon}" />
+                            <TextBlock
+                                Margin="5"
+                                VerticalAlignment="Center"
+                                Text="{DynamicResource TrBtnUninstall}" />
+                        </StackPanel>
+                    </Button>
+
+                </Grid>
+            </Border>
+
 
         </Grid>
 

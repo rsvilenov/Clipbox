@@ -98,6 +98,7 @@
         <Setter Property="BorderBrush" Value="White" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="Foreground" Value="White" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
 
         <Setter Property="Template">
             <Setter.Value>
@@ -109,7 +110,7 @@
                         BorderThickness="{TemplateBinding BorderThickness}"
                         CornerRadius="2"
                         SnapsToDevicePixels="True">
-                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="Center" />
                     </Border>
                 </ControlTemplate>
             </Setter.Value>
@@ -140,6 +141,7 @@
             </Trigger>
         </Style.Triggers>
     </Style>
+
     <ControlTemplate x:Key="checkedTick">
         <Viewbox>
             <Grid

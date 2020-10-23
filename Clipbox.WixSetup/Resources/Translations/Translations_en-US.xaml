@@ -28,4 +28,14 @@
     <sys:String x:Key="TrBtnRetry">Retry</sys:String>
     <sys:String x:Key="TrBtnQuit">Quit</sys:String>
     <sys:String x:Key="TrLblErrorTitle">Error message:</sys:String>
+    <sys:String x:Key="TrBtnChangeInstallDir">Change</sys:String>
+    <sys:String x:Key="TrBtnDisable">DISABLE CLIPBOX</sys:String>
+    <sys:String x:Key="TrLblConfigure">Configure your Clipbox installation</sys:String>
+    <sys:String x:Key="TrLblDisable">Just disable Clipbox?</sys:String>
+    <sys:String x:Key="TrLblDisableInfo">By disabling Clipbox your clipboard history will not be tracked anymore, while you will still be able to access your previously stored clipboard entries. You will be able to re-enable clipboard tracking at any time by right-clicking on Clipbox tray icon and selecting 'Enable'.</sys:String>
+    <sys:String x:Key="TrLblModifyInfo">Having issues? Want to customize yout installation? You are in the right place.</sys:String>
+    <sys:String x:Key="TrBtnUpdate">UPDATE</sys:String>
+    <sys:String x:Key="TrBtnRepair">REPAIR</sys:String>
+    <sys:String x:Key="TrBtnModify">MODIFY</sys:String>
+    <sys:String x:Key="TrBtnUninstall">UNINSTALL</sys:String>
 </ResourceDictionary>
