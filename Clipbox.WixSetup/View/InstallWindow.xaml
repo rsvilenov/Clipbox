@@ -345,10 +345,11 @@
                 Style="{StaticResource BtnDefaultAction}" />
         </Grid>
 
+        <!--  progress page  -->
         <Grid
             Name="ProgressPage"
             Grid.Row="1"
-            Visibility="Visible">
+            Visibility="Collapsed">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -399,6 +400,59 @@
                 Content="{DynamicResource TrBtnCancel}"
                 FontSize="18"
                 Style="{StaticResource BtnActionDark}" />
+        </Grid>
+
+        <Grid
+            Name="ReadyPage"
+            Grid.Row="1"
+            Visibility="Visible">
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBlock
+                Grid.Row="0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontSize="30"
+                FontWeight="Thin"
+                Foreground="White"
+                Text="{DynamicResource TrLblInstallReady}" />
+            <ContentControl
+                Grid.Row="1"
+                Width="60"
+                Foreground="#FF21BD69"
+                Template="{StaticResource ReadyIcon}" />
+            <Ellipse
+                Grid.Row="1"
+                Width="150"
+                Height="150"
+                Stroke="#8a9ed3"
+                StrokeThickness="3" />
+            <TextBlock
+                Grid.Row="2"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontSize="16"
+                FontWeight="Thin"
+                Foreground="White"
+                TextAlignment="Center">
+                <Run Text="{DynamicResource TrLblInstallReadyAnnotation1}" />
+                <LineBreak />
+                <Run Text="{DynamicResource TrLblInstallReadyAnnotation2}" />
+            </TextBlock>
+            <Button
+                Grid.Row="3"
+                Grid.Column="0"
+                Width="170"
+                Height="45"
+                Margin="10"
+                HorizontalAlignment="Center"
+                Content="{DynamicResource TrBtnInstallReady}"
+                FontSize="16"
+                Style="{StaticResource BtnDefaultAction}" />
         </Grid>
 
     </Grid>
