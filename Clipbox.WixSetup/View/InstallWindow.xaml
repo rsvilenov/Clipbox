@@ -451,7 +451,7 @@
                 Height="45"
                 Margin="10"
                 HorizontalAlignment="Center"
-                Content="{DynamicResource TrBtnInstallReady}"
+                Content="{DynamicResource TrBtnOperationComplete}"
                 FontSize="16"
                 Style="{StaticResource BtnDefaultAction}" />
         </Grid>
@@ -524,7 +524,7 @@
         <Grid
             Name="UninstallModifyPage"
             Grid.Row="1"
-            Visibility="Visible">
+            Visibility="Collapsed">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1.5*" />
                 <ColumnDefinition />
@@ -682,6 +682,66 @@
             </Border>
 
 
+        </Grid>
+
+        <Grid
+            Name="UninstallReadyPage"
+            Grid.Row="1"
+            Visibility="Visible">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <TextBlock
+                Grid.Row="0"
+                Margin="40,60,40,0"
+                HorizontalAlignment="Center"
+                FontSize="26"
+                Foreground="White"
+                Text="{DynamicResource TrLblUninstalled}"
+                TextAlignment="Center"
+                TextWrapping="Wrap" />
+            <TextBlock
+                Grid.Row="1"
+                Margin="0,60,0,35"
+                HorizontalAlignment="Center"
+                FontSize="16"
+                Foreground="#b2b2b2"
+                Text="{DynamicResource TrLblRestartRequired}"
+                TextAlignment="Center"
+                TextWrapping="Wrap" />
+            <Button
+                Grid.Row="2"
+                Width="220"
+                Height="50"
+                Margin="10,0,0,0"
+                HorizontalContentAlignment="Left"
+                VerticalContentAlignment="Center"
+                Content="{DynamicResource TrBtnRestartNow}"
+                FontSize="16"
+                Style="{StaticResource BtnDefaultAction}" />
+            <Button
+                Grid.Row="3"
+                Width="220"
+                Height="40"
+                Margin="10,20,0,0"
+                VerticalContentAlignment="Center"
+                Content="{DynamicResource TrBtnRestartLater}"
+                FontSize="16"
+                Style="{StaticResource BtnActionDark}" />
+
+            <Button
+                Grid.Row="2"
+                Width="170"
+                Height="45"
+                Margin="10"
+                HorizontalAlignment="Center"
+                Content="{DynamicResource TrBtnOperationComplete}"
+                FontSize="16"
+                Style="{StaticResource BtnDefaultAction}"
+                Visibility="Collapsed" />
         </Grid>
 
     </Grid>

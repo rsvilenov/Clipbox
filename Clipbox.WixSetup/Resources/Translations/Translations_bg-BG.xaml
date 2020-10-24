@@ -38,4 +38,8 @@
     <sys:String x:Key="TrBtnRepair">ПОПРАВИ</sys:String>
     <sys:String x:Key="TrBtnModify">ПРОМЕНИ</sys:String>
     <sys:String x:Key="TrBtnUninstall">ДЕИНСТАЛИРАЙ</sys:String>
+    <sys:String x:Key="TrBtnRestartNow">Рестартирай сега</sys:String>
+    <sys:String x:Key="TrBtnRestartLater">Рестартирай по-късно</sys:String>
+    <sys:String x:Key="TrLblUninstalled">Clipbox беше деинсталиран успешно.</sys:String>
+    <sys:String x:Key="TrLblRestartRequired">Някои файлове може да останат на текущото си местоположение до следващото рестартиране на компютъра.</sys:String>
 </ResourceDictionary>

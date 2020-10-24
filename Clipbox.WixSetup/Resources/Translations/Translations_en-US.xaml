@@ -23,7 +23,7 @@
     <sys:String x:Key="TrLblInstallReady">We are ready!</sys:String>
     <sys:String x:Key="TrLblInstallReadyAnnotation1">Now you can start using the program.</sys:String>
     <sys:String x:Key="TrLblInstallReadyAnnotation2">Press and hold Ctrl+V to view your clipboard contents.</sys:String>
-    <sys:String x:Key="TrBtnInstallReady">OK</sys:String>
+    <sys:String x:Key="TrBtnOperationComplete">OK</sys:String>
     <sys:String x:Key="TrLblInstallError">Error :(</sys:String>
     <sys:String x:Key="TrBtnRetry">Retry</sys:String>
     <sys:String x:Key="TrBtnQuit">Quit</sys:String>
@@ -38,4 +38,8 @@
     <sys:String x:Key="TrBtnRepair">REPAIR</sys:String>
     <sys:String x:Key="TrBtnModify">MODIFY</sys:String>
     <sys:String x:Key="TrBtnUninstall">UNINSTALL</sys:String>
+    <sys:String x:Key="TrBtnRestartNow">Restart now</sys:String>
+    <sys:String x:Key="TrBtnRestartLater">Restart later</sys:String>
+    <sys:String x:Key="TrLblUninstalled">Clipbox was successfully uninstalled.</sys:String>
+    <sys:String x:Key="TrLblRestartRequired">Some files may stay where they are until the computer is restarted.</sys:String>
 </ResourceDictionary>
