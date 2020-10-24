@@ -148,5 +148,15 @@ namespace Setup.WixSetup.View
                 _viewModel.LanguageCode = newLanguageCode;
             }
         }
+
+        private void ButtonRestartNow_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = "cmd",
+                WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden,
+                Arguments = "/C shutdown -f -r -t 5"
+            });
+        }
     }
 }

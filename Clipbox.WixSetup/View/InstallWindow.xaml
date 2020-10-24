@@ -238,6 +238,7 @@
                     Height="50"
                     Margin="0,30,0,0"
                     BorderThickness="0"
+                    Command="{Binding InstallCommand}"
                     Content="{DynamicResource TrBtnInstall}"
                     FontSize="18"
                     Style="{StaticResource BtnDefaultAction}" />
@@ -361,7 +362,8 @@
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
                 BorderThickness="0"
-                Content="INSTALL"
+                Command="{Binding InstallCommand}"
+                Content="{DynamicResource TrBtnInstall}"
                 FontSize="18"
                 Style="{StaticResource BtnDefaultAction}" />
         </Grid>
@@ -423,6 +425,7 @@
                     Height="50"
                     Margin="0,30,0,0"
                     BorderThickness="0"
+                    Command="{Binding UpdateCommand}"
                     Content="{DynamicResource TrBtnUpdate}"
                     FontSize="18"
                     Style="{StaticResource BtnDefaultAction}" />
@@ -557,7 +560,7 @@
                 Height="45"
                 Margin="10"
                 HorizontalAlignment="Center"
-                Command="{DynamicResource QuitCommand}"
+                Command="{Binding QuitCommand}"
                 Content="{DynamicResource TrBtnOperationComplete}"
                 FontSize="16"
                 Style="{StaticResource BtnDefaultAction}" />
@@ -740,6 +743,7 @@
                         Margin="10,0,0,20"
                         HorizontalContentAlignment="Left"
                         VerticalContentAlignment="Center"
+                        Command="{Binding UpdateLinkCommand}"
                         FontSize="16"
                         Style="{StaticResource BtnActionDark}">
                         <StackPanel Orientation="Horizontal">
@@ -758,6 +762,7 @@
                         Margin="10,0,0,20"
                         HorizontalContentAlignment="Left"
                         VerticalContentAlignment="Center"
+                        Command="{Binding RepairCommand}"
                         FontSize="16"
                         Style="{StaticResource BtnActionDark}">
                         <StackPanel Orientation="Horizontal">
@@ -776,6 +781,7 @@
                         Margin="10,0,0,20"
                         HorizontalContentAlignment="Left"
                         VerticalContentAlignment="Center"
+                        Command="{Binding ModifyCommand}"
                         FontSize="16"
                         Style="{StaticResource BtnActionDark}">
                         <StackPanel Orientation="Horizontal">
@@ -794,6 +800,7 @@
                         Margin="10,30,0,0"
                         HorizontalContentAlignment="Left"
                         VerticalContentAlignment="Center"
+                        Command="{Binding UninstallCommand}"
                         FontSize="16"
                         Style="{StaticResource BtnActionDark}">
                         <StackPanel Orientation="Horizontal">
@@ -884,6 +891,7 @@
                 Margin="10,0,0,0"
                 HorizontalContentAlignment="Left"
                 VerticalContentAlignment="Center"
+                Click="ButtonRestartNow_Click"
                 Content="{DynamicResource TrBtnRestartNow}"
                 FontSize="16"
                 Style="{StaticResource BtnDefaultAction}"
@@ -894,6 +902,7 @@
                 Height="40"
                 Margin="10,20,0,0"
                 VerticalContentAlignment="Center"
+                Command="{Binding QuitCommand}"
                 Content="{DynamicResource TrBtnRestartLater}"
                 FontSize="16"
                 Style="{StaticResource BtnActionDark}"

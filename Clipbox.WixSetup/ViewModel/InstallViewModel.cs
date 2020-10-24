@@ -24,6 +24,7 @@ namespace Clipbox.WixSetup.ViewModel
         public ICommand InstallCommand { get; set; }
         public ICommand UninstallCommand { get; set; }
         public ICommand UpdateCommand { get; set; }
+        public ICommand UpdateLinkCommand { get; set; }
         public ICommand RepairCommand { get; set; }
         public ICommand ModifyCommand { get; set; }
         public ICommand RetryCommand { get; set; }
@@ -46,7 +47,8 @@ namespace Clipbox.WixSetup.ViewModel
             InstallCommand = new DelegateCommand(() => RequestSetupAction(LaunchAction.Install), () => !_isSetupActionRequested);
             UninstallCommand = new DelegateCommand(() => RequestSetupAction(LaunchAction.Uninstall), () => !_isSetupActionRequested);
             RepairCommand = new DelegateCommand(() => RequestSetupAction(LaunchAction.Repair), () => !_isSetupActionRequested);
-            UpdateCommand = new DelegateCommand(UpdateCommandHandler, () => !_isSetupActionRequested);
+            UpdateCommand = new DelegateCommand(() => RequestSetupAction(LaunchAction.UpdateReplace), () => !_isSetupActionRequested);
+            UpdateLinkCommand = new DelegateCommand(UpdateLinkCommandHandler, () => !_isSetupActionRequested);
             ModifyCommand = new DelegateCommand(() => throw new NotImplementedException(nameof(ModifyCommand)));
             RetryCommand = new DelegateCommand(RetryCommandHandler, () => !_isSetupActionRequested);
 
@@ -103,7 +105,7 @@ namespace Clipbox.WixSetup.ViewModel
             _model.PlanAction(launchAction);
         }
 
-        private void UpdateCommandHandler()
+        private void UpdateLinkCommandHandler()
         {
             Process.Start(ProductConstants.PRODUCT_UPDATE_URL);
             QuitInstallerInternal(0);
