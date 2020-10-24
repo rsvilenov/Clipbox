@@ -3,6 +3,7 @@
     public enum ClipboxSetupWorkflow
     {
         Install,
-        Modify
+        Modify,
+        Update
     }
 }

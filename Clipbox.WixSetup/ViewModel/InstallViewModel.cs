@@ -16,6 +16,7 @@ namespace Clipbox.WixSetup.ViewModel
         private readonly object _lockHandle = new object();
 
         public event EventHandler<CancelEventArgs> QuitConfirmationRequested;
+        public event EventHandler<CancelEventArgs> CancelConfirmationRequested;
 
         public ICommand QuitCommand { get; set; }
         public ICommand CloseInstallWindowCommand { get; set; }
@@ -25,11 +26,13 @@ namespace Clipbox.WixSetup.ViewModel
         public ICommand UpdateCommand { get; set; }
         public ICommand RepairCommand { get; set; }
         public ICommand ModifyCommand { get; set; }
+        public ICommand RetryCommand { get; set; }
 
         private bool _isCancelRequested;
         private bool _isSetupActionRequested;
         private int _cacheProgress;
         private int _executeProgress;
+        private LaunchAction _lastLaunchAction;
 
         public InstallViewModel(BootstrapperApplicationModel model)
         {
@@ -39,12 +42,13 @@ namespace Clipbox.WixSetup.ViewModel
 
             QuitCommand = new DelegateCommand(QuitCommandHandler);
             CloseInstallWindowCommand = new DelegateCommand(CloseInstallWindowCommandHandler);
-            CancelCommand = new DelegateCommand(() => _isCancelRequested = true, () => !_isCancelRequested);
+            CancelCommand = new DelegateCommand(CancelCommandHandler, () => !_isCancelRequested);
             InstallCommand = new DelegateCommand(() => RequestSetupAction(LaunchAction.Install), () => !_isSetupActionRequested);
             UninstallCommand = new DelegateCommand(() => RequestSetupAction(LaunchAction.Uninstall), () => !_isSetupActionRequested);
             RepairCommand = new DelegateCommand(() => RequestSetupAction(LaunchAction.Repair), () => !_isSetupActionRequested);
             UpdateCommand = new DelegateCommand(UpdateCommandHandler, () => !_isSetupActionRequested);
             ModifyCommand = new DelegateCommand(() => throw new NotImplementedException(nameof(ModifyCommand)));
+            RetryCommand = new DelegateCommand(RetryCommandHandler, () => !_isSetupActionRequested);
 
             _model.BootstrapperApplication.DetectBegin += BootstrapperApplication_DetectBegin;
             _model.BootstrapperApplication.DetectComplete += BootstrapperApplication_DetectComplete;
@@ -58,11 +62,31 @@ namespace Clipbox.WixSetup.ViewModel
             _model.BootstrapperApplication.ExecuteProgress += BootstrapperApplication_ApplyExecuteProgress;
             _model.BootstrapperApplication.Progress += BootstrapperApplication_Progress;
             _model.BootstrapperApplication.ExecuteMsiMessage += BootstrapperApplication_ExecuteMsiMessage;
+            _model.BootstrapperApplication.ExecutePackageBegin += BootstrapperApplication_ExecutePackageBegin;
+            _model.BootstrapperApplication.ExecutePackageComplete += BootstrapperApplication_ExecutePackageComplete;
+        }
+
+        private void CancelCommandHandler()
+        {
+            CancelEventArgs args = new CancelEventArgs();
+            CancelConfirmationRequested?.Invoke(this, args);
+            if (!args.Cancel)
+            {
+                _isCancelRequested = true;
+            }
+        }
+
+        private void RetryCommandHandler()
+        {
+            RequestSetupAction(_lastLaunchAction);
         }
 
         private void RequestSetupAction(LaunchAction launchAction)
         {
             _isSetupActionRequested = true;
+
+            _lastLaunchAction = launchAction;
+
             switch (launchAction)
             {
                 case LaunchAction.Repair:
@@ -75,6 +99,7 @@ namespace Clipbox.WixSetup.ViewModel
                     ModifyAction = ClipboxModifyAction.Modify;
                     break;
             }
+
             _model.PlanAction(launchAction);
         }
 
@@ -103,8 +128,26 @@ namespace Clipbox.WixSetup.ViewModel
             }
         }
 
+        private void BootstrapperApplication_ExecutePackageBegin(object sender, ExecutePackageBeginEventArgs e)
+        {
+            if (_isCancelRequested)
+            {
+                e.Result = Result.Cancel;
+            }
+        }
+
+        private void BootstrapperApplication_ExecutePackageComplete(object sender, ExecutePackageCompleteEventArgs e)
+        {
+            if (_isCancelRequested)
+            {
+                e.Result = Result.Cancel;
+            }
+        }
+
+
         private void BootstrapperApplication_ApplyComplete(object sender, ApplyCompleteEventArgs e)
         {
+            IsRestartRequired = e.Restart == ApplyRestart.RestartRequired;
             _model.FinalResult = e.Status;
             SetupState = ClipboxSetupState.Done;
         }
@@ -116,7 +159,8 @@ namespace Clipbox.WixSetup.ViewModel
 
         private void BootstrapperApplication_PlanBegin(object sender, PlanBeginEventArgs e)
         {
-            Phases = (LaunchAction.Layout == _model.PlannedAction) ? 1 : 2;
+            Phases = (LaunchAction.Layout == _model.PlannedAction
+                || LaunchAction.Uninstall == _model.PlannedAction) ? 1 : 2;
         }
 
         private void BootstrapperApplication_PlanComplete(object sender, PlanCompleteEventArgs e)
@@ -149,6 +193,18 @@ namespace Clipbox.WixSetup.ViewModel
         private void BootstrapperApplication_DetectComplete(object sender, Microsoft.Tools.WindowsInstallerXml.Bootstrapper.DetectCompleteEventArgs e)
         {
             IsDetectionOngoing = false;
+            switch (_model.BootstrapperApplication.Command.Action)
+            {
+                case LaunchAction.Uninstall:
+                    SetupWorkflow = ClipboxSetupWorkflow.Modify;
+                    break;
+                case LaunchAction.UpdateReplace:
+                    SetupWorkflow = ClipboxSetupWorkflow.Update;
+                    break;
+                case LaunchAction.Install:
+                    SetupWorkflow = ClipboxSetupWorkflow.Install;
+                    break;
+            }
         }
 
         private void BootstrapperApplication_CacheAcquireProgress(Object SENDER, CacheAcquireProgressEventArgs e)
@@ -166,7 +222,7 @@ namespace Clipbox.WixSetup.ViewModel
             {
 
                 _executeProgress = e.OverallPercentage;
-                Progress = (_cacheProgress + _executeProgress) / 2; // always two phases if we hit execution.
+                Progress = (_cacheProgress + _executeProgress) / (ModifyAction == ClipboxModifyAction.Uninstall ? 1 : 2); // always two phases if we hit execution.
 
                 if (_model.BootstrapperApplication.Command.Display == Display.Embedded)
                 {
@@ -190,6 +246,13 @@ namespace Clipbox.WixSetup.ViewModel
         {
             get { return _progress; }
             set { SetField(ref _progress, value, () => Progress); }
+        }
+
+        private bool _isRestartRequired;
+        public bool IsRestartRequired
+        {
+            get { return _isRestartRequired; }
+            set { SetField(ref _isRestartRequired, value, () => IsRestartRequired); }
         }
 
         private int _phases;
@@ -264,7 +327,19 @@ namespace Clipbox.WixSetup.ViewModel
 
         private void CloseInstallWindowCommandHandler()
         {
-            QuitInstallerInternal(errorCode: 0);
+            if (SetupState == ClipboxSetupState.Done
+                || SetupState == ClipboxSetupState.Error
+                || SetupState == ClipboxSetupState.Welcome)
+            {
+                QuitInstallerInternal(errorCode: 0);
+            }
+            else
+            {
+                if (CancelCommand.CanExecute(null))
+                {
+                    CancelCommand.Execute(null);
+                }
+            }
         }
 
         private void QuitCommandHandler()

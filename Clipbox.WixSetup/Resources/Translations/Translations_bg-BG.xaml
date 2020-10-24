@@ -41,5 +41,9 @@
     <sys:String x:Key="TrBtnRestartNow">Рестартирай сега</sys:String>
     <sys:String x:Key="TrBtnRestartLater">Рестартирай по-късно</sys:String>
     <sys:String x:Key="TrLblUninstalled">Clipbox беше деинсталиран успешно.</sys:String>
+    <sys:String x:Key="TrLblRepaired">Поправянето завърши.</sys:String>
+    <sys:String x:Key="TrLblUpdated">Обновяването завърши.</sys:String>
+    <sys:String x:Key="TrLblModified">Инсталацията на Clipbox беше модифицирана успешно.</sys:String>
+    <sys:String x:Key="TrLblReadyForUpdate">Инсталираната на компютъра версия на Clipbox е стара. Кликнете бутона отдолу, за да я обновите.</sys:String>
     <sys:String x:Key="TrLblRestartRequired">Някои файлове може да останат на текущото си местоположение до следващото рестартиране на компютъра.</sys:String>
 </ResourceDictionary>

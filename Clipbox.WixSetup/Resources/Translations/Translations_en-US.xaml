@@ -41,5 +41,9 @@
     <sys:String x:Key="TrBtnRestartNow">Restart now</sys:String>
     <sys:String x:Key="TrBtnRestartLater">Restart later</sys:String>
     <sys:String x:Key="TrLblUninstalled">Clipbox was successfully uninstalled.</sys:String>
+    <sys:String x:Key="TrLblRepaired">The repair process completed.</sys:String>
+    <sys:String x:Key="TrLblUpdated">Clipbox is now up to date.</sys:String>
+    <sys:String x:Key="TrLblModified">Your Clipbox was modified successfully.</sys:String>
+    <sys:String x:Key="TrLblReadyForUpdate">The installed version of Clipbox is old. Click the button below to update it.</sys:String>
     <sys:String x:Key="TrLblRestartRequired">Some files may stay where they are until the computer is restarted.</sys:String>
 </ResourceDictionary>

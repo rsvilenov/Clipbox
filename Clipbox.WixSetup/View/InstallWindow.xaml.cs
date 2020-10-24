@@ -2,6 +2,7 @@
 using Clipbox.WixSetup.View;
 using Clipbox.WixSetup.ViewModel;
 using System;
+using System.ComponentModel;
 using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,7 +22,7 @@ namespace Setup.WixSetup.View
         private readonly InstallViewModel _viewModel;
         private readonly ManualResetEvent _quitConfirmationMre;
 
-        private bool _isQuitConfirmed;
+        private bool _isCancelQuitConfirmed;
         public InstallWindow(InstallViewModel vm)
         {
             InitializeComponent();
@@ -30,6 +31,7 @@ namespace Setup.WixSetup.View
 
             _viewModel = vm;
             _viewModel.QuitConfirmationRequested += _viewModel_QuitConfirmationRequested;
+            _viewModel.CancelConfirmationRequested += _viewModel_CancelConfirmationRequested;
 
             this.MainGrid.DataContext = vm;
 
@@ -37,7 +39,13 @@ namespace Setup.WixSetup.View
             _localizationHelper.SetLanguage(DEFAULT_LANG_CODE);
 
             Closing += InstallWindow_Closing;
+
+            if (DesignerProperties.GetIsInDesignMode(this))
+            {
+                FirstPage.Visibility = Visibility.Visible;
+            }
         }
+
 
         private void InstallWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -48,22 +56,33 @@ namespace Setup.WixSetup.View
             }
         }
 
+        private void _viewModel_CancelConfirmationRequested(object sender, CancelEventArgs e)
+        {
+            ShowAndWaitCancelQuitConfirmationDialog();
+            e.Cancel = !_isCancelQuitConfirmed;
+        }
+
         private void _viewModel_QuitConfirmationRequested(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            ShowAndWaitCancelQuitConfirmationDialog();
+            e.Cancel = !_isCancelQuitConfirmed;
+        }
+
+        private void ShowAndWaitCancelQuitConfirmationDialog()
+        {
             Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                new Action(() =>
-                {
-                    DisableCurtain.Visibility = Visibility.Visible;
-                    ConfirmQuitPopup.IsOpen = true;
-                }));
+                            new Action(() =>
+                            {
+                                DisableCurtain.Visibility = Visibility.Visible;
+                                ConfirmQuitPopup.IsOpen = true;
+                            }));
             _quitConfirmationMre.Reset();
             _quitConfirmationMre.WaitOne();
-            e.Cancel = !_isQuitConfirmed;
         }
 
         private void BtnConfirmQuitYes_Click(object sender, RoutedEventArgs e)
         {
-            _isQuitConfirmed = true;
+            _isCancelQuitConfirmed = true;
 
             DisableCurtain.Visibility = Visibility.Collapsed;
             ConfirmQuitPopup.IsOpen = false;
@@ -73,7 +92,7 @@ namespace Setup.WixSetup.View
 
         private void BtnConfirmQuitNo_Click(object sender, RoutedEventArgs e)
         {
-            _isQuitConfirmed = false;
+            _isCancelQuitConfirmed = false;
 
             DisableCurtain.Visibility = Visibility.Collapsed;
             ConfirmQuitPopup.IsOpen = false;
@@ -81,12 +100,12 @@ namespace Setup.WixSetup.View
             _quitConfirmationMre.Set();
         }
 
-        private void LicenseAgreementLink_Click(object sender, RoutedEventArgs e)
+        private void LicenseAgreementLink_MouseLeftButtonUp(object sender, RoutedEventArgs e)
         {
             System.Diagnostics.Process.Start(ProductConstants.PRODUCT_EULA_URL);
         }
 
-        private void PrivacyPolicyLink_Click(object sender, RoutedEventArgs e)
+        private void PrivacyPolicyLink_MouseLeftButtonUp(object sender, RoutedEventArgs e)
         {
             System.Diagnostics.Process.Start(ProductConstants.PRODUCT_PRIVACY_POLICY_URL);
         }

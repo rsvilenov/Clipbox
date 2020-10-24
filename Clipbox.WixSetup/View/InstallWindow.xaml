@@ -3,6 +3,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:shell="http://schemas.microsoft.com/netfx/2009/xaml/presentation"
+    xmlns:vmEnums="clr-namespace:Clipbox.WixSetup.ViewModel.Enums"
     Width="1012"
     Height="674"
     AllowsTransparency="True"
@@ -16,7 +17,7 @@
                 <ResourceDictionary Source="/Resources/Styles/Style.xaml" />
                 <ResourceDictionary Source="/Resources/Translations/Translations_en-US.xaml" />
             </ResourceDictionary.MergedDictionaries>
-
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         </ResourceDictionary>
     </Window.Resources>
 
@@ -133,8 +134,17 @@
                     Margin="0,6,10,6"
                     FontSize="14"
                     FontWeight="Light"
-                    SelectionChanged="ComboBoxLanguage_SelectionChanged"
-                    Style="{StaticResource FlatComboBoxStyle}">
+                    SelectionChanged="ComboBoxLanguage_SelectionChanged">
+                    <ComboBox.Style>
+                        <Style BasedOn="{StaticResource FlatComboBoxStyle}" TargetType="ComboBox">
+                            <Setter Property="Visibility" Value="Hidden" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding SetupState}" Value="{x:Static vmEnums:ClipboxSetupState.Welcome}">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </ComboBox.Style>
                     <ComboBoxItem
                         Background="#2d364c"
                         Content="{DynamicResource TrLangEN}"
@@ -159,10 +169,21 @@
 
 
         <!--  first page  -->
-        <Grid
-            Name="FirstPage"
-            Grid.Row="1"
-            Visibility="Collapsed">
+        <Grid Name="FirstPage" Grid.Row="1">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding SetupWorkflow}" Value="{x:Static vmEnums:ClipboxSetupWorkflow.Install}" />
+                                <Condition Binding="{Binding SetupState}" Value="{x:Static vmEnums:ClipboxSetupState.Welcome}" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Visibility" Value="Visible" />
+                        </MultiDataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -200,13 +221,13 @@
                     <LineBreak />
                     <Run
                         Cursor="Hand"
-                        Hyperlink.Click="LicenseAgreementLink_Click"
+                        MouseLeftButtonUp="LicenseAgreementLink_MouseLeftButtonUp"
                         Text="{DynamicResource TrLblAgreementEULA}"
                         TextDecorations="Underline" />
                     <Run Text="{DynamicResource TrLblAgreementAnd}" />
                     <Run
                         Cursor="Hand"
-                        Hyperlink.Click="PrivacyPolicyLink_Click"
+                        MouseLeftButtonUp="PrivacyPolicyLink_MouseLeftButtonUp"
                         Text="{DynamicResource TrLblAgreementPrivacyPolicy}"
                         TextDecorations="Underline" />
                 </TextBlock>
@@ -345,11 +366,84 @@
                 Style="{StaticResource BtnDefaultAction}" />
         </Grid>
 
+        <!--  update welcome page  -->
+        <Grid Name="UpdateFirstPage" Grid.Row="1">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding SetupWorkflow}" Value="{x:Static vmEnums:ClipboxSetupWorkflow.Update}" />
+                                <Condition Binding="{Binding SetupState}" Value="{x:Static vmEnums:ClipboxSetupState.Welcome}" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Visibility" Value="Visible" />
+                        </MultiDataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <ContentControl
+                Grid.Row="0"
+                Height="100"
+                Margin="0,70,0,0"
+                Foreground="White"
+                Template="{StaticResource LogoIcon}" />
+            <Grid
+                Grid.Row="1"
+                Margin="0,20,0,0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock
+                    Grid.Row="0"
+                    Margin="0,0,0,30"
+                    HorizontalAlignment="Center"
+                    FontSize="46"
+                    Foreground="White"
+                    Text="Clipbox" />
+                <TextBlock
+                    Grid.Row="1"
+                    Margin="0,100,0,0"
+                    FontSize="16"
+                    Foreground="White"
+                    Text="{DynamicResource TrLblReadyForUpdate}"
+                    TextAlignment="Center" />
+
+                <Button
+                    Grid.Row="2"
+                    Width="180"
+                    Height="50"
+                    Margin="0,30,0,0"
+                    BorderThickness="0"
+                    Content="{DynamicResource TrBtnUpdate}"
+                    FontSize="18"
+                    Style="{StaticResource BtnDefaultAction}" />
+            </Grid>
+        </Grid>
+
         <!--  progress page  -->
-        <Grid
-            Name="ProgressPage"
-            Grid.Row="1"
-            Visibility="Collapsed">
+        <Grid Name="ProgressPage" Grid.Row="1">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding SetupState}" Value="{x:Static vmEnums:ClipboxSetupState.Preparing}">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding SetupState}" Value="{x:Static vmEnums:ClipboxSetupState.Processing}">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -379,7 +473,7 @@
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Center"
                 Style="{StaticResource DefaultProgressBar}"
-                Value="10" />
+                Value="{Binding Progress}" />
             <TextBlock
                 Grid.Row="3"
                 Margin="0,15,0,0"
@@ -397,16 +491,28 @@
                 VerticalAlignment="Bottom"
                 BorderBrush="Gray"
                 BorderThickness="1"
+                Command="{Binding CancelCommand}"
                 Content="{DynamicResource TrBtnCancel}"
                 FontSize="18"
                 Style="{StaticResource BtnActionDark}" />
         </Grid>
 
         <!--  ready page  -->
-        <Grid
-            Name="ReadyPage"
-            Grid.Row="1"
-            Visibility="Collapsed">
+        <Grid Name="ReadyPage" Grid.Row="1">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding SetupWorkflow}" Value="{x:Static vmEnums:ClipboxSetupWorkflow.Install}" />
+                                <Condition Binding="{Binding SetupState}" Value="{x:Static vmEnums:ClipboxSetupState.Done}" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Visibility" Value="Visible" />
+                        </MultiDataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition />
@@ -451,15 +557,24 @@
                 Height="45"
                 Margin="10"
                 HorizontalAlignment="Center"
+                Command="{DynamicResource QuitCommand}"
                 Content="{DynamicResource TrBtnOperationComplete}"
                 FontSize="16"
                 Style="{StaticResource BtnDefaultAction}" />
         </Grid>
 
-        <Grid
-            Name="ErrorPage"
-            Grid.Row="1"
-            Visibility="Collapsed">
+        <!--  error page  -->
+        <Grid Name="ErrorPage" Grid.Row="1">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding SetupState}" Value="{x:Static vmEnums:ClipboxSetupState.Error}">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
             <Grid.RowDefinitions>
                 <RowDefinition />
                 <RowDefinition />
@@ -506,6 +621,7 @@
                     Width="170"
                     Height="45"
                     Margin="10"
+                    Command="{Binding RetryCommand}"
                     Content="{DynamicResource TrBtnRetry}"
                     FontSize="16"
                     Style="{StaticResource BtnActionDark}" />
@@ -521,10 +637,21 @@
 
         </Grid>
 
-        <Grid
-            Name="UninstallModifyPage"
-            Grid.Row="1"
-            Visibility="Collapsed">
+        <Grid Name="UninstallModifyPage" Grid.Row="1">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding SetupWorkflow}" Value="{x:Static vmEnums:ClipboxSetupWorkflow.Modify}" />
+                                <Condition Binding="{Binding SetupState}" Value="{x:Static vmEnums:ClipboxSetupState.Welcome}" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Visibility" Value="Visible" />
+                        </MultiDataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="1.5*" />
                 <ColumnDefinition />
@@ -685,9 +812,30 @@
         </Grid>
 
         <Grid
-            Name="UninstallReadyPage"
+            Name="ModifyReadyPage"
             Grid.Row="1"
-            Visibility="Visible">
+            Visibility="Collapsed">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding SetupWorkflow}" Value="{x:Static vmEnums:ClipboxSetupWorkflow.Modify}" />
+                                <Condition Binding="{Binding SetupState}" Value="{x:Static vmEnums:ClipboxSetupState.Done}" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Visibility" Value="Visible" />
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding SetupWorkflow}" Value="{x:Static vmEnums:ClipboxSetupWorkflow.Update}" />
+                                <Condition Binding="{Binding SetupState}" Value="{x:Static vmEnums:ClipboxSetupState.Done}" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Visibility" Value="Visible" />
+                        </MultiDataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
@@ -700,9 +848,25 @@
                 HorizontalAlignment="Center"
                 FontSize="26"
                 Foreground="White"
-                Text="{DynamicResource TrLblUninstalled}"
                 TextAlignment="Center"
-                TextWrapping="Wrap" />
+                TextWrapping="Wrap">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Text" Value="{DynamicResource TrLblUninstalled}" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ModifyAction}" Value="{x:Static vmEnums:ClipboxModifyAction.Repair}">
+                                <Setter Property="Text" Value="{DynamicResource TrLblRepaired}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ModifyAction}" Value="{x:Static vmEnums:ClipboxModifyAction.Modify}">
+                                <Setter Property="Text" Value="{DynamicResource TrLblModified}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SetupWorkflow}" Value="{x:Static vmEnums:ClipboxSetupWorkflow.Update}">
+                                <Setter Property="Text" Value="{DynamicResource TrLblUpdated}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
             <TextBlock
                 Grid.Row="1"
                 Margin="0,60,0,35"
@@ -711,7 +875,8 @@
                 Foreground="#b2b2b2"
                 Text="{DynamicResource TrLblRestartRequired}"
                 TextAlignment="Center"
-                TextWrapping="Wrap" />
+                TextWrapping="Wrap"
+                Visibility="{Binding IsRestartRequired, Converter={StaticResource BooleanToVisibilityConverter}}" />
             <Button
                 Grid.Row="2"
                 Width="220"
@@ -721,7 +886,8 @@
                 VerticalContentAlignment="Center"
                 Content="{DynamicResource TrBtnRestartNow}"
                 FontSize="16"
-                Style="{StaticResource BtnDefaultAction}" />
+                Style="{StaticResource BtnDefaultAction}"
+                Visibility="{Binding IsRestartRequired, Converter={StaticResource BooleanToVisibilityConverter}}" />
             <Button
                 Grid.Row="3"
                 Width="220"
@@ -730,7 +896,8 @@
                 VerticalContentAlignment="Center"
                 Content="{DynamicResource TrBtnRestartLater}"
                 FontSize="16"
-                Style="{StaticResource BtnActionDark}" />
+                Style="{StaticResource BtnActionDark}"
+                Visibility="{Binding IsRestartRequired, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
             <Button
                 Grid.Row="2"
@@ -740,8 +907,9 @@
                 HorizontalAlignment="Center"
                 Content="{DynamicResource TrBtnOperationComplete}"
                 FontSize="16"
+                IsEnabled="{Binding IsRestartRequired}"
                 Style="{StaticResource BtnDefaultAction}"
-                Visibility="Collapsed" />
+                Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
         </Grid>
 
     </Grid>
