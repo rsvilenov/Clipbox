@@ -19,6 +19,9 @@
     <sys:String x:Key="TrLblAgreementPrivacyPolicy">Privacy Policy</sys:String>
     <sys:String x:Key="TrLblAgreementAnd">and</sys:String>
     <sys:String x:Key="TrLblInstalling">Clipbox is being installed</sys:String>
+    <sys:String x:Key="TrLblUninstalling">Clipbox is being uninstalled</sys:String>
+    <sys:String x:Key="TrLblRepairing">Clipbox is being repaired</sys:String>
+    <sys:String x:Key="TrLblModifying">Clipbox is being modified</sys:String>
     <sys:String x:Key="TrLblInstallingWarning">Do not shut down your computer</sys:String>
     <sys:String x:Key="TrLblInstallReady">We are ready!</sys:String>
     <sys:String x:Key="TrLblInstallReadyAnnotation1">Now you can start using the program.</sys:String>

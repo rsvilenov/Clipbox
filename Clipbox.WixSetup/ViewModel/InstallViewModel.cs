@@ -95,7 +95,7 @@ namespace Clipbox.WixSetup.ViewModel
                     ModifyAction = ClipboxModifyAction.Repair;
                     break;
                 case LaunchAction.Uninstall:
-                    ModifyAction = ClipboxModifyAction.Modify;
+                    ModifyAction = ClipboxModifyAction.Uninstall;
                     break;
                 case LaunchAction.Modify:
                     ModifyAction = ClipboxModifyAction.Modify;
@@ -161,8 +161,7 @@ namespace Clipbox.WixSetup.ViewModel
 
         private void BootstrapperApplication_PlanBegin(object sender, PlanBeginEventArgs e)
         {
-            Phases = (LaunchAction.Layout == _model.PlannedAction
-                || LaunchAction.Uninstall == _model.PlannedAction) ? 1 : 2;
+            Phases = (LaunchAction.Layout == _model.PlannedAction) ? 1 : 2;
         }
 
         private void BootstrapperApplication_PlanComplete(object sender, PlanCompleteEventArgs e)
@@ -224,7 +223,7 @@ namespace Clipbox.WixSetup.ViewModel
             {
 
                 _executeProgress = e.OverallPercentage;
-                Progress = (_cacheProgress + _executeProgress) / (ModifyAction == ClipboxModifyAction.Uninstall ? 1 : 2); // always two phases if we hit execution.
+                Progress = (_cacheProgress + _executeProgress) / 2; // always two phases if we hit execution.
 
                 if (_model.BootstrapperApplication.Command.Display == Display.Embedded)
                 {
@@ -246,7 +245,12 @@ namespace Clipbox.WixSetup.ViewModel
         private int _progress;
         public int Progress
         {
-            get { return _progress; }
+            get { 
+                return SetupWorkflow == ClipboxSetupWorkflow.Modify 
+                    && ModifyAction == ClipboxModifyAction.Uninstall
+                    ? _progress * 2
+                    : _progress; 
+            }
             set { SetField(ref _progress, value, () => Progress); }
         }
 
@@ -354,7 +358,7 @@ namespace Clipbox.WixSetup.ViewModel
             Task.Factory.StartNew(() => 
             {
                 CancelEventArgs args = new CancelEventArgs();
-                if (SetupState == ClipboxSetupState.Welcome
+                if ((SetupState == ClipboxSetupState.Welcome && SetupWorkflow != ClipboxSetupWorkflow.Modify)
                     || SetupState == ClipboxSetupState.Preparing
                     || SetupState == ClipboxSetupState.Processing)
                 {

@@ -39,11 +39,6 @@ namespace Setup.WixSetup.View
             _localizationHelper.SetLanguage(DEFAULT_LANG_CODE);
 
             Closing += InstallWindow_Closing;
-
-            if (DesignerProperties.GetIsInDesignMode(this))
-            {
-                FirstPage.Visibility = Visibility.Visible;
-            }
         }
 
 

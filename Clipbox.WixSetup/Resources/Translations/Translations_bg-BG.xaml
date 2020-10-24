@@ -19,6 +19,9 @@
     <sys:String x:Key="TrLblAgreementPrivacyPolicy">Политика за поверителност</sys:String>
     <sys:String x:Key="TrLblAgreementAnd">и</sys:String>
     <sys:String x:Key="TrLblInstalling">Clipbox се инсталира</sys:String>
+    <sys:String x:Key="TrLblUninstalling">Clipbox се деинсталира</sys:String>
+    <sys:String x:Key="TrLblRepairing">Извършва се поправка на Clipbox</sys:String>
+    <sys:String x:Key="TrLblModifying">Инсталацията на Clipbox се модифицира</sys:String>
     <sys:String x:Key="TrLblInstallingWarning">Не изключвайте компютъра си</sys:String>
     <sys:String x:Key="TrLblInstallReady">Готово!</sys:String>
     <sys:String x:Key="TrLblInstallReadyAnnotation1">Можете да започнете да използвате програмата.</sys:String>

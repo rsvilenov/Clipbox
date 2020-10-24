@@ -2,6 +2,7 @@
     x:Class="Setup.WixSetup.View.InstallWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:mainNs="clr-namespace:Clipbox.WixSetup"
     xmlns:shell="http://schemas.microsoft.com/netfx/2009/xaml/presentation"
     xmlns:vmEnums="clr-namespace:Clipbox.WixSetup.ViewModel.Enums"
     Width="1012"
@@ -211,7 +212,7 @@
                     HorizontalAlignment="Center"
                     FontSize="46"
                     Foreground="White"
-                    Text="Clipbox" />
+                    Text="{x:Static mainNs:ProductConstants.PRODUCT_NAME}" />
                 <TextBlock
                     Grid.Row="1"
                     FontSize="16"
@@ -410,7 +411,7 @@
                     HorizontalAlignment="Center"
                     FontSize="46"
                     Foreground="White"
-                    Text="Clipbox" />
+                    Text="{x:Static mainNs:ProductConstants.PRODUCT_NAME}" />
                 <TextBlock
                     Grid.Row="1"
                     Margin="0,100,0,0"
@@ -466,8 +467,24 @@
                 HorizontalAlignment="Center"
                 FontSize="20"
                 FontWeight="Medium"
-                Foreground="#fefefe"
-                Text="{DynamicResource TrLblInstalling}" />
+                Foreground="#fefefe">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Text" Value="{DynamicResource TrLblInstalling}" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ModifyAction}" Value="{x:Static vmEnums:ClipboxModifyAction.Uninstall}">
+                                <Setter Property="Text" Value="{DynamicResource TrLblUninstalling}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ModifyAction}" Value="{x:Static vmEnums:ClipboxModifyAction.Repair}">
+                                <Setter Property="Text" Value="{DynamicResource TrLblRepairing}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ModifyAction}" Value="{x:Static vmEnums:ClipboxModifyAction.Modify}">
+                                <Setter Property="Text" Value="{DynamicResource TrLblModifying}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
 
             <ProgressBar
                 Grid.Row="2"
@@ -818,10 +835,7 @@
 
         </Grid>
 
-        <Grid
-            Name="ModifyReadyPage"
-            Grid.Row="1"
-            Visibility="Collapsed">
+        <Grid Name="ModifyReadyPage" Grid.Row="1">
             <Grid.Style>
                 <Style TargetType="Grid">
                     <Setter Property="Visibility" Value="Collapsed" />
@@ -912,13 +926,22 @@
                 Grid.Row="2"
                 Width="170"
                 Height="45"
-                Margin="10"
+                Margin="0,80,0,0"
                 HorizontalAlignment="Center"
+                Command="{Binding QuitCommand}"
                 Content="{DynamicResource TrBtnOperationComplete}"
-                FontSize="16"
-                IsEnabled="{Binding IsRestartRequired}"
-                Style="{StaticResource BtnDefaultAction}"
-                Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                FontSize="16">
+                <Button.Style>
+                    <Style BasedOn="{StaticResource BtnDefaultAction}" TargetType="Button">
+                        <Setter Property="Visibility" Value="Visible" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsRestartRequired}" Value="True">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
         </Grid>
 
     </Grid>
