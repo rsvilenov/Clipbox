@@ -10,7 +10,15 @@
 
         public const string WIX_BUNDLE_UPGRADE_CODE = "555C5BB0-4DFA-4559-871F-1408F39A2987";
 
+        public const string MSI_PACKAGE_ID = "ClipboxPackageId";
+
         public const string COMPANY_NAME = "MyCompany";
+
+        public const string PRODUCT_UPDATE_URL = "https://clipbox.org/update";
+
+        public const string PRODUCT_EULA_URL = "https://clipbox.org/eula";
+
+        public const string PRODUCT_PRIVACY_POLICY_URL = "https://clipbox.org/privacy";
 
         public const string MAIN_PROCESS_EXE_NAME = "Clipbox.exe";
 

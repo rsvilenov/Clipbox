@@ -200,13 +200,13 @@
                     <LineBreak />
                     <Run
                         Cursor="Hand"
-                        Hyperlink.Click="Run_Click"
+                        Hyperlink.Click="LicenseAgreementLink_Click"
                         Text="{DynamicResource TrLblAgreementEULA}"
                         TextDecorations="Underline" />
                     <Run Text="{DynamicResource TrLblAgreementAnd}" />
                     <Run
                         Cursor="Hand"
-                        Hyperlink.Click="Run_Click"
+                        Hyperlink.Click="PrivacyPolicyLink_Click"
                         Text="{DynamicResource TrLblAgreementPrivacyPolicy}"
                         TextDecorations="Underline" />
                 </TextBlock>

@@ -82,6 +82,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModel\BindableObject.cs" />
     <Compile Include="ViewModel\DelegateCommand.cs" />
+    <Compile Include="ViewModel\Enums\ClipboxModifyAction.cs" />
+    <Compile Include="ViewModel\Enums\ClipboxSetupState.cs" />
+    <Compile Include="ViewModel\Enums\ClipboxSetupWorkflow.cs" />
     <Compile Include="ViewModel\Enums\InstallState.cs" />
     <Compile Include="ViewModel\Enums\UpdateState.cs" />
     <Compile Include="ViewModel\InstallViewModel.cs" />

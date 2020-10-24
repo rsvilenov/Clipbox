@@ -81,8 +81,14 @@ namespace Setup.WixSetup.View
             _quitConfirmationMre.Set();
         }
 
-        private void Run_Click(object sender, RoutedEventArgs e)
+        private void LicenseAgreementLink_Click(object sender, RoutedEventArgs e)
         {
+            System.Diagnostics.Process.Start(ProductConstants.PRODUCT_EULA_URL);
+        }
+
+        private void PrivacyPolicyLink_Click(object sender, RoutedEventArgs e)
+        {
+            System.Diagnostics.Process.Start(ProductConstants.PRODUCT_PRIVACY_POLICY_URL);
         }
 
         private void CaptionGrid_MouseDown(object sender, MouseButtonEventArgs e)

@@ -125,7 +125,7 @@ namespace Clipbox.WixSetup
                     },
                     new MsiPackage(msiPackagePath)
                     {
-                        Id=$"{ProductConstants.PRODUCT_NAME}PackageId",
+                        Id = ProductConstants.MSI_PACKAGE_ID,
                         DisplayInternalUI = false,
                         Visible = false,
                         Vital = true
