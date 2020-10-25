@@ -726,10 +726,7 @@
 
         </Grid>
 
-        <Grid
-            Name="UninstallModifyPage"
-            Grid.Row="1"
-            Visibility="Visible">
+        <Grid Name="UninstallModifyPage" Grid.Row="1">
             <Grid.Style>
                 <Style TargetType="Grid">
                     <Setter Property="Visibility" Value="Collapsed" />
