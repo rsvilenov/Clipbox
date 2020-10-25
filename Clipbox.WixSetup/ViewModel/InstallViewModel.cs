@@ -52,7 +52,7 @@ namespace Clipbox.WixSetup.ViewModel
             RepairCommand = new DelegateCommand(() => RequestSetupAction(LaunchAction.Repair), () => !_isSetupActionRequested);
             UpdateCommand = new DelegateCommand(() => RequestSetupAction(LaunchAction.UpdateReplace), () => !_isSetupActionRequested);
             UpdateLinkCommand = new DelegateCommand(UpdateLinkCommandHandler, () => !_isSetupActionRequested);
-            ModifyCommand = new DelegateCommand(() => throw new NotImplementedException(nameof(ModifyCommand)));
+            ModifyCommand = new DelegateCommand(ModifyCommandHandler, ModifyCommandHandlerCanExecuteHandler);
             RetryCommand = new DelegateCommand(RetryCommandHandler, () => !_isSetupActionRequested);
 
             _model.BootstrapperApplication.DetectBegin += BootstrapperApplication_DetectBegin;
@@ -71,6 +71,17 @@ namespace Clipbox.WixSetup.ViewModel
             _model.BootstrapperApplication.ExecuteMsiMessage += BootstrapperApplication_ExecuteMsiMessage;
             _model.BootstrapperApplication.ExecutePackageBegin += BootstrapperApplication_ExecutePackageBegin;
             _model.BootstrapperApplication.ExecutePackageComplete += BootstrapperApplication_ExecutePackageComplete;
+        }
+
+        private bool ModifyCommandHandlerCanExecuteHandler()
+        {
+            return true;
+            //Process.GetProcessesByName("")
+        }
+
+        private void ModifyCommandHandler()
+        {
+            
         }
 
         private void CancelCommandHandler()

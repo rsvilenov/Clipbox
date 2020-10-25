@@ -726,7 +726,10 @@
 
         </Grid>
 
-        <Grid Name="UninstallModifyPage" Grid.Row="1">
+        <Grid
+            Name="UninstallModifyPage"
+            Grid.Row="1"
+            Visibility="Visible">
             <Grid.Style>
                 <Style TargetType="Grid">
                     <Setter Property="Visibility" Value="Collapsed" />
@@ -860,6 +863,7 @@
                         </StackPanel>
                     </Button>
 
+                    <!--  for now this button will just open the settings page  -->
                     <Button
                         Grid.Row="3"
                         Width="150"

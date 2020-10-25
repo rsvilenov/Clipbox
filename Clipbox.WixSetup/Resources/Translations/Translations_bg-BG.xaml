@@ -39,7 +39,7 @@
     <sys:String x:Key="TrLblModifyInfo">Имате проблеми? Искате да конфигурирате инсталацията? Вие сте на правилното място.</sys:String>
     <sys:String x:Key="TrBtnUpdate">ОБНОВИ</sys:String>
     <sys:String x:Key="TrBtnRepair">ПОПРАВИ</sys:String>
-    <sys:String x:Key="TrBtnModify">ПРОМЕНИ</sys:String>
+    <sys:String x:Key="TrBtnModify">НАСТРОЙ</sys:String>
     <sys:String x:Key="TrBtnUninstall">ДЕИНСТАЛИРАЙ</sys:String>
     <sys:String x:Key="TrBtnRestartNow">Рестартирай сега</sys:String>
     <sys:String x:Key="TrBtnRestartLater">Рестартирай по-късно</sys:String>

@@ -39,7 +39,7 @@
     <sys:String x:Key="TrLblModifyInfo">Having issues? Want to customize yout installation? You are in the right place.</sys:String>
     <sys:String x:Key="TrBtnUpdate">UPDATE</sys:String>
     <sys:String x:Key="TrBtnRepair">REPAIR</sys:String>
-    <sys:String x:Key="TrBtnModify">MODIFY</sys:String>
+    <sys:String x:Key="TrBtnModify">TWEAK</sys:String>
     <sys:String x:Key="TrBtnUninstall">UNINSTALL</sys:String>
     <sys:String x:Key="TrBtnRestartNow">Restart now</sys:String>
     <sys:String x:Key="TrBtnRestartLater">Restart later</sys:String>
