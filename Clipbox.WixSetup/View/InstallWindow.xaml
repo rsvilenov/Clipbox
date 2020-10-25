@@ -926,7 +926,7 @@
                 Grid.Row="2"
                 Width="170"
                 Height="45"
-                Margin="0,80,0,0"
+                Margin="0,100,0,0"
                 HorizontalAlignment="Center"
                 Command="{Binding QuitCommand}"
                 Content="{DynamicResource TrBtnOperationComplete}"

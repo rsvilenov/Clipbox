@@ -100,9 +100,18 @@ namespace Clipbox.WixSetup.ViewModel
                 case LaunchAction.Modify:
                     ModifyAction = ClipboxModifyAction.Modify;
                     break;
+                case LaunchAction.Install:
+                    SetBurnVariables();
+                    break;
             }
 
             _model.PlanAction(launchAction);
+        }
+
+        private void SetBurnVariables()
+        {
+            _model.SetBurnVariable("CreateDesktopShortcut", CreateDesktopShortcut.ToString());
+            _model.SetBurnVariable("ACTUAL_INSTALLDIR", InstallationDirectory);
         }
 
         private void UpdateLinkCommandHandler()

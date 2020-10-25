@@ -7,6 +7,7 @@
       <Payload SourceFile="bin\Debug\Microsoft.Deployment.WindowsInstaller.dll" />
     </BootstrapperApplicationRef>
 
+    <Variable Name="ACTUAL_INSTALLDIR" Value="%ProgramFiles%\MyCompany\Clipbox" Persisted="yes" />
     <Variable Name="VCPlusPlus2015_x64_RequiredVersion" Value="14.27.29112" Persisted="yes" Type="version" />
     <Variable Name="VCPlusPlus2015_x86_RequiredVersion" Value="14.27.29112" Persisted="yes" Type="version" />
     <Variable Name="Netfx4FullVersion_RequiredVersion" Value="4.7.2" Persisted="yes" Type="version" />
@@ -17,6 +18,7 @@
       <ExePackage Name="Microsoft Visual C++ Redistributable for Visual Studio 2015, 2017 and 2019." InstallCommand="/install /quiet /norestart /ChainingPackage &quot;[Clipbox]&quot;" PerMachine="yes" DetectCondition="VCPlusPlus2015_x64 &gt;= VCPlusPlus2015_x64_RequiredVersion" Permanent="yes" SourceFile="redist\VC_redist.x64.exe" Compressed="yes" Vital="yes" />
 
       <MsiPackage Id="ClipboxPackageId" DisplayInternalUI="no" Visible="no" SourceFile="Clipbox.msi" Vital="yes">
+        <MsiProperty Name="INSTALLDIR" Value="[ACTUAL_INSTALLDIR]" />
         <MsiProperty Name="WIXBUNDLEORIGINALSOURCE" Value="[WixBundleOriginalSource]" />
       </MsiPackage>
     </Chain>

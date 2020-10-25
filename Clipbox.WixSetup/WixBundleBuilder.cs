@@ -48,7 +48,6 @@ namespace Clipbox.WixSetup
             var project =
                 new ManagedProject(ProductConstants.PRODUCT_NAME,
                     new Dir(new Id("INSTALLDIR"),
-                    INSTALL_DIRECTORY,
                         new Files($@"{releaseDirectory}\*", f =>
                             !f.EndsWith(ProductConstants.SERVICE_EXE_NAME)
                             && !f.EndsWith(".pdb")
@@ -66,6 +65,10 @@ namespace Clipbox.WixSetup
                     UI = WUI.WixUI_Minimal,
                     InstallPrivileges = InstallPrivileges.elevated
                 };
+
+            // add a default install dir for the msi package
+            // it will be overridden by the bundle...
+            project.WixVariables.Add("INSTALLDIR", INSTALL_DIRECTORY);
 
             project.BeforeInstall += args =>
             {
@@ -128,7 +131,10 @@ namespace Clipbox.WixSetup
                         Id = ProductConstants.MSI_PACKAGE_ID,
                         DisplayInternalUI = false,
                         Visible = false,
-                        Vital = true
+                        Vital = true,
+                        // pass the custom install dir property to the MSI package.
+                        // this property is defined in bootstrapper.Variables below.
+                        MsiProperties = "INSTALLDIR=[ACTUAL_INSTALLDIR]"
                     })
                 {
                     Version = new Version(majorVersion, minorVersion),
@@ -163,6 +169,10 @@ namespace Clipbox.WixSetup
 
             bootstrapper.Variables = new[]
             {
+                // make it known that we will use a custom property for the install dir
+                // and set its value to the default location. It can be overridden by the UI.
+                new Variable ("ACTUAL_INSTALLDIR", INSTALL_DIRECTORY),
+
                 new Variable("VCPlusPlus2015_x64_RequiredVersion")
                 {
                          Type = WixSharp.VariableType.version,
