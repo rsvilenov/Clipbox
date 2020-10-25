@@ -168,9 +168,8 @@
             </StackPanel>
         </Grid>
 
-
-        <!--  first page  -->
-        <Grid Name="FirstPage" Grid.Row="1">
+        <!--  welcome page  -->
+        <Grid Grid.Row="1">
             <Grid.Style>
                 <Style TargetType="Grid">
                     <Setter Property="Visibility" Value="Collapsed" />
@@ -185,188 +184,193 @@
                     </Style.Triggers>
                 </Style>
             </Grid.Style>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-            <ContentControl
-                Grid.Row="0"
-                Height="100"
-                Margin="0,70,0,0"
-                Foreground="White"
-                Template="{StaticResource LogoIcon}" />
-            <Grid
-                Grid.Row="1"
-                Margin="0,50,0,0"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center">
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
-                    <RowDefinition />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-                <TextBlock
-                    Grid.Row="0"
-                    Margin="0,0,0,30"
-                    HorizontalAlignment="Center"
-                    FontSize="46"
-                    Foreground="White"
-                    Text="{x:Static mainNs:ProductConstants.PRODUCT_NAME}" />
-                <TextBlock
-                    Grid.Row="1"
-                    FontSize="16"
-                    Foreground="White"
-                    TextAlignment="Center">
-                    <Run Text="{DynamicResource TrLblAgreementIntro}" />
-                    <LineBreak />
-                    <Run
-                        Cursor="Hand"
-                        MouseLeftButtonUp="LicenseAgreementLink_MouseLeftButtonUp"
-                        Text="{DynamicResource TrLblAgreementEULA}"
-                        TextDecorations="Underline" />
-                    <Run Text="{DynamicResource TrLblAgreementAnd}" />
-                    <Run
-                        Cursor="Hand"
-                        MouseLeftButtonUp="PrivacyPolicyLink_MouseLeftButtonUp"
-                        Text="{DynamicResource TrLblAgreementPrivacyPolicy}"
-                        TextDecorations="Underline" />
-                </TextBlock>
 
+            <!--  first page  -->
+            <Grid Name="FirstPage">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <ContentControl
+                    Grid.Row="0"
+                    Height="100"
+                    Margin="0,70,0,0"
+                    Foreground="White"
+                    Template="{StaticResource LogoIcon}" />
+                <Grid
+                    Grid.Row="1"
+                    Margin="0,50,0,0"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <TextBlock
+                        Grid.Row="0"
+                        Margin="0,0,0,30"
+                        HorizontalAlignment="Center"
+                        FontSize="46"
+                        Foreground="White"
+                        Text="{x:Static mainNs:ProductConstants.PRODUCT_NAME}" />
+                    <TextBlock
+                        Grid.Row="1"
+                        FontSize="16"
+                        Foreground="White"
+                        TextAlignment="Center">
+                        <Run Text="{DynamicResource TrLblAgreementIntro}" />
+                        <LineBreak />
+                        <Run
+                            Cursor="Hand"
+                            MouseLeftButtonUp="LicenseAgreementLink_MouseLeftButtonUp"
+                            Text="{DynamicResource TrLblAgreementEULA}"
+                            TextDecorations="Underline" />
+                        <Run Text="{DynamicResource TrLblAgreementAnd}" />
+                        <Run
+                            Cursor="Hand"
+                            MouseLeftButtonUp="PrivacyPolicyLink_MouseLeftButtonUp"
+                            Text="{DynamicResource TrLblAgreementPrivacyPolicy}"
+                            TextDecorations="Underline" />
+                    </TextBlock>
+
+                    <Button
+                        Grid.Row="2"
+                        Width="180"
+                        Height="50"
+                        Margin="0,30,0,0"
+                        BorderThickness="0"
+                        Command="{Binding InstallCommand}"
+                        Content="{DynamicResource TrBtnInstall}"
+                        FontSize="18"
+                        Style="{StaticResource BtnDefaultAction}" />
+
+                    <TextBlock
+                        Grid.Row="3"
+                        Width="Auto"
+                        Margin="0,10,0,0"
+                        Cursor="Hand"
+                        FontSize="18"
+                        Foreground="White"
+                        MouseLeftButtonUp="Customize_MouseLeftButtonUp"
+                        Text="{DynamicResource TrLnkCustomInstall}"
+                        TextAlignment="Center"
+                        TextDecorations="Underline" />
+
+                </Grid>
+            </Grid>
+
+            <!--  custom install  -->
+            <Grid
+                Name="CustomInstallPage"
+                Grid.Row="1"
+                VerticalAlignment="Stretch"
+                Visibility="Collapsed">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="931*" />
+                    <ColumnDefinition Width="81*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="60" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="100" />
+                </Grid.RowDefinitions>
+                <StackPanel
+                    Grid.Row="0"
+                    Grid.ColumnSpan="2"
+                    Margin="10,0,0,0"
+                    Orientation="Horizontal">
+                    <Button
+                        Name="BtnInstalloptionsBack"
+                        Width="50"
+                        Height="40"
+                        Click="BtnInstalloptionsBack_Click"
+                        Style="{StaticResource BtnBack}" />
+                    <TextBlock
+                        Margin="20,0,0,0"
+                        VerticalAlignment="Center"
+                        FontSize="30"
+                        Foreground="White"
+                        Text="{DynamicResource TrLblInstallOptions}"
+                        TextAlignment="Left" />
+                </StackPanel>
+                <Grid
+                    Grid.Row="1"
+                    Grid.ColumnSpan="2"
+                    Margin="80,80">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock
+                        Grid.Row="0"
+                        FontSize="16"
+                        Foreground="#f0f0bd"
+                        Text="{DynamicResource TrLblInstallLocation}" />
+
+                    <Grid
+                        Grid.Row="1"
+                        Height="50"
+                        HorizontalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition Width="120" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox
+                            Grid.Column="0"
+                            Height="40"
+                            Padding="5"
+                            VerticalContentAlignment="Center"
+                            Background="Transparent"
+                            BorderBrush="#f0f0bd"
+                            BorderThickness="1"
+                            FontSize="18"
+                            Foreground="#f0f0bd"
+                            Style="{StaticResource DefaultTextBox}"
+                            Text="{Binding InstallationDirectory}" />
+                        <Button
+                            Name="BtnChangeInstallDirectory"
+                            Grid.Column="1"
+                            Width="100"
+                            Height="40"
+                            Margin="10,0,0,0"
+                            VerticalContentAlignment="Center"
+                            Click="BtnChangeInstallDirectory_Click"
+                            Content="{DynamicResource TrBtnChangeInstallDir}"
+                            FontSize="16"
+                            Style="{StaticResource BtnActionDark}" />
+                    </Grid>
+
+                    <ToggleButton
+                        Grid.Row="3"
+                        Height="30"
+                        Margin="0,30,0,0"
+                        HorizontalAlignment="Left"
+                        Content="{DynamicResource TrChkBoxDesktopShortcut}"
+                        FontSize="16"
+                        Foreground="#f0f0bd"
+                        IsChecked="{Binding CreateDesktopShortcut}"
+                        Style="{StaticResource CheckBox}" />
+
+                </Grid>
                 <Button
                     Grid.Row="2"
+                    Grid.ColumnSpan="2"
                     Width="180"
                     Height="50"
-                    Margin="0,30,0,0"
+                    Margin="0,25,15,25"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
                     BorderThickness="0"
                     Command="{Binding InstallCommand}"
                     Content="{DynamicResource TrBtnInstall}"
                     FontSize="18"
                     Style="{StaticResource BtnDefaultAction}" />
-
-                <TextBlock
-                    Grid.Row="3"
-                    Width="Auto"
-                    Margin="0,10,0,0"
-                    Cursor="Hand"
-                    FontSize="18"
-                    Foreground="White"
-                    MouseLeftButtonUp="Customize_MouseLeftButtonUp"
-                    Text="{DynamicResource TrLnkCustomInstall}"
-                    TextAlignment="Center"
-                    TextDecorations="Underline" />
-
             </Grid>
-        </Grid>
 
-        <!--  custom install  -->
-        <Grid
-            Name="CustomInstallPage"
-            Grid.Row="1"
-            VerticalAlignment="Stretch"
-            Visibility="Collapsed">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="931*" />
-                <ColumnDefinition Width="81*" />
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="60" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="100" />
-            </Grid.RowDefinitions>
-            <StackPanel
-                Grid.Row="0"
-                Grid.ColumnSpan="2"
-                Margin="10,0,0,0"
-                Orientation="Horizontal">
-                <Button
-                    Name="BtnInstalloptionsBack"
-                    Width="50"
-                    Height="40"
-                    Click="BtnInstalloptionsBack_Click"
-                    Style="{StaticResource BtnBack}" />
-                <TextBlock
-                    Margin="20,0,0,0"
-                    VerticalAlignment="Center"
-                    FontSize="30"
-                    Foreground="White"
-                    Text="{DynamicResource TrLblInstallOptions}"
-                    TextAlignment="Left" />
-            </StackPanel>
-            <Grid
-                Grid.Row="1"
-                Grid.ColumnSpan="2"
-                Margin="80,80">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-
-                <TextBlock
-                    Grid.Row="0"
-                    FontSize="16"
-                    Foreground="#f0f0bd"
-                    Text="{DynamicResource TrLblInstallLocation}" />
-
-                <Grid
-                    Grid.Row="1"
-                    Height="50"
-                    HorizontalAlignment="Stretch">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition />
-                        <ColumnDefinition Width="120" />
-                    </Grid.ColumnDefinitions>
-                    <TextBox
-                        Grid.Column="0"
-                        Height="40"
-                        Padding="5"
-                        VerticalContentAlignment="Center"
-                        Background="Transparent"
-                        BorderBrush="#f0f0bd"
-                        BorderThickness="1"
-                        FontSize="18"
-                        Foreground="#f0f0bd"
-                        Style="{StaticResource DefaultTextBox}"
-                        Text="{Binding InstallationDirectory}" />
-                    <Button
-                        Name="BtnChangeInstallDirectory"
-                        Grid.Column="1"
-                        Width="100"
-                        Height="40"
-                        Margin="10,0,0,0"
-                        VerticalContentAlignment="Center"
-                        Click="BtnChangeInstallDirectory_Click"
-                        Content="{DynamicResource TrBtnChangeInstallDir}"
-                        FontSize="16"
-                        Style="{StaticResource BtnActionDark}" />
-                </Grid>
-
-                <ToggleButton
-                    Grid.Row="3"
-                    Height="30"
-                    Margin="0,30,0,0"
-                    HorizontalAlignment="Left"
-                    Content="{DynamicResource TrChkBoxDesktopShortcut}"
-                    FontSize="16"
-                    Foreground="#f0f0bd"
-                    IsChecked="{Binding CreateDesktopShortcut}"
-                    Style="{StaticResource CheckBox}" />
-
-            </Grid>
-            <Button
-                Grid.Row="2"
-                Grid.ColumnSpan="2"
-                Width="180"
-                Height="50"
-                Margin="0,25,15,25"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Center"
-                BorderThickness="0"
-                Command="{Binding InstallCommand}"
-                Content="{DynamicResource TrBtnInstall}"
-                FontSize="18"
-                Style="{StaticResource BtnDefaultAction}" />
         </Grid>
 
         <!--  update welcome page  -->
