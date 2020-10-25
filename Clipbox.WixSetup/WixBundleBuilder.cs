@@ -13,8 +13,9 @@ namespace Clipbox.WixSetup
 
         static public void Setup()
         {
-            int majorVersion = (int)Math.Floor(ProductConstants.PRODUCT_VERSION);
-            int minorVersion = (int)ProductConstants.PRODUCT_VERSION % 1;
+            Version productVersion = new Version(ProductConstants.PRODUCT_VERSION.ToString("#.##"));
+            //int majorVersion = (int)Math.Floor(ProductConstants.PRODUCT_VERSION);
+            //int minorVersion = (int)ProductConstants.PRODUCT_VERSION % 1;
 #if DEBUG
             string releaseDirectory = @"..\Build\Debug\";
 #elif RELEASE
@@ -59,7 +60,7 @@ namespace Clipbox.WixSetup
                     new ElevatedManagedAction(CustomActions.InstallDeskband, Return.check, When.Before, Step.StartServices, WixSharp.Condition.NOT_Installed),
                     new ElevatedManagedAction(CustomActions.UnInstallDeskband, Return.check, When.Before, Step.RemoveFiles, WixSharp.Condition.BeingUninstalled))
                 {
-                    Version = new Version(majorVersion, minorVersion),
+                    Version = productVersion,
                     GUID = new Guid(ProductConstants.PRODUCT_GUID),
                     InstallScope = InstallScope.perMachine,
                     UI = WUI.WixUI_Minimal,
@@ -94,7 +95,7 @@ namespace Clipbox.WixSetup
 
             var bootstrapper =
                 new Bundle(ProductConstants.PRODUCT_NAME,
-                new PackageGroupRef("NetFx461Redist"),
+                new PackageGroupRef("NetFx461Web"),
                     // Windows 10 has .net 4.6.0 preinstalled (guaranteed)
                     //new ExePackage(@"redist\NDP472-KB4054530-x86-x64-AllOS-ENU.exe")
                     //{
@@ -137,7 +138,7 @@ namespace Clipbox.WixSetup
                         MsiProperties = "INSTALLDIR=[ACTUAL_INSTALLDIR]"
                     })
                 {
-                    Version = new Version(majorVersion, minorVersion),
+                    Version = productVersion,
                     Manufacturer = ProductConstants.COMPANY_NAME,
                     UpgradeCode = new Guid(ProductConstants.WIX_BUNDLE_UPGRADE_CODE),
                     OutFileName = ProductConstants.PRODUCT_NAME

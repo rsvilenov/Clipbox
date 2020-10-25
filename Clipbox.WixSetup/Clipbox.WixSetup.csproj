@@ -153,6 +153,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="readme.txt" />
+    <Content Include="redist\NDP461-KB3102438-Web.exe" />
     <Content Include="redist\VC_redist.x64.exe" />
     <Content Include="redist\VC_redist.x86.exe" />
   </ItemGroup>

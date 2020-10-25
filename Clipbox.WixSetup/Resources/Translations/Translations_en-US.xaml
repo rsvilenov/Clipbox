@@ -49,4 +49,6 @@
     <sys:String x:Key="TrLblModified">Your Clipbox was modified successfully.</sys:String>
     <sys:String x:Key="TrLblReadyForUpdate">The installed version of Clipbox is old. Click the button below to update it.</sys:String>
     <sys:String x:Key="TrLblRestartRequired">Some files may stay where they are until the computer is restarted.</sys:String>
+    <sys:String x:Key="TrLblInitialLoading">Loading...</sys:String>
+    <sys:String x:Key="TrLblNewerVersionInstalled">A newer version of Clipbox is already installed.</sys:String>
 </ResourceDictionary>

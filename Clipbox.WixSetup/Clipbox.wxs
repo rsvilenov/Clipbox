@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension" xmlns:bal="http://schemas.microsoft.com/wix/BalExtension" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension" xmlns:dep="http://schemas.microsoft.com/wix/DependencyExtension">
-  <Bundle Name="Clipbox" Manufacturer="MyCompany" UpgradeCode="555c5bb0-4dfa-4559-871f-1408f39a2987" Version="1.0" dep:ProviderKey="01234567-8901-2345-6789-012345678901" >
+  <Bundle Name="Clipbox" Manufacturer="MyCompany" UpgradeCode="555c5bb0-4dfa-4559-871f-1408f39a2987" Version="1.2" dep:ProviderKey="01234567-8901-2345-6789-012345678901" >
     <BootstrapperApplicationRef Id="ManagedBootstrapperApplicationHost">
       <Payload SourceFile="Clipbox.WixSetup.exe" />
       <Payload SourceFile="BootstrapperCore.config" />
@@ -13,7 +13,7 @@
     <Variable Name="Netfx4FullVersion_RequiredVersion" Value="4.7.2" Persisted="yes" Type="version" />
 
     <Chain>
-      <PackageGroupRef Id="NetFx461Redist" />
+      <PackageGroupRef Id="NetFx461Web" />
 
       <ExePackage Name="Microsoft Visual C++ Redistributable for Visual Studio 2015, 2017 and 2019." InstallCommand="/install /quiet /norestart /ChainingPackage &quot;[Clipbox]&quot;" PerMachine="yes" DetectCondition="VCPlusPlus2015_x64 &gt;= VCPlusPlus2015_x64_RequiredVersion" Permanent="yes" SourceFile="redist\VC_redist.x64.exe" Compressed="yes" Vital="yes" />
 

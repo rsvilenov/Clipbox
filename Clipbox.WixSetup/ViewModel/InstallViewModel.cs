@@ -6,7 +6,9 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace Clipbox.WixSetup.ViewModel
 {
@@ -34,6 +36,7 @@ namespace Clipbox.WixSetup.ViewModel
         private int _cacheProgress;
         private int _executeProgress;
         private LaunchAction _lastLaunchAction;
+        private Version _installedVersion;
 
         public InstallViewModel(BootstrapperApplicationModel model)
         {
@@ -55,6 +58,8 @@ namespace Clipbox.WixSetup.ViewModel
             _model.BootstrapperApplication.DetectBegin += BootstrapperApplication_DetectBegin;
             _model.BootstrapperApplication.DetectComplete += BootstrapperApplication_DetectComplete;
             _model.BootstrapperApplication.DetectPackageComplete += BootstrapperApplication_DetectPackageComplete;
+            _model.BootstrapperApplication.DetectRelatedBundle += BootstrapperApplication_DetectRelatedBundle;
+            _model.BootstrapperApplication.DetectRelatedMsiPackage += BootstrapperApplication_DetectRelatedMsiPackage;
             _model.BootstrapperApplication.PlanBegin += BootstrapperApplication_PlanBegin;
             _model.BootstrapperApplication.PlanComplete += BootstrapperApplication_PlanComplete;
             _model.BootstrapperApplication.ApplyBegin += BootstrapperApplication_ApplyBegin;
@@ -160,12 +165,18 @@ namespace Clipbox.WixSetup.ViewModel
         {
             IsRestartRequired = e.Restart == ApplyRestart.RestartRequired;
             _model.FinalResult = e.Status;
-            SetupState = ClipboxSetupState.Done;
+            if (SetupState != ClipboxSetupState.Error)
+            {
+                SetupState = ClipboxSetupState.Done;
+            }
         }
 
         private void BootstrapperApplication_ApplyBegin(object sender, ApplyBeginEventArgs e)
         {
-            SetupState = ClipboxSetupState.Processing;
+            if (SetupState != ClipboxSetupState.Error)
+            {
+                SetupState = ClipboxSetupState.Processing;
+            }
         }
 
         private void BootstrapperApplication_PlanBegin(object sender, PlanBeginEventArgs e)
@@ -181,39 +192,71 @@ namespace Clipbox.WixSetup.ViewModel
                 return;
             }
 
-            SetupState = ClipboxSetupState.Processing;
+            if (SetupState != ClipboxSetupState.Error)
+            {
+                SetupState = ClipboxSetupState.Processing;
+            }
 
             _model.ApplyAction();
+        }
+
+        private void BootstrapperApplication_DetectRelatedMsiPackage(object sender, DetectRelatedMsiPackageEventArgs e)
+        {
+            _installedVersion = e.Version;
+        }
+
+        private void BootstrapperApplication_DetectRelatedBundle(object sender, DetectRelatedBundleEventArgs e)
+        {
+            _installedVersion = e.Version;
         }
 
         private void BootstrapperApplication_DetectPackageComplete(object sender, Microsoft.Tools.WindowsInstallerXml.Bootstrapper.DetectPackageCompleteEventArgs e)
         {
             if (e.PackageId.Equals(ProductConstants.MSI_PACKAGE_ID, StringComparison.Ordinal))
             {
-                SetupWorkflow = e.State == PackageState.Present 
-                    ? ClipboxSetupWorkflow.Modify : ClipboxSetupWorkflow.Install;
+                if (e.State == PackageState.Present)
+                {
+                    SetupWorkflow = ClipboxSetupWorkflow.Modify;
+                }
+                else
+                {
+                    Version bundleVersion = _model.BootstrapperApplication.Engine.VersionVariables["WixBundleVersion"];
+                    if (_installedVersion > bundleVersion)
+                    {
+                        // newer version alredy installed
+                        IsNewerVersionAlreadyInstalled = true;
+                    }
+                    else if (_installedVersion < bundleVersion)
+                    {
+                        SetupWorkflow = ClipboxSetupWorkflow.Update;
+                    }
+                    else if (_installedVersion == bundleVersion)
+                    {
+                        SetupWorkflow = ClipboxSetupWorkflow.Modify;
+                    }
+                    else
+                    {
+                        SetupWorkflow = ClipboxSetupWorkflow.Install;
+                    }
+                }
             }
         }
 
         private void BootstrapperApplication_DetectBegin(object sender, Microsoft.Tools.WindowsInstallerXml.Bootstrapper.DetectBeginEventArgs e)
         {
             IsDetectionOngoing = true;
+            if (SetupState != ClipboxSetupState.Error)
+            {
+                SetupState = ClipboxSetupState.Loading;
+            }
         }
 
         private void BootstrapperApplication_DetectComplete(object sender, Microsoft.Tools.WindowsInstallerXml.Bootstrapper.DetectCompleteEventArgs e)
         {
             IsDetectionOngoing = false;
-            switch (_model.BootstrapperApplication.Command.Action)
+            if (SetupState != ClipboxSetupState.Error)
             {
-                case LaunchAction.Uninstall:
-                    SetupWorkflow = ClipboxSetupWorkflow.Modify;
-                    break;
-                case LaunchAction.UpdateReplace:
-                    SetupWorkflow = ClipboxSetupWorkflow.Update;
-                    break;
-                case LaunchAction.Install:
-                    SetupWorkflow = ClipboxSetupWorkflow.Install;
-                    break;
+                SetupState = ClipboxSetupState.Welcome;
             }
         }
 
@@ -282,6 +325,13 @@ namespace Clipbox.WixSetup.ViewModel
         {
             get { return _isDetectionOngoing; }
             set { SetField(ref _isDetectionOngoing, value, () => IsDetectionOngoing); }
+        }
+
+        private bool _isNewerVersionAlreadyInstalled;
+        public bool IsNewerVersionAlreadyInstalled
+        {
+            get { return _isNewerVersionAlreadyInstalled; }
+            set { SetField(ref _isNewerVersionAlreadyInstalled, value, () => IsNewerVersionAlreadyInstalled); }
         }
 
         private ClipboxSetupState _setupState;
@@ -367,7 +417,7 @@ namespace Clipbox.WixSetup.ViewModel
             Task.Factory.StartNew(() => 
             {
                 CancelEventArgs args = new CancelEventArgs();
-                if ((SetupState == ClipboxSetupState.Welcome && SetupWorkflow != ClipboxSetupWorkflow.Modify)
+                if ((SetupState == ClipboxSetupState.Welcome && SetupWorkflow != ClipboxSetupWorkflow.Modify && !_isNewerVersionAlreadyInstalled)
                     || SetupState == ClipboxSetupState.Preparing
                     || SetupState == ClipboxSetupState.Processing)
                 {

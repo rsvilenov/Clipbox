@@ -168,6 +168,70 @@
             </StackPanel>
         </Grid>
 
+
+        <!--  initial loading indicator  -->
+        <Grid Name="Loading" Grid.Row="1">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding SetupState}" Value="{x:Static vmEnums:ClipboxSetupState.Loading}">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            <TextBlock
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontSize="18"
+                Foreground="LightGray"
+                Text="{DynamicResource TrLblInitialLoading}"
+                TextAlignment="Center" />
+        </Grid>
+
+        <!--  newer version already installed  -->
+        <Grid Name="NewerVersionInstalled" Grid.Row="1">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsNewerVersionAlreadyInstalled}" Value="True">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            <Grid.RowDefinitions>
+                <RowDefinition />
+                <RowDefinition />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBlock
+                Grid.Row="0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontSize="26"
+                Foreground="LightGray"
+                Text="{DynamicResource TrLblNewerVersionInstalled}"
+                TextAlignment="Center" />
+            <ContentControl
+                Grid.Row="1"
+                Width="100"
+                Height="100"
+                Foreground="#c17819"
+                Template="{StaticResource SmileIcon}" />
+            <Button
+                Grid.Row="2"
+                Width="170"
+                Height="45"
+                HorizontalAlignment="Center"
+                Command="{Binding QuitCommand}"
+                Content="{DynamicResource TrBtnQuit}"
+                FontSize="16"
+                Style="{StaticResource BtnActionDark}" />
+        </Grid>
+
         <!--  welcome page  -->
         <Grid Grid.Row="1">
             <Grid.Style>
@@ -178,6 +242,7 @@
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding SetupWorkflow}" Value="{x:Static vmEnums:ClipboxSetupWorkflow.Install}" />
                                 <Condition Binding="{Binding SetupState}" Value="{x:Static vmEnums:ClipboxSetupState.Welcome}" />
+                                <Condition Binding="{Binding IsNewerVersionAlreadyInstalled}" Value="False" />
                             </MultiDataTrigger.Conditions>
                             <Setter Property="Visibility" Value="Visible" />
                         </MultiDataTrigger>

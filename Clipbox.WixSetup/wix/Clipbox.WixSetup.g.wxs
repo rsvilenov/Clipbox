@@ -6,7 +6,7 @@
 </auto-generated>
 -->
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="95a2cb1e-ad54-41f4-b1f0-d1e7977a7437" Name="Clipbox" Language="1033" Codepage="Windows-1252" Version="1.0" UpgradeCode="95a2cb1e-ad54-41f4-b1f0-d1e7876a7437" Manufacturer="rosen">
+  <Product Id="95a2cb1e-ad54-41f4-b1f0-d1e7979a7437" Name="Clipbox" Language="1033" Codepage="Windows-1252" Version="1.2" UpgradeCode="95a2cb1e-ad54-41f4-b1f0-d1e7876a7437" Manufacturer="rosen">
     <Package InstallerVersion="200" Compressed="yes" Platform="x64" SummaryCodepage="Windows-1252" InstallPrivileges="elevated" InstallScope="perMachine" Languages="1033" />
     <Media Id="1" Cabinet="Clipbox.cab" EmbedCab="yes" />
 

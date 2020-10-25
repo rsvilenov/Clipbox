@@ -2,6 +2,7 @@
 {
     public enum ClipboxSetupState
     {
+        Loading,
         Welcome,
         Preparing,
         Processing,
