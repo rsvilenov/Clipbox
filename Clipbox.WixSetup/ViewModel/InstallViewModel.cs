@@ -43,8 +43,10 @@ namespace Clipbox.WixSetup.ViewModel
         public InstallViewModel(BootstrapperApplicationModel model)
         {
             _model = model;
+
+            string programFilesDirectory = Environment.Is64BitOperatingSystem ? Environment.GetEnvironmentVariable("ProgramW6432") : Environment.GetEnvironmentVariable("ProgramFiles(x86)");
             InstallationDirectory =
-                System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), ProductConstants.COMPANY_NAME, ProductConstants.PRODUCT_NAME);
+                System.IO.Path.Combine(FindProperProgramFilesDir(), ProductConstants.COMPANY_NAME, ProductConstants.PRODUCT_NAME);
 
             QuitCommand = new DelegateCommand(QuitCommandHandler);
             CloseInstallWindowCommand = new DelegateCommand(CloseInstallWindowCommandHandler);
@@ -75,6 +77,17 @@ namespace Clipbox.WixSetup.ViewModel
             _model.BootstrapperApplication.ExecutePackageComplete += BootstrapperApplication_ExecutePackageComplete;
         }
 
+        private string FindProperProgramFilesDir()
+        {
+            if (Environment.Is64BitOperatingSystem && !Environment.Is64BitProcess)
+            {
+                return Environment.GetEnvironmentVariable("ProgramW6432");
+            }
+            else
+            {
+                return Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+            }
+        }
 
         private bool ModifyCommandHandlerCanExecuteHandler()
         {
@@ -96,25 +109,8 @@ namespace Clipbox.WixSetup.ViewModel
             try
             {
                 CheckIfGuardProcessIsRunning();
-                string installDir = "";
 
-                using (RegistryKey key = Registry.LocalMachine.OpenSubKey($@"Software\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}"))
-                {
-                    if (key != null)
-                    {
-                        installDir = key.GetValue("InstallDirectory") as string;
-                    }
-                }
-                if (installDir == null)
-                {
-                    using (RegistryKey key = Registry.LocalMachine.OpenSubKey($@"Software\Wow6432Node\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}"))
-                    {
-                        if (key != null)
-                        {
-                            installDir = key.GetValue("InstallDirectory") as string;
-                        }
-                    }
-                }
+                string installDir = GetInstallDirFromRegistry();
                 if (installDir == null)
                 {
                     throw new System.IO.DirectoryNotFoundException("Install directory not found in registry.");
@@ -123,7 +119,7 @@ namespace Clipbox.WixSetup.ViewModel
                 Process.Start(guardPath, ProductConstants.OPEN_SETTINGS_WINDOW_ARG);
                 QuitInstallerInternal(0);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 SetupState = ClipboxSetupState.Error;
                 ErrorMessage = ex.Message;
@@ -132,6 +128,32 @@ namespace Clipbox.WixSetup.ViewModel
             {
                 _isSetupActionRequested = false;
             }
+        }
+
+        private string GetInstallDirFromRegistry()
+        {
+            string installDir = null;
+
+            using (RegistryKey key = Registry.LocalMachine.OpenSubKey($@"Software\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}"))
+            {
+                if (key != null)
+                {
+                    installDir = key.GetValue("InstallDirectory") as string;
+                }
+            }
+
+            if (installDir == null)
+            {
+                using (RegistryKey key = Registry.LocalMachine.OpenSubKey($@"Software\Wow6432Node\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}"))
+                {
+                    if (key != null)
+                    {
+                        installDir = key.GetValue("InstallDirectory") as string;
+                    }
+                }
+            }
+
+            return installDir;
         }
 
         private bool CheckIfGuardProcessIsRunning()
