@@ -550,6 +550,9 @@
                             <DataTrigger Binding="{Binding ModifyAction}" Value="{x:Static vmEnums:ClipboxModifyAction.Modify}">
                                 <Setter Property="Text" Value="{DynamicResource TrLblModifying}" />
                             </DataTrigger>
+                            <DataTrigger Binding="{Binding SetupWorkflow}" Value="{x:Static vmEnums:ClipboxSetupWorkflow.Install}">
+                                <Setter Property="Text" Value="{DynamicResource TrLblInstalling}" />
+                            </DataTrigger>
                         </Style.Triggers>
                     </Style>
                 </TextBlock.Style>

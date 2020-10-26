@@ -1,10 +1,12 @@
 ﻿using Clipbox.WixSetup.Model;
 using Clipbox.WixSetup.ViewModel.Enums;
 using Microsoft.Tools.WindowsInstallerXml.Bootstrapper;
+using Microsoft.Win32;
 using Setup.WixSetup.ViewModel;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -35,7 +37,7 @@ namespace Clipbox.WixSetup.ViewModel
         private bool _isSetupActionRequested;
         private int _cacheProgress;
         private int _executeProgress;
-        private LaunchAction _lastLaunchAction;
+        private LaunchAction? _lastLaunchAction;
         private Version _installedVersion;
 
         public InstallViewModel(BootstrapperApplicationModel model)
@@ -53,7 +55,7 @@ namespace Clipbox.WixSetup.ViewModel
             UpdateCommand = new DelegateCommand(() => RequestSetupAction(LaunchAction.UpdateReplace), () => !_isSetupActionRequested);
             UpdateLinkCommand = new DelegateCommand(UpdateLinkCommandHandler, () => !_isSetupActionRequested);
             ModifyCommand = new DelegateCommand(ModifyCommandHandler, ModifyCommandHandlerCanExecuteHandler);
-            RetryCommand = new DelegateCommand(RetryCommandHandler, () => !_isSetupActionRequested);
+            RetryCommand = new DelegateCommand(RetryCommandHandler, () => !_isSetupActionRequested && _lastLaunchAction != null);
 
             _model.BootstrapperApplication.DetectBegin += BootstrapperApplication_DetectBegin;
             _model.BootstrapperApplication.DetectComplete += BootstrapperApplication_DetectComplete;
@@ -73,55 +75,142 @@ namespace Clipbox.WixSetup.ViewModel
             _model.BootstrapperApplication.ExecutePackageComplete += BootstrapperApplication_ExecutePackageComplete;
         }
 
+
         private bool ModifyCommandHandlerCanExecuteHandler()
         {
-            return true;
-            //Process.GetProcessesByName("")
+            try
+            {
+                return CheckIfGuardProcessIsRunning();
+            }
+            catch (Exception ex)
+            {
+                try { _model.BootstrapperApplication.Engine.Log(LogLevel.Error, ex.Message); } catch { }
+                return false;
+            }
         }
 
         private void ModifyCommandHandler()
         {
-            
+            _isSetupActionRequested = true;
+
+            try
+            {
+                CheckIfGuardProcessIsRunning();
+                string installDir = "";
+
+                using (RegistryKey key = Registry.LocalMachine.OpenSubKey($@"Software\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}"))
+                {
+                    if (key != null)
+                    {
+                        installDir = key.GetValue("InstallDirectory") as string;
+                    }
+                }
+                if (installDir == null)
+                {
+                    using (RegistryKey key = Registry.LocalMachine.OpenSubKey($@"Software\Wow6432Node\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}"))
+                    {
+                        if (key != null)
+                        {
+                            installDir = key.GetValue("InstallDirectory") as string;
+                        }
+                    }
+                }
+                if (installDir == null)
+                {
+                    throw new System.IO.DirectoryNotFoundException("Install directory not found in registry.");
+                }
+                string guardPath = System.IO.Path.Combine(installDir, ProductConstants.GUARD_EXE_NAME);
+                Process.Start(guardPath, ProductConstants.OPEN_SETTINGS_WINDOW_ARG);
+                QuitInstallerInternal(0);
+            }
+            catch(Exception ex)
+            {
+                SetupState = ClipboxSetupState.Error;
+                ErrorMessage = ex.Message;
+            }
+            finally
+            {
+                _isSetupActionRequested = false;
+            }
+        }
+
+        private bool CheckIfGuardProcessIsRunning()
+        {
+            int mySessionId = Process.GetCurrentProcess().SessionId;
+            Process[] guardProcs = Process.GetProcessesByName(System.IO.Path.GetFileNameWithoutExtension(ProductConstants.GUARD_EXE_NAME));
+            foreach (Process p in guardProcs)
+            {
+                if (p.SessionId == mySessionId)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         private void CancelCommandHandler()
         {
-            CancelEventArgs args = new CancelEventArgs();
-            CancelConfirmationRequested?.Invoke(this, args);
-            if (!args.Cancel)
+            _isSetupActionRequested = true;
+
+            try
             {
-                _isCancelRequested = true;
+                CancelEventArgs args = new CancelEventArgs();
+                CancelConfirmationRequested?.Invoke(this, args);
+                if (!args.Cancel)
+                {
+                    _isCancelRequested = true;
+                }
+            }
+            finally
+            {
+                _isCancelRequested = false;
             }
         }
 
         private void RetryCommandHandler()
         {
-            RequestSetupAction(_lastLaunchAction);
+            if (_lastLaunchAction.HasValue)
+            {
+                SetupState = ClipboxSetupState.Preparing;
+                RequestSetupAction(_lastLaunchAction.Value);
+            }
+            else
+            {
+                SetupState = ClipboxSetupState.Error;
+            }
         }
 
         private void RequestSetupAction(LaunchAction launchAction)
         {
             _isSetupActionRequested = true;
 
-            _lastLaunchAction = launchAction;
-
-            switch (launchAction)
+            try
             {
-                case LaunchAction.Repair:
-                    ModifyAction = ClipboxModifyAction.Repair;
-                    break;
-                case LaunchAction.Uninstall:
-                    ModifyAction = ClipboxModifyAction.Uninstall;
-                    break;
-                case LaunchAction.Modify:
-                    ModifyAction = ClipboxModifyAction.Modify;
-                    break;
-                case LaunchAction.Install:
-                    SetBurnVariables();
-                    break;
-            }
+                _lastLaunchAction = launchAction;
 
-            _model.PlanAction(launchAction);
+                switch (launchAction)
+                {
+                    case LaunchAction.Repair:
+                        ModifyAction = ClipboxModifyAction.Repair;
+                        break;
+                    case LaunchAction.Uninstall:
+                        ModifyAction = ClipboxModifyAction.Uninstall;
+                        break;
+                    case LaunchAction.Modify:
+                        ModifyAction = ClipboxModifyAction.Modify;
+                        break;
+                    case LaunchAction.Install:
+                        SetBurnVariables();
+                        break;
+                }
+
+                _model.PlanAction(launchAction);
+            }
+            finally
+            {
+                _isSetupActionRequested = false;
+            }
         }
 
         private void SetBurnVariables()
@@ -132,8 +221,21 @@ namespace Clipbox.WixSetup.ViewModel
 
         private void UpdateLinkCommandHandler()
         {
-            Process.Start(ProductConstants.PRODUCT_UPDATE_URL);
-            QuitInstallerInternal(0);
+            _isSetupActionRequested = true;
+            try
+            {
+                Process.Start(ProductConstants.PRODUCT_UPDATE_URL);
+                QuitInstallerInternal(0);
+            }
+            catch (Exception ex)
+            {
+                SetupState = ClipboxSetupState.Error;
+                ErrorMessage = ex.Message;
+            }
+            finally
+            {
+                _isSetupActionRequested = false;
+            }
         }
 
         private void BootstrapperApplication_Error(object sender, ErrorEventArgs e)
@@ -225,7 +327,11 @@ namespace Clipbox.WixSetup.ViewModel
         {
             if (e.PackageId.Equals(ProductConstants.MSI_PACKAGE_ID, StringComparison.Ordinal))
             {
-                if (e.State == PackageState.Present)
+                if (_model.BootstrapperApplication.Command.GetCommandLineArgs().Any(arg => arg.Replace("/", "").Equals(ProductConstants.FORCE_INSTALL_ARG, StringComparison.OrdinalIgnoreCase)))
+                {
+                    SetupWorkflow = ClipboxSetupWorkflow.Install;
+                }
+                else if (e.State == PackageState.Present)
                 {
                     SetupWorkflow = ClipboxSetupWorkflow.Modify;
                 }

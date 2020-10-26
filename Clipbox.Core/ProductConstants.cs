@@ -32,6 +32,10 @@ namespace Clipbox.Core
 
         public const string STARTED_FROM_SERVICE_ARG = "svc";
 
+        public const string OPEN_SETTINGS_WINDOW_ARG = "settings";
+
+        public const string DISABLE_CLIPOARD_TRAKING_ARG = "settings";
+
         public const string STARTED_FROM_SCHEDULER_ARG = "sched";
 
         public const string STARTED_FROM_GUARD_ARG = "guard";
@@ -54,6 +58,10 @@ namespace Clipbox.Core
         public const string PIPE_COMMAND_DISABLE_SEARCH = "DisableSearch";
 
         public const string PIPE_COMMAND_OPEN_MAIN_WINDOW = "OpenMainWindow";
+
+        public const string PIPE_COMMAND_OPEN_SETTINGS_WINDOW = "OpenSettingsWindow";
+
+        public const string PIPE_COMMAND_DISABLE_TRACKING = "DisableTracking";
 
         public const string SEARCH_SERVICE_NAMED_PIPE_PREFIX = "ClipboxSearchPipe";
 

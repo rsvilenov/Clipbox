@@ -233,6 +233,7 @@ namespace Clipbox
 
             
             _settingsWindowService = new SettingsWindowService(_settingsService, _mainClipboardViewWindowService, _cloudSyncService, _extensionLoader.SettingsUIExtensionContainer);
+            _guardCommunicationService.SetSettingsWindowService(_settingsWindowService);
 
             _trayContextMenuService = new TrayContextMenuService(_settingsService, _pauseService, _mainClipboardViewWindowService, _settingsWindowService);
 

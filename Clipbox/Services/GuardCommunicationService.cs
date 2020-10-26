@@ -1,5 +1,6 @@
 ﻿using Clipbox.Core;
 using Clipbox.Core.Enums;
+using Clipbox.Core.Extensibility.Enums;
 using Clipbox.Infrastructure.IPC;
 using Clipbox.Infrastructure.Persistence;
 using Clipbox.Services.Interfaces;
@@ -18,6 +19,8 @@ namespace Clipbox.Services
         private readonly ISettingsService _settingsService;
 
         private IMainClipboardViewWindowService _mainClipboardViewWindowService;
+        private ISettingsWindowService _settingsWindowService;
+
         public GuardCommunicationService(
             IPersistenceProvider persistenceProvider,
             ISettingsService settingsService,
@@ -36,6 +39,11 @@ namespace Clipbox.Services
         public void SetMainClipboardViewWindowService(IMainClipboardViewWindowService svc)
         {
             _mainClipboardViewWindowService = svc;
+        }
+
+        public void SetSettingsWindowService(ISettingsWindowService svc)
+        {
+            _settingsWindowService = svc;
         }
 
         private void _settingsService_SettingChanged(object sender, EventArgsClasses.SettingsEventArgs e)
@@ -60,9 +68,13 @@ namespace Clipbox.Services
             {
                 _settingsService.SetSetting(SettingsKeys.IsSearchEnabled, false);
             }
-            else if (e.ReceivedMessage == ProductConstants.PIPE_COMMAND_OPEN_MAIN_WINDOW)
+            else if (e.ReceivedMessage == ProductConstants.PIPE_COMMAND_OPEN_SETTINGS_WINDOW)
             {
-                _mainClipboardViewWindowService?.OpenOnMonitor(MonitorUtils.GetByCurrentMousePosition());
+                _settingsWindowService?.OpenSettingsWindow(SettingsCategory.General);
+            }
+            else if (e.ReceivedMessage == ProductConstants.PIPE_COMMAND_DISABLE_TRACKING)
+            {
+                _settingsService.SetSetting(SettingsKeys.IsClipboardTrackingEnabled, false);
             }
         }
 

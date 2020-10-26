@@ -44,12 +44,12 @@ namespace ClipboxGuard
             bool isStartedFromWindowsScheduler = startupArgs.Any(arg => arg == ProductConstants.STARTED_FROM_SCHEDULER_ARG);
             bool isStartedFromGuard = startupArgs.Any(arg => arg == ProductConstants.STARTED_FROM_GUARD_ARG);
             bool isStartedFromShortcut = startupArgs.Any(arg => arg == ProductConstants.STARTED_FROM_SHORTCUT);
+            bool isOpenSettingsWindowRequested = startupArgs.Any(arg => arg == ProductConstants.OPEN_SETTINGS_WINDOW_ARG);
+            bool isDisableClipboardTrackingRequested = startupArgs.Any(arg => arg == ProductConstants.DISABLE_CLIPOARD_TRAKING_ARG);
 
-            
+            int mySessionId = SessionUtils.GetCurrentSessionId();
             if (isStartedFromShortcut)
             {
-                int mySessionId = SessionUtils.GetCurrentSessionId();
-
                 int myPid = 0;
                 using (Process p = Process.GetCurrentProcess())
                 {
@@ -68,6 +68,20 @@ namespace ClipboxGuard
                 {
                     MessageBox.Show($"{ProductConstants.SERVICE_SC_NAME} is not running.", ProductConstants.PRODUCT_NAME, MessageBoxButton.OK, MessageBoxImage.Error);
                 }
+
+                Application.Current.Shutdown((int)ProcessExitCodes.Ok);
+                return;
+            }
+            else if (isOpenSettingsWindowRequested)
+            {
+                AskMainProcessToOpenSettingsWindow(mySessionId);
+
+                Application.Current.Shutdown((int)ProcessExitCodes.Ok);
+                return;
+            }
+            else if (isDisableClipboardTrackingRequested)
+            {
+                AskMainProcessToDisableClipboardTracking(mySessionId);
 
                 Application.Current.Shutdown((int)ProcessExitCodes.Ok);
                 return;
@@ -204,6 +218,18 @@ namespace ClipboxGuard
         {
             NamedPipesClient npClient = new NamedPipesClient($"{ProductConstants.MAINPROC_GUARD_COMM_NAMED_PIPE_PREFIX}.{sessionId}");
             npClient.SendMessage(ProductConstants.PIPE_COMMAND_OPEN_MAIN_WINDOW);
+        }
+
+        private void AskMainProcessToOpenSettingsWindow(int sessionId)
+        {
+            NamedPipesClient npClient = new NamedPipesClient($"{ProductConstants.MAINPROC_GUARD_COMM_NAMED_PIPE_PREFIX}.{sessionId}");
+            npClient.SendMessage(ProductConstants.PIPE_COMMAND_OPEN_SETTINGS_WINDOW);
+        }
+
+        private void AskMainProcessToDisableClipboardTracking(int sessionId)
+        {
+            NamedPipesClient npClient = new NamedPipesClient($"{ProductConstants.MAINPROC_GUARD_COMM_NAMED_PIPE_PREFIX}.{sessionId}");
+            npClient.SendMessage(ProductConstants.PIPE_COMMAND_DISABLE_TRACKING);
         }
 
         private void TryDisposeObject(IDisposable obj)

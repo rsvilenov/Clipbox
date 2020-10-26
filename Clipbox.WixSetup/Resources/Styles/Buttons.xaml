@@ -121,6 +121,9 @@
                 <Setter Property="Foreground" Value="White" />
                 <Setter Property="Background" Value="#414a60" />
             </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="Gray" />
+            </Trigger>
         </Style.Triggers>
     </Style>
 
@@ -138,6 +141,9 @@
                 <Setter Property="Foreground" Value="Black" />
                 <Setter Property="BorderBrush" Value="LightGray" />
                 <Setter Property="Background" Value="White" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="Gray" />
             </Trigger>
         </Style.Triggers>
     </Style>

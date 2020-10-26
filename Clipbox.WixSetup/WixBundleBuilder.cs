@@ -58,7 +58,8 @@ namespace Clipbox.WixSetup
                     new Dir(@"%ProgramMenu%",
                         new ExeFileShortcut(ProductConstants.PRODUCT_NAME, System.IO.Path.Combine("[INSTALLDIR]", ProductConstants.GUARD_EXE_NAME), arguments: ProductConstants.STARTED_FROM_SHORTCUT)),
                     new ElevatedManagedAction(CustomActions.InstallDeskband, Return.check, When.Before, Step.StartServices, WixSharp.Condition.NOT_Installed),
-                    new ElevatedManagedAction(CustomActions.UnInstallDeskband, Return.check, When.Before, Step.RemoveFiles, WixSharp.Condition.BeingUninstalled))
+                    new ElevatedManagedAction(CustomActions.UnInstallDeskband, Return.check, When.Before, Step.RemoveFiles, WixSharp.Condition.BeingUninstalled),
+                    new RegValue(RegistryHive.LocalMachine, $@"Software\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}", "InstallDirectory", "[INSTALLDIR]"))
                 {
                     Version = productVersion,
                     GUID = new Guid(ProductConstants.PRODUCT_GUID),

@@ -6,7 +6,7 @@
 </auto-generated>
 -->
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="95a2cb1e-ad54-41f4-b1f0-d1e7979a7437" Name="Clipbox" Language="1033" Codepage="Windows-1252" Version="1.2" UpgradeCode="95a2cb1e-ad54-41f4-b1f0-d1e7876a7437" Manufacturer="rosen">
+  <Product Id="95a2cb1e-ad54-41f4-b1f0-d1e7978a7437" Name="Clipbox" Language="1033" Codepage="Windows-1252" Version="1.1" UpgradeCode="95a2cb1e-ad54-41f4-b1f0-d1e7876a7437" Manufacturer="rosen">
     <Package InstallerVersion="200" Compressed="yes" Platform="x64" SummaryCodepage="Windows-1252" InstallPrivileges="elevated" InstallScope="perMachine" Languages="1033" />
     <Media Id="1" Cabinet="Clipbox.cab" EmbedCab="yes" />
 
@@ -977,6 +977,19 @@
 
       </Directory>
 
+      <Directory Id="ProgramFilesFolder" Name="ProgramFilesFolder">
+
+        <Component Id="Registry.1" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7848742b6" Win64="no" KeyPath="yes">
+          <RegistryKey Root="HKLM" Key="Software\MyCompany\Clipbox">
+            <RegistryValue Id="InstallDirectory" Type="string" KeyPath="no" Value="[INSTALLDIR]" Name="InstallDirectory" />
+          </RegistryKey>
+
+          <CreateFolder />
+          <RemoveFolder Id="ProgramFilesFolder" On="uninstall" />
+        </Component>
+
+      </Directory>
+
       <Component Id="TARGETDIR" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7fa3ae4aa" KeyPath="yes" Win64="yes">
         <CreateFolder />
         <RemoveFolder Id="TARGETDIR" On="uninstall" />
@@ -1227,6 +1240,7 @@
       <ComponentRef Id="Component.ClipboxDeskband.ilk_66903114" />
       <ComponentRef Id="Component.ClipboxDeskband.lib_3170819143" />
       <ComponentRef Id="Component.Clipbox_" />
+      <ComponentRef Id="Registry.1" />
       <ComponentRef Id="TARGETDIR" />
       <ComponentRef Id="INSTALLDIR.Resources" />
     </Feature>

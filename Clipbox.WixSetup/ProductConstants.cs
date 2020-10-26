@@ -4,7 +4,7 @@
     {
         public const string PRODUCT_NAME = "Clipbox";
 
-        public const double PRODUCT_VERSION = 1.2;
+        public const double PRODUCT_VERSION = 1.1;
 
         public const string PRODUCT_GUID = "95A2CB1E-AD54-41F4-B1F0-D1E7876A7437";
 
@@ -39,6 +39,10 @@
         public const string DESKBAND_INSTALL_FAILURE_FLAG_FILENAME = "noband";
 
         public const string STARTED_FROM_SHORTCUT = "scut";
+
+        public const string OPEN_SETTINGS_WINDOW_ARG = "settings";
+
+        public const string FORCE_INSTALL_ARG = "forceinstall";
 
     }
 }
