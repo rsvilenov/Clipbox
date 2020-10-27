@@ -6,12 +6,32 @@ namespace Clipbox.Infrastructure.RegistryAccess
 {
     public static class RegistryUtils
     {
-        public static string GetInstallationPath(bool useHKCU = false)
+        public static string GetInitialCultureCode()
         {
-            string installPathRegKey = $@"Software\Microsoft\Windows\CurrentVersion\App Paths\{ProductConstants.MAIN_PROCESS_EXE_NAME}.exe";
-            using (RegistryKey key = Registry.LocalMachine.OpenSubKey(installPathRegKey))
+            string productHKLMRegKey = $@"Software\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}";
+            using (RegistryKey key = Registry.LocalMachine.OpenSubKey(productHKLMRegKey))
             {
-                return key.GetValue(string.Empty)?.ToString();
+                return key?.GetValue("InitialCultureCode")?.ToString();
+            }
+        }
+
+        public static void StoreCultureCode(string cultureCode)
+        {
+            string productHKCURegKey = $@"Software\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}";
+
+            RegistryKey key = null;
+            try
+            {
+                key = Registry.CurrentUser.OpenSubKey(productHKCURegKey, true);
+                if (key == null)
+                {
+                    key = Registry.CurrentUser.CreateSubKey(productHKCURegKey, true);
+                }
+                key?.SetValue("CultureCode", cultureCode);
+            }
+            finally
+            {
+                key?.Dispose();
             }
         }
     }

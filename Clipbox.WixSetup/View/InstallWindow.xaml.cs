@@ -32,6 +32,7 @@ namespace Setup.WixSetup.View
             _viewModel = vm;
             _viewModel.QuitConfirmationRequested += _viewModel_QuitConfirmationRequested;
             _viewModel.CancelConfirmationRequested += _viewModel_CancelConfirmationRequested;
+            _viewModel.DetectComplete += _viewModel_DetectComplete;
 
             this.MainGrid.DataContext = vm;
 
@@ -41,6 +42,37 @@ namespace Setup.WixSetup.View
             Closing += InstallWindow_Closing;
         }
 
+        private void _viewModel_DetectComplete(object sender, EventArgs e)
+        {
+            string cultureCodeToSet = _viewModel.CultureCode ?? DEFAULT_LANG_CODE;
+
+            Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
+            {
+                try
+                {
+                    _localizationHelper.SetLanguage(cultureCodeToSet);
+
+                    ComboBoxItem itemToSelect = null;
+
+                    foreach (ComboBoxItem item in ComboBoxLanguage.Items)
+                    {
+                        if (item.Tag as string == cultureCodeToSet)
+                        {
+                            itemToSelect = item;
+                        }
+                    }
+
+                    if (itemToSelect != null)
+                    {
+                        itemToSelect.IsSelected = true;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _viewModel.LogMessage($"Error while trying to set the initial language: {ex}");
+                }
+            }));
+        }
 
         private void InstallWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {

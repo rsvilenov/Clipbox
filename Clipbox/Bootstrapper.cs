@@ -12,6 +12,7 @@ using Clipbox.Infrastructure.Encryption.EncryptionProviders;
 using Clipbox.Infrastructure.Extensibility.Loading;
 using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.Persistence.PersistenceProviders;
+using Clipbox.Infrastructure.RegistryAccess;
 using Clipbox.Infrastructure.Search;
 using Clipbox.Infrastructure.Serialization;
 using Clipbox.Infrastructure.UI.Localization;
@@ -302,20 +303,10 @@ namespace Clipbox
 
             settingsService.SetSetting(SettingsKeys.IsInitialConfigurationDone, true);
 
-            string initialCultureCodeFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ProductConstants.INITIAL_CULTURE_CODE_FILENAME);
-            if (File.Exists(initialCultureCodeFilePath))
+            string initialCultureCode = RegistryUtils.GetInitialCultureCode();
+            if (!string.IsNullOrEmpty(initialCultureCode))
             {
-                string cultureCode = null;
-                try
-                {
-                    cultureCode = File.ReadAllText(initialCultureCodeFilePath);
-                }
-                catch { }
-
-                if (!string.IsNullOrWhiteSpace(cultureCode))
-                {
-                    _settingsService.SetSetting(SettingsKeys.LocalizationCulture, cultureCode.Trim());
-                }
+                _settingsService.SetSetting(SettingsKeys.LocalizationCulture, initialCultureCode.Trim());
             }
         }
 
@@ -363,6 +354,10 @@ namespace Clipbox
                 {
                     _clipboardManager.IsClipboardTrackingEnabled = false;
                 }
+            }
+            else if (e.Key == SettingsKeys.LocalizationCulture)
+            {
+                RegistryUtils.StoreCultureCode((string)e.Value);
             }
         }
 

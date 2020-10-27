@@ -21,6 +21,7 @@ namespace Clipbox.WixSetup.ViewModel
 
         public event EventHandler<CancelEventArgs> QuitConfirmationRequested;
         public event EventHandler<CancelEventArgs> CancelConfirmationRequested;
+        public event EventHandler DetectComplete;
 
         public ICommand QuitCommand { get; set; }
         public ICommand CloseInstallWindowCommand { get; set; }
@@ -74,6 +75,7 @@ namespace Clipbox.WixSetup.ViewModel
             _model.BootstrapperApplication.ExecuteMsiMessage += BootstrapperApplication_ExecuteMsiMessage;
             _model.BootstrapperApplication.ExecutePackageBegin += BootstrapperApplication_ExecutePackageBegin;
             _model.BootstrapperApplication.ExecutePackageComplete += BootstrapperApplication_ExecutePackageComplete;
+
         }
 
         private string FindProperProgramFilesDir()
@@ -131,28 +133,78 @@ namespace Clipbox.WixSetup.ViewModel
 
         private string GetInstallDirFromRegistry()
         {
+            string productSubKey = $@"Software\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}";
             string installDir = null;
 
-            using (RegistryKey key = Registry.LocalMachine.OpenSubKey($@"Software\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}"))
+            using (RegistryKey HKLM32 =
+                    RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
+                        RegistryView.Registry32))
+            using (RegistryKey key = HKLM32.OpenSubKey(productSubKey))
             {
-                if (key != null)
-                {
-                    installDir = key.GetValue("InstallDirectory") as string;
-                }
+                installDir = key?.GetValue("InstallDirectory") as string;
             }
 
             if (installDir == null)
             {
-                using (RegistryKey key = Registry.LocalMachine.OpenSubKey($@"Software\Wow6432Node\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}"))
+                using (RegistryKey HKLM64 =
+                       RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
+                           RegistryView.Registry64))
+                using (RegistryKey key = HKLM64.OpenSubKey(productSubKey))
                 {
-                    if (key != null)
-                    {
-                        installDir = key.GetValue("InstallDirectory") as string;
-                    }
+                    installDir = key?.GetValue("InstallDirectory") as string;
                 }
             }
 
             return installDir;
+        }
+
+        private string GetCultureCodeFromRegistry()
+        {
+            string productSubKey = $@"Software\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}";
+            string cultureCode = null;
+
+            using (RegistryKey HKCU32 =
+                    RegistryKey.OpenBaseKey(RegistryHive.CurrentUser,
+                        RegistryView.Registry32))
+            using (RegistryKey key = HKCU32.OpenSubKey(productSubKey))
+            {
+                cultureCode = key?.GetValue("CultureCode") as string;
+            }
+
+            if (cultureCode == null)
+            {
+                using (RegistryKey HKCU64 =
+                    RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
+                        RegistryView.Registry64))
+                using (RegistryKey key = HKCU64.OpenSubKey(productSubKey))
+                {
+                    cultureCode = key?.GetValue("CultureCode") as string;
+                }
+            }
+
+            if (cultureCode == null)
+            {
+                using (RegistryKey HKLM32 =
+                    RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
+                        RegistryView.Registry32))
+                using (RegistryKey key = HKLM32.OpenSubKey(productSubKey))
+                {
+                    cultureCode = key?.GetValue("InitialCultureCode") as string;
+                }
+
+                if (cultureCode == null)
+                {
+                    using (RegistryKey HKLM64 =
+                        RegistryKey.OpenBaseKey(RegistryHive.LocalMachine,
+                            RegistryView.Registry64))
+                    using (RegistryKey key = HKLM64.OpenSubKey(productSubKey))
+                    {
+                        cultureCode = key?.GetValue("InitialCultureCode") as string;
+                    }
+                }
+            }
+
+            return cultureCode;
         }
 
         private bool CheckIfGuardProcessIsRunning()
@@ -393,11 +445,26 @@ namespace Clipbox.WixSetup.ViewModel
         private void BootstrapperApplication_DetectComplete(object sender, Microsoft.Tools.WindowsInstallerXml.Bootstrapper.DetectCompleteEventArgs e)
         {
             IsDetectionOngoing = false;
+
+            if (SetupWorkflow == ClipboxSetupWorkflow.Modify 
+                || SetupWorkflow == ClipboxSetupWorkflow.Update)
+            {
+                try
+                {
+                    CultureCode = GetCultureCodeFromRegistry();
+                }
+                catch (Exception ex)
+                {
+                    try { _model.LogMessage($"Cannot get the culture code from registry: {ex}"); } catch { }
+                }
+            }
+
             if (SetupState != ClipboxSetupState.Error)
             {
-                // GetSelectedLanguageFromRegistry();
                 SetupState = ClipboxSetupState.Welcome;
             }
+
+            DetectComplete?.Invoke(this, new EventArgs());
         }
 
         private void BootstrapperApplication_CacheAcquireProgress(Object SENDER, CacheAcquireProgressEventArgs e)
@@ -574,6 +641,11 @@ namespace Clipbox.WixSetup.ViewModel
         public void QuitInstaller(int errorCode)
         {
             QuitInstallerInternal(errorCode);
+        }
+
+        public void LogMessage(string message)
+        {
+            _model.LogMessage(message);
         }
     }
 }

@@ -66,8 +66,18 @@ namespace Clipbox.WixSetup
                         }),
                     new ElevatedManagedAction(CustomActions.InstallDeskband, Return.check, When.Before, Step.StartServices, WixSharp.Condition.NOT_Installed),
                     new ElevatedManagedAction(CustomActions.UnInstallDeskband, Return.check, When.Before, Step.RemoveFiles, WixSharp.Condition.BeingUninstalled),
-                    new ElevatedManagedAction(CustomActions.SetInitialCultureCode, Return.check, When.Before, Step.StartServices, WixSharp.Condition.NOT_Installed),
-                    new RegValue(RegistryHive.LocalMachine, $@"Software\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}", "InstallDirectory", "[INSTALLDIR]"))
+                    new RegValue(RegistryHive.LocalMachine, $@"Software\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}", "InstallDirectory", "[INSTALLDIR]") 
+                    {
+#if PLATFORM_X64
+                        Win64 = true
+#endif
+                    },
+                    new RegValue(RegistryHive.LocalMachine, $@"Software\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}", "InitialCultureCode", "[INITIAL_CULTURE_CODE]")
+                    {
+#if PLATFORM_X64
+                        Win64 = true
+#endif
+                    })
                 {
                     Version = productVersion,
                     GUID = new Guid(ProductConstants.PRODUCT_GUID),

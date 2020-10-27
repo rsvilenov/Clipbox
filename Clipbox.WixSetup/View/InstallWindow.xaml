@@ -149,7 +149,6 @@
                     <ComboBoxItem
                         Background="#2d364c"
                         Content="{DynamicResource TrLangEN}"
-                        IsSelected="True"
                         Tag="en-US" />
                     <ComboBoxItem
                         Background="#2d364c"

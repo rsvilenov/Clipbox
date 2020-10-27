@@ -995,15 +995,23 @@
 
       </Directory>
 
-      <Directory Id="ProgramFilesFolder" Name="ProgramFilesFolder">
+      <Directory Id="ProgramFiles64Folder" Name="ProgramFiles64Folder">
 
-        <Component Id="Registry.1" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7848742b6" Win64="no" KeyPath="yes">
+        <Component Id="Registry.1" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7848742b6" KeyPath="yes" Win64="yes">
           <RegistryKey Root="HKLM" Key="Software\MyCompany\Clipbox">
             <RegistryValue Id="InstallDirectory" Type="string" KeyPath="no" Value="[INSTALLDIR]" Name="InstallDirectory" />
           </RegistryKey>
 
           <CreateFolder />
-          <RemoveFolder Id="ProgramFilesFolder" On="uninstall" />
+          <RemoveFolder Id="ProgramFiles64Folder" On="uninstall" />
+        </Component>
+
+        <Component Id="Registry.2" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7848842b6" Win64="yes">
+          <RegistryKey Root="HKLM" Key="Software\MyCompany\Clipbox">
+            <RegistryValue Id="InitialCultureCode" Type="string" KeyPath="yes" Value="[INITIAL_CULTURE_CODE]" Name="InitialCultureCode" />
+          </RegistryKey>
+
+          <CreateFolder />
         </Component>
 
       </Directory>
@@ -1021,8 +1029,6 @@
     <CustomAction Id="InstallDeskband" BinaryKey="InstallDeskband_File" DllEntry="InstallDeskband" Return="check" Impersonate="no" Execute="deferred" />
     <CustomAction Id="Set_UnInstallDeskband_Props" Property="UnInstallDeskband" Value="INSTALLDIR=[INSTALLDIR];INSTALLDIR=[INSTALLDIR];UILevel=[UILevel];ProductCode=[ProductCode];ADDLOCAL=[ADDLOCAL];ADDFEATURES=[ADDFEATURES]" />
     <CustomAction Id="UnInstallDeskband" BinaryKey="InstallDeskband_File" DllEntry="UnInstallDeskband" Return="check" Impersonate="no" Execute="deferred" />
-    <CustomAction Id="Set_SetInitialCultureCode_Props" Property="SetInitialCultureCode" Value="INSTALLDIR=[INSTALLDIR];INSTALLDIR=[INSTALLDIR];UILevel=[UILevel];ProductCode=[ProductCode];ADDLOCAL=[ADDLOCAL];ADDFEATURES=[ADDFEATURES]" />
-    <CustomAction Id="SetInitialCultureCode" BinaryKey="InstallDeskband_File" DllEntry="SetInitialCultureCode" Return="check" Impersonate="no" Execute="deferred" />
     <CustomAction Id="WixSharp_InitRuntime_Action" BinaryKey="WixSharp_InitRuntime_Action_File" DllEntry="WixSharp_InitRuntime_Action" Return="check" Execute="immediate" />
     <CustomAction Id="WixSharp_BeforeInstall_Action" BinaryKey="WixSharp_InitRuntime_Action_File" DllEntry="WixSharp_BeforeInstall_Action" Return="check" Execute="immediate" />
 
@@ -1262,6 +1268,7 @@
       <ComponentRef Id="Component.Clipbox_" />
       <ComponentRef Id="Component.Clipbox.1" />
       <ComponentRef Id="Registry.1" />
+      <ComponentRef Id="Registry.2" />
       <ComponentRef Id="TARGETDIR" />
       <ComponentRef Id="INSTALLDIR.Resources" />
     </Feature>
@@ -1271,8 +1278,6 @@
       <Custom Action="InstallDeskband" After="Set_InstallDeskband_Props"> (NOT Installed) </Custom>
       <Custom Action="Set_UnInstallDeskband_Props" Before="RemoveFiles" />
       <Custom Action="UnInstallDeskband" After="Set_UnInstallDeskband_Props"> (REMOVE="ALL") </Custom>
-      <Custom Action="Set_SetInitialCultureCode_Props" Before="StartServices" />
-      <Custom Action="SetInitialCultureCode" After="Set_SetInitialCultureCode_Props"> (NOT Installed) </Custom>
       <Custom Action="WixSharp_InitRuntime_Action" Before="AppSearch"> (1) </Custom>
       <Custom Action="WixSharp_BeforeInstall_Action" Before="InstallFiles">1</Custom>
     </InstallExecuteSequence>
