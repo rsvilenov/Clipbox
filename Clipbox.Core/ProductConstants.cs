@@ -96,5 +96,7 @@ namespace Clipbox.Core
         public const string SHELL_EXTENSION_NAMED_PIPE_PREFIX = "ClipboxShExPipe";
         
         public static readonly IReadOnlyList<byte> CLIENT_EXE_HASH = new byte[] { 0 };
+
+        public const string INITIAL_CULTURE_CODE_FILENAME = "initialCultureCode";
     }
 }

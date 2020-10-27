@@ -44,7 +44,6 @@ namespace Clipbox.WixSetup.ViewModel
         {
             _model = model;
 
-            string programFilesDirectory = Environment.Is64BitOperatingSystem ? Environment.GetEnvironmentVariable("ProgramW6432") : Environment.GetEnvironmentVariable("ProgramFiles(x86)");
             InstallationDirectory =
                 System.IO.Path.Combine(FindProperProgramFilesDir(), ProductConstants.COMPANY_NAME, ProductConstants.PRODUCT_NAME);
 
@@ -237,8 +236,9 @@ namespace Clipbox.WixSetup.ViewModel
 
         private void SetBurnVariables()
         {
-            _model.SetBurnVariable("CreateDesktopShortcut", CreateDesktopShortcut.ToString());
+            _model.SetBurnVariable("CREATE_DESKTOP_SHORTCUT", CreateDesktopShortcut ? "yes" : "no");
             _model.SetBurnVariable("ACTUAL_INSTALLDIR", InstallationDirectory);
+            _model.SetBurnVariable("ACTUAL_INITIAL_CULTURE_CODE", CultureCode);
         }
 
         private void UpdateLinkCommandHandler()
@@ -395,6 +395,7 @@ namespace Clipbox.WixSetup.ViewModel
             IsDetectionOngoing = false;
             if (SetupState != ClipboxSetupState.Error)
             {
+                // GetSelectedLanguageFromRegistry();
                 SetupState = ClipboxSetupState.Welcome;
             }
         }
@@ -494,11 +495,11 @@ namespace Clipbox.WixSetup.ViewModel
             set { SetField(ref _setupWorkflow, value, () => SetupWorkflow); }
         }
 
-        private string _languageCode;
-        public string LanguageCode
+        private string _cultureCode;
+        public string CultureCode
         {
-            get { return _languageCode; }
-            set { SetField(ref _languageCode, value, () => LanguageCode); }
+            get { return _cultureCode; }
+            set { SetField(ref _cultureCode, value, () => CultureCode); }
         }
 
         private string _installationDirectory;

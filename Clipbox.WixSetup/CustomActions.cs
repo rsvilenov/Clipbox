@@ -59,5 +59,23 @@ namespace Clipbox.WixSetup
             });
         }
 
+        [CustomAction]
+        public static ActionResult SetInitialCultureCode(Session session)
+        {
+            return session.HandleErrors(() =>
+            {
+                string selectedCultureCode = session.Property("INITIAL_CULTURE_CODE");
+                if (string.IsNullOrEmpty(selectedCultureCode))
+                {
+                    selectedCultureCode = "en-US";
+                }
+
+                session.Log("Selected culture code to be set to the installed program: {0}", selectedCultureCode);
+
+                string cultureCodeFilePath = System.IO.Path.Combine(session.Property("INSTALLDIR"), ProductConstants.INITIAL_CULTURE_CODE_FILENAME);
+                System.IO.File.WriteAllText(cultureCodeFilePath, selectedCultureCode);
+            });
+        }
+
     }
 }

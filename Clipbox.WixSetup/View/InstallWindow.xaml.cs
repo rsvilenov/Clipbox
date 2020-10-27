@@ -137,10 +137,10 @@ namespace Setup.WixSetup.View
 
         private void ComboBoxLanguage_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if ((ComboBoxLanguage?.SelectedItem as ComboBoxItem)?.Tag is string newLanguageCode)
+            if ((ComboBoxLanguage?.SelectedItem as ComboBoxItem)?.Tag is string newCultureCode)
             {
-                _localizationHelper.SetLanguage(newLanguageCode);
-                _viewModel.LanguageCode = newLanguageCode;
+                _localizationHelper.SetLanguage(newCultureCode);
+                _viewModel.CultureCode = newCultureCode;
             }
         }
 

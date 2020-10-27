@@ -41,10 +41,12 @@ namespace Clipbox.WixSetup
             };
 
 #if PLATFORM_X64
-            ExeFileShortcut uninstaller = new ExeFileShortcut($"Uninstall {ProductConstants.PRODUCT_NAME}", "[System64Folder]msiexec.exe", "/x [ProductCode]");
+            string pathToMsiExec = "[System64Folder]msiexec.exe";
 #else
-                        ExeFileShortcut uninstaller = new ExeFileShortcut($"Uninstall {ProductConstants.PRODUCT_NAME}", "[SystemFolder]msiexec.exe", "/x [ProductCode]");
+            string pathToMsiExec = "[SystemFolder]msiexec.exe";
 #endif
+
+            ExeFileShortcut uninstaller = new ExeFileShortcut($"Uninstall {ProductConstants.PRODUCT_NAME}", pathToMsiExec, "/x [ProductCode]");
 
             var project =
                 new ManagedProject(ProductConstants.PRODUCT_NAME,
@@ -57,8 +59,14 @@ namespace Clipbox.WixSetup
                         service),
                     new Dir(@"%ProgramMenu%",
                         new ExeFileShortcut(ProductConstants.PRODUCT_NAME, System.IO.Path.Combine("[INSTALLDIR]", ProductConstants.GUARD_EXE_NAME), arguments: ProductConstants.STARTED_FROM_SHORTCUT)),
+                    new Dir(@"%Desktop%",
+                        new ExeFileShortcut(ProductConstants.PRODUCT_NAME, System.IO.Path.Combine("[INSTALLDIR]", ProductConstants.GUARD_EXE_NAME), arguments: ProductConstants.STARTED_FROM_SHORTCUT)
+                        {
+                            ComponentCondition = new Condition("DESKTOP_SHORTCUT=\"yes\"")
+                        }),
                     new ElevatedManagedAction(CustomActions.InstallDeskband, Return.check, When.Before, Step.StartServices, WixSharp.Condition.NOT_Installed),
                     new ElevatedManagedAction(CustomActions.UnInstallDeskband, Return.check, When.Before, Step.RemoveFiles, WixSharp.Condition.BeingUninstalled),
+                    new ElevatedManagedAction(CustomActions.SetInitialCultureCode, Return.check, When.Before, Step.StartServices, WixSharp.Condition.NOT_Installed),
                     new RegValue(RegistryHive.LocalMachine, $@"Software\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}", "InstallDirectory", "[INSTALLDIR]"))
                 {
                     Version = productVersion,
@@ -71,6 +79,9 @@ namespace Clipbox.WixSetup
             // add a default install dir for the msi package
             // it will be overridden by the bundle...
             project.WixVariables.Add("INSTALLDIR", INSTALL_DIRECTORY);
+
+            project.WixVariables.Add("INITIAL_CULTURE_CODE", "en-US");
+            project.WixVariables.Add("DESKTOP_SHORTCUT", "no");
 
             project.BeforeInstall += args =>
             {
@@ -136,7 +147,7 @@ namespace Clipbox.WixSetup
                         Vital = true,
                         // pass the custom install dir property to the MSI package.
                         // this property is defined in bootstrapper.Variables below.
-                        MsiProperties = "INSTALLDIR=[ACTUAL_INSTALLDIR]"
+                        MsiProperties = "INSTALLDIR=[ACTUAL_INSTALLDIR];INITIAL_CULTURE_CODE=[ACTUAL_INITIAL_CULTURE_CODE];DESKTOP_SHORTCUT=[CREATE_DESKTOP_SHORTCUT]"
                     })
                 {
                     Version = productVersion,
@@ -174,6 +185,9 @@ namespace Clipbox.WixSetup
                 // make it known that we will use a custom property for the install dir
                 // and set its value to the default location. It can be overridden by the UI.
                 new Variable ("ACTUAL_INSTALLDIR", INSTALL_DIRECTORY),
+
+                new Variable("ACTUAL_INITIAL_CULTURE_CODE", "en-US"),
+                new Variable("CREATE_DESKTOP_SHORTCUT", "no"),
 
                 new Variable("VCPlusPlus2015_x64_RequiredVersion")
                 {

@@ -8,6 +8,8 @@
     </BootstrapperApplicationRef>
 
     <Variable Name="ACTUAL_INSTALLDIR" Value="%ProgramFiles%\MyCompany\Clipbox" Persisted="yes" />
+    <Variable Name="ACTUAL_INITIAL_CULTURE_CODE" Value="en-US" Persisted="yes" />
+    <Variable Name="CREATE_DESKTOP_SHORTCUT" Value="no" Persisted="yes" />
     <Variable Name="VCPlusPlus2015_x64_RequiredVersion" Value="14.27.29112" Persisted="yes" Type="version" />
     <Variable Name="VCPlusPlus2015_x86_RequiredVersion" Value="14.27.29112" Persisted="yes" Type="version" />
     <Variable Name="Netfx4FullVersion_RequiredVersion" Value="4.7.2" Persisted="yes" Type="version" />
@@ -19,6 +21,8 @@
 
       <MsiPackage Id="ClipboxPackageId" DisplayInternalUI="no" Visible="no" SourceFile="Clipbox.msi" Vital="yes">
         <MsiProperty Name="INSTALLDIR" Value="[ACTUAL_INSTALLDIR]" />
+        <MsiProperty Name="INITIAL_CULTURE_CODE" Value="[ACTUAL_INITIAL_CULTURE_CODE]" />
+        <MsiProperty Name="DESKTOP_SHORTCUT" Value="[CREATE_DESKTOP_SHORTCUT]" />
         <MsiProperty Name="WIXBUNDLEORIGINALSOURCE" Value="[WixBundleOriginalSource]" />
       </MsiPackage>
     </Chain>

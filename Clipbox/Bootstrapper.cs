@@ -301,6 +301,22 @@ namespace Clipbox
             System.Threading.Thread.Sleep(1000);
 
             settingsService.SetSetting(SettingsKeys.IsInitialConfigurationDone, true);
+
+            string initialCultureCodeFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ProductConstants.INITIAL_CULTURE_CODE_FILENAME);
+            if (File.Exists(initialCultureCodeFilePath))
+            {
+                string cultureCode = null;
+                try
+                {
+                    cultureCode = File.ReadAllText(initialCultureCodeFilePath);
+                }
+                catch { }
+
+                if (!string.IsNullOrWhiteSpace(cultureCode))
+                {
+                    _settingsService.SetSetting(SettingsKeys.LocalizationCulture, cultureCode.Trim());
+                }
+            }
         }
 
         private void ClearLastExceptionInfo()
