@@ -1281,7 +1281,7 @@
       <Custom Action="Set_UnInstallDeskband_Props" Before="RemoveFiles" />
       <Custom Action="UnInstallDeskband" After="Set_UnInstallDeskband_Props"> (REMOVE="ALL") </Custom>
       <Custom Action="Set_CleanUpArtefacts_Props" After="RemoveFiles" />
-      <Custom Action="CleanUpArtefacts" After="Set_CleanUpArtefacts_Props"> (REMOVE="ALL") </Custom>
+      <Custom Action="CleanUpArtefacts" After="Set_CleanUpArtefacts_Props">(NOT UPGRADINGPRODUCTCODE) AND (REMOVE="ALL")</Custom>
       <Custom Action="WixSharp_InitRuntime_Action" Before="AppSearch"> (1) </Custom>
       <Custom Action="WixSharp_BeforeInstall_Action" Before="InstallFiles">1</Custom>
     </InstallExecuteSequence>

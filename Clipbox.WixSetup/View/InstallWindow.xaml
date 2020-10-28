@@ -533,7 +533,7 @@
                 Grid.Row="1"
                 Margin="0,30,0,0"
                 HorizontalAlignment="Center"
-                FontSize="20"
+                FontSize="24"
                 FontWeight="Medium"
                 Foreground="#fefefe">
                 <TextBlock.Style>
@@ -556,24 +556,25 @@
                     </Style>
                 </TextBlock.Style>
             </TextBlock>
-
-            <ProgressBar
-                Grid.Row="2"
-                Height="10"
-                Margin="50,70,50,0"
-                HorizontalAlignment="Stretch"
-                VerticalAlignment="Center"
-                Style="{StaticResource DefaultProgressBar}"
-                Value="{Binding Progress}" />
             <TextBlock
-                Grid.Row="3"
+                Grid.Row="2"
                 Margin="0,15,0,0"
                 HorizontalAlignment="Center"
                 FontSize="16"
                 FontWeight="Thin"
                 Foreground="#fefefe"
                 Text="{DynamicResource TrLblInstallingWarning}" />
-            <Button
+            <ProgressBar
+                Grid.Row="4"
+                Height="10"
+                Margin="50,70,50,80"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Bottom"
+                Style="{StaticResource DefaultProgressBar}"
+                Value="{Binding Progress}" />
+
+            <!--  BUG: cancelling causes the installer to hang. TODO: figure out why  -->
+            <!--<Button
                 Grid.Row="4"
                 Width="180"
                 Height="40"
@@ -585,7 +586,7 @@
                 Command="{Binding CancelCommand}"
                 Content="{DynamicResource TrBtnCancel}"
                 FontSize="18"
-                Style="{StaticResource BtnActionDark}" />
+                Style="{StaticResource BtnActionDark}" />-->
         </Grid>
 
         <!--  ready page  -->

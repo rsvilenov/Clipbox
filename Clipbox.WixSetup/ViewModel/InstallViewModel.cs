@@ -222,6 +222,10 @@ namespace Clipbox.WixSetup.ViewModel
             return false;
         }
 
+        /// <summary>
+        /// This command causes the installer to hang.
+        /// TODO: figure out why.
+        /// </summary>
         private void CancelCommandHandler()
         {
             _isSetupActionRequested = true;

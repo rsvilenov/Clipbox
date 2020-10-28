@@ -17,7 +17,7 @@ namespace Clipbox.WixSetup
             // this is crucial! without it the resource dictionaries will not laod...
             if (Application.ResourceAssembly == null)
             {
-                Application.ResourceAssembly = typeof(MainWindow).Assembly;
+                Application.ResourceAssembly = GetType().Assembly;
             }
         }
 
