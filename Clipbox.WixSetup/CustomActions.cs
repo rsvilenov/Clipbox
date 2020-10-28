@@ -59,5 +59,14 @@ namespace Clipbox.WixSetup
             });
         }
 
+        [CustomAction]
+        public static ActionResult CleanUpArtefacts(Session session)
+        {
+            return session.HandleErrors(() =>
+            {
+                CleanUpUtility.CleanUp(CleanUpUtility.CleanUpType.RegistryAndAppData);
+            });
+        }
+
     }
 }

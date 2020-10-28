@@ -5,6 +5,9 @@ using Setup.WixSetup.View;
 using System;
 using System.Windows;
 
+
+[assembly: BootstrapperApplication(typeof(Clipbox.WixSetup.ManagedBA))]
+
 namespace Clipbox.WixSetup
 {
     public class ManagedBA : BootstrapperApplication
