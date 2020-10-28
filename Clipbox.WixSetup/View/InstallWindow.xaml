@@ -619,17 +619,18 @@
                 FontWeight="Thin"
                 Foreground="White"
                 Text="{DynamicResource TrLblInstallReady}" />
-            <ContentControl
-                Grid.Row="1"
-                Width="60"
-                Foreground="#FF21BD69"
-                Template="{StaticResource ReadyIcon}" />
-            <Ellipse
-                Grid.Row="1"
-                Width="150"
-                Height="150"
-                Stroke="#8a9ed3"
-                StrokeThickness="3" />
+            <Grid Grid.Row="1">
+                <ContentControl
+                    Width="60"
+                    Foreground="#FF21BD69"
+                    Template="{StaticResource ReadyIcon}" />
+                <Ellipse
+                    Width="150"
+                    Height="150"
+                    Stroke="#8a9ed3"
+                    StrokeThickness="3" />
+            </Grid>
+
             <TextBlock
                 Grid.Row="2"
                 HorizontalAlignment="Center"
@@ -933,8 +934,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <TextBlock
                 Grid.Row="0"
@@ -961,46 +961,63 @@
                     </Style>
                 </TextBlock.Style>
             </TextBlock>
-            <TextBlock
-                Grid.Row="1"
-                Margin="0,60,0,35"
-                HorizontalAlignment="Center"
-                FontSize="16"
-                Foreground="#b2b2b2"
-                Text="{DynamicResource TrLblRestartRequired}"
-                TextAlignment="Center"
-                TextWrapping="Wrap"
-                Visibility="{Binding IsRestartRequired, Converter={StaticResource BooleanToVisibilityConverter}}" />
-            <Button
+
+            <Grid Grid.Row="1" Margin="0,80,0,0">
+                <ContentControl
+                    Width="60"
+                    Foreground="#FF21BD69"
+                    Template="{StaticResource ReadyIcon}" />
+                <Ellipse
+                    Width="150"
+                    Height="150"
+                    Stroke="#8a9ed3"
+                    StrokeThickness="3" />
+            </Grid>
+
+            <StackPanel
                 Grid.Row="2"
-                Width="220"
-                Height="50"
-                Margin="10,0,0,0"
-                HorizontalContentAlignment="Left"
-                VerticalContentAlignment="Center"
-                Click="ButtonRestartNow_Click"
-                Content="{DynamicResource TrBtnRestartNow}"
-                FontSize="16"
-                Style="{StaticResource BtnDefaultAction}"
-                Visibility="{Binding IsRestartRequired, Converter={StaticResource BooleanToVisibilityConverter}}" />
-            <Button
-                Grid.Row="3"
-                Width="220"
-                Height="40"
-                Margin="10,20,0,0"
-                VerticalContentAlignment="Center"
-                Command="{Binding QuitCommand}"
-                Content="{DynamicResource TrBtnRestartLater}"
-                FontSize="16"
-                Style="{StaticResource BtnActionDark}"
-                Visibility="{Binding IsRestartRequired, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                Orientation="Vertical"
+                Visibility="{Binding IsRestartRequired, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <TextBlock
+                    Margin="0,60,0,35"
+                    HorizontalAlignment="Center"
+                    FontSize="16"
+                    Foreground="#b2b2b2"
+                    Text="{DynamicResource TrLblRestartRequired}"
+                    TextAlignment="Center"
+                    TextWrapping="Wrap"
+                    Visibility="{Binding IsRestartRequired, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <Button
+                    Width="220"
+                    Height="50"
+                    Margin="0,0,0,0"
+                    HorizontalContentAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Click="ButtonRestartNow_Click"
+                    Content="{DynamicResource TrBtnRestartNow}"
+                    FontSize="16"
+                    Style="{StaticResource BtnDefaultAction}" />
+                <Button
+                    Width="220"
+                    Height="40"
+                    Margin="0,20,0,50"
+                    VerticalContentAlignment="Center"
+                    Command="{Binding QuitCommand}"
+                    Content="{DynamicResource TrBtnRestartLater}"
+                    FontSize="16"
+                    Style="{StaticResource BtnActionDark}" />
+
+            </StackPanel>
 
             <Button
                 Grid.Row="2"
                 Width="170"
                 Height="45"
-                Margin="0,100,0,0"
+                Margin="0,0,0,50"
                 HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
                 Command="{Binding QuitCommand}"
                 Content="{DynamicResource TrBtnOperationComplete}"
                 FontSize="16">
@@ -1018,204 +1035,6 @@
         </Grid>
 
     </Grid>
-    <!--<Grid Margin="15" VerticalAlignment="Stretch">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="1*" />
-                <RowDefinition Height="1*" />
-                <RowDefinition Height="1*" />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-                <ColumnDefinition Width="1*" />
-            </Grid.ColumnDefinitions>
-
-
-            <Grid
-                Grid.Row="2"
-                Grid.Column="0"
-                ColumnSpan="3">
-                <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <ProgressBar
-                    Grid.Row="0"
-                    Grid.Column="0"
-                    Grid.ColumnSpan="3"
-                    Width="350"
-                    Height="8"
-                    Margin="4"
-                    VerticalAlignment="Bottom"
-                    Maximum="100"
-                    Minimum="0"
-                    Visibility="{Binding ProgressEnabled, Converter={StaticResource BooleanToVisibilityConverter}}"
-                    Value="{Binding Progress}" />
-                <Label
-                    Grid.Row="1"
-                    Grid.Column="0"
-                    Margin="3"
-                    Background="#33CCFF"
-                    Content="{Binding Info}"
-                    Foreground="White"
-                    Visibility="{Binding ProgressEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
-                <Label
-                    Grid.Row="1"
-                    Grid.Column="2"
-                    Margin="3"
-                    HorizontalContentAlignment="Right"
-                    Background="#33CCFF"
-                    Content="{Binding Progress}"
-                    Foreground="White"
-                    Visibility="{Binding ProgressEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
-            </Grid>
-
-
-
-    -->
-    <!--  Install  -->
-    <!--
-            <Button
-                Grid.Row="1"
-                Grid.Column="0"
-                Grid.ColumnSpan="3"
-                Command="{Binding InstallCommand}"
-                Content="Install"
-                Tag="Install"
-                Visibility="{Binding InstallEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
-
-            <Label
-                Grid.Row="1"
-                Grid.Column="0"
-                Grid.ColumnSpan="3"
-                Margin="3"
-                Background="#33CCFF"
-                Content="{Binding Message}"
-                Visibility="{Binding ProgressEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
-
-    -->
-    <!--  Uninstall  -->
-    <!--
-            <Button
-                Grid.Row="1"
-                Grid.Column="0"
-                Command="{Binding UninstallCommand}"
-                Content="{Binding InstallText}"
-                Visibility="{Binding UninstallEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
-    -->
-    <!--<Image Grid.Row= " 1 " Grid.Column= " 0 " Source= " ..\resources\gear.png "   Visibility= " {Binding UninstallEnabled, Converter={StaticResource BooleanToVisibilityConverter}} " />- ->
-
-            <Image Grid.Row= " 1 " Grid.Column= " 0 " Source= " ..\resources\gear.png "    Visibility= " {Binding UninstallEnabled, Converter={StaticResource BooleanToVisibilityConverter}} " >
-                <Image.RenderTransform>
-                    <RotateTransform x:Name= " UpdateRotateTransform " Angle= " 1 " />
-                </Image.RenderTransform>
-                <Image.Triggers>
-                    <EventTrigger RoutedEvent= " Image.Loaded " >
-                        <BeginStoryboard>
-                            <Storyboard>
-                                <DoubleAnimation Storyboard.TargetName= " UpdateRotateTransform " Storyboard.TargetProperty= " Angle " From= " 0.0 " To= " 360.0 " Duration= " 0:0:4 " RepeatBehavior= " Forever " />
-                            </Storyboard>
-                        </BeginStoryboard>
-                    </EventTrigger>
-                </Image.Triggers>
-            </Image>
-    -->
-
-
-    <!--  Repair  -->
-    <!--
-            <Button
-                Grid.Row="1"
-                Grid.Column="1"
-                Grid.ColumnSpan="2"
-                Command="{Binding RepairCommand}"
-                Content=" Repair "
-                Visibility="{Binding RepairEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
-    -->
-    <!--  Complete  -->
-    <!--
-            <Button
-                Grid.Row="1"
-                Grid.Column="0"
-                Grid.ColumnSpan="3"
-                IsEnabled="False"
-                Visibility="{Binding CompleteEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
-                Complete
-            </Button>
-
-
-            <TextBlock
-                Grid.Row="1"
-                Grid.Column="0"
-                Grid.ColumnSpan="3"
-                Text="{Binding Message}"
-                Visibility="{Binding ProgressEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
-
-
-
-    -->
-    <!--  Failed  -->
-    <!--<Button Grid.Row= " 1 " Grid.ColumnSpan= " 3 " Grid.Column= " 0 " Background= " #33CCFF "    Command= " {Binding TryAgainCommand} " Visibility= " {Binding TryAgainEnabled, Converter= {StaticResource BooleanToVisibilityConverter}} " >Failed. Try Again?</Button>
-            <TextBlock Grid.Row= " 1 " Grid.Column= " 2 " HorizontalAlignment= " Center " VerticalAlignment= " Center " FontSize= " 60 " Foreground= " White " IsHitTestVisible= " False "     Visibility= " {Binding TryAgainEnabled, Converter= {StaticResource BooleanToVisibilityConverter}} " >X</TextBlock>-->
-
-
-
-    <!--  Cancel  -->
-    <!--
-            <Button
-                Grid.Row="0"
-                Grid.Column="2"
-                Command="{Binding CancelCommand}"
-                Visibility="{Binding CancelEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
-                Cancel
-            </Button>
-            <TextBlock
-                Grid.Row="0"
-                Grid.Column="2"
-                HorizontalAlignment="Center"
-                VerticalAlignment="Center"
-                FontSize="60"
-                Foreground="White"
-                IsHitTestVisible="False"
-                Visibility="{Binding CancelEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
-                X
-            </TextBlock>
-
-    -->
-    <!--  Exit  -->
-    <!--
-            <Button
-                Name="Exit"
-                Grid.Row="0"
-                Grid.Column="2"
-                Visibility="{Binding ExitEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
-                Exit
-            </Button>
-
-        </Grid>-->
-
-    <!--<StackPanel>
-            <Label Content= " {Binding Message} " />
-            <Label Content= " {Binding PackageId} " />
-            <Button Command= " {Binding InstallCommand} " >Install</Button>
-            <Button Command= " {Binding UninstallCommand} " >Uninstall</Button>
-            <Button Command= " {Binding CancelCommand} " >Cancel</Button>
-            <Label VerticalAlignment= " Center " >Username:</Label>
-            <TextBox Text= " {Binding Username} " Margin= " 10 "   MinWidth= " 150 " />
-            <Label VerticalAlignment= " Center " >Progress:</Label>
-            <Label Content= " {Binding Progress} " />
-            <ProgressBar Width= " 200 " Height= " 30 " Value= " {Binding Progress} " Minimum= " 0 " Maximum= " 100 " />
-        </StackPanel>-->
-
 
 </Window>
 
