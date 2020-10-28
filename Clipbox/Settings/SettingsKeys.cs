@@ -29,7 +29,7 @@ namespace Clipbox.Settings
 
         public static SettingKey<int> MainClipboardViewBackgroundRenderMode = new SettingKey<int>(nameof(MainClipboardViewBackgroundRenderMode), (int)Enums.MainClipboardViewBackgroundRenderMode.ImageBrush);
 
-        public static SettingKey<bool> IsTrayIconEnabled = new SettingKey<bool>(nameof(IsTrayIconEnabled), true);
+        public static SettingKey<bool> IsTrayIconEnabled = new SettingKey<bool>(nameof(IsTrayIconEnabled), false);
 
         public static SettingKey<bool> IsBackgroundPreviewGenerationEnabled = new SettingKey<bool>(nameof(IsBackgroundPreviewGenerationEnabled), true);
 
@@ -62,7 +62,7 @@ namespace Clipbox.Settings
         /// <summary>
         /// Restart is required. Remove this message when the implementation is complete.
         /// </summary>
-        public static SettingKey<bool> UseSearchProviderInExternalProcess = new SettingKey<bool>(nameof(UseSearchProviderInExternalProcess), true);
+        public static SettingKey<bool> UseSearchProviderInExternalProcess = new SettingKey<bool>(nameof(UseSearchProviderInExternalProcess), false);
 
         /// <summary>
         /// Restart is required. Remove this message when the implementation is complete.

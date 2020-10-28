@@ -1,6 +1,5 @@
 ﻿using Clipbox.Core;
 using Microsoft.Win32;
-using System.IO;
 
 namespace Clipbox.Infrastructure.RegistryAccess
 {

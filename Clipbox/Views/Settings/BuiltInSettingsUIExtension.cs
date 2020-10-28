@@ -166,7 +166,7 @@ namespace Clipbox.Views.Settings
 
                     _settings[settingKey] = settingValue;
 
-                    if (!oldValue.Equals(settingValue))
+                    if (oldValue == null || !oldValue.Equals(settingValue))
                     {
                         _settingKeyUIPartMapping[settingKey].SetSettingValue(settingValue);
                         OnSettingUpdated(settingKey);
