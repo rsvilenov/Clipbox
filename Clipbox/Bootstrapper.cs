@@ -257,7 +257,6 @@ namespace Clipbox
 
         private void PerformInitialConfiguration(ExtensionLoader extensionLoader, ISettingsService settingsService)
         {
-
 #if RELEASE
                 MessageBox.Show("Put the strong names!!!");
                 List<string> buildInExtensionAssemblyFullNames = new List<string>

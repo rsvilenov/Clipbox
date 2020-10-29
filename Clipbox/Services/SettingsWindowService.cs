@@ -81,11 +81,18 @@ namespace Clipbox.Services
                         // this event never fires
                         //_settingsWindow.Closed += _settingsWindow_Closed;
                         _settingsWindow.Closing += _settingsWindow_Closing;
+                        _settingsWindow.Shown += _settingsWindow_Shown;
                         _settingsWindow.Show();
                     }
 
                     _settingsWindow.HighlightCategory(highlightCategory);
                 }));
+        }
+
+        private void _settingsWindow_Shown(object sender, EventArgs e)
+        {
+            BringSettingsWindowToFront();
+            _settingsWindow.Shown -= _settingsWindow_Shown;
         }
 
         private void _settingsWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)

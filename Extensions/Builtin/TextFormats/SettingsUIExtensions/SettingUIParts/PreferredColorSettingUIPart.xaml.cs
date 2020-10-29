@@ -25,8 +25,8 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIP
 
         private string _hexColorString;
 
-        private readonly string DEFAULT_FG_COLOR = Colors.Black.ToString();
-        private readonly string DEFAULT_BG_COLOR = Colors.Gainsboro.ToString();
+        public static readonly string DEFAULT_FG_COLOR = Colors.Black.ToString();
+        public static readonly string DEFAULT_BG_COLOR = Colors.Gainsboro.ToString();
 
 
         public PreferredColorSettingUIPart(bool isForegroundSelector)
