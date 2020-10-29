@@ -1,10 +1,8 @@
-﻿using Clipbox.Core.Enums;
-using Clipbox.Infrastructure.UI;
+﻿using Clipbox.Infrastructure.UI;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using System;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
 
 namespace Clipbox.ViewModels
@@ -18,19 +16,14 @@ namespace Clipbox.ViewModels
         private bool _isDisposed;
 
         public event EventHandler ToggleMainWindowOpenRequested;
-
         public event EventHandler SettingsWindowOpenRequested;
+        public event EventHandler QuitRequested;
 
         public ICommand ToggleCloudSyncEnabled { get; }
-
         public ICommand Pause { get; }
-
         public ICommand Resume { get; }
-
         public ICommand Quit { get; }
-
         public ICommand ToggleMainWindowOpen { get; }
-
         public ICommand OpenSettingsWindow { get; }
 
         private bool _isCloudSyncEnabled;
@@ -124,7 +117,7 @@ namespace Clipbox.ViewModels
 
         private void QuitHandler()
         {
-            Application.Current.Shutdown((int)ProcessExitCodes.Ok);
+            QuitRequested?.Invoke(this, new EventArgs());
         }
 
         private void PauseHandler(object intervalObj)

@@ -1,4 +1,5 @@
-﻿using Clipbox.Core.Extensibility.Enums;
+﻿using Clipbox.Core.Enums;
+using Clipbox.Core.Extensibility.Enums;
 using Clipbox.Services.Interfaces;
 using Clipbox.ViewModels;
 using Clipbox.Views;
@@ -7,7 +8,9 @@ using Clipbox.Win32;
 using Clipbox.Win32.LLHooks;
 using Clipbox.Win32.Native;
 using System;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace Clipbox.Services
 {
@@ -16,6 +19,8 @@ namespace Clipbox.Services
     /// </summary>
     public class TrayContextMenuService : ITrayContextMenuService, IDisposable
     {
+        private const int QUIT_DELAY_MS = 2000;
+
         private readonly ISettingsService _settingsService;
         private ITrayContextMenu _trayContextMenu;
         private readonly IMainClipboardViewWindowService _mainClipboardViewWindowService;
@@ -39,9 +44,24 @@ namespace Clipbox.Services
             _trayContextMenuViewModel = new TrayContextMenuViewModel(_settingsService, pauseService, mainClipboardViewWindowService);
             _trayContextMenuViewModel.SettingsWindowOpenRequested += _trayContextMenuViewModel_SettingsWindowOpenRequested;
             _trayContextMenuViewModel.ToggleMainWindowOpenRequested += _trayContextMenuViewModel_ToggleMainWindowOpenRequested;
+            _trayContextMenuViewModel.QuitRequested += _trayContextMenuViewModel_QuitRequested;
 
             _mouseHook = new MouseLLHook();
             _mouseHook.MouseAction += _mouseHook_MouseAction;
+        }
+
+        private void _trayContextMenuViewModel_QuitRequested(object sender, EventArgs e)
+        {
+            // Wait for the context menu and its fade animation to complete berofe initiating Shutdown.
+            // Otherwise the fade animation freezes while the shutdown is ongoing...
+            // TODO: think of a real, not hacky fix for this. 
+            Task.Delay(QUIT_DELAY_MS).ContinueWith((t) =>
+            {
+                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, new Action(() =>
+                {
+                    Application.Current.Shutdown((int)ProcessExitCodes.Ok);
+                }));
+            });
         }
 
         private void _trayContextMenuViewModel_ToggleMainWindowOpenRequested(object sender, EventArgs e)
