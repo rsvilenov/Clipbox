@@ -76,6 +76,10 @@ namespace Clipbox.Services
             {
                 _settingsService.SetSetting(SettingsKeys.IsClipboardTrackingEnabled, false);
             }
+            else if (e.ReceivedMessage == ProductConstants.PIPE_COMMAND_OPEN_MAIN_WINDOW)
+            {
+                _mainClipboardViewWindowService?.OpenOnMonitor(MonitorUtils.GetByCurrentMousePosition());
+            }
         }
 
         private void SetOrUnsetPersistentFlagForHighPriority()
