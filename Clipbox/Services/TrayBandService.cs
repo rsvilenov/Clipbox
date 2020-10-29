@@ -1,5 +1,6 @@
 ﻿using Clipbox.Core;
 using Clipbox.Infrastructure.IPC;
+using Clipbox.Infrastructure.Persistence.FilesystemAccess;
 using Clipbox.Infrastructure.UI;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
@@ -29,15 +30,18 @@ namespace Clipbox.Services
         private readonly IMainClipboardViewWindowService _mainClipboardViewWindowService;
         private readonly ITrayContextMenuService _trayContextMenuService;
         private readonly ISettingsService _settingsService;
+        private readonly IPauseService _pauseService;
 
         public TrayBandService(IMainClipboardViewWindowService mainClipboardViewWindowService,
             ITrayContextMenuService trayContextMenuService,
-            ISettingsService settingsService)
+            ISettingsService settingsService,
+            IPauseService pauseService)
         {
             _mainClipboardViewWindowService = mainClipboardViewWindowService;
 
             _settingsService = settingsService;
             _trayContextMenuService = trayContextMenuService;
+            _pauseService = pauseService;
 
             _trayContextMenuHelper = new TrayContextMenuHelper(_trayContextMenuService);
 
@@ -51,7 +55,30 @@ namespace Clipbox.Services
                 ShowDeskBand(autoConfirm: true);
             }
 
+            // manage the files, signalling the state to the deskband:
+            // when we start, the paused state is impossible, so delete any leftover file from previous state signalling
+            SetTrayBandSignalFileForPauseStateChanged(false);
+
+
+            // get the "enabled" state and delete/create the signalling file accordingly
+            bool isClipboardTrackingEnabled = _settingsService.GetSetting<bool>(SettingsKeys.IsClipboardTrackingEnabled);
+            SetTrayBandFileForEnabledStateChanged(isClipboardTrackingEnabled);
+
             _settingsService.SettingChanged += _settingsService_SettingChanged;
+            _pauseService.PauseStateChanged += _pauseService_PauseStateChanged;
+        }
+
+        private void _pauseService_PauseStateChanged(object sender, EventArgsClasses.PauseEventArgs e)
+        {
+            string disabledFileName = Path.Combine(AppDataUtils.GetAppDataDir(false), "paused");
+            if (e.IsPaused && e.PauseIntervalMs != -1)
+            {
+                SetTrayBandSignalFileForPauseStateChanged(true);
+            }
+            else if (File.Exists(disabledFileName))
+            {
+                SetTrayBandSignalFileForPauseStateChanged(false);
+            }
         }
 
         private void DisableDeskband()
@@ -129,6 +156,41 @@ namespace Clipbox.Services
                 {
                     HideDeskBand();
                 }
+            }
+
+            if (e.Key == SettingsKeys.IsClipboardTrackingEnabled)
+            {
+                SetTrayBandFileForEnabledStateChanged((bool)e.Value);
+            }
+        }
+
+        private void SetTrayBandFileForEnabledStateChanged(bool isEnabled)
+        {
+            // create this file in AppData so that the deskband can find it. 
+            // IMPORTANT: Do not use IPersistenceProvider here, because its implementation may change,
+            // and we want to store the filename precisely in %APPDATA%\Clipbox, so that the
+            // deskband Shell extension, which is written in c++, can read it.
+            string disabledFileName = Path.Combine(AppDataUtils.GetAppDataDir(false), "disabled");
+            if (isEnabled)
+            {
+                File.Delete(disabledFileName);
+            }
+            else
+            {
+                File.Create(disabledFileName).Dispose();
+            }
+        }
+
+        private void SetTrayBandSignalFileForPauseStateChanged(bool isPaused)
+        {
+            string disabledFileName = Path.Combine(AppDataUtils.GetAppDataDir(false), "paused");
+            if (isPaused)
+            {
+                File.Create(disabledFileName).Dispose();
+            }
+            else if (File.Exists(disabledFileName))
+            {
+                File.Delete(disabledFileName);
             }
         }
 

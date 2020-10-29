@@ -33,6 +33,7 @@ namespace Clipbox.Services
         private bool _isDisposed;
         private bool _clearSysClipboardInactivityIntervalReached;
         private bool _clearExtClipboardInactivityIntervalReached;
+        private Application _currentApplication;
 
         public AutoClearClipboardService(IClipboardManager clipboardManager, ISettingsService settingsService)
         {
@@ -54,7 +55,12 @@ namespace Clipbox.Services
             _inactivityDetectionTimer.Elapsed += _inactivityDetectionTimer_Elapsed;
             _inactivityDetectionTimer.Start();
 
-            Application.Current.SessionEnding += Current_SessionEnding;
+            // grab a reference to the current application object in order to
+            // prevent null ref exception on dispose if the Application.Current has
+            // alreday been set to null by WPF upon shutdown.
+            _currentApplication = Application.Current;
+            _currentApplication.SessionEnding += Current_SessionEnding;
+
             SystemEvents.SessionSwitch += SystemEvents_SessionSwitch;
         }
 
@@ -160,7 +166,8 @@ namespace Clipbox.Services
                 _inactivityDetectionTimer.Dispose();
 
                 _settingsService.SettingChanged -= _settingsService_SettingChanged;
-                Application.Current.SessionEnding -= Current_SessionEnding;
+                _currentApplication.SessionEnding -= Current_SessionEnding;
+                _currentApplication = null;
                 SystemEvents.SessionSwitch -= SystemEvents_SessionSwitch;
 
                 _isDisposed = true;

@@ -240,7 +240,7 @@ namespace Clipbox
 
             _trayService = new TrayIconService(_mainClipboardViewWindowService, _trayContextMenuService, _settingsService, _pauseService);
 
-            _trayBandService = new TrayBandService(_mainClipboardViewWindowService, _trayContextMenuService, _settingsService);
+            _trayBandService = new TrayBandService(_mainClipboardViewWindowService, _trayContextMenuService, _settingsService, _pauseService);
 
             _rebuildIndexWindowService = new RebuildIndexWindowService(_searchService, _mainClipboardViewWindowService, _clipboardManager);
 
@@ -300,13 +300,13 @@ namespace Clipbox
             Shell32.SHChangeNotify(NativeEnums.SHCNE.SHCNE_ASSOCCHANGED, NativeEnums.SHChangeNotifyFlags.SHCNF_IDLIST, IntPtr.Zero, IntPtr.Zero);
             System.Threading.Thread.Sleep(1000);
 
-            settingsService.SetSetting(SettingsKeys.IsInitialConfigurationDone, true);
-
             string initialCultureCode = RegistryUtils.GetInitialCultureCode();
             if (!string.IsNullOrEmpty(initialCultureCode))
             {
                 _settingsService.SetSetting(SettingsKeys.LocalizationCulture, initialCultureCode.Trim());
             }
+
+            settingsService.SetSetting(SettingsKeys.IsInitialConfigurationDone, true);
         }
 
         private void ClearLastExceptionInfo()
