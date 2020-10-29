@@ -25,6 +25,7 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
     {
         private const int LUCENE_SEARCH_MAX_RESULT_COUNT = 10000;
         private const int LUCENE_MAX_CLAUSES_COUNT = 50000;
+        private const string LUCENE_READY_FILENAME = "lucene.ready";
 
         private readonly IEncryptionProvider _encryptionProvider;
         private readonly IPersistenceProvider _persistenceProvider;
@@ -43,6 +44,7 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
             // classes to make them use the provider.
             _persistenceProvider = persistenceProvider;
 
+            SetUpLuceneIfFirstRun();
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
         }
@@ -332,6 +334,22 @@ namespace Clipbox.Infrastructure.Search.SearchProviders
                 if (!ProcessIfLuceneException(ex))
                 {
                     throw;
+                }
+            }
+        }
+
+        private void SetUpLuceneIfFirstRun()
+        {
+            string appDataPath = AppDataUtils.GetAppDataDir(false);
+            string luceneReadyFilePath = System.IO.Path.Combine(appDataPath, LUCENE_READY_FILENAME);
+
+            if (!System.IO.File.Exists(luceneReadyFilePath))
+            {
+                string indexDirectoryPath = System.IO.Path.Combine(appDataPath, "searchIdx");
+                if (!System.IO.Directory.Exists(indexDirectoryPath))
+                {
+                    System.IO.Directory.CreateDirectory(indexDirectoryPath);
+                    System.IO.File.WriteAllText(luceneReadyFilePath, "ok");
                 }
             }
         }
