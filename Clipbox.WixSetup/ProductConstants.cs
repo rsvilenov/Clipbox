@@ -4,11 +4,11 @@
     {
         public const string PRODUCT_NAME = "Clipbox";
 
-        public const double PRODUCT_VERSION = 1.2;
+        public const double PRODUCT_VERSION = 1.1;
 
-        public const string MSI_PRODUCT_GUID = "95A2CB1E-AD54-41F4-B1F0-D1E7876A7437";
+        public const string MSI_PRODUCT_GUID = "95A2CB1E-AD54-41F4-B1F0-D1E7876A7437"; //"C7DF05E0-556E-4D60-A32E-B85EBF15C5F6";
 
-        public const string WIX_BUNDLE_UPGRADE_CODE = "C7DF05E0-556E-4D60-A32E-B85EBF15C5F6";//"555C5BB0-4DFA-4559-871F-1408F39A2987";
+        public const string WIX_BUNDLE_UPGRADE_CODE = "555C5BB0-4DFA-4559-871F-1408F39A2987";
 
         public const string MSI_PACKAGE_ID = "ClipboxPackageId";
 

@@ -65,7 +65,7 @@ namespace Clipbox.WixSetup.ViewModel
             UninstallCommand = new DelegateCommand(() => UninstallCommandHandler(), () => !_isSetupActionRequested);
             RepairCommand = new DelegateCommand(() => RequestSetupAction(LaunchAction.Repair), () => !_isSetupActionRequested);
 
-            UpdateCommand = new DelegateCommand(() => RequestSetupAction(LaunchAction.UpdateReplaceEmbedded), () => !_isSetupActionRequested);
+            UpdateCommand = new DelegateCommand(() => RequestSetupAction(LaunchAction.Install), () => !_isSetupActionRequested);
 
             UpdateDownloadCommand = new DelegateCommand(UpdateDownloadCommandHandler, () => !_isSetupActionRequested);
             ModifyCommand = new DelegateCommand(ModifyCommandHandler, ModifyCommandHandlerCanExecuteHandler);
