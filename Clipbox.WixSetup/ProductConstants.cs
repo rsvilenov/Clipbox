@@ -14,7 +14,7 @@
 
         public const string COMPANY_NAME = "MyCompany";
 
-        public const string PRODUCT_UPDATE_URL = "https://clipbox.org/update";
+        public const string PRODUCT_UPDATE_URL = "http://go.microsoft.com/fwlink/?linkid=863265";
 
         public const string PRODUCT_EULA_URL = "https://clipbox.org/eula";
 

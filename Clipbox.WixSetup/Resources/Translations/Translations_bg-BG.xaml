@@ -59,4 +59,6 @@
     <sys:String x:Key="TrLblFactoryResetConfirmation">Сигурни ли сте, че искате да нулирате Clipbox?</sys:String>
     <sys:String x:Key="TrLblFactoryResetDataLossWarning">Това ще върне всички настройки в началното им състояние.</sys:String>
     <sys:String x:Key="TrChkBoxPinTrayIcon">Закачи трей иконката в таскбара, за да не се крие</sys:String>
+    <sys:String x:Key="TrLblDownloadingUpdate">Сваляне на ъпдейт</sys:String>
+    <sys:String x:Key="TrLblDownloadingInfo">Ъпдейтът ще започне след малко.</sys:String>
 </ResourceDictionary>

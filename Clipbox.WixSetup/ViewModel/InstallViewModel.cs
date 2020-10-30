@@ -7,11 +7,10 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.ServiceProcess;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Input;
-using System.Windows.Threading;
 
 namespace Clipbox.WixSetup.ViewModel
 {
@@ -32,7 +31,7 @@ namespace Clipbox.WixSetup.ViewModel
         public ICommand InstallCommand { get; set; }
         public ICommand UninstallCommand { get; set; }
         public ICommand UpdateCommand { get; set; }
-        public ICommand UpdateLinkCommand { get; set; }
+        public ICommand UpdateDownloadCommand { get; set; }
         public ICommand RepairCommand { get; set; }
         public ICommand ModifyCommand { get; set; }
         public ICommand FactoryResetCommand { get; set; }
@@ -59,7 +58,7 @@ namespace Clipbox.WixSetup.ViewModel
             UninstallCommand = new DelegateCommand(() => UninstallCommandHandler(), () => !_isSetupActionRequested);
             RepairCommand = new DelegateCommand(() => RequestSetupAction(LaunchAction.Repair), () => !_isSetupActionRequested);
             UpdateCommand = new DelegateCommand(() => RequestSetupAction(LaunchAction.UpdateReplace), () => !_isSetupActionRequested);
-            UpdateLinkCommand = new DelegateCommand(UpdateLinkCommandHandler, () => !_isSetupActionRequested);
+            UpdateDownloadCommand = new DelegateCommand(UpdateDownloadCommandHandler, () => !_isSetupActionRequested);
             ModifyCommand = new DelegateCommand(ModifyCommandHandler, ModifyCommandHandlerCanExecuteHandler);
             FactoryResetCommand = new DelegateCommand(FactoryResetCommandHandler, () => !_isSetupActionRequested);
             RetryCommand = new DelegateCommand(RetryCommandHandler, () => !_isSetupActionRequested && _lastLaunchAction != null);
@@ -331,32 +330,36 @@ namespace Clipbox.WixSetup.ViewModel
         private void UninstallCommandHandler()
         {
             _isSetupActionRequested = true;
-            Task.Factory.StartNew(() =>
+
+            try
             {
-                try
+                Task.Factory.StartNew(() =>
                 {
-                    CancelEventArgs args = new CancelEventArgs();
-                    UninstallConfirmationRequested?.Invoke(this, args);
-                    if (args.Cancel)
+                    try
                     {
-                        return;
+                        CancelEventArgs args = new CancelEventArgs();
+                        UninstallConfirmationRequested?.Invoke(this, args);
+                        if (args.Cancel)
+                        {
+                            return;
+                        }
+
+                        ModifyAction = ClipboxModifyAction.Uninstall;
+
+                        _model.PlanAction(LaunchAction.Uninstall);
                     }
-
-                    ModifyAction = ClipboxModifyAction.Uninstall;
-
-                    _model.PlanAction(LaunchAction.Uninstall);
-                }
-                catch (Exception ex)
-                {
-                    try { _model.LogMessage(ex.ToString()); } catch { }
-                    SetupState = ClipboxSetupState.Error;
-                    ErrorMessage = ex.Message;
-                }
-                finally
-                {
-                    _isSetupActionRequested = false;
-                }
-            });
+                    catch (Exception ex)
+                    {
+                        try { _model.LogMessage(ex.ToString()); } catch { }
+                        SetupState = ClipboxSetupState.Error;
+                        ErrorMessage = ex.Message;
+                    }
+                });
+            }
+            finally
+            {
+                _isSetupActionRequested = false;
+            }
         }
 
         private void RequestSetupAction(LaunchAction launchAction)
@@ -399,18 +402,43 @@ namespace Clipbox.WixSetup.ViewModel
             _model.SetBurnVariable("ACTUAL_INITIAL_CULTURE_CODE", CultureCode);
         }
 
-        private void UpdateLinkCommandHandler()
+        private void UpdateDownloadCommandHandler()
         {
             _isSetupActionRequested = true;
+
             try
             {
-                Process.Start(ProductConstants.PRODUCT_UPDATE_URL);
-                QuitInstallerInternal(0);
-            }
-            catch (Exception ex)
-            {
-                SetupState = ClipboxSetupState.Error;
-                ErrorMessage = ex.Message;
+                Task.Factory.StartNew(() =>
+                {
+                    try
+                    {
+                        ModifyAction = ClipboxModifyAction.DownloadUpdate;
+                        SetupState = ClipboxSetupState.Downloading;
+
+                        string tempFilePath = System.IO.Path.GetTempFileName();
+
+                        WebClient webClient = new WebClient();
+                        webClient.DownloadProgressChanged += (s, e) =>
+                        {
+                            Progress = e.ProgressPercentage;
+                        };
+                        webClient.DownloadFileCompleted += (s, e) =>
+                        {
+                            System.IO.File.Move(tempFilePath, $"{tempFilePath}.exe");
+
+                            Process.Start($"{tempFilePath}.exe");
+                            QuitInstallerInternal(0);
+                        };
+
+                        webClient.DownloadFileAsync(new Uri(ProductConstants.PRODUCT_UPDATE_URL),
+                            tempFilePath);
+                    }
+                    catch (Exception ex)
+                    {
+                        SetupState = ClipboxSetupState.Error;
+                        ErrorMessage = ex.Message;
+                    }
+                });
             }
             finally
             {

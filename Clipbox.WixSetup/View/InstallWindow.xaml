@@ -710,6 +710,9 @@
                         <DataTrigger Binding="{Binding SetupState}" Value="{x:Static vmEnums:ClipboxSetupState.Processing}">
                             <Setter Property="Visibility" Value="Visible" />
                         </DataTrigger>
+                        <DataTrigger Binding="{Binding SetupState}" Value="{x:Static vmEnums:ClipboxSetupState.Downloading}">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
                     </Style.Triggers>
                 </Style>
             </Grid.Style>
@@ -749,6 +752,9 @@
                             <DataTrigger Binding="{Binding ModifyAction}" Value="{x:Static vmEnums:ClipboxModifyAction.FactoryReset}">
                                 <Setter Property="Text" Value="{DynamicResource TrLblFactoryResetting}" />
                             </DataTrigger>
+                            <DataTrigger Binding="{Binding ModifyAction}" Value="{x:Static vmEnums:ClipboxModifyAction.DownloadUpdate}">
+                                <Setter Property="Text" Value="{DynamicResource TrLblDownloadingUpdate}" />
+                            </DataTrigger>
                             <DataTrigger Binding="{Binding SetupWorkflow}" Value="{x:Static vmEnums:ClipboxSetupWorkflow.Install}">
                                 <Setter Property="Text" Value="{DynamicResource TrLblInstalling}" />
                             </DataTrigger>
@@ -762,8 +768,18 @@
                 HorizontalAlignment="Center"
                 FontSize="16"
                 FontWeight="Thin"
-                Foreground="#fefefe"
-                Text="{DynamicResource TrLblInstallingWarning}" />
+                Foreground="#fefefe">
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Text" Value="{DynamicResource TrLblInstallingWarning}" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding SetupState}" Value="{x:Static vmEnums:ClipboxSetupState.Downloading}">
+                                <Setter Property="Text" Value="{DynamicResource TrLblDownloadingInfo}" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
             <ProgressBar
                 Grid.Row="4"
                 Height="10"
@@ -1034,7 +1050,7 @@
                         Margin="10,0,0,20"
                         HorizontalContentAlignment="Left"
                         VerticalContentAlignment="Center"
-                        Command="{Binding UpdateLinkCommand}"
+                        Command="{Binding UpdateDownloadCommand}"
                         FontSize="16"
                         Style="{StaticResource BtnActionDark}">
                         <StackPanel Orientation="Horizontal">

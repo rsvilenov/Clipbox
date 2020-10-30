@@ -5,6 +5,7 @@
         Uninstall,
         Repair,
         Modify,
-        FactoryReset
+        FactoryReset,
+        DownloadUpdate
     }
 }

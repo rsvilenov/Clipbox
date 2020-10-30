@@ -59,4 +59,6 @@
     <sys:String x:Key="TrLblFactoryResetConfirmation">Are you sure you want to reset Clipbox?</sys:String>
     <sys:String x:Key="TrLblFactoryResetDataLossWarning">Doing so will set all its settings to their initial state.</sys:String>
     <sys:String x:Key="TrChkBoxPinTrayIcon">Pin the tray icon to the taskbar, so it never hides</sys:String>
+    <sys:String x:Key="TrLblDownloadingUpdate">Downloading update</sys:String>
+    <sys:String x:Key="TrLblDownloadingInfo">The update will start in a while.</sys:String>
 </ResourceDictionary>

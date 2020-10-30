@@ -6,6 +6,7 @@
         Welcome,
         Preparing,
         Processing,
+        Downloading,
         Done,
         Error
     }
