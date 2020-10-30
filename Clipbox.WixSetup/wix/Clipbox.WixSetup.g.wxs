@@ -6,7 +6,7 @@
 </auto-generated>
 -->
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="95a2cb1e-ad54-41f4-b1f0-d1e7978a7437" Name="Clipbox" Language="1033" Codepage="Windows-1252" Version="1.1" UpgradeCode="95a2cb1e-ad54-41f4-b1f0-d1e7876a7437" Manufacturer="rosen">
+  <Product Id="95a2cb1e-ad54-41f4-b1f0-d1e79785f4e5" Name="Clipbox" Language="1033" Codepage="Windows-1252" Version="1.1.7608.32941" UpgradeCode="95a2cb1e-ad54-41f4-b1f0-d1e7876a7437" Manufacturer="rosen">
     <Package InstallerVersion="200" Compressed="yes" Platform="x64" SummaryCodepage="Windows-1252" InstallPrivileges="elevated" InstallScope="perMachine" Languages="1033" />
     <Media Id="1" Cabinet="Clipbox.cab" EmbedCab="yes" />
 
@@ -1027,6 +1027,14 @@
           <CreateFolder />
         </Component>
 
+        <Component Id="Registry.4" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7848242b6" Win64="yes">
+          <RegistryKey Root="HKLM" Key="Software\MyCompany\Clipbox">
+            <RegistryValue Id="ProductVersion" Type="string" KeyPath="yes" Value="1.1.7608.32941" Name="ProductVersion" />
+          </RegistryKey>
+
+          <CreateFolder />
+        </Component>
+
       </Directory>
 
       <Component Id="TARGETDIR" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7fa3ae4aa" KeyPath="yes" Win64="yes">
@@ -1038,6 +1046,11 @@
 
     <UI />
 
+    <Upgrade Id="95a2cb1e-ad54-41f4-b1f0-d1e7876a7437">
+      <UpgradeVersion Minimum="0.0.0.0" Maximum="1.1.7608.32941" IncludeMinimum="yes" IncludeMaximum="no" Property="UPGRADEFOUND" />
+      <UpgradeVersion Minimum="1.1.7608.32941" IncludeMinimum="no" Property="NEWPRODUCTFOUND" />
+    </Upgrade>
+
     <CustomAction Id="Set_InstallDeskband_Props" Property="InstallDeskband" Value="PIN_TRAY_ICON=[PIN_TRAY_ICON];INSTALLDIR=[INSTALLDIR];UILevel=[UILevel];ProductCode=[ProductCode];ADDLOCAL=[ADDLOCAL];ADDFEATURES=[ADDFEATURES]" />
     <CustomAction Id="InstallDeskband" BinaryKey="InstallDeskband_File" DllEntry="InstallDeskband" Return="check" Impersonate="no" Execute="deferred" />
     <CustomAction Id="Set_UnInstallDeskband_Props" Property="UnInstallDeskband" Value="INSTALLDIR=[INSTALLDIR];INSTALLDIR=[INSTALLDIR];UILevel=[UILevel];ProductCode=[ProductCode];ADDLOCAL=[ADDLOCAL];ADDFEATURES=[ADDFEATURES]" />
@@ -1046,6 +1059,7 @@
     <CustomAction Id="CleanUpArtefacts" BinaryKey="InstallDeskband_File" DllEntry="CleanUpArtefacts" Return="ignore" Impersonate="no" Execute="deferred" />
     <CustomAction Id="WixSharp_InitRuntime_Action" BinaryKey="WixSharp_InitRuntime_Action_File" DllEntry="WixSharp_InitRuntime_Action" Return="check" Execute="immediate" />
     <CustomAction Id="WixSharp_BeforeInstall_Action" BinaryKey="WixSharp_InitRuntime_Action_File" DllEntry="WixSharp_BeforeInstall_Action" Return="check" Execute="immediate" />
+    <CustomAction Id="PreventDowngrading" Error="Newer version already installed" />
 
     <Binary Id="InstallDeskband_File" SourceFile="%this%.CA.dll" />
     <Binary Id="WixSharp_InitRuntime_Action_File" SourceFile="WixSharp.CA.dll" />
@@ -1053,7 +1067,7 @@
     <UIRef Id="WixUI_Minimal" />
     <UIRef Id="WixUI_ErrorProgressText" />
 
-    <Property Id="WixSharp_BeforeInstall_Handlers" Value="Clipbox.WixSetup, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null|Clipbox.WixSetup.WixBundleBuilder+&lt;&gt;c|&lt;Setup&gt;b__1_0" />
+    <Property Id="WixSharp_BeforeInstall_Handlers" Value="Clipbox.WixSetup, Version=1.1.7608.32941, Culture=neutral, PublicKeyToken=null|Clipbox.WixSetup.WixBundleBuilder+&lt;&gt;c|&lt;Setup&gt;b__1_0" />
     <Property Id="ProgramMenuFolder.Clipbox_.WorkDir" Value="INSTALLDIR\" />
 
     <Feature Id="Complete" Title="Complete" Absent="allow" Level="1">
@@ -1285,6 +1299,7 @@
       <ComponentRef Id="Registry.1" />
       <ComponentRef Id="Registry.2" />
       <ComponentRef Id="Registry.3" />
+      <ComponentRef Id="Registry.4" />
       <ComponentRef Id="TARGETDIR" />
       <ComponentRef Id="INSTALLDIR.Resources" />
     </Feature>
@@ -1298,7 +1313,14 @@
       <Custom Action="CleanUpArtefacts" After="Set_CleanUpArtefacts_Props">(NOT UPGRADINGPRODUCTCODE) AND (REMOVE="ALL")</Custom>
       <Custom Action="WixSharp_InitRuntime_Action" Before="AppSearch"> (1) </Custom>
       <Custom Action="WixSharp_BeforeInstall_Action" Before="InstallFiles">1</Custom>
+      <Custom Action="PreventDowngrading" After="FindRelatedProducts">NEWPRODUCTFOUND</Custom>
+
+      <RemoveExistingProducts After="InstallInitialize" />
     </InstallExecuteSequence>
+
+    <InstallUISequence>
+      <Custom Action="PreventDowngrading" After="FindRelatedProducts">NEWPRODUCTFOUND</Custom>
+    </InstallUISequence>
 
   </Product>
 </Wix>

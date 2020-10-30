@@ -51,6 +51,13 @@ namespace Clipbox.WixSetup.ViewModel
             InstallationDirectory =
                 System.IO.Path.Combine(FindProperProgramFilesDir(), ProductConstants.COMPANY_NAME, ProductConstants.PRODUCT_NAME);
 
+            Version productVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+#if DEBUG
+            VersionString = productVersion.ToString();
+#else
+            VersionString = $"{productVersion.Major}.{productVersion.Minor}";
+#endif
+
             QuitCommand = new DelegateCommand(QuitCommandHandler);
             CloseInstallWindowCommand = new DelegateCommand(CloseInstallWindowCommandHandler);
             CancelCommand = new DelegateCommand(CancelCommandHandler, () => !_isCancelRequested);
@@ -701,6 +708,13 @@ namespace Clipbox.WixSetup.ViewModel
         {
             get { return _cultureCode; }
             set { SetField(ref _cultureCode, value, () => CultureCode); }
+        }
+
+        private string _versionString;
+        public string VersionString
+        {
+            get { return _versionString; }
+            set { SetField(ref _versionString, value, () => VersionString); }
         }
 
         private string _installationDirectory;

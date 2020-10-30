@@ -6,13 +6,15 @@
 
         public const double PRODUCT_VERSION = 1.1;
 
-        public const string PRODUCT_GUID = "95A2CB1E-AD54-41F4-B1F0-D1E7876A7437";
+        public const string MSI_PRODUCT_GUID = "95A2CB1E-AD54-41F4-B1F0-D1E7876A7437";
 
         public const string WIX_BUNDLE_UPGRADE_CODE = "555C5BB0-4DFA-4559-871F-1408F39A2987";
 
         public const string MSI_PACKAGE_ID = "ClipboxPackageId";
 
         public const string COMPANY_NAME = "MyCompany";
+
+        public const string PRODUCT_LATEST_VERSION_URL = "http://go.microsoft.com/fwlink/?linkid=863265";
 
         public const string PRODUCT_UPDATE_URL = "http://go.microsoft.com/fwlink/?linkid=863265";
 

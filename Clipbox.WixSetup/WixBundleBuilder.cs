@@ -1,7 +1,12 @@
 ﻿using System;
+using System.Reflection;
 using System.ServiceProcess;
 using WixSharp;
 using WixSharp.Bootstrapper;
+
+// let Visual Studio auto-increment the build and revision numbers.
+// In order for this to work, in the csprj file "Deterministic" should be set to "false"
+[assembly: AssemblyVersion("1.1.*")]
 
 namespace Clipbox.WixSetup
 {
@@ -13,9 +18,14 @@ namespace Clipbox.WixSetup
 
         static public void Setup()
         {
-            Version productVersion = new Version(ProductConstants.PRODUCT_VERSION.ToString("#.##"));
-            //int majorVersion = (int)Math.Floor(ProductConstants.PRODUCT_VERSION);
-            //int minorVersion = (int)ProductConstants.PRODUCT_VERSION % 1;
+            // this assembly version will be our product full version.
+            Version asmVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+
+            if (double.Parse($"{asmVersion.Major}.{asmVersion.Minor}") != ProductConstants.PRODUCT_VERSION)
+            {
+                throw new InvalidOperationException($"Assebmly's major.minor version is {asmVersion.Major}.{asmVersion.Minor} while the product version is {ProductConstants.PRODUCT_VERSION}. They should match.");
+            }
+            
 #if DEBUG
             string releaseDirectory = @"..\Build\Debug\";
 #elif RELEASE
@@ -117,10 +127,16 @@ namespace Clipbox.WixSetup
 #if PLATFORM_X64
                         Win64 = true
 #endif
+                    },
+                    new RegValue(RegistryHive.LocalMachine, $@"Software\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}", "ProductVersion", asmVersion.ToString())
+                    {
+#if PLATFORM_X64
+                        Win64 = true
+#endif
                     })
                 {
-                    Version = productVersion,
-                    GUID = new Guid(ProductConstants.PRODUCT_GUID),
+                    Version = asmVersion,
+                    GUID = new Guid(ProductConstants.MSI_PRODUCT_GUID),
                     InstallScope = InstallScope.perMachine,
                     UI = WUI.WixUI_Minimal,
                     InstallPrivileges = InstallPrivileges.elevated
@@ -133,6 +149,9 @@ namespace Clipbox.WixSetup
             project.WixVariables.Add("INITIAL_CULTURE_CODE", "en-US");
             project.WixVariables.Add("DESKTOP_SHORTCUT", "no");
             project.WixVariables.Add("PIN_TRAY_ICON", "yes");
+
+            project.MajorUpgradeStrategy = MajorUpgradeStrategy.Default;
+            project.MajorUpgradeStrategy.RemoveExistingProductAfter = Step.InstallInitialize;
 
             project.BeforeInstall += args =>
             {
@@ -201,7 +220,7 @@ namespace Clipbox.WixSetup
                         MsiProperties = "INSTALLDIR=[ACTUAL_INSTALLDIR];INITIAL_CULTURE_CODE=[ACTUAL_INITIAL_CULTURE_CODE];DESKTOP_SHORTCUT=[CREATE_DESKTOP_SHORTCUT];PIN_TRAY_ICON=[PIN_TRAY_ICON]"
                     })
                 {
-                    Version = productVersion,
+                    Version = asmVersion,
                     Manufacturer = ProductConstants.COMPANY_NAME,
                     UpgradeCode = new Guid(ProductConstants.WIX_BUNDLE_UPGRADE_CODE),
                     OutFileName = ProductConstants.PRODUCT_NAME
