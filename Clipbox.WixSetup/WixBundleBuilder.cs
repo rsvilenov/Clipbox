@@ -63,8 +63,11 @@ namespace Clipbox.WixSetup
                         new ExeFileShortcut(ProductConstants.PRODUCT_NAME, System.IO.Path.Combine("[INSTALLDIR]", ProductConstants.GUARD_EXE_NAME), arguments: ProductConstants.STARTED_FROM_SHORTCUT)
                         {
                             ComponentCondition = new Condition("DESKTOP_SHORTCUT=\"yes\"")
-                        }),
-                    new ElevatedManagedAction(CustomActions.InstallDeskband, Return.check, When.Before, Step.StartServices, WixSharp.Condition.NOT_Installed),
+                        }), 
+                    new ElevatedManagedAction(CustomActions.InstallDeskband, Return.check, When.Before, Step.StartServices, WixSharp.Condition.NOT_Installed)
+                    {
+                        UsesProperties = "PIN_TRAY_ICON=[PIN_TRAY_ICON]"
+                    },
                     new ElevatedManagedAction(CustomActions.UnInstallDeskband, Return.check, When.Before, Step.RemoveFiles, WixSharp.Condition.BeingUninstalled),
                     new ElevatedManagedAction(CustomActions.CleanUpArtefacts, Return.ignore, When.After, Step.RemoveFiles, WixSharp.Condition.BeingUninstalledAndNotBeingUpgraded),
                     new RegValue(RegistryHive.LocalMachine, $@"Software\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}", "InstallDirectory", "[INSTALLDIR]") 
@@ -74,6 +77,12 @@ namespace Clipbox.WixSetup
 #endif
                     },
                     new RegValue(RegistryHive.LocalMachine, $@"Software\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}", "InitialCultureCode", "[INITIAL_CULTURE_CODE]")
+                    {
+#if PLATFORM_X64
+                        Win64 = true
+#endif
+                    },
+                    new RegValue(RegistryHive.LocalMachine, $@"Software\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}", "InitialPinTrayIcon", "[PIN_TRAY_ICON]")
                     {
 #if PLATFORM_X64
                         Win64 = true
@@ -93,6 +102,7 @@ namespace Clipbox.WixSetup
 
             project.WixVariables.Add("INITIAL_CULTURE_CODE", "en-US");
             project.WixVariables.Add("DESKTOP_SHORTCUT", "no");
+            project.WixVariables.Add("PIN_TRAY_ICON", "yes");
 
             project.BeforeInstall += args =>
             {
@@ -158,7 +168,7 @@ namespace Clipbox.WixSetup
                         Vital = true,
                         // pass the custom install dir property to the MSI package.
                         // this property is defined in bootstrapper.Variables below.
-                        MsiProperties = "INSTALLDIR=[ACTUAL_INSTALLDIR];INITIAL_CULTURE_CODE=[ACTUAL_INITIAL_CULTURE_CODE];DESKTOP_SHORTCUT=[CREATE_DESKTOP_SHORTCUT]"
+                        MsiProperties = "INSTALLDIR=[ACTUAL_INSTALLDIR];INITIAL_CULTURE_CODE=[ACTUAL_INITIAL_CULTURE_CODE];DESKTOP_SHORTCUT=[CREATE_DESKTOP_SHORTCUT];PIN_TRAY_ICON=[PIN_TRAY_ICON]"
                     })
                 {
                     Version = productVersion,
@@ -199,6 +209,7 @@ namespace Clipbox.WixSetup
 
                 new Variable("ACTUAL_INITIAL_CULTURE_CODE", "en-US"),
                 new Variable("CREATE_DESKTOP_SHORTCUT", "no"),
+                new Variable("PIN_TRAY_ICON", "yes"),
 
                 new Variable("VCPlusPlus2015_x64_RequiredVersion")
                 {

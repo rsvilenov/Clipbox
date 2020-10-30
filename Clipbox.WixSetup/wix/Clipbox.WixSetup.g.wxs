@@ -13,6 +13,7 @@
     <WixVariable Id="INSTALLDIR" Value="%ProgramFiles%\MyCompany\Clipbox" />
     <WixVariable Id="INITIAL_CULTURE_CODE" Value="en-US" />
     <WixVariable Id="DESKTOP_SHORTCUT" Value="no" />
+    <WixVariable Id="PIN_TRAY_ICON" Value="yes" />
 
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="INSTALLDIR" Name="INSTALLDIR">
@@ -1014,6 +1015,14 @@
           <CreateFolder />
         </Component>
 
+        <Component Id="Registry.3" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7848942b6" Win64="yes">
+          <RegistryKey Root="HKLM" Key="Software\MyCompany\Clipbox">
+            <RegistryValue Id="InitialPinTrayIcon" Type="string" KeyPath="yes" Value="[PIN_TRAY_ICON]" Name="InitialPinTrayIcon" />
+          </RegistryKey>
+
+          <CreateFolder />
+        </Component>
+
       </Directory>
 
       <Component Id="TARGETDIR" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7fa3ae4aa" KeyPath="yes" Win64="yes">
@@ -1025,7 +1034,7 @@
 
     <UI />
 
-    <CustomAction Id="Set_InstallDeskband_Props" Property="InstallDeskband" Value="INSTALLDIR=[INSTALLDIR];INSTALLDIR=[INSTALLDIR];UILevel=[UILevel];ProductCode=[ProductCode];ADDLOCAL=[ADDLOCAL];ADDFEATURES=[ADDFEATURES]" />
+    <CustomAction Id="Set_InstallDeskband_Props" Property="InstallDeskband" Value="PIN_TRAY_ICON=[PIN_TRAY_ICON];INSTALLDIR=[INSTALLDIR];UILevel=[UILevel];ProductCode=[ProductCode];ADDLOCAL=[ADDLOCAL];ADDFEATURES=[ADDFEATURES]" />
     <CustomAction Id="InstallDeskband" BinaryKey="InstallDeskband_File" DllEntry="InstallDeskband" Return="check" Impersonate="no" Execute="deferred" />
     <CustomAction Id="Set_UnInstallDeskband_Props" Property="UnInstallDeskband" Value="INSTALLDIR=[INSTALLDIR];INSTALLDIR=[INSTALLDIR];UILevel=[UILevel];ProductCode=[ProductCode];ADDLOCAL=[ADDLOCAL];ADDFEATURES=[ADDFEATURES]" />
     <CustomAction Id="UnInstallDeskband" BinaryKey="InstallDeskband_File" DllEntry="UnInstallDeskband" Return="check" Impersonate="no" Execute="deferred" />
@@ -1271,6 +1280,7 @@
       <ComponentRef Id="Component.Clipbox.1" />
       <ComponentRef Id="Registry.1" />
       <ComponentRef Id="Registry.2" />
+      <ComponentRef Id="Registry.3" />
       <ComponentRef Id="TARGETDIR" />
       <ComponentRef Id="INSTALLDIR.Resources" />
     </Feature>

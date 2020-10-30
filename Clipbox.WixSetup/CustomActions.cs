@@ -16,13 +16,16 @@ namespace Clipbox.WixSetup
                 var dll = System.IO.Path.Combine(session.Property("INSTALLDIR"), ProductConstants.DESKBAND_SHELL_EXT_DLL_NAME);
                 Process.Start("regsvr32.exe", $"/s \"{dll}\"").WaitForExit();
 
-                var deskbandCtrlExe = System.IO.Path.Combine(session.Property("INSTALLDIR"), ProductConstants.DESKBAND_CTRL_EXE_NAME);
-                using (Process deskbandCtlProcess = Process.Start(deskbandCtrlExe, "nowait"))
+                if (session.Property("PIN_TRAY_ICON") == "yes")
                 {
-                    deskbandCtlProcess.WaitForExit();
-                    if (deskbandCtlProcess.ExitCode != 0)
+                    var deskbandCtrlExe = System.IO.Path.Combine(session.Property("INSTALLDIR"), ProductConstants.DESKBAND_CTRL_EXE_NAME);
+                    using (Process deskbandCtlProcess = Process.Start(deskbandCtrlExe, "nowait"))
                     {
-                        System.IO.File.Create(System.IO.Path.Combine(session.Property("INSTALLDIR"), ProductConstants.DESKBAND_INSTALL_FAILURE_FLAG_FILENAME));
+                        deskbandCtlProcess.WaitForExit();
+                        if (deskbandCtlProcess.ExitCode != 0)
+                        {
+                            System.IO.File.Create(System.IO.Path.Combine(session.Property("INSTALLDIR"), ProductConstants.DESKBAND_INSTALL_FAILURE_FLAG_FILENAME));
+                        }
                     }
                 }
             });

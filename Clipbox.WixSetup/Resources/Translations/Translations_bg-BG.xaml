@@ -58,4 +58,5 @@
     <sys:String x:Key="TrLblFactoryResetComplete">Нулирането на Clipbox завърши успешно.</sys:String>
     <sys:String x:Key="TrLblFactoryResetConfirmation">Сигурни ли сте, че искате да нулирате Clipbox?</sys:String>
     <sys:String x:Key="TrLblFactoryResetDataLossWarning">Това ще върне всички настройки в началното им състояние.</sys:String>
+    <sys:String x:Key="TrChkBoxPinTrayIcon">Закачи трей иконката в таскбара, за да не се крие</sys:String>
 </ResourceDictionary>

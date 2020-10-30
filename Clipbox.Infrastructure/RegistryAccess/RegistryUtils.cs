@@ -14,6 +14,15 @@ namespace Clipbox.Infrastructure.RegistryAccess
             }
         }
 
+        public static string GetInitialPinTrayIcon()
+        {
+            string productHKLMRegKey = $@"Software\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}";
+            using (RegistryKey key = Registry.LocalMachine.OpenSubKey(productHKLMRegKey))
+            {
+                return key?.GetValue("InitialPinTrayIcon")?.ToString();
+            }
+        }
+
         public static void StoreCultureCode(string cultureCode)
         {
             string productHKCURegKey = $@"Software\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}";

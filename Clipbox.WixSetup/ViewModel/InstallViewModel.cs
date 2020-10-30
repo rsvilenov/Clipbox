@@ -291,8 +291,7 @@ namespace Clipbox.WixSetup.ViewModel
 
 
         /// <summary>
-        /// This command causes the installer to hang.
-        /// TODO: figure out why.
+        /// This command causes unpredictable results.
         /// </summary>
         private void CancelCommandHandler()
         {
@@ -395,6 +394,7 @@ namespace Clipbox.WixSetup.ViewModel
         private void SetBurnVariables()
         {
             _model.SetBurnVariable("CREATE_DESKTOP_SHORTCUT", CreateDesktopShortcut ? "yes" : "no");
+            _model.SetBurnVariable("PIN_TRAY_ICON", PinTrayIcon ? "yes" : "no");
             _model.SetBurnVariable("ACTUAL_INSTALLDIR", InstallationDirectory);
             _model.SetBurnVariable("ACTUAL_INITIAL_CULTURE_CODE", CultureCode);
         }
@@ -687,6 +687,13 @@ namespace Clipbox.WixSetup.ViewModel
         {
             get { return _createDesktopShortcut; }
             set { SetField(ref _createDesktopShortcut, value, () => CreateDesktopShortcut); }
+        }
+
+        private bool _pinTrayIcon = true;
+        public bool PinTrayIcon
+        {
+            get { return _pinTrayIcon; }
+            set { SetField(ref _pinTrayIcon, value, () => PinTrayIcon); }
         }
 
         private string _errorMessage;

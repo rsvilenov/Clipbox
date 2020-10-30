@@ -516,7 +516,6 @@
             <!--  custom install  -->
             <Grid
                 Name="CustomInstallPage"
-                Grid.Row="1"
                 VerticalAlignment="Stretch"
                 Visibility="Collapsed">
                 <Grid.ColumnDefinitions>
@@ -596,16 +595,26 @@
                             Style="{StaticResource BtnActionDark}" />
                     </Grid>
 
-                    <ToggleButton
-                        Grid.Row="3"
-                        Height="30"
-                        Margin="0,30,0,0"
-                        HorizontalAlignment="Left"
-                        Content="{DynamicResource TrChkBoxDesktopShortcut}"
-                        FontSize="16"
-                        Foreground="#f0f0bd"
-                        IsChecked="{Binding CreateDesktopShortcut}"
-                        Style="{StaticResource CheckBox}" />
+                    <StackPanel Grid.Row="3" Orientation="Vertical">
+                        <ToggleButton
+                            Height="30"
+                            Margin="0,30,0,0"
+                            HorizontalAlignment="Left"
+                            Content="{DynamicResource TrChkBoxDesktopShortcut}"
+                            FontSize="16"
+                            Foreground="#f0f0bd"
+                            IsChecked="{Binding CreateDesktopShortcut}"
+                            Style="{StaticResource CheckBox}" />
+                        <ToggleButton
+                            Height="30"
+                            Margin="0,0,0,0"
+                            HorizontalAlignment="Left"
+                            Content="{DynamicResource TrChkBoxPinTrayIcon}"
+                            FontSize="16"
+                            Foreground="#f0f0bd"
+                            IsChecked="{Binding PinTrayIcon}"
+                            Style="{StaticResource CheckBox}" />
+                    </StackPanel>
 
                 </Grid>
                 <Button

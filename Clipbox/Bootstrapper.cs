@@ -303,6 +303,14 @@ namespace Clipbox
                 _settingsService.SetSetting(SettingsKeys.LocalizationCulture, initialCultureCode.Trim());
             }
 
+            string initialPinTrayIcon = RegistryUtils.GetInitialPinTrayIcon();
+            if (!string.IsNullOrEmpty(initialPinTrayIcon))
+            {
+                bool pin = initialPinTrayIcon == "yes";
+                _settingsService.SetSetting(SettingsKeys.IsDeskBandEnabled, pin);
+                _settingsService.SetSetting(SettingsKeys.IsTrayIconEnabled, !pin);
+            }
+
             settingsService.SetSetting(SettingsKeys.IsInitialConfigurationDone, true);
         }
 
