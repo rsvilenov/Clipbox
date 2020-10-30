@@ -21,6 +21,7 @@ namespace Clipbox.WixSetup.ViewModel
 
         public event EventHandler<CancelEventArgs> QuitConfirmationRequested;
         public event EventHandler<CancelEventArgs> CancelConfirmationRequested;
+        public event EventHandler<CancelEventArgs> UninstallConfirmationRequested;
         public event EventHandler DetectComplete;
 
         public ICommand QuitCommand { get; set; }
@@ -52,7 +53,7 @@ namespace Clipbox.WixSetup.ViewModel
             CloseInstallWindowCommand = new DelegateCommand(CloseInstallWindowCommandHandler);
             CancelCommand = new DelegateCommand(CancelCommandHandler, () => !_isCancelRequested);
             InstallCommand = new DelegateCommand(() => RequestSetupAction(LaunchAction.Install), () => !_isSetupActionRequested);
-            UninstallCommand = new DelegateCommand(() => RequestSetupAction(LaunchAction.Uninstall), () => !_isSetupActionRequested);
+            UninstallCommand = new DelegateCommand(() => UninstallCommandHandler(), () => !_isSetupActionRequested);
             RepairCommand = new DelegateCommand(() => RequestSetupAction(LaunchAction.Repair), () => !_isSetupActionRequested);
             UpdateCommand = new DelegateCommand(() => RequestSetupAction(LaunchAction.UpdateReplace), () => !_isSetupActionRequested);
             UpdateLinkCommand = new DelegateCommand(UpdateLinkCommandHandler, () => !_isSetupActionRequested);
@@ -232,16 +233,19 @@ namespace Clipbox.WixSetup.ViewModel
 
             try
             {
-                CancelEventArgs args = new CancelEventArgs();
-                CancelConfirmationRequested?.Invoke(this, args);
-                if (!args.Cancel)
+                Task.Factory.StartNew(() =>
                 {
-                    _isCancelRequested = true;
-                }
+                    CancelEventArgs args = new CancelEventArgs();
+                    CancelConfirmationRequested?.Invoke(this, args);
+                    if (!args.Cancel)
+                    {
+                        _isCancelRequested = true;
+                    }
+                });
             }
             finally
             {
-                _isCancelRequested = false;
+                _isSetupActionRequested = false;
             }
         }
 
@@ -258,6 +262,37 @@ namespace Clipbox.WixSetup.ViewModel
             }
         }
 
+        private void UninstallCommandHandler()
+        {
+            _isSetupActionRequested = true;
+            Task.Factory.StartNew(() =>
+            {
+                try
+                {
+                    CancelEventArgs args = new CancelEventArgs();
+                    UninstallConfirmationRequested?.Invoke(this, args);
+                    if (args.Cancel)
+                    {
+                        return;
+                    }
+
+                    ModifyAction = ClipboxModifyAction.Uninstall;
+
+                    _model.PlanAction(LaunchAction.Uninstall);
+                }
+                catch (Exception ex)
+                {
+                    _model.LogMessage(ex.ToString());
+                    SetupState = ClipboxSetupState.Error;
+                    ErrorMessage = ex.Message;
+                }
+                finally
+                {
+                    _isSetupActionRequested = false;
+                }
+            });
+        }
+
         private void RequestSetupAction(LaunchAction launchAction)
         {
             _isSetupActionRequested = true;
@@ -272,8 +307,7 @@ namespace Clipbox.WixSetup.ViewModel
                         ModifyAction = ClipboxModifyAction.Repair;
                         break;
                     case LaunchAction.Uninstall:
-                        ModifyAction = ClipboxModifyAction.Uninstall;
-                        break;
+                        throw new InvalidOperationException($"Uninstalling should be handled by {nameof(UninstallCommandHandler)}");
                     case LaunchAction.Modify:
                         ModifyAction = ClipboxModifyAction.Modify;
                         break;
@@ -283,6 +317,7 @@ namespace Clipbox.WixSetup.ViewModel
                 }
 
                 _model.PlanAction(launchAction);
+
             }
             finally
             {

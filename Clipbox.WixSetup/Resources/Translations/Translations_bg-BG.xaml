@@ -51,4 +51,7 @@
     <sys:String x:Key="TrLblRestartRequired">Някои файлове може да останат на текущото си местоположение до следващото рестартиране на компютъра.</sys:String>
     <sys:String x:Key="TrLblInitialLoading">Зареждане...</sys:String>
     <sys:String x:Key="TrLblNewerVersionInstalled">По-нова версия наClipbox е вече инсталирана.</sys:String>
+    <sys:String x:Key="TrLblUninstallConfirmation">Сигурни ли сте, че искате да деинсталирате Clipbox?</sys:String>
+    <sys:String x:Key="TrLblUninstallDataLossWarning">Внимание: ще загубите всички клипборд записи, запазени локално на компютъра.</sys:String>
+    <sys:String x:Key="TrLblPopupQuestion">Въпрос</sys:String>
 </ResourceDictionary>

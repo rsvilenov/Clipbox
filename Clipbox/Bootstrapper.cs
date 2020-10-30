@@ -229,9 +229,6 @@ namespace Clipbox
             // Initialize the flow controller
             _flowController = new FlowController(_clipboardManager, _keyboardService, _flowExtensionExecutorService, _previewWindowService, _mainClipboardViewWindowService);
 
-            //_mainWindow = new MainWindow(_settingsService);
-            //Application.Current.MainWindow = _mainWindow;
-
             
             _settingsWindowService = new SettingsWindowService(_settingsService, _mainClipboardViewWindowService, _cloudSyncService, _extensionLoader.SettingsUIExtensionContainer);
             _guardCommunicationService.SetSettingsWindowService(_settingsWindowService);

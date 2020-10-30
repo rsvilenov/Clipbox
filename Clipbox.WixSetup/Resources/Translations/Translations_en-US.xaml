@@ -51,4 +51,7 @@
     <sys:String x:Key="TrLblRestartRequired">Some files may stay where they are until the computer is restarted.</sys:String>
     <sys:String x:Key="TrLblInitialLoading">Loading...</sys:String>
     <sys:String x:Key="TrLblNewerVersionInstalled">A newer version of Clipbox is already installed.</sys:String>
+    <sys:String x:Key="TrLblUninstallConfirmation">Are you sure that you want to uninstall Clipbox?</sys:String>
+    <sys:String x:Key="TrLblUninstallDataLossWarning">Warning: you will lose all locally saved clipboard entries.</sys:String>
+    <sys:String x:Key="TrLblPopupQuestion">Question</sys:String>
 </ResourceDictionary>

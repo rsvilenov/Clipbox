@@ -42,8 +42,7 @@
             Height="200"
             Panel.ZIndex="101"
             Placement="Center"
-            PlacementTarget="{Binding ElementName=MainGrid}"
-            Visibility="Collapsed">
+            PlacementTarget="{Binding ElementName=MainGrid}">
             <Border
                 Background="White"
                 BorderBrush="#808080"
@@ -58,10 +57,16 @@
                         <RowDefinition />
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <Border
+                    <DockPanel
                         Grid.Row="0"
                         Grid.ColumnSpan="2"
                         Background="#2d364c">
+                        <TextBlock
+                            Margin="10,0,0,0"
+                            VerticalAlignment="Center"
+                            FontSize="16"
+                            Foreground="White"
+                            Text="{DynamicResource TrLblPopupQuestion}" />
                         <Button
                             Width="24"
                             Height="24"
@@ -69,7 +74,7 @@
                             VerticalAlignment="Center"
                             Click="BtnConfirmQuitNo_Click"
                             Style="{StaticResource BtnClose}" />
-                    </Border>
+                    </DockPanel>
 
                     <TextBlock
                         Grid.Row="1"
@@ -107,6 +112,98 @@
                 </Grid>
             </Border>
         </Popup>
+
+        <Popup
+            Name="ConfirmUninstallPopup"
+            Width="600"
+            Height="200"
+            Panel.ZIndex="101"
+            Placement="Center"
+            PlacementTarget="{Binding ElementName=MainGrid}">
+            <Border
+                Background="White"
+                BorderBrush="#808080"
+                BorderThickness="2">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30" />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <DockPanel
+                        Grid.Row="0"
+                        Grid.ColumnSpan="2"
+                        Background="#2d364c">
+                        <TextBlock
+                            Margin="10,0,0,0"
+                            VerticalAlignment="Center"
+                            FontSize="16"
+                            Foreground="White"
+                            Text="{DynamicResource TrLblPopupQuestion}" />
+                        <Button
+                            Width="24"
+                            Height="24"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Click="BtnConfirmUninstallNo_Click"
+                            Style="{StaticResource BtnClose}" />
+                    </DockPanel>
+
+                    <TextBlock
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="16"
+                        Foreground="Black"
+                        Text="{DynamicResource TrLblUninstallConfirmation}"
+                        TextWrapping="Wrap" />
+                    <TextBlock
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        Grid.ColumnSpan="2"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="16"
+                        Foreground="Black"
+                        Text="{DynamicResource TrLblUninstallDataLossWarning}"
+                        TextWrapping="Wrap" />
+
+                    <Button
+                        Grid.Row="3"
+                        Grid.Column="0"
+                        Width="55"
+                        Height="35"
+                        Margin="10"
+                        HorizontalAlignment="Right"
+                        Background="Red"
+                        BorderBrush="Black"
+                        BorderThickness="1"
+                        Click="BtnConfirmUninstallYes_Click"
+                        Content="{DynamicResource TrBtnYes}"
+                        FontSize="16"
+                        Style="{StaticResource BtnDefaultAction}" />
+                    <Button
+                        Grid.Row="3"
+                        Grid.Column="1"
+                        Width="55"
+                        Height="35"
+                        Margin="10"
+                        HorizontalAlignment="Left"
+                        Click="BtnConfirmUninstallNo_Click"
+                        Content="{DynamicResource TrBtnNo}"
+                        FontSize="16"
+                        Style="{StaticResource BtnActionLight}" />
+                </Grid>
+            </Border>
+        </Popup>
+
         <!--  title bar  -->
         <Grid
             Grid.Row="0"
@@ -828,7 +925,7 @@
                         TextWrapping="Wrap" />
                     <Button
                         Grid.Row="1"
-                        Width="150"
+                        Width="170"
                         Height="40"
                         Margin="10,0,0,20"
                         HorizontalContentAlignment="Left"
@@ -847,7 +944,7 @@
 
                     <Button
                         Grid.Row="2"
-                        Width="150"
+                        Width="170"
                         Height="40"
                         Margin="10,0,0,20"
                         HorizontalContentAlignment="Left"
@@ -867,7 +964,7 @@
                     <!--  for now this button will just open the settings page  -->
                     <Button
                         Grid.Row="3"
-                        Width="150"
+                        Width="170"
                         Height="40"
                         Margin="10,0,0,20"
                         HorizontalContentAlignment="Left"
@@ -886,7 +983,7 @@
 
                     <Button
                         Grid.Row="4"
-                        Width="150"
+                        Width="170"
                         Height="40"
                         Margin="10,30,0,0"
                         HorizontalContentAlignment="Left"

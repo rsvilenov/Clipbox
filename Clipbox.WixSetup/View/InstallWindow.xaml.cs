@@ -20,18 +20,20 @@ namespace Setup.WixSetup.View
 
         private readonly LocalizationHelper _localizationHelper;
         private readonly InstallViewModel _viewModel;
-        private readonly ManualResetEvent _quitConfirmationMre;
+        private readonly ManualResetEvent _confirmationDialogsMre;
 
         private bool _isCancelQuitConfirmed;
+        private bool _isUninstallQuitConfirmed;
         public InstallWindow(InstallViewModel vm)
         {
             InitializeComponent();
 
-            _quitConfirmationMre = new ManualResetEvent(false);
+            _confirmationDialogsMre = new ManualResetEvent(false);
 
             _viewModel = vm;
             _viewModel.QuitConfirmationRequested += _viewModel_QuitConfirmationRequested;
             _viewModel.CancelConfirmationRequested += _viewModel_CancelConfirmationRequested;
+            _viewModel.UninstallConfirmationRequested += _viewModel_UninstallConfirmationRequested;
             _viewModel.DetectComplete += _viewModel_DetectComplete;
 
             this.MainGrid.DataContext = vm;
@@ -40,6 +42,12 @@ namespace Setup.WixSetup.View
             _localizationHelper.SetLanguage(DEFAULT_LANG_CODE);
 
             Closing += InstallWindow_Closing;
+        }
+
+        private void _viewModel_UninstallConfirmationRequested(object sender, CancelEventArgs e)
+        {
+            ShowAndWaitUninstallConfirmationDialog();
+            e.Cancel = !_isUninstallQuitConfirmed;
         }
 
         private void _viewModel_DetectComplete(object sender, EventArgs e)
@@ -103,8 +111,8 @@ namespace Setup.WixSetup.View
                                 DisableCurtain.Visibility = Visibility.Visible;
                                 ConfirmQuitPopup.IsOpen = true;
                             }));
-            _quitConfirmationMre.Reset();
-            _quitConfirmationMre.WaitOne();
+            _confirmationDialogsMre.Reset();
+            _confirmationDialogsMre.WaitOne();
         }
 
         private void BtnConfirmQuitYes_Click(object sender, RoutedEventArgs e)
@@ -114,7 +122,7 @@ namespace Setup.WixSetup.View
             DisableCurtain.Visibility = Visibility.Collapsed;
             ConfirmQuitPopup.IsOpen = false;
 
-            _quitConfirmationMre.Set();
+            _confirmationDialogsMre.Set();
         }
 
         private void BtnConfirmQuitNo_Click(object sender, RoutedEventArgs e)
@@ -124,8 +132,41 @@ namespace Setup.WixSetup.View
             DisableCurtain.Visibility = Visibility.Collapsed;
             ConfirmQuitPopup.IsOpen = false;
 
-            _quitConfirmationMre.Set();
+            _confirmationDialogsMre.Set();
         }
+
+        private void ShowAndWaitUninstallConfirmationDialog()
+        {
+            Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                            new Action(() =>
+                            {
+                                DisableCurtain.Visibility = Visibility.Visible;
+                                ConfirmUninstallPopup.IsOpen = true;
+                            }));
+            _confirmationDialogsMre.Reset();
+            _confirmationDialogsMre.WaitOne();
+        }
+
+        private void BtnConfirmUninstallYes_Click(object sender, RoutedEventArgs e)
+        {
+            _isUninstallQuitConfirmed = true;
+
+            DisableCurtain.Visibility = Visibility.Collapsed;
+            ConfirmUninstallPopup.IsOpen = false;
+
+            _confirmationDialogsMre.Set();
+        }
+
+        private void BtnConfirmUninstallNo_Click(object sender, RoutedEventArgs e)
+        {
+            _isUninstallQuitConfirmed = false;
+
+            DisableCurtain.Visibility = Visibility.Collapsed;
+            ConfirmUninstallPopup.IsOpen = false;
+
+            _confirmationDialogsMre.Set();
+        }
+
 
         private void LicenseAgreementLink_MouseLeftButtonUp(object sender, RoutedEventArgs e)
         {
