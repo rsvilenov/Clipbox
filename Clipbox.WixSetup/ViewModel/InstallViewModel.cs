@@ -241,11 +241,12 @@ namespace Clipbox.WixSetup.ViewModel
                     {
                         ModifyAction = ClipboxModifyAction.FactoryReset;
                         SetupState = ClipboxSetupState.Processing;
-                        IsProgressIndeterminate = true;
+
+                        // some progress values...
+                        Progress = 15;
 
                         try
                         {
-                            
                             ServiceController service = new ServiceController(ProductConstants.SERVICE_SC_NAME);
 
                             bool wasServiceRunning = false;
@@ -256,14 +257,20 @@ namespace Clipbox.WixSetup.ViewModel
                                 service.Stop(); 
                                 service.WaitForStatus(ServiceControllerStatus.Stopped);
                             }
+
+                            Progress = 35;
                             
                             CleanUpUtility.CleanUp(CleanUpUtility.CleanUpType.AppDataSettings, justCurrentUser: true);
+
+                            Progress = 75;
 
                             if (wasServiceRunning)
                             {
                                 service.Start();
                                 service.WaitForStatus(ServiceControllerStatus.Running);
                             }
+
+                            Progress = 100;
 
                             SetupState = ClipboxSetupState.Done;
                         }
@@ -609,22 +616,7 @@ namespace Clipbox.WixSetup.ViewModel
                     ? _progress * 2
                     : _progress; 
             }
-            set 
-            { 
-                SetField(ref _progress, value, () => Progress);
-
-                if (IsProgressIndeterminate)
-                {
-                    IsProgressIndeterminate = false;
-                }
-            }
-        }
-
-        private bool _isProgressIndeterminate;
-        public bool IsProgressIndeterminate
-        {
-            get { return _isProgressIndeterminate; }
-            set { SetField(ref _isProgressIndeterminate, value, () => IsProgressIndeterminate); }
+            set { SetField(ref _progress, value, () => Progress); }
         }
 
         private bool _isRestartRequired;

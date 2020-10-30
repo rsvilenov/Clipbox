@@ -761,7 +761,6 @@
                 Margin="100,70,100,80"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Bottom"
-                IsIndeterminate="{Binding IsProgressIndeterminate}"
                 Style="{StaticResource DefaultProgressBar}"
                 Value="{Binding Progress}" />
 
