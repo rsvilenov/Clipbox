@@ -43,10 +43,22 @@ namespace Clipbox.WixSetup
                 InstallWindow View = new InstallWindow(viewModel);
                 model.SetWindowHandle(View);
                 this.Engine.Detect();
-                if (this.Command.Display != Display.Embedded && this.Command.Display != Display.None)
+
+                bool isInQuietMode = this.Command.Display == Display.Embedded
+                    || this.Command.Display == Display.None;
+                if (!isInQuietMode)
                 {
                     View.ShowDialog();
                 }
+                else if (LaunchAction.Uninstall != this.Command.Action)
+                {
+                    string quietModeError = "Only Uninstall is supported in quiet mode.";
+                    Engine.Log(LogLevel.Error, quietModeError);
+                    MessageBox.Show(quietModeError);
+                    this.Engine.Quit(1);
+                    return;
+                }
+
                 System.Windows.Threading.Dispatcher.Run();
                 this.Engine.Quit(model.FinalResult);
             }
