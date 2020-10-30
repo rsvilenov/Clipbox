@@ -23,7 +23,8 @@ namespace Setup.WixSetup.View
         private readonly ManualResetEvent _confirmationDialogsMre;
 
         private bool _isCancelQuitConfirmed;
-        private bool _isUninstallQuitConfirmed;
+        private bool _isUninstallConfirmed;
+        private bool _isFactoryResetConfirmed;
         public InstallWindow(InstallViewModel vm)
         {
             InitializeComponent();
@@ -34,6 +35,7 @@ namespace Setup.WixSetup.View
             _viewModel.QuitConfirmationRequested += _viewModel_QuitConfirmationRequested;
             _viewModel.CancelConfirmationRequested += _viewModel_CancelConfirmationRequested;
             _viewModel.UninstallConfirmationRequested += _viewModel_UninstallConfirmationRequested;
+            _viewModel.FactoryResetConfirmationRequested += _viewModel_FactoryResetConfirmationRequested;
             _viewModel.DetectComplete += _viewModel_DetectComplete;
 
             this.MainGrid.DataContext = vm;
@@ -42,12 +44,6 @@ namespace Setup.WixSetup.View
             _localizationHelper.SetLanguage(DEFAULT_LANG_CODE);
 
             Closing += InstallWindow_Closing;
-        }
-
-        private void _viewModel_UninstallConfirmationRequested(object sender, CancelEventArgs e)
-        {
-            ShowAndWaitUninstallConfirmationDialog();
-            e.Cancel = !_isUninstallQuitConfirmed;
         }
 
         private void _viewModel_DetectComplete(object sender, EventArgs e)
@@ -77,7 +73,11 @@ namespace Setup.WixSetup.View
                 }
                 catch (Exception ex)
                 {
-                    _viewModel.LogMessage($"Error while trying to set the initial language: {ex}");
+                    try { _viewModel.LogMessage($"Error while trying to set the initial language: {ex}"); }
+                    catch 
+                    { 
+                        // TODO: message box? 
+                    }
                 }
             }));
         }
@@ -89,6 +89,18 @@ namespace Setup.WixSetup.View
             {
                 _viewModel.QuitCommand.Execute(null);
             }
+        }
+
+        private void _viewModel_FactoryResetConfirmationRequested(object sender, CancelEventArgs e)
+        {
+            ShowAndWaitFactoryResetConfirmationDialog();
+            e.Cancel = !_isFactoryResetConfirmed;
+        }
+
+        private void _viewModel_UninstallConfirmationRequested(object sender, CancelEventArgs e)
+        {
+            ShowAndWaitUninstallConfirmationDialog();
+            e.Cancel = !_isUninstallConfirmed;
         }
 
         private void _viewModel_CancelConfirmationRequested(object sender, CancelEventArgs e)
@@ -149,7 +161,7 @@ namespace Setup.WixSetup.View
 
         private void BtnConfirmUninstallYes_Click(object sender, RoutedEventArgs e)
         {
-            _isUninstallQuitConfirmed = true;
+            _isUninstallConfirmed = true;
 
             DisableCurtain.Visibility = Visibility.Collapsed;
             ConfirmUninstallPopup.IsOpen = false;
@@ -159,10 +171,42 @@ namespace Setup.WixSetup.View
 
         private void BtnConfirmUninstallNo_Click(object sender, RoutedEventArgs e)
         {
-            _isUninstallQuitConfirmed = false;
+            _isUninstallConfirmed = false;
 
             DisableCurtain.Visibility = Visibility.Collapsed;
             ConfirmUninstallPopup.IsOpen = false;
+
+            _confirmationDialogsMre.Set();
+        }
+
+        private void ShowAndWaitFactoryResetConfirmationDialog()
+        {
+            Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                            new Action(() =>
+                            {
+                                DisableCurtain.Visibility = Visibility.Visible;
+                                ConfirmFactoryResetPopup.IsOpen = true;
+                            }));
+            _confirmationDialogsMre.Reset();
+            _confirmationDialogsMre.WaitOne();
+        }
+
+        private void BtnConfirmFactoryResetYes_Click(object sender, RoutedEventArgs e)
+        {
+            _isFactoryResetConfirmed = true;
+
+            DisableCurtain.Visibility = Visibility.Collapsed;
+            ConfirmFactoryResetPopup.IsOpen = false;
+
+            _confirmationDialogsMre.Set();
+        }
+
+        private void BtnConfirmFactoryResetNo_Click(object sender, RoutedEventArgs e)
+        {
+            _isFactoryResetConfirmed = false;
+
+            DisableCurtain.Visibility = Visibility.Collapsed;
+            ConfirmFactoryResetPopup.IsOpen = false;
 
             _confirmationDialogsMre.Set();
         }

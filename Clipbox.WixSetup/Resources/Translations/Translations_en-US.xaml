@@ -32,11 +32,11 @@
     <sys:String x:Key="TrBtnQuit">Quit</sys:String>
     <sys:String x:Key="TrLblErrorTitle">Error message:</sys:String>
     <sys:String x:Key="TrBtnChangeInstallDir">Change</sys:String>
-    <sys:String x:Key="TrBtnDisable">DISABLE CLIPBOX</sys:String>
+    <sys:String x:Key="TrBtnFactoryReset">RESET CLIPBOX</sys:String>
     <sys:String x:Key="TrLblConfigure">Configure your Clipbox installation</sys:String>
-    <sys:String x:Key="TrLblDisable">Just disable Clipbox?</sys:String>
-    <sys:String x:Key="TrLblDisableInfo">By disabling Clipbox your clipboard history will not be tracked anymore, while you will still be able to access your previously stored clipboard entries. You will be able to re-enable clipboard tracking at any time by right-clicking on Clipbox tray icon and selecting 'Enable'.</sys:String>
-    <sys:String x:Key="TrLblModifyInfo">Having issues? Want to customize yout installation? You are in the right place.</sys:String>
+    <sys:String x:Key="TrLblFactoryReset">Reset Clipbox?</sys:String>
+    <sys:String x:Key="TrLblFactoryResetInfo">By resetting Clipbox all its settings will return to the state they were in when the program was installed. This should be enough to solve most problems.</sys:String>
+    <sys:String x:Key="TrLblModifyInfo">Want to customize yout installation? You are in the right place.</sys:String>
     <sys:String x:Key="TrBtnUpdate">UPDATE</sys:String>
     <sys:String x:Key="TrBtnRepair">REPAIR</sys:String>
     <sys:String x:Key="TrBtnModify">TWEAK</sys:String>
@@ -54,4 +54,8 @@
     <sys:String x:Key="TrLblUninstallConfirmation">Are you sure that you want to uninstall Clipbox?</sys:String>
     <sys:String x:Key="TrLblUninstallDataLossWarning">Warning: you will lose all locally saved clipboard entries.</sys:String>
     <sys:String x:Key="TrLblPopupQuestion">Question</sys:String>
+    <sys:String x:Key="TrLblFactoryResetting">Resetting Clipbox. Please wait.</sys:String>
+    <sys:String x:Key="TrLblFactoryResetComplete">Resetting Clipbox completed successfully.</sys:String>
+    <sys:String x:Key="TrLblFactoryResetConfirmation">Are you sure you want to reset Clipbox?</sys:String>
+    <sys:String x:Key="TrLblFactoryResetDataLossWarning">Doing so will set all its settings to their initial state.</sys:String>
 </ResourceDictionary>

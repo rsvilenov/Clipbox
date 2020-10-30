@@ -21,6 +21,7 @@ namespace Clipbox.WixSetup.ViewModel
 
         public event EventHandler<CancelEventArgs> QuitConfirmationRequested;
         public event EventHandler<CancelEventArgs> CancelConfirmationRequested;
+        public event EventHandler<CancelEventArgs> FactoryResetConfirmationRequested;
         public event EventHandler<CancelEventArgs> UninstallConfirmationRequested;
         public event EventHandler DetectComplete;
 
@@ -33,6 +34,7 @@ namespace Clipbox.WixSetup.ViewModel
         public ICommand UpdateLinkCommand { get; set; }
         public ICommand RepairCommand { get; set; }
         public ICommand ModifyCommand { get; set; }
+        public ICommand FactoryResetCommand { get; set; }
         public ICommand RetryCommand { get; set; }
 
         private bool _isCancelRequested;
@@ -58,6 +60,7 @@ namespace Clipbox.WixSetup.ViewModel
             UpdateCommand = new DelegateCommand(() => RequestSetupAction(LaunchAction.UpdateReplace), () => !_isSetupActionRequested);
             UpdateLinkCommand = new DelegateCommand(UpdateLinkCommandHandler, () => !_isSetupActionRequested);
             ModifyCommand = new DelegateCommand(ModifyCommandHandler, ModifyCommandHandlerCanExecuteHandler);
+            FactoryResetCommand = new DelegateCommand(FactoryResetCommandHandler, () => !_isSetupActionRequested);
             RetryCommand = new DelegateCommand(RetryCommandHandler, () => !_isSetupActionRequested && _lastLaunchAction != null);
 
             _model.BootstrapperApplication.DetectBegin += BootstrapperApplication_DetectBegin;
@@ -223,6 +226,42 @@ namespace Clipbox.WixSetup.ViewModel
             return false;
         }
 
+        private void FactoryResetCommandHandler()
+        {
+            _isSetupActionRequested = true;
+
+            try
+            {
+                Task.Factory.StartNew(() =>
+                {
+                    CancelEventArgs args = new CancelEventArgs();
+                    FactoryResetConfirmationRequested?.Invoke(this, args);
+                    if (!args.Cancel)
+                    {
+                        ModifyAction = ClipboxModifyAction.FactoryReset;
+                        IsProgressIndeterminate = true;
+
+                        try
+                        {
+                            CleanUpUtility.CleanUp(CleanUpUtility.CleanUpType.AppDataSettings);
+                            SetupState = ClipboxSetupState.Done;
+                        }
+                        catch (Exception ex)
+                        {
+                            SetupState = ClipboxSetupState.Error;
+                            ErrorMessage = ex.Message;
+                            try { _model.LogMessage(ex.ToString()); } catch { }
+                        }
+                    }
+                });
+            }
+            finally
+            {
+                _isSetupActionRequested = false;
+            }
+        }
+
+
         /// <summary>
         /// This command causes the installer to hang.
         /// TODO: figure out why.
@@ -282,7 +321,7 @@ namespace Clipbox.WixSetup.ViewModel
                 }
                 catch (Exception ex)
                 {
-                    _model.LogMessage(ex.ToString());
+                    try { _model.LogMessage(ex.ToString()); } catch { }
                     SetupState = ClipboxSetupState.Error;
                     ErrorMessage = ex.Message;
                 }
@@ -549,7 +588,22 @@ namespace Clipbox.WixSetup.ViewModel
                     ? _progress * 2
                     : _progress; 
             }
-            set { SetField(ref _progress, value, () => Progress); }
+            set 
+            { 
+                SetField(ref _progress, value, () => Progress);
+
+                if (IsProgressIndeterminate)
+                {
+                    IsProgressIndeterminate = false;
+                }
+            }
+        }
+
+        private bool _isProgressIndeterminate;
+        public bool IsProgressIndeterminate
+        {
+            get { return _isProgressIndeterminate; }
+            set { SetField(ref _isProgressIndeterminate, value, () => IsProgressIndeterminate); }
         }
 
         private bool _isRestartRequired;

@@ -4,6 +4,7 @@
     {
         Uninstall,
         Repair,
-        Modify
+        Modify,
+        FactoryReset
     }
 }
