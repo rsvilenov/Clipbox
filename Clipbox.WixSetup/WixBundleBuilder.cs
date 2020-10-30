@@ -40,6 +40,32 @@ namespace Clipbox.WixSetup
                 }
             };
 
+            File mainProcessFile = new File(System.IO.Path.Combine(releaseDirectory, ProductConstants.MAIN_PROCESS_EXE_NAME))
+            {
+                FirewallExceptions = new FirewallException[]
+                {
+                    new FirewallException
+                    {
+                        Name = $"{ProductConstants.PRODUCT_NAME} Main Process",
+                        Scope = FirewallExceptionScope.any,
+                        Profile = FirewallExceptionProfile.all
+                    }
+                }
+            };
+
+            File guardProcessFile = new File(System.IO.Path.Combine(releaseDirectory, ProductConstants.GUARD_EXE_NAME))
+            {
+                FirewallExceptions = new FirewallException[]
+                {
+                    new FirewallException
+                    {
+                        Name = $"{ProductConstants.PRODUCT_NAME} Guard Process",
+                        Scope = FirewallExceptionScope.any,
+                        Profile = FirewallExceptionProfile.all
+                    }
+                }
+            };
+
 #if PLATFORM_X64
             string pathToMsiExec = "[System64Folder]msiexec.exe";
 #else
@@ -53,8 +79,12 @@ namespace Clipbox.WixSetup
                     new Dir(new Id("INSTALLDIR"),
                         new Files($@"{releaseDirectory}\*", f =>
                             !f.EndsWith(ProductConstants.SERVICE_EXE_NAME)
+                            && !f.EndsWith(ProductConstants.MAIN_PROCESS_EXE_NAME)
+                            && !f.EndsWith(ProductConstants.GUARD_EXE_NAME)
                             && !f.EndsWith(".pdb")
                             && !f.EndsWith(".msi")),
+                        mainProcessFile,
+                        guardProcessFile,
                         uninstaller,
                         service),
                     new Dir(@"%ProgramMenu%",
@@ -63,14 +93,14 @@ namespace Clipbox.WixSetup
                         new ExeFileShortcut(ProductConstants.PRODUCT_NAME, System.IO.Path.Combine("[INSTALLDIR]", ProductConstants.GUARD_EXE_NAME), arguments: ProductConstants.STARTED_FROM_SHORTCUT)
                         {
                             ComponentCondition = new Condition("DESKTOP_SHORTCUT=\"yes\"")
-                        }), 
+                        }),
                     new ElevatedManagedAction(CustomActions.InstallDeskband, Return.check, When.Before, Step.StartServices, WixSharp.Condition.NOT_Installed)
                     {
                         UsesProperties = "PIN_TRAY_ICON=[PIN_TRAY_ICON]"
                     },
                     new ElevatedManagedAction(CustomActions.UnInstallDeskband, Return.check, When.Before, Step.RemoveFiles, WixSharp.Condition.BeingUninstalled),
                     new ElevatedManagedAction(CustomActions.CleanUpArtefacts, Return.ignore, When.After, Step.RemoveFiles, WixSharp.Condition.BeingUninstalledAndNotBeingUpgraded),
-                    new RegValue(RegistryHive.LocalMachine, $@"Software\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}", "InstallDirectory", "[INSTALLDIR]") 
+                    new RegValue(RegistryHive.LocalMachine, $@"Software\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}", "InstallDirectory", "[INSTALLDIR]")
                     {
 #if PLATFORM_X64
                         Win64 = true
@@ -106,7 +136,7 @@ namespace Clipbox.WixSetup
 
             project.BeforeInstall += args =>
             {
-                if (args.IsUninstalling)
+                if (args.IsUninstalling || args.IsRepairing || args.IsUpgrading)
                 {
                     System.ServiceProcess.ServiceController svc = new System.ServiceProcess.ServiceController(ProductConstants.SERVICE_SC_NAME);
 

@@ -18,6 +18,18 @@
     <Directory Id="TARGETDIR" Name="SourceDir">
       <Directory Id="INSTALLDIR" Name="INSTALLDIR">
 
+        <Component Id="Component.Clipbox.exe_2656892653" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7f6d653d8" Win64="yes">
+          <File Id="Clipbox.exe_2656892653" Source="..\Build\Debug\Clipbox.exe">
+            <FirewallException Id="Clipbox_Main_Process" Name="Clipbox Main Process" Profile="all" Scope="any" xmlns="http://schemas.microsoft.com/wix/FirewallExtension" />
+          </File>
+        </Component>
+
+        <Component Id="Component.ClipboxGuard.exe_1044990699" Guid="95a2cb1e-ad54-41f4-b1f0-d1e71086e81b" Win64="yes">
+          <File Id="ClipboxGuard.exe_1044990699" Source="..\Build\Debug\ClipboxGuard.exe">
+            <FirewallException Id="Clipbox_Guard_Process" Name="Clipbox Guard Process" Profile="all" Scope="any" xmlns="http://schemas.microsoft.com/wix/FirewallExtension" />
+          </File>
+        </Component>
+
         <Component Id="Component.ClipboxSvc.exe_4180487428" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7d694a327" Win64="yes">
           <File Id="ClipboxSvc.exe_4180487428" Source="..\Build\Debug\ClipboxSvc.exe" />
 
@@ -53,10 +65,6 @@
 
         <Component Id="Component.Clipbox.Core.dll_3747658967" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7243cb0dd" Win64="yes">
           <File Id="Clipbox.Core.dll_3747658967" Source="..\Build\Debug\Clipbox.Core.dll" />
-        </Component>
-
-        <Component Id="Component.Clipbox.exe_796257028" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7622c97c4" Win64="yes">
-          <File Id="Clipbox.exe_796257028" Source="..\Build\Debug\Clipbox.exe" />
         </Component>
 
         <Component Id="Component.Clipbox.exe.config_946084390" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7f520044a" Win64="yes">
@@ -201,10 +209,6 @@
 
         <Component Id="Component.ClipboxDeskbandOwner.ilk_2935560666" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7ab1639df" Win64="yes">
           <File Id="ClipboxDeskbandOwner.ilk_2935560666" Source="..\Build\Debug\ClipboxDeskbandOwner.ilk" />
-        </Component>
-
-        <Component Id="Component.ClipboxGuard.exe_3241799233" Guid="95a2cb1e-ad54-41f4-b1f0-d1e79ad45dd8" Win64="yes">
-          <File Id="ClipboxGuard.exe_3241799233" Source="..\Build\Debug\ClipboxGuard.exe" />
         </Component>
 
         <Component Id="Component.ClipboxGuard.exe.config_1212704406" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7a6046fe7" Win64="yes">
@@ -1053,6 +1057,8 @@
     <Property Id="ProgramMenuFolder.Clipbox_.WorkDir" Value="INSTALLDIR\" />
 
     <Feature Id="Complete" Title="Complete" Absent="allow" Level="1">
+      <ComponentRef Id="Component.Clipbox.exe_2656892653" />
+      <ComponentRef Id="Component.ClipboxGuard.exe_1044990699" />
       <ComponentRef Id="Component.ClipboxSvc.exe_4180487428" />
       <ComponentRef Id="Component.Azure.Core.dll_4260981386" />
       <ComponentRef Id="Component.Azure.Core.xml_3561573998" />
@@ -1060,7 +1066,6 @@
       <ComponentRef Id="Component.BootstrapperCore.xml_3849446513" />
       <ComponentRef Id="Component.Clipbox.CloudServices.dll_250840988" />
       <ComponentRef Id="Component.Clipbox.Core.dll_3747658967" />
-      <ComponentRef Id="Component.Clipbox.exe_796257028" />
       <ComponentRef Id="Component.Clipbox.exe.config_946084390" />
       <ComponentRef Id="Component.Clipbox.ExtendedClipboard.dll_4283202" />
       <ComponentRef Id="Component.Clipbox.Extensions.BuiltIn.General.Cloud.Google.dll_3076843639" />
@@ -1097,7 +1102,6 @@
       <ComponentRef Id="Component.ClipboxDeskbandControl.ilk_4108457118" />
       <ComponentRef Id="Component.ClipboxDeskbandOwner.exe_2127680904" />
       <ComponentRef Id="Component.ClipboxDeskbandOwner.ilk_2935560666" />
-      <ComponentRef Id="Component.ClipboxGuard.exe_3241799233" />
       <ComponentRef Id="Component.ClipboxGuard.exe.config_1212704406" />
       <ComponentRef Id="Component.ClipboxSearch.exe_3521860437" />
       <ComponentRef Id="Component.ClipboxSearch.exe.config_3651597785" />
