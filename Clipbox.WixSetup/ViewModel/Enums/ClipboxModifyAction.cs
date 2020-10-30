@@ -2,7 +2,6 @@
 {
     public enum ClipboxModifyAction
     {
-        Uninstall,
         Repair,
         Modify,
         FactoryReset,

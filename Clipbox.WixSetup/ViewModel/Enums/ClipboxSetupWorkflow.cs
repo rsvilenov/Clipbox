@@ -4,6 +4,7 @@
     {
         Install,
         Modify,
-        Update
+        Update,
+        Uninstall
     }
 }

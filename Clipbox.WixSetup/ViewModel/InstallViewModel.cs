@@ -30,6 +30,7 @@ namespace Clipbox.WixSetup.ViewModel
         public ICommand CancelCommand { get; set; }
         public ICommand InstallCommand { get; set; }
         public ICommand UninstallCommand { get; set; }
+        public ICommand GoToUninstallCommand { get; set; }
         public ICommand UpdateCommand { get; set; }
         public ICommand UpdateDownloadCommand { get; set; }
         public ICommand RepairCommand { get; set; }
@@ -63,6 +64,7 @@ namespace Clipbox.WixSetup.ViewModel
             CancelCommand = new DelegateCommand(CancelCommandHandler, () => !_isCancelRequested);
             InstallCommand = new DelegateCommand(() => RequestSetupAction(LaunchAction.Install), () => !_isSetupActionRequested);
             UninstallCommand = new DelegateCommand(() => UninstallCommandHandler(), () => !_isSetupActionRequested);
+            GoToUninstallCommand = new DelegateCommand(() => GoToUninstallCommandHandler(), () => !_isSetupActionRequested);
             RepairCommand = new DelegateCommand(() => RequestSetupAction(LaunchAction.Repair), () => !_isSetupActionRequested);
 
             UpdateCommand = new DelegateCommand(() => RequestSetupAction(LaunchAction.Install), () => !_isSetupActionRequested);
@@ -89,6 +91,16 @@ namespace Clipbox.WixSetup.ViewModel
             _model.BootstrapperApplication.ExecutePackageBegin += BootstrapperApplication_ExecutePackageBegin;
             _model.BootstrapperApplication.ExecutePackageComplete += BootstrapperApplication_ExecutePackageComplete;
 
+        }
+
+        private void GoToUninstallCommandHandler()
+        {
+            _isSetupActionRequested = true;
+
+            SetupWorkflow = ClipboxSetupWorkflow.Uninstall;
+            SetupState = ClipboxSetupState.Welcome;
+
+            _isSetupActionRequested = false;
         }
 
         private string FindProperProgramFilesDir()
@@ -364,8 +376,6 @@ namespace Clipbox.WixSetup.ViewModel
                             return;
                         }
 
-                        ModifyAction = ClipboxModifyAction.Uninstall;
-
                         _model.PlanAction(LaunchAction.Uninstall);
                     }
                     catch (Exception ex)
@@ -612,12 +622,16 @@ namespace Clipbox.WixSetup.ViewModel
         {
             IsDetectionOngoing = false;
 
-            if (LaunchAction.Uninstall == _model.BootstrapperApplication.Command.Action
-                && (_model.BootstrapperApplication.Command.Display == Display.Embedded || _model.BootstrapperApplication.Command.Display == Display.None))
+            if (LaunchAction.Uninstall == _model.BootstrapperApplication.Command.Action)
             {
-                _model.BootstrapperApplication.Engine.Log(LogLevel.Verbose, "Invoking automatic plan for uninstall.");
-                _model.PlanAction(LaunchAction.Uninstall);
-                return;
+                if (_model.BootstrapperApplication.Command.Display == Display.Embedded || _model.BootstrapperApplication.Command.Display == Display.None)
+                {
+                    _model.BootstrapperApplication.Engine.Log(LogLevel.Verbose, "Invoking automatic plan for uninstall.");
+                    _model.PlanAction(LaunchAction.Uninstall);
+                    return;
+                }
+
+                SetupWorkflow = ClipboxSetupWorkflow.Uninstall;
             }
 
             if (SetupWorkflow == ClipboxSetupWorkflow.Modify 
@@ -680,7 +694,7 @@ namespace Clipbox.WixSetup.ViewModel
         {
             get { 
                 return SetupWorkflow == ClipboxSetupWorkflow.Modify 
-                    && ModifyAction == ClipboxModifyAction.Uninstall
+                    && SetupWorkflow == ClipboxSetupWorkflow.Uninstall
                     ? _progress * 2
                     : _progress; 
             }
@@ -812,7 +826,7 @@ namespace Clipbox.WixSetup.ViewModel
             Task.Factory.StartNew(() => 
             {
                 CancelEventArgs args = new CancelEventArgs();
-                if ((SetupState == ClipboxSetupState.Welcome && SetupWorkflow != ClipboxSetupWorkflow.Modify && !_isNewerVersionAlreadyInstalled)
+                if ((SetupState == ClipboxSetupState.Welcome && SetupWorkflow != ClipboxSetupWorkflow.Modify && !_isNewerVersionAlreadyInstalled && SetupWorkflow != ClipboxSetupWorkflow.Uninstall)
                     || SetupState == ClipboxSetupState.Preparing
                     || SetupState == ClipboxSetupState.Processing)
                 {

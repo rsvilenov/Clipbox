@@ -62,4 +62,8 @@
     <sys:String x:Key="TrChkBoxPinTrayIcon">Pin the tray icon to the taskbar, so it never hides</sys:String>
     <sys:String x:Key="TrLblDownloadingUpdate">Downloading update</sys:String>
     <sys:String x:Key="TrLblDownloadingInfo">The update will start in a while.</sys:String>
+    <sys:String x:Key="TrLblInstallerVersion">Version:</sys:String>
+    <sys:String x:Key="TrLblAboutToUninstall">Uninstall Clipbox</sys:String>
+    <sys:String x:Key="TrLblReadyForUninstall">By uninstalling Clipbox you will lose all clipboard entries, saved locally on this computer.</sys:String>
+    <sys:String x:Key="TrLblReadyForUninstallConfirm">Are you sure you want to proceed?</sys:String>
 </ResourceDictionary>

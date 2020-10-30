@@ -393,6 +393,7 @@
                 <RowDefinition />
                 <RowDefinition />
                 <RowDefinition />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <TextBlock
                 Grid.Row="0"
@@ -412,11 +413,25 @@
                 Grid.Row="2"
                 Width="170"
                 Height="45"
+                Margin="0,0,0,50"
                 HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
                 Command="{Binding QuitCommand}"
                 Content="{DynamicResource TrBtnQuit}"
                 FontSize="16"
                 Style="{StaticResource BtnActionDark}" />
+
+            <TextBlock
+                Grid.Row="3"
+                Margin="15,0,0,15"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Bottom"
+                FontSize="14"
+                Foreground="LightGray"
+                Text="{Binding VersionString}">
+                <Run Text="{DynamicResource TrLblInstallerVersion}" />
+                <Run Text="{Binding VersionString}" />
+            </TextBlock>
         </Grid>
 
         <!--  welcome page  -->
@@ -715,6 +730,80 @@
             </Grid>
         </Grid>
 
+        <!--  uninstall welcome page  -->
+        <Grid Name="UninstallFirstPage" Grid.Row="1">
+            <Grid.Style>
+                <Style TargetType="Grid">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding SetupWorkflow}" Value="{x:Static vmEnums:ClipboxSetupWorkflow.Uninstall}" />
+                                <Condition Binding="{Binding SetupState}" Value="{x:Static vmEnums:ClipboxSetupState.Welcome}" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Visibility" Value="Visible" />
+                        </MultiDataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Grid.Style>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <TextBlock
+                Grid.Row="0"
+                Margin="0,20,0,10"
+                HorizontalAlignment="Center"
+                FontSize="36"
+                Foreground="White"
+                Text="{DynamicResource TrLblAboutToUninstall}" />
+            <ContentControl
+                Grid.Row="1"
+                Height="100"
+                Margin="0,90,0,0"
+                Foreground="White"
+                Template="{StaticResource UninstallIcon}" />
+            <Grid
+                Grid.Row="2"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock
+                    Grid.Row="0"
+                    Margin="50,0,50,0"
+                    FontSize="20"
+                    Foreground="Red"
+                    Text="{DynamicResource TrLblReadyForUninstall}"
+                    TextAlignment="Center"
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    Grid.Row="1"
+                    Margin="0,90,0,0"
+                    FontSize="20"
+                    Foreground="White"
+                    Text="{DynamicResource TrLblReadyForUninstallConfirm}"
+                    TextAlignment="Center"
+                    TextWrapping="Wrap" />
+                <Button
+                    Grid.Row="2"
+                    Width="180"
+                    Height="50"
+                    Margin="0,30,0,0"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    Command="{Binding UninstallCommand}"
+                    Content="{DynamicResource TrBtnUninstall}"
+                    FontSize="18"
+                    Style="{StaticResource BtnActionDark}" />
+            </Grid>
+        </Grid>
+
         <!--  progress page  -->
         <Grid Name="ProgressPage" Grid.Row="1">
             <Grid.Style>
@@ -757,9 +846,6 @@
                     <Style TargetType="TextBlock">
                         <Setter Property="Text" Value="{DynamicResource TrLblInstalling}" />
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding ModifyAction}" Value="{x:Static vmEnums:ClipboxModifyAction.Uninstall}">
-                                <Setter Property="Text" Value="{DynamicResource TrLblUninstalling}" />
-                            </DataTrigger>
                             <DataTrigger Binding="{Binding ModifyAction}" Value="{x:Static vmEnums:ClipboxModifyAction.Repair}">
                                 <Setter Property="Text" Value="{DynamicResource TrLblRepairing}" />
                             </DataTrigger>
@@ -777,6 +863,9 @@
                             </DataTrigger>
                             <DataTrigger Binding="{Binding SetupWorkflow}" Value="{x:Static vmEnums:ClipboxSetupWorkflow.Update}">
                                 <Setter Property="Text" Value="{DynamicResource TrLblUpdating}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SetupWorkflow}" Value="{x:Static vmEnums:ClipboxSetupWorkflow.Uninstall}">
+                                <Setter Property="Text" Value="{DynamicResource TrLblUninstalling}" />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
@@ -1128,7 +1217,7 @@
                         Margin="10,30,0,0"
                         HorizontalContentAlignment="Left"
                         VerticalContentAlignment="Center"
-                        Command="{Binding UninstallCommand}"
+                        Command="{Binding GoToUninstallCommand}"
                         FontSize="16"
                         Style="{StaticResource BtnActionDark}">
                         <StackPanel Orientation="Horizontal">
@@ -1146,7 +1235,7 @@
 
         </Grid>
 
-        <Grid Name="ModifyReadyPage" Grid.Row="1">
+        <Grid Name="ModifyUninstallReadyPage" Grid.Row="1">
             <Grid.Style>
                 <Style TargetType="Grid">
                     <Setter Property="Visibility" Value="Collapsed" />
@@ -1161,6 +1250,13 @@
                         <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
                                 <Condition Binding="{Binding SetupWorkflow}" Value="{x:Static vmEnums:ClipboxSetupWorkflow.Update}" />
+                                <Condition Binding="{Binding SetupState}" Value="{x:Static vmEnums:ClipboxSetupState.Done}" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter Property="Visibility" Value="Visible" />
+                        </MultiDataTrigger>
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding SetupWorkflow}" Value="{x:Static vmEnums:ClipboxSetupWorkflow.Uninstall}" />
                                 <Condition Binding="{Binding SetupState}" Value="{x:Static vmEnums:ClipboxSetupState.Done}" />
                             </MultiDataTrigger.Conditions>
                             <Setter Property="Visibility" Value="Visible" />
@@ -1196,6 +1292,9 @@
                             </DataTrigger>
                             <DataTrigger Binding="{Binding SetupWorkflow}" Value="{x:Static vmEnums:ClipboxSetupWorkflow.Update}">
                                 <Setter Property="Text" Value="{DynamicResource TrLblUpdated}" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding SetupWorkflow}" Value="{x:Static vmEnums:ClipboxSetupWorkflow.Uninstall}">
+                                <Setter Property="Text" Value="{DynamicResource TrLblUninstalled}" />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
