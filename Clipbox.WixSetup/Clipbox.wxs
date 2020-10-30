@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension" xmlns:bal="http://schemas.microsoft.com/wix/BalExtension" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension" xmlns:dep="http://schemas.microsoft.com/wix/DependencyExtension">
-  <Bundle Name="Clipbox" Manufacturer="MyCompany" UpgradeCode="555c5bb0-4dfa-4559-871f-1408f39a2987" Version="1.1.7608.32941" dep:ProviderKey="01234567-8901-2345-6789-012345678901" >
+  <Bundle Name="Clipbox" Manufacturer="MyCompany" UpgradeCode="c7df05e0-556e-4d60-a32e-b85ebf15c5f6" Version="1.2.7608.36872" dep:ProviderKey="01234567-8901-2345-6789-012345678901" >
     <BootstrapperApplicationRef Id="ManagedBootstrapperApplicationHost">
       <Payload SourceFile="Clipbox.WixSetup.exe" />
       <Payload SourceFile="BootstrapperCore.config" />

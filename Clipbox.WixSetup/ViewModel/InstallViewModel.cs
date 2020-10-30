@@ -64,7 +64,9 @@ namespace Clipbox.WixSetup.ViewModel
             InstallCommand = new DelegateCommand(() => RequestSetupAction(LaunchAction.Install), () => !_isSetupActionRequested);
             UninstallCommand = new DelegateCommand(() => UninstallCommandHandler(), () => !_isSetupActionRequested);
             RepairCommand = new DelegateCommand(() => RequestSetupAction(LaunchAction.Repair), () => !_isSetupActionRequested);
-            UpdateCommand = new DelegateCommand(() => RequestSetupAction(LaunchAction.UpdateReplace), () => !_isSetupActionRequested);
+
+            UpdateCommand = new DelegateCommand(() => RequestSetupAction(LaunchAction.UpdateReplaceEmbedded), () => !_isSetupActionRequested);
+
             UpdateDownloadCommand = new DelegateCommand(UpdateDownloadCommandHandler, () => !_isSetupActionRequested);
             ModifyCommand = new DelegateCommand(ModifyCommandHandler, ModifyCommandHandlerCanExecuteHandler);
             FactoryResetCommand = new DelegateCommand(FactoryResetCommandHandler, () => !_isSetupActionRequested);
@@ -101,6 +103,20 @@ namespace Clipbox.WixSetup.ViewModel
             }
         }
 
+        private void HandleException(Exception ex)
+        {
+            if (_model.BootstrapperApplication.Command.Display == Display.Embedded)
+            {
+                _model.BootstrapperApplication.Engine.SendEmbeddedError(1, ex.Message, 0);
+            }
+            else
+            {
+                SetupState = ClipboxSetupState.Error;
+                ErrorMessage = ex.Message;
+                try { _model.BootstrapperApplication.Engine.Log(LogLevel.Error, ex.Message); } catch { }
+            }
+        }
+
         private bool ModifyCommandHandlerCanExecuteHandler()
         {
             try
@@ -133,8 +149,7 @@ namespace Clipbox.WixSetup.ViewModel
             }
             catch (Exception ex)
             {
-                SetupState = ClipboxSetupState.Error;
-                ErrorMessage = ex.Message;
+                HandleException(ex);
             }
             finally
             {
@@ -282,9 +297,7 @@ namespace Clipbox.WixSetup.ViewModel
                         }
                         catch (Exception ex)
                         {
-                            SetupState = ClipboxSetupState.Error;
-                            ErrorMessage = ex.Message;
-                            try { _model.LogMessage(ex.ToString()); } catch { }
+                            HandleException(ex);
                         }
                     }
                 });
@@ -357,9 +370,7 @@ namespace Clipbox.WixSetup.ViewModel
                     }
                     catch (Exception ex)
                     {
-                        try { _model.LogMessage(ex.ToString()); } catch { }
-                        SetupState = ClipboxSetupState.Error;
-                        ErrorMessage = ex.Message;
+                        HandleException(ex);
                     }
                 });
             }
@@ -442,8 +453,7 @@ namespace Clipbox.WixSetup.ViewModel
                     }
                     catch (Exception ex)
                     {
-                        SetupState = ClipboxSetupState.Error;
-                        ErrorMessage = ex.Message;
+                        HandleException(ex);
                     }
                 });
             }
@@ -455,8 +465,15 @@ namespace Clipbox.WixSetup.ViewModel
 
         private void BootstrapperApplication_Error(object sender, ErrorEventArgs e)
         {
-            SetupState = ClipboxSetupState.Error;
-            ErrorMessage = e.ErrorMessage;
+            if (_model.BootstrapperApplication.Command.Display == Display.Embedded)
+            {
+                _model.BootstrapperApplication.Engine.SendEmbeddedError(e.ErrorCode, e.ErrorMessage, e.UIHint);
+            }
+            else
+            {
+                SetupState = ClipboxSetupState.Error;
+                ErrorMessage = e.ErrorMessage;
+            }
         }
 
         private void BootstrapperApplication_ExecuteMsiMessage(object sender, ExecuteMsiMessageEventArgs e)
@@ -493,9 +510,17 @@ namespace Clipbox.WixSetup.ViewModel
         {
             IsRestartRequired = e.Restart == ApplyRestart.RestartRequired;
             _model.FinalResult = e.Status;
-            if (SetupState != ClipboxSetupState.Error)
+            if (_model.BootstrapperApplication.Command.Display == Display.Embedded 
+                || _model.BootstrapperApplication.Command.Display == Display.None)
             {
-                SetupState = ClipboxSetupState.Done;
+                _model.QuitInstaller(0);
+            }
+            else
+            {
+                if (SetupState != ClipboxSetupState.Error)
+                {
+                    SetupState = ClipboxSetupState.Done;
+                }
             }
         }
 
@@ -586,6 +611,14 @@ namespace Clipbox.WixSetup.ViewModel
         private void BootstrapperApplication_DetectComplete(object sender, Microsoft.Tools.WindowsInstallerXml.Bootstrapper.DetectCompleteEventArgs e)
         {
             IsDetectionOngoing = false;
+
+            if (LaunchAction.Uninstall == _model.BootstrapperApplication.Command.Action
+                && (_model.BootstrapperApplication.Command.Display == Display.Embedded || _model.BootstrapperApplication.Command.Display == Display.None))
+            {
+                _model.BootstrapperApplication.Engine.Log(LogLevel.Verbose, "Invoking automatic plan for uninstall.");
+                _model.PlanAction(LaunchAction.Uninstall);
+                return;
+            }
 
             if (SetupWorkflow == ClipboxSetupWorkflow.Modify 
                 || SetupWorkflow == ClipboxSetupWorkflow.Update)

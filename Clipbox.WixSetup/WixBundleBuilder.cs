@@ -6,7 +6,7 @@ using WixSharp.Bootstrapper;
 
 // let Visual Studio auto-increment the build and revision numbers.
 // In order for this to work, in the csprj file "Deterministic" should be set to "false"
-[assembly: AssemblyVersion("1.1.*")]
+[assembly: AssemblyVersion("1.2.*")]
 
 namespace Clipbox.WixSetup
 {

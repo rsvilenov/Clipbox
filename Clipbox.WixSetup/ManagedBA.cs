@@ -43,7 +43,10 @@ namespace Clipbox.WixSetup
                 InstallWindow View = new InstallWindow(viewModel);
                 model.SetWindowHandle(View);
                 this.Engine.Detect();
-                View.ShowDialog();
+                if (this.Command.Display != Display.Embedded && this.Command.Display != Display.None)
+                {
+                    View.ShowDialog();
+                }
                 System.Windows.Threading.Dispatcher.Run();
                 this.Engine.Quit(model.FinalResult);
             }
