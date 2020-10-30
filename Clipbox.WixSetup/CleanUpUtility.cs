@@ -1,4 +1,5 @@
 ﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Security.Principal;
@@ -15,9 +16,22 @@ namespace Clipbox.WixSetup
             RegistryAndAppDataSettings
         }
 
-        public static void CleanUp(CleanUpType cleanUpType)
+        public static void CleanUp(CleanUpType cleanUpType, bool justCurrentUser = false)
         {
-            Dictionary<string, string> sidsAndAppDatas = GetAllSidsAndAppDatas();
+            Dictionary<string, string> sidsAndAppDatas = null;
+            if (justCurrentUser)
+            {
+                var currentUserSid = WindowsIdentity.GetCurrent().User.ToString();
+                string appData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                sidsAndAppDatas = new Dictionary<string, string>
+                {
+                    { currentUserSid, appData }
+                };
+            }
+            else
+            {
+                sidsAndAppDatas = GetAllSidsAndAppDatas();
+            }
 
             foreach (string sid in sidsAndAppDatas.Keys)
             {
@@ -44,7 +58,11 @@ namespace Clipbox.WixSetup
 
         private static void DeleteAppDataSettings(string appDataPath)
         {
-            Directory.Delete(Path.Combine(appDataPath, ProductConstants.PRODUCT_NAME, "Settings"), true);
+            string appDataSettingsDirPath = Path.Combine(appDataPath, ProductConstants.PRODUCT_NAME, "Settings");
+            foreach (string filePath in Directory.GetFiles(appDataSettingsDirPath))
+            {
+                File.Delete(filePath);
+            }
         }
 
         private static void DeleteAppData(string appDataPath)

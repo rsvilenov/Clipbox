@@ -7,6 +7,7 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.ServiceProcess;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
@@ -239,11 +240,31 @@ namespace Clipbox.WixSetup.ViewModel
                     if (!args.Cancel)
                     {
                         ModifyAction = ClipboxModifyAction.FactoryReset;
+                        SetupState = ClipboxSetupState.Processing;
                         IsProgressIndeterminate = true;
 
                         try
                         {
-                            CleanUpUtility.CleanUp(CleanUpUtility.CleanUpType.AppDataSettings);
+                            
+                            ServiceController service = new ServiceController(ProductConstants.SERVICE_SC_NAME);
+
+                            bool wasServiceRunning = false;
+                            if (service.Status.Equals(ServiceControllerStatus.Running)
+                            && !service.Status.Equals(ServiceControllerStatus.StopPending))
+                            {
+                                wasServiceRunning = true;
+                                service.Stop(); 
+                                service.WaitForStatus(ServiceControllerStatus.Stopped);
+                            }
+                            
+                            CleanUpUtility.CleanUp(CleanUpUtility.CleanUpType.AppDataSettings, justCurrentUser: true);
+
+                            if (wasServiceRunning)
+                            {
+                                service.Start();
+                                service.WaitForStatus(ServiceControllerStatus.Running);
+                            }
+
                             SetupState = ClipboxSetupState.Done;
                         }
                         catch (Exception ex)

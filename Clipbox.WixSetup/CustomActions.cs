@@ -64,7 +64,7 @@ namespace Clipbox.WixSetup
         {
             return session.HandleErrors(() =>
             {
-                CleanUpUtility.CleanUp(CleanUpUtility.CleanUpType.RegistryAndAppData);
+                CleanUpUtility.CleanUp(CleanUpUtility.CleanUpType.RegistryAndAppData, justCurrentUser: false);
             });
         }
 
