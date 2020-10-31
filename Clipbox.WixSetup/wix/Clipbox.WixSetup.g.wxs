@@ -6,7 +6,7 @@
 </auto-generated>
 -->
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="95a2cb1e-ad54-41f4-b1f0-d1e797850902" Name="Clipbox" Language="1033" Codepage="Windows-1252" Version="1.1.7609.1482" UpgradeCode="555c5bb0-4dfa-4559-871f-1408f39a2987" Manufacturer="rosen">
+  <Product Id="95a2cb1e-ad54-41f4-b1f0-d1e79785110c" Name="Clipbox" Language="1033" Codepage="Windows-1252" Version="1.1.7609.7636" UpgradeCode="555c5bb0-4dfa-4559-871f-1408f39a2987" Manufacturer="rosen">
     <Package InstallerVersion="200" Compressed="yes" Platform="x64" SummaryCodepage="Windows-1252" InstallPrivileges="elevated" InstallScope="perMachine" Languages="1033" />
     <Media Id="1" Cabinet="Clipbox.cab" EmbedCab="yes" />
 
@@ -1029,7 +1029,7 @@
 
         <Component Id="Registry.4" Guid="95a2cb1e-ad54-41f4-b1f0-d1e7848242b6" Win64="yes">
           <RegistryKey Root="HKLM" Key="Software\MyCompany\Clipbox">
-            <RegistryValue Id="ProductVersion" Type="string" KeyPath="yes" Value="1.1.7609.1482" Name="ProductVersion" />
+            <RegistryValue Id="ProductVersion" Type="string" KeyPath="yes" Value="1.1.7609.7636" Name="ProductVersion" />
           </RegistryKey>
 
           <CreateFolder />
@@ -1047,8 +1047,8 @@
     <UI />
 
     <Upgrade Id="555c5bb0-4dfa-4559-871f-1408f39a2987">
-      <UpgradeVersion Minimum="0.0.0.0" Maximum="1.1.7609.1482" IncludeMinimum="yes" IncludeMaximum="no" Property="UPGRADEFOUND" />
-      <UpgradeVersion Minimum="1.1.7609.1482" IncludeMinimum="no" Property="NEWPRODUCTFOUND" />
+      <UpgradeVersion Minimum="0.0.0.0" Maximum="1.1.7609.7636" IncludeMinimum="yes" IncludeMaximum="no" Property="UPGRADEFOUND" />
+      <UpgradeVersion Minimum="1.1.7609.7636" IncludeMinimum="no" Property="NEWPRODUCTFOUND" />
     </Upgrade>
 
     <CustomAction Id="Set_InstallDeskband_Props" Property="InstallDeskband" Value="PIN_TRAY_ICON=[PIN_TRAY_ICON];INSTALLDIR=[INSTALLDIR];UILevel=[UILevel];ProductCode=[ProductCode];ADDLOCAL=[ADDLOCAL];ADDFEATURES=[ADDFEATURES]" />
@@ -1067,7 +1067,7 @@
     <UIRef Id="WixUI_Minimal" />
     <UIRef Id="WixUI_ErrorProgressText" />
 
-    <Property Id="WixSharp_BeforeInstall_Handlers" Value="Clipbox.WixSetup, Version=1.1.7609.1482, Culture=neutral, PublicKeyToken=null|Clipbox.WixSetup.WixBundleBuilder+&lt;&gt;c|&lt;Setup&gt;b__1_0" />
+    <Property Id="WixSharp_BeforeInstall_Handlers" Value="Clipbox.WixSetup, Version=1.1.7609.7636, Culture=neutral, PublicKeyToken=null|Clipbox.WixSetup.WixBundleBuilder+&lt;&gt;c|&lt;Setup&gt;b__1_0" />
     <Property Id="ProgramMenuFolder.Clipbox_.WorkDir" Value="INSTALLDIR\" />
 
     <Feature Id="Complete" Title="Complete" Absent="allow" Level="1">

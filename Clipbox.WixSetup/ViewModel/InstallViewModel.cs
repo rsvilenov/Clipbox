@@ -452,10 +452,18 @@ namespace Clipbox.WixSetup.ViewModel
                         };
                         webClient.DownloadFileCompleted += (s, e) =>
                         {
-                            System.IO.File.Move(tempFilePath, $"{tempFilePath}.exe");
+                            if (e.Error != null)
+                            {
+                                try { System.IO.File.Delete(tempFilePath); } catch { }
+                                HandleException(e.Error);
+                            }
+                            else
+                            {
+                                System.IO.File.Move(tempFilePath, $"{tempFilePath}.exe");
 
-                            Process.Start($"{tempFilePath}.exe");
-                            QuitInstallerInternal(0);
+                                Process.Start($"{tempFilePath}.exe");
+                                QuitInstallerInternal(0);
+                            }
                         };
 
                         webClient.DownloadFileAsync(new Uri(ProductConstants.PRODUCT_UPDATE_URL),
