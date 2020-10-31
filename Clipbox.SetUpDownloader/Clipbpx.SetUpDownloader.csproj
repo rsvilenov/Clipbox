@@ -66,6 +66,8 @@
     <Compile Include="CustomControls\HitTestTransparentPictureBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="EnvironmentUtils.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="ProductConstants.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

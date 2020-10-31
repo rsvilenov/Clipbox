@@ -5,5 +5,6 @@
         public static string PRODUCT_NAME = "Clipbox";
 
         public static string PRODUCT_DOWNLOAD_URL = "http://go.microsoft.com/fwlink/?linkid=863265";
+        public static string PRODUCT_DOWNLOAD_HASH_URL = "http://go.microsoft.com/fwlink/?linkid=863265";
     }
 }
