@@ -99,7 +99,7 @@ namespace Clipbpx.SetUpDownloader
             {
                 if (e.Error != null)
                 {
-                    FailWithMessageBox("Download failed. Are you connected to the Internet? You can still install Clipbox by downloading an offline installer from the website.", e.Error.ToString());
+                    FailWithMessageBox("Download failed. Please, check your Internet connection and try again. If the error keeps occurring, you can still install Clipbox by downloading an offline installer from the website.", e.Error.ToString());
                 }
                 else
                 {
@@ -117,7 +117,7 @@ namespace Clipbpx.SetUpDownloader
                 if (e.Error != null)
                 {
                     try { File.Delete(tempFilePath); } catch { }
-                    FailWithMessageBox("Download failed. Are you connected to the Internet? You can still install Clipbox by downloading an offline installer from the website.", e.Error.ToString());
+                    FailWithMessageBox("Download failed. Please, check your Internet connection and try again. If the error keeps occurring, you can still install Clipbox by downloading an offline installer from the website.", e.Error.ToString());
                 }
                 else
                 {

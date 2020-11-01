@@ -6,8 +6,11 @@ namespace Clipbpx.SetUpDownloader
     public class Logger
     {
         private string _logFilePath;
+        private object _lockObject;
         public Logger()
         {
+            _lockObject = new object();
+
             string tempFileName = Path.GetTempFileName();
 
             _logFilePath =
@@ -22,7 +25,17 @@ namespace Clipbpx.SetUpDownloader
 
         public void Log(string message)
         {
-            File.AppendAllText(_logFilePath, $"{DateTime.Now.ToFileTime()} --> {message}{Environment.NewLine}");
+            lock (_lockObject)
+            {
+                try
+                {
+                    File.AppendAllText(_logFilePath, $"{DateTime.Now.ToFileTime()} --> {message}{Environment.NewLine}");
+                }
+                catch 
+                {
+                    // the crucial task in this program is downloading, not logging, so... just swallow the exception
+                }
+            }
         }
     }
 }
