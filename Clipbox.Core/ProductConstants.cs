@@ -98,5 +98,7 @@ namespace Clipbox.Core
         public static readonly IReadOnlyList<byte> CLIENT_EXE_HASH = new byte[] { 0 };
 
         public const string INITIAL_CULTURE_CODE_FILENAME = "initialCultureCode";
+
+        public const string PRODUCT_LATEST_VERSION_URL = "someUrl";
     }
 }

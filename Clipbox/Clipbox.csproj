@@ -142,12 +142,14 @@
     <Compile Include="Services\Interfaces\ISearchProviderSelectorService.cs" />
     <Compile Include="Services\Interfaces\ISearchService.cs" />
     <Compile Include="Services\Interfaces\ISettingsWindowService.cs" />
+    <Compile Include="Services\Interfaces\IUpdateNotificationService.cs" />
     <Compile Include="Services\LocalizationService.cs" />
     <Compile Include="Services\PauseService.cs" />
     <Compile Include="Services\RebuildIndexWindowService.cs" />
     <Compile Include="Services\SearchProviderSelectorService.cs" />
     <Compile Include="Services\SearchService.cs" />
     <Compile Include="Services\SettingsWindowService.cs" />
+    <Compile Include="Services\UpdateNotificationService.cs" />
     <Compile Include="Technical\Converters\DateTimeToHumanReadableDateString.cs" />
     <Compile Include="Technical\Converters\MillisecondsToHumanReadableDateStringConverter.cs" />
     <Compile Include="Technical\Converters\TextFromTextBlockConverter.cs" />

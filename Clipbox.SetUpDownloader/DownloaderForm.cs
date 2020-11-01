@@ -192,6 +192,7 @@ namespace Clipbpx.SetUpDownloader
             try
             {
                 File.Move(tempFilePath, setupPath);
+
                 using (Process p = Process.Start(setupPath))
                 {
                     // hide the form
