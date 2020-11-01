@@ -133,6 +133,12 @@ namespace Clipbox.WixSetup
 #if PLATFORM_X64
                         Win64 = true
 #endif
+                    },
+                    new RegValue(RegistryHive.LocalMachine, $@"Software\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}", "CachedSetupPath", "[UNINSTALLER_PATH]")
+                    {
+#if PLATFORM_X64
+                        Win64 = true
+#endif
                     })
                 {
                     Version = asmVersion,

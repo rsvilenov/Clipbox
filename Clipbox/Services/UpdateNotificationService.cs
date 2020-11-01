@@ -1,6 +1,8 @@
 ﻿using Clipbox.Core;
+using Clipbox.Infrastructure.RegistryAccess;
 using Clipbox.Services.Interfaces;
 using System;
+using System.Diagnostics;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Timers;
@@ -37,6 +39,19 @@ namespace Clipbox.Services
             if (_isNetworkAvailable)
             {
                 _updateCheckTimer.Start();
+            }
+        }
+
+        public void LaunchUpdate()
+        {
+            string cachedSetupPath = RegistryUtils.GetCachedSetupPath();
+            if (!string.IsNullOrEmpty(cachedSetupPath))
+            {
+                Process.Start(cachedSetupPath, "forceupdate");
+            }
+            else
+            {
+                Process.Start(ProductConstants.PRODUCT_UPDATE_PAGE_URL);
             }
         }
 

@@ -201,7 +201,7 @@ namespace Clipbox.Services
                 if (!string.IsNullOrEmpty(selectedCloudSupportServiceName))
                 {
                     var newExtension = _extensionContainer.Resolve(selectedCloudSupportServiceName);
-                    if (!newExtension.GetType().Equals(_cloudSupportExt.GetType()))
+                    if (_cloudSupportExt != null && !newExtension.GetType().Equals(_cloudSupportExt.GetType()))
                     {
                         _isResetOfItemsSyncStatusRequested = true;
                     }

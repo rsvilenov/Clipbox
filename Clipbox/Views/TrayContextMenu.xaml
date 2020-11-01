@@ -20,7 +20,7 @@
                 IsEnabled="{Binding IsMainWindowOpen, Converter={StaticResource InverseBooleanConverter}}"
                 Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <MenuItem.Icon>
-                    <Image Source="pack://application:,,,/Resources/Images/OpenMainWindow.png" />
+                    <Image Source="pack://application:,,,/Resources/Images/TrayMenu/OpenMainWindow.png" />
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem
@@ -28,12 +28,17 @@
                 Header="{loc:Localize LBL_CONTEXT_MENU_CLOSE_MAIN_WINDOW}"
                 Visibility="{Binding IsMainWindowOpen, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <MenuItem.Icon>
-                    <Image Source="pack://application:,,,/Resources/Images/OpenMainWindow.png" />
+                    <Image Source="pack://application:,,,/Resources/Images/TrayMenu/OpenMainWindow.png">
+                        <Image.RenderTransformOrigin>0.5,0.5</Image.RenderTransformOrigin>
+                        <Image.RenderTransform>
+                            <RotateTransform Angle="180" />
+                        </Image.RenderTransform>
+                    </Image>
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem Command="{Binding ToggleCloudSyncEnabled}" Header="{loc:Localize LBL_CONTEXT_MENU_DISABLE_CLOUD_SYNC}">
                 <MenuItem.Icon>
-                    <Image Source="pack://application:,,,/Resources/Images/SyncDisabled.png" />
+                    <Image Source="pack://application:,,,/Resources/Images/TrayMenu/SyncDisabled.png" />
                 </MenuItem.Icon>
                 <MenuItem.Style>
                     <Style TargetType="MenuItem">
@@ -51,7 +56,7 @@
             </MenuItem>
             <MenuItem Command="{Binding ToggleCloudSyncEnabled}" Header="{loc:Localize LBL_CONTEXT_MENU_ENABLE_CLOUD_SYNC}">
                 <MenuItem.Icon>
-                    <Image Source="pack://application:,,,/Resources/Images/Sync.png" />
+                    <Image Source="pack://application:,,,/Resources/Images/TrayMenu/Sync.png" />
                 </MenuItem.Icon>
                 <MenuItem.Style>
                     <Style TargetType="MenuItem">
@@ -72,7 +77,7 @@
                 IsEnabled="{Binding IsPaused, Converter={StaticResource InverseBooleanConverter}}"
                 Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <MenuItem.Icon>
-                    <Image Source="pack://application:,,,/Resources/Images/Pause.png" />
+                    <Image Source="pack://application:,,,/Resources/Images/TrayMenu/Pause.png" />
                 </MenuItem.Icon>
                 <MenuItem
                     Command="{Binding Pause}"
@@ -96,18 +101,26 @@
                 Header="{loc:Localize LBL_CONTEXT_MENU_RESUME}"
                 Visibility="{Binding IsPaused, Converter={StaticResource BooleanToVisibilityConverter}}">
                 <MenuItem.Icon>
-                    <Image Source="pack://application:,,,/Resources/Images/Resume.png" />
+                    <Image Source="pack://application:,,,/Resources/Images/TrayMenu/Resume.png" />
                 </MenuItem.Icon>
             </MenuItem>
             <MenuItem Command="{Binding OpenSettingsWindow}" Header="{loc:Localize LBL_CONTEXT_MENU_SETTINGS}">
                 <MenuItem.Icon>
-                    <Image Source="pack://application:,,,/Resources/Images/Settings.png" />
+                    <Image Source="pack://application:,,,/Resources/Images/TrayMenu/Settings.png" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem
+                Command="{Binding LaunchUpdate}"
+                Header="{loc:Localize LBL_CONTEXT_MENU_UPDATE}"
+                Visibility="{Binding IsUpdateAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <MenuItem.Icon>
+                    <Image Source="pack://application:,,,/Resources/Images/TrayMenu/Update.png" />
                 </MenuItem.Icon>
             </MenuItem>
             <Separator />
             <MenuItem Command="{Binding Quit}" Header="{loc:Localize LBL_CONTEXT_MENU_QUIT}">
                 <MenuItem.Icon>
-                    <Image Source="pack://application:,,,/Resources/Images/Exit.png" />
+                    <Image Source="pack://application:,,,/Resources/Images/TrayMenu/Exit.png" />
                 </MenuItem.Icon>
             </MenuItem>
         </ContextMenu>

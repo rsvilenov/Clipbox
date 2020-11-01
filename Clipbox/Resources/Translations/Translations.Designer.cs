@@ -395,6 +395,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Update Clipbox.
+        /// </summary>
+        internal static string LBL_CONTEXT_MENU_UPDATE {
+            get {
+                return ResourceManager.GetString("LBL_CONTEXT_MENU_UPDATE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Today.
         /// </summary>
         internal static string LBL_DATE_TODAY {

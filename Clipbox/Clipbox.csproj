@@ -811,23 +811,23 @@
     <Resource Include="TODO.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Images\Settings.png" />
+    <Resource Include="Resources\Images\TrayMenu\Settings.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Images\Sync.png" />
+    <Resource Include="Resources\Images\TrayMenu\Sync.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Images\SyncDisabled.png" />
+    <Resource Include="Resources\Images\TrayMenu\SyncDisabled.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Images\Pause.png" />
-    <Resource Include="Resources\Images\Resume.png" />
+    <Resource Include="Resources\Images\TrayMenu\Pause.png" />
+    <Resource Include="Resources\Images\TrayMenu\Resume.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Images\Exit.png" />
+    <Resource Include="Resources\Images\TrayMenu\Exit.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\Images\OpenMainWindow.png" />
+    <Resource Include="Resources\Images\TrayMenu\OpenMainWindow.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Images\warn_triangle.png" />
@@ -854,6 +854,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\Images\Clip-WF-black-bg.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Images\TrayMenu\Update.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -66,6 +66,7 @@ namespace Clipbox
         ISearchProviderSelectorService _searchProviderSelectorService;
         GuardCommunicationService _guardCommunicationService;
         AutoClearClipboardService _autoClearClipboardService;
+        UpdateNotificationService _updateNotificationService;
 
         private int _shutdownSequenceCallCount;
 
@@ -216,6 +217,8 @@ namespace Clipbox
 
             _searchService = new SearchService(_extensionLoader.SearchSupportExtensionContainer, _clipboardManager, searchProvider);
 
+            _updateNotificationService = new UpdateNotificationService();
+
             // this view can show a little bit slower so we will not keep its instance alive the whole time - we will create it upon request within the service
             _mainClipboardViewWindowService = new MainClipboardViewWindowService(_clipboardManager,
                 _previewGenerationService,
@@ -233,7 +236,7 @@ namespace Clipbox
             _settingsWindowService = new SettingsWindowService(_settingsService, _mainClipboardViewWindowService, _cloudSyncService, _extensionLoader.SettingsUIExtensionContainer);
             _guardCommunicationService.SetSettingsWindowService(_settingsWindowService);
 
-            _trayContextMenuService = new TrayContextMenuService(_settingsService, _pauseService, _mainClipboardViewWindowService, _settingsWindowService);
+            _trayContextMenuService = new TrayContextMenuService(_settingsService, _pauseService, _mainClipboardViewWindowService, _settingsWindowService, _updateNotificationService);
 
             _trayService = new TrayIconService(_mainClipboardViewWindowService, _trayContextMenuService, _settingsService, _pauseService);
 
@@ -406,6 +409,7 @@ namespace Clipbox
                 TryDisposeObject(_rebuildIndexWindowService);
                 TryDisposeObject(_searchService);
                 TryDisposeObject(_autoClearClipboardService);
+                TryDisposeObject(_updateNotificationService);
             }
         }
 

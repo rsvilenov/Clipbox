@@ -12,6 +12,7 @@ namespace Clipbox.ViewModels
         private readonly ISettingsService _settingsService;
         private readonly IPauseService _pauseService;
         private readonly IMainClipboardViewWindowService _mainClipboardViewWindowService;
+        private readonly IUpdateNotificationService _updateNotificationService;
 
         private bool _isDisposed;
 
@@ -25,6 +26,7 @@ namespace Clipbox.ViewModels
         public ICommand Quit { get; }
         public ICommand ToggleMainWindowOpen { get; }
         public ICommand OpenSettingsWindow { get; }
+        public ICommand LaunchUpdate { get; }
 
         private bool _isCloudSyncEnabled;
         public bool IsCloudSyncEnabled
@@ -54,29 +56,46 @@ namespace Clipbox.ViewModels
             set { SetField(ref _isToggleCloudSyncVisible, value); }
         }
 
+        private bool _isUpdateAvailable;
+        public bool IsUpdateAvailable
+        {
+            get { return _isUpdateAvailable; }
+            set { SetField(ref _isUpdateAvailable, value); }
+        }
+
         public TrayContextMenuViewModel(ISettingsService settingsService,
             IPauseService pauseService, 
-            IMainClipboardViewWindowService mainClipboardViewWindowService)
+            IMainClipboardViewWindowService mainClipboardViewWindowService,
+            IUpdateNotificationService updateNotificationService)
         {
             _settingsService = settingsService ?? throw new ArgumentNullException(nameof(settingsService));
             _pauseService = pauseService ?? throw new ArgumentNullException(nameof(pauseService));
             _mainClipboardViewWindowService = mainClipboardViewWindowService ?? throw new ArgumentNullException(nameof(pauseService));
+            _updateNotificationService = updateNotificationService ?? throw new ArgumentNullException(nameof(updateNotificationService));
 
             _mainClipboardViewWindowService.MainWindowOpened += _mainClipboardViewWindowService_MainWindowOpened;
             _mainClipboardViewWindowService.MainWindowClosed += _mainClipboardViewWindowService_MainWindowClosed;
+            _updateNotificationService.UpdateAvailable += _updateNotificationService_UpdateAvailable;
 
             IsToggleCloudSyncVisible = _settingsService.GetSetting<bool>(SettingsKeys.IsCloudServicesEnabled);
             IsCloudSyncEnabled = _settingsService.GetSetting<bool>(SettingsKeys.IsCloudSyncEnabled);
             IsPaused = !_settingsService.GetSetting<bool>(SettingsKeys.IsClipboardTrackingEnabled);
+            IsUpdateAvailable = _updateNotificationService.IsUpdateAvailable;
 
             ToggleCloudSyncEnabled = new DelegateCommand(ToggleCloudSyncEnabledHandler);
             Pause = new DelegateCommand<object>(PauseHandler);
             Resume = new DelegateCommand(ResumeHandler);
             ToggleMainWindowOpen = new DelegateCommand(() => Task.Run(() => ToggleMainWindowOpenRequested?.Invoke(this, new EventArgs())));
             OpenSettingsWindow = new DelegateCommand(() => Task.Run(() => SettingsWindowOpenRequested?.Invoke(this, new EventArgs())));
+            LaunchUpdate = new DelegateCommand(() => Task.Run(() => _updateNotificationService.LaunchUpdate()), () => IsUpdateAvailable);
             Quit = new DelegateCommand(QuitHandler);
 
             _settingsService.SettingChanged += _settingsService_SettingChanged;
+        }
+
+        private void _updateNotificationService_UpdateAvailable(object sender, EventArgs e)
+        {
+            IsUpdateAvailable = true;
         }
 
         private void _mainClipboardViewWindowService_MainWindowClosed(object sender, EventArgs e)

@@ -2,10 +2,12 @@
 
 namespace Clipbox.Services.Interfaces
 {
-    interface IUpdateNotificationService
+    public interface IUpdateNotificationService
     {
         bool IsUpdateAvailable { get; }
 
         event EventHandler UpdateAvailable;
+
+        void LaunchUpdate();
     }
 }

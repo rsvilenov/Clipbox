@@ -229,6 +229,9 @@
   <data name="LBL_CONTEXT_MENU_SETTINGS" xml:space="preserve">
     <value>Настройки</value>
   </data>
+  <data name="LBL_CONTEXT_MENU_UPDATE" xml:space="preserve">
+    <value>Обновете Clipbox</value>
+  </data>
   <data name="LBL_DATERANGESELECTOR_SHOW_ITEMS_FROM" xml:space="preserve">
     <value>Покажи записи от</value>
   </data>

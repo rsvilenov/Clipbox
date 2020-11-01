@@ -229,6 +229,9 @@ from this window except the pinned ones.</value>
   <data name="LBL_CONTEXT_MENU_SETTINGS" xml:space="preserve">
     <value>Settings</value>
   </data>
+  <data name="LBL_CONTEXT_MENU_UPDATE" xml:space="preserve">
+    <value>Update Clipbox</value>
+  </data>
   <data name="LBL_DATERANGESELECTOR_SHOW_ITEMS_FROM" xml:space="preserve">
     <value>Show items from</value>
   </data>

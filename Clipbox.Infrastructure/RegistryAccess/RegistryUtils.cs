@@ -5,6 +5,15 @@ namespace Clipbox.Infrastructure.RegistryAccess
 {
     public static class RegistryUtils
     {
+        public static string GetCachedSetupPath()
+        {
+            string productHKLMRegKey = $@"Software\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}";
+            using (RegistryKey key = Registry.LocalMachine.OpenSubKey(productHKLMRegKey))
+            {
+                return key?.GetValue("CachedSetupPath")?.ToString();
+            }
+        }
+
         public static string GetInitialCultureCode()
         {
             string productHKLMRegKey = $@"Software\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}";

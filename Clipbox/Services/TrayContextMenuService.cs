@@ -25,6 +25,7 @@ namespace Clipbox.Services
         private ITrayContextMenu _trayContextMenu;
         private readonly IMainClipboardViewWindowService _mainClipboardViewWindowService;
         private readonly ISettingsWindowService _settingsWindowService;
+        private readonly IUpdateNotificationService _updateNotificationService;
         private readonly MouseLLHook _mouseHook;
         private readonly TrayContextMenuViewModel _trayContextMenuViewModel;
 
@@ -35,13 +36,15 @@ namespace Clipbox.Services
         public TrayContextMenuService(ISettingsService settingsService,
             IPauseService pauseService,
             IMainClipboardViewWindowService mainClipboardViewWindowService,
-            ISettingsWindowService settingsWindowService)
+            ISettingsWindowService settingsWindowService,
+            IUpdateNotificationService updateNotificationService)
         {
             _settingsService = settingsService;
             _mainClipboardViewWindowService = mainClipboardViewWindowService;
             _settingsWindowService = settingsWindowService;
+            _updateNotificationService = updateNotificationService;
 
-            _trayContextMenuViewModel = new TrayContextMenuViewModel(_settingsService, pauseService, mainClipboardViewWindowService);
+            _trayContextMenuViewModel = new TrayContextMenuViewModel(_settingsService, pauseService, mainClipboardViewWindowService, updateNotificationService);
             _trayContextMenuViewModel.SettingsWindowOpenRequested += _trayContextMenuViewModel_SettingsWindowOpenRequested;
             _trayContextMenuViewModel.ToggleMainWindowOpenRequested += _trayContextMenuViewModel_ToggleMainWindowOpenRequested;
             _trayContextMenuViewModel.QuitRequested += _trayContextMenuViewModel_QuitRequested;
