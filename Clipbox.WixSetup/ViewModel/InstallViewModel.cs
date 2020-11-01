@@ -60,7 +60,10 @@ namespace Clipbox.WixSetup.ViewModel
 #endif
 
             QuitCommand = new DelegateCommand(QuitCommandHandler);
-            CloseInstallWindowCommand = new DelegateCommand(CloseInstallWindowCommandHandler);
+            CloseInstallWindowCommand = new DelegateCommand(CloseInstallWindowCommandHandler, 
+                    () => SetupState != ClipboxSetupState.Preparing 
+                        && SetupState != ClipboxSetupState.Processing 
+                        && SetupState != ClipboxSetupState.Downloading);
             CancelCommand = new DelegateCommand(CancelCommandHandler, () => !_isCancelRequested);
             InstallCommand = new DelegateCommand(() => RequestSetupAction(LaunchAction.Install), () => !_isSetupActionRequested);
             UninstallCommand = new DelegateCommand(() => UninstallCommandHandler(), () => !_isSetupActionRequested);
@@ -588,6 +591,11 @@ namespace Clipbox.WixSetup.ViewModel
                 if (_model.BootstrapperApplication.Command.GetCommandLineArgs().Any(arg => arg.Replace("/", "").Equals(ProductConstants.FORCE_INSTALL_ARG, StringComparison.OrdinalIgnoreCase)))
                 {
                     SetupWorkflow = ClipboxSetupWorkflow.Install;
+                }
+                else if (_model.BootstrapperApplication.Command.GetCommandLineArgs().Any(arg => arg.Replace("/", "").Equals(ProductConstants.FORCE_UPDATE_DOWNLOAD_ARG, StringComparison.OrdinalIgnoreCase)))
+                {
+                    SetupWorkflow = ClipboxSetupWorkflow.Modify;
+                    UpdateDownloadCommand.Execute(null);
                 }
                 else if (e.State == PackageState.Present)
                 {

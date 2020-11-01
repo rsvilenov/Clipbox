@@ -27,6 +27,9 @@
             <Trigger Property="IsPressed" Value="True">
                 <Setter Property="Foreground" Value="Red" />
             </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="#FF686868" />
+            </Trigger>
         </Style.Triggers>
     </Style>
 

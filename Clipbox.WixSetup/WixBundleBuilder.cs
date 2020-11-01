@@ -134,7 +134,7 @@ namespace Clipbox.WixSetup
                         Win64 = true
 #endif
                     },
-                    new RegValue(RegistryHive.LocalMachine, $@"Software\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}", "CachedSetupPath", "[UNINSTALLER_PATH]")
+                    new RegValue(RegistryHive.LocalMachine, $@"Software\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}", "BundleUpgradeCode", "{" + ProductConstants.WIX_BUNDLE_UPGRADE_CODE + "}")
                     {
 #if PLATFORM_X64
                         Win64 = true

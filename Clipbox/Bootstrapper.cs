@@ -454,7 +454,7 @@ namespace Clipbox
             // the WoW subsystem when we are running a 32 bit process on a 64
             // bit OS. So, just don't allow that.
             if (Environment.Is64BitOperatingSystem
-                && IntPtr.Size == 4 /* int ptr size of 4 indicates that the program is compiled for 32 bit platform */)
+                && !Environment.Is64BitProcess)
             {
                 throw new PlatformNotSupportedException("Please compile this program for 64 bit architecure.");
             }

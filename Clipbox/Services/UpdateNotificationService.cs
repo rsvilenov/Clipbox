@@ -44,10 +44,10 @@ namespace Clipbox.Services
 
         public void LaunchUpdate()
         {
-            string cachedSetupPath = RegistryUtils.GetCachedSetupPath();
+            string cachedSetupPath = RegistryUtils.GetBundleCachePath();
             if (!string.IsNullOrEmpty(cachedSetupPath))
             {
-                Process.Start(cachedSetupPath, "forceupdate");
+                Process.Start(cachedSetupPath, "forceupdatedownload");
             }
             else
             {
