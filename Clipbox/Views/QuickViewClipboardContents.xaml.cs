@@ -1,4 +1,5 @@
 ﻿using Clipbox.Infrastructure.Extensibility.Containers;
+using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.UI.DataObjects;
 using Clipbox.Infrastructure.UI.Utils;
 using Clipbox.Services.EventArgsClasses;
@@ -24,13 +25,19 @@ namespace Clipbox.Views
     /// </summary>
     public partial class QuickViewClipboardContents : ClipboardViewControlBase
     {
+        private const string STORED_STATE_PERSISTENCE_KEY = "QuickViewState";
+
         private readonly QuickViewkClipboardContentsViewModel _viewModel;
         private readonly ISettingsService _settingsService;
+        private readonly IPersistenceProvider _persistenceProvider;
 
         private MonitorDimensions _oldMonitorDimensions;
         private bool _isDisposing;
 
-        public QuickViewClipboardContents(QuickViewkClipboardContentsViewModel vm, UIExtensionContainer container, ISettingsService settingsService)
+        public QuickViewClipboardContents(QuickViewkClipboardContentsViewModel vm,
+            UIExtensionContainer container, 
+            ISettingsService settingsService,
+            IPersistenceProvider persistenceProvider)
             : base (container, settingsService)
         {   
             InitializeComponent();
@@ -39,6 +46,7 @@ namespace Clipbox.Views
             _viewModel = vm;
 
             _settingsService = settingsService;
+            _persistenceProvider = persistenceProvider;
 
             IsVisibleChanged += QuickViewClipboardContents_IsVisibleChanged;
 
@@ -163,6 +171,39 @@ namespace Clipbox.Views
         public void LoadItem(string clipboardItemId)
         {
             _viewModel.ScheduleLoadingOfNewItem(clipboardItemId);
+        }
+
+        public void StoreState()
+        {
+            if (_viewModel.ClipboardViewItemWrappers.Any())
+            {
+                string stateString = new string(_viewModel
+                    .ClipboardViewItemWrappers
+                    .SelectMany(w => w.Id + ";").ToArray());
+                _persistenceProvider.Write(STORED_STATE_PERSISTENCE_KEY, stateString);
+            }
+        }
+
+        public bool CheckIsStoredStateAvailable()
+        {
+            return _persistenceProvider.CheckIfKeyExists(STORED_STATE_PERSISTENCE_KEY);
+        }
+
+        public void RestoreState()
+        {
+            if (_persistenceProvider.CheckIfKeyExists(STORED_STATE_PERSISTENCE_KEY))
+            {
+                string stateString = _persistenceProvider.ReadText(STORED_STATE_PERSISTENCE_KEY);
+                if (!string.IsNullOrEmpty(stateString))
+                {
+                    foreach (string itemId in stateString.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
+                    {
+                        _viewModel.ScheduleLoadingOfNewItem(itemId);
+                    }
+                }
+
+                _persistenceProvider.Delete(STORED_STATE_PERSISTENCE_KEY);
+            }
         }
         
         public override void FocusNextItem()

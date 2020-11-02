@@ -46,6 +46,7 @@ namespace ClipboxGuard
             bool isStartedFromShortcut = startupArgs.Any(arg => arg == ProductConstants.STARTED_FROM_SHORTCUT);
             bool isOpenSettingsWindowRequested = startupArgs.Any(arg => arg == ProductConstants.OPEN_SETTINGS_WINDOW_ARG);
             bool isDisableClipboardTrackingRequested = startupArgs.Any(arg => arg == ProductConstants.DISABLE_CLIPOARD_TRAKING_ARG);
+            bool isStoreQvStateRequested = startupArgs.Any(arg => arg == ProductConstants.STORE_QV_STATE_ARG);
 
             int mySessionId = SessionUtils.GetCurrentSessionId();
             if (isStartedFromShortcut)
@@ -82,6 +83,13 @@ namespace ClipboxGuard
             else if (isDisableClipboardTrackingRequested)
             {
                 AskMainProcessToDisableClipboardTracking(mySessionId);
+
+                Application.Current.Shutdown((int)ProcessExitCodes.Ok);
+                return;
+            }
+            else if (isStoreQvStateRequested)
+            {
+                AskMainProcessToStoreQvState(mySessionId);
 
                 Application.Current.Shutdown((int)ProcessExitCodes.Ok);
                 return;
@@ -230,6 +238,12 @@ namespace ClipboxGuard
         {
             NamedPipesClient npClient = new NamedPipesClient($"{ProductConstants.MAINPROC_GUARD_COMM_NAMED_PIPE_PREFIX}.{sessionId}");
             npClient.SendMessage(ProductConstants.PIPE_COMMAND_DISABLE_TRACKING);
+        }
+
+        private void AskMainProcessToStoreQvState(int sessionId)
+        {
+            NamedPipesClient npClient = new NamedPipesClient($"{ProductConstants.MAINPROC_GUARD_COMM_NAMED_PIPE_PREFIX}.{sessionId}");
+            npClient.SendMessage(ProductConstants.PIPE_COMMAND_STORE_QV_STATE);
         }
 
         private void TryDisposeObject(IDisposable obj)

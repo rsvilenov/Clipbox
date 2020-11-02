@@ -1,4 +1,5 @@
 ﻿using Clipbox.Core.Extensibility.Contracts;
+using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.DataObjects;
 using Clipbox.Infrastructure.UI.Windows;
@@ -69,7 +70,6 @@ namespace Clipbox.Services
             });
 
 
-            _previewControl.LoadWrappedPinnedItems();
 
             _sizeChangedSligingTimer = new SlidingTimer();
             _sizeChangedSligingTimer.Elapsed += _sizeChangedSligingTimer_Elapsed;
@@ -79,6 +79,7 @@ namespace Clipbox.Services
 
             PreloadQuickViewWindow();
 
+            LoadInitialContents();
         }
 
         public IReadOnlyCollection<string> SelectedItemIds { get; set; }
@@ -250,6 +251,38 @@ namespace Clipbox.Services
         public void LoadClipboardItem(string clipboardItemId)
         {
             _previewControl.LoadItem(clipboardItemId);
+        }
+
+        private void LoadInitialContents()
+        {
+            try
+            {
+                if (_previewControl.CheckIsStoredStateAvailable())
+                {
+                    _previewControl.RestoreState();
+                }
+                else
+                {
+                    _previewControl.LoadWrappedPinnedItems();
+                }
+            }
+            catch
+            {
+                // TODO: log the exception
+            }
+        }
+
+        /// <summary>
+        /// Tells the service to load the currently shown items on the next start of the program.
+        /// Useful when the program is restarted for an upgrade.
+        /// </summary>
+        public void StoreState()
+        {
+            try { _previewControl.StoreState(); }
+            catch
+            {
+                // TODO: log the exception
+            }
         }
 
         public void Dispose()

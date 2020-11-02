@@ -19,6 +19,7 @@ namespace Clipbox.Services
         private readonly ISettingsService _settingsService;
 
         private IMainClipboardViewWindowService _mainClipboardViewWindowService;
+        private IQuickClipboardViewWindowService _quickClipboardViewWindowService;
         private ISettingsWindowService _settingsWindowService;
 
         public GuardCommunicationService(
@@ -39,6 +40,11 @@ namespace Clipbox.Services
         public void SetMainClipboardViewWindowService(IMainClipboardViewWindowService svc)
         {
             _mainClipboardViewWindowService = svc;
+        }
+
+        public void SetQuickClipboardViewWindowService(IQuickClipboardViewWindowService svc)
+        {
+            _quickClipboardViewWindowService = svc;
         }
 
         public void SetSettingsWindowService(ISettingsWindowService svc)
@@ -79,6 +85,11 @@ namespace Clipbox.Services
             else if (e.ReceivedMessage == ProductConstants.PIPE_COMMAND_OPEN_MAIN_WINDOW)
             {
                 _mainClipboardViewWindowService?.OpenOnMonitor(MonitorUtils.GetByCurrentMousePosition());
+            }
+            else if(e.ReceivedMessage == ProductConstants.PIPE_COMMAND_STORE_QV_STATE)
+            {
+                // an upgrade is about to begin...
+                _quickClipboardViewWindowService.StoreState();
             }
         }
 

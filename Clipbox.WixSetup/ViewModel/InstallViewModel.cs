@@ -70,7 +70,7 @@ namespace Clipbox.WixSetup.ViewModel
             GoToUninstallCommand = new DelegateCommand(() => GoToUninstallCommandHandler(), () => !_isSetupActionRequested);
             RepairCommand = new DelegateCommand(() => RequestSetupAction(LaunchAction.Repair), () => !_isSetupActionRequested);
 
-            UpdateCommand = new DelegateCommand(() => RequestSetupAction(LaunchAction.Install), () => !_isSetupActionRequested);
+            UpdateCommand = new DelegateCommand(() => UpdateCommandHandler(), () => !_isSetupActionRequested);
 
             UpdateDownloadCommand = new DelegateCommand(UpdateDownloadCommandHandler, () => !_isSetupActionRequested);
             ModifyCommand = new DelegateCommand(ModifyCommandHandler, ModifyCommandHandlerCanExecuteHandler);
@@ -151,8 +151,6 @@ namespace Clipbox.WixSetup.ViewModel
 
             try
             {
-                CheckIfGuardProcessIsRunning();
-
                 string installDir = GetInstallDirFromRegistry();
                 if (installDir == null)
                 {
@@ -431,6 +429,62 @@ namespace Clipbox.WixSetup.ViewModel
             _model.SetBurnVariable("PIN_TRAY_ICON", PinTrayIcon ? "yes" : "no");
             _model.SetBurnVariable("ACTUAL_INSTALLDIR", InstallationDirectory);
             _model.SetBurnVariable("ACTUAL_INITIAL_CULTURE_CODE", CultureCode);
+        }
+
+        private void UpdateCommandHandler()
+        {
+            _isSetupActionRequested = true;
+
+            SetupWorkflow = ClipboxSetupWorkflow.Update;
+            SetupState = ClipboxSetupState.Preparing;
+
+            try
+            {
+                Task.Factory.StartNew(() =>
+                {
+                    try
+                    {
+                        // try to call the running program and tell it to store the Quick View state, so after the update
+                        // and the restart of the program the user will still see their copied items 
+                        if (CheckIfGuardProcessIsRunning())
+                        {
+                            string installDir = GetInstallDirFromRegistry();
+                            if (installDir == null)
+                            {
+                                throw new System.IO.DirectoryNotFoundException("Install directory not found in registry.");
+                            }
+                            string guardPath = System.IO.Path.Combine(installDir, ProductConstants.GUARD_EXE_NAME);
+                            using (Process p = Process.Start(guardPath, ProductConstants.STORE_QV_STATE_ARG))
+                            {
+                                p.WaitForExit();
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        try
+                        {
+                            _model.BootstrapperApplication.Engine.Log(LogLevel.Error, "Error storing the quick view state.");
+                            _model.BootstrapperApplication.Engine.Log(LogLevel.Error, ex.Message);
+                        }
+                        catch { }
+                    }
+
+                    try
+                    {
+                        _model.PlanAction(LaunchAction.Install);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        HandleException(ex);
+                    }
+                });
+            }
+            finally
+            {
+                _isSetupActionRequested = false;
+            }
         }
 
         private void UpdateDownloadCommandHandler()

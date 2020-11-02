@@ -44,6 +44,8 @@
 
         public const string OPEN_SETTINGS_WINDOW_ARG = "settings";
 
+        public const string STORE_QV_STATE_ARG = "storeqvstate";
+
         public const string FORCE_INSTALL_ARG = "forceinstall";
 
         public const string FORCE_UPDATE_DOWNLOAD_ARG = "forceupdatedownload";

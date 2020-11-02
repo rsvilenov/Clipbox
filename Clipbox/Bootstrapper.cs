@@ -46,7 +46,7 @@ namespace Clipbox
         LowLevelKeyboardService _keyboardService;
         IClipboardManager _clipboardManager;
         ClipboardListenerService _clipboardListenerService;
-        QuickClipboardViewWindowService _previewWindowService;
+        QuickClipboardViewWindowService _quickClipboardViewWindowService;
         FlowExtensionExecutorService _flowExtensionExecutorService;
         TrayIconService _trayService;
         ISettingsService _settingsService;
@@ -197,10 +197,11 @@ namespace Clipbox
             var viewModel = new QuickViewkClipboardContentsViewModel(_clipboardManager, _previewGenerationService, _settingsService);
 
             // Prepare the preview window
-            _quickViewClipboardContents = new QuickViewClipboardContents(viewModel, _extensionLoader.UIExtensionContainer, _settingsService);
-
+            _quickViewClipboardContents = new QuickViewClipboardContents(viewModel, _extensionLoader.UIExtensionContainer, _settingsService, _persistenceProvider);
+            
             // Initialize the quick preview window service
-            _previewWindowService = new QuickClipboardViewWindowService(_quickViewClipboardContents, _settingsService);
+            _quickClipboardViewWindowService = new QuickClipboardViewWindowService(_quickViewClipboardContents, _settingsService);
+            _guardCommunicationService.SetQuickClipboardViewWindowService(_quickClipboardViewWindowService);
 
             // Initialize the FlowExtension executor service
             _flowExtensionExecutorService = new FlowExtensionExecutorService(_extensionLoader.FlowExtensionContainer, _settingsService);
@@ -230,7 +231,7 @@ namespace Clipbox
             _guardCommunicationService.SetMainClipboardViewWindowService(_mainClipboardViewWindowService);
 
             // Initialize the flow controller
-            _flowController = new FlowController(_clipboardManager, _keyboardService, _flowExtensionExecutorService, _previewWindowService, _mainClipboardViewWindowService);
+            _flowController = new FlowController(_clipboardManager, _keyboardService, _flowExtensionExecutorService, _quickClipboardViewWindowService, _mainClipboardViewWindowService);
 
             
             _settingsWindowService = new SettingsWindowService(_settingsService, _mainClipboardViewWindowService, _cloudSyncService, _extensionLoader.SettingsUIExtensionContainer);
@@ -398,7 +399,7 @@ namespace Clipbox
                 TryDisposeObject(_cloudSyncService);
                 TryDisposeObject(_clipboardManager);
                 TryDisposeObject(_flowExtensionExecutorService);
-                TryDisposeObject(_previewWindowService);
+                TryDisposeObject(_quickClipboardViewWindowService);
                 TryDisposeObject(_quickViewClipboardContents);
                 TryDisposeObject(_previewGenerationService);
                 TryDisposeObject(_clipboardListenerService);

@@ -42,6 +42,8 @@ namespace Clipbox.Core
 
         public const string OPEN_MAIN_WINDOW_ARG = "main";
 
+        public const string STORE_QV_STATE_ARG = "storeqvstate";
+
         public const string STARTED_FROM_SHORTCUT = "scut";
 
         public const string RUN_WITH_HIGH_PRIORITY_FLAG_KEY = "_hp";
@@ -62,6 +64,8 @@ namespace Clipbox.Core
         public const string PIPE_COMMAND_OPEN_SETTINGS_WINDOW = "OpenSettingsWindow";
 
         public const string PIPE_COMMAND_DISABLE_TRACKING = "DisableTracking";
+
+        public const string PIPE_COMMAND_STORE_QV_STATE = "StoreQvState";
 
         public const string SEARCH_SERVICE_NAMED_PIPE_PREFIX = "ClipboxSearchPipe";
 
