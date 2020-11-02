@@ -410,7 +410,7 @@ namespace Clipbox.WixSetup.ViewModel
                         ModifyAction = ClipboxModifyAction.Modify;
                         break;
                     case LaunchAction.Install:
-                        SetBurnVariables();
+                        SetBurnVariables(isUpdate: false);
                         break;
                 }
 
@@ -423,12 +423,20 @@ namespace Clipbox.WixSetup.ViewModel
             }
         }
 
-        private void SetBurnVariables()
+        private void SetBurnVariables(bool isUpdate)
         {
-            _model.SetBurnVariable("CREATE_DESKTOP_SHORTCUT", CreateDesktopShortcut ? "yes" : "no");
-            _model.SetBurnVariable("PIN_TRAY_ICON", PinTrayIcon ? "yes" : "no");
-            _model.SetBurnVariable("ACTUAL_INSTALLDIR", InstallationDirectory);
-            _model.SetBurnVariable("ACTUAL_INITIAL_CULTURE_CODE", CultureCode);
+            if (isUpdate)
+            {
+                // TODO: add CREATE_DESKTOP_SHORTCUT as well
+                _model.SetBurnVariable("ACTUAL_INSTALLDIR", GetInstallDirFromRegistry());
+            }
+            else
+            {
+                _model.SetBurnVariable("CREATE_DESKTOP_SHORTCUT", CreateDesktopShortcut ? "yes" : "no");
+                _model.SetBurnVariable("PIN_TRAY_ICON", PinTrayIcon ? "yes" : "no");
+                _model.SetBurnVariable("ACTUAL_INSTALLDIR", InstallationDirectory);
+                _model.SetBurnVariable("ACTUAL_INITIAL_CULTURE_CODE", CultureCode);
+            }
         }
 
         private void UpdateCommandHandler()
@@ -472,6 +480,7 @@ namespace Clipbox.WixSetup.ViewModel
 
                     try
                     {
+                        SetBurnVariables(isUpdate: true);
                         _model.PlanAction(LaunchAction.Install);
 
                     }
