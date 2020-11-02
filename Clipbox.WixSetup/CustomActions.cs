@@ -71,5 +71,22 @@ namespace Clipbox.WixSetup
             });
         }
 
+        [CustomAction]
+        public static ActionResult HideDeskband(Session session)
+        {
+            // this action exists in case Clipbox is not running before the uninstall process begins,
+            // which means that it will not hide its deskband. So we have to hide it in any case.
+            // It remains loaded in Windows Explorer, but is unregistered and hidden, no next time
+            // Explorer starts, it will not load it. No system or shell restart is really required here.
+            return session.HandleErrors(() =>
+            {
+                var deskbandCtrlExe = System.IO.Path.Combine(session.Property("INSTALLDIR"), ProductConstants.DESKBAND_CTRL_EXE_NAME);
+                using (Process deskbandCtlProcess = Process.Start(deskbandCtrlExe, "hide"))
+                {
+                    deskbandCtlProcess.WaitForExit();
+                }
+            });
+        }
+
     }
 }

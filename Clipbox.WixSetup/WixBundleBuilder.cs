@@ -110,6 +110,7 @@ namespace Clipbox.WixSetup
                     },
                     new ElevatedManagedAction(CustomActions.UnInstallDeskband, Return.check, When.Before, Step.RemoveFiles, WixSharp.Condition.BeingUninstalled),
                     new ElevatedManagedAction(CustomActions.CleanUpArtefacts, Return.ignore, When.After, Step.RemoveFiles, WixSharp.Condition.BeingUninstalledAndNotBeingUpgraded),
+                    new ElevatedManagedAction(CustomActions.HideDeskband, Return.ignore, When.Before, Step.RemoveFiles, WixSharp.Condition.BeingUninstalled),
                     new RegValue(RegistryHive.LocalMachine, $@"Software\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}", "InstallDirectory", "[INSTALLDIR]")
                     {
 #if PLATFORM_X64

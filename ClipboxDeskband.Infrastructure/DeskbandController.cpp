@@ -81,6 +81,29 @@ HRESULT DeskbandController::ShowDeskband()
     return hr;
 }
 
+HRESULT DeskbandController::HideDeskband()
+{
+    HRESULT hr = S_OK;
+    ITrayDeskBand* pTrayDeskBand = NULL;
+    hr = CoCreateInstance(CLSID_TrayDeskBand, NULL, CLSCTX_ALL, IID_PPV_ARGS(&pTrayDeskBand));
+
+    if (SUCCEEDED(hr))
+    {
+        hr = pTrayDeskBand->DeskBandRegistrationChanged();
+        if (SUCCEEDED(hr))
+        {
+            hr = pTrayDeskBand->HideDeskBand(PRODCONST_CLSID_ClipboxDeskBand);
+            if (SUCCEEDED(hr))
+            {
+                hr = pTrayDeskBand->DeskBandRegistrationChanged();
+            }
+        }
+        pTrayDeskBand->Release();
+    }
+
+    return hr;
+}
+
 
 HRESULT DeskbandController::TryRemoveDeskband(bool* removeSuccess)
 {

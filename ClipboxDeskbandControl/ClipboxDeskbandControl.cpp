@@ -17,6 +17,7 @@
 
 LPCWSTR APPDATA_SUBFOLDER = L"Clipbox";
 LPCWSTR ARG_NOWAIT = L"nowait";
+LPCWSTR ARG_HIDE = L"hide";
 
 static const UINT_PTR WAIT_CONFIRM_DIALOG_TIMER_ID = 1;
 static const UINT_PTR WAIT_CONFIRM_DIALOG_ANSWERED_TIMER_ID = 2;
@@ -68,7 +69,21 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         return (int)EXIT_CODES::UNKNOWN;
     }
 
+    if (wcscmp(lpCmdLine, ARG_HIDE) == 0)
+    {
+        bool isRemoved;
+        HRESULT hr = S_OK;
+        bool isShown;
+        if (SUCCEEDED(g_deskbandController->IsDeskbandShown(&isShown)) && isShown)
+        {
+            hr = g_deskbandController->HideDeskband();
+        }
+        
+        return  SUCCEEDED(hr) ? (int)EXIT_CODES::OK : (int)EXIT_CODES::UNKNOWN;
+    }
+
     g_nowait = wcscmp(lpCmdLine, ARG_NOWAIT) == 0;
+
 
     if (!CreateMsgWindow())
     {

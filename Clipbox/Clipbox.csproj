@@ -440,10 +440,6 @@
       <DependentUpon>TrayContextMenu.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\WallpaperWindow.cs" />
-    <Page Include="Resources\TrayContextMenu.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Themes\ContentTypeIconBand.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

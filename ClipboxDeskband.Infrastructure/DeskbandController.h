@@ -16,5 +16,6 @@ public:
 	HRESULT             IsDeskbandShown(bool* isShown);
 	HRESULT             LoadDeskband(bool* isDeskbandRegistered);
 	HRESULT             ShowDeskband();
+	HRESULT				HideDeskband();
 	HRESULT				NotiryDeskbandRegistrationChange();
 };
