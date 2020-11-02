@@ -232,6 +232,9 @@ from this window except the pinned ones.</value>
   <data name="LBL_CONTEXT_MENU_UPDATE" xml:space="preserve">
     <value>Update Clipbox</value>
   </data>
+  <data name="LBL_DATERANGESELECTOR_NO_DATES_AVAILABLE" xml:space="preserve">
+    <value>No clipboard items have been stored yet.</value>
+  </data>
   <data name="LBL_DATERANGESELECTOR_SHOW_ITEMS_FROM" xml:space="preserve">
     <value>Show items from</value>
   </data>

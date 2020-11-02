@@ -78,28 +78,49 @@
                         </Style>
                     </ContentControl.Style>
                 </ContentControl>
-                <StackPanel
-                    Grid.Column="1"
-                    Margin="15,0,0,0"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Orientation="Horizontal">
-                    <i:Interaction.Behaviors>
-                        <infBeh:FrameworkElementDpiScalingBehavior MaxScaleFactor="1.5" />
-                    </i:Interaction.Behaviors>
-                    <TextBlock FontSize="14" Foreground="White">
-                        <Run Text="{loc:Localize LBL_DATERANGESELECTOR_SHOW_ITEMS_FROM}" />
-                        <Run FontWeight="Bold" Text="{Binding SelectedMinDateTimeMs, Converter={StaticResource MillisecondsToHumanReadableDateStringConverter}}" />
-                    </TextBlock>
+                <Grid Grid.Column="1" Margin="15,0,0,0">
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsLoading}" Value="True">
+                                    <Setter Property="Visibility" Value="Hidden" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                    <StackPanel
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Orientation="Horizontal"
+                        Visibility="{Binding AreAnyDatesAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
+                        <i:Interaction.Behaviors>
+                            <infBeh:FrameworkElementDpiScalingBehavior MaxScaleFactor="1.5" />
+                        </i:Interaction.Behaviors>
+                        <TextBlock FontSize="14" Foreground="White">
+                            <Run Text="{loc:Localize LBL_DATERANGESELECTOR_SHOW_ITEMS_FROM}" />
+                            <Run FontWeight="Bold" Text="{Binding SelectedMinDateTimeMs, Converter={StaticResource MillisecondsToHumanReadableDateStringConverter}}" />
+                        </TextBlock>
+                        <TextBlock
+                            FontSize="14"
+                            Foreground="White"
+                            Visibility="{Binding AreMinAndMaxSelectedDatesDistinct, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Run Text=" " />
+                            <Run Text="{loc:Localize LBL_DATERANGESELECTOR_SHOW_ITEMS_TO}" />
+                            <Run FontWeight="Bold" Text="{Binding SelectedMaxDateTimeMs, Converter={StaticResource MillisecondsToHumanReadableDateStringConverter}}" />
+                        </TextBlock>
+                    </StackPanel>
+
                     <TextBlock
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
                         FontSize="14"
                         Foreground="White"
-                        Visibility="{Binding AreMinAndMaxSelectedDatesDistinct, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <Run Text=" " />
-                        <Run Text="{loc:Localize LBL_DATERANGESELECTOR_SHOW_ITEMS_TO}" />
-                        <Run FontWeight="Bold" Text="{Binding SelectedMaxDateTimeMs, Converter={StaticResource MillisecondsToHumanReadableDateStringConverter}}" />
-                    </TextBlock>
-                </StackPanel>
+                        IsEnabled="{Binding AreAnyDatesAvailable, Converter={StaticResource InverseBooleanConverter}}"
+                        Text="{loc:Localize LBL_DATERANGESELECTOR_NO_DATES_AVAILABLE}"
+                        Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                </Grid>
 
             </Grid>
 
@@ -109,7 +130,7 @@
                 Grid.ColumnSpan="2"
                 Margin="15,25,15,0"
                 VerticalAlignment="Top"
-                IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBooleanConverter}}"
+                IsEnabled="{Binding AreAnyDatesAvailable}"
                 LowerValue="{Binding SelectedMinDateTimeMs, Mode=TwoWay}"
                 Maximum="{Binding MaxDateTimeMs}"
                 Minimum="{Binding MinDateTimeMs}"
@@ -125,7 +146,7 @@
                 Command="{Binding OkClicked}"
                 Content="{loc:Localize BTN_LBL_Ok}"
                 Foreground="White"
-                IsEnabled="{Binding IsLoading, Converter={StaticResource InverseBooleanConverter}}"
+                IsEnabled="{Binding AreAnyDatesAvailable}"
                 Style="{DynamicResource BtnOk}" />
 
             <Button

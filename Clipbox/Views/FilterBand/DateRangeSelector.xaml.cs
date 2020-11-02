@@ -28,7 +28,20 @@ namespace Clipbox.Views.FilterBand
             InitializeComponent();
             this.mainBorder.DataContext = this;
         }
-        
+
+
+
+        private bool AreAnyDatesAvailable
+        {
+            get { return (bool)GetValue(AreAnyDatesAvailableProperty); }
+            set { SetValue(AreAnyDatesAvailableProperty, value); }
+        }
+
+        private static readonly DependencyProperty AreAnyDatesAvailableProperty =
+            DependencyProperty.Register(nameof(AreAnyDatesAvailable), typeof(bool), typeof(DateRangeSelector), new PropertyMetadata(false));
+
+
+
         private List<double> _dateTimeMsCollection;
 
         private ObservableCollection<double> DateTimeMsCollection
@@ -159,8 +172,16 @@ namespace Clipbox.Views.FilterBand
         protected override void OnLoadDataComplete()
         {
             DateTimeMsCollection = new ObservableCollection<double>(_dateTimeMsCollection);
-            SelectedMinDateTimeMs = DateTimeMsCollection?.Min() ?? 0;
-            SelectedMaxDateTimeMs = DateTimeMsCollection?.Max() ?? 0;
+            if (DateTimeMsCollection.Any())
+            {
+                SelectedMinDateTimeMs = DateTimeMsCollection?.Min() ?? 0;
+                SelectedMaxDateTimeMs = DateTimeMsCollection?.Max() ?? 0;
+                AreAnyDatesAvailable = true;
+            }
+            else
+            {
+                AreAnyDatesAvailable = false;
+            }
         }
 
         protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)

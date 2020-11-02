@@ -422,6 +422,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No clipboard items have been stored yet..
+        /// </summary>
+        internal static string LBL_DATERANGESELECTOR_NO_DATES_AVAILABLE {
+            get {
+                return ResourceManager.GetString("LBL_DATERANGESELECTOR_NO_DATES_AVAILABLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Show items from.
         /// </summary>
         internal static string LBL_DATERANGESELECTOR_SHOW_ITEMS_FROM {

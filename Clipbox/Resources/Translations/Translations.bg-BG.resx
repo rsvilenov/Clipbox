@@ -232,6 +232,9 @@
   <data name="LBL_CONTEXT_MENU_UPDATE" xml:space="preserve">
     <value>Обновете Clipbox</value>
   </data>
+  <data name="LBL_DATERANGESELECTOR_NO_DATES_AVAILABLE" xml:space="preserve">
+    <value>Все още няма никакви клипборд записи.</value>
+  </data>
   <data name="LBL_DATERANGESELECTOR_SHOW_ITEMS_FROM" xml:space="preserve">
     <value>Покажи записи от</value>
   </data>
