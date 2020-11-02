@@ -427,7 +427,17 @@ namespace Clipbox.WixSetup.ViewModel
         {
             if (isUpdate)
             {
-                // TODO: add CREATE_DESKTOP_SHORTCUT as well
+                try
+                {
+                    string commonDesktopFolderPath = Win32.SpecialFoldersUtils.GetAllUsersDesktopFolderPath();
+                    bool desktopShortcutExists = System.IO.File.Exists(System.IO.Path.Combine(commonDesktopFolderPath, $"{ProductConstants.PRODUCT_NAME}.lnk"));
+                    _model.SetBurnVariable("CREATE_DESKTOP_SHORTCUT", desktopShortcutExists ? "yes" : "no");
+                }
+                catch (Exception ex)
+                {
+                    try { _model.LogMessage($"Error while detecting the presence of a desktop shortcut: {ex}"); } catch { }
+                }
+
                 _model.SetBurnVariable("ACTUAL_INSTALLDIR", GetInstallDirFromRegistry());
             }
             else
