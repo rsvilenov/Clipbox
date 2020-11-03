@@ -1576,6 +1576,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to New version of Clipbox is available! Click here to install it..
+        /// </summary>
+        internal static string TTP_MAINVIEW_BTN_UPDATE_AVAILABLE {
+            get {
+                return ResourceManager.GetString("TTP_MAINVIEW_BTN_UPDATE_AVAILABLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Deletion is disabled because the item is pinned in the Quick View (the one that shows up upon long pressing Ctrl+V).
         /// </summary>
         internal static string TTP_MAINVIEW_DELETE_DISABLED_ITEM_PINNED_IN_QV {

@@ -226,7 +226,8 @@ namespace Clipbox
                 _extensionLoader.UIExtensionContainer,
                 _settingsService,
                 _searchService,
-                _cloudSyncService);
+                _cloudSyncService,
+                _updateNotificationService);
 
             _guardCommunicationService.SetMainClipboardViewWindowService(_mainClipboardViewWindowService);
 

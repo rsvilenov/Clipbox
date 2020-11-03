@@ -28,6 +28,7 @@ namespace Clipbox.Services
         private readonly IPreviewGenerationService _previewGenerationService;
         private readonly ISearchService _searchService;
         private readonly ICloudSynchronizationService _cloudSyncService;
+        private readonly IUpdateNotificationService _updateNotificationService;
         private readonly UIExtensionContainer _uiExtContainer;
         
         private IMainWindow _mainWindow;
@@ -58,7 +59,8 @@ namespace Clipbox.Services
             UIExtensionContainer uiExtContainer, 
             ISettingsService settingsService,
             ISearchService searchService,
-            ICloudSynchronizationService cloudSyncService)
+            ICloudSynchronizationService cloudSyncService,
+            IUpdateNotificationService updateNotificationService)
         {
             _clipboardManager = clipboardManager;
             _previewGenerationService = previewGenerationService;
@@ -66,6 +68,7 @@ namespace Clipbox.Services
             _settingsService = settingsService;
             _searchService = searchService;
             _cloudSyncService = cloudSyncService;
+            _updateNotificationService = updateNotificationService;
         }
 
         public void Close()
@@ -139,7 +142,8 @@ namespace Clipbox.Services
                             _settingsService,
                             dm,
                             _searchService,
-                            _cloudSyncService);
+                            _cloudSyncService,
+                            _updateNotificationService);
                         _mainWindow = mainWindow;
 
                         _mainWindow.ClipbardItemsCombinabilityCheckRequested += _mainWindow_ClipbardItemsCombinabilityCheckRequested;

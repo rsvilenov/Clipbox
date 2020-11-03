@@ -35,6 +35,7 @@ namespace Clipbox.Views
     public partial class MainViewClipboardContents : ClipboardViewControlBase, IDisposable
     {
         private readonly ISettingsService _settingsService;
+        private readonly IUpdateNotificationService _updateNotificationService;
 
         private readonly int _maxNumOfItemsToLoadAtOnce;
         private readonly List<ISearchTerm> _searchTerms;
@@ -57,7 +58,8 @@ namespace Clipbox.Views
 
         public MainViewClipboardContents(MainViewClipboardContentsViewModel vm,
             UIExtensionContainer container,
-            ISettingsService settingsService)
+            ISettingsService settingsService,
+            IUpdateNotificationService updateNotificationService)
             : base(container, settingsService)
         {
             InitializeComponent();
@@ -65,6 +67,7 @@ namespace Clipbox.Views
             DataContext = _viewModel;
 
             _settingsService = settingsService;
+            _updateNotificationService = updateNotificationService;
 
             _cancellableTaskManager = new CancellableTaskManager();
 
@@ -104,6 +107,9 @@ namespace Clipbox.Views
 
             _viewModel.RequestCloseOfMainWindow += _viewModel_RequestCloseOfMainWindow;
             _settingsService.SettingChanged += SettingsService_SettingChanged;
+
+            // this window is created anew on every openning, so no event subscription is needed here...
+            IsUpdateAvailable = _updateNotificationService.IsUpdateAvailable;
         }
 
 
@@ -143,6 +149,16 @@ namespace Clipbox.Views
 
         public static readonly DependencyProperty AllPagesItemsCountProperty =
             DependencyProperty.Register(nameof(AllPagesItemsCount), typeof(int), typeof(MainViewClipboardContents), new PropertyMetadata(0));
+
+
+        public bool IsUpdateAvailable
+        {
+            get { return (bool)GetValue(IsUpdateAvailableProperty); }
+            set { SetValue(IsUpdateAvailableProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsUpdateAvailableProperty =
+            DependencyProperty.Register(nameof(IsUpdateAvailable), typeof(bool), typeof(MainViewClipboardContents), new PropertyMetadata(false));
 
 
         private void _viewModel_RequestCloseOfMainWindow(object sender, EventArgs e)
@@ -993,6 +1009,16 @@ namespace Clipbox.Views
         {
             // unselect the pinned or protected items that were not deleted, but are still selected
             Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => MainListView.UnselectAll()));
+        }
+
+        private void UpdateAvailableButton_Click(object sender, RoutedEventArgs e)
+        {
+            Task.Run(() =>
+            {
+                _updateNotificationService.LaunchUpdate();
+            });
+
+            CloseMainWindowRequested?.Invoke(this, new EventArgs());
         }
     }
 }

@@ -561,7 +561,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="{Binding ElementName=TopBarGrid, Path=ActualHeight}" />
                 <RowDefinition Height="*" />
-                <RowDefinition Height="50" />
+                <RowDefinition Height="Auto" />
                 <RowDefinition Height="50" />
             </Grid.RowDefinitions>
             <Grid.Background>
@@ -601,37 +601,70 @@
                 </filterBand:FilterBand.Style>
             </filterBand:FilterBand>
 
-            <Button
+            <StackPanel
                 Grid.Row="2"
+                Width="{Binding ElementName=BtnSettings, Path=ActualWidth}"
                 VerticalAlignment="Bottom"
-                VerticalContentAlignment="Center"
-                Click="CloudErrorButton_Click"
-                Foreground="{DynamicResource AlertBrush2}"
-                ToolTip="{loc:Localize TTP_MAINVIEW_BTN_CLOUD_ERROR}"
-                Visibility="{Binding IsCloudSyncSvcInErrorState, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <Button.Style>
-                    <Style BasedOn="{StaticResource IconButton}" TargetType="Button">
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding Path=AreFadeAnimationsEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type views:MainViewClipboardContents}}}" Value="True">
-                                <Setter Property="Content">
-                                    <Setter.Value>
-                                        <ContentControl Margin="15" Template="{StaticResource CloudErrorBlinkingIcon}" />
-                                    </Setter.Value>
-                                </Setter>
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding Path=AreFadeAnimationsEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type views:MainViewClipboardContents}}}" Value="False">
-                                <Setter Property="Content">
-                                    <Setter.Value>
-                                        <ContentControl Margin="15" Template="{StaticResource CloudErrorIcon}" />
-                                    </Setter.Value>
-                                </Setter>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </Button.Style>
-            </Button>
+                Orientation="Vertical">
+                <Button
+                    VerticalContentAlignment="Center"
+                    Click="UpdateAvailableButton_Click"
+                    Foreground="#FFC17819"
+                    ToolTip="{loc:Localize TTP_MAINVIEW_BTN_UPDATE_AVAILABLE}"
+                    Visibility="{Binding IsUpdateAvailable, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type views:MainViewClipboardContents}}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Button.Style>
+                        <Style BasedOn="{StaticResource IconButton}" TargetType="Button">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=AreFadeAnimationsEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type views:MainViewClipboardContents}}}" Value="True">
+                                    <Setter Property="Content">
+                                        <Setter.Value>
+                                            <ContentControl Margin="15" Template="{StaticResource UpdateAvailableBlinkingIcon}" />
+                                        </Setter.Value>
+                                    </Setter>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=AreFadeAnimationsEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type views:MainViewClipboardContents}}}" Value="False">
+                                    <Setter Property="Content">
+                                        <Setter.Value>
+                                            <ContentControl Margin="15" Template="{StaticResource UpdateAvailableIcon}" />
+                                        </Setter.Value>
+                                    </Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+                <Button
+                    VerticalContentAlignment="Center"
+                    Click="CloudErrorButton_Click"
+                    Foreground="{DynamicResource AlertBrush2}"
+                    ToolTip="{loc:Localize TTP_MAINVIEW_BTN_CLOUD_ERROR}"
+                    Visibility="{Binding IsCloudSyncSvcInErrorState, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Button.Style>
+                        <Style BasedOn="{StaticResource IconButton}" TargetType="Button">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=AreFadeAnimationsEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type views:MainViewClipboardContents}}}" Value="True">
+                                    <Setter Property="Content">
+                                        <Setter.Value>
+                                            <ContentControl Margin="15" Template="{StaticResource CloudErrorBlinkingIcon}" />
+                                        </Setter.Value>
+                                    </Setter>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=AreFadeAnimationsEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type views:MainViewClipboardContents}}}" Value="False">
+                                    <Setter Property="Content">
+                                        <Setter.Value>
+                                            <ContentControl Margin="15" Template="{StaticResource CloudErrorIcon}" />
+                                        </Setter.Value>
+                                    </Setter>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </StackPanel>
 
             <Button
+                x:Name="BtnSettings"
                 Grid.Row="3"
                 VerticalAlignment="Bottom"
                 VerticalContentAlignment="Center"
