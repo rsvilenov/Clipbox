@@ -18,6 +18,7 @@ namespace Clipbox.ViewModels
 
         public event EventHandler ToggleMainWindowOpenRequested;
         public event EventHandler SettingsWindowOpenRequested;
+        public event EventHandler AboutWindowOpenRequested;
         public event EventHandler QuitRequested;
 
         public ICommand ToggleCloudSyncEnabled { get; }
@@ -27,6 +28,7 @@ namespace Clipbox.ViewModels
         public ICommand ToggleMainWindowOpen { get; }
         public ICommand OpenSettingsWindow { get; }
         public ICommand LaunchUpdate { get; }
+        public ICommand OpenAboutWindow { get; }
 
         private bool _isCloudSyncEnabled;
         public bool IsCloudSyncEnabled
@@ -88,9 +90,15 @@ namespace Clipbox.ViewModels
             ToggleMainWindowOpen = new DelegateCommand(() => Task.Run(() => ToggleMainWindowOpenRequested?.Invoke(this, new EventArgs())));
             OpenSettingsWindow = new DelegateCommand(() => Task.Run(() => SettingsWindowOpenRequested?.Invoke(this, new EventArgs())));
             LaunchUpdate = new DelegateCommand(() => Task.Run(() => _updateNotificationService.LaunchUpdate()), () => IsUpdateAvailable);
+            OpenAboutWindow = new DelegateCommand(OpenAboutWindowCommandHandler);
             Quit = new DelegateCommand(QuitHandler);
 
             _settingsService.SettingChanged += _settingsService_SettingChanged;
+        }
+
+        private void OpenAboutWindowCommandHandler()
+        {
+            AboutWindowOpenRequested?.Invoke(this, new EventArgs());   
         }
 
         private void _updateNotificationService_UpdateAvailable(object sender, EventArgs e)

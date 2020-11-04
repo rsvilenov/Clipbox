@@ -8,6 +8,7 @@ using Clipbox.Win32;
 using Clipbox.Win32.LLHooks;
 using Clipbox.Win32.Native;
 using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
@@ -30,6 +31,7 @@ namespace Clipbox.Services
         private readonly TrayContextMenuViewModel _trayContextMenuViewModel;
 
         private bool _isDisposed;
+        private AboutWindow _aboutWindow;
 
         public bool IsContextMenuOpen { get; private set; }
 
@@ -47,10 +49,39 @@ namespace Clipbox.Services
             _trayContextMenuViewModel = new TrayContextMenuViewModel(_settingsService, pauseService, mainClipboardViewWindowService, updateNotificationService);
             _trayContextMenuViewModel.SettingsWindowOpenRequested += _trayContextMenuViewModel_SettingsWindowOpenRequested;
             _trayContextMenuViewModel.ToggleMainWindowOpenRequested += _trayContextMenuViewModel_ToggleMainWindowOpenRequested;
+            _trayContextMenuViewModel.AboutWindowOpenRequested += _trayContextMenuViewModel_AboutWindowOpenRequested;
             _trayContextMenuViewModel.QuitRequested += _trayContextMenuViewModel_QuitRequested;
 
             _mouseHook = new MouseLLHook();
             _mouseHook.MouseAction += _mouseHook_MouseAction;
+        }
+
+        private void _trayContextMenuViewModel_AboutWindowOpenRequested(object sender, EventArgs e)
+        {
+            Task.Run(new Action(() =>
+            {
+                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, 
+                    new Action(() =>
+                    {
+                        if (_aboutWindow == null)
+                        {
+                            _aboutWindow = new AboutWindow();
+                            _aboutWindow.Show();
+                            _aboutWindow.Closing += _aboutWindow_Closing;
+                        }
+                        else
+                        {
+                            _aboutWindow.Activate();
+                        }
+                        
+                    }));
+            }));
+        }
+
+        private void _aboutWindow_Closing(object sender, CancelEventArgs e)
+        {
+            _aboutWindow.Closing -= _aboutWindow_Closing;
+            _aboutWindow = null;
         }
 
         private void _trayContextMenuViewModel_QuitRequested(object sender, EventArgs e)

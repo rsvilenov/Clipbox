@@ -175,6 +175,9 @@ from this window except the pinned ones.</value>
   <data name="en-US" xml:space="preserve">
     <value>English</value>
   </data>
+  <data name="LBL_ABOUT_WINDOW_TITLE" xml:space="preserve">
+    <value>About Clipbox</value>
+  </data>
   <data name="LBL_APPSELECTOR_FILTER_BY_APP" xml:space="preserve">
     <value>Filter by application</value>
   </data>
@@ -201,6 +204,9 @@ from this window except the pinned ones.</value>
   </data>
   <data name="LBL_CONTEXT_MENU_5_MIN" xml:space="preserve">
     <value>5 min</value>
+  </data>
+  <data name="LBL_CONTEXT_MENU_ABOUT" xml:space="preserve">
+    <value>About Clipbox</value>
   </data>
   <data name="LBL_CONTEXT_MENU_CLOSE_MAIN_WINDOW" xml:space="preserve">
     <value>Close fullscreen view</value>
@@ -342,6 +348,9 @@ from this window except the pinned ones.</value>
   </data>
   <data name="LBL_SETTINGS_CATEGORY_GENERAL" xml:space="preserve">
     <value>General</value>
+  </data>
+  <data name="LBL_SETTINGS_CATEGORY_HELP" xml:space="preserve">
+    <value>Help</value>
   </data>
   <data name="LBL_SETTINGS_CATEGORY_PASTING" xml:space="preserve">
     <value>Pasting</value>

@@ -117,6 +117,11 @@
                     <Image Source="pack://application:,,,/Resources/Images/TrayMenu/Update.png" />
                 </MenuItem.Icon>
             </MenuItem>
+            <MenuItem Command="{Binding OpenAboutWindow}" Header="{loc:Localize LBL_CONTEXT_MENU_ABOUT}">
+                <MenuItem.Icon>
+                    <Image Source="pack://application:,,,/Resources/Images/TrayMenu/About.png" />
+                </MenuItem.Icon>
+            </MenuItem>
             <Separator />
             <MenuItem Command="{Binding Quit}" Header="{loc:Localize LBL_CONTEXT_MENU_QUIT}">
                 <MenuItem.Icon>

@@ -68,6 +68,15 @@ namespace Clipbox.Infrastructure.RegistryAccess
             return bundleCachePath;
         }
 
+        public static string GetProductVersion()
+        {
+            string productHKLMRegKey = $@"Software\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}";
+            using (RegistryKey key = Registry.LocalMachine.OpenSubKey(productHKLMRegKey))
+            {
+                return key?.GetValue("ProductVersion")?.ToString();
+            }
+        }
+
         public static string GetInitialCultureCode()
         {
             string productHKLMRegKey = $@"Software\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}";

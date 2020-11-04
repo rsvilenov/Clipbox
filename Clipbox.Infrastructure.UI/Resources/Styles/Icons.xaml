@@ -2033,4 +2033,25 @@
             </Grid>
         </Viewbox>
     </ControlTemplate>
+
+    <ControlTemplate x:Key="LogoIcon">
+        <Viewbox>
+            <Grid>
+                <Path
+                    Data="M6,0L16,0C16.551987,0,17,0.44799805,17,1L17,25C17,25.309998,16.856995,25.602005,16.612,25.791L8.8619995,31.791C8.6819916,31.931 8.4659882,32 8.25,32 8.022995,32 7.7969971,31.923004 7.6119995,31.771011L0.36199951,25.771011C0.13299561,25.581009,0,25.298004,0,25L0,5 2,5 2,24.529999 8.2709961,29.719009 15,24.51001 15,2 7,2 7,22.520004 8.5,23.719009 10,22.520004 10,9 12,9 12,23C12,23.304001,11.862,23.591003,11.625,23.781006L9.125,25.781006C8.7589874,26.072998,8.2409973,26.072998,7.875,25.781006L5.375,23.781006C5.1380005,23.591003,5,23.304001,5,23L5,1C5,0.44799805,5.447998,0,6,0z"
+                    Fill="{TemplateBinding Foreground}"
+                    RenderTransformOrigin="0.5,0.5"
+                    Stretch="Uniform">
+                    <Path.RenderTransform>
+                        <TransformGroup>
+                            <TransformGroup.Children>
+                                <RotateTransform Angle="0" />
+                                <ScaleTransform ScaleX="1" ScaleY="1" />
+                            </TransformGroup.Children>
+                        </TransformGroup>
+                    </Path.RenderTransform>
+                </Path>
+            </Grid>
+        </Viewbox>
+    </ControlTemplate>
 </ResourceDictionary>

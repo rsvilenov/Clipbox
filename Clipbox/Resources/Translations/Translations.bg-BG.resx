@@ -175,6 +175,9 @@
   <data name="en-US" xml:space="preserve">
     <value>Английски</value>
   </data>
+  <data name="LBL_ABOUT_WINDOW_TITLE" xml:space="preserve">
+    <value>Относно Clipbox</value>
+  </data>
   <data name="LBL_APPSELECTOR_FILTER_BY_APP" xml:space="preserve">
     <value>Филтрирай по приложение</value>
   </data>
@@ -201,6 +204,9 @@
   </data>
   <data name="LBL_CONTEXT_MENU_5_MIN" xml:space="preserve">
     <value>5 мин</value>
+  </data>
+  <data name="LBL_CONTEXT_MENU_ABOUT" xml:space="preserve">
+    <value>Относно Clipbox</value>
   </data>
   <data name="LBL_CONTEXT_MENU_CLOSE_MAIN_WINDOW" xml:space="preserve">
     <value>Затвори прегледа на цял екран</value>
@@ -342,6 +348,9 @@
   </data>
   <data name="LBL_SETTINGS_CATEGORY_GENERAL" xml:space="preserve">
     <value>Общи</value>
+  </data>
+  <data name="LBL_SETTINGS_CATEGORY_HELP" xml:space="preserve">
+    <value>Помощ</value>
   </data>
   <data name="LBL_SETTINGS_CATEGORY_PASTING" xml:space="preserve">
     <value>Пействане</value>

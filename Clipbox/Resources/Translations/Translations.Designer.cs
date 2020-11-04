@@ -233,6 +233,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to About Clipbox.
+        /// </summary>
+        internal static string LBL_ABOUT_WINDOW_TITLE {
+            get {
+                return ResourceManager.GetString("LBL_ABOUT_WINDOW_TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Filter by application.
         /// </summary>
         internal static string LBL_APPSELECTOR_FILTER_BY_APP {
@@ -310,6 +319,15 @@ namespace Clipbox.Resources.Translations {
         internal static string LBL_CONTEXT_MENU_5_MIN {
             get {
                 return ResourceManager.GetString("LBL_CONTEXT_MENU_5_MIN", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to About Clipbox.
+        /// </summary>
+        internal static string LBL_CONTEXT_MENU_ABOUT {
+            get {
+                return ResourceManager.GetString("LBL_CONTEXT_MENU_ABOUT", resourceCulture);
             }
         }
         
@@ -733,6 +751,15 @@ namespace Clipbox.Resources.Translations {
         internal static string LBL_SETTINGS_CATEGORY_GENERAL {
             get {
                 return ResourceManager.GetString("LBL_SETTINGS_CATEGORY_GENERAL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Help.
+        /// </summary>
+        internal static string LBL_SETTINGS_CATEGORY_HELP {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_CATEGORY_HELP", resourceCulture);
             }
         }
         
