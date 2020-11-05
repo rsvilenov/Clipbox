@@ -8,6 +8,7 @@
         <ResourceDictionary Source="Brushes.xaml" />
         <ResourceDictionary Source="Slider.xaml" />
         <ResourceDictionary Source="ComboBox.xaml" />
+        <ResourceDictionary Source="Hyperlink.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
 </ResourceDictionary>

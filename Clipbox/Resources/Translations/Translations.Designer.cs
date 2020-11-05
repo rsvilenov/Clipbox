@@ -1351,6 +1351,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to About Clipbox.
+        /// </summary>
+        internal static string LNK_SETTINGS_OPEN_ABOUT {
+            get {
+                return ResourceManager.GetString("LNK_SETTINGS_OPEN_ABOUT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Off.
         /// </summary>
         internal static string TGL_BTN_LBL_Off {

@@ -110,5 +110,12 @@ namespace Clipbox.Core
         public const string PRODUCT_EULA_URL = "https://clipbox.org/eula";
 
         public const string PRODUCT_PRIVACY_POLICY_URL = "https://clipbox.org/privacy";
+
+        public const string HELP_URL = "https://clipbox.org/help";
+
+        public const string REPORT_BUG_URL = "https://clipbox.org/bugreport";
+
+        public const string FEEDBACK_URL = "https://clipbox.org/feedback";
+
     }
 }

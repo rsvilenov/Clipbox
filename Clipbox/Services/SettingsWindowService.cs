@@ -14,6 +14,7 @@ namespace Clipbox.Services
         private readonly ISettingsService _settingsService;
         private readonly IMainClipboardViewWindowService _mainClipboardViewWindowService;
         private readonly ICloudSynchronizationService _cloudSyncService;
+        private readonly IAboutWindowService _aboutWindowService;
         private readonly SettingsUIExtensionContainer _extContainer;
 
         private SettingsWindow _settingsWindow;
@@ -21,10 +22,12 @@ namespace Clipbox.Services
         public SettingsWindowService(ISettingsService settingsService,
             IMainClipboardViewWindowService mainClipboardViewWindowService,
             ICloudSynchronizationService cloudSyncService,
+            IAboutWindowService aboutWindowService,
             SettingsUIExtensionContainer extContainer)
         {
             _settingsService = settingsService;
             _cloudSyncService = cloudSyncService;
+            _aboutWindowService = aboutWindowService;
 
             _mainClipboardViewWindowService = mainClipboardViewWindowService;
             _mainClipboardViewWindowService.OpenMainWindowRequested += _mainClipboardViewWindowService_OpenMainWindowRequested;
@@ -77,7 +80,7 @@ namespace Clipbox.Services
                     }
                     else
                     {
-                        _settingsWindow = new SettingsWindow(_settingsService, _cloudSyncService, _extContainer);
+                        _settingsWindow = new SettingsWindow(_settingsService, _cloudSyncService, _aboutWindowService, _extContainer);
                         // this event never fires
                         //_settingsWindow.Closed += _settingsWindow_Closed;
                         _settingsWindow.Closing += _settingsWindow_Closing;

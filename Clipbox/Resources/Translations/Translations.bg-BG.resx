@@ -549,6 +549,9 @@
   <data name="LNK_ABOUT_WINDOW_PRIVACY_POLICY" xml:space="preserve">
     <value>Политика за поверителност</value>
   </data>
+  <data name="LNK_SETTINGS_OPEN_ABOUT" xml:space="preserve">
+    <value>Относно Clipbox</value>
+  </data>
   <data name="TGL_BTN_LBL_Off" xml:space="preserve">
     <value>Изкл.</value>
   </data>

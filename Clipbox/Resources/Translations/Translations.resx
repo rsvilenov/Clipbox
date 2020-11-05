@@ -549,6 +549,9 @@ Warning: more rows means more RAM usage!</value>
   <data name="LNK_ABOUT_WINDOW_PRIVACY_POLICY" xml:space="preserve">
     <value>Privacy policy</value>
   </data>
+  <data name="LNK_SETTINGS_OPEN_ABOUT" xml:space="preserve">
+    <value>About Clipbox</value>
+  </data>
   <data name="TGL_BTN_LBL_Off" xml:space="preserve">
     <value>Off</value>
   </data>

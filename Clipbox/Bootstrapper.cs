@@ -67,6 +67,7 @@ namespace Clipbox
         GuardCommunicationService _guardCommunicationService;
         AutoClearClipboardService _autoClearClipboardService;
         UpdateNotificationService _updateNotificationService;
+        IAboutWindowService _aboutWindowService;
 
         private int _shutdownSequenceCallCount;
 
@@ -234,11 +235,12 @@ namespace Clipbox
             // Initialize the flow controller
             _flowController = new FlowController(_clipboardManager, _keyboardService, _flowExtensionExecutorService, _quickClipboardViewWindowService, _mainClipboardViewWindowService);
 
-            
-            _settingsWindowService = new SettingsWindowService(_settingsService, _mainClipboardViewWindowService, _cloudSyncService, _extensionLoader.SettingsUIExtensionContainer);
+            _aboutWindowService = new AboutWindowService();
+
+            _settingsWindowService = new SettingsWindowService(_settingsService, _mainClipboardViewWindowService, _cloudSyncService, _aboutWindowService, _extensionLoader.SettingsUIExtensionContainer);
             _guardCommunicationService.SetSettingsWindowService(_settingsWindowService);
 
-            _trayContextMenuService = new TrayContextMenuService(_settingsService, _pauseService, _mainClipboardViewWindowService, _settingsWindowService, _updateNotificationService);
+            _trayContextMenuService = new TrayContextMenuService(_settingsService, _pauseService, _mainClipboardViewWindowService, _settingsWindowService, _updateNotificationService, _aboutWindowService);
 
             _trayService = new TrayIconService(_mainClipboardViewWindowService, _trayContextMenuService, _settingsService, _pauseService);
 

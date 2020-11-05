@@ -44,15 +44,6 @@
             </ResourceDictionary.MergedDictionaries>
 
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-
-            <Style x:Key="HyperLinkTextBlockStyle" TargetType="TextBlock">
-                <Setter Property="Foreground" Value="LightBlue" />
-                <Style.Triggers>
-                    <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Foreground" Value="MediumAquamarine" />
-                    </Trigger>
-                </Style.Triggers>
-            </Style>
         </ResourceDictionary>
 
     </Window.Resources>
@@ -127,16 +118,17 @@
                 VerticalContentAlignment="Center"
                 BorderBrush="Gray"
                 BorderThickness="1"
+                Click="ButtonOnlineHelp_Click"
                 Style="{StaticResource IconButton}">
                 <StackPanel Orientation="Horizontal">
                     <ContentControl
                         Margin="6"
-                        Foreground="LightBlue"
+                        Foreground="#0e97dd"
                         Template="{DynamicResource QuestionIcon}" />
                     <TextBlock
                         Margin="10,5,0,0"
                         FontSize="16"
-                        Foreground="LightBlue"
+                        Foreground="{DynamicResource ControlForegroundBrush}"
                         Text="{loc:Localize BTN_ABOUT_WINDOW_HELP}"
                         TextAlignment="Left" />
                 </StackPanel>
@@ -155,16 +147,17 @@
                 VerticalContentAlignment="Center"
                 BorderBrush="Gray"
                 BorderThickness="1"
+                Click="ButtonFeedback_Click"
                 Style="{StaticResource IconButton}">
                 <StackPanel Orientation="Horizontal">
                     <ContentControl
                         Margin="7"
-                        Foreground="LightBlue"
+                        Foreground="#0e97dd"
                         Template="{DynamicResource FeedbackIcon}" />
                     <TextBlock
                         Margin="10,5,0,0"
                         FontSize="16"
-                        Foreground="LightBlue"
+                        Foreground="{DynamicResource ControlForegroundBrush}"
                         Text="{loc:Localize BTN_ABOUT_WINDOW_FEEDBACK}"
                         TextAlignment="Left" />
                 </StackPanel>
@@ -182,16 +175,17 @@
                 VerticalContentAlignment="Center"
                 BorderBrush="Gray"
                 BorderThickness="1"
+                Click="ButtonReportBug_Click"
                 Style="{StaticResource IconButton}">
                 <StackPanel Orientation="Horizontal">
                     <ContentControl
                         Margin="5"
-                        Foreground="LightBlue"
+                        Foreground="#0e97dd"
                         Template="{DynamicResource BugIcon}" />
                     <TextBlock
                         Margin="10,5,0,0"
                         FontSize="16"
-                        Foreground="LightBlue"
+                        Foreground="{DynamicResource ControlForegroundBrush}"
                         Text="{loc:Localize BTN_ABOUT_WINDOW_REPORT}"
                         TextAlignment="Left" />
                 </StackPanel>
@@ -202,13 +196,10 @@
                 Grid.Column="1"
                 Margin="0,30,0,0"
                 HorizontalAlignment="Center"
-                VerticalAlignment="Bottom"
-                Cursor="Hand"
-                FontSize="16"
-                Foreground="LightBlue">
+                VerticalAlignment="Bottom">
                 <TextBlock>
-                    <Hyperlink Click="HyperlinkEula_Click" TextDecorations="">
-                        <TextBlock Style="{StaticResource HyperLinkTextBlockStyle}" Text="{loc:Localize LNK_ABOUT_WINDOW_LICENSE_AGREEMENT}" />
+                    <Hyperlink Click="HyperlinkEula_Click" Style="{StaticResource HyperlinkStyle}">
+                        <TextBlock Text="{loc:Localize LNK_ABOUT_WINDOW_LICENSE_AGREEMENT}" />
                     </Hyperlink>
                 </TextBlock>
 
@@ -219,12 +210,9 @@
                 Grid.Column="1"
                 Margin="0,5,0,0"
                 HorizontalAlignment="Center"
-                VerticalAlignment="Bottom"
-                Cursor="Hand"
-                FontSize="16"
-                Foreground="LightBlue">
-                <Hyperlink Click="HyperlinkPrivacyPolicy_Click" TextDecorations="">
-                    <TextBlock Style="{StaticResource HyperLinkTextBlockStyle}" Text="{loc:Localize LNK_ABOUT_WINDOW_PRIVACY_POLICY}" />
+                VerticalAlignment="Bottom">
+                <Hyperlink Click="HyperlinkPrivacyPolicy_Click" Style="{StaticResource HyperlinkStyle}">
+                    <TextBlock Text="{loc:Localize LNK_ABOUT_WINDOW_PRIVACY_POLICY}" />
                 </Hyperlink>
             </TextBlock>
         </Grid>

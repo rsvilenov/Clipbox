@@ -35,14 +35,33 @@ namespace Clipbox.Views
 
         private void HyperlinkEula_Click(object sender, RoutedEventArgs e)
         {
-            using (Process p = Process.Start(ProductConstants.PRODUCT_EULA_URL)) ;
+            OpenUrl(ProductConstants.PRODUCT_EULA_URL);
             e.Handled = true;
         }
 
         private void HyperlinkPrivacyPolicy_Click(object sender, RoutedEventArgs e)
         {
-            using (Process p = Process.Start(ProductConstants.PRODUCT_PRIVACY_POLICY_URL)) ;
+            OpenUrl(ProductConstants.PRODUCT_PRIVACY_POLICY_URL);
             e.Handled = true;
+        }
+
+        private void ButtonOnlineHelp_Click(object sender, RoutedEventArgs e)
+        {
+            OpenUrl(ProductConstants.HELP_URL);
+        }
+
+        private void ButtonFeedback_Click(object sender, RoutedEventArgs e)
+        {
+            OpenUrl(ProductConstants.FEEDBACK_URL);
+        }
+
+        private void ButtonReportBug_Click(object sender, RoutedEventArgs e)
+        {
+            OpenUrl(ProductConstants.REPORT_BUG_URL);
+        }
+        private void OpenUrl(string url)
+        {
+            using (Process p = Process.Start(url)) { }
         }
     }
 }

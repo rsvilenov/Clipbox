@@ -26,12 +26,11 @@ namespace Clipbox.Services
         private ITrayContextMenu _trayContextMenu;
         private readonly IMainClipboardViewWindowService _mainClipboardViewWindowService;
         private readonly ISettingsWindowService _settingsWindowService;
-        private readonly IUpdateNotificationService _updateNotificationService;
+        private readonly IAboutWindowService _aboutWindowService;
         private readonly MouseLLHook _mouseHook;
         private readonly TrayContextMenuViewModel _trayContextMenuViewModel;
 
         private bool _isDisposed;
-        private AboutWindow _aboutWindow;
 
         public bool IsContextMenuOpen { get; private set; }
 
@@ -39,12 +38,13 @@ namespace Clipbox.Services
             IPauseService pauseService,
             IMainClipboardViewWindowService mainClipboardViewWindowService,
             ISettingsWindowService settingsWindowService,
-            IUpdateNotificationService updateNotificationService)
+            IUpdateNotificationService updateNotificationService,
+            IAboutWindowService aboutWindowService)
         {
             _settingsService = settingsService;
             _mainClipboardViewWindowService = mainClipboardViewWindowService;
             _settingsWindowService = settingsWindowService;
-            _updateNotificationService = updateNotificationService;
+            _aboutWindowService = aboutWindowService;
 
             _trayContextMenuViewModel = new TrayContextMenuViewModel(_settingsService, pauseService, mainClipboardViewWindowService, updateNotificationService);
             _trayContextMenuViewModel.SettingsWindowOpenRequested += _trayContextMenuViewModel_SettingsWindowOpenRequested;
@@ -58,32 +58,10 @@ namespace Clipbox.Services
 
         private void _trayContextMenuViewModel_AboutWindowOpenRequested(object sender, EventArgs e)
         {
-            Task.Run(new Action(() =>
-            {
-                Application.Current.Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, 
-                    new Action(() =>
-                    {
-                        if (_aboutWindow == null)
-                        {
-                            _aboutWindow = new AboutWindow();
-                            _aboutWindow.Show();
-                            _aboutWindow.Closing += _aboutWindow_Closing;
-                        }
-                        else
-                        {
-                            _aboutWindow.Activate();
-                        }
-                        
-                    }));
-            }));
+            _aboutWindowService.OpenAboutWindow();
         }
 
-        private void _aboutWindow_Closing(object sender, CancelEventArgs e)
-        {
-            _aboutWindow.Closing -= _aboutWindow_Closing;
-            _aboutWindow = null;
-        }
-
+        
         private void _trayContextMenuViewModel_QuitRequested(object sender, EventArgs e)
         {
             // Wait for the context menu and its fade animation to complete berofe initiating Shutdown.

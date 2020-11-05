@@ -114,6 +114,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Translations.resx</DependentUpon>
     </Compile>
+    <Compile Include="Services\AboutWindowService.cs" />
     <Compile Include="Services\AutoClearClipboardService.cs" />
     <Compile Include="Services\ClipboardViewWindowServiceBase.cs" />
     <Compile Include="Services\CloudSynchronizationService.cs" />
@@ -131,6 +132,7 @@
     <Compile Include="Services\EventArgsClasses\SyncEventArgs.cs" />
     <Compile Include="Services\Exceptions\CloudSyncException.cs" />
     <Compile Include="Services\Exceptions\PreviewGenerationException.cs" />
+    <Compile Include="Services\Interfaces\IAboutWindowService.cs" />
     <Compile Include="Services\Interfaces\Common\EventArgsClasses\ProgressEventArgs.cs" />
     <Compile Include="Services\Interfaces\Common\IProvideProgressInfo.cs" />
     <Compile Include="Services\GuardCommunicationService.cs" />

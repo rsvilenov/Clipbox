@@ -7,17 +7,14 @@ using Clipbox.Core.Extensibility.Contracts.ExtentionTypes;
 using Clipbox.Core.Extensibility.Contracts.PreviewData;
 using Clipbox.Core.Extensibility.Enums;
 using Clipbox.Infrastructure.Extensibility.Containers;
-using Clipbox.Infrastructure.ExtensionMethods;
 using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.CustomControls;
 using Clipbox.Infrastructure.UI.ExtensionMethods;
 using Clipbox.Infrastructure.UI.Localization;
-using Clipbox.Infrastructure.UI.Utils;
 using Clipbox.Infrastructure.UI.Windows;
 using Clipbox.Infrastructure.UI.Windows.Enums;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
-using Clipbox.Views.Dialog;
 using Clipbox.Views.Dialog.Enums;
 using Clipbox.Views.Dialog.EventArgsClasses;
 using Clipbox.Views.Settings.BuiltInExtensions;
@@ -25,7 +22,6 @@ using Clipbox.Views.Settings.Interfaces;
 using Clipbox.Win32;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
@@ -45,14 +41,17 @@ namespace Clipbox.Views.Settings
     {
         private readonly ISettingsService _settingsService;
         private readonly ICloudSynchronizationService _cloudSyncService;
+        private readonly IAboutWindowService _aboutWindowService;
         private readonly SettingsUIExtensionContainer _extContainer;
 
         public SettingsWindow(ISettingsService settingsService,
             ICloudSynchronizationService cloudSyncService,
+            IAboutWindowService aboutWindowService,
             SettingsUIExtensionContainer extContainer)
         {
             _settingsService = settingsService;
             _cloudSyncService = cloudSyncService;
+            _aboutWindowService = aboutWindowService;
             _extContainer = extContainer;
 
             InitializeComponent();
@@ -558,6 +557,12 @@ namespace Clipbox.Views.Settings
                     }
                 }
             }
+        }
+
+        private void HyperlinkOpenAboutWindow_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+            _aboutWindowService.OpenAboutWindow();
         }
 
 #if DEBUG
