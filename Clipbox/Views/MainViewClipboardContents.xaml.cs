@@ -1020,5 +1020,10 @@ namespace Clipbox.Views
 
             CloseMainWindowRequested?.Invoke(this, new EventArgs());
         }
+
+        private void BtnCloseMainWindow_Click(object sender, RoutedEventArgs e)
+        {
+            CloseMainWindowRequested?.Invoke(this, new EventArgs());
+        }
     }
 }

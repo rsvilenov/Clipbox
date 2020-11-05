@@ -32,6 +32,7 @@
     Icon="pack://application:,,,/Clipbox.Infrastructure.UI;component/Resources/Images/Clip-WF.ico"
     IsMinimizeButtonVisible="False"
     ResizeMode="NoResize"
+    ScaleMode="Full"
     SizeToContent="WidthAndHeight"
     WindowStartupLocation="CenterScreen"
     WindowState="Normal"

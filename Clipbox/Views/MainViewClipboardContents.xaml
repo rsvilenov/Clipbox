@@ -571,6 +571,22 @@
                 <infBeh:FrameworkElementDpiScalingBehavior />
             </i:Interaction.Behaviors>
 
+            <Button
+                Grid.Row="0"
+                MaxWidth="35"
+                MaxHeight="35"
+                Margin="0,0,0,3"
+                Padding="12"
+                VerticalAlignment="Center"
+                Click="BtnCloseMainWindow_Click"
+                Style="{DynamicResource BtnCloseMainWindow}"
+                ToolTip="{loc:Localize TTP_MAINVIEW_CLOSE_BUTTON}"
+                Visibility="{Binding Path=IsManipulationEnabled, RelativeSource={RelativeSource AncestorType={x:Type Border}}, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <i:Interaction.Behaviors>
+                    <infBeh:FrameworkElementDpiScalingBehavior />
+                </i:Interaction.Behaviors>
+            </Button>
+
             <!--
                 show the cloud filter only when the cloud service is enabled (regardless of the cloud service error state
                 and regardless of whether cloud syncing is actually enabled at the moment)

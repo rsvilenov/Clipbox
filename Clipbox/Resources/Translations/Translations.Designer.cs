@@ -1666,6 +1666,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Close this window.
+        /// </summary>
+        internal static string TTP_MAINVIEW_CLOSE_BUTTON {
+            get {
+                return ResourceManager.GetString("TTP_MAINVIEW_CLOSE_BUTTON", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Deletion is disabled because the item is pinned in the Quick View (the one that shows up upon long pressing Ctrl+V).
         /// </summary>
         internal static string TTP_MAINVIEW_DELETE_DISABLED_ITEM_PINNED_IN_QV {

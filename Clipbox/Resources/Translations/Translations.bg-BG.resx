@@ -654,6 +654,9 @@
   <data name="TTP_MAINVIEW_BTN_UPDATE_AVAILABLE" xml:space="preserve">
     <value>Нова версия на Clipbox е налична. Кликнете тук, за да я инсталирате.</value>
   </data>
+  <data name="TTP_MAINVIEW_CLOSE_BUTTON" xml:space="preserve">
+    <value>Затворете този прозорец</value>
+  </data>
   <data name="TTP_MAINVIEW_DELETE_DISABLED_ITEM_PINNED_IN_QV" xml:space="preserve">
     <value>Изтриването е забранено, защото записът е закачен за бързия преглед (достъпен чрез задържане на Ctrl+V)</value>
   </data>

@@ -654,6 +654,9 @@ Warning: more rows means more RAM usage!</value>
   <data name="TTP_MAINVIEW_BTN_UPDATE_AVAILABLE" xml:space="preserve">
     <value>New version of Clipbox is available! Click here to install it.</value>
   </data>
+  <data name="TTP_MAINVIEW_CLOSE_BUTTON" xml:space="preserve">
+    <value>Close this window</value>
+  </data>
   <data name="TTP_MAINVIEW_DELETE_DISABLED_ITEM_PINNED_IN_QV" xml:space="preserve">
     <value>Deletion is disabled because the item is pinned in the Quick View (the one that shows up upon long pressing Ctrl+V)</value>
   </data>
