@@ -120,6 +120,15 @@
   <data name="bg-BG" xml:space="preserve">
     <value>Български</value>
   </data>
+  <data name="BTN_ABOUT_WINDOW_FEEDBACK" xml:space="preserve">
+    <value>Дай мнение</value>
+  </data>
+  <data name="BTN_ABOUT_WINDOW_HELP" xml:space="preserve">
+    <value>Онлайн помощ</value>
+  </data>
+  <data name="BTN_ABOUT_WINDOW_REPORT" xml:space="preserve">
+    <value>Докладвай бъг</value>
+  </data>
   <data name="BTN_LBL_Cancel" xml:space="preserve">
     <value>Отмени</value>
   </data>
@@ -533,6 +542,12 @@
   </data>
   <data name="LBL_TILE_MULTIITEM_PRESENTER_N_SELECTED" xml:space="preserve">
     <value>избрани</value>
+  </data>
+  <data name="LNK_ABOUT_WINDOW_LICENSE_AGREEMENT" xml:space="preserve">
+    <value>Лицензно споразумение</value>
+  </data>
+  <data name="LNK_ABOUT_WINDOW_PRIVACY_POLICY" xml:space="preserve">
+    <value>Политика за поверителност</value>
   </data>
   <data name="TGL_BTN_LBL_Off" xml:space="preserve">
     <value>Изкл.</value>

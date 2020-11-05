@@ -44,6 +44,15 @@
             </ResourceDictionary.MergedDictionaries>
 
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
+            <Style x:Key="HyperLinkTextBlockStyle" TargetType="TextBlock">
+                <Setter Property="Foreground" Value="LightBlue" />
+                <Style.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                        <Setter Property="Foreground" Value="MediumAquamarine" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
         </ResourceDictionary>
 
     </Window.Resources>
@@ -89,7 +98,7 @@
 
             <TextBlock
                 Grid.Row="3"
-                Margin="0,15,0,0"
+                Margin="0,22,0,0"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Bottom"
                 FontSize="14"
@@ -110,8 +119,8 @@
             <Button
                 Grid.Row="0"
                 Grid.Column="1"
-                Width="160"
-                Height="30"
+                Width="174"
+                Height="35"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Top"
                 HorizontalContentAlignment="Center"
@@ -119,19 +128,27 @@
                 BorderBrush="Gray"
                 BorderThickness="1"
                 Style="{StaticResource IconButton}">
-                <TextBlock
-                    FontSize="16"
-                    Foreground="LightBlue"
-                    Text="Online Help"
-                    TextAlignment="Center" />
+                <StackPanel Orientation="Horizontal">
+                    <ContentControl
+                        Margin="6"
+                        Foreground="LightBlue"
+                        Template="{DynamicResource QuestionIcon}" />
+                    <TextBlock
+                        Margin="10,5,0,0"
+                        FontSize="16"
+                        Foreground="LightBlue"
+                        Text="{loc:Localize BTN_ABOUT_WINDOW_HELP}"
+                        TextAlignment="Left" />
+                </StackPanel>
+
             </Button>
 
             <Button
                 Grid.Row="1"
                 Grid.Column="1"
-                Width="160"
-                Height="30"
-                Margin="0,20,0,0"
+                Width="175"
+                Height="35"
+                Margin="0,15,0,0"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Top"
                 HorizontalContentAlignment="Center"
@@ -139,19 +156,26 @@
                 BorderBrush="Gray"
                 BorderThickness="1"
                 Style="{StaticResource IconButton}">
-                <TextBlock
-                    FontSize="16"
-                    Foreground="LightBlue"
-                    Text="Give Feedback"
-                    TextAlignment="Center" />
+                <StackPanel Orientation="Horizontal">
+                    <ContentControl
+                        Margin="7"
+                        Foreground="LightBlue"
+                        Template="{DynamicResource FeedbackIcon}" />
+                    <TextBlock
+                        Margin="10,5,0,0"
+                        FontSize="16"
+                        Foreground="LightBlue"
+                        Text="{loc:Localize BTN_ABOUT_WINDOW_FEEDBACK}"
+                        TextAlignment="Left" />
+                </StackPanel>
             </Button>
 
             <Button
                 Grid.Row="2"
                 Grid.Column="1"
-                Width="160"
-                Height="30"
-                Margin="0,20,0,0"
+                Width="175"
+                Height="35"
+                Margin="0,15,0,0"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Top"
                 HorizontalContentAlignment="Center"
@@ -159,11 +183,18 @@
                 BorderBrush="Gray"
                 BorderThickness="1"
                 Style="{StaticResource IconButton}">
-                <TextBlock
-                    FontSize="16"
-                    Foreground="LightBlue"
-                    Text="Report a Problem"
-                    TextAlignment="Center" />
+                <StackPanel Orientation="Horizontal">
+                    <ContentControl
+                        Margin="5"
+                        Foreground="LightBlue"
+                        Template="{DynamicResource BugIcon}" />
+                    <TextBlock
+                        Margin="10,5,0,0"
+                        FontSize="16"
+                        Foreground="LightBlue"
+                        Text="{loc:Localize BTN_ABOUT_WINDOW_REPORT}"
+                        TextAlignment="Left" />
+                </StackPanel>
             </Button>
 
             <TextBlock
@@ -174,8 +205,14 @@
                 VerticalAlignment="Bottom"
                 Cursor="Hand"
                 FontSize="16"
-                Foreground="LightBlue"
-                Text="License Agreement" />
+                Foreground="LightBlue">
+                <TextBlock>
+                    <Hyperlink Click="HyperlinkEula_Click" TextDecorations="">
+                        <TextBlock Style="{StaticResource HyperLinkTextBlockStyle}" Text="{loc:Localize LNK_ABOUT_WINDOW_LICENSE_AGREEMENT}" />
+                    </Hyperlink>
+                </TextBlock>
+
+            </TextBlock>
 
             <TextBlock
                 Grid.Row="4"
@@ -185,8 +222,11 @@
                 VerticalAlignment="Bottom"
                 Cursor="Hand"
                 FontSize="16"
-                Foreground="LightBlue"
-                Text="Privacy Policy" />
+                Foreground="LightBlue">
+                <Hyperlink Click="HyperlinkPrivacyPolicy_Click" TextDecorations="">
+                    <TextBlock Style="{StaticResource HyperLinkTextBlockStyle}" Text="{loc:Localize LNK_ABOUT_WINDOW_PRIVACY_POLICY}" />
+                </Hyperlink>
+            </TextBlock>
         </Grid>
     </Grid>
 </customControls:WindowFrame>

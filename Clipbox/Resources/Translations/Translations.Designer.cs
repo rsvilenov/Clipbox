@@ -70,6 +70,33 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Give Feedback.
+        /// </summary>
+        internal static string BTN_ABOUT_WINDOW_FEEDBACK {
+            get {
+                return ResourceManager.GetString("BTN_ABOUT_WINDOW_FEEDBACK", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Online help.
+        /// </summary>
+        internal static string BTN_ABOUT_WINDOW_HELP {
+            get {
+                return ResourceManager.GetString("BTN_ABOUT_WINDOW_HELP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Report a Problem.
+        /// </summary>
+        internal static string BTN_ABOUT_WINDOW_REPORT {
+            get {
+                return ResourceManager.GetString("BTN_ABOUT_WINDOW_REPORT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         internal static string BTN_LBL_Cancel {
@@ -1302,6 +1329,24 @@ namespace Clipbox.Resources.Translations {
         internal static string LBL_TILE_MULTIITEM_PRESENTER_N_SELECTED {
             get {
                 return ResourceManager.GetString("LBL_TILE_MULTIITEM_PRESENTER_N_SELECTED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to License agreement.
+        /// </summary>
+        internal static string LNK_ABOUT_WINDOW_LICENSE_AGREEMENT {
+            get {
+                return ResourceManager.GetString("LNK_ABOUT_WINDOW_LICENSE_AGREEMENT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Privacy policy.
+        /// </summary>
+        internal static string LNK_ABOUT_WINDOW_PRIVACY_POLICY {
+            get {
+                return ResourceManager.GetString("LNK_ABOUT_WINDOW_PRIVACY_POLICY", resourceCulture);
             }
         }
         

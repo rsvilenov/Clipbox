@@ -120,6 +120,15 @@
   <data name="bg-BG" xml:space="preserve">
     <value>Bulgarian</value>
   </data>
+  <data name="BTN_ABOUT_WINDOW_FEEDBACK" xml:space="preserve">
+    <value>Give Feedback</value>
+  </data>
+  <data name="BTN_ABOUT_WINDOW_HELP" xml:space="preserve">
+    <value>Online help</value>
+  </data>
+  <data name="BTN_ABOUT_WINDOW_REPORT" xml:space="preserve">
+    <value>Report a Problem</value>
+  </data>
   <data name="BTN_LBL_Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
@@ -533,6 +542,12 @@ Warning: more rows means more RAM usage!</value>
   </data>
   <data name="LBL_TILE_MULTIITEM_PRESENTER_N_SELECTED" xml:space="preserve">
     <value>selected</value>
+  </data>
+  <data name="LNK_ABOUT_WINDOW_LICENSE_AGREEMENT" xml:space="preserve">
+    <value>License agreement</value>
+  </data>
+  <data name="LNK_ABOUT_WINDOW_PRIVACY_POLICY" xml:space="preserve">
+    <value>Privacy policy</value>
   </data>
   <data name="TGL_BTN_LBL_Off" xml:space="preserve">
     <value>Off</value>

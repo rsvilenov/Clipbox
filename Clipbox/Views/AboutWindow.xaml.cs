@@ -1,5 +1,7 @@
-﻿using Clipbox.Infrastructure.RegistryAccess;
+﻿using Clipbox.Core;
+using Clipbox.Infrastructure.RegistryAccess;
 using Clipbox.Infrastructure.UI.CustomControls;
+using System.Diagnostics;
 using System.Windows;
 
 namespace Clipbox.Views
@@ -31,6 +33,16 @@ namespace Clipbox.Views
         public static readonly DependencyProperty VersionStringProperty =
             DependencyProperty.Register(nameof(VersionString), typeof(string), typeof(AboutWindow), new PropertyMetadata(string.Empty));
 
+        private void HyperlinkEula_Click(object sender, RoutedEventArgs e)
+        {
+            using (Process p = Process.Start(ProductConstants.PRODUCT_EULA_URL)) ;
+            e.Handled = true;
+        }
 
+        private void HyperlinkPrivacyPolicy_Click(object sender, RoutedEventArgs e)
+        {
+            using (Process p = Process.Start(ProductConstants.PRODUCT_PRIVACY_POLICY_URL)) ;
+            e.Handled = true;
+        }
     }
 }

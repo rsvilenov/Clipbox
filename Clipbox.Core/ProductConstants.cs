@@ -106,5 +106,9 @@ namespace Clipbox.Core
         public const string PRODUCT_LATEST_VERSION_URL = "someUrl";
 
         public const string PRODUCT_UPDATE_PAGE_URL = "someUrl";
+
+        public const string PRODUCT_EULA_URL = "https://clipbox.org/eula";
+
+        public const string PRODUCT_PRIVACY_POLICY_URL = "https://clipbox.org/privacy";
     }
 }
