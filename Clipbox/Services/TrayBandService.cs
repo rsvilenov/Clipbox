@@ -5,6 +5,7 @@ using Clipbox.Infrastructure.UI;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.Win32;
+using Clipbox.Win32.Native;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -266,14 +267,32 @@ namespace Clipbox.Services
             {
                 if (!_trayContextMenuService.IsContextMenuOpen)
                 {
-                    // we do not have to dpi-callibrate these coordinates
-                    var deskbandRect = WindowUtils.GetWindowRectangle(_lastDeskbandHwnd);
-
-                    _trayContextMenuService.ShowContextMenuAtPoint(new Point
+                    System.Drawing.Point p = new System.Drawing.Point();
+                    if (!User32.GetCursorPos(ref p))
                     {
-                        X = deskbandRect.X,
-                        Y = deskbandRect.Y
+                        throw new Win32Exception();
+                    }
+
+                    var monitor = MonitorUtils.GetByCurrentMousePosition();
+                    var scaleFactor = monitor.Dpi / 96;
+
+                    _trayContextMenuService.ShowContextMenuAtPoint(new System.Windows.Point
+                    {
+                        X = p.X / scaleFactor,
+                        Y = p.Y / scaleFactor
                     });
+
+                    // This code below does not behave as it should when high dpi settings are used.
+                    // TODO: figure out why
+
+                    //// we do not have to dpi-callibrate these coordinates
+                    //var deskbandRect = WindowUtils.GetWindowRectangle(_lastDeskbandHwnd);
+
+                    //_trayContextMenuService.ShowContextMenuAtPoint(new Point
+                    //{
+                    //    X = deskbandRect.X,
+                    //    Y = deskbandRect.Y
+                    //});
                 }
             }
 
