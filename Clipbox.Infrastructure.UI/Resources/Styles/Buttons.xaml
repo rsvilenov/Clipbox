@@ -121,10 +121,10 @@
 
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Foreground" Value="{DynamicResource AlertBrush1}" />
+                <Setter Property="Foreground" Value="{DynamicResource AlertBrush2}" />
             </Trigger>
             <Trigger Property="IsPressed" Value="True">
-                <Setter Property="Foreground" Value="{DynamicResource AlertBrush2}" />
+                <Setter Property="Foreground" Value="{DynamicResource AlertBrush1}" />
             </Trigger>
         </Style.Triggers>
     </Style>

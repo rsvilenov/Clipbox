@@ -17,7 +17,7 @@
     xmlns:sysTheme="clr-namespace:Clipbox.Infrastructure.UI.Theme;assembly=Clipbox.Infrastructure.UI"
     Width="Auto"
     Height="Auto"
-    MinWidth="750"
+    MinWidth="720"
     MinHeight="560"
     AllowsTransparency="True"
     Background="{DynamicResource TaskbarColorBrush}"
@@ -213,7 +213,7 @@
                             <ControlTemplate TargetType="{x:Type TabControl}">
                                 <Grid>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="250" />
+                                        <ColumnDefinition Width="Auto" MinWidth="250" />
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
                                     <Grid
@@ -267,6 +267,9 @@
                                     Name="Panel"
                                     Height="45"
                                     Background="Transparent">
+                                    <i:Interaction.Behaviors>
+                                        <infBeh:FrameworkElementDpiScalingBehavior />
+                                    </i:Interaction.Behaviors>
                                     <Border
                                         Name="Border"
                                         Margin="0,10,0,10"
@@ -303,6 +306,9 @@
                 </TabItem.HeaderTemplate>
                 <TabItem.Content>
                     <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+                        <i:Interaction.Behaviors>
+                            <infBeh:FrameworkElementDpiScalingBehavior />
+                        </i:Interaction.Behaviors>
                         <StackPanel Margin="0,0,40,0" Orientation="Vertical">
                             <!--
                                 prevent the scrollviewer from scrolling to the actual
@@ -347,7 +353,11 @@
                 </TabItem.HeaderTemplate>
                 <TabItem.Content>
                     <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+                        <i:Interaction.Behaviors>
+                            <infBeh:FrameworkElementDpiScalingBehavior />
+                        </i:Interaction.Behaviors>
                         <StackPanel Margin="0,0,40,0" Orientation="Vertical">
+
                             <!--
                                 prevent the scrollviewer from scrolling to the actual
                                 focualbe items upon tab change,
@@ -392,6 +402,9 @@
                 </TabItem.HeaderTemplate>
                 <TabItem.Content>
                     <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+                        <i:Interaction.Behaviors>
+                            <infBeh:FrameworkElementDpiScalingBehavior />
+                        </i:Interaction.Behaviors>
                         <StackPanel Margin="0,0,40,0" Orientation="Vertical">
                             <TextBlock
                                 Focusable="True"
@@ -430,6 +443,9 @@
                 </TabItem.HeaderTemplate>
                 <TabItem.Content>
                     <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+                        <i:Interaction.Behaviors>
+                            <infBeh:FrameworkElementDpiScalingBehavior />
+                        </i:Interaction.Behaviors>
                         <StackPanel Orientation="Vertical">
                             <TextBlock
                                 Focusable="True"
@@ -468,6 +484,9 @@
                 </TabItem.HeaderTemplate>
                 <TabItem.Content>
                     <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+                        <i:Interaction.Behaviors>
+                            <infBeh:FrameworkElementDpiScalingBehavior />
+                        </i:Interaction.Behaviors>
                         <StackPanel Orientation="Vertical">
                             <TextBlock
                                 Focusable="True"
@@ -506,6 +525,9 @@
                 </TabItem.HeaderTemplate>
                 <TabItem.Content>
                     <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+                        <i:Interaction.Behaviors>
+                            <infBeh:FrameworkElementDpiScalingBehavior />
+                        </i:Interaction.Behaviors>
                         <StackPanel Orientation="Vertical">
                             <TextBlock
                                 Focusable="True"
@@ -544,6 +566,9 @@
                 </TabItem.HeaderTemplate>
                 <TabItem.Content>
                     <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+                        <i:Interaction.Behaviors>
+                            <infBeh:FrameworkElementDpiScalingBehavior />
+                        </i:Interaction.Behaviors>
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="Auto" />
@@ -666,7 +691,11 @@
                     VerticalAlignment="Center"
                     FontSize="18"
                     Foreground="White"
-                    Text="{loc:Localize LBL_SETTINGS_WINDOW_LOADING}" />
+                    Text="{loc:Localize LBL_SETTINGS_WINDOW_LOADING}">
+                    <i:Interaction.Behaviors>
+                        <infBeh:FrameworkElementDpiScalingBehavior />
+                    </i:Interaction.Behaviors>
+                </TextBlock>
             </Grid>
             <Border.Style>
                 <Style TargetType="Border">

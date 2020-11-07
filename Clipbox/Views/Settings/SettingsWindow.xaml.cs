@@ -44,6 +44,8 @@ namespace Clipbox.Views.Settings
         private readonly IAboutWindowService _aboutWindowService;
         private readonly SettingsUIExtensionContainer _extContainer;
 
+        private double _selectedTabItemHorizontalTemplateWidth;
+
         public SettingsWindow(ISettingsService settingsService,
             ICloudSynchronizationService cloudSyncService,
             IAboutWindowService aboutWindowService,
@@ -56,7 +58,7 @@ namespace Clipbox.Views.Settings
 
             InitializeComponent();
 
-            ScaleMode = DpiScaleMode.Full;
+            ScaleMode = DpiScaleMode.Custom;
 
             SetWindowTitle();
             
@@ -79,6 +81,9 @@ namespace Clipbox.Views.Settings
             Closing += SettingsWindow_Closing;
             MouseDown += SettingsWindow_MouseDown;
             Shown += SettingsWindow_Shown;
+            DPIChanged += SettingsWindow_DPIChanged;
+
+            this.tabControl.SelectionChanged += TabControl_SelectionChanged;
 
             _settingsService.SettingChanged += _settingsService_SettingChanged;
         }
@@ -97,27 +102,45 @@ namespace Clipbox.Views.Settings
             Title = $"{ProductConstants.PRODUCT_NAME} {translationSource.GetTranslation("LBL_SETTINGS_WINDOW_TITLE_SETTINGS_PART")}";
         }
 
+        private void SettingsWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            ApplyHorizontalOrVerticalTemplate();
+        }
         private void SettingsWindow_Shown(object sender, EventArgs e)
         {
+            ApplyHorizontalOrVerticalTemplate();
             SizeChanged += SettingsWindow_SizeChanged;
         }
 
-        double _selectedTabItemHorizontalTemplateWidth;
-        private void SettingsWindow_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void SettingsWindow_DPIChanged(object sender, DpiChangedEventArgs e)
         {
-            var tabItemContainer = (tabControl.SelectedItem as TabItem).Content as ScrollViewer;
-            var tabItemContents = tabItemContainer.Content as FrameworkElement;
-
-            if (!UseInlinedPreviews)
-            {
-                _selectedTabItemHorizontalTemplateWidth = tabItemContents.ActualWidth;
-            }
-
-            // use the vertical template if the content width exceeds the available space
-            UseInlinedPreviews = _selectedTabItemHorizontalTemplateWidth > tabItemContainer.ActualWidth;
+            ApplyHorizontalOrVerticalTemplate();
         }
 
-        
+        private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ApplyHorizontalOrVerticalTemplate();
+        }
+
+        private void ApplyHorizontalOrVerticalTemplate()
+        {
+            // make sure that the behaviors, which resizes the contents according to the dpi, have finished,
+            // so that we can take the proper size of the items when deciding which template to use
+            Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
+            {
+                var tabItemContainer = (tabControl.SelectedItem as TabItem).Content as ScrollViewer;
+                var tabItemContents = tabItemContainer.Content as FrameworkElement;
+
+                if (!UseInlinedPreviews)
+                {
+                    _selectedTabItemHorizontalTemplateWidth = tabItemContents.ActualWidth;
+                }
+
+                // use the vertical template if the content width exceeds the available space
+                UseInlinedPreviews = _selectedTabItemHorizontalTemplateWidth > tabItemContainer.ActualWidth;
+            }));
+        }
+
         private void SettingsWindow_MouseDown(object sender, MouseButtonEventArgs e)
         {
             // make sure that clicking outside of a conrol moves the focus away from it
