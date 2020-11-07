@@ -48,6 +48,8 @@
 
         public const string FORCE_INSTALL_ARG = "forceinstall";
 
+        public const string SHOW_MSI_MESSAGES = "showmsimessages";
+
         public const string FORCE_UPDATE_DOWNLOAD_ARG = "forceupdatedownload";
 
         public const string INITIAL_CULTURE_CODE_FILENAME = "initialCultureCode";

@@ -64,7 +64,11 @@ namespace Clipbox.WixSetup.ViewModel
                     () => SetupState != ClipboxSetupState.Preparing 
                         && SetupState != ClipboxSetupState.Processing 
                         && SetupState != ClipboxSetupState.Downloading);
-            CancelCommand = new DelegateCommand(CancelCommandHandler, () => !_isCancelRequested);
+            CancelCommand = new DelegateCommand(CancelCommandHandler, () => false /* disable this command for now */
+            && !_isCancelRequested 
+            && (SetupState == ClipboxSetupState.Preparing
+                || SetupState == ClipboxSetupState.Processing
+                || SetupState == ClipboxSetupState.Downloading));
             InstallCommand = new DelegateCommand(() => RequestSetupAction(LaunchAction.Install), () => !_isSetupActionRequested);
             UninstallCommand = new DelegateCommand(() => UninstallCommandHandler(), () => !_isSetupActionRequested);
             GoToUninstallCommand = new DelegateCommand(() => GoToUninstallCommandHandler(), () => !_isSetupActionRequested);
@@ -657,15 +661,26 @@ namespace Clipbox.WixSetup.ViewModel
             _installedVersion = e.Version;
         }
 
+        private bool CheckIsCmdArgPassed(string cmdArg)
+        {
+            return _model.BootstrapperApplication.Command
+                .GetCommandLineArgs()
+                .Any(arg => arg.Replace("/", "")
+                    .Replace("-","")
+                    .Equals(cmdArg, StringComparison.OrdinalIgnoreCase));
+        }
+
         private void BootstrapperApplication_DetectPackageComplete(object sender, Microsoft.Tools.WindowsInstallerXml.Bootstrapper.DetectPackageCompleteEventArgs e)
         {
             if (e.PackageId.Equals(ProductConstants.MSI_PACKAGE_ID, StringComparison.Ordinal))
             {
-                if (_model.BootstrapperApplication.Command.GetCommandLineArgs().Any(arg => arg.Replace("/", "").Equals(ProductConstants.FORCE_INSTALL_ARG, StringComparison.OrdinalIgnoreCase)))
+                ShowMessages = CheckIsCmdArgPassed(ProductConstants.SHOW_MSI_MESSAGES);
+                
+                if (CheckIsCmdArgPassed(ProductConstants.FORCE_INSTALL_ARG))
                 {
                     SetupWorkflow = ClipboxSetupWorkflow.Install;
                 }
-                else if (_model.BootstrapperApplication.Command.GetCommandLineArgs().Any(arg => arg.Replace("/", "").Equals(ProductConstants.FORCE_UPDATE_DOWNLOAD_ARG, StringComparison.OrdinalIgnoreCase)))
+                else if (CheckIsCmdArgPassed(ProductConstants.FORCE_UPDATE_DOWNLOAD_ARG))
                 {
                     SetupWorkflow = ClipboxSetupWorkflow.Modify;
                     UpdateDownloadCommand.Execute(null);
@@ -782,8 +797,7 @@ namespace Clipbox.WixSetup.ViewModel
         public int Progress
         {
             get { 
-                return SetupWorkflow == ClipboxSetupWorkflow.Modify 
-                    && SetupWorkflow == ClipboxSetupWorkflow.Uninstall
+                return SetupWorkflow == ClipboxSetupWorkflow.Uninstall
                     ? _progress * 2
                     : _progress; 
             }
@@ -886,6 +900,13 @@ namespace Clipbox.WixSetup.ViewModel
         {
             get { return _message; }
             set { SetField(ref _message, value, () => Message); }
+        }
+
+        private bool _showMessages;
+        public bool ShowMessages
+        {
+            get { return _showMessages; }
+            set { SetField(ref _showMessages, value, () => ShowMessages); }
         }
 
         private void CloseInstallWindowCommandHandler()

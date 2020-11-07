@@ -22,6 +22,13 @@
         </ResourceDictionary>
     </Window.Resources>
 
+    <Window.InputBindings>
+        <KeyBinding
+            Key="F4"
+            Command="{Binding Path=DataContext.CloseInstallWindowCommand, ElementName=MainGrid}"
+            Modifiers="Alt" />
+    </Window.InputBindings>
+
     <Grid x:Name="MainGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="40" />
@@ -826,8 +833,8 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition />
             </Grid.RowDefinitions>
             <ContentControl
                 Grid.Row="0"
@@ -889,10 +896,21 @@
                     </Style>
                 </TextBlock.Style>
             </TextBlock>
+            <TextBlock
+                Grid.Row="3"
+                Margin="10"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                FontSize="14"
+                FontWeight="Thin"
+                Foreground="White"
+                Text="{Binding Message}"
+                TextWrapping="Wrap"
+                Visibility="{Binding ShowMessages, Converter={StaticResource BooleanToVisibilityConverter}}" />
             <ProgressBar
                 Grid.Row="4"
                 Height="10"
-                Margin="100,70,100,80"
+                Margin="100,0,100,80"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Bottom"
                 Style="{StaticResource DefaultProgressBar}"
