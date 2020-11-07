@@ -278,6 +278,7 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
 
@@ -496,6 +497,77 @@
 
                             </StackPanel>
 
+
+                            <!--<Grid Grid.Column="3">
+                                <Grid.Style>
+                                    <Style TargetType="Grid">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding AreFadeAnimationsEnabled, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type views:MainViewClipboardContents}}}" Value="True">
+                                                <DataTrigger.EnterActions>
+                                                    <BeginStoryboard Name="sbBlink">
+                                                        <BeginStoryboard.Storyboard>
+                                                            <Storyboard RepeatBehavior="Forever">
+                                                                <DoubleAnimation
+                                                                    AutoReverse="True"
+                                                                    BeginTime="0:0:1"
+                                                                    Storyboard.TargetProperty="Opacity"
+                                                                    From="0.5"
+                                                                    To="1"
+                                                                    Duration="0:0:0.4" />
+                                                                <DoubleAnimation
+                                                                    AutoReverse="True"
+                                                                    Storyboard.TargetProperty="Opacity"
+                                                                    From="1"
+                                                                    To="1"
+                                                                    Duration="0:0:0.4" />
+                                                                <DoubleAnimation
+                                                                    AutoReverse="True"
+                                                                    Storyboard.TargetProperty="Opacity"
+                                                                    From="1"
+                                                                    To="0.5"
+                                                                    Duration="0:0:0.4" />
+                                                            </Storyboard>
+                                                        </BeginStoryboard.Storyboard>
+                                                    </BeginStoryboard>
+                                                </DataTrigger.EnterActions>
+                                                <DataTrigger.ExitActions>
+                                                    <StopStoryboard BeginStoryboardName="sbBlink" />
+                                                </DataTrigger.ExitActions>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Grid.Style>
+
+                                <Border
+                                    Margin="24,10,0,10"
+                                    Background="Transparent"
+                                    BorderBrush="Orange"
+                                    BorderThickness="0,1,1,1">
+                                    <TextBlock
+                                        Margin="10,0"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Foreground="White">
+                                        Click this button to put the selected items in the system clipboard.
+                                        You can then paste them wherever you want the normal way.
+                                    </TextBlock>
+                                </Border>
+                                <Path
+                                    VerticalAlignment="Center"
+                                    Fill="Transparent"
+                                    Stroke="Orange"
+                                    StrokeThickness="1">
+                                    <Path.Data>
+                                        <PathGeometry>
+                                            <PathFigure StartPoint="25,0">
+                                                <PolyLineSegment Points="10,15, 25,30" />
+                                                <LineSegment IsStroked="False" Point="25,0" />
+                                            </PathFigure>
+                                        </PathGeometry>
+                                    </Path.Data>
+                                </Path>
+                            </Grid>-->
+
                         </Grid>
                     </ScrollViewer>
                 </Grid>
@@ -575,17 +647,13 @@
                 Grid.Row="0"
                 MaxWidth="35"
                 MaxHeight="35"
-                Margin="0,0,0,3"
+                Margin="0,8,0,3"
                 Padding="12"
-                VerticalAlignment="Center"
+                VerticalAlignment="Top"
                 Click="BtnCloseMainWindow_Click"
                 Style="{DynamicResource BtnCloseMainWindow}"
                 ToolTip="{loc:Localize TTP_MAINVIEW_CLOSE_BUTTON}"
-                Visibility="{Binding Path=IsManipulationEnabled, RelativeSource={RelativeSource AncestorType={x:Type Border}}, Converter={StaticResource BooleanToVisibilityConverter}}">
-                <i:Interaction.Behaviors>
-                    <infBeh:FrameworkElementDpiScalingBehavior />
-                </i:Interaction.Behaviors>
-            </Button>
+                Visibility="{Binding Path=IsManipulationEnabled, RelativeSource={RelativeSource AncestorType={x:Type Border}}, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
             <!--
                 show the cloud filter only when the cloud service is enabled (regardless of the cloud service error state
