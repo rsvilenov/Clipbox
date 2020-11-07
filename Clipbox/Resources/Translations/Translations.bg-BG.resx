@@ -184,8 +184,14 @@
   <data name="en-US" xml:space="preserve">
     <value>Английски</value>
   </data>
+  <data name="LBL_ABOUT_WINDOW_BUILD_NUMBER" xml:space="preserve">
+    <value>билд</value>
+  </data>
   <data name="LBL_ABOUT_WINDOW_TITLE" xml:space="preserve">
     <value>Относно Clipbox</value>
+  </data>
+  <data name="LBL_ABOUT_WINDOW_VERSION" xml:space="preserve">
+    <value>версия</value>
   </data>
   <data name="LBL_APPSELECTOR_FILTER_BY_APP" xml:space="preserve">
     <value>Филтрирай по приложение</value>

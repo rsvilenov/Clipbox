@@ -260,11 +260,29 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to build.
+        /// </summary>
+        internal static string LBL_ABOUT_WINDOW_BUILD_NUMBER {
+            get {
+                return ResourceManager.GetString("LBL_ABOUT_WINDOW_BUILD_NUMBER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to About Clipbox.
         /// </summary>
         internal static string LBL_ABOUT_WINDOW_TITLE {
             get {
                 return ResourceManager.GetString("LBL_ABOUT_WINDOW_TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to version.
+        /// </summary>
+        internal static string LBL_ABOUT_WINDOW_VERSION {
+            get {
+                return ResourceManager.GetString("LBL_ABOUT_WINDOW_VERSION", resourceCulture);
             }
         }
         

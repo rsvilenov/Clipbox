@@ -184,8 +184,14 @@ from this window except the pinned ones.</value>
   <data name="en-US" xml:space="preserve">
     <value>English</value>
   </data>
+  <data name="LBL_ABOUT_WINDOW_BUILD_NUMBER" xml:space="preserve">
+    <value>build</value>
+  </data>
   <data name="LBL_ABOUT_WINDOW_TITLE" xml:space="preserve">
     <value>About Clipbox</value>
+  </data>
+  <data name="LBL_ABOUT_WINDOW_VERSION" xml:space="preserve">
+    <value>version</value>
   </data>
   <data name="LBL_APPSELECTOR_FILTER_BY_APP" xml:space="preserve">
     <value>Filter by application</value>

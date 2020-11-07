@@ -87,7 +87,7 @@
                 VerticalAlignment="Bottom"
                 FontSize="16"
                 Foreground="LightGray">
-                <Run Text="Version" />
+                <Run Text="{loc:Localize LBL_ABOUT_WINDOW_VERSION}" />
                 <Run Text="{Binding VersionString}" />
             </TextBlock>
             <TextBlock
@@ -97,7 +97,7 @@
                 VerticalAlignment="Bottom"
                 FontSize="12"
                 Foreground="DarkGray">
-                <Run Text="(build " />
+                <Run Text="(" /><Run Text="{loc:Localize LBL_ABOUT_WINDOW_BUILD_NUMBER}" />
                 <Run Text="{Binding BuildNumberString}" /><Run Text=")" />
                 <TextBlock.Style>
                     <Style TargetType="TextBlock">
