@@ -2,6 +2,7 @@
 using Clipbox.Infrastructure.RegistryAccess;
 using Clipbox.Infrastructure.UI.CustomControls;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 
 namespace Clipbox.Views
@@ -21,7 +22,18 @@ namespace Clipbox.Views
 
         private void AboutWindow_Shown(object sender, System.EventArgs e)
         {
-            VersionString = RegistryUtils.GetProductVersion();
+            string versionStr = RegistryUtils.GetProductVersion();
+            
+            string[] versionParts = versionStr.Split('.');
+            if (versionParts.Length == 4)
+            {
+                VersionString = $"{versionParts[0]}.{versionParts[1]}";
+                BuildNumberString = versionParts[2];
+            }
+            else
+            {
+                VersionString = versionStr;
+            }
         }
 
         public string VersionString
@@ -32,6 +44,17 @@ namespace Clipbox.Views
 
         public static readonly DependencyProperty VersionStringProperty =
             DependencyProperty.Register(nameof(VersionString), typeof(string), typeof(AboutWindow), new PropertyMetadata(string.Empty));
+
+        public string BuildNumberString
+        {
+            get { return (string)GetValue(BuildNumberStringProperty); }
+            set { SetValue(BuildNumberStringProperty, value); }
+        }
+
+        public static readonly DependencyProperty BuildNumberStringProperty =
+            DependencyProperty.Register("BuildNumberString", typeof(string), typeof(AboutWindow), new PropertyMetadata(string.Empty));
+
+
 
         private void HyperlinkEula_Click(object sender, RoutedEventArgs e)
         {

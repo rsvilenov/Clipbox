@@ -65,6 +65,7 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <ContentControl
                 Grid.Row="0"
@@ -84,12 +85,34 @@
                 Margin="0,0,0,0"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Bottom"
-                FontSize="14"
-                Foreground="LightGray"
-                Text="{Binding VersionString}" />
-
+                FontSize="16"
+                Foreground="LightGray">
+                <Run Text="Version" />
+                <Run Text="{Binding VersionString}" />
+            </TextBlock>
             <TextBlock
                 Grid.Row="3"
+                Margin="0,0,0,0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Bottom"
+                FontSize="12"
+                Foreground="DarkGray">
+                <Run Text="(build " />
+                <Run Text="{Binding BuildNumberString}" /><Run Text=")" />
+                <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="Visibility" Value="Visible" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding BuildNumberString}" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+
+            <TextBlock
+                Grid.Row="4"
                 Margin="0,22,0,0"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Bottom"
@@ -195,7 +218,7 @@
             <TextBlock
                 Grid.Row="3"
                 Grid.Column="1"
-                Margin="0,30,0,0"
+                Margin="0,45,0,0"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Bottom">
                 <TextBlock>
