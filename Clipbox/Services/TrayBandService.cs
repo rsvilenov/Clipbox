@@ -280,7 +280,7 @@ namespace Clipbox.Services
                     {
                         X = p.X / scaleFactor,
                         Y = p.Y / scaleFactor
-                    });
+                    }, scaleFactor);
 
                     // This code below does not behave as it should when high dpi settings are used.
                     // TODO: figure out why

@@ -148,6 +148,8 @@
     <Content Include="redist\NDP461-KB3102438-Web.exe" />
     <Content Include="redist\VC_redist.x64.exe" />
     <Content Include="redist\VC_redist.x86.exe" />
+    <Resource Include="Resources\Images\Logo.ico" />
+    <Content Include="Resources\Images\LogoNoTransparent.ico" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

@@ -1,6 +1,7 @@
 ﻿using Clipbox.Infrastructure.UI.Utils;
 using Clipbox.Infrastructure.UI.Windows;
 using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Interactivity;
 
@@ -37,8 +38,10 @@ namespace Clipbox.Infrastructure.UI.Behaviors
 
             if (AssociatedObject.IsLoaded)
             {
-                Setup();
-                Scale();
+                if (Setup())
+                {
+                    Scale();
+                }
             }
         }
 
@@ -50,23 +53,35 @@ namespace Clipbox.Infrastructure.UI.Behaviors
         private void AssociatedObject_Loaded(object sender, RoutedEventArgs e)
         {
             AssociatedObject.Loaded -= AssociatedObject_Loaded;
-            
-            Setup();
-            Scale();
+
+            if (Setup())
+            {
+                Scale();
+            }
         }
 
-        private void Setup()
+        private bool Setup()
         {
-            _pmDpiwindow = Window.GetWindow(AssociatedObject) as PerMonitorDpiWindow;
+            Window wnd = Window.GetWindow(AssociatedObject);
+            if (wnd == null)
+            {
+                Debug.WriteLine($"{nameof(FrameworkElementDpiScalingBehavior)}: the associated window cound not be resolved.");
+                return false;
+
+            }
+            _pmDpiwindow = wnd as PerMonitorDpiWindow;
             if (_pmDpiwindow == null)
             {
-                throw new NotSupportedException($"{nameof(FrameworkElementDpiScalingBehavior)} can only be used with {nameof(PerMonitorDpiWindow)}");
+                Debug.WriteLine($"{nameof(FrameworkElementDpiScalingBehavior)} can only be used with {nameof(PerMonitorDpiWindow)}");
+                return false;
             }
 
             _scaleFactor = _pmDpiwindow.ScaleFactor;
 
             _pmDpiwindow.DPIChanged += Wnd_DPIChanged;
             _isDpiEventWired = true;
+
+            return true;
         }
 
         private void Scale()

@@ -29,7 +29,7 @@
                                    ResourceLookupMode=CurrentAssembly}"
     FontSize="16"
     Foreground="{DynamicResource ControlForegroundBrush}"
-    Icon="pack://application:,,,/Clipbox.Infrastructure.UI;component/Resources/Images/Clip-WF.ico"
+    Icon="pack://application:,,,/Clipbox.Infrastructure.UI;component/Resources/Images/Logo.ico"
     IsMinimizeButtonVisible="False"
     ResizeMode="NoResize"
     ScaleMode="Full"

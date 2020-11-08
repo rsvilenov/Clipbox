@@ -25,7 +25,7 @@ namespace Clipbox.WixSetup
             {
                 throw new InvalidOperationException($"Assebmly's major.minor version is {asmVersion.Major}.{asmVersion.Minor} while the product version is {ProductConstants.PRODUCT_VERSION}. They should match.");
             }
-            
+
 #if DEBUG
             string releaseDirectory = @"..\Build\Debug\";
 #elif RELEASE
@@ -150,6 +150,8 @@ namespace Clipbox.WixSetup
                     InstallPrivileges = InstallPrivileges.elevated
                 };
 
+            project.ControlPanelInfo.ProductIcon = @"Resources\Images\LogoNoTransparent.ico";
+
             // add a default install dir for the msi package
             // it will be overridden by the bundle...
             project.WixVariables.Add("INSTALLDIR", INSTALL_DIRECTORY);
@@ -231,7 +233,8 @@ namespace Clipbox.WixSetup
                     Version = asmVersion,
                     Manufacturer = ProductConstants.COMPANY_NAME,
                     UpgradeCode = new Guid(ProductConstants.WIX_BUNDLE_UPGRADE_CODE),
-                    OutFileName = ProductConstants.PRODUCT_NAME
+                    OutFileName = ProductConstants.PRODUCT_NAME,
+                    IconFile = @"Resources\Images\Logo.ico"
                 };
 
             bootstrapper.Include(WixExtension.Util);

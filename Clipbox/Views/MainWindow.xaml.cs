@@ -97,7 +97,7 @@ namespace Clipbox.Views
 
             Title = ProductConstants.PRODUCT_NAME;
 
-            using (Bitmap bmpIcon = ResourceUtils.GetApplicationIcon())
+            using (Bitmap bmpIcon = ResourceUtils.GetApplicationIconBitmap())
             {
                 Icon = bmpIcon.ToBitmapSource();
             }

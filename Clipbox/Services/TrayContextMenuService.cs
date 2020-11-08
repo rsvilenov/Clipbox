@@ -104,7 +104,7 @@ namespace Clipbox.Services
             }
         }
 
-        public void ShowContextMenuAtPoint(Point p)
+        public void ShowContextMenuAtPoint(Point p, double scaleFactor)
         {
             if (_isDisposed)
             {
@@ -117,7 +117,7 @@ namespace Clipbox.Services
                 _trayContextMenu.Opened += _trayContextMenu_Opened;
             }
 
-            _trayContextMenu.OpenAtPoint(p);
+            _trayContextMenu.OpenAtPoint(p, scaleFactor);
         }
 
         private void _trayContextMenuViewModel_SettingsWindowOpenRequested(object sender, EventArgs e)

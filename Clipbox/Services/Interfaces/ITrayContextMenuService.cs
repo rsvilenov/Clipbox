@@ -5,7 +5,7 @@ namespace Clipbox.Services.Interfaces
 {
     public interface ITrayContextMenuService
     {
-        void ShowContextMenuAtPoint(Point p);
+        void ShowContextMenuAtPoint(Point p, double scaleFactor);
 
         bool IsContextMenuOpen { get; }
     }

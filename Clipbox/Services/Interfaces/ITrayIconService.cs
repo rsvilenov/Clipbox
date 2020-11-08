@@ -9,8 +9,6 @@ namespace Clipbox.Services.Interfaces
 
         void HideTrayIcon();
 
-        void ShowToolTip(string toolTipText);
-
         TrayIconVisibilityPreference GetVisibilityPreference();
 
         void SetVisibilityPreference(TrayIconVisibilityPreference preference);

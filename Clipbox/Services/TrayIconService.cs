@@ -18,13 +18,14 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows;
+using System.Windows.Forms;
 using System.Windows.Interop;
 
 namespace Clipbox.Services
 {
     public class TrayIconService : ITrayIconService, IDisposable
     {
-        private readonly TaskbarIcon _taskbarIcon;
+        private readonly NotifyIcon _notifyIcon;
         private readonly string _currentProcessName;
         
         // TODO: create a lightweight implementation of a message-only window
@@ -51,10 +52,10 @@ namespace Clipbox.Services
             _settingsService = settingsService;
             _pauseService = pauseService;
 
-            _taskbarIcon = new TaskbarIcon
+            _notifyIcon = new NotifyIcon
             {
-                Visibility = Visibility.Collapsed,
-                ToolTipText = ProductConstants.PRODUCT_NAME
+                Text = ProductConstants.PRODUCT_NAME,
+                Visible = false
             };
 
             SetTrayIconImage();
@@ -64,8 +65,7 @@ namespace Clipbox.Services
                 _currentProcessName = p.ProcessName;
             }
 
-            _taskbarIcon.TrayLeftMouseUp += _taskbarIcon_TrayLeftMouseUp;
-            _taskbarIcon.TrayRightMouseUp += _taskbarIcon_TrayRightMouseUp;
+            _notifyIcon.MouseUp += _notifyIcon_MouseUp;
 
             _msgOnlyWindow = new HwndSource(0, 0, 0, 0, 0, 0, 0, null, IntPtr.Zero);
             _msgOnlyWindow.AddHook(new HwndSourceHook(WndProc));
@@ -83,9 +83,45 @@ namespace Clipbox.Services
             _pauseService.PauseStateChanged += _pauseService_PauseStateChanged;
         }
 
+        private void _notifyIcon_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                if (_mainClipboardViewWindowService.IsOpen)
+                {
+                    _mainClipboardViewWindowService.Close();
+                }
+                else
+                {
+                    _mainClipboardViewWindowService.OpenOnMonitor(MonitorUtils.GetByCurrentMousePosition());
+                }
+
+                TrayIconClicked?.Invoke(this, new EventArgs());
+            }
+            else if (e.Button == MouseButtons.Right)
+            {
+                System.Drawing.Point p = new System.Drawing.Point();
+                if (!User32.GetCursorPos(ref p))
+                {
+                    throw new Win32Exception();
+                }
+
+                var monitor = MonitorUtils.GetByCurrentMousePosition();
+                var scaleFactor = monitor.Dpi / 96;
+
+                _trayContextMenuService.ShowContextMenuAtPoint(new System.Windows.Point
+                {
+                    X = p.X / scaleFactor,
+                    Y = p.Y / scaleFactor
+                }, scaleFactor);
+            }
+        }
+
         private void SetTrayIconImage()
         {
-            using (Bitmap bmpIcon = ResourceUtils.GetApplicationIcon())
+            using (var trayIconStream = Assembly.GetAssembly(this.GetType())
+                            .GetManifestResourceStream("Clipbox.Resources.Images.TrayIcon.Logo.png"))
+            using (var bmpIcon = (Bitmap)Image.FromStream(trayIconStream))
             using (Bitmap result = new Bitmap(Math.Max(bmpIcon.Width, bmpIcon.Width),
                          Math.Max(bmpIcon.Height, bmpIcon.Height)))
             using (Graphics g = Graphics.FromImage(result))
@@ -112,7 +148,10 @@ namespace Clipbox.Services
                     }
                 }
 
-                _taskbarIcon.Icon = result.ToIcon();
+                using (Bitmap scaled = result.GetScaled((int)SystemInformation.SmallIconSize.Width, (int)SystemInformation.SmallIconSize.Height, interpolationMode: System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor) as Bitmap)
+                {
+                    _notifyIcon.Icon = result.ToIcon();
+                }
             }
 
         }
@@ -166,7 +205,7 @@ namespace Clipbox.Services
             {
                 X = p.X / scaleFactor,
                 Y = p.Y / scaleFactor
-            });
+            }, scaleFactor);
         }
 
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
@@ -231,7 +270,7 @@ namespace Clipbox.Services
 
         public void HideTrayIcon()
         {
-            _taskbarIcon.Visibility = Visibility.Hidden;
+            _notifyIcon.Visible = false;
         }
 
         public void SetVisibilityPreference(TrayIconVisibilityPreference preference)
@@ -261,21 +300,15 @@ namespace Clipbox.Services
 
         public void ShowTrayIcon()
         {
-            _taskbarIcon.Visibility = Visibility.Visible;
+            _notifyIcon.Visible = true;
         }
 
-        public void ShowToolTip(string toolTipText)
-        {
-            // TODO: support rtf via custom tooltip
-            _taskbarIcon.ShowBalloonTip("Clipbox", toolTipText, BalloonIcon.Info);
-        }
-        
         public void Dispose()
         {
             // TODO: do we really need to unsunscribe?
-            _taskbarIcon.TrayLeftMouseUp -= _taskbarIcon_TrayLeftMouseUp;
+            _notifyIcon.MouseUp += _notifyIcon_MouseUp;
             HideTrayIcon();
-            _taskbarIcon.Dispose();
+            _notifyIcon.Dispose();
             _msgOnlyWindow.Dispose();
         }
 

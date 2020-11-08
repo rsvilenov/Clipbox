@@ -18,7 +18,7 @@
     CaptionForeground="{DynamicResource ControlForegroundBrush}"
     FontSize="16"
     Foreground="White"
-    Icon="pack://application:,,,/Clipbox.Infrastructure.UI;component/Resources/Images/Clip-WF.ico"
+    Icon="pack://application:,,,/Clipbox.Infrastructure.UI;component/Resources/Images/Logo.ico"
     IsCloseButtonVisible="False"
     ResizeMode="NoResize"
     SizeToContent="Manual"

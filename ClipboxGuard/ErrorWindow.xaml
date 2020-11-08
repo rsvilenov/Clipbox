@@ -13,6 +13,7 @@
     Height="350"
     Background="White"
     Foreground="Black"
+    Icon="Resources/Icons/Logo.ico"
     ShowInTaskbar="True"
     Topmost="True"
     Visibility="Visible"

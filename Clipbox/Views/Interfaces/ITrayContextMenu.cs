@@ -8,7 +8,7 @@ namespace Clipbox.Views.Interfaces
     {
         MonitorUtils.DisplayMonitor CurrentMonitor { get; }
 
-        void OpenAtPoint(Point p);
+        void OpenAtPoint(Point p, double scaleFactor);
 
         void Close();
 
