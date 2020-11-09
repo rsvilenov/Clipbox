@@ -359,12 +359,23 @@ namespace Clipbox.Win32
             }
         }
 
-        public static Rectangle GetWindowRectangle(IntPtr hWnd)
+        public static Rectangle GetWindowRectangle(IntPtr hWnd, bool getClientRect = false)
         {
             NativeStructures.RECT rect;
-            if (!User32.GetWindowRect(hWnd, out rect))
+
+            if (getClientRect)
             {
-                throw new Win32Exception();
+                if (!User32.GetClientRect(hWnd, out rect))
+                {
+                    throw new Win32Exception();
+                }
+            }
+            else
+            {
+                if (!User32.GetWindowRect(hWnd, out rect))
+                {
+                    throw new Win32Exception();
+                }
             }
 
             return rect.ToRectangle();

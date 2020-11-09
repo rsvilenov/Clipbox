@@ -176,7 +176,10 @@ namespace Clipbox.Win32.Native
         
         [DllImport(ExternDll.User32, SetLastError = true)]
         public static extern bool GetWindowRect(IntPtr hwnd, out RECT lpRect);
-        
+
+        [DllImport(ExternDll.User32, SetLastError = true)]
+        public static extern bool GetClientRect(IntPtr hWnd, out RECT lpRect);
+
         [DllImport(ExternDll.User32, SetLastError = true)]
         public static extern bool ChangeWindowMessageFilterEx(IntPtr hWnd, uint msg, ChangeWindowMessageFilterExAction action, ref CHANGEFILTERSTRUCT changeInfo);
 

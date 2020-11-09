@@ -47,13 +47,34 @@ namespace Clipbox.Views
             {
                 Handle = contextMenuHWndSource.Handle;
                 CurrentMonitor = MonitorUtils.GetByWindowHandle(Handle);
-                System.Drawing.Rectangle rect = WindowUtils.GetWindowRectangle(this.Handle);
-                WindowUtils.SetWindowsPosition(this.Handle,
-                    _requestedPositionX - rect.Width,
-                    _requestedPositionY - rect.Height,
-                    rect.Width,
-                    rect.Height);
+                System.Drawing.Rectangle rect = WindowUtils.GetWindowRectangle(this.Handle, getClientRect: true);
 
+                int windowXPos = _requestedPositionX;
+                int windowYPos = _requestedPositionY;
+
+                if (_requestedPositionX + rect.Width > CurrentMonitor.Bounds.X + CurrentMonitor.Bounds.Width)
+                {
+                    windowXPos = _requestedPositionX - rect.Width;
+                }
+                else if (_requestedPositionX - rect.Width < CurrentMonitor.Bounds.X)
+                {
+                    windowXPos = _requestedPositionX;
+                }
+
+                if (_requestedPositionY + rect.Height > CurrentMonitor.Bounds.Y + CurrentMonitor.Bounds.Height)
+                {
+                    windowYPos = _requestedPositionY - rect.Height;
+                }
+                else if (_requestedPositionY - rect.Height < CurrentMonitor.Bounds.Y)
+                {
+                    windowYPos = _requestedPositionY;
+                }
+
+                WindowUtils.SetWindowsPosition(this.Handle,
+                windowXPos,
+                windowYPos,
+                rect.Width,
+                rect.Height);
             }
 
             Opened?.Invoke(this, new EventArgs());
