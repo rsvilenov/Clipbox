@@ -1,6 +1,7 @@
 ﻿using Clipbox.Core.Enums;
 using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.UI.Utils;
+using ClipboxGuard.Enums;
 using ClipboxGuard.Services.Common;
 using ClipboxGuard.Services.EventArgsClasses;
 using ClipboxGuard.Services.Interfaces;
@@ -50,10 +51,25 @@ namespace ClipboxGuard.Services
         {
             ReportAnalysis analysis = _reportAnalysisService.GetAnalysis();
 
-            ShowErrorWindow(out bool restartProcessRequested, analysis);
-            e.RestartProcess = restartProcessRequested;
+            bool isRestartProcessRequested;
 
-            if (!restartProcessRequested)
+            // check if there is something logged for the main process
+            if (analysis.ErrorOrigin.HasFlag(ErrorOrigin.MainProcess))
+            {
+                ShowErrorWindow(out isRestartProcessRequested, analysis);
+            }
+            else
+            {
+                // if there is nothing logged for the crash of the main process, this means that
+                // most likely some low-level winapi related error has brought the process down,
+                // and we do now know what it is. So nothing to show to the user and nothing to
+                // send to the developers... Just restart the main process then.
+                isRestartProcessRequested = true;
+            }
+
+            e.RestartProcess = isRestartProcessRequested;
+
+            if (!isRestartProcessRequested)
             {
                 Application.Current.Dispatcher.Invoke(() =>
                 {
