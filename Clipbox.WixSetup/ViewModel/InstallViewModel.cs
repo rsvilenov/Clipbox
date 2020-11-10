@@ -58,6 +58,7 @@ namespace Clipbox.WixSetup.ViewModel
 #else
             VersionString = $"{productVersion.Major}.{productVersion.Minor}";
 #endif
+            BuildNumberString = productVersion.Build.ToString();
 
             QuitCommand = new DelegateCommand(QuitCommandHandler);
             CloseInstallWindowCommand = new DelegateCommand(CloseInstallWindowCommandHandler, 
@@ -865,6 +866,13 @@ namespace Clipbox.WixSetup.ViewModel
         {
             get { return _versionString; }
             set { SetField(ref _versionString, value, () => VersionString); }
+        }
+
+        private string _buildNumberString;
+        public string BuildNumberString
+        {
+            get { return _buildNumberString; }
+            set { SetField(ref _buildNumberString, value, () => BuildNumberString); }
         }
 
         private string _installationDirectory;

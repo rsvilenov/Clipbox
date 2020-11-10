@@ -26,18 +26,9 @@ namespace Clipbox.WixSetup
         /// </summary>
         protected override void Run()
         {
-            // BootstrapperApplicationModel model = new BootstrapperApplicationModel(this);
-            // InstallViewModel installVm = new InstallViewModel(model);
-            // var mainWindow = new InstallWindow(installVm);
-            //// mainWindow.Mba = this;
-            //// mainWindow.InstallVm = installVm;
-            // mainWindow.ShowDialog();
-            // Engine.Quit(0);
-
             BootstrapperApplicationModel model = null;
             try
             {
-
                 model = new BootstrapperApplicationModel(this);
                 var viewModel = new InstallViewModel(model);
                 InstallWindow View = new InstallWindow(viewModel);
@@ -48,6 +39,19 @@ namespace Clipbox.WixSetup
                     || this.Command.Display == Display.None;
                 if (!isInQuietMode)
                 {
+                    if (!(SystemParameters.PrimaryScreenWidth > 1280 &&
+                       SystemParameters.PrimaryScreenHeight > 768))
+                    {
+                        if (MessageBox.Show("Some features may not work properly on screen resolutions lower than 1280x760. Do you want to continue?"
+                            , $"{ProductConstants.PRODUCT_NAME} Setup"
+                            , MessageBoxButton.YesNo
+                            , MessageBoxImage.Warning) == MessageBoxResult.No)
+                        {
+                            this.Engine.Quit(1);
+                            return;
+                        }
+                    }
+
                     View.ShowDialog();
                 }
                 else if (LaunchAction.Uninstall != this.Command.Action)

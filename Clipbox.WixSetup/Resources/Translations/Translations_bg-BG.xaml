@@ -66,4 +66,5 @@
     <sys:String x:Key="TrLblAboutToUninstall">Деинсталиране на Clipbox</sys:String>
     <sys:String x:Key="TrLblReadyForUninstall">Деинсталирайки Clipbox, Вие ще изгубите всички клипборд записи, съхранени локално на този копютър.</sys:String>
     <sys:String x:Key="TrLblReadyForUninstallConfirm">Сигурни ли сте, че искате да продължите?</sys:String>
+    <sys:String x:Key="TrLblBuildNumber">Билд:</sys:String>
 </ResourceDictionary>

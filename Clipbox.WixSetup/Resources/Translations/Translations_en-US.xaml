@@ -66,4 +66,5 @@
     <sys:String x:Key="TrLblAboutToUninstall">Uninstall Clipbox</sys:String>
     <sys:String x:Key="TrLblReadyForUninstall">By uninstalling Clipbox you will lose all clipboard entries, saved locally on this computer.</sys:String>
     <sys:String x:Key="TrLblReadyForUninstallConfirm">Are you sure you want to proceed?</sys:String>
+    <sys:String x:Key="TrLblBuildNumber">Build:</sys:String>
 </ResourceDictionary>

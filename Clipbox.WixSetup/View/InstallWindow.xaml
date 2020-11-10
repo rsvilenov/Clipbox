@@ -434,8 +434,7 @@
                 HorizontalAlignment="Left"
                 VerticalAlignment="Bottom"
                 FontSize="14"
-                Foreground="LightGray"
-                Text="{Binding VersionString}">
+                Foreground="LightGray">
                 <Run Text="{DynamicResource TrLblInstallerVersion}" />
                 <Run Text="{Binding VersionString}" />
             </TextBlock>
@@ -464,6 +463,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <ContentControl
                     Grid.Row="0"
@@ -541,6 +541,26 @@
                         TextAlignment="Center"
                         TextDecorations="Underline" />
 
+                </Grid>
+                <Grid
+                    Grid.Row="2"
+                    Margin="15,10"
+                    VerticalAlignment="Bottom">
+                    <TextBlock
+                        DockPanel.Dock="Left"
+                        FontSize="14"
+                        Foreground="Gray">
+                        <Run Text="{DynamicResource TrLblBuildNumber}" />
+                        <Run Text="{Binding BuildNumberString}" />
+                    </TextBlock>
+
+                    <TextBlock
+                        HorizontalAlignment="Right"
+                        FontSize="14"
+                        Foreground="Gray">
+                        <Run Text="©" />
+                        <Run Text="{x:Static mainNs:ProductConstants.COMPANY_NAME}" />
+                    </TextBlock>
                 </Grid>
             </Grid>
 
@@ -684,6 +704,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
             <ContentControl
                 Grid.Row="0"
@@ -734,6 +755,26 @@
                     Content="{DynamicResource TrBtnUpdate}"
                     FontSize="18"
                     Style="{StaticResource BtnDefaultAction}" />
+            </Grid>
+            <Grid
+                Grid.Row="2"
+                Margin="15,10"
+                VerticalAlignment="Bottom">
+                <TextBlock
+                    DockPanel.Dock="Left"
+                    FontSize="14"
+                    Foreground="Gray">
+                    <Run Text="{DynamicResource TrLblBuildNumber}" />
+                    <Run Text="{Binding BuildNumberString}" />
+                </TextBlock>
+
+                <TextBlock
+                    HorizontalAlignment="Right"
+                    FontSize="14"
+                    Foreground="Gray">
+                    <Run Text="©" />
+                    <Run Text="{x:Static mainNs:ProductConstants.COMPANY_NAME}" />
+                </TextBlock>
             </Grid>
         </Grid>
 
