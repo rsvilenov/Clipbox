@@ -40,7 +40,9 @@ namespace Clipbox.WixSetup
                 if (!isInQuietMode)
                 {
                     if (!(SystemParameters.PrimaryScreenWidth > 1280 &&
-                       SystemParameters.PrimaryScreenHeight > 768))
+                       SystemParameters.PrimaryScreenHeight > 768)
+                       && LaunchAction.Uninstall != this.Command.Action
+                       && LaunchAction.Modify != this.Command.Action)
                     {
                         if (MessageBox.Show("Some features may not work properly on screen resolutions lower than 1280x760. Do you want to continue?"
                             , $"{ProductConstants.PRODUCT_NAME} Setup"
