@@ -75,7 +75,14 @@ namespace Clipbox.ViewModels
 
                 if (SettingsService.GetSetting<bool>(SettingsKeys.IsAutomaticCloudSyncOfPinnedItemsEnabled))
                 {
-                    ClipboardManager.EnableDisableSyncOfItem(e.ItemId, true);
+                    try
+                    {
+                        ClipboardManager.EnableDisableSyncOfItem(e.ItemId, true);
+                    }
+                    catch (ArgumentException aex)
+                    {
+                        Debug.WriteLine(aex);
+                    }
                 }
 
                 OnClipboardEntryPinnedUnpinned(e.ItemId);
@@ -261,7 +268,15 @@ namespace Clipbox.ViewModels
                 wrapper.SyncStatus = CloudSyncStatus.SyncDisabled;
             }
 
-            ClipboardManager.EnableDisableSyncOfItem(clipboardItemId, wrapper.SyncStatus != CloudSyncStatus.SyncDisabled);
+            try
+            {
+                ClipboardManager.EnableDisableSyncOfItem(clipboardItemId, wrapper.SyncStatus != CloudSyncStatus.SyncDisabled);
+            }
+            catch (ArgumentException aex)
+            {
+                Debug.WriteLine(aex);
+            }
+
             OnSyncOfClipboardEntryEnabledOrDisabled(clipboardItemId);
         }
 
@@ -286,7 +301,14 @@ namespace Clipbox.ViewModels
                 throw new InvalidOperationException($"The view item for {clipboardItemId} is not loaded. Please load it first.");
             }
 
-            ClipboardManager.ProtectUnprotectItem(clipboardItemId, !wrapper.ViewItem.IsProtected);
+            try
+            {
+                ClipboardManager.ProtectUnprotectItem(clipboardItemId, !wrapper.ViewItem.IsProtected);
+            }
+            catch (ArgumentException aex)
+            {
+                Debug.Write(aex);
+            }
         }
 
         public void PinUnpinClipboardEntry(string clipboardItemId)
@@ -302,7 +324,14 @@ namespace Clipbox.ViewModels
                 throw new InvalidOperationException($"The view item for {clipboardItemId} is not loaded. Please load it first.");
             }
 
-            ClipboardManager.PinUnpinItem(clipboardItemId, !wrapper.ViewItem.IsPinned);
+            try
+            {
+                ClipboardManager.PinUnpinItem(clipboardItemId, !wrapper.ViewItem.IsPinned);
+            }
+            catch (ArgumentException aex)
+            {
+                Debug.Write(aex);
+            }
         }
 
         public bool CanPinUnpinItem(string clipboardItemId)

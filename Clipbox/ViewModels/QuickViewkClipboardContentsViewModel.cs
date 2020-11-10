@@ -123,7 +123,17 @@ namespace Clipbox.ViewModels
                 .OrderByDescending(w => w.ClipboardItem.TimestampInfo.ModifiedDateUtcTicks)
                 .Skip(maxPinnedItemsToRemain)
                 .ToList()
-                .ForEach(w => ClipboardManager.PinUnpinItem(w.Id, pin: false));
+                .ForEach(w =>
+                {
+                    try
+                    {
+                        ClipboardManager.PinUnpinItem(w.Id, pin: false);
+                    }
+                    catch (ArgumentException aex)
+                    {
+                        Debug.WriteLine(aex);
+                    }
+                });
         }
 
         private void ClearAllClipboardEntriesHandler()
