@@ -68,6 +68,7 @@ namespace Clipbox
         AutoClearClipboardService _autoClearClipboardService;
         UpdateNotificationService _updateNotificationService;
         IAboutWindowService _aboutWindowService;
+        IPopupBaloonService _popupBaloonService;
 
         private int _shutdownSequenceCallCount;
 
@@ -221,6 +222,8 @@ namespace Clipbox
 
             _updateNotificationService = new UpdateNotificationService();
 
+            _popupBaloonService = new PopupBaloonService(_clipboardManager, _settingsService, _updateNotificationService);
+
             // this view can show a little bit slower so we will not keep its instance alive the whole time - we will create it upon request within the service
             _mainClipboardViewWindowService = new MainClipboardViewWindowService(_clipboardManager,
                 _previewGenerationService,
@@ -357,14 +360,7 @@ namespace Clipbox
         {
             if (e.Key == SettingsKeys.IsClipboardTrackingEnabled)
             {
-                if ((bool)e.Value)
-                {
-                    _clipboardManager.IsClipboardTrackingEnabled = true;
-                }
-                else
-                {
-                    _clipboardManager.IsClipboardTrackingEnabled = false;
-                }
+                _clipboardManager.IsClipboardTrackingEnabled = (bool)e.Value;
             }
             else if (e.Key == SettingsKeys.LocalizationCulture)
             {
@@ -375,9 +371,8 @@ namespace Clipbox
         private string CreateOrGetAppGuid()
         {
             const string APP_GUID_PERSISTENCE_KEY = "appGuid";
-            
-            string appGuid = null;
 
+            string appGuid;
             if (_persistenceProvider.CheckIfKeyExists(APP_GUID_PERSISTENCE_KEY))
             {
                 appGuid = _persistenceProvider.ReadText(APP_GUID_PERSISTENCE_KEY);

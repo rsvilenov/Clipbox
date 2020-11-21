@@ -13,5 +13,9 @@ namespace Clipbox.Win32.Native
 
         [DllImport(ExternDll.Shell32, CharSet = CharSet.Auto)]
         public static extern int ExtractIconEx(string lpszFile, int nIconIndex, IntPtr[] phIconLarge, IntPtr[] phIconSmall, int nIcons);
+
+        [DllImport(ExternDll.Shell32)]
+        internal static extern IntPtr SHAppBarMessage(int msg, ref NativeStructures.APPBARDATA data);
+
     }
 }

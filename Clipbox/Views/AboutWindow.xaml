@@ -41,7 +41,6 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Clipbox.Infrastructure.UI;component/Resources/Styles/Style.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/Clipbox.Infrastructure.UI.CustomControls;component/Styles/ToggleSwitchWindows10.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />

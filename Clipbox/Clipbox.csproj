@@ -141,6 +141,7 @@
     <Compile Include="Services\Interfaces\IGuardCommunicationService.cs" />
     <Compile Include="Services\Interfaces\ILocalizationService.cs" />
     <Compile Include="Services\Interfaces\IPauseService.cs" />
+    <Compile Include="Services\Interfaces\IPopupBaloonService.cs" />
     <Compile Include="Services\Interfaces\IRebuildIndexWindowService.cs" />
     <Compile Include="Services\Interfaces\ISearchProviderSelectorService.cs" />
     <Compile Include="Services\Interfaces\ISearchService.cs" />
@@ -148,6 +149,7 @@
     <Compile Include="Services\Interfaces\IUpdateNotificationService.cs" />
     <Compile Include="Services\LocalizationService.cs" />
     <Compile Include="Services\PauseService.cs" />
+    <Compile Include="Services\PopupBaloonService.cs" />
     <Compile Include="Services\RebuildIndexWindowService.cs" />
     <Compile Include="Services\SearchProviderSelectorService.cs" />
     <Compile Include="Services\SearchService.cs" />
@@ -283,6 +285,9 @@
     <Compile Include="Views\LoadingPopupGovernor.cs" />
     <Compile Include="Views\MainViewClipboardContents.xaml.cs">
       <DependentUpon>MainViewClipboardContents.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PopupBaloon.xaml.cs">
+      <DependentUpon>PopupBaloon.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\QuickViewClipboardContents.xaml.cs">
       <DependentUpon>QuickViewClipboardContents.xaml</DependentUpon>
@@ -542,6 +547,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="Views\PopupBaloon.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\QuickViewClipboardContents.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -876,6 +885,7 @@
   <ItemGroup>
     <Resource Include="Resources\Images\LogoNoTransparent.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

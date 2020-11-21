@@ -355,5 +355,15 @@ namespace Clipbox.Win32.Native
             [MarshalAs(UnmanagedType.U4)] public UInt32 cbSize;
             [MarshalAs(UnmanagedType.U4)] public UInt32 dwTime;
         }
+
+        internal struct APPBARDATA
+        {
+            public int cbSize;
+            public IntPtr hWnd;
+            public int uCallbackMessage;
+            public int uEdge;
+            public RECT rc;
+            public IntPtr lParam;
+        }
     }
 }
