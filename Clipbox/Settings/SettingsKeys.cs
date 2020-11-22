@@ -96,6 +96,11 @@ namespace Clipbox.Settings
         
         public static SettingKey<int> ClipboardOpenningTimeoutMs = new SettingKey<int>(nameof(ClipboardOpenningTimeoutMs), 500);
 
+        /// <summary>
+        /// This contains a list of all help tooltips that has already been shown and the user saw them 
+        /// </summary>
+        public static SettingKey<string> HelpToopTipsSeenList = new SettingKey<string>(nameof(HelpToopTipsSeenList), string.Empty);
+
 
         /// <summary>
         /// This is a special key - it is false only upon the first start of the application. It should not be resettable by the user.

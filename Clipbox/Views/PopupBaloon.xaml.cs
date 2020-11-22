@@ -1,8 +1,10 @@
-﻿using Clipbox.Infrastructure.UI.Windows;
+﻿using Clipbox.Infrastructure.UI;
+using Clipbox.Infrastructure.UI.Windows;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using System;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media.Animation;
 
 namespace Clipbox.Views
@@ -14,19 +16,28 @@ namespace Clipbox.Views
     {
         private const int FADE_IN_DURATION_MS = 1000;
 
-        private readonly bool _areFadeAnimationsEnabled;
+        public ICommand CloseCommand { get; set; }
+
+        public event EventHandler UserConfirmed;
 
         public PopupBaloon(ISettingsService settingsService)
         {
             InitializeComponent();
             this.mainGrid.DataContext = this;
 
-            _areFadeAnimationsEnabled = settingsService.GetSetting<bool>(SettingsKeys.AreFadeAnimationsEnabled);
-            if (_areFadeAnimationsEnabled)
+            CloseCommand = new DelegateCommand(CloseCommandHandler);
+
+            if (settingsService.GetSetting<bool>(SettingsKeys.AreFadeAnimationsEnabled))
             {
                 Opacity = 0;
                 Shown += PopupBaloon_Shown;
             }
+        }
+
+        private void CloseCommandHandler()
+        {
+            UserConfirmed?.Invoke(this, new EventArgs());
+            this.Close();
         }
 
         private void PopupBaloon_Shown(object sender, EventArgs e)

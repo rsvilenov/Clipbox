@@ -129,6 +129,9 @@
   <data name="BTN_ABOUT_WINDOW_REPORT" xml:space="preserve">
     <value>Report a Problem</value>
   </data>
+  <data name="BTN_BALOON_GOT_IT" xml:space="preserve">
+    <value>Got it!</value>
+  </data>
   <data name="BTN_LBL_Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
@@ -210,6 +213,9 @@ from this window except the pinned ones.</value>
   </data>
   <data name="LBL_APPSELECTOR_TITLE" xml:space="preserve">
     <value>Filter by source application and/or window title</value>
+  </data>
+  <data name="LBL_BALOON_QV_REMINDER" xml:space="preserve">
+    <value>Press and hold Ctrl+V to loop through your copied items. It works just like Alt+Tab.</value>
   </data>
   <data name="LBL_CONTEXT_MENU_30_MIN" xml:space="preserve">
     <value>30 min</value>

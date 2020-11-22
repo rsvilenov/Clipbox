@@ -97,6 +97,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Got it!.
+        /// </summary>
+        internal static string BTN_BALOON_GOT_IT {
+            get {
+                return ResourceManager.GetString("BTN_BALOON_GOT_IT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         internal static string BTN_LBL_Cancel {
@@ -337,6 +346,15 @@ namespace Clipbox.Resources.Translations {
         internal static string LBL_APPSELECTOR_TITLE {
             get {
                 return ResourceManager.GetString("LBL_APPSELECTOR_TITLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Press and hold Ctrl+V to loop through your copied items. It works just like Alt+Tab..
+        /// </summary>
+        internal static string LBL_BALOON_QV_REMINDER {
+            get {
+                return ResourceManager.GetString("LBL_BALOON_QV_REMINDER", resourceCulture);
             }
         }
         

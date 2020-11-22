@@ -1,8 +1,12 @@
 ﻿using Clipbox.ExtendedClipboard.Interfaces;
+using Clipbox.Infrastructure.Serialization;
+using Clipbox.Infrastructure.UI.Localization;
 using Clipbox.Services.Interfaces;
+using Clipbox.Settings;
 using Clipbox.Views;
 using Clipbox.Win32;
 using System;
+using System.Collections.Generic;
 using System.Windows;
 
 namespace Clipbox.Services
@@ -21,6 +25,14 @@ namespace Clipbox.Services
         private int _requestedShowPosY;
         private const int BALOON_HEIGHT = 300;
         private const int BALOON_WIDTH = 550;
+        private List<string> _seenToolTips;
+
+        private const string TTP_QV_REMINDER_INITIAL = nameof(TTP_QV_REMINDER_INITIAL);
+        private readonly Dictionary<string, string> _ttpNameTranslationMapping = new Dictionary<string, string>
+        {
+            { TTP_QV_REMINDER_INITIAL, "LBL_BALOON_QV_REMINDER" }
+        };
+
         public PopupBaloonService(IClipboardManager clipboardManager, 
             ISettingsService settingsService,
             IUpdateNotificationService updateNotificationService)
@@ -29,10 +41,23 @@ namespace Clipbox.Services
             _updateNotificationService = updateNotificationService;
             _updateNotificationService.UpdateAvailable += _updateNotificationService_UpdateAvailable;
 
-            _clipboardManager = clipboardManager;
-            _clipboardManager.ItemAdded += _clipboardManager_ItemAdded;
+            _settingsService.SettingChanged += _settingsService_SettingChanged;
 
-            ShowBaloonWithText("some test");
+            _clipboardManager = clipboardManager;
+
+            _seenToolTips = GetSeenTooltips();
+            if (!CheckIsTooltipSeen(TTP_QV_REMINDER_INITIAL))
+            {
+                _clipboardManager.ItemAdded += _clipboardManager_ItemAdded;
+            }
+        }
+
+        private void _settingsService_SettingChanged(object sender, EventArgsClasses.SettingsEventArgs e)
+        {
+            if (e.Key == SettingsKeys.HelpToopTipsSeenList)
+            {
+                _seenToolTips = GetSeenTooltips();
+            }
         }
 
         private void _updateNotificationService_UpdateAvailable(object sender, EventArgs e)
@@ -42,19 +67,23 @@ namespace Clipbox.Services
 
         private void _clipboardManager_ItemAdded(object sender, ExtendedClipboard.EventArgs.ItemAddedEventArgs e)
         {
-            if (++_numCopiedItemsSinceStartup >= N_COPIED_ITEMS_TO_SHOW_QV_INFOBALOON_AFTER)
+            if (++_numCopiedItemsSinceStartup >= N_COPIED_ITEMS_TO_SHOW_QV_INFOBALOON_AFTER
+                && !CheckIsTooltipSeen(TTP_QV_REMINDER_INITIAL))
             {
-                ShowQvInfoBaloon();
+                _clipboardManager.ItemAdded -= _clipboardManager_ItemAdded;
+                ShowBaloon(TTP_QV_REMINDER_INITIAL);
             }
         }
 
-        private void ShowQvInfoBaloon()
+        private void ShowBaloon(string baloonName)
         {
+            if (!_ttpNameTranslationMapping.ContainsKey(baloonName))
+            {
+                return;
+            }
 
-        }
+            string text = TranslationSourcePool.Instance.GetSource().GetTranslation(_ttpNameTranslationMapping[baloonName]);
 
-        private void ShowBaloonWithText(string text)
-        {
             TaskbarUtils.TaskbarInfo tbInfo = TaskbarUtils.GetTaskbarInfo();
             MonitorUtils.DisplayMonitor dm = MonitorUtils.GetPrimaryMonitor();
             if (dm.Bounds.Contains(tbInfo.Rectangle))
@@ -108,23 +137,93 @@ namespace Clipbox.Services
                         // because setting them here causes unpredictable behaviour with high DPI settings
                         Top = _requestedShowPosY,
                         Left = _requestedShowPosX,
-                        Text = text
+                        Text = text,
+                        Tag = baloonName
                     };
 
                     _baloon.SourceInitialized += Baloon_SourceInitialized;
+                    _baloon.UserConfirmed += _baloon_UserConfirmed;
+                    _baloon.Closing += _baloon_Closing;
                     _baloon.Show();
                 }));
         }
 
-        private void Baloon_SourceInitialized(object sender, EventArgs e)
+        private void _baloon_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             _baloon.SourceInitialized -= Baloon_SourceInitialized;
+            _baloon.UserConfirmed -= _baloon_UserConfirmed;
+            _baloon.Closing -= _baloon_Closing;
+        }
 
+        private void _baloon_UserConfirmed(object sender, EventArgs e)
+        {
+            string toolTipName = ((PopupBaloon)sender).Tag as string;
+            if (toolTipName == null)
+            {
+                throw new InvalidOperationException("The tooltip does not have a name (tag)");
+            }
+
+            StoreIsTooltipSeen(toolTipName);
+        }
+
+        private void Baloon_SourceInitialized(object sender, EventArgs e)
+        {
             WindowUtils.SetWindowsPosition(_baloon.Handle,
                 _requestedShowPosX,
                 _requestedShowPosY,
                 BALOON_WIDTH,
                 BALOON_HEIGHT);
+        }
+
+        private List<string> GetSeenTooltips()
+        {
+            string xml = _settingsService.GetSetting<string>(SettingsKeys.HelpToopTipsSeenList);
+            if (string.IsNullOrEmpty(xml))
+            {
+                return new List<string>();
+            }
+
+            List<string> ttpList = null;
+
+            try
+            {
+                ttpList = XmlSerialization.Deserialize<List<string>>(xml);
+            }
+            catch
+            {
+                // TODO: log
+            }
+
+            return ttpList;
+        }
+
+        private bool CheckIsTooltipSeen(string toolTipName)
+        {
+            if (_seenToolTips == null)
+            {
+                // there was an error. do not show the tooltip again
+                return true;
+            }
+            else
+            {
+                return _seenToolTips.Contains(toolTipName);
+            }
+        }
+
+        private void StoreIsTooltipSeen(string toolTipName)
+        {
+            if (_seenToolTips != null)
+            {
+                _seenToolTips.Add(toolTipName);
+                try
+                {
+                    _settingsService.SetSetting(SettingsKeys.HelpToopTipsSeenList, XmlSerialization.Serialize(_seenToolTips));
+                }
+                catch
+                {
+                    // TODO: log
+                }
+            }
         }
     }
 }

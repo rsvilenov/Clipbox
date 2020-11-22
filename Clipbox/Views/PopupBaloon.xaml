@@ -6,6 +6,7 @@
     xmlns:customControls="clr-namespace:Clipbox.Infrastructure.UI.CustomControls;assembly=Clipbox.Infrastructure.UI.CustomControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:infWnd="clr-namespace:Clipbox.Infrastructure.UI.Windows;assembly=Clipbox.Infrastructure.UI"
+    xmlns:loc="clr-namespace:Clipbox.Infrastructure.UI.Localization;assembly=Clipbox.Infrastructure.UI.Localization"
     xmlns:local="clr-namespace:Clipbox.Views"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     d:DesignHeight="350"
@@ -13,6 +14,7 @@
     Background="{DynamicResource TaskbarColorBrush}"
     ResizeMode="NoResize"
     ScaleMode="Custom"
+    Topmost="True"
     WindowStyle="None"
     mc:Ignorable="d">
     <Window.Resources>
@@ -50,6 +52,7 @@
             MaxWidth="30"
             HorizontalAlignment="Right"
             VerticalAlignment="Stretch"
+            Command="{Binding CloseCommand}"
             Style="{DynamicResource BtnWindowClose}" />
 
         <ContentControl
@@ -64,12 +67,15 @@
         <TextBlock
             Grid.Row="1"
             Grid.Column="1"
+            Grid.ColumnSpan="2"
+            Margin="0,0,10,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
             FontSize="18"
             Foreground="#f0f0f0"
             Text="{Binding Text}"
-            TextAlignment="Justify" />
+            TextAlignment="Justify"
+            TextWrapping="Wrap" />
 
         <Button
             Grid.Row="2"
@@ -78,10 +84,13 @@
             Margin="0,0,20,20"
             HorizontalAlignment="Right"
             VerticalAlignment="Stretch"
-            Content="Got it!"
+            BorderBrush="Gray"
+            Command="{Binding CloseCommand}"
             FontSize="16"
             Foreground="White"
-            Style="{DynamicResource IconButton}" />
+            Style="{DynamicResource IconButton}">
+            <TextBlock Margin="10,5,10,5" Text="{loc:Localize BTN_BALOON_GOT_IT}" />
+        </Button>
 
     </Grid>
 </infWnd:AcryllicWindow>
