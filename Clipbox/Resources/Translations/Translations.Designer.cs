@@ -106,6 +106,24 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Later.
+        /// </summary>
+        internal static string BTN_BALOON_UPDATE_LATER {
+            get {
+                return ResourceManager.GetString("BTN_BALOON_UPDATE_LATER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update now.
+        /// </summary>
+        internal static string BTN_BALOON_UPDATE_NOW {
+            get {
+                return ResourceManager.GetString("BTN_BALOON_UPDATE_NOW", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
         internal static string BTN_LBL_Cancel {
@@ -355,6 +373,15 @@ namespace Clipbox.Resources.Translations {
         internal static string LBL_BALOON_QV_REMINDER {
             get {
                 return ResourceManager.GetString("LBL_BALOON_QV_REMINDER", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An new version of Clipbox is available. Click the button below to get in now..
+        /// </summary>
+        internal static string LBL_BALOON_UPDATE_AVAILABLE {
+            get {
+                return ResourceManager.GetString("LBL_BALOON_UPDATE_AVAILABLE", resourceCulture);
             }
         }
         

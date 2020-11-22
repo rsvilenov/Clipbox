@@ -7,6 +7,7 @@ using Clipbox.Views;
 using Clipbox.Win32;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace Clipbox.Services
@@ -14,6 +15,9 @@ namespace Clipbox.Services
     public class PopupBaloonService : IPopupBaloonService
     {
         private const int N_COPIED_ITEMS_TO_SHOW_QV_INFOBALOON_AFTER = 3;
+        private const int DELAY_SHOW_UPDATE_NOTIFICATION_MS = 5 * 60 * 1000; // 5 min
+        private const int BALOON_HEIGHT = 300;
+        private const int BALOON_WIDTH = 550;
 
         private readonly IClipboardManager _clipboardManager;
         private readonly ISettingsService _settingsService;
@@ -23,14 +27,27 @@ namespace Clipbox.Services
         private PopupBaloon _baloon;
         private int _requestedShowPosX;
         private int _requestedShowPosY;
-        private const int BALOON_HEIGHT = 300;
-        private const int BALOON_WIDTH = 550;
         private List<string> _seenToolTips;
+        private bool _isBaloonOpen;
 
-        private const string TTP_QV_REMINDER_INITIAL = nameof(TTP_QV_REMINDER_INITIAL);
-        private readonly Dictionary<string, string> _ttpNameTranslationMapping = new Dictionary<string, string>
+        private const string BLN_QV_REMINDER_INITIAL = nameof(BLN_QV_REMINDER_INITIAL);
+        private const string BLN_UPDATE_AVAILABLE = nameof(BLN_UPDATE_AVAILABLE);
+        private readonly Dictionary<string, BaloonInfo> _baloonNameTranslationMapping = new Dictionary<string, BaloonInfo>
         {
-            { TTP_QV_REMINDER_INITIAL, "LBL_BALOON_QV_REMINDER" }
+            { 
+                BLN_QV_REMINDER_INITIAL, new BaloonInfo
+                {
+                    TextTranslationKey = "LBL_BALOON_QV_REMINDER"
+                }
+            },
+            {
+                BLN_UPDATE_AVAILABLE, new BaloonInfo
+                {
+                    TextTranslationKey = "LBL_BALOON_UPDATE_AVAILABLE",
+                    CustomActionTranslationKey ="BTN_BALOON_UPDATE_NOW",
+                    CustomActionDismissTranslationKey = "BTN_BALOON_UPDATE_LATER"
+                }
+            }
         };
 
         public PopupBaloonService(IClipboardManager clipboardManager, 
@@ -46,10 +63,27 @@ namespace Clipbox.Services
             _clipboardManager = clipboardManager;
 
             _seenToolTips = GetSeenTooltips();
-            if (!CheckIsTooltipSeen(TTP_QV_REMINDER_INITIAL))
+            if (!CheckIsTooltipSeen(BLN_QV_REMINDER_INITIAL))
             {
                 _clipboardManager.ItemAdded += _clipboardManager_ItemAdded;
             }
+
+            if (_updateNotificationService.IsUpdateAvailable)
+            {
+                ShowUpdateNotificationWithDelay();
+            }
+        }
+
+        private void ShowUpdateNotificationWithDelay()
+        {
+            Task.Delay(DELAY_SHOW_UPDATE_NOTIFICATION_MS)
+                                .ContinueWith((t) =>
+                                {
+                                    if (!CheckIsTooltipSeen(BLN_UPDATE_AVAILABLE))
+                                    {
+                                        TryShowBaloon(BLN_UPDATE_AVAILABLE);
+                                    }
+                                });
         }
 
         private void _settingsService_SettingChanged(object sender, EventArgsClasses.SettingsEventArgs e)
@@ -62,27 +96,50 @@ namespace Clipbox.Services
 
         private void _updateNotificationService_UpdateAvailable(object sender, EventArgs e)
         {
-            
+            if (!CheckIsTooltipSeen(BLN_UPDATE_AVAILABLE))
+            {
+                TryShowBaloon(BLN_UPDATE_AVAILABLE);
+            }
         }
 
         private void _clipboardManager_ItemAdded(object sender, ExtendedClipboard.EventArgs.ItemAddedEventArgs e)
         {
             if (++_numCopiedItemsSinceStartup >= N_COPIED_ITEMS_TO_SHOW_QV_INFOBALOON_AFTER
-                && !CheckIsTooltipSeen(TTP_QV_REMINDER_INITIAL))
+                && !CheckIsTooltipSeen(BLN_QV_REMINDER_INITIAL))
             {
                 _clipboardManager.ItemAdded -= _clipboardManager_ItemAdded;
-                ShowBaloon(TTP_QV_REMINDER_INITIAL);
+                TryShowBaloon(BLN_QV_REMINDER_INITIAL);
+            }
+        }
+
+        private void CustomActionRequested(string baloonName)
+        {
+            if (baloonName == BLN_UPDATE_AVAILABLE)
+            {
+                _updateNotificationService.LaunchUpdate();
             }
         }
 
         private void ShowBaloon(string baloonName)
         {
-            if (!_ttpNameTranslationMapping.ContainsKey(baloonName))
+            if (!_baloonNameTranslationMapping.ContainsKey(baloonName))
             {
                 return;
             }
 
-            string text = TranslationSourcePool.Instance.GetSource().GetTranslation(_ttpNameTranslationMapping[baloonName]);
+            BaloonInfo bi = _baloonNameTranslationMapping[baloonName];
+
+            string text = TranslationSourcePool.Instance.GetSource().GetTranslation(bi.TextTranslationKey);
+            string customActionText = null;
+            if (!string.IsNullOrEmpty(bi.CustomActionTranslationKey))
+            {
+                customActionText = TranslationSourcePool.Instance.GetSource().GetTranslation(bi.CustomActionTranslationKey);
+            }
+            string customActionDismissText = null;
+            if (!string.IsNullOrEmpty(bi.CustomActionDismissTranslationKey))
+            {
+                customActionDismissText = TranslationSourcePool.Instance.GetSource().GetTranslation(bi.CustomActionDismissTranslationKey);
+            }
 
             TaskbarUtils.TaskbarInfo tbInfo = TaskbarUtils.GetTaskbarInfo();
             MonitorUtils.DisplayMonitor dm = MonitorUtils.GetPrimaryMonitor();
@@ -129,6 +186,12 @@ namespace Clipbox.Services
             Application.Current.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal,
                 new Action(() =>
                 {
+                    if (_isBaloonOpen)
+                    {
+                        return;
+                    }
+
+                    _isBaloonOpen = true;
                     _baloon = new PopupBaloon(_settingsService)
                     {
                         Width = BALOON_WIDTH,
@@ -138,32 +201,64 @@ namespace Clipbox.Services
                         Top = _requestedShowPosY,
                         Left = _requestedShowPosX,
                         Text = text,
+                        CustomActionButtonText = customActionText,
+                        CustomActionDismissButtonText = customActionDismissText,
                         Tag = baloonName
                     };
 
                     _baloon.SourceInitialized += Baloon_SourceInitialized;
                     _baloon.UserConfirmed += _baloon_UserConfirmed;
+                    _baloon.CustomActionRequested += _baloon_CustomActionRequested;
                     _baloon.Closing += _baloon_Closing;
                     _baloon.Show();
                 }));
+        }
+
+        private void TryShowBaloon(string baloonName)
+        {
+            try
+            {
+                ShowBaloon(baloonName);
+            }
+            catch
+            {
+                // TODO: log
+            }
+        }
+
+        private void _baloon_CustomActionRequested(object sender, EventArgs e)
+        {
+            string baloon = ((PopupBaloon)sender).Tag as string;
+            if (baloon == null)
+            {
+                throw new InvalidOperationException("The baloon does not have a name (tag)");
+            }
+
+            Task.Run(() =>
+            {
+                CustomActionRequested(baloon);
+            });
         }
 
         private void _baloon_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             _baloon.SourceInitialized -= Baloon_SourceInitialized;
             _baloon.UserConfirmed -= _baloon_UserConfirmed;
+            _baloon.CustomActionRequested -= _baloon_CustomActionRequested;
             _baloon.Closing -= _baloon_Closing;
+
+            _isBaloonOpen = false;
         }
 
         private void _baloon_UserConfirmed(object sender, EventArgs e)
         {
-            string toolTipName = ((PopupBaloon)sender).Tag as string;
-            if (toolTipName == null)
+            string baloonName = ((PopupBaloon)sender).Tag as string;
+            if (baloonName == null)
             {
-                throw new InvalidOperationException("The tooltip does not have a name (tag)");
+                throw new InvalidOperationException("The baloon does not have a name (tag)");
             }
 
-            StoreIsTooltipSeen(toolTipName);
+            StoreIsTooltipSeen(baloonName);
         }
 
         private void Baloon_SourceInitialized(object sender, EventArgs e)
@@ -225,5 +320,14 @@ namespace Clipbox.Services
                 }
             }
         }
+
+
+        public struct BaloonInfo
+        {
+            public string TextTranslationKey { get; set; }
+            public string CustomActionTranslationKey { get; set; }
+            public string CustomActionDismissTranslationKey { get; set; }
+        }
+
     }
 }

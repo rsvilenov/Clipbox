@@ -17,8 +17,10 @@ namespace Clipbox.Views
         private const int FADE_IN_DURATION_MS = 1000;
 
         public ICommand CloseCommand { get; set; }
+        public ICommand CustomActionCommand { get; set; }
 
         public event EventHandler UserConfirmed;
+        public event EventHandler CustomActionRequested;
 
         public PopupBaloon(ISettingsService settingsService)
         {
@@ -26,12 +28,19 @@ namespace Clipbox.Views
             this.mainGrid.DataContext = this;
 
             CloseCommand = new DelegateCommand(CloseCommandHandler);
+            CustomActionCommand = new DelegateCommand(CustomActionCommandHandler);
 
             if (settingsService.GetSetting<bool>(SettingsKeys.AreFadeAnimationsEnabled))
             {
                 Opacity = 0;
                 Shown += PopupBaloon_Shown;
             }
+        }
+
+        private void CustomActionCommandHandler()
+        {
+            CustomActionRequested?.Invoke(this, new EventArgs());
+            this.Close();
         }
 
         private void CloseCommandHandler()
@@ -56,5 +65,25 @@ namespace Clipbox.Views
 
         public static readonly DependencyProperty TextProperty =
             DependencyProperty.Register(nameof(Text), typeof(string), typeof(PopupBaloon), new PropertyMetadata(string.Empty));
+
+
+        public string CustomActionButtonText
+        {
+            get { return (string)GetValue(CustomActionButtonTextProperty); }
+            set { SetValue(CustomActionButtonTextProperty, value); }
+        }
+
+        public static readonly DependencyProperty CustomActionButtonTextProperty =
+            DependencyProperty.Register(nameof(CustomActionButtonText), typeof(string), typeof(PopupBaloon), new PropertyMetadata(string.Empty));
+
+        public string CustomActionDismissButtonText
+        {
+            get { return (string)GetValue(CustomActionDismissButtonTextProperty); }
+            set { SetValue(CustomActionDismissButtonTextProperty, value); }
+        }
+
+        public static readonly DependencyProperty CustomActionDismissButtonTextProperty =
+            DependencyProperty.Register(nameof(CustomActionDismissButtonText), typeof(string), typeof(PopupBaloon), new PropertyMetadata(string.Empty));
+
     }
 }

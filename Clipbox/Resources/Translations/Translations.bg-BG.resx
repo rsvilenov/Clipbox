@@ -132,6 +132,12 @@
   <data name="BTN_BALOON_GOT_IT" xml:space="preserve">
     <value>Разбрах!</value>
   </data>
+  <data name="BTN_BALOON_UPDATE_LATER" xml:space="preserve">
+    <value>По-късно</value>
+  </data>
+  <data name="BTN_BALOON_UPDATE_NOW" xml:space="preserve">
+    <value>Обновете сега</value>
+  </data>
   <data name="BTN_LBL_Cancel" xml:space="preserve">
     <value>Отмени</value>
   </data>
@@ -216,6 +222,9 @@
   </data>
   <data name="LBL_BALOON_QV_REMINDER" xml:space="preserve">
     <value>Натиснете и задръжте Ctrl+V, за да видите копираните си неща. Работи точно като Alt+Tab.</value>
+  </data>
+  <data name="LBL_BALOON_UPDATE_AVAILABLE" xml:space="preserve">
+    <value>Нова версия на Clipbox е налична. Кликнете бутона отдолу, за да я инсталирате.</value>
   </data>
   <data name="LBL_CONTEXT_MENU_30_MIN" xml:space="preserve">
     <value>30 мин</value>

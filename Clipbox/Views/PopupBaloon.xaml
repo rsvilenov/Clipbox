@@ -53,7 +53,7 @@
             HorizontalAlignment="Right"
             VerticalAlignment="Stretch"
             Command="{Binding CloseCommand}"
-            Style="{DynamicResource BtnWindowClose}" />
+            Style="{StaticResource BtnWindowClose}" />
 
         <ContentControl
             Grid.Row="1"
@@ -64,18 +64,90 @@
             Foreground="#f0f0f0"
             Template="{StaticResource LogoIcon}" />
 
-        <TextBlock
+        <Grid
             Grid.Row="1"
             Grid.Column="1"
             Grid.ColumnSpan="2"
-            Margin="0,0,10,0"
+            Margin="0,0,20,0"
             HorizontalAlignment="Left"
-            VerticalAlignment="Center"
-            FontSize="18"
-            Foreground="#f0f0f0"
-            Text="{Binding Text}"
-            TextAlignment="Justify"
-            TextWrapping="Wrap" />
+            VerticalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <TextBlock
+                Grid.Row="0"
+                Grid.ColumnSpan="2"
+                FontSize="18"
+                Foreground="#f0f0f0"
+                Text="{Binding Text}"
+                TextAlignment="Justify"
+                TextWrapping="Wrap" />
+
+            <Button
+                Grid.Row="1"
+                Grid.Column="0"
+                MinWidth="120"
+                Margin="0,30,0,0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                BorderBrush="Gray"
+                Command="{Binding CustomActionCommand}"
+                FontSize="16"
+                Foreground="White">
+                <TextBlock
+                    Margin="10,5,10,5"
+                    HorizontalAlignment="Center"
+                    Text="{Binding CustomActionButtonText}" />
+                <Button.Style>
+                    <Style BasedOn="{StaticResource IconButton}" TargetType="Button">
+                        <Setter Property="Visibility" Value="Visible" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding CustomActionButtonText}" Value="">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding CustomActionButtonText}" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+            <Button
+                Grid.Row="1"
+                Grid.Column="1"
+                MinWidth="120"
+                Margin="0,30,0,0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                BorderBrush="Gray"
+                Command="{Binding CloseCommand}"
+                FontSize="16"
+                Foreground="White">
+                <TextBlock
+                    Margin="10,5,10,5"
+                    HorizontalAlignment="Center"
+                    Text="{Binding CustomActionDismissButtonText}" />
+                <Button.Style>
+                    <Style BasedOn="{StaticResource IconButton}" TargetType="Button">
+                        <Setter Property="Visibility" Value="Visible" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding CustomActionDismissButtonText}" Value="">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding CustomActionDismissButtonText}" Value="{x:Null}">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+        </Grid>
 
         <Button
             Grid.Row="2"
@@ -87,9 +159,21 @@
             BorderBrush="Gray"
             Command="{Binding CloseCommand}"
             FontSize="16"
-            Foreground="White"
-            Style="{DynamicResource IconButton}">
+            Foreground="White">
             <TextBlock Margin="10,5,10,5" Text="{loc:Localize BTN_BALOON_GOT_IT}" />
+            <Button.Style>
+                <Style BasedOn="{StaticResource IconButton}" TargetType="Button">
+                    <Setter Property="Visibility" Value="Collapsed" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding CustomActionButtonText}" Value="">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding CustomActionButtonText}" Value="{x:Null}">
+                            <Setter Property="Visibility" Value="Visible" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
         </Button>
 
     </Grid>
