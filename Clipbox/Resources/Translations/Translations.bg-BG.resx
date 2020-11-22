@@ -224,7 +224,7 @@
     <value>Натиснете и задръжте Ctrl+V, за да видите копираните си неща. Работи точно като Alt+Tab.</value>
   </data>
   <data name="LBL_BALOON_UPDATE_AVAILABLE" xml:space="preserve">
-    <value>Нова версия на Clipbox е налична. Кликнете бутона отдолу, за да я инсталирате.</value>
+    <value>Нова версия на Clipbox е налична.</value>
   </data>
   <data name="LBL_CONTEXT_MENU_30_MIN" xml:space="preserve">
     <value>30 мин</value>

@@ -377,7 +377,7 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An new version of Clipbox is available. Click the button below to get in now..
+        ///   Looks up a localized string similar to An new version of Clipbox is available..
         /// </summary>
         internal static string LBL_BALOON_UPDATE_AVAILABLE {
             get {

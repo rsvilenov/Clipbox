@@ -224,7 +224,7 @@ from this window except the pinned ones.</value>
     <value>Press and hold Ctrl+V to loop through your copied items. It works just like Alt+Tab.</value>
   </data>
   <data name="LBL_BALOON_UPDATE_AVAILABLE" xml:space="preserve">
-    <value>An new version of Clipbox is available. Click the button below to get in now.</value>
+    <value>An new version of Clipbox is available.</value>
   </data>
   <data name="LBL_CONTEXT_MENU_30_MIN" xml:space="preserve">
     <value>30 min</value>
