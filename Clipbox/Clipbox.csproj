@@ -289,6 +289,9 @@
     <Compile Include="Views\PopupBaloon.xaml.cs">
       <DependentUpon>PopupBaloon.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\PopupHint.xaml.cs">
+      <DependentUpon>PopupHint.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\QuickViewClipboardContents.xaml.cs">
       <DependentUpon>QuickViewClipboardContents.xaml</DependentUpon>
     </Compile>
@@ -548,6 +551,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Views\PopupBaloon.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PopupHint.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
