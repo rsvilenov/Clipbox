@@ -1,7 +1,6 @@
 ﻿using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.Extensibility.Containers;
-using Clipbox.Infrastructure.UI.DataObjects;
 using Clipbox.Infrastructure.UI.Windows.Enums;
 using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Interfaces;

@@ -1,5 +1,7 @@
 ﻿using Clipbox.Infrastructure.UI;
+using Clipbox.Infrastructure.UI.Windows;
 using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
@@ -13,6 +15,8 @@ namespace Clipbox.Views
     {
         public ICommand CloseCommand { get; set; }
         public event EventHandler ClosedByUser;
+
+        private static double _initialDpi;
 
         public PopupHint()
         {
@@ -66,6 +70,22 @@ namespace Clipbox.Views
                 Window parentWindow = Window.GetWindow(AnchorElement);
                 if (parentWindow != null && parentWindow.IsVisible)
                 {
+                    if (parentWindow is PerMonitorDpiWindow dpiWindow)
+                    {
+                        if (_initialDpi == 0)
+                        {
+                            _initialDpi = dpiWindow.CurrentDPI;
+                        }
+                        else if (_initialDpi != dpiWindow.CurrentDPI)
+                        {
+                            // popups do not position correctly when the dpi changes,
+                            // regardless of the fact that each new popup is a newly created instance...
+                            Debug.WriteLine("The dpi of the monitor has changed and the hint cannot be shown, as it does not handle dpi changes well.");
+                            IsOpen = false;
+                            return;
+                        }
+                    }
+
                     Point relativePoint;
 
                     try
@@ -81,6 +101,17 @@ namespace Clipbox.Views
 
                     HorizontalOffset = relativePoint.X + (AnchorElement.ActualWidth / 2);
                     VerticalOffset = relativePoint.Y + AnchorElement.ActualHeight;
+
+                    // if the popup falls outside of the parent window, hide it
+                    if (HorizontalOffset + ActualWidth > parentWindow.ActualWidth ||
+                        VerticalOffset + ActualHeight > parentWindow.ActualHeight)
+                    {
+                        Debug.WriteLine("The hint cannot show, because if falls outside of its parent window");
+                        IsOpen = false;
+                        return;
+                    }
+
+                    IsOpen = true;
                 }
             }
         }

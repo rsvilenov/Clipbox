@@ -95,7 +95,7 @@
             Grid.ColumnSpan="3"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch"
-            Background="{DynamicResource TaskbarColorBrush}"
+            Background="#2d2d30"
             BorderBrush="Transparent"
             BorderThickness="1" />
 

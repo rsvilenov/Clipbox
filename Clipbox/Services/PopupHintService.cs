@@ -20,6 +20,7 @@ namespace Clipbox.Services
 
         private PopupHint _currentPopupHint;
         private bool _isHintPopupOpen;
+        private bool _areHintsDisabled;
 
         public PopupHintService(ISettingsService settingsService)
         {
@@ -95,7 +96,6 @@ namespace Clipbox.Services
                                 IsTopPointing = isTopPointing,
                                 Text = text,
                                 Tag = popupName,
-                                IsOpen = true,
                                 StaysOpen = true
                             };
                         }
