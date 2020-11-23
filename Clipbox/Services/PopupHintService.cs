@@ -1,20 +1,25 @@
-﻿using Clipbox.Services.DataObjects;
+﻿using Clipbox.Infrastructure.UI.Localization;
+using Clipbox.Services.Catalogues;
+using Clipbox.Services.DataObjects;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.Views;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace Clipbox.Services
 {
     public class PopupHintService : IPopupHintService
     {
         private readonly ISettingsService _settingsService;
-
-        private SettingsStringCollection _seenToolTips;
-        private PopupHint _currentPopupHint;
         private readonly object _lockHandle;
+        private readonly SettingsStringCollection _seenToolTips;
+
+        private PopupHint _currentPopupHint;
+        private bool _isHintPopupOpen;
 
         public PopupHintService(ISettingsService settingsService)
         {
@@ -49,52 +54,114 @@ namespace Clipbox.Services
 
         public void ShowHintPopup(string popupName, FrameworkElement anchorElement, bool isTopPointing)
         {
-            if (_popupInfoDictionary.ContainsKey(popupName) 
-                && !_seenToolTips.IsInErrorState 
+            if (_popupInfoDictionary.ContainsKey(popupName)
+                && !_seenToolTips.IsInErrorState
                 && !_seenToolTips.Contains(popupName))
             {
-                _currentPopupHint = new PopupHint
-                {
-                    AnchorElement = anchorElement,
-                    IsTopPointing = isTopPointing,
-                    Text = _popupInfoDictionary[popupName],
-                    Tag = popupName
-                };
+                anchorElement.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                    new Action(() =>
+                    {
+                        try
+                        {
+                            string text = TranslationSourcePool.Instance
+                                .GetSource()
+                                .GetTranslation(_popupInfoDictionary[popupName]);
 
-                _currentPopupHint.Closed += _currentPopupHint_Closed;
+                            if (_isHintPopupOpen)
+                            {
+                                _currentPopupHint.IsOpen = false;
+                                _isHintPopupOpen = false;
+                            }
+
+                            _isHintPopupOpen = true;
+                            _currentPopupHint = new PopupHint
+                            {
+                                AnchorElement = anchorElement,
+                                IsTopPointing = isTopPointing,
+                                Text = text,
+                                Tag = popupName,
+                                IsOpen = true,
+                                StaysOpen = true
+                            };
+                        }
+                        catch
+                        {
+                            // TODO: ?
+                            return;
+                        }
+
+                        _currentPopupHint.ClosedByUser += _currentPopupHint_ClosedByUser;
+                        _currentPopupHint.IsVisibleChanged += _currentPopupHint_IsVisibleChanged;
+                    }));
             }
         }
 
-        private void _currentPopupHint_Closed(object sender, EventArgs e)
+        public void HideHintPopup()
         {
-            _currentPopupHint.Closed -= _currentPopupHint_Closed;
-
-            lock (_lockHandle)
+            if (_currentPopupHint != null)
             {
-                _seenToolTips.Add((string)_currentPopupHint.Tag);
+                _currentPopupHint?.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
+                    new Action(() =>
+                    {
+                        try
+                        {
+                            if (_currentPopupHint.IsOpen)
+                            {
+                                _currentPopupHint.IsOpen = false;
+                            }
+                        }
+                        catch
+                        {
+                            // TODO: ?
+                        }
+                    }));
+            }
+        }
 
-                if (!_seenToolTips.IsInErrorState)
+        private void _currentPopupHint_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (!(bool)e.NewValue)
+            {
+                _currentPopupHint.ClosedByUser -= _currentPopupHint_ClosedByUser;
+                _currentPopupHint.IsVisibleChanged -= _currentPopupHint_IsVisibleChanged;
+            }
+        }
+
+        private void _currentPopupHint_ClosedByUser(object sender, EventArgs e)
+        {
+            string popupName = (string)_currentPopupHint.Tag;
+
+            Task.Run(() =>
+            {
+                lock (_lockHandle)
                 {
-                    try
+                    _seenToolTips.Add(popupName);
+
+                    if (!_seenToolTips.IsInErrorState)
                     {
-                        _settingsService.SetSetting(SettingsKeys.HintToopTipsSeenList, _seenToolTips.GetXml());
-                    }
-                    catch
-                    {
-                        // TODO: log
+                        try
+                        {
+                            _settingsService.SetSetting(SettingsKeys.HintToopTipsSeenList, _seenToolTips.GetXml());
+                        }
+                        catch
+                        {
+                            // TODO: log
+                        }
                     }
                 }
-            }
+            });
+        }
+
+        private void _currentPopupHint_ToolTipClosing(object sender, System.Windows.Controls.ToolTipEventArgs e)
+        {
+            _currentPopupHint.ToolTipClosing += _currentPopupHint_ToolTipClosing;
+
+            
         }
 
         private readonly Dictionary<string, string> _popupInfoDictionary = new Dictionary<string, string>()
         {
-            { PopupNames.PP_HINT_CHARGE_CLIPBOARD, "TTP_HINT_CHARGE_CLIPBOARD" }
+            { PopupHintNames.PP_HINT_CHARGE_CLIPBOARD, "LBL_HINT_CHARGE_CLIPBOARD" }
         };
-
-        public static class PopupNames
-        {
-            public const string PP_HINT_CHARGE_CLIPBOARD = nameof(PP_HINT_CHARGE_CLIPBOARD);
-        }
     }
 }

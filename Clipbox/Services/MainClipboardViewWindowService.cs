@@ -29,6 +29,7 @@ namespace Clipbox.Services
         private readonly ISearchService _searchService;
         private readonly ICloudSynchronizationService _cloudSyncService;
         private readonly IUpdateNotificationService _updateNotificationService;
+        private readonly IPopupHintService _popupHintService;
         private readonly UIExtensionContainer _uiExtContainer;
         
         private IMainWindow _mainWindow;
@@ -60,7 +61,8 @@ namespace Clipbox.Services
             ISettingsService settingsService,
             ISearchService searchService,
             ICloudSynchronizationService cloudSyncService,
-            IUpdateNotificationService updateNotificationService)
+            IUpdateNotificationService updateNotificationService,
+            IPopupHintService popupHintService)
         {
             _clipboardManager = clipboardManager;
             _previewGenerationService = previewGenerationService;
@@ -69,6 +71,7 @@ namespace Clipbox.Services
             _searchService = searchService;
             _cloudSyncService = cloudSyncService;
             _updateNotificationService = updateNotificationService;
+            _popupHintService = popupHintService;
         }
 
         public void Close()
@@ -93,6 +96,8 @@ namespace Clipbox.Services
                         _mainWindow.Close();
                         //_mainWindow.Close();
                         _mainWindow = null;
+
+                        try { _popupHintService.HideHintPopup(); } catch { /* TODO: ? */ }
 
                         MainWindowClosed?.Invoke(this, new EventArgs());
                     }
@@ -143,7 +148,8 @@ namespace Clipbox.Services
                             dm,
                             _searchService,
                             _cloudSyncService,
-                            _updateNotificationService);
+                            _updateNotificationService,
+                            _popupHintService);
                         _mainWindow = mainWindow;
 
                         _mainWindow.ClipbardItemsCombinabilityCheckRequested += _mainWindow_ClipbardItemsCombinabilityCheckRequested;

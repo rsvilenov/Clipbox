@@ -557,6 +557,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Press this button to put the selected items into the system clipboard. You can then paste them wherever you want..
+        /// </summary>
+        internal static string LBL_HINT_CHARGE_CLIPBOARD {
+            get {
+                return ResourceManager.GetString("LBL_HINT_CHARGE_CLIPBOARD", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Incompatible items..
         /// </summary>
         internal static string LBL_MAINVIEW_INCOMPATIBLE_ITEMS {

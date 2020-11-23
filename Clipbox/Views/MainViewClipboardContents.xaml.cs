@@ -6,6 +6,8 @@ using Clipbox.Infrastructure.Threading;
 using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.Theme.Enums;
 using Clipbox.Infrastructure.UI.Utils;
+using Clipbox.Services;
+using Clipbox.Services.Catalogues;
 using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
@@ -36,6 +38,7 @@ namespace Clipbox.Views
     {
         private readonly ISettingsService _settingsService;
         private readonly IUpdateNotificationService _updateNotificationService;
+        private readonly IPopupHintService _popupHintService;
 
         private readonly int _maxNumOfItemsToLoadAtOnce;
         private readonly List<ISearchTerm> _searchTerms;
@@ -59,7 +62,8 @@ namespace Clipbox.Views
         public MainViewClipboardContents(MainViewClipboardContentsViewModel vm,
             UIExtensionContainer container,
             ISettingsService settingsService,
-            IUpdateNotificationService updateNotificationService)
+            IUpdateNotificationService updateNotificationService,
+            IPopupHintService popupHintService)
             : base(container, settingsService)
         {
             InitializeComponent();
@@ -68,6 +72,7 @@ namespace Clipbox.Views
 
             _settingsService = settingsService;
             _updateNotificationService = updateNotificationService;
+            _popupHintService = popupHintService;
 
             _cancellableTaskManager = new CancellableTaskManager();
 
@@ -847,6 +852,7 @@ namespace Clipbox.Views
                 && MainListView.AreSelectedItemsCombinable)
             {
                 LoadUIExtensionsWithDelay();
+                _popupHintService.ShowHintPopup(PopupHintNames.PP_HINT_CHARGE_CLIPBOARD, setToClipboardBtn, true);
             }
             else
             {

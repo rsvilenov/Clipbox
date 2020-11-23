@@ -495,13 +495,6 @@
                                     ToolTip="{loc:Localize TTP_MAINVIEW_BTN_SET_TO_CLIPBOARD}" />
 
                             </StackPanel>
-
-                            <local:PopupHint
-                                AnchorElement="{Binding ElementName=setToClipboardBtn}"
-                                AreFadeAnimationsEnabled="True"
-                                IsOpen="{Binding ElementName=setToClipboardBtn, Path=IsVisible, Mode=OneWay}"
-                                StaysOpen="True"
-                                Text="Some text to show" />
                         </Grid>
                     </ScrollViewer>
                 </Grid>

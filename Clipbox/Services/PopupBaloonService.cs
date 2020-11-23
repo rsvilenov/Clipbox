@@ -13,7 +13,7 @@ using System.Windows;
 
 namespace Clipbox.Services
 {
-    public class PopupBaloonService : IPopupBaloonService
+    public class PopupBaloonService : IPopupBaloonService, IDisposable
     {
         private const int N_COPIED_ITEMS_TO_SHOW_QV_INFOBALOON_AFTER = 3;
         private const int DELAY_SHOW_UPDATE_NOTIFICATION_MS = 5 * 60 * 1000; // 5 min
@@ -32,6 +32,7 @@ namespace Clipbox.Services
         private int _requestedShowPosX;
         private int _requestedShowPosY;
         private bool _isBaloonOpen;
+        private bool _isSettingChangeEventWired;
 
         private const string BLN_QV_REMINDER_INITIAL = nameof(BLN_QV_REMINDER_INITIAL);
         private const string BLN_UPDATE_AVAILABLE = nameof(BLN_UPDATE_AVAILABLE);
@@ -72,6 +73,7 @@ namespace Clipbox.Services
             if (!CheckIsTooltipSeen(BLN_QV_REMINDER_INITIAL))
             {
                 _clipboardManager.ItemAdded += _clipboardManager_ItemAdded;
+                _isSettingChangeEventWired = true;
             }
 
             if (_updateNotificationService.IsUpdateAvailable)
@@ -126,6 +128,7 @@ namespace Clipbox.Services
                 && !CheckIsTooltipSeen(BLN_QV_REMINDER_INITIAL))
             {
                 _clipboardManager.ItemAdded -= _clipboardManager_ItemAdded;
+                _isSettingChangeEventWired = false;
                 TryShowBaloon(BLN_QV_REMINDER_INITIAL);
             }
         }
@@ -317,6 +320,14 @@ namespace Clipbox.Services
             }
         }
 
+        public void Dispose()
+        {
+            if (_isSettingChangeEventWired)
+            {
+                _isSettingChangeEventWired = false;
+                _clipboardManager.ItemAdded -= _clipboardManager_ItemAdded; 
+            }
+        }
 
         public struct BaloonInfo
         {

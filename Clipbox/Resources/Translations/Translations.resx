@@ -283,6 +283,9 @@ from this window except the pinned ones.</value>
   <data name="LBL_DATE_YESTERDAY" xml:space="preserve">
     <value>Yesterday</value>
   </data>
+  <data name="LBL_HINT_CHARGE_CLIPBOARD" xml:space="preserve">
+    <value>Press this button to put the selected items into the system clipboard. You can then paste them wherever you want.</value>
+  </data>
   <data name="LBL_MAINVIEW_INCOMPATIBLE_ITEMS" xml:space="preserve">
     <value>Incompatible items.</value>
   </data>

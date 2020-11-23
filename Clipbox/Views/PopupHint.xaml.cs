@@ -12,6 +12,7 @@ namespace Clipbox.Views
     public partial class PopupHint : Popup
     {
         public ICommand CloseCommand { get; set; }
+        public event EventHandler ClosedByUser;
 
         public PopupHint()
         {
@@ -19,15 +20,31 @@ namespace Clipbox.Views
             this.mainGrid.DataContext = this;
 
             CloseCommand = new DelegateCommand(CloseCommandHandler);
+            Loaded += PopupHint_Loaded;
+        }
+
+        private void PopupHint_Loaded(object sender, RoutedEventArgs e)
+        {
             if (AnchorElement != null)
             {
+                AdjustPosition();
                 AnchorElement.LayoutUpdated += AnchorElement_LayoutUpdated;
+                AnchorElement.IsVisibleChanged += AnchorElement_IsVisibleChanged;
             }
         }
 
         protected override void OnClosed(EventArgs e)
         {
             AnchorElement.LayoutUpdated -= AnchorElement_LayoutUpdated;
+            AnchorElement.IsVisibleChanged += AnchorElement_IsVisibleChanged;
+        }
+
+        private void AnchorElement_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (!(bool)e.NewValue)
+            {
+                IsOpen = false;
+            }
         }
 
         private void AnchorElement_LayoutUpdated(object sender, EventArgs e)
@@ -38,6 +55,7 @@ namespace Clipbox.Views
         private void CloseCommandHandler()
         {
             IsOpen = false;
+            ClosedByUser?.Invoke(this, new EventArgs());
         }
 
         private void AdjustPosition()
@@ -52,8 +70,9 @@ namespace Clipbox.Views
 
                     try
                     {
-                        relativePoint = AnchorElement.TransformToAncestor(parentWindow)
-                                          .Transform(new Point(0, 0));
+                        relativePoint = AnchorElement
+                            .TransformToAncestor(parentWindow)
+                            .Transform(new Point(0, 0));
                     }
                     catch (InvalidOperationException) // the visual tree is not ready yet
                     {
@@ -61,12 +80,15 @@ namespace Clipbox.Views
                     }
 
                     HorizontalOffset = relativePoint.X + (AnchorElement.ActualWidth / 2);
-                        VerticalOffset = relativePoint.Y + AnchorElement.ActualHeight;
-                   
+                    VerticalOffset = relativePoint.Y + AnchorElement.ActualHeight;
                 }
             }
         }
 
+        private void ParentWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            IsOpen = false;
+        }
 
         public FrameworkElement AnchorElement
         {

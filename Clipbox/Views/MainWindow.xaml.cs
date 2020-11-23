@@ -43,6 +43,7 @@ namespace Clipbox.Views
         private readonly IPreviewGenerationService _previewGenerationService;
         private readonly ICloudSynchronizationService _cloudSyncService;
         private readonly IUpdateNotificationService _updateNotificationService;
+        private readonly IPopupHintService _popupHintService;
 
         private readonly MainClipboardViewBackgroundRenderMode _backgroundRenderMode;
         private readonly MainViewClipboardContents _mainViewClipboardContents;
@@ -77,7 +78,8 @@ namespace Clipbox.Views
             MonitorUtils.DisplayMonitor monitor,
             ISearchService searchService,
             ICloudSynchronizationService cloudSyncService,
-            IUpdateNotificationService updateNotificationService)
+            IUpdateNotificationService updateNotificationService,
+            IPopupHintService popupHintService)
         {
             _clipboardManager = clipboardManager;
             _uiExtContainer = uiExtContainer;
@@ -87,7 +89,8 @@ namespace Clipbox.Views
             _cloudSyncService = cloudSyncService;
             _previewGenerationService = previewGenerationService;
             _updateNotificationService = updateNotificationService;
-            
+            _popupHintService = popupHintService;
+
             if (!ThemeManager.IsLoaded)
             {
                 ThemeManager.LoadThemeFromSystemTheme();
@@ -112,7 +115,8 @@ namespace Clipbox.Views
                             _cloudSyncService),
                         _uiExtContainer,
                         _settingsService,
-                        _updateNotificationService);
+                        _updateNotificationService,
+                        _popupHintService);
 
             _mainViewClipboardContents.SetMonitorDimensions(new MonitorDimensions
             {

@@ -68,7 +68,8 @@ namespace Clipbox
         AutoClearClipboardService _autoClearClipboardService;
         UpdateNotificationService _updateNotificationService;
         IAboutWindowService _aboutWindowService;
-        IPopupBaloonService _popupBaloonService;
+        PopupBaloonService _popupBaloonService;
+        IPopupHintService _popupHintService;
 
         private int _shutdownSequenceCallCount;
 
@@ -223,6 +224,7 @@ namespace Clipbox
             _updateNotificationService = new UpdateNotificationService();
 
             _popupBaloonService = new PopupBaloonService(_clipboardManager, _settingsService, _updateNotificationService);
+            _popupHintService = new PopupHintService(_settingsService);
 
             // this view can show a little bit slower so we will not keep its instance alive the whole time - we will create it upon request within the service
             _mainClipboardViewWindowService = new MainClipboardViewWindowService(_clipboardManager,
@@ -231,7 +233,8 @@ namespace Clipbox
                 _settingsService,
                 _searchService,
                 _cloudSyncService,
-                _updateNotificationService);
+                _updateNotificationService,
+                _popupHintService);
 
             _guardCommunicationService.SetMainClipboardViewWindowService(_mainClipboardViewWindowService);
 
@@ -409,6 +412,7 @@ namespace Clipbox
                 TryDisposeObject(_searchService);
                 TryDisposeObject(_autoClearClipboardService);
                 TryDisposeObject(_updateNotificationService);
+                TryDisposeObject(_popupBaloonService);
             }
         }
 

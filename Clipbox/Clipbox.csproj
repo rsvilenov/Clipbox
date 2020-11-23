@@ -117,6 +117,7 @@
     </Compile>
     <Compile Include="Services\AboutWindowService.cs" />
     <Compile Include="Services\AutoClearClipboardService.cs" />
+    <Compile Include="Services\Catalogues\PopupHintNames.cs" />
     <Compile Include="Services\ClipboardViewWindowServiceBase.cs" />
     <Compile Include="Services\CloudSynchronizationService.cs" />
     <Compile Include="Services\DataObjects\CalibratedPreviewDimentionInfo.cs" />
