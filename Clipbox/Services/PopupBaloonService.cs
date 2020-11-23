@@ -1,6 +1,7 @@
 ﻿using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.Serialization;
 using Clipbox.Infrastructure.UI.Localization;
+using Clipbox.Services.DataObjects;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.Views;
@@ -23,11 +24,13 @@ namespace Clipbox.Services
         private readonly ISettingsService _settingsService;
         private readonly IUpdateNotificationService _updateNotificationService;
 
+        private readonly SettingsStringCollection _seenToolTips;
+        private readonly object _lockHandle;
+
         private int _numCopiedItemsSinceStartup;
         private PopupBaloon _baloon;
         private int _requestedShowPosX;
         private int _requestedShowPosY;
-        private List<string> _seenToolTips;
         private bool _isBaloonOpen;
 
         private const string BLN_QV_REMINDER_INITIAL = nameof(BLN_QV_REMINDER_INITIAL);
@@ -58,11 +61,14 @@ namespace Clipbox.Services
             _updateNotificationService = updateNotificationService;
             _updateNotificationService.UpdateAvailable += _updateNotificationService_UpdateAvailable;
 
+            _lockHandle = new object();
+            _seenToolTips = new SettingsStringCollection();
+            LoadSeenTtps();
+            
             _settingsService.SettingChanged += _settingsService_SettingChanged;
 
             _clipboardManager = clipboardManager;
 
-            _seenToolTips = GetSeenTooltips();
             if (!CheckIsTooltipSeen(BLN_QV_REMINDER_INITIAL))
             {
                 _clipboardManager.ItemAdded += _clipboardManager_ItemAdded;
@@ -71,6 +77,14 @@ namespace Clipbox.Services
             if (_updateNotificationService.IsUpdateAvailable)
             {
                 ShowUpdateNotificationWithDelay();
+            }
+        }
+        private void LoadSeenTtps()
+        {
+            string seenTtpsXml = _settingsService.GetSetting(SettingsKeys.BaloonToopTipsSeenList);
+            if (!string.IsNullOrEmpty(seenTtpsXml))
+            {
+                _seenToolTips.Load(seenTtpsXml);
             }
         }
 
@@ -90,7 +104,11 @@ namespace Clipbox.Services
         {
             if (e.Key == SettingsKeys.BaloonToopTipsSeenList)
             {
-                _seenToolTips = GetSeenTooltips();
+                lock (_lockHandle)
+                {
+                    _seenToolTips.Clear();
+                    LoadSeenTtps();
+                }
             }
         }
 
@@ -270,31 +288,9 @@ namespace Clipbox.Services
                 BALOON_HEIGHT);
         }
 
-        private List<string> GetSeenTooltips()
-        {
-            string xml = _settingsService.GetSetting<string>(SettingsKeys.BaloonToopTipsSeenList);
-            if (string.IsNullOrEmpty(xml))
-            {
-                return new List<string>();
-            }
-
-            List<string> ttpList = null;
-
-            try
-            {
-                ttpList = XmlSerialization.Deserialize<List<string>>(xml);
-            }
-            catch
-            {
-                // TODO: log
-            }
-
-            return ttpList;
-        }
-
         private bool CheckIsTooltipSeen(string toolTipName)
         {
-            if (_seenToolTips == null)
+            if (_seenToolTips.IsInErrorState)
             {
                 // there was an error. do not show the tooltip again
                 return true;
@@ -307,12 +303,12 @@ namespace Clipbox.Services
 
         private void StoreIsTooltipSeen(string toolTipName)
         {
-            if (_seenToolTips != null)
+            lock (_lockHandle)
             {
                 _seenToolTips.Add(toolTipName);
                 try
                 {
-                    _settingsService.SetSetting(SettingsKeys.BaloonToopTipsSeenList, XmlSerialization.Serialize(_seenToolTips));
+                    _settingsService.SetSetting(SettingsKeys.BaloonToopTipsSeenList, _seenToolTips.GetXml());
                 }
                 catch
                 {

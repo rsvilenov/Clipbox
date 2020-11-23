@@ -28,10 +28,13 @@ namespace Clipbox.Services
 
         private void _settingsService_SettingChanged(object sender, EventArgsClasses.SettingsEventArgs e)
         {
-            lock (_lockHandle)
+            if (e.Key == SettingsKeys.HintToopTipsSeenList)
             {
-                _seenToolTips.Clear();
-                LoadSeenTtps();
+                lock (_lockHandle)
+                {
+                    _seenToolTips.Clear();
+                    LoadSeenTtps();
+                }
             }
         }
 
@@ -72,7 +75,14 @@ namespace Clipbox.Services
 
                 if (!_seenToolTips.IsInErrorState)
                 {
-                    _settingsService.SetSetting(SettingsKeys.HintToopTipsSeenList, _seenToolTips.GetXml());
+                    try
+                    {
+                        _settingsService.SetSetting(SettingsKeys.HintToopTipsSeenList, _seenToolTips.GetXml());
+                    }
+                    catch
+                    {
+                        // TODO: log
+                    }
                 }
             }
         }
