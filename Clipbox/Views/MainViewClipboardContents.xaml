@@ -497,10 +497,9 @@
                             </StackPanel>
 
                             <local:PopupHint
+                                AnchorElement="{Binding ElementName=setToClipboardBtn}"
                                 AreFadeAnimationsEnabled="True"
                                 IsOpen="{Binding ElementName=setToClipboardBtn, Path=IsVisible, Mode=OneWay}"
-                                Placement="Bottom"
-                                PlacementTarget="{Binding ElementName=setToClipboardBtn}"
                                 StaysOpen="True"
                                 Text="Some text to show" />
                         </Grid>

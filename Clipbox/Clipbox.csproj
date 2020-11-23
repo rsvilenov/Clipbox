@@ -124,6 +124,7 @@
     <Compile Include="Services\DataObjects\PreviewDimensionInfo.cs" />
     <Compile Include="Services\DataObjects\PreviewDimensions.cs" />
     <Compile Include="Services\DataObjects\PreviewItemTransferObject.cs" />
+    <Compile Include="Services\DataObjects\SettingsStringCollection.cs" />
     <Compile Include="Services\Enums\ErrorState.cs" />
     <Compile Include="Services\Enums\PreviewGenerationStatus.cs" />
     <Compile Include="Services\Enums\TrayIconVisibilityPreference.cs" />
@@ -142,6 +143,7 @@
     <Compile Include="Services\Interfaces\ILocalizationService.cs" />
     <Compile Include="Services\Interfaces\IPauseService.cs" />
     <Compile Include="Services\Interfaces\IPopupBaloonService.cs" />
+    <Compile Include="Services\Interfaces\IPopupHintService.cs" />
     <Compile Include="Services\Interfaces\IRebuildIndexWindowService.cs" />
     <Compile Include="Services\Interfaces\ISearchProviderSelectorService.cs" />
     <Compile Include="Services\Interfaces\ISearchService.cs" />
@@ -150,6 +152,7 @@
     <Compile Include="Services\LocalizationService.cs" />
     <Compile Include="Services\PauseService.cs" />
     <Compile Include="Services\PopupBaloonService.cs" />
+    <Compile Include="Services\PopupHintService.cs" />
     <Compile Include="Services\RebuildIndexWindowService.cs" />
     <Compile Include="Services\SearchProviderSelectorService.cs" />
     <Compile Include="Services\SearchService.cs" />

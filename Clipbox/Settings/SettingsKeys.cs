@@ -97,9 +97,14 @@ namespace Clipbox.Settings
         public static SettingKey<int> ClipboardOpenningTimeoutMs = new SettingKey<int>(nameof(ClipboardOpenningTimeoutMs), 500);
 
         /// <summary>
-        /// This contains a list of all help tooltips that has already been shown and the user saw them 
+        /// This contains a list of all baloon tooltips that has already been shown and the user saw them 
         /// </summary>
-        public static SettingKey<string> HelpToopTipsSeenList = new SettingKey<string>(nameof(HelpToopTipsSeenList), string.Empty);
+        public static SettingKey<string> BaloonToopTipsSeenList = new SettingKey<string>(nameof(BaloonToopTipsSeenList), string.Empty);
+        
+        /// <summary>
+        /// This contains a list of all hint tooltips that has already been shown and the user saw them 
+        /// </summary>
+        public static SettingKey<string> HintToopTipsSeenList = new SettingKey<string>(nameof(HintToopTipsSeenList), string.Empty);
 
 
         /// <summary>

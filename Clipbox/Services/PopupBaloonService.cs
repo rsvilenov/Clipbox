@@ -88,7 +88,7 @@ namespace Clipbox.Services
 
         private void _settingsService_SettingChanged(object sender, EventArgsClasses.SettingsEventArgs e)
         {
-            if (e.Key == SettingsKeys.HelpToopTipsSeenList)
+            if (e.Key == SettingsKeys.BaloonToopTipsSeenList)
             {
                 _seenToolTips = GetSeenTooltips();
             }
@@ -272,7 +272,7 @@ namespace Clipbox.Services
 
         private List<string> GetSeenTooltips()
         {
-            string xml = _settingsService.GetSetting<string>(SettingsKeys.HelpToopTipsSeenList);
+            string xml = _settingsService.GetSetting<string>(SettingsKeys.BaloonToopTipsSeenList);
             if (string.IsNullOrEmpty(xml))
             {
                 return new List<string>();
@@ -312,7 +312,7 @@ namespace Clipbox.Services
                 _seenToolTips.Add(toolTipName);
                 try
                 {
-                    _settingsService.SetSetting(SettingsKeys.HelpToopTipsSeenList, XmlSerialization.Serialize(_seenToolTips));
+                    _settingsService.SetSetting(SettingsKeys.BaloonToopTipsSeenList, XmlSerialization.Serialize(_seenToolTips));
                 }
                 catch
                 {
