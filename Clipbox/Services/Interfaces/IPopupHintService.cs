@@ -4,7 +4,8 @@ namespace Clipbox.Services.Interfaces
 {
     public interface IPopupHintService
     {
-        void ShowHintPopup(string popupName, FrameworkElement anchorElement, bool isTopPointing);
-        void HideHintPopup();
+        bool HasPopupBeenSeen(string popupName);
+        bool TryShowHintPopup(string popupName, FrameworkElement anchorElement, bool isTopPointing);
+        void HideHintPopup(bool setAsSeen = false);
     }
 }

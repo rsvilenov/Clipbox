@@ -36,6 +36,8 @@ namespace Clipbox.Views
     /// </summary>
     public partial class MainViewClipboardContents : ClipboardViewControlBase, IDisposable
     {
+        const int HINT_POPUP_DELAY_MS = 1000;
+
         private readonly ISettingsService _settingsService;
         private readonly IUpdateNotificationService _updateNotificationService;
         private readonly IPopupHintService _popupHintService;
@@ -44,8 +46,11 @@ namespace Clipbox.Views
         private readonly List<ISearchTerm> _searchTerms;
         private readonly CancellableTaskManager _cancellableTaskManager;
         private readonly SlidingTimer _uiExtensionGenerationSlidingTimer;
+        private readonly SlidingTimer _hintPopupSlidingTimer;
 
         private MainViewClipboardContentsViewModel _viewModel;
+
+        private string _lastShownHintPopupName;
 
         /// <summary>
         /// This field provides not a nice solution to the problem of
@@ -82,6 +87,12 @@ namespace Clipbox.Views
             };
             _uiExtensionGenerationSlidingTimer.Elapsed += _uiExtensionGenerationSlidingTimer_Elapsed;
 
+            _hintPopupSlidingTimer = new SlidingTimer
+            {
+                IntervalMs = HINT_POPUP_DELAY_MS
+            };
+            _hintPopupSlidingTimer.Elapsed += _hintPopupSlidingTimer_Elapsed;
+
 
             Loaded += MainViewClipboardContents_Loaded;
             IsVisibleChanged += MainViewClipboardContents_IsVisibleChanged;
@@ -117,6 +128,25 @@ namespace Clipbox.Views
             IsUpdateAvailable = _updateNotificationService.IsUpdateAvailable;
         }
 
+        private void _hintPopupSlidingTimer_Elapsed(object sender, EventArgs e)
+        {
+            Dispatcher.BeginInvoke(DispatcherPriority.Background,
+            (Action)(() =>
+            {
+                ShowHintPopup();
+            }));
+        }
+
+        private void ShowHintPopup()
+        {
+            if (setToClipboardBtn.IsVisible
+                && !_popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_CHARGE_CLIPBOARD))
+            {
+                _lastShownHintPopupName = PopupHintNames.PP_HINT_CHARGE_CLIPBOARD;
+                _popupHintService.TryShowHintPopup(PopupHintNames.PP_HINT_CHARGE_CLIPBOARD, setToClipboardBtn, true);
+            }
+        }
+            
 
         public bool AreFadeAnimationsEnabled
         {
@@ -350,6 +380,7 @@ namespace Clipbox.Views
             _settingsService.SettingChanged -= SettingsService_SettingChanged;
 
             _uiExtensionGenerationSlidingTimer.Dispose();
+            _hintPopupSlidingTimer.Dispose();
 
             if (MainListView != null)
             {
@@ -852,7 +883,7 @@ namespace Clipbox.Views
                 && MainListView.AreSelectedItemsCombinable)
             {
                 LoadUIExtensionsWithDelay();
-                _popupHintService.ShowHintPopup(PopupHintNames.PP_HINT_CHARGE_CLIPBOARD, setToClipboardBtn, true);
+                ShowHintPopupWithDelay();
             }
             else
             {
@@ -896,6 +927,22 @@ namespace Clipbox.Views
                 });
             }));
 
+        }
+
+        protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
+        {
+            bool setAsSeen = _lastShownHintPopupName == PopupHintNames.PP_HINT_CHARGE_CLIPBOARD
+                && setToClipboardBtn.IsMouseOver;
+            //|| (_lastShownHintPopupName == some other name && other buttin is mouse over)
+
+
+            _popupHintService.HideHintPopup(setAsSeen);
+        }
+
+        private void ShowHintPopupWithDelay()
+        {
+            _popupHintService.HideHintPopup();
+            _hintPopupSlidingTimer.Slide();
         }
 
         private void MainListView_GroupingComplete(object sender, EventArgs e)

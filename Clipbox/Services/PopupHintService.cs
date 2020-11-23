@@ -52,10 +52,25 @@ namespace Clipbox.Services
             }
         }
 
-        public void ShowHintPopup(string popupName, FrameworkElement anchorElement, bool isTopPointing)
+        public bool HasPopupBeenSeen(string popupName)
         {
-            if (_popupInfoDictionary.ContainsKey(popupName)
-                && !_seenToolTips.IsInErrorState
+            if (!_popupInfoDictionary.ContainsKey(popupName))
+            {
+                throw new ArgumentException($"{popupName} is not registered with the service.");
+            }
+
+            return _seenToolTips.IsInErrorState
+                || _seenToolTips.Contains(popupName);
+        }
+
+        public bool TryShowHintPopup(string popupName, FrameworkElement anchorElement, bool isTopPointing)
+        {
+            if (!_popupInfoDictionary.ContainsKey(popupName))
+            {
+                throw new ArgumentException($"{popupName} is not registered with the service.");
+            }
+
+            if (!_seenToolTips.IsInErrorState
                 && !_seenToolTips.Contains(popupName))
             {
                 anchorElement.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
@@ -93,10 +108,14 @@ namespace Clipbox.Services
                         _currentPopupHint.ClosedByUser += _currentPopupHint_ClosedByUser;
                         _currentPopupHint.IsVisibleChanged += _currentPopupHint_IsVisibleChanged;
                     }));
+
+                return true;
             }
+
+            return false;
         }
 
-        public void HideHintPopup()
+        public void HideHintPopup(bool setAsSeen = false)
         {
             if (_currentPopupHint != null)
             {
@@ -105,9 +124,15 @@ namespace Clipbox.Services
                     {
                         try
                         {
+                            string popupName = (string)_currentPopupHint.Tag;
                             if (_currentPopupHint.IsOpen)
                             {
                                 _currentPopupHint.IsOpen = false;
+                            }
+
+                            if (setAsSeen)
+                            {
+                                SetAsAlreadySeen(popupName);
                             }
                         }
                         catch
@@ -124,6 +149,7 @@ namespace Clipbox.Services
             {
                 _currentPopupHint.ClosedByUser -= _currentPopupHint_ClosedByUser;
                 _currentPopupHint.IsVisibleChanged -= _currentPopupHint_IsVisibleChanged;
+                _isHintPopupOpen = false;
             }
         }
 
@@ -133,30 +159,28 @@ namespace Clipbox.Services
 
             Task.Run(() =>
             {
-                lock (_lockHandle)
-                {
-                    _seenToolTips.Add(popupName);
-
-                    if (!_seenToolTips.IsInErrorState)
-                    {
-                        try
-                        {
-                            _settingsService.SetSetting(SettingsKeys.HintToopTipsSeenList, _seenToolTips.GetXml());
-                        }
-                        catch
-                        {
-                            // TODO: log
-                        }
-                    }
-                }
+                SetAsAlreadySeen(popupName);
             });
         }
 
-        private void _currentPopupHint_ToolTipClosing(object sender, System.Windows.Controls.ToolTipEventArgs e)
+        private void SetAsAlreadySeen(string popupName)
         {
-            _currentPopupHint.ToolTipClosing += _currentPopupHint_ToolTipClosing;
+            lock (_lockHandle)
+            {
+                _seenToolTips.Add(popupName);
 
-            
+                if (!_seenToolTips.IsInErrorState)
+                {
+                    try
+                    {
+                        _settingsService.SetSetting(SettingsKeys.HintToopTipsSeenList, _seenToolTips.GetXml());
+                    }
+                    catch
+                    {
+                        // TODO: log
+                    }
+                }
+            }
         }
 
         private readonly Dictionary<string, string> _popupInfoDictionary = new Dictionary<string, string>()
