@@ -17,6 +17,7 @@ namespace Clipbox.Views
         public event EventHandler ClosedByUser;
 
         private static double _initialDpi;
+        private static bool _hasDpiChanged;
 
         public PopupHint()
         {
@@ -76,10 +77,11 @@ namespace Clipbox.Views
                         {
                             _initialDpi = dpiWindow.CurrentDPI;
                         }
-                        else if (_initialDpi != dpiWindow.CurrentDPI)
+                        else if (_hasDpiChanged || _initialDpi != dpiWindow.CurrentDPI)
                         {
                             // popups do not position correctly when the dpi changes,
                             // regardless of the fact that each new popup is a newly created instance...
+                            _hasDpiChanged = true;
                             Debug.WriteLine("The dpi of the monitor has changed and the hint cannot be shown, as it does not handle dpi changes well.");
                             IsOpen = false;
                             return;
