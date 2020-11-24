@@ -223,7 +223,7 @@ namespace Clipbox
 
             _updateNotificationService = new UpdateNotificationService();
 
-            _popupBaloonService = new PopupBaloonService(_clipboardManager, _settingsService, _updateNotificationService);
+            _popupBaloonService = new PopupBaloonService(_clipboardManager, _settingsService, _updateNotificationService, _quickClipboardViewWindowService);
             _popupHintService = new PopupHintService(_settingsService);
 
             // this view can show a little bit slower so we will not keep its instance alive the whole time - we will create it upon request within the service

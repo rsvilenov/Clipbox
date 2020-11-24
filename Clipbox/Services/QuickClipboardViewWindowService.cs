@@ -30,6 +30,8 @@ namespace Clipbox.Services
         // used for storing the original window's opacity when preloading the window (it gets shown with Opacity=0.0)
         private double _quickViewWindowOpacity;
 
+        public event EventHandler QVWindowShown;
+
         private bool ShouldResizeToDpi()
         {
             return _settingsService.GetSetting<bool>(SettingsKeys.ResizeAccordingToMonitorOrSystemDpi);
@@ -194,6 +196,7 @@ namespace Clipbox.Services
                 
                 _quickViewWindow.Show();
 
+                QVWindowShown?.Invoke(this, new EventArgs());
             }));
         }
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Clipbox.Services.Interfaces
 {
@@ -19,5 +20,7 @@ namespace Clipbox.Services.Interfaces
         IReadOnlyCollection<string> SelectedItemIds { get; }
 
         IReadOnlyDictionary<string, IReadOnlyCollection<int>> SelectedMultiItemIds { get; }
+
+        event EventHandler QVWindowShown;
     }
 }

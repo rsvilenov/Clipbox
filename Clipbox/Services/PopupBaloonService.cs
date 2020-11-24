@@ -23,6 +23,7 @@ namespace Clipbox.Services
         private readonly IClipboardManager _clipboardManager;
         private readonly ISettingsService _settingsService;
         private readonly IUpdateNotificationService _updateNotificationService;
+        private readonly IQuickClipboardViewWindowService _qvWindowService;
 
         private readonly SettingsStringCollection _seenToolTips;
         private readonly object _lockHandle;
@@ -33,6 +34,8 @@ namespace Clipbox.Services
         private int _requestedShowPosY;
         private bool _isBaloonOpen;
         private bool _isSettingChangeEventWired;
+        private bool _isQvShownEventWired;
+        private bool _isDisposed;
 
         private const string BLN_QV_REMINDER_INITIAL = nameof(BLN_QV_REMINDER_INITIAL);
         private const string BLN_UPDATE_AVAILABLE = nameof(BLN_UPDATE_AVAILABLE);
@@ -56,12 +59,15 @@ namespace Clipbox.Services
 
         public PopupBaloonService(IClipboardManager clipboardManager, 
             ISettingsService settingsService,
-            IUpdateNotificationService updateNotificationService)
+            IUpdateNotificationService updateNotificationService,
+            IQuickClipboardViewWindowService qvWindowService)
         {
             _settingsService = settingsService;
             _updateNotificationService = updateNotificationService;
-            _updateNotificationService.UpdateAvailable += _updateNotificationService_UpdateAvailable;
+            _qvWindowService = qvWindowService;
 
+            _updateNotificationService.UpdateAvailable += _updateNotificationService_UpdateAvailable;
+            
             _lockHandle = new object();
             _seenToolTips = new SettingsStringCollection();
             LoadSeenTtps();
@@ -72,6 +78,9 @@ namespace Clipbox.Services
 
             if (!CheckIsTooltipSeen(BLN_QV_REMINDER_INITIAL))
             {
+                _qvWindowService.QVWindowShown += _qvWindowService_QVWindowShown;
+                _isQvShownEventWired = true;
+
                 _clipboardManager.ItemAdded += _clipboardManager_ItemAdded;
                 _isSettingChangeEventWired = true;
             }
@@ -81,6 +90,28 @@ namespace Clipbox.Services
                 ShowUpdateNotificationWithDelay();
             }
         }
+
+        private void _qvWindowService_QVWindowShown(object sender, EventArgs e)
+        {
+            if (_baloon != null)
+            {
+                Application.Current.Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Normal,
+                    new Action(() =>
+                    {
+                        if (_baloon.IsVisible 
+                        && _baloon.Tag is string baloonName 
+                        && baloonName == BLN_QV_REMINDER_INITIAL)
+                        {
+                            _qvWindowService.QVWindowShown -= _qvWindowService_QVWindowShown;
+                            _isQvShownEventWired = false;
+
+                            _baloon.Close();
+                            StoreIsTooltipSeen(baloonName);
+                        }
+                    }));
+            }
+        }
+
         private void LoadSeenTtps()
         {
             string seenTtpsXml = _settingsService.GetSetting(SettingsKeys.BaloonToopTipsSeenList);
@@ -327,10 +358,24 @@ namespace Clipbox.Services
 
         public void Dispose()
         {
-            if (_isSettingChangeEventWired)
+            if (!_isDisposed)
             {
-                _isSettingChangeEventWired = false;
-                _clipboardManager.ItemAdded -= _clipboardManager_ItemAdded; 
+                if (_isSettingChangeEventWired)
+                {
+                    _isSettingChangeEventWired = false;
+                    _clipboardManager.ItemAdded -= _clipboardManager_ItemAdded;
+                }
+
+                if (_isQvShownEventWired)
+                {
+                    _isQvShownEventWired = false;
+                    _qvWindowService.QVWindowShown -= _qvWindowService_QVWindowShown;
+                }
+
+                _updateNotificationService.UpdateAvailable -= _updateNotificationService_UpdateAvailable;
+                _settingsService.SettingChanged -= _settingsService_SettingChanged;
+
+                _isDisposed = true;
             }
         }
 
