@@ -352,6 +352,12 @@ from this window except the pinned ones.</value>
   <data name="LBL_SETTINGS_ADVANCED_SHOW_SETTINGS" xml:space="preserve">
     <value>Show settings</value>
   </data>
+  <data name="LBL_SETTINGS_ARE_BALOON_POPUPS_ENABLED" xml:space="preserve">
+    <value>Show information popups near the system clock</value>
+  </data>
+  <data name="LBL_SETTINGS_ARE_HINT_POPUPS_ENABLED" xml:space="preserve">
+    <value>Show hints in the fullscreen view</value>
+  </data>
   <data name="LBL_SETTINGS_AUTO_CLEAR_EXT_CLIPBOARD_ENABLED" xml:space="preserve">
     <value>After some time of user inactivity, clear all unprotoected clipboard entries, saved since the last login</value>
   </data>

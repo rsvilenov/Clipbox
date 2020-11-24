@@ -97,6 +97,16 @@ namespace Clipbox.Settings
         public static SettingKey<int> ClipboardOpenningTimeoutMs = new SettingKey<int>(nameof(ClipboardOpenningTimeoutMs), 500);
 
         /// <summary>
+        /// Hint popups that are shown in the main window
+        /// </summary>
+        public static SettingKey<bool> AreHintPopupsEnabled = new SettingKey<bool>(nameof(AreHintPopupsEnabled), true);
+
+        /// <summary>
+        /// Popups that are shown next to the system clock
+        /// </summary>
+        public static SettingKey<bool> AreBaloonPopupsEnabled = new SettingKey<bool>(nameof(AreBaloonPopupsEnabled), true);
+
+        /// <summary>
         /// This contains a list of all baloon tooltips that has already been shown and the user saw them 
         /// </summary>
         public static SettingKey<string> BaloonToopTipsSeenList = new SettingKey<string>(nameof(BaloonToopTipsSeenList), string.Empty);

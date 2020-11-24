@@ -87,7 +87,9 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
                 .Add(SettingsKeys.AreFadeAnimationsEnabled, new FadeAnimationsSettingUIPart())
                 .Add(SettingsKeys.CloudServiceAuthAttemptTimeout, new CloudAuthTimeoutSettingUIPart())
                 .Add(SettingsKeys.ClipboardFormatSupportExtTimeout, new ClipboardFormatSupportExtTimeoutSettingUIPart())
-                .Add(SettingsKeys.ClipboardOpenningTimeoutMs, new ClipboardOpeningTimeoutSettingUIPart());
+                .Add(SettingsKeys.ClipboardOpenningTimeoutMs, new ClipboardOpeningTimeoutSettingUIPart())
+                .Add(SettingsKeys.AreBaloonPopupsEnabled, new AreBaloonPopupsEnabledSettingUIPart())
+                .Add(SettingsKeys.AreHintPopupsEnabled, new AreHintPopupsEnabledSettingUIPart());
         }
 
         private void ManageUIPartsVisibility(ISettingKey settingKey)

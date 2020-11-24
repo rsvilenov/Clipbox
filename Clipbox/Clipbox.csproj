@@ -324,6 +324,12 @@
     <Compile Include="Views\Settings\BuiltInExtensions\CloudBuiltInSettingsUIExtension.cs" />
     <Compile Include="Views\Settings\BuiltInExtensions\GeneralBuiltInSettingsUIExtension.cs" />
     <Compile Include="Views\Settings\BuiltInExtensions\PreviewsBuiltInSettingsUIExtension.cs" />
+    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\AreBaloonPopupsEnabledSettingUIPart.xaml.cs">
+      <DependentUpon>AreBaloonPopupsEnabledSettingUIPart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\AreHintPopupsEnabledSettingUIPart.xaml.cs">
+      <DependentUpon>AreHintPopupsEnabledSettingUIPart.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\AutoClearExtClipboardSettingUIPart.xaml.cs">
       <DependentUpon>AutoClearExtClipboardSettingUIPart.xaml</DependentUpon>
     </Compile>
@@ -572,6 +578,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\RebuildIndicesWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\BuiltInExtensions\UIParts\AreBaloonPopupsEnabledSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\BuiltInExtensions\UIParts\AreHintPopupsEnabledSettingUIPart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

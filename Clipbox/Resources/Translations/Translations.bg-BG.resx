@@ -352,6 +352,12 @@
   <data name="LBL_SETTINGS_ADVANCED_SHOW_SETTINGS" xml:space="preserve">
     <value>Покажи настройките</value>
   </data>
+  <data name="LBL_SETTINGS_ARE_BALOON_POPUPS_ENABLED" xml:space="preserve">
+    <value>Показвай информационни попъпи близо до часовника в таскбара</value>
+  </data>
+  <data name="LBL_SETTINGS_ARE_HINT_POPUPS_ENABLED" xml:space="preserve">
+    <value>Показвай подсказки в изгледа на цял екран</value>
+  </data>
   <data name="LBL_SETTINGS_AUTO_CLEAR_EXT_CLIPBOARD_ENABLED" xml:space="preserve">
     <value>След определен период на потребителска неакивност изтрий всички незащитени клипборд записи, направени след последния логин</value>
   </data>

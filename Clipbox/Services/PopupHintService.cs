@@ -78,7 +78,8 @@ namespace Clipbox.Services
                 throw new ArgumentException($"{popupName} is not registered with the service.");
             }
 
-            if (!_seenToolTips.IsInErrorState
+            if (_settingsService.GetSetting(SettingsKeys.AreHintPopupsEnabled)
+                && !_seenToolTips.IsInErrorState
                 && !_seenToolTips.Contains(popupName))
             {
                 anchorElement.Dispatcher.BeginInvoke(DispatcherPriority.Normal,

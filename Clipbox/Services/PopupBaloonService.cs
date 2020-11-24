@@ -148,6 +148,11 @@ namespace Clipbox.Services
                 return;
             }
 
+            if (!_settingsService.GetSetting<bool>(SettingsKeys.AreBaloonPopupsEnabled))
+            {
+                return;
+            }
+
             BaloonInfo bi = _baloonNameTranslationMapping[baloonName];
 
             string text = TranslationSourcePool.Instance.GetSource().GetTranslation(bi.TextTranslationKey);

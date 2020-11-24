@@ -764,6 +764,24 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Show information popups near the system clock.
+        /// </summary>
+        internal static string LBL_SETTINGS_ARE_BALOON_POPUPS_ENABLED {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_ARE_BALOON_POPUPS_ENABLED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Show hints in the fullscreen view.
+        /// </summary>
+        internal static string LBL_SETTINGS_ARE_HINT_POPUPS_ENABLED {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_ARE_HINT_POPUPS_ENABLED", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to After some time of user inactivity, clear all unprotoected clipboard entries, saved since the last login.
         /// </summary>
         internal static string LBL_SETTINGS_AUTO_CLEAR_EXT_CLIPBOARD_ENABLED {
