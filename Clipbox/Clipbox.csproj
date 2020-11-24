@@ -127,6 +127,7 @@
     <Compile Include="Services\DataObjects\PreviewItemTransferObject.cs" />
     <Compile Include="Services\DataObjects\SettingsStringCollection.cs" />
     <Compile Include="Services\Enums\ErrorState.cs" />
+    <Compile Include="Services\Enums\PopupHintArrowDirection.cs" />
     <Compile Include="Services\Enums\PreviewGenerationStatus.cs" />
     <Compile Include="Services\Enums\TrayIconVisibilityPreference.cs" />
     <Compile Include="Services\EventArgsClasses\ErrorStateEventArgs.cs" />

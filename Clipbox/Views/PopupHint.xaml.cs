@@ -101,8 +101,18 @@ namespace Clipbox.Views
                         return;
                     }
 
-                    HorizontalOffset = relativePoint.X + (AnchorElement.ActualWidth / 2);
-                    VerticalOffset = relativePoint.Y + AnchorElement.ActualHeight;
+                    switch(ArrowDirection)
+                    {
+                        case PopupArrowDirection.Left:
+                        case PopupArrowDirection.None:
+                            HorizontalOffset = relativePoint.X + AnchorElement.ActualWidth;
+                            VerticalOffset = relativePoint.Y + (AnchorElement.ActualHeight / 2);
+                            break;
+                        case PopupArrowDirection.Top:
+                            HorizontalOffset = relativePoint.X + (AnchorElement.ActualWidth / 2);
+                            VerticalOffset = relativePoint.Y + AnchorElement.ActualHeight;
+                            break;
+                    }
 
                     // if the popup falls outside of the parent window, hide it
                     if (HorizontalOffset + ActualWidth > parentWindow.ActualWidth ||
@@ -143,17 +153,6 @@ namespace Clipbox.Views
         }
 
 
-
-        public bool IsTopPointing
-        {
-            get { return (bool)GetValue(IsTopPointingProperty); }
-            set { SetValue(IsTopPointingProperty, value); }
-        }
-
-        public static readonly DependencyProperty IsTopPointingProperty =
-            DependencyProperty.Register(nameof(IsTopPointing), typeof(bool), typeof(PopupHint), new PropertyMetadata(true));
-
-
         public bool AreFadeAnimationsEnabled
         {
             get { return (bool)GetValue(AreFadeAnimationsEnabledProperty); }
@@ -175,6 +174,22 @@ namespace Clipbox.Views
             DependencyProperty.Register(nameof(Text), typeof(string), typeof(PopupHint), new PropertyMetadata(string.Empty));
 
 
+        public PopupArrowDirection ArrowDirection
+        {
+            get { return (PopupArrowDirection)GetValue(ArrowDirectionProperty); }
+            set { SetValue(ArrowDirectionProperty, value); }
+        }
 
+        public static readonly DependencyProperty ArrowDirectionProperty =
+            DependencyProperty.Register(nameof(ArrowDirection), typeof(PopupArrowDirection), typeof(PopupHint), new PropertyMetadata(PopupArrowDirection.Top));
+
+
+    }
+
+    public enum PopupArrowDirection
+    {
+        None,
+        Top,
+        Left
     }
 }

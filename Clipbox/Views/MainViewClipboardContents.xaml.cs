@@ -8,6 +8,7 @@ using Clipbox.Infrastructure.UI.Theme.Enums;
 using Clipbox.Infrastructure.UI.Utils;
 using Clipbox.Services;
 using Clipbox.Services.Catalogues;
+using Clipbox.Services.Enums;
 using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
@@ -143,10 +144,9 @@ namespace Clipbox.Views
                 && !_popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_CHARGE_CLIPBOARD))
             {
                 _lastShownHintPopupName = PopupHintNames.PP_HINT_CHARGE_CLIPBOARD;
-                _popupHintService.TryShowHintPopup(PopupHintNames.PP_HINT_CHARGE_CLIPBOARD, setToClipboardBtn, true);
+                _popupHintService.TryShowHintPopup(PopupHintNames.PP_HINT_CHARGE_CLIPBOARD, setToClipboardBtn, PopupHintArrowDirection.Top);
             }
         }
-            
 
         public bool AreFadeAnimationsEnabled
         {

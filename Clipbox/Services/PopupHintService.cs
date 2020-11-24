@@ -1,6 +1,7 @@
 ﻿using Clipbox.Infrastructure.UI.Localization;
 using Clipbox.Services.Catalogues;
 using Clipbox.Services.DataObjects;
+using Clipbox.Services.Enums;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.Views;
@@ -64,7 +65,7 @@ namespace Clipbox.Services
                 || _seenToolTips.Contains(popupName);
         }
 
-        public bool TryShowHintPopup(string popupName, FrameworkElement anchorElement, bool isTopPointing)
+        public bool TryShowHintPopup(string popupName, FrameworkElement anchorElement, PopupHintArrowDirection arrowDirection)
         {
             if (!_popupInfoDictionary.ContainsKey(popupName))
             {
@@ -93,11 +94,23 @@ namespace Clipbox.Services
                             _currentPopupHint = new PopupHint
                             {
                                 AnchorElement = anchorElement,
-                                IsTopPointing = isTopPointing,
                                 Text = text,
                                 Tag = popupName,
                                 StaysOpen = true
                             };
+
+                            switch(arrowDirection)
+                            {
+                                case PopupHintArrowDirection.Top:
+                                    _currentPopupHint.ArrowDirection = PopupArrowDirection.Top;
+                                    break;
+                                case PopupHintArrowDirection.Left:
+                                    _currentPopupHint.ArrowDirection = PopupArrowDirection.Left;
+                                    break;
+                                case PopupHintArrowDirection.None:
+                                    _currentPopupHint.ArrowDirection = PopupArrowDirection.None;
+                                    break;
+                            }
                         }
                         catch
                         {
