@@ -15,9 +15,15 @@ namespace Clipbox.Services
 {
     public class PopupHintService : IPopupHintService
     {
+        /// <summary>
+        /// The maximum number of times the hint shows
+        /// </summary>
+        private const int MAX_SHOW_LIMIT = 2;
+
         private readonly ISettingsService _settingsService;
         private readonly object _lockHandle;
         private readonly SettingsStringCollection _seenToolTips;
+        private readonly Dictionary<string, int> _shownCount;
 
         private PopupHint _currentPopupHint;
         private bool _isHintPopupOpen;
@@ -27,6 +33,7 @@ namespace Clipbox.Services
             _settingsService = settingsService;
             _seenToolTips = new SettingsStringCollection();
             _lockHandle = new object();
+            _shownCount = new Dictionary<string, int>();
 
             LoadSeenTtps();
             _settingsService.SettingChanged += _settingsService_SettingChanged;
@@ -112,6 +119,13 @@ namespace Clipbox.Services
                             }
 
                             _currentPopupHint.Open();
+                            
+                            if (!_shownCount.ContainsKey(popupName))
+                            {
+                                _shownCount.Add(popupName, 0);
+                            }
+
+                            _shownCount[popupName]++;
                         }
                         catch
                         {
@@ -144,7 +158,10 @@ namespace Clipbox.Services
                                 _currentPopupHint.Close();
                             }
 
-                            if (setAsSeen)
+                            bool maxShowLimitReached = _shownCount.ContainsKey(popupName)
+                                && _shownCount[popupName] >= MAX_SHOW_LIMIT;
+                            
+                            if (setAsSeen || maxShowLimitReached)
                             {
                                 SetAsAlreadySeen(popupName);
                             }
