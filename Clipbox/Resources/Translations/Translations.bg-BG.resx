@@ -286,6 +286,9 @@
   <data name="LBL_HINT_CHARGE_CLIPBOARD" xml:space="preserve">
     <value>Кликнете този бутон, за да заредите избраните неща в системния клипборд. Можете след това да ги пейстнете, където си искате.</value>
   </data>
+  <data name="LBL_HINT_UI_EXTENSIONS" xml:space="preserve">
+    <value>Можете да модифицирате избраните неща, преди да ги заредите в системния клипборд.</value>
+  </data>
   <data name="LBL_MAINVIEW_INCOMPATIBLE_ITEMS" xml:space="preserve">
     <value>Несъвместими записи.</value>
   </data>

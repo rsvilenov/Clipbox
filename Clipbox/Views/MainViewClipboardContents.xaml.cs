@@ -146,6 +146,12 @@ namespace Clipbox.Views
                 _lastShownHintPopupName = PopupHintNames.PP_HINT_CHARGE_CLIPBOARD;
                 _popupHintService.TryShowHintPopup(PopupHintNames.PP_HINT_CHARGE_CLIPBOARD, setToClipboardBtn, PopupHintArrowDirection.Top);
             }
+            else if (uiExtensionContainer.IsVisible
+                && !_popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_UI_EXTENSIONS))
+            {
+                _lastShownHintPopupName = PopupHintNames.PP_HINT_UI_EXTENSIONS;
+                _popupHintService.TryShowHintPopup(PopupHintNames.PP_HINT_UI_EXTENSIONS, uiExtensionContainer, PopupHintArrowDirection.Top);
+            }
         }
 
         public bool AreFadeAnimationsEnabled

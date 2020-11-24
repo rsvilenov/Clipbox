@@ -21,7 +21,6 @@ namespace Clipbox.Services
 
         private PopupHint _currentPopupHint;
         private bool _isHintPopupOpen;
-        private bool _areHintsDisabled;
 
         public PopupHintService(ISettingsService settingsService)
         {
@@ -111,6 +110,8 @@ namespace Clipbox.Services
                                     _currentPopupHint.ArrowDirection = PopupArrowDirection.None;
                                     break;
                             }
+
+                            _currentPopupHint.Open();
                         }
                         catch
                         {
@@ -140,7 +141,7 @@ namespace Clipbox.Services
                             string popupName = (string)_currentPopupHint.Tag;
                             if (_currentPopupHint.IsOpen)
                             {
-                                _currentPopupHint.IsOpen = false;
+                                _currentPopupHint.Close();
                             }
 
                             if (setAsSeen)
@@ -198,7 +199,8 @@ namespace Clipbox.Services
 
         private readonly Dictionary<string, string> _popupInfoDictionary = new Dictionary<string, string>()
         {
-            { PopupHintNames.PP_HINT_CHARGE_CLIPBOARD, "LBL_HINT_CHARGE_CLIPBOARD" }
+            { PopupHintNames.PP_HINT_CHARGE_CLIPBOARD, "LBL_HINT_CHARGE_CLIPBOARD" },
+            { PopupHintNames.PP_HINT_UI_EXTENSIONS, "LBL_HINT_UI_EXTENSIONS" }
         };
     }
 }

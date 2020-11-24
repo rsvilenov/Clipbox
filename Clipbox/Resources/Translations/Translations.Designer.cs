@@ -566,6 +566,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You can modify the selected items before putting them into the system clipboard..
+        /// </summary>
+        internal static string LBL_HINT_UI_EXTENSIONS {
+            get {
+                return ResourceManager.GetString("LBL_HINT_UI_EXTENSIONS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Incompatible items..
         /// </summary>
         internal static string LBL_MAINVIEW_INCOMPATIBLE_ITEMS {

@@ -16,6 +16,8 @@ namespace Clipbox.Views
         public ICommand CloseCommand { get; set; }
         public event EventHandler ClosedByUser;
 
+        private bool _isClosed;
+
         private static double _initialDpi;
         private static bool _hasDpiChanged;
 
@@ -48,7 +50,7 @@ namespace Clipbox.Views
         {
             if (!(bool)e.NewValue)
             {
-                IsOpen = false;
+                Close();
             }
         }
 
@@ -59,13 +61,25 @@ namespace Clipbox.Views
 
         private void CloseCommandHandler()
         {
-            IsOpen = false;
+            Close();
             ClosedByUser?.Invoke(this, new EventArgs());
+        }
+
+        public void Open()
+        {
+            IsOpen = true;
+            _isClosed = false;
+        }
+
+        public void Close()
+        {
+            _isClosed = true;
+            IsOpen = false;
         }
 
         private void AdjustPosition()
         {
-            if (AnchorElement != null && AnchorElement.IsLoaded)
+            if (!_isClosed && AnchorElement != null && AnchorElement.IsLoaded)
             {
                 Placement = PlacementMode.Absolute;
                 Window parentWindow = Window.GetWindow(AnchorElement);
@@ -90,10 +104,16 @@ namespace Clipbox.Views
 
                     Point relativePoint;
 
+                    Point topArrowPointerPoint;
+
                     try
                     {
                         relativePoint = AnchorElement
                             .TransformToAncestor(parentWindow)
+                            .Transform(new Point(0, 0));
+
+                        topArrowPointerPoint = topArrow
+                            .TransformToAncestor(this.Child)
                             .Transform(new Point(0, 0));
                     }
                     catch (InvalidOperationException) // the visual tree is not ready yet
@@ -101,7 +121,7 @@ namespace Clipbox.Views
                         return;
                     }
 
-                    switch(ArrowDirection)
+                    switch (ArrowDirection)
                     {
                         case PopupArrowDirection.Left:
                         case PopupArrowDirection.None:
@@ -109,7 +129,7 @@ namespace Clipbox.Views
                             VerticalOffset = relativePoint.Y + (AnchorElement.ActualHeight / 2);
                             break;
                         case PopupArrowDirection.Top:
-                            HorizontalOffset = relativePoint.X + (AnchorElement.ActualWidth / 2);
+                            HorizontalOffset = relativePoint.X + (AnchorElement.ActualWidth / 2) - (topArrowPointerPoint.X + topArrow.ActualWidth / 2);
                             VerticalOffset = relativePoint.Y + AnchorElement.ActualHeight;
                             break;
                     }
@@ -130,7 +150,7 @@ namespace Clipbox.Views
 
         private void ParentWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            IsOpen = false;
+            Close();
         }
 
         public FrameworkElement AnchorElement

@@ -53,6 +53,7 @@
             </Polygon.Style>
         </Polygon>
         <Polygon
+            x:Name="topArrow"
             Grid.Row="0"
             Grid.Column="1"
             Margin="10,0,0,0"
