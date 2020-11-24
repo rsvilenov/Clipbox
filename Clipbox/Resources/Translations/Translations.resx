@@ -286,6 +286,12 @@ from this window except the pinned ones.</value>
   <data name="LBL_HINT_CHARGE_CLIPBOARD" xml:space="preserve">
     <value>Press this button to put the selected items into the system clipboard. You can then paste them wherever you want.</value>
   </data>
+  <data name="LBL_HINT_FILTER_BAND" xml:space="preserve">
+    <value>Use these buttons to filter the items by type, date, source program...</value>
+  </data>
+  <data name="LBL_HINT_SELECT_MULTIPLE" xml:space="preserve">
+    <value>By holding Ctrl key, you can select multiple items of the same kind and then paste them at once.</value>
+  </data>
   <data name="LBL_HINT_UI_EXTENSIONS" xml:space="preserve">
     <value>You can modify the selected items before putting them into the system clipboard.</value>
   </data>

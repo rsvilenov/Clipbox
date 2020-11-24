@@ -200,7 +200,9 @@ namespace Clipbox.Services
         private readonly Dictionary<string, string> _popupInfoDictionary = new Dictionary<string, string>()
         {
             { PopupHintNames.PP_HINT_CHARGE_CLIPBOARD, "LBL_HINT_CHARGE_CLIPBOARD" },
-            { PopupHintNames.PP_HINT_UI_EXTENSIONS, "LBL_HINT_UI_EXTENSIONS" }
+            { PopupHintNames.PP_HINT_UI_EXTENSIONS, "LBL_HINT_UI_EXTENSIONS" },
+            { PopupHintNames.PP_HINT_SELECT_MULTIPLE, "LBL_HINT_SELECT_MULTIPLE" },
+            { PopupHintNames.PP_HINT_FILTER_BAND, "LBL_HINT_FILTER_BAND" }
         };
     }
 }

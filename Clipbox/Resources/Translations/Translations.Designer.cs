@@ -566,6 +566,24 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Use these buttons to filter the items by type, date, source program....
+        /// </summary>
+        internal static string LBL_HINT_FILTER_BAND {
+            get {
+                return ResourceManager.GetString("LBL_HINT_FILTER_BAND", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to By holding Ctrl key, you can select multiple items of the same kind and then paste them at once..
+        /// </summary>
+        internal static string LBL_HINT_SELECT_MULTIPLE {
+            get {
+                return ResourceManager.GetString("LBL_HINT_SELECT_MULTIPLE", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You can modify the selected items before putting them into the system clipboard..
         /// </summary>
         internal static string LBL_HINT_UI_EXTENSIONS {

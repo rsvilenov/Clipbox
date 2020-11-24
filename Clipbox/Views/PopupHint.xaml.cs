@@ -123,8 +123,11 @@ namespace Clipbox.Views
 
                     switch (ArrowDirection)
                     {
-                        case PopupArrowDirection.Left:
                         case PopupArrowDirection.None:
+                            HorizontalOffset = relativePoint.X + AnchorElement.ActualWidth + 15;
+                            VerticalOffset = relativePoint.Y + (AnchorElement.ActualHeight / 2);
+                            break;
+                        case PopupArrowDirection.Left:
                             HorizontalOffset = relativePoint.X + AnchorElement.ActualWidth;
                             VerticalOffset = relativePoint.Y + (AnchorElement.ActualHeight / 2);
                             break;

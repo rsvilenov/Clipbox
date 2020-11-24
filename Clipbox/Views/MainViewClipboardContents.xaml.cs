@@ -140,6 +140,12 @@ namespace Clipbox.Views
 
         private void ShowHintPopup()
         {
+            if (_lastShownHintPopupName != null)
+            {
+                // show just one tip on one openning of the window
+                return;
+            }
+
             if (setToClipboardBtn.IsVisible
                 && !_popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_CHARGE_CLIPBOARD))
             {
@@ -151,6 +157,22 @@ namespace Clipbox.Views
             {
                 _lastShownHintPopupName = PopupHintNames.PP_HINT_UI_EXTENSIONS;
                 _popupHintService.TryShowHintPopup(PopupHintNames.PP_HINT_UI_EXTENSIONS, uiExtensionContainer, PopupHintArrowDirection.Top);
+            }
+            else if (_popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_CHARGE_CLIPBOARD) 
+                && _popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_UI_EXTENSIONS)
+                && setToClipboardBtn.IsVisible)
+            {
+                _lastShownHintPopupName = PopupHintNames.PP_HINT_SELECT_MULTIPLE;
+                _popupHintService.TryShowHintPopup(PopupHintNames.PP_HINT_SELECT_MULTIPLE, setToClipboardBtn, PopupHintArrowDirection.None);
+            }
+            else if (_popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_CHARGE_CLIPBOARD)
+                && _popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_UI_EXTENSIONS)
+                && _popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_SELECT_MULTIPLE)
+                && !setToClipboardBtn.IsVisible)
+            {
+                _lastShownHintPopupName = PopupHintNames.PP_HINT_FILTER_BAND;
+                _popupHintService.TryShowHintPopup(PopupHintNames.PP_HINT_FILTER_BAND, filterBand, PopupHintArrowDirection.Left);
+
             }
         }
 
@@ -954,6 +976,9 @@ namespace Clipbox.Views
         private void MainListView_GroupingComplete(object sender, EventArgs e)
         {
             LoadingPopupGovernor.ClosePopup();
+
+            // when the grouping completes, show any tooltips that have not yet been shown
+            ShowHintPopupWithDelay();
 
             // if we do not set the visibility in background, 
             // the fade animations controlled by the triggers do not work
