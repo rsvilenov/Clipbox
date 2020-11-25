@@ -5,6 +5,7 @@ using Clipbox.Infrastructure.Diagnostics;
 using Clipbox.Infrastructure.IPC;
 using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.Persistence.PersistenceProviders;
+using Clipbox.Infrastructure.RegistryAccess;
 using Clipbox.Infrastructure.Serialization;
 using Clipbox.Infrastructure.UI.Localization;
 using Clipbox.Infrastructure.UI.Localization.LozalizationProviders;
@@ -106,6 +107,15 @@ namespace ClipboxGuard
             ILocalizationProvider localizationProvider = AsmAwareResxLocalizationProvider.Instance;
 
             TranslationSourcePool.InitTranslationSourcePool(localizationProvider);
+
+            string cultureCode = null;
+            try { cultureCode = RegistryUtils.GetCultureCode(); }
+            catch { }
+
+            if (!string.IsNullOrEmpty(cultureCode))
+            {
+                localizationProvider.CurrentCulture = new System.Globalization.CultureInfo(cultureCode);
+            }
 
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 

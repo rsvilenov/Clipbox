@@ -86,6 +86,15 @@ namespace Clipbox.Infrastructure.RegistryAccess
             }
         }
 
+        public static string GetCultureCode()
+        {
+            string productHKCURegKey = $@"Software\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}";
+            using (RegistryKey key = Registry.CurrentUser.OpenSubKey(productHKCURegKey))
+            {
+                return key?.GetValue("CultureCode")?.ToString();
+            }
+        }
+
         public static string GetInitialPinTrayIcon()
         {
             string productHKLMRegKey = $@"Software\{ProductConstants.COMPANY_NAME}\{ProductConstants.PRODUCT_NAME}";
