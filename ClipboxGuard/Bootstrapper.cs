@@ -187,7 +187,7 @@ namespace ClipboxGuard
                 }
                 catch { }
                 
-                _errorMessageWindowService?.ShowErrorWindow(out isRestartRequested, new ReportAnalysis(ErrorOrigin.Unknown, exception.ToString()));
+                _errorMessageWindowService?.ShowErrorWindow(out isRestartRequested, new ReportAnalysis(ErrorOrigin.GuardProcess, exception.ToString()));
             }
             catch { }
 

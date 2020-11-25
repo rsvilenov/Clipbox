@@ -9,53 +9,117 @@
     xmlns:localEnums="clr-namespace:ClipboxGuard.Enums"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="Clipbox Guard"
-    Width="525"
-    Height="350"
-    Background="White"
+    Width="625"
+    Height="420"
+    Background="#2d364c"
     Foreground="Black"
     Icon="Resources/Icons/Logo.ico"
+    ResizeMode="NoResize"
     ShowInTaskbar="True"
     Topmost="True"
     Visibility="Visible"
-    WindowStyle="ToolWindow"
+    WindowStartupLocation="CenterScreen"
+    WindowStyle="None"
     mc:Ignorable="d">
     <Window.Resources>
-        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="pack://application:,,,/ClipboxGuard;component/Resources/Styles/Style.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <Style BasedOn="{StaticResource MinimalisticScrollBarStyle}" TargetType="ScrollBar">
+                <Setter Property="Foreground" Value="White" />
+                <Setter Property="Margin" Value="0,5,2,5" />
+            </Style>
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+        </ResourceDictionary>
     </Window.Resources>
     <Grid x:Name="mainGrid" Margin="10,0,10,0">
         <Grid.RowDefinitions>
-            <RowDefinition Height="30" />
-            <RowDefinition />
-            <RowDefinition Height="2*" />
+            <RowDefinition Height="45" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="50" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-
-        <StackPanel
+        <!--  title bar  -->
+        <Grid
             Grid.Row="0"
-            HorizontalAlignment="Center"
-            Orientation="Horizontal">
+            Background="Transparent"
+            MouseDown="CaptionGrid_MouseDown">
+            <StackPanel
+                Height="24"
+                Margin="10,0,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Orientation="Horizontal">
+                <ContentControl
+                    Height="20"
+                    Foreground="#f0f0f0"
+                    Template="{StaticResource LogoIcon}" />
+                <TextBlock
+                    Margin="10,0,0,0"
+                    FontSize="16"
+                    Foreground="#f0f0f0"
+                    Text="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Window}, Path=Title}" />
+            </StackPanel>
+
+            <Button
+                Name="BtnCloseWindow"
+                Width="35"
+                Height="35"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Style="{StaticResource BtnWindowClose}" />
+        </Grid>
+
+        <Grid Grid.Row="1" HorizontalAlignment="Center">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <ContentControl
+                Grid.Column="0"
+                Height="25"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
+                Foreground="Red"
+                Template="{StaticResource ErrorIconThin}" />
             <TextBlock
+                Grid.Column="1"
+                Margin="20,0,0,0"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
                 FontSize="18"
                 FontWeight="Bold"
                 Foreground="Red">
                 <Run Text="{x:Static core:ProductConstants.PRODUCT_NAME}" /><Run Text=":" />
                 <Run Text="{loc:Localize LBL_FATAL_ERROR, ResourceLookupMode=CurrentAssembly}" />
             </TextBlock>
-        </StackPanel>
+        </Grid>
 
         <StackPanel
-            Grid.Row="1"
+            Grid.Row="2"
             Margin="0,10,0,0"
             Orientation="Vertical">
-            <TextBlock FontWeight="Bold" Text="{loc:Localize LBL_FAILED_COMPONENT, ResourceLookupMode=CurrentAssembly}" />
-            <TextBlock Text="{Binding ErrorOriginLabel}" TextWrapping="Wrap" />
+            <TextBlock
+                FontSize="14"
+                FontWeight="Bold"
+                Foreground="LightGray"
+                Text="{loc:Localize LBL_FAILED_COMPONENT,
+                                    ResourceLookupMode=CurrentAssembly}" />
+            <TextBlock
+                FontSize="14"
+                Foreground="LightGray"
+                Text="{Binding ErrorOriginLabel}"
+                TextWrapping="Wrap" />
         </StackPanel>
 
         <Grid
-            Grid.Row="2"
+            Grid.Row="3"
+            Margin="0,15,0,0"
             HorizontalAlignment="Stretch"
             VerticalAlignment="Stretch">
             <Grid.RowDefinitions>
@@ -64,7 +128,9 @@
             </Grid.RowDefinitions>
             <TextBlock
                 Grid.Row="0"
+                FontSize="14"
                 FontWeight="Bold"
+                Foreground="LightGray"
                 Text="{loc:Localize Key=LBL_ERROR_DETAILS,
                                     ResourceLookupMode=CurrentAssembly}"
                 TextWrapping="Wrap" />
@@ -82,30 +148,41 @@
                     VerticalAlignment="Stretch"
                     HorizontalScrollBarVisibility="Disabled"
                     VerticalScrollBarVisibility="Visible">
-                    <TextBlock Text="{Binding ErrorText}" TextWrapping="Wrap" />
+                    <TextBlock
+                        Foreground="LightGray"
+                        Text="{Binding ErrorText}"
+                        TextWrapping="Wrap" />
                 </ScrollViewer>
 
             </Border>
         </Grid>
 
         <CheckBox
-            Grid.Row="3"
-            Margin="0,15,5,5"
-            HorizontalAlignment="Left"
+            Grid.Row="4"
+            Height="30"
+            Margin="0,10,0,0"
+            HorizontalAlignment="Stretch"
             VerticalAlignment="Center"
+            FontSize="14"
+            Foreground="#f0f0bd"
             IsChecked="{Binding IsRestartRequested}"
+            Style="{StaticResource CheckBox}"
             Visibility="{Binding ShowRestartOption, Converter={StaticResource BooleanToVisibilityConverter}}">
             <TextBlock Text="{loc:Localize CB_REQUEST_RESTART, ResourceLookupMode=CurrentAssembly}" />
         </CheckBox>
         <CheckBox
-            Grid.Row="4"
+            Grid.Row="5"
+            Height="30"
             Margin="0,5,5,5"
-            HorizontalAlignment="Left"
+            HorizontalAlignment="Stretch"
             VerticalAlignment="Center"
-            IsChecked="{Binding IsReportErrorRequested}">
+            FontSize="14"
+            Foreground="#f0f0bd"
+            IsChecked="{Binding IsReportErrorRequested}"
+            Style="{StaticResource CheckBox}">
             <TextBlock Text="{loc:Localize CB_SEND_ERROR, ResourceLookupMode=CurrentAssembly}" />
         </CheckBox>
-        <ContentControl Grid.Row="5" Margin="10,5,5,5">
+        <ContentControl Grid.Row="6" Margin="0,5,5,5">
             <ContentControl.Template>
                 <ControlTemplate TargetType="ContentControl">
                     <Grid>
@@ -117,6 +194,8 @@
                             x:Name="progressBar"
                             Grid.Column="0"
                             Height="20"
+                            Background="#1e2434"
+                            Foreground="#7ed5fa"
                             IsIndeterminate="True" />
                         <TextBlock x:Name="statusTextBox" Grid.Column="1" />
                     </Grid>
@@ -152,12 +231,16 @@
 
         </ContentControl>
         <Button
-            Grid.Row="6"
+            Grid.Row="7"
             Width="100"
-            Margin="10"
+            Height="30"
+            Margin="0,15,0,10"
             HorizontalAlignment="Center"
+            Background="Transparent"
             Click="Button_Click"
-            Content="OK" />
+            Content="OK"
+            Foreground="White"
+            Style="{StaticResource BtnOk}" />
 
     </Grid>
 </Window>

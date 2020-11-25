@@ -45,6 +45,14 @@ namespace ClipboxGuard
             IsReportErrorRequested = NetworkInterface.GetIsNetworkAvailable();
         }
 
+        private void CaptionGrid_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+            {
+                DragMove();
+            }
+        }
+
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             Close();
