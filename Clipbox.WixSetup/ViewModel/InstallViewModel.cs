@@ -740,7 +740,8 @@ namespace Clipbox.WixSetup.ViewModel
             }
 
             if (SetupWorkflow == ClipboxSetupWorkflow.Modify 
-                || SetupWorkflow == ClipboxSetupWorkflow.Update)
+                || SetupWorkflow == ClipboxSetupWorkflow.Update
+                || SetupWorkflow == ClipboxSetupWorkflow.Uninstall)
             {
                 try
                 {

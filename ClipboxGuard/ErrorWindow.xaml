@@ -12,6 +12,8 @@
     Width="625"
     Height="420"
     Background="#2d364c"
+    BorderBrush="#007acc"
+    BorderThickness="1"
     Foreground="Black"
     Icon="Resources/Icons/Logo.ico"
     ResizeMode="NoResize"
