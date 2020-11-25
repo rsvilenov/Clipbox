@@ -45,19 +45,6 @@ namespace ClipboxGuard
             IsReportErrorRequested = NetworkInterface.GetIsNetworkAvailable();
         }
 
-        private void CaptionGrid_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ChangedButton == MouseButton.Left)
-            {
-                DragMove();
-            }
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
-        
         private string ErrorText
         {
             get { return (string)GetValue(ErrorTextProperty); }
@@ -120,6 +107,29 @@ namespace ClipboxGuard
 
         private static readonly DependencyProperty StateOfReportSendingProperty =
             DependencyProperty.Register(nameof(StateOfReportSending), typeof(ReportSendState), typeof(ErrorWindow), new PropertyMetadata(default(ReportSendState)));
-        
+
+
+        private void CaptionGrid_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+            {
+                DragMove();
+            }
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        private void BtnCloseWindow_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
+
+        private void CopyErrorDetailsButton_Click(object sender, RoutedEventArgs e)
+        {
+            Clipboard.SetText(ErrorText);
+        }
     }
 }

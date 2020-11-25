@@ -72,6 +72,7 @@
                 Height="35"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
+                Click="BtnCloseWindow_Click"
                 Style="{StaticResource BtnWindowClose}" />
         </Grid>
 
@@ -126,16 +127,41 @@
                 <RowDefinition Height="Auto" />
                 <RowDefinition />
             </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
             <TextBlock
                 Grid.Row="0"
+                Grid.Column="0"
+                VerticalAlignment="Bottom"
                 FontSize="14"
                 FontWeight="Bold"
                 Foreground="LightGray"
                 Text="{loc:Localize Key=LBL_ERROR_DETAILS,
                                     ResourceLookupMode=CurrentAssembly}"
                 TextWrapping="Wrap" />
+            <Button
+                Grid.Row="0"
+                Grid.Column="1"
+                Width="35"
+                Height="35"
+                Margin="3"
+                HorizontalAlignment="Right"
+                VerticalAlignment="Center"
+                Background="Transparent"
+                BorderBrush="Gray"
+                BorderThickness="1"
+                Click="CopyErrorDetailsButton_Click"
+                Foreground="White"
+                Style="{StaticResource IconButton}"
+                ToolTip="{loc:Localize BTN_COPY_ERROR_DETAILS}">
+                <ContentControl Margin="5" Template="{StaticResource CopyIcon}" />
+            </Button>
             <Border
                 Grid.Row="1"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
                 Margin="0,3,0,0"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch"
