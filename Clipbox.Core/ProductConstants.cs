@@ -57,6 +57,8 @@ namespace Clipbox.Core
 
         public const string PIPE_COMMAND_QUIT = "Quit";
 
+        public const string PIPE_COMMAND_PING = "Ping";
+
         public const string PIPE_COMMAND_DISABLE_SEARCH = "DisableSearch";
 
         public const string PIPE_COMMAND_OPEN_MAIN_WINDOW = "OpenMainWindow";

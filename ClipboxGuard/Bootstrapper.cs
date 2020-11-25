@@ -36,6 +36,7 @@ namespace ClipboxGuard
         private IErrorWindowService _errorMessageWindowService;
         private ISessionMonitorService _sessionMonitorService;
         private IReportAnalysisService _reportAnalysisService;
+        private ClipboardCheckerService _clipboardCheckerService;
 
         public void PerformStartupSequence()
         {
@@ -140,6 +141,7 @@ namespace ClipboxGuard
                 _reportAnalysisService = new ReportAnalysisService(_persistenceProvider);
                 _errorMessageWindowService = new ErrorWindowService(_mainProcessKeeperService, _searchProcessKeeperService, _reportAnalysisService, _persistenceProvider, _isStartedFromSvc);
                 _sessionMonitorService = new SessionMonitorService(_mainProcessKeeperService, _searchProcessKeeperService);
+                _clipboardCheckerService = new ClipboardCheckerService(_mainProcessKeeperService);
 
                 // start the external processes after the error message window service
                 // has been started, so that if they crash immediately after starting,
@@ -212,6 +214,7 @@ namespace ClipboxGuard
             {
                 TryDisposeObject(_mainProcessKeeperService);
                 TryDisposeObject(_searchProcessKeeperService);
+                TryDisposeObject(_clipboardCheckerService);
             }
         }
 

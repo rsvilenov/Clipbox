@@ -8,5 +8,6 @@ namespace ClipboxGuard.Services.Interfaces
         event EventHandler<RestartFatalErrorEventArgs> FatalErrorOccurred;
         void StartExternalProcessManagement();
         void StopMainProcess();
+        void RestartMainProcess();
     }
 }

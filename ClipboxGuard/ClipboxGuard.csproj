@@ -86,11 +86,13 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Translations.resx</DependentUpon>
     </Compile>
+    <Compile Include="Services\ClipboardCheckerService.cs" />
     <Compile Include="Services\Common\ReportAnalysis.cs" />
     <Compile Include="Services\ErrorWindowService.cs" />
     <Compile Include="Services\EventArgsClasses\ReportStateEventArgs.cs" />
     <Compile Include="Services\EventArgsClasses\RestartFatalErrorEventArgs.cs" />
     <Compile Include="Services\EventArgsClasses\FatalErrorEventArgs.cs" />
+    <Compile Include="Services\Interfaces\IClipboardCheckerService.cs" />
     <Compile Include="Services\Interfaces\IReportAnalysisService.cs" />
     <Compile Include="Services\Interfaces\IReportSenderService.cs" />
     <Compile Include="Services\Interfaces\ISessionMonitorService.cs" />

@@ -11,7 +11,9 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.ExceptionServices;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace ClipboxGuard.Services
@@ -19,14 +21,15 @@ namespace ClipboxGuard.Services
     public class MainProcessKeeperService : IMainProcessKeeperService, IDisposable
     {
         private const int MAIN_PROCESS_EXIT_TIMEOUT_MS = 3000;
-
+        
         private readonly ISearchProcessKeeperService _searchProcessKeeperService;
         private readonly IPersistenceProvider _persistenceProvider;
         private readonly string _installationPath;
         private readonly int _sessionId;
         private readonly NamedPipesClient _pipeClient;
         private readonly NamedPipesServer _pipeServer;
-        
+        private readonly MainProcessPinger _mainProcessPinger;
+
         private Process _mainProcess;
         private bool _isMainProcessExitRequested;
 
@@ -41,6 +44,9 @@ namespace ClipboxGuard.Services
             _persistenceProvider = persistenceProvider;
             _installationPath = installationPath;
             _sessionId = sessionId;
+
+            _mainProcessPinger = new MainProcessPinger(sessionId);
+            _mainProcessPinger.PingFailed += _mainProcessPinger_PingFailed;
 
             _pipeClient = new NamedPipesClient($"{ProductConstants.MAINPROC_GUARD_COMM_NAMED_PIPE_PREFIX}.{sessionId}");
 
@@ -65,8 +71,16 @@ namespace ClipboxGuard.Services
             _searchProcessKeeperService.RestartOfMainProcessRequested += _searchProcessKeeperService_RestartOfMainProcessRequested;
         }
 
+        private void _mainProcessPinger_PingFailed(object sender, EventArgs e)
+        {
+            StartMainProcess(stopFirstIfRunning: true);
+        }
+
         public void StartExternalProcessManagement()
         {
+            _mainProcessPinger.Start();
+
+
             StartMainProcess(stopFirstIfRunning: true);
         }
 
@@ -78,6 +92,11 @@ namespace ClipboxGuard.Services
             }
 
             StartMainProcess(stopFirstIfRunning: false);
+        }
+
+        public void RestartMainProcess()
+        {
+            StartMainProcess(stopFirstIfRunning: true);
         }
 
         private void StartMainProcess(bool stopFirstIfRunning)
@@ -102,6 +121,8 @@ namespace ClipboxGuard.Services
                 }
             }
 
+            _mainProcessPinger.Stop();
+
             bool runWithHighPriority = _persistenceProvider
                 .CheckIfKeyExists(ProductConstants.RUN_WITH_HIGH_PRIORITY_FLAG_KEY);
             
@@ -122,6 +143,8 @@ namespace ClipboxGuard.Services
             _mainProcess.PriorityClass = runWithHighPriority ?
                     ProcessPriorityClass.High
                     : ProcessPriorityClass.Normal;
+
+            _mainProcessPinger.Start();
         }
 
         private void _mainProcess_Exited(object sender, EventArgs e)
@@ -135,7 +158,8 @@ namespace ClipboxGuard.Services
             
             int exitCode = _mainProcess.ExitCode;
             string stdErr = _mainProcess.StandardError.ReadToEnd();
-            
+
+            _mainProcessPinger.Stop();
             _mainProcess.Dispose();
 
             if (exitCode == (int)ProcessExitCodes.Ok)
@@ -201,6 +225,8 @@ namespace ClipboxGuard.Services
         public void StopMainProcess()
         {
             _isMainProcessExitRequested = true;
+
+            _mainProcessPinger.Stop();
 
             if (!CheckIsMainProcessRunning())
             {
@@ -322,8 +348,99 @@ namespace ClipboxGuard.Services
             try
             {
                 StopMainProcess();
+                
+                // request stopping of the ping thread to stop
+                // and wait for it to stop
+                _mainProcess.Dispose();
             }
             catch { }
+        }
+
+
+
+        private class MainProcessPinger : IDisposable
+        {
+            private const int PING_INTERVAL_MS = 5000;
+            private const int PING_TIMEOUT_MS = 10000;
+
+            private readonly ManualResetEvent _stopMre;
+            private readonly SynchronizationContext _mainSyncContext;
+            private readonly NamedPipesClient _pipeClient;
+
+            private bool _isPingThreadEnabled;
+            private bool _isDisposed;
+
+            public event EventHandler PingFailed;
+            public MainProcessPinger(int sessionId)
+            {
+                _pipeClient = new NamedPipesClient($"{ProductConstants.MAINPROC_GUARD_COMM_NAMED_PIPE_PREFIX}.{sessionId}");
+                _stopMre = new ManualResetEvent(true);
+                _mainSyncContext = SynchronizationContext.Current;
+            }
+
+            public void Start()
+            {
+                Task.Run(() =>
+                {
+                    try
+                    {
+                        MainProcessContinuousPing();
+                    }
+                    catch (Exception ex)
+                    {
+                        var edi = ExceptionDispatchInfo.Capture(ex);
+                        _mainSyncContext.Post(state => ((ExceptionDispatchInfo)state).Throw(), edi);
+                    }
+                });
+            }
+
+            public void Stop()
+            {
+                _isPingThreadEnabled = false;
+                _stopMre.WaitOne();
+            }
+
+
+            private void MainProcessContinuousPing()
+            {
+                _isPingThreadEnabled = true;
+                _stopMre.Reset();
+                var currentSyncContext = SynchronizationContext.Current;
+
+                while (_isPingThreadEnabled)
+                {
+                    try
+                    {
+                        var task = Task.Run(() =>_pipeClient.SendMessage(ProductConstants.PIPE_COMMAND_PING));
+
+                        if (!task.Wait(PING_TIMEOUT_MS))
+                        {
+                            throw new TimeoutException();
+                        }
+
+                        Thread.Sleep(PING_INTERVAL_MS);
+                    }
+                    catch
+                    {
+                        // stop pinging after an exception
+                        _isPingThreadEnabled = false;
+                        // every exception here means that something went wrong with the main process
+                        Task.Run(() => PingFailed?.Invoke(this, new EventArgs()));
+                    }
+                }
+
+                _stopMre.Set();
+            }
+
+            public void Dispose()
+            {
+                if (!_isDisposed)
+                {
+                    _isDisposed = true;
+                    Stop();
+                    _stopMre.Dispose();
+                }
+            }
         }
     }
 }
