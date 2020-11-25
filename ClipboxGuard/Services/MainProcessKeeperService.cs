@@ -21,6 +21,7 @@ namespace ClipboxGuard.Services
     public class MainProcessKeeperService : IMainProcessKeeperService, IDisposable
     {
         private const int MAIN_PROCESS_EXIT_TIMEOUT_MS = 3000;
+        private const int QUIT_PIPE_MSG_TIMEOUT_MS = 3000;
         
         private readonly ISearchProcessKeeperService _searchProcessKeeperService;
         private readonly IPersistenceProvider _persistenceProvider;
@@ -78,9 +79,6 @@ namespace ClipboxGuard.Services
 
         public void StartExternalProcessManagement()
         {
-            _mainProcessPinger.Start();
-
-
             StartMainProcess(stopFirstIfRunning: true);
         }
 
@@ -235,7 +233,11 @@ namespace ClipboxGuard.Services
 
             try
             {
-                _pipeClient.SendMessage(ProductConstants.PIPE_COMMAND_QUIT);
+                var task = Task.Run(() => _pipeClient.SendMessage(ProductConstants.PIPE_COMMAND_QUIT));
+                if (!task.Wait(QUIT_PIPE_MSG_TIMEOUT_MS))
+                {
+                    throw new TimeoutException();
+                }
             }
             catch (Exception ex) when (ex is TimeoutException || ex is IOException)
             {
