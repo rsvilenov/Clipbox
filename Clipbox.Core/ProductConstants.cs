@@ -105,7 +105,7 @@ namespace Clipbox.Core
 
         public const string INITIAL_CULTURE_CODE_FILENAME = "initialCultureCode";
 
-        public const string PRODUCT_LATEST_VERSION_URL = "someUrl";
+        public const string PRODUCT_LATEST_VERSION_URL = "https://localhost:44381/api/version/current";
 
         public const string PRODUCT_UPDATE_PAGE_URL = "someUrl";
 

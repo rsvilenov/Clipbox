@@ -8,9 +8,11 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.ServiceProcess;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace Clipbox.WixSetup.ViewModel
 {
@@ -44,6 +46,7 @@ namespace Clipbox.WixSetup.ViewModel
         private int _executeProgress;
         private LaunchAction? _lastLaunchAction;
         private Version _installedVersion;
+        private bool _isUpdateAvailable;
 
         public InstallViewModel(BootstrapperApplicationModel model)
         {
@@ -77,7 +80,7 @@ namespace Clipbox.WixSetup.ViewModel
 
             UpdateCommand = new DelegateCommand(() => UpdateCommandHandler(), () => !_isSetupActionRequested);
 
-            UpdateDownloadCommand = new DelegateCommand(UpdateDownloadCommandHandler, () => !_isSetupActionRequested);
+            UpdateDownloadCommand = new DelegateCommand(UpdateDownloadCommandHandler, UpdateDownloadCommandCanExecuteHandler);
             ModifyCommand = new DelegateCommand(ModifyCommandHandler, ModifyCommandHandlerCanExecuteHandler);
             FactoryResetCommand = new DelegateCommand(FactoryResetCommandHandler, () => !_isSetupActionRequested);
             RetryCommand = new DelegateCommand(RetryCommandHandler, () => !_isSetupActionRequested && _lastLaunchAction != null);
@@ -511,6 +514,36 @@ namespace Clipbox.WixSetup.ViewModel
             }
         }
 
+        private bool UpdateDownloadCommandCanExecuteHandler()
+        {
+            return _isUpdateAvailable && !_isSetupActionRequested;
+        }
+
+        private bool CheckForUpdate()
+        {
+            if (!NetworkInterface.GetIsNetworkAvailable())
+            {
+                return false;
+            }
+
+            try
+            {
+                using (WebClient webClient = new WebClient())
+                {
+                    string latestVersion = webClient.DownloadString(ProductConstants.PRODUCT_LATEST_VERSION_URL);
+                    if (!string.IsNullOrEmpty(latestVersion)
+                        && double.TryParse(latestVersion.Trim(), out double newVersion)
+                        && newVersion > ProductConstants.PRODUCT_VERSION)
+                    {
+                        return true;
+                    }
+                }
+            }
+            catch { }
+
+            return false;
+        }
+
         private void UpdateDownloadCommandHandler()
         {
             _isSetupActionRequested = true;
@@ -739,7 +772,7 @@ namespace Clipbox.WixSetup.ViewModel
                 SetupWorkflow = ClipboxSetupWorkflow.Uninstall;
             }
 
-            if (SetupWorkflow == ClipboxSetupWorkflow.Modify 
+            if (SetupWorkflow == ClipboxSetupWorkflow.Modify
                 || SetupWorkflow == ClipboxSetupWorkflow.Update
                 || SetupWorkflow == ClipboxSetupWorkflow.Uninstall)
             {
@@ -756,6 +789,16 @@ namespace Clipbox.WixSetup.ViewModel
             if (SetupState != ClipboxSetupState.Error)
             {
                 SetupState = ClipboxSetupState.Welcome;
+            }
+
+            if (SetupWorkflow == ClipboxSetupWorkflow.Modify)
+            {
+                Task.Factory.StartNew(() =>
+                {
+                    _isUpdateAvailable = CheckForUpdate();
+
+                    ((DelegateCommand)UpdateDownloadCommand).RaiseCanExecuteChanged();
+                });
             }
 
             DetectComplete?.Invoke(this, new EventArgs());

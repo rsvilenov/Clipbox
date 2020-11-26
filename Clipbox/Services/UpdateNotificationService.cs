@@ -16,10 +16,11 @@ namespace Clipbox.Services
 
         public event EventHandler UpdateAvailable;
 
-        private Timer _updateCheckTimer;
-        private bool _isNetworkAvailable;
+        private readonly Timer _updateCheckTimer;
         private readonly WebClient _webClient;
+
         private bool _isDisposed;
+        private bool _isNetworkAvailable;
 
         public UpdateNotificationService()
         {
@@ -27,6 +28,7 @@ namespace Clipbox.Services
             NetworkChange.NetworkAvailabilityChanged += NetworkChange_NetworkAvailabilityChanged;
 
             _webClient = new WebClient();
+            _webClient.DownloadStringCompleted += WebClient_DownloadStringCompleted;
 
             _updateCheckTimer = new Timer
             {
