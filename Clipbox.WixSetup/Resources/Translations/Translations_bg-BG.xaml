@@ -36,7 +36,7 @@
     <sys:String x:Key="TrBtnFactoryReset">НУЛИРАЙ CLIPBOX</sys:String>
     <sys:String x:Key="TrLblConfigure">Конфигурирайте инсталацията на Clipbox</sys:String>
     <sys:String x:Key="TrLblFactoryReset">Нулиране на Clipbox?</sys:String>
-    <sys:String x:Key="TrLblFactoryResetInfo">При нулиране на Clipbox всички негови настроийки ще се върнат в състоянието, в което са били веднага след инсталацията на програмата.</sys:String>
+    <sys:String x:Key="TrLblFactoryResetInfo">При нулиране на Clipbox всички негови настроийки ще се върнат в състоянието, в което са били веднага след инсталацията на програмата. Няма да загубите никакви клипборд записи.</sys:String>
     <sys:String x:Key="TrLblModifyInfo">Искате да промените инсталацията? Вие сте на правилното място.</sys:String>
     <sys:String x:Key="TrBtnUpdate">ОБНОВИ</sys:String>
     <sys:String x:Key="TrBtnRepair">ПОПРАВИ</sys:String>

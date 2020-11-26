@@ -36,7 +36,7 @@
     <sys:String x:Key="TrBtnFactoryReset">RESET CLIPBOX</sys:String>
     <sys:String x:Key="TrLblConfigure">Configure your Clipbox installation</sys:String>
     <sys:String x:Key="TrLblFactoryReset">Reset Clipbox?</sys:String>
-    <sys:String x:Key="TrLblFactoryResetInfo">By resetting Clipbox all its settings will return to the state they were in when the program was installed. This should be enough to solve most problems.</sys:String>
+    <sys:String x:Key="TrLblFactoryResetInfo">By resetting Clipbox all its settings will return to the state they were in when the program was installed. This should be enough to solve most problems. No stored clipboard entries will be lost.</sys:String>
     <sys:String x:Key="TrLblModifyInfo">Want to customize yout installation? You are in the right place.</sys:String>
     <sys:String x:Key="TrBtnUpdate">UPDATE</sys:String>
     <sys:String x:Key="TrBtnRepair">REPAIR</sys:String>

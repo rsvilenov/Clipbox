@@ -1774,7 +1774,7 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to New version of Clipbox is available! Click here to install it..
+        ///   Looks up a localized string similar to A new version of Clipbox is available! Click here to install it..
         /// </summary>
         internal static string TTP_MAINVIEW_BTN_UPDATE_AVAILABLE {
             get {
