@@ -5,6 +5,7 @@ using Clipbox.Infrastructure.Persistence;
 using Clipbox.Win32;
 using ClipboxGuard.Services.EventArgsClasses;
 using ClipboxGuard.Services.Interfaces;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -49,6 +50,9 @@ namespace ClipboxGuard.Services
             _mainProcessPinger = new MainProcessPinger(sessionId);
             _mainProcessPinger.PingFailed += _mainProcessPinger_PingFailed;
 
+            SystemEvents.PowerModeChanged += SystemEvents_PowerModeChanged;
+            SystemEvents.SessionSwitch += SystemEvents_SessionSwitch;
+
             _pipeClient = new NamedPipesClient($"{ProductConstants.MAINPROC_GUARD_COMM_NAMED_PIPE_PREFIX}.{sessionId}");
 
             _pipeServer = new NamedPipesServer($"{ProductConstants.GUARD_NAMED_PIPE_PREFIX}.{sessionId}");
@@ -70,6 +74,31 @@ namespace ClipboxGuard.Services
             };
 
             _searchProcessKeeperService.RestartOfMainProcessRequested += _searchProcessKeeperService_RestartOfMainProcessRequested;
+        }
+
+        private void SystemEvents_SessionSwitch(object sender, SessionSwitchEventArgs e)
+        {
+            switch (e.Reason)
+            {
+                case SessionSwitchReason.SessionLock:
+                    _mainProcessPinger.Stop();
+                    break;
+                case SessionSwitchReason.SessionUnlock:
+                    _mainProcessPinger.Start();
+                    break;
+            }
+        }
+
+        private void SystemEvents_PowerModeChanged(object sender, PowerModeChangedEventArgs e)
+        {
+            if (e.Mode == PowerModes.Suspend)
+            {
+                _mainProcessPinger.Stop();
+            }
+            else if (e.Mode == PowerModes.Resume)
+            {
+                _mainProcessPinger.Start();
+            }
         }
 
         private void _mainProcessPinger_PingFailed(object sender, EventArgs e)
@@ -407,7 +436,6 @@ namespace ClipboxGuard.Services
             {
                 _isPingThreadEnabled = true;
                 _stopMre.Reset();
-                var currentSyncContext = SynchronizationContext.Current;
 
                 while (_isPingThreadEnabled)
                 {
@@ -427,7 +455,18 @@ namespace ClipboxGuard.Services
                         // stop pinging after an exception
                         _isPingThreadEnabled = false;
                         // every exception here means that something went wrong with the main process
-                        Task.Run(() => PingFailed?.Invoke(this, new EventArgs()));
+                        Task.Run(() =>
+                        {
+                            try
+                            {
+                                PingFailed?.Invoke(this, new EventArgs());
+                            }
+                            catch (Exception ex)
+                            {
+                                var edi = ExceptionDispatchInfo.Capture(ex);
+                                _mainSyncContext.Post(state => ((ExceptionDispatchInfo)state).Throw(), edi);
+                            }
+                        });
                     }
                 }
 

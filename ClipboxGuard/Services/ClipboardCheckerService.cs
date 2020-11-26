@@ -1,10 +1,8 @@
 ﻿using Clipbox.Win32.Native;
 using ClipboxGuard.Services.Interfaces;
+using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.ExceptionServices;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Interop;
@@ -22,6 +20,7 @@ namespace ClipboxGuard.Services
         private readonly HwndSource _hWndSource;
         private readonly SynchronizationContext _mainSyncContext;
 
+        private bool _isCheckingClipboardThreadEnabled;
         private bool _isCheckingClipboardEnabled;
         private bool _isDisposed;
 
@@ -32,6 +31,9 @@ namespace ClipboxGuard.Services
             _mainSyncContext = SynchronizationContext.Current;
             _clipboardCheckerWorkerStoppingMre = new ManualResetEvent(true);
             _hWndSource = new HwndSource(0, 0, 0, 0, 0, 0, 0, null, IntPtr.Zero /* HWND_DESKTOP */);
+
+            SystemEvents.PowerModeChanged += SystemEvents_PowerModeChanged;
+            SystemEvents.SessionSwitch += SystemEvents_SessionSwitch;
 
             Task.Run(() => 
             { 
@@ -47,13 +49,44 @@ namespace ClipboxGuard.Services
             });
         }
 
+        private void SystemEvents_SessionSwitch(object sender, SessionSwitchEventArgs e)
+        {
+            switch (e.Reason)
+            {
+                case SessionSwitchReason.SessionLock:
+                    _isCheckingClipboardEnabled = false;
+                    break;
+                case SessionSwitchReason.SessionUnlock:
+                    _isCheckingClipboardEnabled = true;
+                    break;
+            }
+        }
+
+        private void SystemEvents_PowerModeChanged(object sender, PowerModeChangedEventArgs e)
+        {
+            if (e.Mode == PowerModes.Suspend)
+            {
+                _isCheckingClipboardEnabled = false;
+            }
+            else if (e.Mode == PowerModes.Resume)
+            {
+                _isCheckingClipboardEnabled = true;
+            }
+        }
+
         private void CheckClipboard()
         {
+            _isCheckingClipboardThreadEnabled = true;
             _isCheckingClipboardEnabled = true;
-
             int numberOfFailedAttempts = 0;
-            while (_isCheckingClipboardEnabled)
+            while (_isCheckingClipboardThreadEnabled)
             {
+                if (!_isCheckingClipboardEnabled)
+                {
+                    Thread.Sleep(CHECK_CLIPBOARD_INTERVAL_MS);
+                    continue;
+                }
+
                 bool clipboardOpenSuccess;
                 try
                 {
@@ -95,7 +128,7 @@ namespace ClipboxGuard.Services
             if (_isDisposed)
             {
                 _isDisposed = true;
-                _isCheckingClipboardEnabled = false;
+                _isCheckingClipboardThreadEnabled = false;
                 _clipboardCheckerWorkerStoppingMre.WaitOne();
             }
         }
