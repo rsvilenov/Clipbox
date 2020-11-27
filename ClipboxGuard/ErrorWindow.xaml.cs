@@ -159,7 +159,9 @@ namespace ClipboxGuard
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (IsSubmitErrorRequested && StateOfReportSending != ReportSubmitState.Error)
+            if (ShowSubmitOption 
+                && IsSubmitErrorRequested 
+                && StateOfReportSending != ReportSubmitState.Error)
             {
                 SubmitReportRequested?.Invoke(this, new RequestSubmitReportEventArgs(_reportAnalysis));
             }
