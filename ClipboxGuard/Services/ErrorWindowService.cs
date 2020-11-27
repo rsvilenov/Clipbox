@@ -177,7 +177,7 @@ namespace ClipboxGuard.Services
 
         private void _errorWindow_SubmitReportRequested(object sender, RequestSubmitReportEventArgs e)
         {
-            if (_reportSubmitterService != null)
+            if (_reportSubmitterService != null && e.ReportAnalysis?.AggregateReport != null)
             {
                 _reportSubmitterService.SubmitReport(e.ReportAnalysis.AggregateReport);
             }
