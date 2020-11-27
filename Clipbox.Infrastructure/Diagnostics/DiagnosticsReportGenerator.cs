@@ -63,7 +63,7 @@ namespace Clipbox.Infrastructure.Diagnostics
                         ExtensionDescription = extInfo.Description,
                         ExtensionType = extType.FullName,
                         ExtensionModuleName = extType.Module.FullyQualifiedName,
-                        ExtensionVersion = extInfo.Version
+                        ExtensionVersion = extInfo.Version?.ToString()
                     };
                 }
             }

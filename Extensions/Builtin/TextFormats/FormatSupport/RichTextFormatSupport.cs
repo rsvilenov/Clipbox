@@ -9,10 +9,10 @@ using System.Runtime.InteropServices;
 namespace Clipbox.Extensions.BuiltIn.TextFormats.FormatSupport
 {
     [ClipboxExtension(
-    description: "Copy/paste support for RTF (Rich text format)",
-    author: ProductConstants.PRODUCT_NAME,
-    version: 1.0,
-    MinHostVersion = 1.0
+        description: "Copy/paste support for RTF (Rich text format)",
+        author: ProductConstants.PRODUCT_NAME,
+        version: "1.0",
+        minHostVersion: "1.0"
     )]
     // the original Rtf is ANSI, and it seems that everything
     // that is sent to the clipboard as Rtf is ANSI

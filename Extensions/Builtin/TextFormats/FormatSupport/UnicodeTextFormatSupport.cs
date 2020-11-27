@@ -9,10 +9,10 @@ using System.Runtime.InteropServices;
 namespace Clipbox.Extensions.BuiltIn.TextFormats.FormatSupport
 {
     [ClipboxExtension(
-    description: "Copy/paste support for Unicode text",
-    author: ProductConstants.PRODUCT_NAME,
-    version: 1.0,
-    MinHostVersion = 1.0
+        description: "Copy/paste support for Unicode text",
+        author: ProductConstants.PRODUCT_NAME,
+        version: "1.0",
+        minHostVersion: "1.0"
     )]
     [ClipboardFormat("CF_UNICODETEXT")]
     public class UnicodeTextFormatSupport : ClipboardFormatSupport<UnicodeTextIntermediateFormat>

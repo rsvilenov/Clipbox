@@ -10,10 +10,10 @@ using System.Text;
 namespace Clipbox.Extensions.BuiltIn.TextFormats.FormatSupport
 {
     [ClipboxExtension(
-    description: "Copy/paste support for HTML data",
-    author: ProductConstants.PRODUCT_NAME,
-    version: 1.0,
-    MinHostVersion = 1.0
+        description: "Copy/paste support for HTML data",
+        author: ProductConstants.PRODUCT_NAME,
+        version: "1.0",
+        minHostVersion: "1.0"
     )]
     [ClipboardFormat("CF_HTML")]
     public class HtmlFormatSupport : ClipboardFormatSupport<TextIntermediateFormat>

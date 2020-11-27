@@ -8,10 +8,10 @@ using Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIParts
 namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
 {
     [ClipboxExtension(
-    description: "Setting UI extension for the extensions which process the copied text before storing",
-    author: ProductConstants.PRODUCT_NAME,
-    version: 1.0,
-    MinHostVersion = 1.0
+        description: "Setting UI extension for the extensions which process the copied text before storing",
+        author: ProductConstants.PRODUCT_NAME,
+        version: "1.0",
+        minHostVersion: "1.0"
     )]
     public class TextPreProcessingSettingUIExtension : SettingsUIExtension
     {

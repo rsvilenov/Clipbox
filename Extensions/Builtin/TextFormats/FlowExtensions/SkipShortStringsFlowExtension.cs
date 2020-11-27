@@ -8,10 +8,10 @@ using System.Collections.Generic;
 namespace Clipbox.Extensions.BuiltIn.TextFormats.FlowExtensions
 {
     [ClipboxExtension(
-    description: "Skips storing words shorted than N characters.",
-    author: ProductConstants.PRODUCT_NAME,
-    version: 1.0,
-    MinHostVersion = 1.0
+        description: "Skips storing words shorted than N characters.",
+        author: ProductConstants.PRODUCT_NAME,
+        version: "1.0",
+        minHostVersion: "1.0"
     )]
     public class SkipShortStringsFlowExtension : FlowExtension
     {

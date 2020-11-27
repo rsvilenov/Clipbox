@@ -10,8 +10,8 @@ namespace Clipbox.Extensions.BuiltIn.General.SettingsUIExtensions
     [ClipboxExtension(
         description: "Settings UI for the app blacklist",
         author: ProductConstants.PRODUCT_NAME,
-        version: 1.0,
-        MinHostVersion = 1.0
+        version: "1.0",
+        minHostVersion: "1.0"
         )]
     public class BlacklistedAppsSettingsUIExtension : SettingsUIExtension
     {

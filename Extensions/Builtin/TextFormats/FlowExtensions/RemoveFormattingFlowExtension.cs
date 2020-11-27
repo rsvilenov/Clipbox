@@ -16,10 +16,10 @@ using System.Windows.Documents;
 namespace Clipbox.Extensions.BuiltIn.TextFormats.FlowExtensions
 {
     [ClipboxExtension(
-    description: "Removes the formatting from formatted text",
-    author: ProductConstants.PRODUCT_NAME,
-    version: 1.0,
-    MinHostVersion = 1.0
+        description: "Removes the formatting from formatted text",
+        author: ProductConstants.PRODUCT_NAME,
+        version: "1.0",
+        minHostVersion: "1.0"
     )]
     public class RemoveFormattingFlowExtension : FlowExtension
     {

@@ -14,10 +14,10 @@ using System.Drawing.Imaging;
 namespace Clipbox.Extensions.BuiltIn.ImageFormats.PreviewGenerators
 {
     [ClipboxExtension(
-    description: "Preview generation support for metafile images (generates the thumbnail of the copied image)",
-    author: ProductConstants.PRODUCT_NAME,
-    version: 1.0,
-    MinHostVersion = 1.0
+        description: "Preview generation support for metafile images (generates the thumbnail of the copied image)",
+        author: ProductConstants.PRODUCT_NAME,
+        version: "1.0",
+        minHostVersion: "1.0"
     )]
     [IntermediateFormatSupport("{D77A8959-A11B-457E-892F-1D34BC925E87}")]
     public class MetafilePictPreviewGenerator : SinglePreviewGenerator<MetafilePictIntermediateFormat, ImagePreviewData>

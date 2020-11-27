@@ -9,8 +9,8 @@ namespace Clipbox.Extensions.BuiltIn.General.FlowExtensions
     [ClipboxExtension(
         description: "Disable copy/paste operations in remote desktop sessions",
         author: ProductConstants.PRODUCT_NAME,
-        version: 1.0,
-        MinHostVersion = 1.0
+        version: "1.0",
+        minHostVersion: "1.0"
         )]
     public class DisableRemoteDesktopOperations : FlowExtension
     {

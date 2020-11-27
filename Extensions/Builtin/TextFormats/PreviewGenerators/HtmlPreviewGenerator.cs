@@ -17,10 +17,10 @@ using System.Windows.Media.Imaging;
 namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators
 {
     [ClipboxExtension(
-    description: "Preview generation support for HTML data (generates a thumbnail of rendered html content)",
-    author: ProductConstants.PRODUCT_NAME,
-    version: 1.0,
-    MinHostVersion = 1.0
+        description: "Preview generation support for HTML data (generates a thumbnail of rendered html content)",
+        author: ProductConstants.PRODUCT_NAME,
+        version: "1.0",
+        minHostVersion: "1.0"
     )]
     [IntermediateFormatSupport("{5E4E9C1F-A324-42A4-AE9E-AA64DD871CC8}")]
     public class HtmlPreviewGenerator : SinglePreviewGenerator<HtmlIntermediateFormat, HtmlPreviewData>

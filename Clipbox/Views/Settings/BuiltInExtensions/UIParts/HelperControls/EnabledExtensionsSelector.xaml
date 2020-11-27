@@ -188,7 +188,7 @@
                                             VerticalAlignment="Center"
                                             Foreground="White">
                                             <Run Text="{Binding ExtensionName}" />
-                                            <Run Text="{Binding Version, StringFormat={} (v. {0})}" />
+                                            <Run Text="{Binding Version}" />
                                             <i:Interaction.Behaviors>
                                                 <infBeh:FrameworkElementDpiScalingBehavior MaxScaleFactor="1.5" />
                                             </i:Interaction.Behaviors>
@@ -287,7 +287,7 @@
                                         VerticalAlignment="Center"
                                         Foreground="White">
                                         <Run Text="{Binding ExtensionName}" />
-                                        <Run Text="{Binding Version, StringFormat={} (v. {0})}" />
+                                        <Run Text="{Binding Version}" />
                                         <i:Interaction.Behaviors>
                                             <infBeh:FrameworkElementDpiScalingBehavior MaxScaleFactor="1.5" />
                                         </i:Interaction.Behaviors>

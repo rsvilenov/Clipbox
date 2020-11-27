@@ -16,8 +16,8 @@ namespace Clipbox.Extensions.BuiltIn.HdropFormat.FormatSupport
     [ClipboxExtension(
          description: "Copying/psating of file(s) from Windows Explorer",
          author: ProductConstants.PRODUCT_NAME,
-         version: 1.0,
-         MinHostVersion = 1.0
+         version: "1.0",
+         minHostVersion: "1.0"
          )]
     [ClipboardFormat("CF_HDROP")]
     public class HdropFormatSupport : ClipboardFormatSupport<FilesystemPathsIntermediateFormat>

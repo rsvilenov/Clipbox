@@ -12,8 +12,8 @@ namespace Clipbox.Extensions.BuiltIn.HdropFormat.FlowExtensions
     [ClipboxExtension(
         description: "Remove the files that has been cut-pasted from the clipboard storage",
         author: ProductConstants.PRODUCT_NAME,
-        version: 1.0,
-        MinHostVersion = 1.0
+        version: "1.0",
+        minHostVersion: "1.0"
         )]
     public class CutFlowExtension : FlowExtension
     {

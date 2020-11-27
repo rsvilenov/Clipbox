@@ -96,12 +96,14 @@
     <Compile Include="Services\Interfaces\IClipboardCheckerService.cs" />
     <Compile Include="Services\Interfaces\IReportAnalysisService.cs" />
     <Compile Include="Services\Interfaces\IReportSenderService.cs" />
+    <Compile Include="Services\Interfaces\IReportSubmitterService.cs" />
     <Compile Include="Services\Interfaces\ISessionMonitorService.cs" />
     <Compile Include="Services\MainProcessKeeperService.cs" />
     <Compile Include="Services\Interfaces\IErrorWindowService.cs" />
     <Compile Include="Services\Interfaces\IMainProcessKeeperService.cs" />
     <Compile Include="Services\Interfaces\ISearchProcessKeeperService.cs" />
     <Compile Include="Services\ReportAnalysisService.cs" />
+    <Compile Include="Services\ReportSubmitterService.cs" />
     <Compile Include="Services\SearchProcessKeeperService.cs" />
     <Compile Include="Services\SessionMonitorService.cs" />
     <Page Include="ErrorWindow.xaml">

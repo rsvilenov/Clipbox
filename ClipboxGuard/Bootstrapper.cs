@@ -196,8 +196,13 @@ namespace ClipboxGuard
                     _persistenceProvider.Write(ProductConstants.GUARD_FAILURE_XML_PERSISTENCE_KEY, reportXml);
                 }
                 catch { }
-                
-                _errorMessageWindowService?.ShowErrorWindow(out isRestartRequested, new ReportAnalysis(ErrorOrigin.GuardProcess, exception.ToString()));
+
+                AggregateReport ar = new AggregateReport(ProductConstants.PRODUCT_VERSION)
+                {
+                    GuardProcessReport = dr
+                };
+
+                _errorMessageWindowService?.ShowErrorWindow(out isRestartRequested, new ReportAnalysis(ErrorOrigin.GuardProcess, exception.ToString(), ar));
             }
             catch { }
 

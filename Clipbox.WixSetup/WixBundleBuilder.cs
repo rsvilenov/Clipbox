@@ -21,9 +21,10 @@ namespace Clipbox.WixSetup
             // this assembly version will be our product full version.
             Version asmVersion = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
 
-            if (double.Parse($"{asmVersion.Major}.{asmVersion.Minor}") != ProductConstants.PRODUCT_VERSION)
+            if (!(ProductConstants.PRODUCT_VERSION.Major == asmVersion.Major 
+                && ProductConstants.PRODUCT_VERSION.Minor == asmVersion.Minor))
             {
-                throw new InvalidOperationException($"Assebmly's major.minor version is {asmVersion.Major}.{asmVersion.Minor} while the product version is {ProductConstants.PRODUCT_VERSION}. They should match.");
+                throw new InvalidOperationException($"Assebmly's major.minor version is {asmVersion.Major}.{asmVersion.Minor} while the product version is {ProductConstants.PRODUCT_VERSION.Major}.{ProductConstants.PRODUCT_VERSION.Minor}. They should match.");
             }
 
 #if DEBUG

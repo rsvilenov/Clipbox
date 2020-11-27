@@ -27,8 +27,8 @@ namespace Clipbox.Extensions.BuiltIn.Cloud.Google.CloudSupportExtensions
     [ClipboxExtension(
            description: "Google Drive cloud support",
            author: ProductConstants.PRODUCT_NAME,
-           version: 1.0,
-           MinHostVersion = 1.0
+           version: "1.0",
+           minHostVersion: "1.0"
            )]
     [CloudSupport("Google Drive", "GoogleDrive.png")]
     public class GoogleDriveCloudSupportExtension : CloudSupportExtension, IAuthenticatable

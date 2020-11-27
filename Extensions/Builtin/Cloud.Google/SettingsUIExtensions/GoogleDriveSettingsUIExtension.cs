@@ -4,14 +4,16 @@ using Clipbox.Core.Extensibility.Contracts.ExtensionTypes.GeneralTypes;
 using Clipbox.Core.Extensibility.Enums;
 using Clipbox.Extensions.BuiltIn.Cloud.Google.CloudSupportExtensions;
 using Clipbox.Extensions.BuiltIn.Cloud.Google.SettingsUIExtensions.SettingUIParts;
+using System;
+using System.Reflection;
 
 namespace Clipbox.Extensions.BuiltIn.Cloud.Google.SettingsUIExtensions
 {
-    [ClipboxExtension(
+       [ClipboxExtension(
            description: "Settings UI for Google Drive cloud support",
            author: ProductConstants.PRODUCT_NAME,
-           version: 1.0,
-           MinHostVersion = 1.0
+           version: "1.0",
+           minHostVersion: "1.0"
            )]
     public class GoogleDriveSettingsUIExtension : SettingsUIExtension
     {

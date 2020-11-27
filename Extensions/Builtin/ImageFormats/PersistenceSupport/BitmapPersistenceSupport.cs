@@ -9,10 +9,10 @@ using System.IO;
 namespace Clipbox.Extensions.BuiltIn.ImageFormats.PersistenceSupport
 {
     [ClipboxExtension(
-    description: "Persistence support for bitmap images",
-    author: ProductConstants.PRODUCT_NAME,
-    version: 1.0,
-    MinHostVersion = 1.0
+        description: "Persistence support for bitmap images",
+        author: ProductConstants.PRODUCT_NAME,
+        version: "1.0",
+        minHostVersion: "1.0"
     )]
     [IntermediateFormatSupport("{4422E0FD-3DD7-4B10-B167-DB63BB97D6E1}")]
     public class BitmapPersistenceSupport : PersistenceSupportExtension<BitmapIntermediateFormat>

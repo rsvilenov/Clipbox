@@ -7,10 +7,10 @@ using System.Text;
 namespace Clipbox.Extensions.BuiltIn.TextFormats.PersistenceSupport
 {
     [ClipboxExtension(
-    description: "Persistence support for HTML data",
-    author: ProductConstants.PRODUCT_NAME,
-    version: 1.0,
-    MinHostVersion = 1.0
+        description: "Persistence support for HTML data",
+        author: ProductConstants.PRODUCT_NAME,
+        version: "1.0",
+        minHostVersion: "1.0"
     )]
     [IntermediateFormatSupport("{5E4E9C1F-A324-42A4-AE9E-AA64DD871CC8}")]
     public class HtmlPersistenceSupport : PersistenceSupportExtension<HtmlIntermediateFormat>

@@ -10,8 +10,8 @@ namespace Clipbox.Extensions.BuiltIn.Cloud.Microsoft.SettingsUIExtensions
     [ClipboxExtension(
            description: "Settings UI for Microsoft OneDrive cloud support",
            author: ProductConstants.PRODUCT_NAME,
-           version: 1.0,
-           MinHostVersion = 1.0
+           version: "1.0",
+           minHostVersion: "1.0"
            )]
     public class GoogleDriveSettingsUIExtension : SettingsUIExtension
     {

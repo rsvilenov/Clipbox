@@ -531,11 +531,19 @@ namespace Clipbox.WixSetup.ViewModel
                 using (WebClient webClient = new WebClient())
                 {
                     string latestVersion = webClient.DownloadString(ProductConstants.PRODUCT_LATEST_VERSION_URL);
-                    if (!string.IsNullOrEmpty(latestVersion)
-                        && double.TryParse(latestVersion.Trim(), out double newVersion)
-                        && newVersion > ProductConstants.PRODUCT_VERSION)
+                    if (!string.IsNullOrEmpty(latestVersion))
                     {
-                        return true;
+                        string[] parts = latestVersion.Trim().Split('.');
+                        if (parts.Length == 2
+                            && int.TryParse(parts[0], out int major)
+                            && int.TryParse(parts[1], out int minor))
+                        {
+                            Version newVersion = new Version(major, minor);
+                            if (newVersion > ProductConstants.PRODUCT_VERSION)
+                            {
+                                return true;
+                            }
+                        }
                     }
                 }
             }

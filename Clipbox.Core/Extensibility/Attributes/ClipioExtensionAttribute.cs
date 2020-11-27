@@ -1,4 +1,5 @@
 ﻿using Clipbox.Core.Extensibility.Contracts;
+using Clipbox.Core.Extensibility.Exceptions;
 using System;
 using System.Linq;
 using System.Reflection;
@@ -11,21 +12,25 @@ namespace Clipbox.Core.Extensibility.Attributes
     [AttributeUsage(AttributeTargets.Class, AllowMultiple =false)]
     public class ClipboxExtensionAttribute : Attribute
     {
-        /// <summary>
-        /// The minimum version of Clipbox on which this extension can run
-        /// </summary>
-        public double MinHostVersion { get; set; }
-
         private readonly string _description;
         private readonly string _author;
-        private readonly double _version;
+        private readonly string _version;
+        private readonly string _minHostVersion;
 
 
-        public ClipboxExtensionAttribute(string description, string author, double version)
+        /// <summary>
+        /// Describes a Clipbox extension
+        /// </summary>
+        /// <param name="description">The description of the extension</param>
+        /// <param name="author">Extension's author</param>
+        /// <param name="version">Extension's version (ex: "1.4" - major.minor)</param>
+        /// <param name="minHostVersion">The minimum version of Clipbox on which this extension can run (ex: "1.4" - major.minor)</param>
+        public ClipboxExtensionAttribute(string description, string author, string version, string minHostVersion)
         {
             _description = description;
             _author = author;
             _version = version;
+            _minHostVersion = minHostVersion;
         }
 
         public static bool IsDefinedFor(Type type)
@@ -42,13 +47,46 @@ namespace Clipbox.Core.Extensibility.Attributes
                 throw new InvalidOperationException($"Attribute {nameof(ClipboxExtensionAttribute)} has not been defined for type {type.Name}");
             }
 
+            string versionString = extensionAttribute.ConstructorArguments[2].Value as string;
+            if (string.IsNullOrWhiteSpace(versionString))
+            {
+                throw new ClipboxExtensionException($"Please provide a valid value for {nameof(ClipboxExtensionAttribute)}'s constructor parameter 'version'.");
+            }
+        
+            string minHostVersionString = extensionAttribute.ConstructorArguments[3].Value as string;
+            if (string.IsNullOrWhiteSpace(minHostVersionString))
+            {
+                throw new ClipboxExtensionException($"Please provide a valid value for {nameof(ClipboxExtensionAttribute)}'s constructor parameter 'minHostVersion'.");
+            }
+
+            Version version = null;
+            Version minHostVersion = null;
+
+            try
+            {
+                version = new Version(versionString);
+            }
+            catch (FormatException ex)
+            {
+                throw new ClipboxExtensionException($"{versionString} is not a valid value for {nameof(ClipboxExtensionAttribute)}'s constructor parameter 'version'.", ex);
+            }
+
+            try
+            {
+                minHostVersion = new Version(minHostVersionString);
+            }
+            catch (FormatException ex)
+            {
+                throw new ClipboxExtensionException($"{minHostVersionString} is not a valid value for {nameof(ClipboxExtensionAttribute)}'s constructor parameter 'minHostVersion'.", ex);
+            }
+
             return new ExtensionInfo
             {
                 ExtensionObjectType = type,
                 Description = extensionAttribute.ConstructorArguments[0].Value as string,
                 Author = extensionAttribute.ConstructorArguments[1].Value as string,
-                Version = (double)extensionAttribute.ConstructorArguments[2].Value,
-                MinHostVersion = GetNamedArgumentValue<double>(extensionAttribute, nameof(MinHostVersion))
+                Version = version,
+                MinHostVersion = minHostVersion
             };
         }
 
@@ -60,30 +98,17 @@ namespace Clipbox.Core.Extensibility.Attributes
                             .FirstOrDefault();
         }
 
-        private static T GetNamedArgumentValue<T>(CustomAttributeData attrData, string argumentName)
-        {
-            foreach (CustomAttributeNamedArgument arg in attrData.NamedArguments)
-            {
-                if (arg.MemberInfo?.Name == argumentName && arg.MemberInfo.ReflectedType == typeof(T))
-                {
-                    return (T)arg.TypedValue.Value;
-                }
-            }
-
-            return default;
-        }
-
         private class ExtensionInfo : IExtensionInfo
         {
             public Type ExtensionObjectType { get; set; }
 
-            public double Version { get; set; }
+            public Version Version { get; set; }
 
             public string Author { get; set; }
 
             public string Description { get; set; }
 
-            public double MinHostVersion { get; set; }
+            public Version MinHostVersion { get; set; }
         }
     }
 }

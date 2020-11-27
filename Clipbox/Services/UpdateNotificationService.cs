@@ -95,12 +95,20 @@ namespace Clipbox.Services
             {
                 string newVersionStr = e.Result;
 
-                if (!string.IsNullOrEmpty(newVersionStr)
-                    && double.TryParse(newVersionStr.Trim(), out double newVersion) 
-                    && newVersion > ProductConstants.PRODUCT_VERSION)
+                if (!string.IsNullOrEmpty(newVersionStr))
                 {
-                    IsUpdateAvailable = true;
-                    UpdateAvailable?.Invoke(this, new EventArgs());
+                    string[] parts = newVersionStr.Trim().Split('.');
+                    if (parts.Length == 2 
+                        && int.TryParse(parts[0], out int major) 
+                        && int.TryParse(parts[1], out int minor))
+                    {
+                        Version newVersion = new Version(major, minor);
+                        if (newVersion > ProductConstants.PRODUCT_VERSION)
+                        {
+                            IsUpdateAvailable = true;
+                            UpdateAvailable?.Invoke(this, new EventArgs());
+                        }
+                    }
                 }
             }
 

@@ -14,8 +14,8 @@ namespace Clipbox.Extensions.BuiltIn.HdropFormat.FlowExtensions
     [ClipboxExtension(
         description: "Remove clipboard entries for files which does not exist anymore",
         author: ProductConstants.PRODUCT_NAME,
-        version: 1.0,
-        MinHostVersion = 1.0
+        version: "1.0",
+        minHostVersion: "1.0"
         )]
     public class RemoveDeadFilePaths : FlowExtension
     {

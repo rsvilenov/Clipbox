@@ -12,8 +12,8 @@ namespace Clipbox.Extensions.BuiltIn.HdropFormat.FlowUIExtensions
     [ClipboxExtension(
         description: "UI part (buttons) for changing the preferred drop effect of files before pasting them",
         author: ProductConstants.PRODUCT_NAME,
-        version: 1.0,
-        MinHostVersion = 1.0
+        version: "1.0",
+        minHostVersion: "1.0"
         )]
     public class PreferredDropEffectFlowUIExtension : FlowUIExtension<PreferredDropEffect>
     {

@@ -26,7 +26,7 @@
     <sys:String x:Key="TrLblInstallingWarning">Не изключвайте компютъра си</sys:String>
     <sys:String x:Key="TrLblInstallReady">Готово!</sys:String>
     <sys:String x:Key="TrLblInstallReadyAnnotation1">Можете да започнете да използвате програмата.</sys:String>
-    <sys:String x:Key="TrLblInstallReadyAnnotation2">Натиснете и задръжте Ctrl+V и ще видите съдържанието на клипборда.</sys:String>
+    <sys:String x:Key="TrLblInstallReadyAnnotation2">Благодарим, че избрахте Clipbox!</sys:String>
     <sys:String x:Key="TrBtnInstallReady">OK</sys:String>
     <sys:String x:Key="TrLblInstallError">Грешка :(</sys:String>
     <sys:String x:Key="TrBtnRetry">Опитай отново</sys:String>

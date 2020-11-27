@@ -13,8 +13,8 @@ namespace Clipbox.Extensions.BuiltIn.HdropFormat.FlowExtensions
     [ClipboxExtension(
         description: "Change the prefered drop effect when pasting files",
         author: ProductConstants.PRODUCT_NAME,
-        version: 1.0,
-        MinHostVersion = 1.0
+        version: "1.0",
+        minHostVersion: "1.0"
         )]
     public class ProcessModifyHdropTargets : FlowExtension
     {

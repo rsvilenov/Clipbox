@@ -11,10 +11,10 @@ using System;
 namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
 {
     [ClipboxExtension(
-    description: "Setting UI extension for text preview generation",
-    author: ProductConstants.PRODUCT_NAME,
-    version: 1.0,
-    MinHostVersion = 1.0
+        description: "Setting UI extension for text preview generation",
+        author: ProductConstants.PRODUCT_NAME,
+        version: "1.0",
+        minHostVersion: "1.0"
     )]
     public class TextPreviewGeneratorsSettingsUIExtension : SettingsUIExtension
     {

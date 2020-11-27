@@ -10,10 +10,10 @@ using System.Linq;
 namespace Clipbox.Extensions.BuiltIn.TextFormats.FlowUIExtensions
 {
     [ClipboxExtension(
-    description: "Setting UI controls for the extension that removes the formatting of text entries",
-    author: ProductConstants.PRODUCT_NAME,
-    version: 1.0,
-    MinHostVersion = 1.0
+        description: "Setting UI controls for the extension that removes the formatting of text entries",
+        author: ProductConstants.PRODUCT_NAME,
+        version: "1.0",
+        minHostVersion: "1.0"
     )]
     public class RemoveFormattingFlowUIExtension : FlowUIExtension<RemoveFormatting>
     {   

@@ -11,10 +11,10 @@ using System.Text.RegularExpressions;
 namespace Clipbox.Extensions.BuiltIn.TextFormats.FlowExtensions
 {
     [ClipboxExtension(
-    description: "Skips storing of copied words that are highly likely to be passwords (if the word is not part of some text, of course)",
-    author: ProductConstants.PRODUCT_NAME,
-    version: 1.0,
-    MinHostVersion = 1.0
+        description: "Skips storing of copied words that are highly likely to be passwords (if the word is not part of some text, of course)",
+        author: ProductConstants.PRODUCT_NAME,
+        version: "1.0",
+        minHostVersion: "1.0"
     )]
     public class SkipPasswordsFlowExtension :  FlowExtension
     {

@@ -18,10 +18,10 @@ using Clipbox.Core;
 namespace Clipbox.Extensions.BuiltIn.TextFormats.FlowExtensions
 {
     [ClipboxExtension(
-    description: "Concatinates two or more text entries when they are being pasted together",
-    author: ProductConstants.PRODUCT_NAME,
-    version: 1.0,
-    MinHostVersion = 1.0
+        description: "Concatinates two or more text entries when they are being pasted together",
+        author: ProductConstants.PRODUCT_NAME,
+        version: "1.0",
+        minHostVersion: "1.0"
     )]
     public class ConcatTextSelectionsFlowExtension : FlowExtension
     {

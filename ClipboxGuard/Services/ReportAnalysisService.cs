@@ -23,13 +23,18 @@ namespace ClipboxGuard.Services
         public ReportAnalysis GetAnalysis()
         {
             ErrorOrigin errorOrigin = ErrorOrigin.Unknown;
-            
+
+            AggregateReport aggregateReport = new AggregateReport(ProductConstants.PRODUCT_VERSION);
+
             StringBuilder errorDetailsStringBuilder = new StringBuilder();
             if (_persistenceProvider.CheckIfKeyExists(ProductConstants.MAIN_CRASHFILE_PERSISTENCE_KEY))
             {
+                string mainProcessCrashText = _persistenceProvider.ReadText(ProductConstants.MAIN_CRASHFILE_PERSISTENCE_KEY);
                 errorDetailsStringBuilder.AppendLine("Main process crash error:");
-                errorDetailsStringBuilder.Append(_persistenceProvider.ReadText(ProductConstants.MAIN_CRASHFILE_PERSISTENCE_KEY));
+                errorDetailsStringBuilder.Append(mainProcessCrashText);
                 errorOrigin = ErrorOrigin.MainProcess;
+
+                aggregateReport.AddComponentError(Component.MainProcess, mainProcessCrashText);
             }
 
             if (_persistenceProvider.CheckIfKeyExists(ProductConstants.MAIN_PROCESS_FAILURE_XML_PERSISTENCE_KEY))
@@ -40,6 +45,8 @@ namespace ClipboxGuard.Services
                 errorDetailsStringBuilder.AppendLine("Main process exception:");
                 errorDetailsStringBuilder.AppendLine(dr.FailureInfo.ExceptionStringData);
                 errorOrigin = ErrorOrigin.MainProcess;
+
+                aggregateReport.MainProcessReport = dr;
             }
 
             if (_persistenceProvider.CheckIfKeyExists(ProductConstants.GUARD_FAILURE_XML_PERSISTENCE_KEY))
@@ -50,6 +57,8 @@ namespace ClipboxGuard.Services
                 errorDetailsStringBuilder.AppendLine("Guard process exception:");
                 errorDetailsStringBuilder.AppendLine(dr.FailureInfo.ExceptionStringData);
                 errorOrigin |= ErrorOrigin.GuardProcess;
+
+                aggregateReport.GuardProcessReport = dr;
             }
             
             if (_persistenceProvider.CheckIfKeyExists(ProductConstants.SEARCH_CRASHFILE_PERSISTENCE_KEY))
@@ -59,11 +68,14 @@ namespace ClipboxGuard.Services
                 {
                     errorDetailsStringBuilder.AppendLine("Search process crash error:");
                     errorDetailsStringBuilder.Append(crashMessage);
+
+                    aggregateReport.AddComponentError(Component.SearchProcess, crashMessage);
                 }
 
                 // there may not be any crash message in the crash file, but its presence
                 // still indicates a crash
                 errorOrigin |= ErrorOrigin.SearchProcess;
+
             }
 
             if (_persistenceProvider.CheckIfKeyExists(ProductConstants.SEARCH_PROCESS_FAILURE_XML_PERSISTENCE_KEY))
@@ -74,14 +86,19 @@ namespace ClipboxGuard.Services
                 errorDetailsStringBuilder.AppendLine("Search process exception:");
                 errorDetailsStringBuilder.AppendLine(dr.FailureInfo.ExceptionStringData);
                 errorOrigin |= ErrorOrigin.SearchProcess;
+
+                aggregateReport.SearchProcessReport = dr;
             }
 
             if (_persistenceProvider.CheckIfCategoryExists(ProductConstants.SEARCH_INDEX_ERROR_LOG_CATEGORY)
                 && _persistenceProvider.CheckIfKeyExists(ProductConstants.SEARCH_INDEX_ERROR_LOG_CATEGORY, ProductConstants.SEARCH_INDEX_ERROR_LOG_AGGREGATE))
             {
+                string searchIndexErrorText = _persistenceProvider.ReadText(ProductConstants.SEARCH_INDEX_ERROR_LOG_CATEGORY, ProductConstants.SEARCH_INDEX_ERROR_LOG_AGGREGATE);
                 errorDetailsStringBuilder.AppendLine("Search index exception:");
-                errorDetailsStringBuilder.Append(_persistenceProvider.ReadText(ProductConstants.SEARCH_INDEX_ERROR_LOG_CATEGORY, ProductConstants.SEARCH_INDEX_ERROR_LOG_AGGREGATE));
+                errorDetailsStringBuilder.Append(searchIndexErrorText);
                 errorOrigin |= ErrorOrigin.SearchIndex;
+
+                aggregateReport.AddComponentError(Component.SearchIndex, searchIndexErrorText);
             }
 
             if (_persistenceProvider.CheckIfKeyExists(ProductConstants.DESKBAND_LOG_APPDATA_FILENAME))
@@ -93,6 +110,7 @@ namespace ClipboxGuard.Services
                     errorDetailsStringBuilder.AppendLine("Deskband errors:");
                     errorDetailsStringBuilder.Append(deskbandLogText);
                     errorOrigin |= ErrorOrigin.Deskband;
+                    aggregateReport.AddComponentError(Component.Deskband, deskbandLogText);
                 }
             }
 
@@ -105,6 +123,7 @@ namespace ClipboxGuard.Services
                     errorDetailsStringBuilder.AppendLine("Deskband owner process errors:");
                     errorDetailsStringBuilder.Append(deskbandOwnerLogText);
                     errorOrigin |= ErrorOrigin.DeskbandOwner;
+                    aggregateReport.AddComponentError(Component.DeskbandOwner, deskbandOwnerLogText);
                 }
             }
 
@@ -117,6 +136,7 @@ namespace ClipboxGuard.Services
                     errorDetailsStringBuilder.AppendLine("Deskband control process errors:");
                     errorDetailsStringBuilder.Append(deskbandControlLogText);
                     errorOrigin |= ErrorOrigin.DeskbandControl;
+                    aggregateReport.AddComponentError(Component.DeskbandControl, deskbandControlLogText);
                 }
             }
 
@@ -129,7 +149,7 @@ namespace ClipboxGuard.Services
                 errorOrigin &= ~ErrorOrigin.Unknown;
             }
 
-            return new ReportAnalysis(errorOrigin, errorDetailsStringBuilder.ToString());
+            return new ReportAnalysis(errorOrigin, errorDetailsStringBuilder.ToString(), aggregateReport);
         }
     }
 }

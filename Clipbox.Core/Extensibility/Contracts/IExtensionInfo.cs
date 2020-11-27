@@ -15,7 +15,7 @@ namespace Clipbox.Core.Extensibility.Contracts
         /// <summary>
         /// The version of the extension
         /// </summary>
-        double Version { get; }
+        Version Version { get; }
 
         /// <summary>
         /// Who wrote the extension
@@ -30,6 +30,6 @@ namespace Clipbox.Core.Extensibility.Contracts
         /// <summary>
         /// The minimum version of Clipbox on which this extension can run
         /// </summary>
-        double MinHostVersion { get; }
+        Version MinHostVersion { get; }
     }
 }

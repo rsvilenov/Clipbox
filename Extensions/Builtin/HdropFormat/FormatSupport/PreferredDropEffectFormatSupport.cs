@@ -13,8 +13,8 @@ namespace Clipbox.Extensions.BuiltIn.HdropFormat.FormatSupport
     [ClipboxExtension(
         description: "Storing the paste action when copying files from Windows Explorer. (The preferred drop effect, which can be either Cut, Copy or Copy shortcut)",
         author: ProductConstants.PRODUCT_NAME,
-        version: 1.0,
-        MinHostVersion = 1.0
+        version: "1.0",
+        minHostVersion: "1.0"
         )]
     [ClipboardFormat("Preferred DropEffect")]
     public class PreferredDropEffectFormatSupport : ClipboardFormatSupport<PreferredDropEffectIntermediateFormat>

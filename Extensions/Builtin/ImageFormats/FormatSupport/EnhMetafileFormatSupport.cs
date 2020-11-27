@@ -8,10 +8,10 @@ using System.Drawing.Imaging;
 namespace Clipbox.Extensions.BuiltIn.ImageFormats.FormatSupport
 {
     [ClipboxExtension(
-    description: "Support for copying/pasting of enhanced metafile images",
-    author: ProductConstants.PRODUCT_NAME,
-    version: 1.0,
-    MinHostVersion = 1.0
+        description: "Support for copying/pasting of enhanced metafile images",
+        author: ProductConstants.PRODUCT_NAME,
+        version: "1.0",
+        minHostVersion: "1.0"
     )]
     [ClipboardFormat("CF_ENHMETAFILE_DataToPtr_Exception")]
    //// [ClipboardFormat("CF_METAFILEPICT")]

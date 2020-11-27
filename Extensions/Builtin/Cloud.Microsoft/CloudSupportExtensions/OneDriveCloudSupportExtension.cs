@@ -21,8 +21,8 @@ namespace Clipbox.Extensions.BuiltIn.Cloud.Microsoft.CloudSupportExtensions
     [ClipboxExtension(
               description: "Microsoft OneDrive cloud support",
               author: ProductConstants.PRODUCT_NAME,
-              version: 1.0,
-              MinHostVersion = 1.0
+              version: "1.0",
+              minHostVersion: "1.0"
               )]
     [CloudSupport("Microsoft OneDrive", "OneDrive.png")]
     public class OneDriveCloudSupportExtension : CloudSupportExtension, IAuthenticatable

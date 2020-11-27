@@ -10,10 +10,10 @@ using System;
 namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
 {
     [ClipboxExtension(
-    description: "Setting UI extension for password skipping",
-    author: ProductConstants.PRODUCT_NAME,
-    version: 1.0,
-    MinHostVersion = 1.0
+        description: "Setting UI extension for password skipping",
+        author: ProductConstants.PRODUCT_NAME,
+        version: "1.0",
+        minHostVersion: "1.0"
     )]
     public class SkipPasswordsSettingsUIExtension : SettingsUIExtension
     {

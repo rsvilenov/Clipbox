@@ -10,10 +10,10 @@ using System.Text.RegularExpressions;
 namespace Clipbox.Extensions.BuiltIn.TextFormats.FlowExtensions
 {
     [ClipboxExtension(
-    description: "Masks/hides credit card numbers from the copied text",
-    author: ProductConstants.PRODUCT_NAME,
-    version: 1.0,
-    MinHostVersion = 1.0
+        description: "Masks/hides credit card numbers from the copied text",
+        author: ProductConstants.PRODUCT_NAME,
+        version: "1.0",
+        minHostVersion: "1.0"
     )]
     public class ProcessCCNumbersFlowExtension : FlowExtension
     {

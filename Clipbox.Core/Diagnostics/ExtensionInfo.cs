@@ -7,7 +7,7 @@ namespace Clipbox.Core.Diagnostics
     {
         public string ExtensionType { get; set; }
 
-        public double ExtensionVersion { get; set; }
+        public string ExtensionVersion { get; set; }
 
         public string ExtensionAuthor { get; set; }
 

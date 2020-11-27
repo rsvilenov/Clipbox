@@ -8,10 +8,10 @@ using System.Drawing.Imaging;
 namespace Clipbox.Extensions.BuiltIn.ImageFormats.PersistenceSupport
 {
     [ClipboxExtension(
-    description: "Persistence support for metafile images",
-    author: ProductConstants.PRODUCT_NAME,
-    version: 1.0,
-    MinHostVersion = 1.0
+        description: "Persistence support for metafile images",
+        author: ProductConstants.PRODUCT_NAME,
+        version: "1.0",
+        minHostVersion: "1.0"
     )]
     [IntermediateFormatSupport("{69BD2743-DADE-4B24-B3A1-5B6D73BDAE32}")]
     public class MetafilePersistenceSupport : PersistenceSupportExtension<MetafileIntermediateFormat>

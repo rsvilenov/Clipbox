@@ -26,7 +26,7 @@
     <sys:String x:Key="TrLblInstallingWarning">Do not shut down your computer</sys:String>
     <sys:String x:Key="TrLblInstallReady">Clipbox is installed and ready for use.</sys:String>
     <sys:String x:Key="TrLblInstallReadyAnnotation1">Now you can start using the program.</sys:String>
-    <sys:String x:Key="TrLblInstallReadyAnnotation2">Press and hold Ctrl+V to view your clipboard contents.</sys:String>
+    <sys:String x:Key="TrLblInstallReadyAnnotation2">Thank you for chosing Clipbox!</sys:String>
     <sys:String x:Key="TrBtnOperationComplete">OK</sys:String>
     <sys:String x:Key="TrLblInstallError">Error :(</sys:String>
     <sys:String x:Key="TrBtnRetry">Retry</sys:String>

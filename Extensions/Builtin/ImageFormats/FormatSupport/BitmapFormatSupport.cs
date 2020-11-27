@@ -9,10 +9,10 @@ using System.Runtime.InteropServices;
 namespace Clipbox.Extensions.BuiltIn.ImageFormats.FormatSupport
 {
     [ClipboxExtension(
-    description: "Support for copying/pasting of BITMAP images",
-    author: ProductConstants.PRODUCT_NAME,
-    version: 1.0,
-    MinHostVersion = 1.0
+        description: "Support for copying/pasting of BITMAP images",
+        author: ProductConstants.PRODUCT_NAME,
+        version: "1.0",
+        minHostVersion: "1.0"
     )]
     [ClipboardFormat("CF_BITMAP_CRASHES")]
     public class BitmapFormatSupport : ClipboardFormatSupport<BitmapIntermediateFormat>

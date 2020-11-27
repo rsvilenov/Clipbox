@@ -13,10 +13,10 @@ using System.Windows.Threading;
 namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators
 {
     [ClipboxExtension(
-    description: "Preview generation support for Unicode textt (generates a thumbnail of the text)",
-    author: ProductConstants.PRODUCT_NAME,
-    version: 1.0,
-    MinHostVersion = 1.0
+        description: "Preview generation support for Unicode textt (generates a thumbnail of the text)",
+        author: ProductConstants.PRODUCT_NAME,
+        version: "1.0",
+        minHostVersion: "1.0"
     )]
     [IntermediateFormatSupport("{CAF7A257-882B-46CE-A26D-679D228EA8B7}")]
     [PreviewPriority(99)]

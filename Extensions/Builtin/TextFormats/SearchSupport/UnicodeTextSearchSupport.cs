@@ -6,10 +6,10 @@ using Clipbox.Extensions.BuiltIn.TextFormats.IntermediateFormats;
 namespace Clipbox.Extensions.BuiltIn.TextFormats.SearchSupport
 {
     [ClipboxExtension(
-    description: "Search support for copied Unicode text content",
-    author: ProductConstants.PRODUCT_NAME,
-    version: 1.0,
-    MinHostVersion = 1.0
+        description: "Search support for copied Unicode text content",
+        author: ProductConstants.PRODUCT_NAME,
+        version: "1.0",
+        minHostVersion: "1.0"
     )]
     [IntermediateFormatSupport("{CAF7A257-882B-46CE-A26D-679D228EA8B7}")]
     public class UnicodeTextSearchSupport : SearchSupportExtension<UnicodeTextIntermediateFormat>

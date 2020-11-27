@@ -1,10 +1,12 @@
-﻿namespace Clipbox.WixSetup
+﻿using System;
+
+namespace Clipbox.WixSetup
 {
     internal class ProductConstants
     {
         public const string PRODUCT_NAME = "Clipbox";
 
-        public const double PRODUCT_VERSION = 1.1;
+        public static readonly Version PRODUCT_VERSION = new Version(1,1);
 
         public const string MSI_PRODUCT_GUID = "95A2CB1E-AD54-41F4-B1F0-D1E7876A7437"; //"C7DF05E0-556E-4D60-A32E-B85EBF15C5F6";
 
@@ -14,7 +16,7 @@
 
         public const string COMPANY_NAME = "MyCompany";
 
-        public const string PRODUCT_LATEST_VERSION_URL = "http://go.microsoft.com/fwlink/?linkid=863265";
+        public const string PRODUCT_LATEST_VERSION_URL = "https://localhost:44381/api/version/current";
 
         public const string PRODUCT_UPDATE_URL = "http://go.microsoft.com/fwlink/?linkid=863265";
 

@@ -11,10 +11,10 @@ using System.Runtime.InteropServices;
 namespace Clipbox.Extensions.BuiltIn.ImageFormats.FormatSupport
 {
     [ClipboxExtension(
-    description: "Support for copying/pasting of Dib V5 images",
-    author: ProductConstants.PRODUCT_NAME,
-    version: 1.0,
-    MinHostVersion = 1.0
+        description: "Support for copying/pasting of Dib V5 images",
+        author: ProductConstants.PRODUCT_NAME,
+        version: "1.0",
+        minHostVersion: "1.0"
     )]
     [ClipboardFormat("CF_DIBV5")]
     public class DibV5FormatSupport : ClipboardFormatSupport<DibV5IntermediateFormat>

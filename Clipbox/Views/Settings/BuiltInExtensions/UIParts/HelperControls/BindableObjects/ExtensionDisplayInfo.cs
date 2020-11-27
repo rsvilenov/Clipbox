@@ -31,8 +31,8 @@ namespace Clipbox.Views.Settings.BuiltInExtensions.UIParts.HelperControls.Bindab
         /// <summary>
         /// The version of the extension
         /// </summary>
-        private double _version;
-        public double Version
+        private string _version;
+        public string Version
         {
             get { return _version; }
             set { SetField(ref _version, value); }

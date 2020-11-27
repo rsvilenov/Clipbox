@@ -72,6 +72,7 @@
     <Compile Include="Configuration\ISettingKey.cs" />
     <Compile Include="Configuration\SettingKey.cs" />
     <Compile Include="Configuration\SettingObject.cs" />
+    <Compile Include="Diagnostics\AggregateReport.cs" />
     <Compile Include="Diagnostics\DiagnosticsReport.cs" />
     <Compile Include="Diagnostics\ExtensionInfo.cs" />
     <Compile Include="Diagnostics\FailureInfo.cs" />

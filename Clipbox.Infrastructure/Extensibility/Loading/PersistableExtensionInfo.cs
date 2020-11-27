@@ -28,7 +28,7 @@ namespace Clipbox.Infrastructure.Extensibility.Loading
         /// <summary>
         /// The version of the extension
         /// </summary>
-        public double Version { get; set; }
+        public string Version { get; set; }
 
         /// <summary>
         /// Who wrote the extension
@@ -43,6 +43,6 @@ namespace Clipbox.Infrastructure.Extensibility.Loading
         /// <summary>
         /// The minimum version of Clipbox on which this extension can run
         /// </summary>
-        public double MinHostVersion { get; set; }
+        public string MinHostVersion { get; set; }
     }
 }

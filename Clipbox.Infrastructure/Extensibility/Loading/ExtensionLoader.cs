@@ -188,8 +188,8 @@ namespace Clipbox.Infrastructure.Extensibility.Loading
                             Description = extInfo.Description,
                             ExtensionObjectTypeFullName = extInfo.ExtensionObjectType.FullName,
                             TypeNameOfExtension = extInfo.ExtensionObjectType.Name,
-                            Version = extInfo.Version,
-                            MinHostVersion = extInfo.MinHostVersion
+                            Version = extInfo.Version?.ToString(),
+                            MinHostVersion = extInfo.MinHostVersion?.ToString()
                         };
 
                         yield return new ExtensionTypeInfo(extInfo.ExtensionObjectType, persistableExtensionInfo);

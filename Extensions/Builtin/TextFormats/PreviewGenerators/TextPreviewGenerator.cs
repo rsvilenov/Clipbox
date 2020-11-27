@@ -13,10 +13,10 @@ using System.Windows.Threading;
 namespace Clipbox.Extensions.BuiltIn.TextFormats.PreviewGenerators
 {
     [ClipboxExtension(
-    description: "Preview generation support for ANSI textt (generates a thumbnail of the text)",
-    author: ProductConstants.PRODUCT_NAME,
-    version: 1.0,
-    MinHostVersion = 1.0
+        description: "Preview generation support for ANSI textt (generates a thumbnail of the text)",
+        author: ProductConstants.PRODUCT_NAME,
+        version: "1.0",
+        minHostVersion: "1.0"
     )]
     [IntermediateFormatSupport("{89BCFB06-B1FC-4C0D-BFE6-9643BED5A172}")]
     [PreviewPriority(98)]
