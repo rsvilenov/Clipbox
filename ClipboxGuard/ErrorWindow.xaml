@@ -35,6 +35,12 @@
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         </ResourceDictionary>
     </Window.Resources>
+    <Window.InputBindings>
+        <KeyBinding
+            Key="F4"
+            Command="{Binding Path=DataContext.CloseWindowCommand, ElementName=mainGrid}"
+            Modifiers="Alt" />
+    </Window.InputBindings>
     <Grid x:Name="mainGrid" Margin="10,0,10,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="45" />
@@ -74,7 +80,7 @@
                 Height="35"
                 HorizontalAlignment="Right"
                 VerticalAlignment="Center"
-                Click="BtnCloseWindow_Click"
+                Command="{Binding CloseWindowCommand}"
                 Style="{StaticResource BtnWindowClose}" />
         </Grid>
 
@@ -154,7 +160,7 @@
                 Background="Transparent"
                 BorderBrush="Gray"
                 BorderThickness="1"
-                Click="CopyErrorDetailsButton_Click"
+                Command="{Binding CopyErrorDetailsCommand}"
                 Foreground="White"
                 Style="{StaticResource IconButton}"
                 ToolTip="{loc:Localize BTN_COPY_ERROR_DETAILS}">
@@ -284,11 +290,10 @@
             Margin="0,15,0,10"
             HorizontalAlignment="Center"
             Background="Transparent"
-            Click="Button_Click"
+            Command="{Binding SendOrCloseCommand}"
             Foreground="White">
             <Button.Style>
                 <Style BasedOn="{StaticResource BtnOk}" TargetType="Button">
-                    <Setter Property="IsEnabled" Value="True" />
                     <Setter Property="Content" Value="{loc:Localize BTN_SEND_REPORT}" />
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding StateOfReportSending}" Value="{x:Static localEnums:ReportSubmitState.Error}">
@@ -296,15 +301,6 @@
                         </DataTrigger>
                         <DataTrigger Binding="{Binding StateOfReportSending}" Value="{x:Static localEnums:ReportSubmitState.Done}">
                             <Setter Property="Content" Value="OK" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding StateOfReportSending}" Value="{x:Static localEnums:ReportSubmitState.Connecting}">
-                            <Setter Property="IsEnabled" Value="False" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding StateOfReportSending}" Value="{x:Static localEnums:ReportSubmitState.Requested}">
-                            <Setter Property="IsEnabled" Value="False" />
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding StateOfReportSending}" Value="{x:Static localEnums:ReportSubmitState.Sending}">
-                            <Setter Property="IsEnabled" Value="False" />
                         </DataTrigger>
                     </Style.Triggers>
                 </Style>

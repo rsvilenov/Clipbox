@@ -2,6 +2,7 @@
 {
     public enum ReportSubmitState
     {
+        None,
         Requested,
         Connecting,
         Sending,

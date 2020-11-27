@@ -16,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Clipbox.Infrastructure.ExtensionMethods;
+using Clipbox.Infrastructure.UI;
 using ClipboxGuard.Enums;
 using ClipboxGuard.EventArgsClasses;
 using ClipboxGuard.Services.Common;
@@ -29,11 +30,29 @@ namespace ClipboxGuard
     {
         public event EventHandler<RequestSubmitReportEventArgs> SubmitReportRequested;
 
+        public ICommand CloseWindowCommand { get; set; }
+        public ICommand SendOrCloseCommand { get; set; }
+        public ICommand CopyErrorDetailsCommand { get; set; }
+
         private readonly ReportAnalysis _reportAnalysis;
+
         public ErrorWindow(ReportAnalysis reportAnalysis, ErrorOrigin errorOrigin, bool showRestartOption, bool showSubmitOption)
         {
             InitializeComponent();
             mainGrid.DataContext = this;
+
+            CloseWindowCommand = new DelegateCommand(CloseWindowCommandHandler, 
+                () => StateOfReportSending == ReportSubmitState.None
+                    || StateOfReportSending == ReportSubmitState.Done
+                    || StateOfReportSending == ReportSubmitState.Error);
+
+            SendOrCloseCommand = new DelegateCommand(SendOrCloseCommandHandler, 
+                () => StateOfReportSending == ReportSubmitState.None
+                     || StateOfReportSending == ReportSubmitState.Done
+                     || StateOfReportSending == ReportSubmitState.Error);
+
+            CopyErrorDetailsCommand = new DelegateCommand(() => Clipboard.SetText(ErrorText));
+
             try
             {
                 ErrorOriginLabel = string.Join("; ", errorOrigin.GetDescriptionsForFlagsEnum());
@@ -52,9 +71,34 @@ namespace ClipboxGuard
             IsSubmitErrorRequested = NetworkInterface.GetIsNetworkAvailable();
         }
 
+        private void SendOrCloseCommandHandler()
+        {
+            if (ShowSubmitOption
+                && IsSubmitErrorRequested
+                && StateOfReportSending != ReportSubmitState.Error)
+            {
+                SubmitReportRequested?.Invoke(this, new RequestSubmitReportEventArgs(_reportAnalysis));
+            }
+            else
+            {
+                Close();
+            }
+        }
+
+        private void CloseWindowCommandHandler()
+        {
+            Close();
+        }
+
         public void SetReportSubmitState(ReportSubmitState state)
         {
-            Dispatcher.Invoke(() => StateOfReportSending = state);
+            Dispatcher.Invoke(() =>
+            {
+                StateOfReportSending = state;
+
+                ((DelegateCommand)CloseWindowCommand).RaiseCanExecuteChanged();
+                ((DelegateCommand)SendOrCloseCommand).RaiseCanExecuteChanged();
+            });
         }
 
         public void SetReportSubmitErrorText(string errorText)
@@ -155,30 +199,6 @@ namespace ClipboxGuard
             {
                 DragMove();
             }
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            if (ShowSubmitOption 
-                && IsSubmitErrorRequested 
-                && StateOfReportSending != ReportSubmitState.Error)
-            {
-                SubmitReportRequested?.Invoke(this, new RequestSubmitReportEventArgs(_reportAnalysis));
-            }
-            else
-            {
-                Close();
-            }
-        }
-
-        private void BtnCloseWindow_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
-
-        private void CopyErrorDetailsButton_Click(object sender, RoutedEventArgs e)
-        {
-            Clipboard.SetText(ErrorText);
         }
     }
 }
