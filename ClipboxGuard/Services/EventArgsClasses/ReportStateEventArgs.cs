@@ -5,11 +5,11 @@ namespace ClipboxGuard.Services.EventArgsClasses
 {
     public class ReportStateEventArgs : EventArgs
     {
-        public ReportStateEventArgs(ReportSendState state)
+        public ReportStateEventArgs(ReportSubmitState state)
         {
             State = state;
         }
 
-        public ReportSendState State { get; }
+        public ReportSubmitState State { get; }
     }
 }

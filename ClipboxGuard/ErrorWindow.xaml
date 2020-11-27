@@ -206,8 +206,9 @@
             VerticalAlignment="Center"
             FontSize="14"
             Foreground="#f0f0bd"
-            IsChecked="{Binding IsReportErrorRequested}"
-            Style="{StaticResource CheckBox}">
+            IsChecked="{Binding IsSubmitErrorRequested}"
+            Style="{StaticResource CheckBox}"
+            Visibility="{Binding ShowSubmitOption, Converter={StaticResource BooleanToVisibilityConverter}}">
             <TextBlock Text="{loc:Localize CB_SEND_ERROR, ResourceLookupMode=CurrentAssembly}" />
         </CheckBox>
         <ContentControl Grid.Row="6" Margin="0,5,5,5">
@@ -218,39 +219,57 @@
                             <ColumnDefinition Width="3*" />
                             <ColumnDefinition Width="4*" />
                         </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
                         <ProgressBar
                             x:Name="progressBar"
+                            Grid.Row="0"
                             Grid.Column="0"
                             Height="20"
                             Background="#1e2434"
                             Foreground="#7ed5fa"
                             IsIndeterminate="True" />
-                        <TextBlock x:Name="statusTextBox" Grid.Column="1" />
+                        <TextBlock
+                            x:Name="statusTextBox"
+                            Grid.Row="0"
+                            Grid.Column="1" />
+                        <TextBlock
+                            x:Name="submitErrorTextBox"
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="2"
+                            Margin="3"
+                            Foreground="Red"
+                            Text="{Binding ReportSubmitErrorText}"
+                            Visibility="Collapsed" />
                     </Grid>
                     <ControlTemplate.Triggers>
-                        <DataTrigger Binding="{Binding StateOfReportSending}" Value="{x:Static localEnums:ReportSendState.Requested}">
+                        <DataTrigger Binding="{Binding StateOfReportSending}" Value="{x:Static localEnums:ReportSubmitState.Requested}">
                             <Setter Property="Visibility" Value="Collapsed" />
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding StateOfReportSending}" Value="{x:Static localEnums:ReportSendState.Connecting}">
+                        <DataTrigger Binding="{Binding StateOfReportSending}" Value="{x:Static localEnums:ReportSubmitState.Connecting}">
                             <Setter Property="Visibility" Value="Visible" />
                             <Setter TargetName="progressBar" Property="IsIndeterminate" Value="True" />
                             <Setter TargetName="statusTextBox" Property="Text" Value="{loc:Localize LBL_STATUS_CONNECTING, ResourceLookupMode=CurrentAssembly}" />
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding StateOfReportSending}" Value="{x:Static localEnums:ReportSendState.Sending}">
+                        <DataTrigger Binding="{Binding StateOfReportSending}" Value="{x:Static localEnums:ReportSubmitState.Sending}">
                             <Setter Property="Visibility" Value="Visible" />
                             <Setter TargetName="progressBar" Property="IsIndeterminate" Value="True" />
                             <Setter TargetName="statusTextBox" Property="Text" Value="{loc:Localize LBL_STATUS_SENDING, ResourceLookupMode=CurrentAssembly}" />
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding StateOfReportSending}" Value="{x:Static localEnums:ReportSendState.Done}">
+                        <DataTrigger Binding="{Binding StateOfReportSending}" Value="{x:Static localEnums:ReportSubmitState.Done}">
                             <Setter Property="Visibility" Value="Visible" />
                             <Setter TargetName="progressBar" Property="IsIndeterminate" Value="False" />
                             <Setter TargetName="progressBar" Property="Value" Value="100" />
                             <Setter TargetName="statusTextBox" Property="Text" Value="{loc:Localize LBL_STATUS_SENT, ResourceLookupMode=CurrentAssembly}" />
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding StateOfReportSending}" Value="{x:Static localEnums:ReportSendState.Error}">
+                        <DataTrigger Binding="{Binding StateOfReportSending}" Value="{x:Static localEnums:ReportSubmitState.Error}">
                             <Setter Property="Visibility" Value="Visible" />
                             <Setter TargetName="progressBar" Property="IsIndeterminate" Value="False" />
                             <Setter TargetName="progressBar" Property="Value" Value="100" />
+                            <Setter TargetName="submitErrorTextBox" Property="Visibility" Value="Visible" />
                             <Setter TargetName="statusTextBox" Property="Text" Value="{loc:Localize LBL_STATUS_SEND_ERROR, ResourceLookupMode=CurrentAssembly}" />
                         </DataTrigger>
                     </ControlTemplate.Triggers>
@@ -266,9 +285,31 @@
             HorizontalAlignment="Center"
             Background="Transparent"
             Click="Button_Click"
-            Content="OK"
-            Foreground="White"
-            Style="{StaticResource BtnOk}" />
+            Foreground="White">
+            <Button.Style>
+                <Style BasedOn="{StaticResource BtnOk}" TargetType="Button">
+                    <Setter Property="IsEnabled" Value="True" />
+                    <Setter Property="Content" Value="{loc:Localize BTN_SEND_REPORT}" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding StateOfReportSending}" Value="{x:Static localEnums:ReportSubmitState.Error}">
+                            <Setter Property="Content" Value="OK" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding StateOfReportSending}" Value="{x:Static localEnums:ReportSubmitState.Done}">
+                            <Setter Property="Content" Value="OK" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding StateOfReportSending}" Value="{x:Static localEnums:ReportSubmitState.Connecting}">
+                            <Setter Property="IsEnabled" Value="False" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding StateOfReportSending}" Value="{x:Static localEnums:ReportSubmitState.Requested}">
+                            <Setter Property="IsEnabled" Value="False" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding StateOfReportSending}" Value="{x:Static localEnums:ReportSubmitState.Sending}">
+                            <Setter Property="IsEnabled" Value="False" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
 
     </Grid>
 </Window>

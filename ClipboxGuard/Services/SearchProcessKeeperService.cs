@@ -33,6 +33,7 @@ namespace ClipboxGuard.Services
         private Process _searchProcess;
         private RemoteSearch _remoteSearchPipeClient;
         private NamedPipesClient _mainProcessPipeClient;
+        private bool _isDisposed;
 
         public event EventHandler RestartOfMainProcessRequested;
         public event EventHandler<RestartFatalErrorEventArgs> FatalErrorOccurred;
@@ -56,6 +57,11 @@ namespace ClipboxGuard.Services
 
         public void StartExternalProcessManagement()
         {
+            if (_isDisposed)
+            {
+                throw new ObjectDisposedException(nameof(SearchProcessKeeperService));
+            }
+
             StartFlagWatcher();
 
             if (_flagForExternalProcessExists)
@@ -234,6 +240,11 @@ namespace ClipboxGuard.Services
 
         public void StopSearchProcess()
         {
+            if (_isDisposed)
+            {
+                throw new ObjectDisposedException(nameof(SearchProcessKeeperService));
+            }
+
             if (!CheckIsSearchProcessRunning())
             {
                 return;
@@ -278,22 +289,27 @@ namespace ClipboxGuard.Services
         
         public void Dispose()
         {
-            try
+            if (!_isDisposed)
             {
-                StopSearchProcess();
+                _isDisposed = true;
 
-                lock (_watcherMreLockHandle)
+                try
                 {
-                    _watcherMre.Reset();
-                    _isFlagWatcherActive = false;
-                }
+                    StopSearchProcess();
 
-                _watcherMre.WaitOne();
-            }
-            catch { }
-            finally
-            {
-                _watcherMre.Dispose();
+                    lock (_watcherMreLockHandle)
+                    {
+                        _watcherMre.Reset();
+                        _isFlagWatcherActive = false;
+                    }
+
+                    _watcherMre.WaitOne();
+                }
+                catch { }
+                finally
+                {
+                    _watcherMre.Dispose();
+                }
             }
         }
     }

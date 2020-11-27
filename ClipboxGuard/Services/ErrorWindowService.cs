@@ -2,6 +2,7 @@
 using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.UI.Utils;
 using ClipboxGuard.Enums;
+using ClipboxGuard.EventArgsClasses;
 using ClipboxGuard.Services.Common;
 using ClipboxGuard.Services.EventArgsClasses;
 using ClipboxGuard.Services.Interfaces;
@@ -12,26 +13,31 @@ using System.Windows.Threading;
 
 namespace ClipboxGuard.Services
 {
-    public class ErrorWindowService : IErrorWindowService
+    public class ErrorWindowService : IErrorWindowService, IDisposable
     {
         private readonly IMainProcessKeeperService _mainProcessKeeperService;
         private readonly ISearchProcessKeeperService _searchProcessKeeperService;
         private readonly IReportAnalysisService _reportAnalysisService;
         private readonly IPersistenceProvider _persistenceProvider;
+        private readonly IReportSubmitterService _reportSubmitterService;
         private readonly bool _isStartedFromSvc;
+        private readonly ManualResetEvent _mainWindowWaitMre;
 
         private static readonly object _mainWindowLockHandle = new object();
-
+        private ErrorWindow _errorWindow;
+        private bool _isDisposed;
         public ErrorWindowService(IPersistenceProvider persistenceProvider,
             bool isStartedFromSvc)
         {
             _persistenceProvider = persistenceProvider;
             _isStartedFromSvc = isStartedFromSvc;
+            _mainWindowWaitMre = new ManualResetEvent(false);
         }
 
         public ErrorWindowService(IMainProcessKeeperService mainProcessKeeperService,
             ISearchProcessKeeperService searchProcessKeeperService,
             IReportAnalysisService reportAnalysisService,
+            IReportSubmitterService reportSubmitterService,
             IPersistenceProvider persistenceProvider,
             bool isStartedFromSvc)
             : this(persistenceProvider, isStartedFromSvc)
@@ -39,12 +45,25 @@ namespace ClipboxGuard.Services
             _mainProcessKeeperService = mainProcessKeeperService;
             _searchProcessKeeperService = searchProcessKeeperService;
             _reportAnalysisService = reportAnalysisService;
+            _reportSubmitterService = reportSubmitterService;
             _isStartedFromSvc = isStartedFromSvc;
             _persistenceProvider = persistenceProvider;
 
             _mainProcessKeeperService.FatalErrorOccurred += _mainProcessKeeperService_FatalErrorOccurred;
             _searchProcessKeeperService.FatalErrorOccurred += _searchProcessKeeperService_FatalErrorOccurred;
+            if (_reportSubmitterService != null)
+            {
+                _reportSubmitterService.StateChanged += _reportSubmitterService_StateChanged;
+            }
+        }
 
+        private void _reportSubmitterService_StateChanged(object sender, ReportStateEventArgs e)
+        {
+            _errorWindow?.SetReportSubmitState(e.State);
+            if (e.State == ReportSubmitState.Error)
+            {
+                _errorWindow?.SetReportSubmitErrorText(_reportSubmitterService.GetError());
+            }
         }
 
         private void _mainProcessKeeperService_FatalErrorOccurred(object sender, RestartFatalErrorEventArgs e)
@@ -96,11 +115,21 @@ namespace ClipboxGuard.Services
 
         public void ShowErrorWindow(out bool restartProcessRequested, ReportAnalysis reportAnalysis = null)
         {
+            if (_isDisposed)
+            {
+                throw new ObjectDisposedException(nameof(ErrorWindowService));
+            }
+
             ShowErrorWindow(true, out restartProcessRequested, reportAnalysis);
         }
 
         public void ShowErrorWindow(ReportAnalysis reportAnalysis = null)
         {
+            if (_isDisposed)
+            {
+                throw new ObjectDisposedException(nameof(ErrorWindowService));
+            }
+
             ShowErrorWindow(false, out _, reportAnalysis);
         }
 
@@ -117,27 +146,25 @@ namespace ClipboxGuard.Services
             {
                 using (OwnThreadDispatcher otDispatcher = new OwnThreadDispatcher())
                 {
-                    ErrorWindow errorWindow = null;
-                    using (ManualResetEvent mainWindowWaitMre = new ManualResetEvent(false))
+                    otDispatcher.BeginInvoke(DispatcherPriority.Background, (Action)(() =>
                     {
-                        otDispatcher.BeginInvoke(DispatcherPriority.Background, (Action)(() =>
-                        {
-                            errorWindow = new ErrorWindow(analysis.ErrorDetails, 
-                                analysis.ErrorOrigin,
-                                showRestartOption);
-                            errorWindow.Closing += (e, a) => mainWindowWaitMre.Set();
-                            errorWindow.ShowDialog();
-                        }));
+                        _errorWindow = new ErrorWindow(analysis, 
+                            analysis.ErrorOrigin,
+                            showRestartOption,
+                            showSubmitOption: _reportSubmitterService != null);
+                        _errorWindow.Closing += _errorWindow_Closing;
+                        _errorWindow.SubmitReportRequested += _errorWindow_SubmitReportRequested;
+                        _errorWindow.ShowDialog();
+                    }));
 
-                        mainWindowWaitMre.WaitOne();
-                    }
+                    _mainWindowWaitMre.WaitOne();
 
                     bool restartRequired = false;
                     using (ManualResetEvent restartMre = new ManualResetEvent(false))
                     {
                         otDispatcher.Invoke(DispatcherPriority.Send, (Action)(() =>
                         {
-                            restartRequired = errorWindow.IsRestartRequested;
+                            restartRequired = _errorWindow.IsRestartRequested;
                             restartMre.Set();
                         }));
 
@@ -147,6 +174,34 @@ namespace ClipboxGuard.Services
                 }
             }
             
+        }
+
+        private void _errorWindow_SubmitReportRequested(object sender, RequestSubmitReportEventArgs e)
+        {
+            if (_reportSubmitterService != null)
+            {
+                _reportSubmitterService.SubmitReport(e.ReportAnalysis.AggregateReport);
+            }
+        }
+
+        private void _errorWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            _errorWindow.Closing -= _errorWindow_Closing;
+            _mainWindowWaitMre.Set();
+        }
+
+        public void Dispose()
+        {
+            if (!_isDisposed)
+            {
+                _isDisposed = true;
+                _mainProcessKeeperService.FatalErrorOccurred -= _mainProcessKeeperService_FatalErrorOccurred;
+                _searchProcessKeeperService.FatalErrorOccurred -= _searchProcessKeeperService_FatalErrorOccurred;
+                if (_reportSubmitterService != null)
+                {
+                    _reportSubmitterService.StateChanged -= _reportSubmitterService_StateChanged;
+                }
+            }
         }
     }
 }

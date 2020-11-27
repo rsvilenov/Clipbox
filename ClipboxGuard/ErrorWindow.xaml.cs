@@ -17,6 +17,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Clipbox.Infrastructure.ExtensionMethods;
 using ClipboxGuard.Enums;
+using ClipboxGuard.EventArgsClasses;
+using ClipboxGuard.Services.Common;
 
 namespace ClipboxGuard
 {
@@ -25,8 +27,10 @@ namespace ClipboxGuard
     /// </summary>
     public partial class ErrorWindow : Window
     {
+        public event EventHandler<RequestSubmitReportEventArgs> SubmitReportRequested;
 
-        public ErrorWindow(string errorDetails, ErrorOrigin errorOrigin, bool showRestartOption)
+        private readonly ReportAnalysis _reportAnalysis;
+        public ErrorWindow(ReportAnalysis reportAnalysis, ErrorOrigin errorOrigin, bool showRestartOption, bool showSubmitOption)
         {
             InitializeComponent();
             mainGrid.DataContext = this;
@@ -39,10 +43,23 @@ namespace ClipboxGuard
                 ErrorOriginLabel = "Unknown";
             }
 
-            ErrorText = errorDetails;
+            _reportAnalysis = reportAnalysis;
+
+            ErrorText = reportAnalysis.ErrorDetails;
             ShowRestartOption = showRestartOption;
+            ShowSubmitOption = showSubmitOption;
             IsRestartRequested = true;
-            IsReportErrorRequested = NetworkInterface.GetIsNetworkAvailable();
+            IsSubmitErrorRequested = NetworkInterface.GetIsNetworkAvailable();
+        }
+
+        public void SetReportSubmitState(ReportSubmitState state)
+        {
+            Dispatcher.Invoke(() => StateOfReportSending = state);
+        }
+
+        public void SetReportSubmitErrorText(string errorText)
+        {
+            Dispatcher.Invoke(() => ReportSubmitErrorText = errorText);
         }
 
         private string ErrorText
@@ -54,6 +71,16 @@ namespace ClipboxGuard
         private static readonly DependencyProperty ErrorTextProperty =
             DependencyProperty.Register(nameof(ErrorText), typeof(string), typeof(ErrorWindow), new PropertyMetadata(string.Empty));
 
+
+
+        public bool ShowSubmitOption
+        {
+            get { return (bool)GetValue(ShowSubmitOptionProperty); }
+            set { SetValue(ShowSubmitOptionProperty, value); }
+        }
+
+        public static readonly DependencyProperty ShowSubmitOptionProperty =
+            DependencyProperty.Register(nameof(ShowSubmitOption), typeof(bool), typeof(ErrorWindow), new PropertyMetadata(true));
 
 
 
@@ -77,14 +104,14 @@ namespace ClipboxGuard
             DependencyProperty.Register(nameof(IsRestartRequested), typeof(bool), typeof(ErrorWindow), new PropertyMetadata(false));
 
         
-        public bool IsReportErrorRequested
+        public bool IsSubmitErrorRequested
         {
-            get { return (bool)GetValue(IsReportErrorRequestedProperty); }
-            set { SetValue(IsReportErrorRequestedProperty, value); }
+            get { return (bool)GetValue(IsSubmitErrorRequestedProperty); }
+            set { SetValue(IsSubmitErrorRequestedProperty, value); }
         }
 
-        public static readonly DependencyProperty IsReportErrorRequestedProperty =
-            DependencyProperty.Register(nameof(IsReportErrorRequested), typeof(bool), typeof(ErrorWindow), new PropertyMetadata(false));
+        public static readonly DependencyProperty IsSubmitErrorRequestedProperty =
+            DependencyProperty.Register(nameof(IsSubmitErrorRequested), typeof(bool), typeof(ErrorWindow), new PropertyMetadata(false));
         
 
         public string ErrorOriginLabel
@@ -99,14 +126,27 @@ namespace ClipboxGuard
 
 
 
-        private ReportSendState StateOfReportSending
+        private ReportSubmitState StateOfReportSending
         {
-            get { return (ReportSendState)GetValue(StateOfReportSendingProperty); }
+            get { return (ReportSubmitState)GetValue(StateOfReportSendingProperty); }
             set { SetValue(StateOfReportSendingProperty, value); }
         }
 
         private static readonly DependencyProperty StateOfReportSendingProperty =
-            DependencyProperty.Register(nameof(StateOfReportSending), typeof(ReportSendState), typeof(ErrorWindow), new PropertyMetadata(default(ReportSendState)));
+            DependencyProperty.Register(nameof(StateOfReportSending), typeof(ReportSubmitState), typeof(ErrorWindow), new PropertyMetadata(default(ReportSubmitState)));
+
+
+
+
+        private string ReportSubmitErrorText
+        {
+            get { return (string)GetValue(ReportSubmitErrorTextProperty); }
+            set { SetValue(ReportSubmitErrorTextProperty, value); }
+        }
+
+        private static readonly DependencyProperty ReportSubmitErrorTextProperty =
+            DependencyProperty.Register(nameof(ReportSubmitErrorText), typeof(string), typeof(ErrorWindow), new PropertyMetadata(string.Empty));
+
 
 
         private void CaptionGrid_MouseDown(object sender, MouseButtonEventArgs e)
@@ -119,7 +159,14 @@ namespace ClipboxGuard
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Close();
+            if (IsSubmitErrorRequested && StateOfReportSending != ReportSubmitState.Error)
+            {
+                SubmitReportRequested?.Invoke(this, new RequestSubmitReportEventArgs(_reportAnalysis));
+            }
+            else
+            {
+                Close();
+            }
         }
 
         private void BtnCloseWindow_Click(object sender, RoutedEventArgs e)

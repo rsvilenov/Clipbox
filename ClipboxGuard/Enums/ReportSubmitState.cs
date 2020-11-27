@@ -1,6 +1,6 @@
 ﻿namespace ClipboxGuard.Enums
 {
-    public enum ReportSendState
+    public enum ReportSubmitState
     {
         Requested,
         Connecting,

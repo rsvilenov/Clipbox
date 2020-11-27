@@ -70,6 +70,15 @@ namespace ClipboxGuard.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Send.
+        /// </summary>
+        internal static string BTN_SEND_REPORT {
+            get {
+                return ResourceManager.GetString("BTN_SEND_REPORT", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Restart the failed component.
         /// </summary>
         internal static string CB_REQUEST_RESTART {

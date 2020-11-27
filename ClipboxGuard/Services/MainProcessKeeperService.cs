@@ -34,9 +34,10 @@ namespace ClipboxGuard.Services
 
         private Process _mainProcess;
         private bool _isMainProcessExitRequested;
+        private bool _isDisposed;
 
         public event EventHandler<RestartFatalErrorEventArgs> FatalErrorOccurred;
-
+        
         public MainProcessKeeperService(ISearchProcessKeeperService searchProcessKeeperService,
             IPersistenceProvider persistenceProvider,
             string installationPath,
@@ -108,6 +109,11 @@ namespace ClipboxGuard.Services
 
         public void StartExternalProcessManagement()
         {
+            if (_isDisposed)
+            {
+                throw new ObjectDisposedException(nameof(MainProcessKeeperService));
+            }
+
             StartMainProcess(stopFirstIfRunning: true);
         }
 
@@ -123,6 +129,11 @@ namespace ClipboxGuard.Services
 
         public void RestartMainProcess()
         {
+            if (_isDisposed)
+            {
+                throw new ObjectDisposedException(nameof(MainProcessKeeperService));
+            }
+
             StartMainProcess(stopFirstIfRunning: true);
         }
 
@@ -251,6 +262,11 @@ namespace ClipboxGuard.Services
 
         public void StopMainProcess()
         {
+            if (_isDisposed)
+            {
+                throw new ObjectDisposedException(nameof(MainProcessKeeperService));
+            }
+
             _isMainProcessExitRequested = true;
 
             _mainProcessPinger.Stop();
@@ -376,15 +392,20 @@ namespace ClipboxGuard.Services
 
         public void Dispose()
         {
-            try
+            if (!_isDisposed)
             {
-                StopMainProcess();
-                
-                // request stopping of the ping thread to stop
-                // and wait for it to stop
-                _mainProcess.Dispose();
+                _isDisposed = true;
+
+                try
+                {
+                    StopMainProcess();
+
+                    // request stopping of the ping thread to stop
+                    // and wait for it to stop
+                    _mainProcess.Dispose();
+                }
+                catch { }
             }
-            catch { }
         }
 
 
@@ -411,6 +432,11 @@ namespace ClipboxGuard.Services
 
             public void Start()
             {
+                if (_isDisposed)
+                {
+                    throw new ObjectDisposedException(nameof(MainProcessPinger));
+                }
+
                 Task.Run(() =>
                 {
                     try
@@ -427,6 +453,11 @@ namespace ClipboxGuard.Services
 
             public void Stop()
             {
+                if (_isDisposed)
+                {
+                    throw new ObjectDisposedException(nameof(MainProcessPinger));
+                }
+
                 _isPingThreadEnabled = false;
                 _stopMre.WaitOne();
             }

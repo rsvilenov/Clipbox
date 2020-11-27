@@ -81,7 +81,8 @@
     </ApplicationDefinition>
     <Compile Include="Bootstrapper.cs" />
     <Compile Include="Enums\ErrorOrigin.cs" />
-    <Compile Include="Enums\ReportSendState.cs" />
+    <Compile Include="Enums\ReportSubmitState.cs" />
+    <Compile Include="EventArgsClasses\RequestSubmitReportEventArgs.cs" />
     <Compile Include="Resources\Translations\Translations.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -89,13 +90,13 @@
     </Compile>
     <Compile Include="Services\ClipboardCheckerService.cs" />
     <Compile Include="Services\Common\ReportAnalysis.cs" />
+    <Compile Include="Services\Common\ProductVersionHelper.cs" />
     <Compile Include="Services\ErrorWindowService.cs" />
     <Compile Include="Services\EventArgsClasses\ReportStateEventArgs.cs" />
     <Compile Include="Services\EventArgsClasses\RestartFatalErrorEventArgs.cs" />
     <Compile Include="Services\EventArgsClasses\FatalErrorEventArgs.cs" />
     <Compile Include="Services\Interfaces\IClipboardCheckerService.cs" />
     <Compile Include="Services\Interfaces\IReportAnalysisService.cs" />
-    <Compile Include="Services\Interfaces\IReportSenderService.cs" />
     <Compile Include="Services\Interfaces\IReportSubmitterService.cs" />
     <Compile Include="Services\Interfaces\ISessionMonitorService.cs" />
     <Compile Include="Services\MainProcessKeeperService.cs" />

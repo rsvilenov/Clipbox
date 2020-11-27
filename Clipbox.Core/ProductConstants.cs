@@ -120,5 +120,6 @@ namespace Clipbox.Core
 
         public const string FEEDBACK_URL = "https://clipbox.org/feedback";
 
+        public const string FEEDBACK_AUTO_BUG_REPORT_URL = "https://clipbox.org/autobugreport";
     }
 }

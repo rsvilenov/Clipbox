@@ -24,7 +24,7 @@ namespace ClipboxGuard.Services
         {
             ErrorOrigin errorOrigin = ErrorOrigin.Unknown;
 
-            AggregateReport aggregateReport = new AggregateReport(ProductConstants.PRODUCT_VERSION);
+            AggregateReport aggregateReport = new AggregateReport(ProductVersionHelper.GetFullProductVersion());
 
             StringBuilder errorDetailsStringBuilder = new StringBuilder();
             if (_persistenceProvider.CheckIfKeyExists(ProductConstants.MAIN_CRASHFILE_PERSISTENCE_KEY))
@@ -151,5 +151,6 @@ namespace ClipboxGuard.Services
 
             return new ReportAnalysis(errorOrigin, errorDetailsStringBuilder.ToString(), aggregateReport);
         }
+
     }
 }

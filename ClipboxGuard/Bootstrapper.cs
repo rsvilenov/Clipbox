@@ -37,6 +37,7 @@ namespace ClipboxGuard
         private IErrorWindowService _errorMessageWindowService;
         private ISessionMonitorService _sessionMonitorService;
         private IReportAnalysisService _reportAnalysisService;
+        private ReportSubmitterService _reportSubmitterService;
         private ClipboardCheckerService _clipboardCheckerService;
 
         public void PerformStartupSequence()
@@ -149,7 +150,8 @@ namespace ClipboxGuard
                 _searchProcessKeeperService = new SearchProcessKeeperService(_persistenceProvider, installationPath, sessionId);
                 _mainProcessKeeperService = new MainProcessKeeperService(_searchProcessKeeperService, _persistenceProvider, installationPath, sessionId);
                 _reportAnalysisService = new ReportAnalysisService(_persistenceProvider);
-                _errorMessageWindowService = new ErrorWindowService(_mainProcessKeeperService, _searchProcessKeeperService, _reportAnalysisService, _persistenceProvider, _isStartedFromSvc);
+                _reportSubmitterService = new ReportSubmitterService();
+                _errorMessageWindowService = new ErrorWindowService(_mainProcessKeeperService, _searchProcessKeeperService, _reportAnalysisService, _reportSubmitterService, _persistenceProvider, _isStartedFromSvc);
                 _sessionMonitorService = new SessionMonitorService(_mainProcessKeeperService, _searchProcessKeeperService);
                 _clipboardCheckerService = new ClipboardCheckerService(_mainProcessKeeperService);
 
@@ -197,7 +199,7 @@ namespace ClipboxGuard
                 }
                 catch { }
 
-                AggregateReport ar = new AggregateReport(ProductConstants.PRODUCT_VERSION)
+                AggregateReport ar = new AggregateReport(ProductVersionHelper.GetFullProductVersion())
                 {
                     GuardProcessReport = dr
                 };
@@ -230,6 +232,7 @@ namespace ClipboxGuard
                 TryDisposeObject(_mainProcessKeeperService);
                 TryDisposeObject(_searchProcessKeeperService);
                 TryDisposeObject(_clipboardCheckerService);
+                TryDisposeObject(_reportSubmitterService);
             }
         }
 
