@@ -35,7 +35,7 @@ namespace ClipboxGuard.Services
             {
                 string reportXml = XmlSerialization.Serialize(aggregateReport);
 
-                _webClient.Headers["Content-Type"] = "application/xml";
+                _webClient.Headers["Content-Type"] = "text/plain";
                 _webClient.UploadDataCompleted += _webClient_UploadDataCompleted;
                 _webClient.UploadProgressChanged += _webClient_UploadProgressChanged;
 

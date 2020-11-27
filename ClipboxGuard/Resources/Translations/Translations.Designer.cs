@@ -70,7 +70,7 @@ namespace ClipboxGuard.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Send.
+        ///   Looks up a localized string similar to Send report.
         /// </summary>
         internal static string BTN_SEND_REPORT {
             get {

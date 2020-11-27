@@ -221,11 +221,8 @@
             <ContentControl.Template>
                 <ControlTemplate TargetType="ContentControl">
                     <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="3*" />
-                            <ColumnDefinition Width="4*" />
-                        </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
@@ -233,25 +230,30 @@
                             x:Name="progressBar"
                             Grid.Row="0"
                             Grid.Column="0"
-                            Height="20"
+                            Height="10"
                             Background="#1e2434"
                             Foreground="#7ed5fa"
                             IsIndeterminate="True" />
                         <TextBlock
                             x:Name="statusTextBox"
-                            Grid.Row="0"
-                            Grid.Column="1" />
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Margin="0,3,0,0"
+                            Foreground="White" />
                         <TextBlock
                             x:Name="submitErrorTextBox"
-                            Grid.Row="1"
+                            Grid.Row="2"
                             Grid.Column="0"
                             Grid.ColumnSpan="2"
-                            Margin="3"
+                            Margin="0,3,0,0"
                             Foreground="Red"
                             Text="{Binding ReportSubmitErrorText}"
                             Visibility="Collapsed" />
                     </Grid>
                     <ControlTemplate.Triggers>
+                        <DataTrigger Binding="{Binding StateOfReportSending}" Value="{x:Static localEnums:ReportSubmitState.None}">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
                         <DataTrigger Binding="{Binding StateOfReportSending}" Value="{x:Static localEnums:ReportSubmitState.Requested}">
                             <Setter Property="Visibility" Value="Collapsed" />
                         </DataTrigger>
@@ -276,6 +278,7 @@
                             <Setter TargetName="progressBar" Property="IsIndeterminate" Value="False" />
                             <Setter TargetName="progressBar" Property="Value" Value="100" />
                             <Setter TargetName="submitErrorTextBox" Property="Visibility" Value="Visible" />
+                            <Setter TargetName="statusTextBox" Property="Foreground" Value="Red" />
                             <Setter TargetName="statusTextBox" Property="Text" Value="{loc:Localize LBL_STATUS_SEND_ERROR, ResourceLookupMode=CurrentAssembly}" />
                         </DataTrigger>
                     </ControlTemplate.Triggers>
@@ -285,8 +288,8 @@
         </ContentControl>
         <Button
             Grid.Row="7"
-            Width="100"
             Height="30"
+            MinWidth="100"
             Margin="0,15,0,10"
             HorizontalAlignment="Center"
             Background="Transparent"
@@ -300,6 +303,9 @@
                             <Setter Property="Content" Value="OK" />
                         </DataTrigger>
                         <DataTrigger Binding="{Binding StateOfReportSending}" Value="{x:Static localEnums:ReportSubmitState.Done}">
+                            <Setter Property="Content" Value="OK" />
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding IsSubmitErrorRequested}" Value="False">
                             <Setter Property="Content" Value="OK" />
                         </DataTrigger>
                     </Style.Triggers>

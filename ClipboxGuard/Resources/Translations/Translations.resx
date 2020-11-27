@@ -121,7 +121,7 @@
     <value>Copy the error details in the clipboard</value>
   </data>
   <data name="BTN_SEND_REPORT" xml:space="preserve">
-    <value>Send</value>
+    <value>Send report</value>
   </data>
   <data name="CB_REQUEST_RESTART" xml:space="preserve">
     <value>Restart the failed component</value>

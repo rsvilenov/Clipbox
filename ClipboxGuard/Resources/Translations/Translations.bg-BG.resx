@@ -121,7 +121,7 @@
     <value>Копирай детайлите за грешката в клипборда</value>
   </data>
   <data name="BTN_SEND_REPORT" xml:space="preserve">
-    <value>Изпрати</value>
+    <value>Изпрати доклад</value>
   </data>
   <data name="CB_REQUEST_RESTART" xml:space="preserve">
     <value>Рестартирай компонента, дал грешла</value>

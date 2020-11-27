@@ -22,6 +22,7 @@ namespace ClipboxGuard.Services
         private readonly IReportSubmitterService _reportSubmitterService;
         private readonly bool _isStartedFromSvc;
         private readonly ManualResetEvent _mainWindowWaitMre;
+        private readonly OwnThreadDispatcher _otDispatcher;
 
         private static readonly object _mainWindowLockHandle = new object();
         private ErrorWindow _errorWindow;
@@ -32,6 +33,7 @@ namespace ClipboxGuard.Services
             _persistenceProvider = persistenceProvider;
             _isStartedFromSvc = isStartedFromSvc;
             _mainWindowWaitMre = new ManualResetEvent(false);
+            _otDispatcher = new OwnThreadDispatcher();
         }
 
         public ErrorWindowService(IMainProcessKeeperService mainProcessKeeperService,
@@ -144,33 +146,30 @@ namespace ClipboxGuard.Services
             // show the error windows one by one if more than one error occurs.
             lock (_mainWindowLockHandle)
             {
-                using (OwnThreadDispatcher otDispatcher = new OwnThreadDispatcher())
+                _otDispatcher.BeginInvoke(DispatcherPriority.Background, (Action)(() =>
                 {
-                    otDispatcher.BeginInvoke(DispatcherPriority.Background, (Action)(() =>
+                    _errorWindow = new ErrorWindow(analysis,
+                        analysis.ErrorOrigin,
+                        showRestartOption,
+                        showSubmitOption: _reportSubmitterService != null);
+                    _errorWindow.Closing += _errorWindow_Closing;
+                    _errorWindow.SubmitReportRequested += _errorWindow_SubmitReportRequested;
+                    _errorWindow.ShowDialog();
+                }));
+
+                _mainWindowWaitMre.WaitOne();
+
+                bool restartRequired = false;
+                using (ManualResetEvent restartMre = new ManualResetEvent(false))
+                {
+                    _otDispatcher.Invoke(DispatcherPriority.Send, (Action)(() =>
                     {
-                        _errorWindow = new ErrorWindow(analysis, 
-                            analysis.ErrorOrigin,
-                            showRestartOption,
-                            showSubmitOption: _reportSubmitterService != null);
-                        _errorWindow.Closing += _errorWindow_Closing;
-                        _errorWindow.SubmitReportRequested += _errorWindow_SubmitReportRequested;
-                        _errorWindow.ShowDialog();
+                        restartRequired = _errorWindow.IsRestartRequested;
+                        restartMre.Set();
                     }));
 
-                    _mainWindowWaitMre.WaitOne();
-
-                    bool restartRequired = false;
-                    using (ManualResetEvent restartMre = new ManualResetEvent(false))
-                    {
-                        otDispatcher.Invoke(DispatcherPriority.Send, (Action)(() =>
-                        {
-                            restartRequired = _errorWindow.IsRestartRequested;
-                            restartMre.Set();
-                        }));
-
-                        restartMre.WaitOne();
-                        restartProcessRequested = restartRequired;
-                    }
+                    restartMre.WaitOne();
+                    restartProcessRequested = restartRequired;
                 }
             }
             
@@ -195,6 +194,8 @@ namespace ClipboxGuard.Services
             if (!_isDisposed)
             {
                 _isDisposed = true;
+                _otDispatcher.Dispose();
+                _mainWindowWaitMre.Dispose();
                 _mainProcessKeeperService.FatalErrorOccurred -= _mainProcessKeeperService_FatalErrorOccurred;
                 _searchProcessKeeperService.FatalErrorOccurred -= _searchProcessKeeperService_FatalErrorOccurred;
                 if (_reportSubmitterService != null)

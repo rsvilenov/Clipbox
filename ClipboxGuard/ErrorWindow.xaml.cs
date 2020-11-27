@@ -77,6 +77,8 @@ namespace ClipboxGuard
                 && IsSubmitErrorRequested
                 && StateOfReportSending != ReportSubmitState.Error)
             {
+                // hide the submit option when the user requests a submit
+                ShowSubmitOption = false;
                 SubmitReportRequested?.Invoke(this, new RequestSubmitReportEventArgs(_reportAnalysis));
             }
             else

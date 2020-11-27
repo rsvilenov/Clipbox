@@ -472,7 +472,22 @@ namespace ClipboxGuard.Services
                 {
                     try
                     {
-                        var task = Task.Run(() =>_pipeClient.SendMessage(ProductConstants.PIPE_COMMAND_PING));
+                        var task = Task.Run(() =>
+                        { 
+                            try 
+                            { 
+                                _pipeClient.SendMessage(ProductConstants.PIPE_COMMAND_PING); 
+                            } 
+                            catch 
+                            {
+                                if (_isPingThreadEnabled)
+                                {
+                                    // stop pinging after an exception
+                                    _isPingThreadEnabled = false;
+                                    RaisePingFailed();
+                                }
+                            }
+                        });
 
                         if (!task.Wait(PING_TIMEOUT_MS))
                         {
@@ -483,25 +498,33 @@ namespace ClipboxGuard.Services
                     }
                     catch
                     {
-                        // stop pinging after an exception
-                        _isPingThreadEnabled = false;
-                        // every exception here means that something went wrong with the main process
-                        Task.Run(() =>
+                        if (_isPingThreadEnabled)
                         {
-                            try
-                            {
-                                PingFailed?.Invoke(this, new EventArgs());
-                            }
-                            catch (Exception ex)
-                            {
-                                var edi = ExceptionDispatchInfo.Capture(ex);
-                                _mainSyncContext.Post(state => ((ExceptionDispatchInfo)state).Throw(), edi);
-                            }
-                        });
+                            // stop pinging after an exception
+                            _isPingThreadEnabled = false;
+                            RaisePingFailed();
+                        }
                     }
                 }
 
                 _stopMre.Set();
+            }
+
+            private void RaisePingFailed()
+            {
+                // every exception here means that something went wrong with the main process
+                Task.Run(() =>
+                {
+                    try
+                    {
+                        PingFailed?.Invoke(this, new EventArgs());
+                    }
+                    catch (Exception ex)
+                    {
+                        var edi = ExceptionDispatchInfo.Capture(ex);
+                        _mainSyncContext.Post(state => ((ExceptionDispatchInfo)state).Throw(), edi);
+                    }
+                });
             }
 
             public void Dispose()
