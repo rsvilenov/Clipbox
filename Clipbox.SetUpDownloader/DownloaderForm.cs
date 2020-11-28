@@ -13,10 +13,19 @@ namespace Clipbpx.SetUpDownloader
     public partial class DownloaderForm : Form
     {
         private readonly Logger _logger;
+        private readonly string _checksumUrl;
+        private readonly string _downloadUrl;
 
         public DownloaderForm()
         {
             _logger = new Logger();
+
+            _checksumUrl = EnvironmentUtils.Is64BitOs() ?
+                 ProductConstants.PRODUCT_DOWNLOAD_HASH_X64_URL : ProductConstants.PRODUCT_DOWNLOAD_HASH_X86_URL;
+
+            _downloadUrl = EnvironmentUtils.Is64BitOs() ?
+               ProductConstants.PRODUCT_DOWNLOAD_X64_URL : ProductConstants.PRODUCT_DOWNLOAD_X86_URL;
+
 
             try
             {
@@ -77,14 +86,9 @@ namespace Clipbpx.SetUpDownloader
             string tempFilePath = System.IO.Path.GetTempFileName();
             _logger.Log($"Temp path for the downloaded setup file: {tempFilePath}");
 
-            string checkSumUrl = EnvironmentUtils.Is64BitOs() ?
-                $"{ProductConstants.PRODUCT_DOWNLOAD_HASH_URL}_x64.exe" : $"{ProductConstants.PRODUCT_DOWNLOAD_HASH_URL}_x86.exe";
-
-            string downloadUrl = EnvironmentUtils.Is64BitOs() ?
-                $"{ProductConstants.PRODUCT_DOWNLOAD_URL}_x64.exe" : $"{ProductConstants.PRODUCT_DOWNLOAD_URL}_x86.exe";
-
-            _logger.Log($"Checksum url: {checkSumUrl}");
-            _logger.Log($"Setup url: {downloadUrl}");
+            
+            _logger.Log($"Checksum url: {_checksumUrl}");
+            _logger.Log($"Setup url: {_downloadUrl}");
 
             WebClient webClient = new WebClient();
             webClient.Headers.Add("User-Agent", "Clipbox Downloader 1.0");
@@ -107,7 +111,7 @@ namespace Clipbpx.SetUpDownloader
                     _logger.Log($"Got expected checksum: {md5Hash}");
                     _logger.Log("Starting the actual download.");
 
-                    webClient.DownloadFileAsync(new Uri(downloadUrl),
+                    webClient.DownloadFileAsync(new Uri(_downloadUrl),
                         tempFilePath);
                 }
             };
@@ -131,7 +135,16 @@ namespace Clipbpx.SetUpDownloader
                             using (var md5 = MD5.Create())
                             using (var stream = File.OpenRead(tempFilePath))
                             {
-                                checkSumIsOk = Encoding.Default.GetString(md5.ComputeHash(stream)) == md5Hash;
+                                byte[] hashBytes = md5.ComputeHash(stream);
+
+                                // Convert the byte array to hexadecimal string
+                                StringBuilder sb = new StringBuilder();
+                                for (int i = 0; i < hashBytes.Length; i++)
+                                {
+                                    sb.Append(hashBytes[i].ToString("X2"));
+                                }
+
+                                checkSumIsOk = sb.ToString() == md5Hash;
                             }
                         }
                         catch(Exception ex)
@@ -167,9 +180,9 @@ namespace Clipbpx.SetUpDownloader
 
             try
             {
-                _logger.Log($"Fetching the expected checksum from {ProductConstants.PRODUCT_DOWNLOAD_HASH_URL}.");
+                _logger.Log($"Fetching the expected checksum from {_checksumUrl}.");
 
-                webClient.DownloadStringAsync(new Uri(ProductConstants.PRODUCT_DOWNLOAD_HASH_URL));
+                webClient.DownloadStringAsync(new Uri(_checksumUrl));
             }
             catch (Exception ex)
             {
@@ -196,7 +209,11 @@ namespace Clipbpx.SetUpDownloader
                 using (Process p = Process.Start(setupPath))
                 {
                     // hide the form
-                    Hide();
+                    this.Invoke(new MethodInvoker(delegate ()
+                    {
+                        Hide();
+                    }));
+                    
 
                     // wait for the setup to finish, so that we can delete the file afterwards
                     _logger.Log("Waiting for the setup program to complete.");

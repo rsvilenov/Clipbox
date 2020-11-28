@@ -4,7 +4,9 @@
     {
         public static string PRODUCT_NAME = "Clipbox";
 
-        public static string PRODUCT_DOWNLOAD_URL = "http://go.microsoft.com/fwlink/?linkid=863265";
-        public static string PRODUCT_DOWNLOAD_HASH_URL = "http://go.microsoft.com/fwlink/?linkid=863265";
+        public static string PRODUCT_DOWNLOAD_X86_URL = "https://localhost:44315/api/download/setupx86";
+        public static string PRODUCT_DOWNLOAD_X64_URL = "https://localhost:44315/api/download/setupx64";
+        public static string PRODUCT_DOWNLOAD_HASH_X64_URL = "https://localhost:44315/api/download/hashx64";
+        public static string PRODUCT_DOWNLOAD_HASH_X86_URL = "https://localhost:44315/api/download/hashx86";
     }
 }
