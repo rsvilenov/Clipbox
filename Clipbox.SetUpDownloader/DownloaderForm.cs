@@ -12,24 +12,36 @@ namespace Clipbpx.SetUpDownloader
 {
     public partial class DownloaderForm : Form
     {
+        private const int TIMEOUT_MS = 30000;
+
         private readonly Logger _logger;
+        private readonly WebClient _webClient;
         private readonly string _checksumUrl;
         private readonly string _downloadUrl;
+        private readonly System.Timers.Timer _downloadTimeoutTimer;
 
         public DownloaderForm()
         {
             _logger = new Logger();
 
-            _checksumUrl = EnvironmentUtils.Is64BitOs() ?
-                 ProductConstants.PRODUCT_DOWNLOAD_HASH_X64_URL : ProductConstants.PRODUCT_DOWNLOAD_HASH_X86_URL;
-
-            _downloadUrl = EnvironmentUtils.Is64BitOs() ?
-               ProductConstants.PRODUCT_DOWNLOAD_X64_URL : ProductConstants.PRODUCT_DOWNLOAD_X86_URL;
-
-
             try
             {
                 _logger.Log("Initializing downloader form");
+
+                _checksumUrl = EnvironmentUtils.Is64BitOs() ?
+                     ProductConstants.PRODUCT_DOWNLOAD_HASH_X64_URL : ProductConstants.PRODUCT_DOWNLOAD_HASH_X86_URL;
+
+                _downloadUrl = EnvironmentUtils.Is64BitOs() ?
+                   ProductConstants.PRODUCT_DOWNLOAD_X64_URL : ProductConstants.PRODUCT_DOWNLOAD_X86_URL;
+
+                _downloadTimeoutTimer = new System.Timers.Timer(TIMEOUT_MS)
+                {
+                    AutoReset = false
+                };
+                _downloadTimeoutTimer.Elapsed += _downloadTimeoutTimer_Elapsed;
+
+                _webClient = new WebClient();
+
                 Icon = Icon.FromHandle(Properties.Resources.Clip_WF.GetHicon());
                 StartPosition = FormStartPosition.CenterScreen;
 
@@ -90,17 +102,21 @@ namespace Clipbpx.SetUpDownloader
             _logger.Log($"Checksum url: {_checksumUrl}");
             _logger.Log($"Setup url: {_downloadUrl}");
 
-            WebClient webClient = new WebClient();
-            webClient.Headers.Add("User-Agent", "Clipbox Downloader 1.0");
+            _webClient.Headers.Add("User-Agent", "Clipbox Downloader 1.0");
 
             string md5Hash = string.Empty;
-            webClient.DownloadProgressChanged += (s, e) =>
+            _webClient.DownloadProgressChanged += (s, e) =>
             {
+                _downloadTimeoutTimer.Stop();
+                _downloadTimeoutTimer.Start();
+
                 downloadProgressBar.Value = e.ProgressPercentage;
             };
 
-            webClient.DownloadStringCompleted += (s, e) =>
+            _webClient.DownloadStringCompleted += (s, e) =>
             {
+                _downloadTimeoutTimer.Stop();
+
                 if (e.Error != null)
                 {
                     FailWithMessageBox("Download failed. Please, check your Internet connection and try again. If the error keeps occurring, you can still install Clipbox by downloading an offline installer from the website.", e.Error.ToString());
@@ -111,13 +127,16 @@ namespace Clipbpx.SetUpDownloader
                     _logger.Log($"Got expected checksum: {md5Hash}");
                     _logger.Log("Starting the actual download.");
 
-                    webClient.DownloadFileAsync(new Uri(_downloadUrl),
+                    _downloadTimeoutTimer.Start();
+                    _webClient.DownloadFileAsync(new Uri(_downloadUrl),
                         tempFilePath);
                 }
             };
 
-            webClient.DownloadFileCompleted += (s, e) =>
+            _webClient.DownloadFileCompleted += (s, e) =>
             {
+                _downloadTimeoutTimer.Stop();
+
                 if (e.Error != null)
                 {
                     try { File.Delete(tempFilePath); } catch { }
@@ -181,14 +200,19 @@ namespace Clipbpx.SetUpDownloader
             try
             {
                 _logger.Log($"Fetching the expected checksum from {_checksumUrl}.");
-
-                webClient.DownloadStringAsync(new Uri(_checksumUrl));
+                _downloadTimeoutTimer.Start();
+                _webClient.DownloadStringAsync(new Uri(_checksumUrl));
             }
             catch (Exception ex)
             {
                 try { File.Delete(tempFilePath); } catch { }
                 FailWithMessageBox("Download failed. Are you connected to the Internet? You can still install Clipbox by downloading an offline installer from the website.", ex.ToString());
             }
+        }
+        private void _downloadTimeoutTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            // cancelling the request will trigger the DownloadComplete event with the error property's text set to 'aborted'
+            try { _webClient.CancelAsync(); } catch { }
         }
 
         private void FailWithMessageBox(string messageBoxMsg, string logMsg)
