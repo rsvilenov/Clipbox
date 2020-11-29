@@ -12,6 +12,7 @@ namespace Clipbox.Core.Diagnostics
             ProductMajorVersion = productVersion.Major;
             ProductMinorVersion = productVersion.Minor;
             BuildNumber = productVersion.Build;
+            Is64BitVersion = Environment.Is64BitProcess;
         }
 
         public AggregateReport()
@@ -39,6 +40,8 @@ namespace Clipbox.Core.Diagnostics
         public int ProductMinorVersion { get; set; }
 
         public int BuildNumber { get; set; }
+
+        public bool Is64BitVersion { get; set; }
 
         public List<ComponentError> ComponentErrors { get; set; }
     }
