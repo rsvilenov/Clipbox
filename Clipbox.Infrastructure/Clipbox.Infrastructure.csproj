@@ -68,6 +68,7 @@
     <Compile Include="CLR\ClrHelpers.cs" />
     <Compile Include="CLR\TrackableObject.cs" />
     <Compile Include="Compression\ByteArrayCompressor.cs" />
+    <Compile Include="Diagnostics\AggregateReportGenerator.cs" />
     <Compile Include="Diagnostics\DiagnosticsReportGenerator.cs" />
     <Compile Include="Diagnostics\ManagementObject.cs" />
     <Compile Include="Diagnostics\ManagementObjectSearcher.cs" />

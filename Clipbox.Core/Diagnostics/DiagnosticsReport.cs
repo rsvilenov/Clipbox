@@ -8,7 +8,7 @@ namespace Clipbox.Core.Diagnostics
     {
         public FailureInfo FailureInfo { get; set; }
 
-        public SystemInfo SystemInfo { get; set; }
+        public SystemState SystemState { get; set; }
         
         public List<ExtensionInfo> LoadedExtensions { get; set; }
     }

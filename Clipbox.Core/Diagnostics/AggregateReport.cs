@@ -6,13 +6,14 @@ namespace Clipbox.Core.Diagnostics
     [Serializable]
     public class AggregateReport
     {
-        public AggregateReport(Version productVersion)
+        public AggregateReport(Version productVersion, SystemInfo systemInfo, bool is64BitProcess)
             : this()
         {
             ProductMajorVersion = productVersion.Major;
             ProductMinorVersion = productVersion.Minor;
             BuildNumber = productVersion.Build;
-            Is64BitVersion = Environment.Is64BitProcess;
+            Is64BitVersion = is64BitProcess;
+            SystemInfo = systemInfo;
         }
 
         public AggregateReport()
@@ -29,20 +30,15 @@ namespace Clipbox.Core.Diagnostics
             });
         }
 
+
+        public SystemInfo SystemInfo { get; set; }
         public DiagnosticsReport MainProcessReport { get; set; }
-
         public DiagnosticsReport GuardProcessReport { get; set; }
-
         public DiagnosticsReport SearchProcessReport { get; set; }
-
         public int ProductMajorVersion { get; set; }
-
         public int ProductMinorVersion { get; set; }
-
         public int BuildNumber { get; set; }
-
         public bool Is64BitVersion { get; set; }
-
         public List<ComponentError> ComponentErrors { get; set; }
     }
 

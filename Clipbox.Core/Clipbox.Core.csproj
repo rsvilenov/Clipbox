@@ -77,6 +77,8 @@
     <Compile Include="Diagnostics\ExtensionInfo.cs" />
     <Compile Include="Diagnostics\FailureInfo.cs" />
     <Compile Include="Diagnostics\SystemInfo.cs" />
+    <Compile Include="Diagnostics\SystemState.cs" />
+    <Compile Include="Diagnostics\WindowsVersionInfo.cs" />
     <Compile Include="DisposableObject.cs" />
     <Compile Include="ClipboardContent\Enums\ClipboardContentClass.cs" />
     <Compile Include="Extensibility\Attributes\CloudSupportAttribute.cs" />

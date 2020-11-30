@@ -26,7 +26,7 @@ namespace Clipbox.Infrastructure.Diagnostics
             var report = new DiagnosticsReport
             {
                 FailureInfo = fi,
-                SystemInfo = GetSystemInfo()
+                SystemState = GetSystemInfo()
             };
 
             if (includeExtensionInfo)
@@ -69,17 +69,12 @@ namespace Clipbox.Infrastructure.Diagnostics
             }
         }
 
-        private static SystemInfo GetSystemInfo()
+        private static SystemState GetSystemInfo()
         {
-            SystemInfo si = new SystemInfo
+            SystemState si = new SystemState
             {
-                Is64BitOs = Environment.Is64BitOperatingSystem,
-                CpuCount = Environment.ProcessorCount,
                 WorkingSet = Environment.WorkingSet
             };
-            
-            try { si.OsVersion = OsVersionUtils.GetWindowsVersion(); }
-            catch { }
 
             try
             {
@@ -102,12 +97,6 @@ namespace Clipbox.Infrastructure.Diagnostics
             }
             catch { }
 
-            try
-            {
-                si.CpuName = CpuUtils.GetCpuName();
-            }
-            catch { }
-            
             try
             {
                 string appDataRoot = Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));

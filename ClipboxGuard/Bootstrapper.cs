@@ -199,10 +199,8 @@ namespace ClipboxGuard
                 }
                 catch { }
 
-                AggregateReport ar = new AggregateReport(ProductVersionHelper.GetFullProductVersion())
-                {
-                    GuardProcessReport = dr
-                };
+                AggregateReport ar = AggregateReportGenerator.CreateNewEmptyReport(ProductVersionHelper.GetFullProductVersion());
+                ar.GuardProcessReport = dr;
 
                 _errorMessageWindowService?.ShowErrorWindow(out isRestartRequested, new ReportAnalysis(ErrorOrigin.GuardProcess, exception.ToString(), ar));
             }

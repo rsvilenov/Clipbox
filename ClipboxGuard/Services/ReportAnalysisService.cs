@@ -1,5 +1,6 @@
 ﻿using Clipbox.Core;
 using Clipbox.Core.Diagnostics;
+using Clipbox.Infrastructure.Diagnostics;
 using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.Serialization;
 using ClipboxGuard.Enums;
@@ -24,7 +25,7 @@ namespace ClipboxGuard.Services
         {
             ErrorOrigin errorOrigin = ErrorOrigin.Unknown;
 
-            AggregateReport aggregateReport = new AggregateReport(ProductVersionHelper.GetFullProductVersion());
+            AggregateReport aggregateReport = AggregateReportGenerator.CreateNewEmptyReport(ProductVersionHelper.GetFullProductVersion());
 
             StringBuilder errorDetailsStringBuilder = new StringBuilder();
             if (_persistenceProvider.CheckIfKeyExists(ProductConstants.MAIN_CRASHFILE_PERSISTENCE_KEY))
