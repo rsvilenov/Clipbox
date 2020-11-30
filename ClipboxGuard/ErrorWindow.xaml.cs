@@ -94,6 +94,11 @@ namespace ClipboxGuard
 
         public void SetReportSubmitState(ReportSubmitState state)
         {
+            if (state == ReportSubmitState.Done)
+            {
+                Task.Delay(1000).ContinueWith(t => Dispatcher.Invoke(() => { try { Close(); } catch { } }));
+            }
+            
             Dispatcher.Invoke(() =>
             {
                 StateOfReportSending = state;

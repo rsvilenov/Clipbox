@@ -32,7 +32,7 @@ namespace ClipboxGuard.Services
         {
             _persistenceProvider = persistenceProvider;
             _isStartedFromSvc = isStartedFromSvc;
-            _mainWindowWaitMre = new ManualResetEvent(false);
+            _mainWindowWaitMre = new ManualResetEvent(true);
             _otDispatcher = new OwnThreadDispatcher();
         }
 
@@ -146,6 +146,11 @@ namespace ClipboxGuard.Services
             // show the error windows one by one if more than one error occurs.
             lock (_mainWindowLockHandle)
             {
+                // wait for any previously open window to close
+                _mainWindowWaitMre.WaitOne();
+
+                _mainWindowWaitMre.Reset();
+
                 _otDispatcher.BeginInvoke(DispatcherPriority.Background, (Action)(() =>
                 {
                     _errorWindow = new ErrorWindow(analysis,
@@ -157,6 +162,7 @@ namespace ClipboxGuard.Services
                     _errorWindow.ShowDialog();
                 }));
 
+                // wait for the currently open window to close
                 _mainWindowWaitMre.WaitOne();
 
                 bool restartRequired = false;
