@@ -1,7 +1,5 @@
 ﻿using Clipbox.Infrastructure.UI.Utils;
-using Clipbox.Win32.Native;
 using System;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
@@ -92,8 +90,13 @@ namespace Clipbox.Views
         {
             _popup.SourceInitialized -= _popup_SourceInitialized;
 
+            // UPDATE: this steals the focus from the search text box while the user is still typing
+            // and if at that time the popup opens (the user has paused for a second, for example).
+            // Since the main view will always be topmost, letting the loading indicator float freely
+            // should not be an issue, since it is always topmost.
+
             // do not let the window float freely
-            User32.SetParent(_popup.Handle, _parentHwnd);
+            // User32.SetParent(_popup.Handle, _parentHwnd);
         }
 
         public static void ClosePopup(bool fadeOut = true)

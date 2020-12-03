@@ -9,8 +9,11 @@
     d:DesignWidth="800"
     AllowsTransparency="True"
     Background="{x:Null}"
+    Focusable="False"
+    ShowActivated="False"
     ShowInTaskbar="False"
     SizeToContent="WidthAndHeight"
+    Topmost="True"
     WindowStartupLocation="CenterScreen"
     WindowStyle="None"
     mc:Ignorable="d">
