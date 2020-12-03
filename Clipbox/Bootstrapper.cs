@@ -143,7 +143,6 @@ namespace Clipbox
             _extensionLoader.SetEnabledExtensions(GetEnabledExtensions());
             _extensionLoader.LoadContainers();
 
-
             IEnumerable<SettingsUIExtension> settingsExtensions = _extensionLoader.SettingsUIExtensionContainer.ResolveAll();
             foreach (ISettingsRegistrator ext in settingsExtensions)
             {
@@ -239,7 +238,12 @@ namespace Clipbox
             _guardCommunicationService.SetMainClipboardViewWindowService(_mainClipboardViewWindowService);
 
             // Initialize the flow controller
-            _flowController = new FlowController(_clipboardManager, _keyboardService, _flowExtensionExecutorService, _quickClipboardViewWindowService, _mainClipboardViewWindowService);
+            _flowController = new FlowController(_clipboardManager, 
+                _keyboardService, 
+                _flowExtensionExecutorService, 
+                _quickClipboardViewWindowService, 
+                _mainClipboardViewWindowService,
+                _settingsService);
 
             _aboutWindowService = new AboutWindowService();
 

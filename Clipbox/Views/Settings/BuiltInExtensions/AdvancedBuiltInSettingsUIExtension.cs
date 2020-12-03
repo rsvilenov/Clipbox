@@ -89,7 +89,8 @@ namespace Clipbox.Views.Settings.BuiltInExtensions
                 .Add(SettingsKeys.ClipboardFormatSupportExtTimeout, new ClipboardFormatSupportExtTimeoutSettingUIPart())
                 .Add(SettingsKeys.ClipboardOpenningTimeoutMs, new ClipboardOpeningTimeoutSettingUIPart())
                 .Add(SettingsKeys.AreBaloonPopupsEnabled, new AreBaloonPopupsEnabledSettingUIPart())
-                .Add(SettingsKeys.AreHintPopupsEnabled, new AreHintPopupsEnabledSettingUIPart());
+                .Add(SettingsKeys.AreHintPopupsEnabled, new AreHintPopupsEnabledSettingUIPart())
+                .Add(SettingsKeys.AutoRepeatKeyIntervalQV, new AutoRepeatKeyIntervalQVSettingUIPart());
         }
 
         private void ManageUIPartsVisibility(ISettingKey settingKey)

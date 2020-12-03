@@ -317,7 +317,7 @@
     <value>Индексът за търсене е повреден.</value>
   </data>
   <data name="LBL_MAINVIEW_UI_EXT_PANEL" xml:space="preserve">
-    <value>Промени:</value>
+    <value>Подготви:</value>
   </data>
   <data name="LBL_OPEN_MAIN_VIEW_REQUESTED_POPUP" xml:space="preserve">
     <value>За да отворите прегледа на цял екран, моля първо затворете този прозорец.</value>
@@ -381,6 +381,9 @@
   </data>
   <data name="LBL_SETTINGS_AUTO_DETERMINE_MAX_PREVIEW_TASKS" xml:space="preserve">
     <value>Автоматично определяй максималния брой на едновременните задачи за генериране на прегледи</value>
+  </data>
+  <data name="LBL_SETTINGS_AUTO_REPEAT_KEY_INTERVAL_IN_QV" xml:space="preserve">
+    <value>Когато е задържана натисната клавишната комбинация Ctrl+V, фокусирай следващия запис в Бързия преглед след този интервал (в милисекунди)</value>
   </data>
   <data name="LBL_SETTINGS_BACKGROUND_PREVIEW_GENERATION" xml:space="preserve">
     <value>Генериране на прегледите във фонов режим</value>

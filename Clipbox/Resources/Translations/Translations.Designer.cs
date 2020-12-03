@@ -656,7 +656,7 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Modify:.
+        ///   Looks up a localized string similar to Prepare:.
         /// </summary>
         internal static string LBL_MAINVIEW_UI_EXT_PANEL {
             get {
@@ -850,6 +850,15 @@ namespace Clipbox.Resources.Translations {
         internal static string LBL_SETTINGS_AUTO_DETERMINE_MAX_PREVIEW_TASKS {
             get {
                 return ResourceManager.GetString("LBL_SETTINGS_AUTO_DETERMINE_MAX_PREVIEW_TASKS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to When holding Ctrl+V down, focus next item in the QuickView after this interval (in milliseconds).
+        /// </summary>
+        internal static string LBL_SETTINGS_AUTO_REPEAT_KEY_INTERVAL_IN_QV {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_AUTO_REPEAT_KEY_INTERVAL_IN_QV", resourceCulture);
             }
         }
         

@@ -345,6 +345,9 @@
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\AutoDetermineMaxPreviewTasksSettingUIPart.xaml.cs">
       <DependentUpon>AutoDetermineMaxPreviewTasksSettingUIPart.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\AutoRepeatKeyIntervalQVSettingUIPart.xaml.cs">
+      <DependentUpon>AutoRepeatKeyIntervalQVSettingUIPart.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\BackgroundPreviewGenerationSettingUIPart.xaml.cs">
       <DependentUpon>BackgroundPreviewGenerationSettingUIPart.xaml</DependentUpon>
     </Compile>
@@ -606,6 +609,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\BuiltInExtensions\UIParts\AutoDetermineMaxPreviewTasksSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\BuiltInExtensions\UIParts\AutoRepeatKeyIntervalQVSettingUIPart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

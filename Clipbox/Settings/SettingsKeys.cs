@@ -59,6 +59,9 @@ namespace Clipbox.Settings
 
         public static SettingKey<int> OnItemStoringFlowExtensionsMaxTasks = new SettingKey<int>(nameof(OnItemStoringFlowExtensionsMaxTasks), 10);
 
+        public static SettingKey<int> AutoRepeatKeyIntervalQV = new SettingKey<int>(nameof(AutoRepeatKeyIntervalQV), 800);
+
+
         /// <summary>
         /// Restart is required. Remove this message when the implementation is complete.
         /// </summary>

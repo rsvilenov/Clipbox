@@ -4,9 +4,9 @@ using Clipbox.Core.Extensibility.Enums;
 using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Services.EventArgsClasses;
 using Clipbox.Services.Interfaces;
+using Clipbox.Settings;
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -18,33 +18,41 @@ namespace Clipbox
 {
     public class FlowController : IDisposable
     {
+        private const int KEY_REPEAT_INTERVAL_MS = 600; 
+
         private readonly IClipboardManager _clipboardManager;
         private readonly ILowLevelKeyboardService _keyboardService;
         private readonly IQuickClipboardViewWindowService _quickViewWindowService;
         private readonly IMainClipboardViewWindowService _mainViewWindowService;
         private readonly IFlowExtensionExecutorService _flowExtensionExecutorService;
+        private readonly ISettingsService _settingsService;
+
+        private readonly IEnumerable<IHouseKeepingTask> _houseKeepingTasks;
 
         private readonly System.Timers.Timer _longCtrlVTimer;
+        private readonly System.Timers.Timer _autoRepeatKeyTimer;
 
         private bool _hasCtrlVBeenPreviouslyPressed = false;
         private bool _hasQuickViewWindowShowingBeenRequested = false;
 
         private IEnumerable<IFlowParameter> _parametersFromQuickViewWindowService;
 
-        private IEnumerable<IHouseKeepingTask> _houseKeepingTasks;
+        private bool _isDisposed;
 
         public FlowController(IClipboardManager clipboardManager, 
             ILowLevelKeyboardService keyboardService,
             IFlowExtensionExecutorService flowExtensionExecutorService, 
             IQuickClipboardViewWindowService quickViewWindowService,
-            IMainClipboardViewWindowService mainViewWindowService)
+            IMainClipboardViewWindowService mainViewWindowService,
+            ISettingsService settingsService)
         {
             _clipboardManager = clipboardManager;
             _keyboardService = keyboardService;
             _flowExtensionExecutorService = flowExtensionExecutorService;
             _quickViewWindowService = quickViewWindowService;
             _mainViewWindowService = mainViewWindowService;
-            
+            _settingsService = settingsService;
+
             _quickViewWindowService.CombinabilityCheckRequested += _clipboardViewWindowService_CombinabilityCheckRequested;
             _quickViewWindowService.HousekeepingRequested += _clipboardViewWindowService_HousekeepingRequested;
 
@@ -65,12 +73,27 @@ namespace Clipbox
             _longCtrlVTimer = new System.Timers.Timer(keyboardDelayMs);
             _longCtrlVTimer.AutoReset = false;
             _longCtrlVTimer.Elapsed += _longCtrlVTimer_Elapsed;
-            
+
+            int keyRepeatInterval = _settingsService.GetSetting<int>(SettingsKeys.AutoRepeatKeyIntervalQV);
+            _settingsService.SettingChanged += _settingsService_SettingChanged;
+
+            _autoRepeatKeyTimer = new System.Timers.Timer(keyRepeatInterval);
+            _autoRepeatKeyTimer.Elapsed += _autoRepeatKeyTimer_Elapsed;
+
+
             _keyboardService.CtrlVHotkeyDown += _keyboardListener_CtrlVHotkeyDown;
             _keyboardService.ControlKeyUp += _keyboardListener_ControlKeyUp;
             _keyboardService.VKeyUp += _keyboardListener_VKeyUp;
         }
-        
+
+        private void _settingsService_SettingChanged(object sender, SettingsEventArgs e)
+        {
+            if (e.Key == SettingsKeys.AutoRepeatKeyIntervalQV && !_isDisposed)
+            {
+                _autoRepeatKeyTimer.Interval = _settingsService.GetSetting<int>(SettingsKeys.AutoRepeatKeyIntervalQV);
+            }
+        }
+
         private void _clipboardViewWindowService_HousekeepingRequested(object sender, HousekeepingEventArgs e)
         {
             PerformHouseKeeping(e.ClipboardItemIdsToProcess,
@@ -178,8 +201,10 @@ namespace Clipbox
 
         private void _keyboardListener_VKeyUp(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            _isVKeyUpOccurredAfterKeyDown = true;
             Debug.WriteLine("V key is up");
-            _longCtrlVTimer.Stop();
+            _longCtrlVTimer.Stop(); 
+            _autoRepeatKeyTimer.Stop();
 
             // if the preview window has not been activated, ensure the normal behavior of Ctrl+V
             if (_hasCtrlVBeenPreviouslyPressed && !_quickViewWindowService.IsWindowVisible && !_hasQuickViewWindowShowingBeenRequested)
@@ -196,8 +221,8 @@ namespace Clipbox
         {
             Debug.WriteLine("Ctrl key is up");
 
-
             _longCtrlVTimer.Stop();
+            _autoRepeatKeyTimer.Stop();
 
             if (_quickViewWindowService.IsWindowVisible)
             {
@@ -220,16 +245,44 @@ namespace Clipbox
             _hasCtrlVBeenPreviouslyPressed = false;
         }
 
+        private bool _isFirstCtrlVKeyDown = true;
+        private bool _isVKeyUpOccurredAfterKeyDown = false;
+
         private void _longCtrlVTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             RequestOpenQuickViewWindow();
+        }
+
+        private void _autoRepeatKeyTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            if (_quickViewWindowService.IsWindowVisible)
+            {
+                FocusNextItemInQuickViewWindow();
+            }
         }
 
         private void _keyboardListener_CtrlVHotkeyDown(object sender, System.ComponentModel.CancelEventArgs e)
         {
             Debug.WriteLine("Ctrl+V is down");
             e.Cancel = true;
-            
+
+            if (_isFirstCtrlVKeyDown)
+            {
+                _isFirstCtrlVKeyDown = false;
+            }
+            else if(!_isVKeyUpOccurredAfterKeyDown)
+            {
+                // when the system starts to automatically repeat key press events,
+                // it sends us only WM_KEYDOWN, but not WM_KEYUP.
+                // When we receive WM_KEYUP, this means that the user has
+                // interacted with the system and that the event is not part
+                // of the auto-repeat key sequence.
+                return;
+            }
+
+            _autoRepeatKeyTimer.Start();
+
+            _isVKeyUpOccurredAfterKeyDown = false;
             _hasCtrlVBeenPreviouslyPressed = true;
 
            
@@ -440,7 +493,13 @@ namespace Clipbox
 
         public void Dispose()
         {
-            _longCtrlVTimer.Dispose();
+            if (!_isDisposed)
+            {
+                _isDisposed = true;
+                _settingsService.SettingChanged -= _settingsService_SettingChanged;
+                _longCtrlVTimer.Dispose();
+                _autoRepeatKeyTimer.Dispose();
+            }
         }
     }
 }

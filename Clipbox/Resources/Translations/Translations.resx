@@ -317,7 +317,7 @@ from this window except the pinned ones.</value>
     <value>The search index is broken.</value>
   </data>
   <data name="LBL_MAINVIEW_UI_EXT_PANEL" xml:space="preserve">
-    <value>Modify:</value>
+    <value>Prepare:</value>
   </data>
   <data name="LBL_OPEN_MAIN_VIEW_REQUESTED_POPUP" xml:space="preserve">
     <value>To open the fullscreen view, please close this window first.</value>
@@ -381,6 +381,9 @@ from this window except the pinned ones.</value>
   </data>
   <data name="LBL_SETTINGS_AUTO_DETERMINE_MAX_PREVIEW_TASKS" xml:space="preserve">
     <value>Automatically determine the maximum number of simultaneous preview generation tasks</value>
+  </data>
+  <data name="LBL_SETTINGS_AUTO_REPEAT_KEY_INTERVAL_IN_QV" xml:space="preserve">
+    <value>When holding Ctrl+V down, focus next item in the QuickView after this interval (in milliseconds)</value>
   </data>
   <data name="LBL_SETTINGS_BACKGROUND_PREVIEW_GENERATION" xml:space="preserve">
     <value>Enable background preview generation</value>
