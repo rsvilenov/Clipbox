@@ -368,7 +368,7 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Press and hold Ctrl+V to loop through your copied items. It works just like Alt+Tab..
+        ///   Looks up a localized string similar to Hold down Ctrl+V for at least a second to open your copied items. Do not release Ctrl. Press V without releasing Ctrl to loop through them. When you release Ctrl, the selected item will be pasted. It works just like Alt+Tab..
         /// </summary>
         internal static string LBL_BALOON_QV_REMINDER {
             get {

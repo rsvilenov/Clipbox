@@ -221,7 +221,7 @@
     <value>Филтрирай по приложение и/или по заглавие на прозорец</value>
   </data>
   <data name="LBL_BALOON_QV_REMINDER" xml:space="preserve">
-    <value>Натиснете и задръжте Ctrl+V, за да видите копираните си неща. Работи точно като Alt+Tab.</value>
+    <value>Задръжте Ctrl+V за поне секунда, за да видите копираните си неща. Не пускайте Ctrl. Натискайте V, без да пускате Ctrl, за да сменяте избрания запис за пействане. Когато пуснете Ctrl, избраният запис ще бъде пейстнат. Работи точно като Alt+Tab.</value>
   </data>
   <data name="LBL_BALOON_UPDATE_AVAILABLE" xml:space="preserve">
     <value>Нова версия на Clipbox е налична.</value>

@@ -221,7 +221,7 @@ from this window except the pinned ones.</value>
     <value>Filter by source application and/or window title</value>
   </data>
   <data name="LBL_BALOON_QV_REMINDER" xml:space="preserve">
-    <value>Press and hold Ctrl+V to loop through your copied items. It works just like Alt+Tab.</value>
+    <value>Hold down Ctrl+V for at least a second to open your copied items. Do not release Ctrl. Press V without releasing Ctrl to loop through them. When you release Ctrl, the selected item will be pasted. It works just like Alt+Tab.</value>
   </data>
   <data name="LBL_BALOON_UPDATE_AVAILABLE" xml:space="preserve">
     <value>An new version of Clipbox is available.</value>

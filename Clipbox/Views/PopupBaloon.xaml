@@ -68,7 +68,7 @@
             Grid.Row="1"
             Grid.Column="1"
             Grid.ColumnSpan="2"
-            Margin="0,0,20,0"
+            Margin="0,0,35,0"
             HorizontalAlignment="Left"
             VerticalAlignment="Center">
             <Grid.RowDefinitions>
@@ -85,7 +85,7 @@
                 FontSize="18"
                 Foreground="#f0f0f0"
                 Text="{Binding Text}"
-                TextAlignment="Justify"
+                TextAlignment="Left"
                 TextWrapping="Wrap" />
 
             <Button
