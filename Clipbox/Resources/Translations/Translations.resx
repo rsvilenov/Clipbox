@@ -639,6 +639,9 @@ Warning: more rows means more RAM usage!</value>
   <data name="TTP_FILTERBAND_FILTER_BY_DATE_TOGGLED_PREFIX" xml:space="preserve">
     <value>Showing items, created from</value>
   </data>
+  <data name="TTP_FILTERBAND_FILTER_BY_DATE_TOGGLED_PREFIX_SINGLE_DAY" xml:space="preserve">
+    <value>Showing items from</value>
+  </data>
   <data name="TTP_FILTERBAND_FILTER_BY_DATE_TOGGLED_ТО" xml:space="preserve">
     <value>to</value>
   </data>

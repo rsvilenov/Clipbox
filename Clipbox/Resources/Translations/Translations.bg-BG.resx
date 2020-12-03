@@ -637,7 +637,10 @@
     <value>Филтрирай по дата</value>
   </data>
   <data name="TTP_FILTERBAND_FILTER_BY_DATE_TOGGLED_PREFIX" xml:space="preserve">
-    <value>Показват се елемети, създадени от</value>
+    <value>Показват се записи, създадени от</value>
+  </data>
+  <data name="TTP_FILTERBAND_FILTER_BY_DATE_TOGGLED_PREFIX_SINGLE_DAY" xml:space="preserve">
+    <value>Показват се записи от</value>
   </data>
   <data name="TTP_FILTERBAND_FILTER_BY_DATE_TOGGLED_ТО" xml:space="preserve">
     <value>до</value>

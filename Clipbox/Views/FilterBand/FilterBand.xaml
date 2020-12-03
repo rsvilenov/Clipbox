@@ -132,7 +132,11 @@
                         <Setter Property="Content" Value="{DynamicResource DateSelectionIcon}" />
                         <Setter Property="ToolTip" Value="{loc:Localize TTP_FILTERBAND_FILTER_BY_DATE}" />
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding DateRangeToggled}" Value="True">
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding AreStartAndEndDateTheSameDay}" Value="False" />
+                                    <Condition Binding="{Binding DateRangeToggled}" Value="True" />
+                                </MultiDataTrigger.Conditions>
                                 <Setter Property="ToolTip">
                                     <Setter.Value>
                                         <TextBlock>
@@ -143,7 +147,21 @@
                                         </TextBlock>
                                     </Setter.Value>
                                 </Setter>
-                            </DataTrigger>
+                            </MultiDataTrigger>
+                            <MultiDataTrigger>
+                                <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding AreStartAndEndDateTheSameDay}" Value="True" />
+                                    <Condition Binding="{Binding DateRangeToggled}" Value="True" />
+                                </MultiDataTrigger.Conditions>
+                                <Setter Property="ToolTip">
+                                    <Setter.Value>
+                                        <TextBlock>
+                                            <Run Text="{loc:Localize TTP_FILTERBAND_FILTER_BY_DATE_TOGGLED_PREFIX_SINGLE_DAY}" />
+                                            <Run FontWeight="Bold" Text="{Binding StartDateMs, Converter={StaticResource MillisecondsToHumanReadableDateStringConverter}}" />
+                                        </TextBlock>
+                                    </Setter.Value>
+                                </Setter>
+                            </MultiDataTrigger>
                         </Style.Triggers>
                     </Style>
 

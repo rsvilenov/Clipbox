@@ -22,7 +22,6 @@
 
             <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
             <infConv:InverseBooleanConverter x:Key="InverseBooleanConverter" />
-            <conv:MillisecondsToHumanReadableDateStringConverter x:Key="MillisecondsToHumanReadableDateStringConverter" />
             <Style BasedOn="{StaticResource MinimalisticScrollBarStyle}" TargetType="ScrollBar">
                 <Setter Property="Foreground" Value="White" />
                 <Setter Property="Margin" Value="0,5,2,5" />

@@ -1621,6 +1621,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Showing items from.
+        /// </summary>
+        internal static string TTP_FILTERBAND_FILTER_BY_DATE_TOGGLED_PREFIX_SINGLE_DAY {
+            get {
+                return ResourceManager.GetString("TTP_FILTERBAND_FILTER_BY_DATE_TOGGLED_PREFIX_SINGLE_DAY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to to.
         /// </summary>
         internal static string TTP_FILTERBAND_FILTER_BY_DATE_TOGGLED_ТО {

@@ -144,6 +144,18 @@ namespace Clipbox.Views.FilterBand
             set { SetValue(EndDateMsProperty, value); }
         }
 
+
+        public bool AreStartAndEndDateTheSameDay
+        {
+            get { return (bool)GetValue(AreStartAndEndDateTheSameDayProperty); }
+            set { SetValue(AreStartAndEndDateTheSameDayProperty, value); }
+        }
+
+        public static readonly DependencyProperty AreStartAndEndDateTheSameDayProperty =
+            DependencyProperty.Register(nameof(AreStartAndEndDateTheSameDay), typeof(bool), typeof(FilterBand), new PropertyMetadata(false));
+
+
+
         private static readonly DependencyProperty EndDateMsProperty =
             DependencyProperty.Register(nameof(EndDateMs), typeof(double), typeof(FilterBand), new PropertyMetadata(-1d));
 
@@ -214,10 +226,12 @@ namespace Clipbox.Views.FilterBand
                 if (StartDateMs > -1 && EndDateMs > -1)
                 {
                     long minUtcTicks = (new DateTime(1970, 1, 1))
+                    .ToUniversalTime()
                     .AddMilliseconds(StartDateMs)
                     .Ticks;
 
                     long maxUtcTicks = (new DateTime(1970, 1, 1))
+                        .ToUniversalTime()
                         .AddMilliseconds(EndDateMs)
                         .AddDays(1)
                         .Ticks;
@@ -471,8 +485,16 @@ namespace Clipbox.Views.FilterBand
                     {
                         DateRangeToggled = true;
 
-                        StartDateMs = dialogArgs.StartMs;
-                        EndDateMs = dialogArgs.EndMs;
+                        // the values, received from DateRangeEventArgs are UTC
+                        StartDateMs = ToLocalTimeMilliseconds(dialogArgs.StartMs);
+                        EndDateMs = ToLocalTimeMilliseconds(dialogArgs.EndMs);
+
+                        DateTime minDt = (new DateTime(1970, 1, 1))
+                        .AddMilliseconds(StartDateMs);
+                        DateTime maxDt = (new DateTime(1970, 1, 1))
+                            .AddMilliseconds(EndDateMs);
+
+                        AreStartAndEndDateTheSameDay = minDt.Date == maxDt.Date;
 
                         RebuildSearchTermCollection();
                     }
@@ -489,6 +511,16 @@ namespace Clipbox.Views.FilterBand
 
             popup.IsOpen = true;
             ShouldParentBeEnabled = false;
+        }
+
+        private double ToLocalTimeMilliseconds(double utcMilliseconds)
+        {
+            DateTime utcDt = (new DateTime(1970, 1, 1))
+                .AddMilliseconds(utcMilliseconds)
+                .ToLocalTime();
+            
+
+            return (double)(utcDt - new DateTime(1970, 1, 1)).TotalMilliseconds;
         }
 
         private void ToggleApplicationSelectionButton_PreviewMouseDown(object sender, MouseButtonEventArgs e)

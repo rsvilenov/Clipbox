@@ -149,7 +149,17 @@ namespace Clipbox.Views.FilterBand
         
         protected override void OnOkButton()
         {
-            DateRangeSelected?.Invoke(this, new DateRangeEventArgs(SelectedMinDateTimeMs, SelectedMaxDateTimeMs));
+            DateTime minUtcDt = (new DateTime(1970, 1, 1))
+                .AddMilliseconds(SelectedMinDateTimeMs)
+                .ToUniversalTime();
+            DateTime maxUtcDt = (new DateTime(1970, 1, 1))
+                .AddMilliseconds(SelectedMaxDateTimeMs)
+                .ToUniversalTime();
+
+            double selectedMinDateTimeUtcMs = (double)(minUtcDt - new DateTime(1970, 1, 1)).TotalMilliseconds;
+            double selectedMaxDateTimeUtcMs = (double)(maxUtcDt - new DateTime(1970, 1, 1)).TotalMilliseconds;
+
+            DateRangeSelected?.Invoke(this, new DateRangeEventArgs(selectedMinDateTimeUtcMs, selectedMaxDateTimeUtcMs));
         }
 
         protected override void OnCancelButton()
@@ -163,7 +173,7 @@ namespace Clipbox.Views.FilterBand
             _dateTimeMsCollection = ClipboardItemsDataProvider
                 .GetAllCreationTimestampTicksUtc()
                 .Distinct()
-                .Select(ticks => new DateTime(ticks).Date) // get the utc date
+                .Select(ticks => new DateTime(ticks).ToLocalTime().Date) // get the local date
                 .Select(date => (double)(date - new DateTime(1970, 1, 1)).TotalMilliseconds)
                 .Distinct()
                 .ToList();
@@ -176,11 +186,21 @@ namespace Clipbox.Views.FilterBand
             {
                 SelectedMinDateTimeMs = DateTimeMsCollection?.Min() ?? 0;
                 SelectedMaxDateTimeMs = DateTimeMsCollection?.Max() ?? 0;
-                AreAnyDatesAvailable = true;
-            }
-            else
-            {
-                AreAnyDatesAvailable = false;
+
+                if (SelectedMinDateTimeMs != 0 && SelectedMaxDateTimeMs != 0)
+                {
+                    DateTime minDt = (new DateTime(1970, 1, 1))
+                        .AddMilliseconds(SelectedMinDateTimeMs)
+                        .ToLocalTime();
+                    DateTime maxDt = (new DateTime(1970, 1, 1))
+                        .AddMilliseconds(SelectedMaxDateTimeMs)
+                        .ToLocalTime();
+
+                    if (minDt.Date != maxDt.Date)
+                    {
+                        AreAnyDatesAvailable = true;
+                    }
+                }
             }
         }
 

@@ -19,11 +19,10 @@ namespace Clipbox.Technical.Converters
 
             double milliseconds = (double)value;
 
-            DateTime utcDt = (new DateTime(1970, 1, 1))
+            DateTime dateTime = (new DateTime(1970, 1, 1))
                 .AddMilliseconds(milliseconds);
 
-            string humanReadableDateString = utcDt
-                .ToLocalTime()
+            string humanReadableDateString = dateTime
                 .ToWindowsStyleHumanReadableString();
 
             if (humanReadableDateString.StartsWith("LBL_"))
