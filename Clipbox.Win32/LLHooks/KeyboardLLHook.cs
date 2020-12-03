@@ -19,9 +19,17 @@ namespace Clipbox.Win32.LLHooks
         protected override CallbackResult OnCallback(int nCode, IntPtr wParam, IntPtr lParam)
         {
             if (nCode >= 0 && (wParam == (IntPtr)NativeEnums.KeyboardMessages.WM_KEYDOWN || wParam == (IntPtr)NativeEnums.KeyboardMessages.WM_KEYUP))
-            {
+            {  
                 int vkCode = Marshal.ReadInt32(lParam);
-                var args = new KeyboardEventArgs((NativeEnums.Keys)vkCode, (NativeEnums.KeyboardMessages)wParam);
+
+                bool isInjected = false;
+                if (nCode >= 0 && lParam != IntPtr.Zero)
+                {
+                    NativeStructures.KBDLLHOOKSTRUCT kbd = Marshal.PtrToStructure<NativeStructures.KBDLLHOOKSTRUCT>(lParam);
+                    isInjected = kbd.flags.HasFlag(NativeEnums.KBDLLHOOKSTRUCTFlags.LLKHF_INJECTED);
+                }
+
+                var args = new KeyboardEventArgs((NativeEnums.Keys)vkCode, (NativeEnums.KeyboardMessages)wParam, isInjected);
                 KeyboardAction?.Invoke(args);
                 if (args.CancelEvent)
                 {

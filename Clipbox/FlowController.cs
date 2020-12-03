@@ -232,8 +232,13 @@ namespace Clipbox
                 // do not hold the hook for long - we may get unhooked by Windows
                 Task.Run(new Action(() =>
                 {
+                    // UPDATE: now the injected keystrokes are skipped by LowLevelKeyboardService, 
+                    // and I am not sure that generating a keyboard event while the hook is processing
+                    // another one will have any effect on the execution of the event... 
+                    // So, no waiting for the hook seems to be required (let alone the ugly hread.Sleep())...
+
                     // this simulates ctrl press and we do not want to do this while holding a hook to the ctrl key up event
-                    Thread.Sleep(100); // TODO: find a better way of ensuring that DoPasteOperation() gets executed after the hook returns...
+                    // Thread.Sleep(100); // TODO: find a better way of ensuring that DoPasteOperation() gets executed after the hook returns...
 
                     Debug.WriteLine("Doing paste operation");
                     bool pasteCancelled = false;

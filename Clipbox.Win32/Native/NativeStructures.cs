@@ -365,5 +365,15 @@ namespace Clipbox.Win32.Native
             public RECT rc;
             public IntPtr lParam;
         }
+
+        [StructLayout(LayoutKind.Sequential)]
+        public class KBDLLHOOKSTRUCT
+        {
+            public uint vkCode;
+            public uint scanCode;
+            public NativeEnums.KBDLLHOOKSTRUCTFlags flags;
+            public uint time;
+            public UIntPtr dwExtraInfo;
+        }
     }
 }

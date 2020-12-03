@@ -4,6 +4,7 @@ using Clipbox.Core.Search.SearchTerms;
 using Clipbox.Infrastructure.Extensibility.Containers;
 using Clipbox.Infrastructure.Threading;
 using Clipbox.Infrastructure.UI;
+using Clipbox.Infrastructure.UI.CustomControls;
 using Clipbox.Infrastructure.UI.Theme.Enums;
 using Clipbox.Infrastructure.UI.Utils;
 using Clipbox.Services;
@@ -1000,10 +1001,13 @@ namespace Clipbox.Views
                         MainListView.Visibility = Visibility.Visible;
 
                         // focus the mainlistview only if the contents changed due to things other than search
-                        if (!(Keyboard.FocusedElement is TextBox))
-                        {
-                            MainListView.Focus();
-                        }
+                        // TODO: this doesnt't work, focused element is sometimes null when the focus is inside the search text box.
+                        // Figure out why.
+                        //IInputElement focusedElement = Keyboard.FocusedElement ?? FocusManager.GetFocusedElement(this);
+                        //if (!(focusedElement is SearchTextBox))
+                        //{
+                        //    MainListView.Focus();
+                        //}
                     }));
         }
 
