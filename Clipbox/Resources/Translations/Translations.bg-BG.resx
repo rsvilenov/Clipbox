@@ -215,10 +215,10 @@
     <value>Пишете тук, за да търсите</value>
   </data>
   <data name="LBL_APPSELECTOR_SELECT_APPS_OVERLAY" xml:space="preserve">
-    <value>Изберете приложение от списъка долу</value>
+    <value>Изберете приложение от списъка долу като го кликнете два пъти или използвате бутона +</value>
   </data>
   <data name="LBL_APPSELECTOR_TITLE" xml:space="preserve">
-    <value>Филтрирай по приложение и/или по заглавие на прозорец</value>
+    <value>Филтрирай по приложение, от което идват копираните записи</value>
   </data>
   <data name="LBL_BALOON_QV_REMINDER" xml:space="preserve">
     <value>Задръжте Ctrl+V за поне секунда, за да видите копираните си неща. Не пускайте Ctrl. Натискайте V, без да пускате Ctrl, за да сменяте избрания запис за пействане. Когато пуснете Ctrl, избраният запис ще бъде пейстнат. Работи точно като Alt+Tab.</value>

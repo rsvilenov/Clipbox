@@ -143,7 +143,7 @@ To view or change the list, click "Manage".</value>
     <value>None</value>
   </data>
   <data name="LBL_BLACKLISTED_APPS_SELECT_APPS_MSG" xml:space="preserve">
-    <value>Select apps from the list below</value>
+    <value>To add applications to the blacklist, select them from the list below by double-clicking them or by using the + button.</value>
   </data>
   <data name="LBL_BLACKLIST_SEARCH_OVERLAY" xml:space="preserve">
     <value>Type here to search</value>

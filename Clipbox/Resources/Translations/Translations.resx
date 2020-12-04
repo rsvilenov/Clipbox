@@ -215,10 +215,10 @@ from this window except the pinned ones.</value>
     <value>Type here to search</value>
   </data>
   <data name="LBL_APPSELECTOR_SELECT_APPS_OVERLAY" xml:space="preserve">
-    <value>Select apps from the list below</value>
+    <value>Select apps from the list below by double-clicking them or by using the + button</value>
   </data>
   <data name="LBL_APPSELECTOR_TITLE" xml:space="preserve">
-    <value>Filter by source application and/or window title</value>
+    <value>Filter by the application, from which the items are copied</value>
   </data>
   <data name="LBL_BALOON_QV_REMINDER" xml:space="preserve">
     <value>Hold down Ctrl+V for at least a second to open your copied items. Do not release Ctrl. Press V without releasing Ctrl to loop through them. When you release Ctrl, the selected item will be pasted. It works just like Alt+Tab.</value>

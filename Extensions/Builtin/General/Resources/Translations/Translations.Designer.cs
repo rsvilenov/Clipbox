@@ -143,7 +143,7 @@ namespace Clipbox.Extensions.BuiltIn.General.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Select apps from the list below.
+        ///   Looks up a localized string similar to To add applications to the blacklist, select them from the list below by double-clicking them or by using the + button..
         /// </summary>
         internal static string LBL_BLACKLISTED_APPS_SELECT_APPS_MSG {
             get {

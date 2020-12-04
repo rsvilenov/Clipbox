@@ -143,7 +143,7 @@
     <value>Няма</value>
   </data>
   <data name="LBL_BLACKLISTED_APPS_SELECT_APPS_MSG" xml:space="preserve">
-    <value>Изберете приложения от долния списък</value>
+    <value>Изберете приложение от списъка долу като го кликнете два пъти или използвате бутона +</value>
   </data>
   <data name="LBL_BLACKLIST_SEARCH_OVERLAY" xml:space="preserve">
     <value>Пишете тук, за да търсите</value>

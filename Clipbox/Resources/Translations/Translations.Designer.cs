@@ -350,7 +350,7 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Select apps from the list below.
+        ///   Looks up a localized string similar to Select apps from the list below by double-clicking them or by using the + button.
         /// </summary>
         internal static string LBL_APPSELECTOR_SELECT_APPS_OVERLAY {
             get {
@@ -359,7 +359,7 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Filter by source application and/or window title.
+        ///   Looks up a localized string similar to Filter by the application, from which the items are copied.
         /// </summary>
         internal static string LBL_APPSELECTOR_TITLE {
             get {

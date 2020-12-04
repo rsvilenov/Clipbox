@@ -33,8 +33,8 @@
         BorderBrush="{DynamicResource AccentBrush}"
         BorderThickness="1">
         <Grid
-            Width="600"
-            Height="550"
+            Width="700"
+            Height="650"
             Margin="15"
             Background="{DynamicResource TaskbarColorBrush}">
             <Grid.RowDefinitions>
@@ -161,10 +161,25 @@
                         </ListView.ItemContainerStyle>
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <Border
-                                    BorderBrush="DarkGray"
-                                    BorderThickness="1"
-                                    CornerRadius="1">
+                                <Border BorderThickness="1" CornerRadius="1">
+                                    <Border.InputBindings>
+                                        <MouseBinding
+                                            Command="{Binding DataContext.RemoveApplication, ElementName=mainBorder}"
+                                            CommandParameter="{Binding}"
+                                            Gesture="LeftDoubleClick" />
+                                    </Border.InputBindings>
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="BorderBrush" Value="DarkGray" />
+                                            <Setter Property="Background" Value="Transparent" />
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="BorderBrush" Value="White" />
+                                                    <Setter Property="Background" Value="#3e3e42" />
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
                                     <Grid Margin="5,3,3,5" Background="Transparent">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="40" />
@@ -204,12 +219,14 @@
                     </ListView>
                     <TextBlock
                         Grid.Row="0"
+                        Margin="20"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         FontSize="16"
                         FontWeight="Bold"
                         Foreground="{DynamicResource ControlForegroundBrush}"
-                        Text="{loc:Localize LBL_APPSELECTOR_SELECT_APPS_OVERLAY}">
+                        Text="{loc:Localize LBL_APPSELECTOR_SELECT_APPS_OVERLAY}"
+                        TextWrapping="Wrap">
                         <TextBlock.Style>
                             <Style TargetType="TextBlock">
                                 <Setter Property="Visibility" Value="Collapsed" />
@@ -267,10 +284,25 @@
                         </ListView.ItemContainerStyle>
                         <ListView.ItemTemplate>
                             <DataTemplate>
-                                <Border
-                                    BorderBrush="DarkGray"
-                                    BorderThickness="1"
-                                    CornerRadius="1">
+                                <Border BorderThickness="1" CornerRadius="1">
+                                    <Border.InputBindings>
+                                        <MouseBinding
+                                            Command="{Binding DataContext.AddApplication, ElementName=mainBorder}"
+                                            CommandParameter="{Binding}"
+                                            Gesture="LeftDoubleClick" />
+                                    </Border.InputBindings>
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="BorderBrush" Value="DarkGray" />
+                                            <Setter Property="Background" Value="Transparent" />
+                                            <Style.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter Property="BorderBrush" Value="White" />
+                                                    <Setter Property="Background" Value="#3e3e42" />
+                                                </Trigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
                                     <Grid Margin="5,3,3,5" Background="Transparent">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="40" />
