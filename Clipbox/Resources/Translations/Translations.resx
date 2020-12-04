@@ -215,10 +215,10 @@ from this window except the pinned ones.</value>
     <value>Type here to search</value>
   </data>
   <data name="LBL_APPSELECTOR_SELECT_APPS_OVERLAY" xml:space="preserve">
-    <value>Select apps from the list below by double-clicking them or by using the + button</value>
+    <value>Select apps from the list below by double-clicking them or by pressing the + button</value>
   </data>
   <data name="LBL_APPSELECTOR_TITLE" xml:space="preserve">
-    <value>Filter by the application, from which the items are copied</value>
+    <value>Filter by the application, from which the items were copied</value>
   </data>
   <data name="LBL_BALOON_QV_REMINDER" xml:space="preserve">
     <value>Hold down Ctrl+V for at least a second to open your copied items. Do not release Ctrl. Press V without releasing Ctrl to loop through them. When you release Ctrl, the selected item will be pasted. It works just like Alt+Tab.</value>
@@ -267,6 +267,9 @@ from this window except the pinned ones.</value>
   </data>
   <data name="LBL_CONTEXT_MENU_UPDATE" xml:space="preserve">
     <value>Update Clipbox</value>
+  </data>
+  <data name="LBL_DATERANGESELECTOR_HELP" xml:space="preserve">
+    <value>Drag the circles below in order to limit the date-range for the clipboard items which are visible in the main window.</value>
   </data>
   <data name="LBL_DATERANGESELECTOR_NO_DATES_AVAILABLE" xml:space="preserve">
     <value>No clipboard items have been stored yet.</value>
@@ -344,7 +347,7 @@ from this window except the pinned ones.</value>
     <value>This setting will not take effect until the next start of the application. Do you want to restart it now?</value>
   </data>
   <data name="LBL_RMSELECTOR_TITLE" xml:space="preserve">
-    <value>Filter by source device</value>
+    <value>Filter the clipboard records by the device they come from</value>
   </data>
   <data name="LBL_SETTINGS_ADVANCED_MODIFY_WARNING" xml:space="preserve">
     <value>Modifying these settings may cause the program to stop working properly.</value>
@@ -646,7 +649,7 @@ Warning: more rows means more RAM usage!</value>
     <value>to</value>
   </data>
   <data name="TTP_FILTERBAND_FILTER_BY_DEVICE" xml:space="preserve">
-    <value>Filter by source device</value>
+    <value>Filter by the device the clipboard records come from</value>
   </data>
   <data name="TTP_FILTERBAND_FILTER_BY_DEVICE_CURRENT" xml:space="preserve">
     <value>Show items, comming from this computer</value>
@@ -751,7 +754,7 @@ Warning: more rows means more RAM usage!</value>
     <value>Type here to search</value>
   </data>
   <data name="TTP_RMSELECTOR_SELECTED_DEVICES_OVERLAY" xml:space="preserve">
-    <value>Select devices from the list below</value>
+    <value>Select devices from the list below by double clicking on it or pressing the + button</value>
   </data>
   <data name="TTP_SETTINGS_CLOUD_CLEAR_DATA" xml:space="preserve">
     <value>Delete all the synced data in the cloud</value>

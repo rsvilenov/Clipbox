@@ -10,6 +10,7 @@
     xmlns:infConv="clr-namespace:Clipbox.Infrastructure.UI.Converters;assembly=Clipbox.Infrastructure.UI"
     xmlns:loc="clr-namespace:Clipbox.Infrastructure.UI.Localization;assembly=Clipbox.Infrastructure.UI.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    MaxWidth="500"
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
@@ -79,6 +80,10 @@
                     </ContentControl.Style>
                 </ContentControl>
                 <Grid Grid.Column="1" Margin="15,0,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
                     <Grid.Style>
                         <Style TargetType="Grid">
                             <Setter Property="Visibility" Value="Visible" />
@@ -89,37 +94,54 @@
                             </Style.Triggers>
                         </Style>
                     </Grid.Style>
+
+                    <i:Interaction.Behaviors>
+                        <infBeh:FrameworkElementDpiScalingBehavior MaxScaleFactor="1.5" />
+                    </i:Interaction.Behaviors>
+
                     <StackPanel
+                        Grid.Row="0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Orientation="Horizontal"
                         Visibility="{Binding AreAnyDatesAvailable, Converter={StaticResource BooleanToVisibilityConverter}}">
-                        <i:Interaction.Behaviors>
-                            <infBeh:FrameworkElementDpiScalingBehavior MaxScaleFactor="1.5" />
-                        </i:Interaction.Behaviors>
-                        <TextBlock FontSize="14" Foreground="White">
+
+                        <TextBlock FontSize="18" Foreground="White">
                             <Run Text="{loc:Localize LBL_DATERANGESELECTOR_SHOW_ITEMS_FROM}" />
                             <Run FontWeight="Bold" Text="{Binding SelectedMinDateTimeMs, Converter={StaticResource MillisecondsToHumanReadableDateStringConverter}}" />
                         </TextBlock>
                         <TextBlock
-                            FontSize="14"
+                            FontSize="18"
                             Foreground="White"
                             Visibility="{Binding AreMinAndMaxSelectedDatesDistinct, Converter={StaticResource BooleanToVisibilityConverter}}">
                             <Run Text=" " />
                             <Run Text="{loc:Localize LBL_DATERANGESELECTOR_SHOW_ITEMS_TO}" />
                             <Run FontWeight="Bold" Text="{Binding SelectedMaxDateTimeMs, Converter={StaticResource MillisecondsToHumanReadableDateStringConverter}}" />
                         </TextBlock>
+
                     </StackPanel>
 
                     <TextBlock
+                        Grid.Row="0"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
-                        FontSize="14"
+                        FontSize="16"
                         Foreground="White"
                         IsEnabled="{Binding AreAnyDatesAvailable, Converter={StaticResource InverseBooleanConverter}}"
                         Text="{loc:Localize LBL_DATERANGESELECTOR_NO_DATES_AVAILABLE}"
                         Visibility="{Binding RelativeSource={RelativeSource Mode=Self}, Path=IsEnabled, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
+
+                    <TextBlock
+                        Grid.Row="1"
+                        Margin="10,20"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="16"
+                        Foreground="DarkGray"
+                        Text="{loc:Localize LBL_DATERANGESELECTOR_HELP}"
+                        TextAlignment="Center"
+                        TextWrapping="Wrap" />
                 </Grid>
 
             </Grid>
@@ -128,7 +150,7 @@
                 x:Name="rangeSlider"
                 Grid.Row="1"
                 Grid.ColumnSpan="2"
-                Margin="15,25,15,0"
+                Margin="95,15,95,40"
                 VerticalAlignment="Top"
                 IsEnabled="{Binding AreAnyDatesAvailable}"
                 LowerValue="{Binding SelectedMinDateTimeMs, Mode=TwoWay}"
@@ -147,7 +169,11 @@
                 Content="{loc:Localize BTN_LBL_Ok}"
                 Foreground="White"
                 IsEnabled="{Binding AreAnyDatesAvailable}"
-                Style="{DynamicResource BtnOk}" />
+                Style="{DynamicResource BtnOk}">
+                <i:Interaction.Behaviors>
+                    <infBeh:FrameworkElementDpiScalingBehavior MaxScaleFactor="1.5" />
+                </i:Interaction.Behaviors>
+            </Button>
 
             <Button
                 x:Name="btnCancel"
@@ -159,7 +185,12 @@
                 Command="{Binding CancelClicked}"
                 Content="{loc:Localize BTN_LBL_Cancel}"
                 Foreground="White"
-                Style="{DynamicResource BtnCancel}" />
+                Style="{DynamicResource BtnCancel}">
+                <i:Interaction.Behaviors>
+                    <infBeh:FrameworkElementDpiScalingBehavior MaxScaleFactor="1.5" />
+                </i:Interaction.Behaviors>
+            </Button>
+
         </Grid>
     </Border>
 </filterBand:FilterDialogBase>

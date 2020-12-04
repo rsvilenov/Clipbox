@@ -350,7 +350,7 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Select apps from the list below by double-clicking them or by using the + button.
+        ///   Looks up a localized string similar to Select apps from the list below by double-clicking them or by pressing the + button.
         /// </summary>
         internal static string LBL_APPSELECTOR_SELECT_APPS_OVERLAY {
             get {
@@ -359,7 +359,7 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Filter by the application, from which the items are copied.
+        ///   Looks up a localized string similar to Filter by the application, from which the items were copied.
         /// </summary>
         internal static string LBL_APPSELECTOR_TITLE {
             get {
@@ -526,6 +526,15 @@ namespace Clipbox.Resources.Translations {
         internal static string LBL_DATE_YESTERDAY {
             get {
                 return ResourceManager.GetString("LBL_DATE_YESTERDAY", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Drag the circles below in order to limit the date-range for the clipboard items which are visible in the main window..
+        /// </summary>
+        internal static string LBL_DATERANGESELECTOR_HELP {
+            get {
+                return ResourceManager.GetString("LBL_DATERANGESELECTOR_HELP", resourceCulture);
             }
         }
         
@@ -737,7 +746,7 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Filter by source device.
+        ///   Looks up a localized string similar to Filter the clipboard records by the device they come from.
         /// </summary>
         internal static string LBL_RMSELECTOR_TITLE {
             get {
@@ -1639,7 +1648,7 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Filter by source device.
+        ///   Looks up a localized string similar to Filter by the device the clipboard records come from.
         /// </summary>
         internal static string TTP_FILTERBAND_FILTER_BY_DEVICE {
             get {
@@ -1954,7 +1963,7 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Select devices from the list below.
+        ///   Looks up a localized string similar to Select devices from the list below by double clicking on it or pressing the + button.
         /// </summary>
         internal static string TTP_RMSELECTOR_SELECTED_DEVICES_OVERLAY {
             get {

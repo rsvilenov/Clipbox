@@ -268,6 +268,9 @@
   <data name="LBL_CONTEXT_MENU_UPDATE" xml:space="preserve">
     <value>Обновете Clipbox</value>
   </data>
+  <data name="LBL_DATERANGESELECTOR_HELP" xml:space="preserve">
+    <value>Преместете с мишката кръглите ръкохватки отдолу, за да ограничите времевия диапазон на показваните в основния прозорец клипборд записи. </value>
+  </data>
   <data name="LBL_DATERANGESELECTOR_NO_DATES_AVAILABLE" xml:space="preserve">
     <value>Все още няма никакви клипборд записи.</value>
   </data>
@@ -344,7 +347,7 @@
     <value>Тази настройка ще влезе в действие при следващия старт на приложението. Искате ли да го рестартирате сега?</value>
   </data>
   <data name="LBL_RMSELECTOR_TITLE" xml:space="preserve">
-    <value>Филтрирай по устройство</value>
+    <value>Филтрирай клипборд записите според устройството, от което те идват</value>
   </data>
   <data name="LBL_SETTINGS_ADVANCED_MODIFY_WARNING" xml:space="preserve">
     <value>Промяната на тези настройки може да попречи на нормалната работа на приложението.</value>
@@ -646,7 +649,7 @@
     <value>до</value>
   </data>
   <data name="TTP_FILTERBAND_FILTER_BY_DEVICE" xml:space="preserve">
-    <value>Филтрирай по устройство/компютър, източник на клипборд записите</value>
+    <value>Филтрирай по устройство/компютър, от което идват клипборд записите</value>
   </data>
   <data name="TTP_FILTERBAND_FILTER_BY_DEVICE_CURRENT" xml:space="preserve">
     <value>Показвай записи, идващи от настоящия компютър</value>
@@ -751,7 +754,7 @@
     <value>Пишете тук, за да търсите</value>
   </data>
   <data name="TTP_RMSELECTOR_SELECTED_DEVICES_OVERLAY" xml:space="preserve">
-    <value>Изберете устройство от списъка долу</value>
+    <value>Изберете устройство от списъка долу като кликнете два пъти върху него или използвайки + бутона</value>
   </data>
   <data name="TTP_SETTINGS_CLOUD_CLEAR_DATA" xml:space="preserve">
     <value>Изтрий всички записи в облака</value>
