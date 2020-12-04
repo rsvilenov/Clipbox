@@ -14,8 +14,6 @@ namespace Clipbox.Services
 
         private readonly KeyboardLLHook _keyboardHook;
 
-        private bool _simulatingCtrlV = false;
-
         public LowLevelKeyboardService()
         {
             _keyboardHook = new KeyboardLLHook();
@@ -37,12 +35,6 @@ namespace Clipbox.Services
             if (args.KeyboardAction == Win32.Native.NativeEnums.KeyboardMessages.WM_KEYUP &&
                 (args.Key == Win32.Native.NativeEnums.Keys.LeftControl || args.Key == Win32.Native.NativeEnums.Keys.RightContol))
             {
-                if (_simulatingCtrlV)
-                {
-                    _simulatingCtrlV = false;
-                    return;
-                }
-
                 CancelEventArgs ctrlKeyUpArgs = new CancelEventArgs();
                 ControlKeyUp?.Invoke(this, ctrlKeyUpArgs);
                 args.CancelEvent = ctrlKeyUpArgs.Cancel;
@@ -51,11 +43,6 @@ namespace Clipbox.Services
             else if (args.KeyboardAction == Win32.Native.NativeEnums.KeyboardMessages.WM_KEYUP &&
                 args.Key == Win32.Native.NativeEnums.Keys.V)
             {
-                if (_simulatingCtrlV)
-                {
-                    _simulatingCtrlV = false;
-                    return;
-                }
                 CancelEventArgs vKeyUpArgs = new CancelEventArgs();
                 VKeyUp?.Invoke(this, vKeyUpArgs);
                 args.CancelEvent = vKeyUpArgs.Cancel;
@@ -65,11 +52,6 @@ namespace Clipbox.Services
                 (KeyboardUtils.IsKeyPressed(Win32.Native.NativeEnums.Keys.LeftControl) || KeyboardUtils.IsKeyPressed(Win32.Native.NativeEnums.Keys.RightContol)) &&
                 args.Key == Win32.Native.NativeEnums.Keys.V)
             {
-                if (_simulatingCtrlV)
-                {
-                    return;
-                }
-
                 CancelEventArgs ctrlVArgs = new CancelEventArgs();
                 CtrlVHotkeyDown?.Invoke(this, ctrlVArgs);
 
@@ -85,8 +67,6 @@ namespace Clipbox.Services
 
         public void SimulateCtrlV()
         {
-            _simulatingCtrlV = true;
-
             // Ctrl key may already be down, so we have to check this
             if (KeyboardUtils.IsKeyPressed(Win32.Native.NativeEnums.Keys.LeftControl)
                 || KeyboardUtils.IsKeyPressed(Win32.Native.NativeEnums.Keys.RightContol))

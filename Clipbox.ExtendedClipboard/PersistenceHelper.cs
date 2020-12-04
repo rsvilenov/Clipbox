@@ -305,7 +305,7 @@ namespace Clipbox.ExtendedClipboard
             TransferableClipboardItem transferableClipboardItem = null;
             try
             {
-                BinaryFormatterSerialization.DeserializeObject<TransferableClipboardItem>(ByteArrayCompressor.Decompress(itemData));
+                transferableClipboardItem = BinaryFormatterSerialization.DeserializeObject<TransferableClipboardItem>(ByteArrayCompressor.Decompress(itemData));
             }
             catch (SerializationException)
             {
