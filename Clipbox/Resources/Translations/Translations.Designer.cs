@@ -575,6 +575,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Do you want to see more hints?.
+        /// </summary>
+        internal static string LBL_HINT_CONTINUE_SHOWING_HINTS_QUESTION {
+            get {
+                return ResourceManager.GetString("LBL_HINT_CONTINUE_SHOWING_HINTS_QUESTION", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Use these buttons to filter the items by type, date, source program....
         /// </summary>
         internal static string LBL_HINT_FILTER_BAND {

@@ -573,6 +573,8 @@ namespace Clipbox.Views.ClipboardListView
 
         public void Dispose()
         {
+            
+            Dispatcher.Invoke(() => ItemsSource = null);
             _postSelectionUtilsTimer.Dispose();
             _scrollbarThumbPositionChangedSlidingTimer.Dispose();
             _layoutSlidingTimer.Dispose();

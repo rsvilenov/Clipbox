@@ -96,8 +96,6 @@ namespace Clipbox.Services
                         //_mainWindow.Close();
                         _mainWindow = null;
 
-                        try { _popupHintService.HideHintPopup(); } catch { /* TODO: ? */ }
-
                         MainWindowClosed?.Invoke(this, new EventArgs());
                     }
                 }));

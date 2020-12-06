@@ -1,5 +1,6 @@
 ﻿using Clipbox.Infrastructure.UI;
 using Clipbox.Infrastructure.UI.Windows;
+using Clipbox.Views.EventArgsClasses;
 using System;
 using System.Diagnostics;
 using System.Windows;
@@ -14,9 +15,13 @@ namespace Clipbox.Views
     public partial class PopupHint : Popup
     {
         public ICommand CloseCommand { get; set; }
-        public event EventHandler ClosedByUser;
+        public ICommand ConfirmCommand { get; set; }
+        public ICommand DeclineCommand { get; set; }
+
+        public event EventHandler<PopupHintResponseEventArgs> ClosedByUser;
 
         private bool _isClosed;
+        private bool _areAnchorElementEventsWired;
 
         private static double _initialDpi;
         private static bool _hasDpiChanged;
@@ -27,7 +32,14 @@ namespace Clipbox.Views
             this.mainGrid.DataContext = this;
 
             CloseCommand = new DelegateCommand(CloseCommandHandler);
+            ConfirmCommand = new DelegateCommand(ConfirmCommandHandler);
+            DeclineCommand = new DelegateCommand(DeclineCommandHandler);
             Loaded += PopupHint_Loaded;
+        }
+
+        protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer()
+        {
+            return null;
         }
 
         private void PopupHint_Loaded(object sender, RoutedEventArgs e)
@@ -37,13 +49,21 @@ namespace Clipbox.Views
                 AdjustPosition();
                 AnchorElement.LayoutUpdated += AnchorElement_LayoutUpdated;
                 AnchorElement.IsVisibleChanged += AnchorElement_IsVisibleChanged;
+                _areAnchorElementEventsWired = true;
             }
         }
 
         protected override void OnClosed(EventArgs e)
         {
-            AnchorElement.LayoutUpdated -= AnchorElement_LayoutUpdated;
-            AnchorElement.IsVisibleChanged += AnchorElement_IsVisibleChanged;
+            if (_areAnchorElementEventsWired)
+            {
+                _areAnchorElementEventsWired = false;
+                AnchorElement.LayoutUpdated -= AnchorElement_LayoutUpdated;
+                AnchorElement.IsVisibleChanged -= AnchorElement_IsVisibleChanged;
+            }
+
+            // this is very important! without calling it, the Closed event will NOT be fired
+            base.OnClosed(e);
         }
 
         private void AnchorElement_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
@@ -62,7 +82,20 @@ namespace Clipbox.Views
         private void CloseCommandHandler()
         {
             Close();
-            ClosedByUser?.Invoke(this, new EventArgs());
+            ClosedByUser?.Invoke(this, new PopupHintResponseEventArgs(PopupHintResponseEventArgs.PopupHintResponse.Close));
+        }
+
+
+        private void DeclineCommandHandler()
+        {
+            Close();
+            ClosedByUser?.Invoke(this, new PopupHintResponseEventArgs(PopupHintResponseEventArgs.PopupHintResponse.Decline));
+        }
+
+        private void ConfirmCommandHandler()
+        {
+            Close();
+            ClosedByUser?.Invoke(this, new PopupHintResponseEventArgs(PopupHintResponseEventArgs.PopupHintResponse.Confirm));
         }
 
         public void Open()
@@ -151,11 +184,6 @@ namespace Clipbox.Views
             }
         }
 
-        private void ParentWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            Close();
-        }
-
         public FrameworkElement AnchorElement
         {
             get { return (FrameworkElement)GetValue(AnchorElementProperty); }
@@ -207,6 +235,14 @@ namespace Clipbox.Views
             DependencyProperty.Register(nameof(ArrowDirection), typeof(PopupArrowDirection), typeof(PopupHint), new PropertyMetadata(PopupArrowDirection.Top));
 
 
+        public bool IsQuestion
+        {
+            get { return (bool)GetValue(IsQuestionProperty); }
+            set { SetValue(IsQuestionProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsQuestionProperty =
+            DependencyProperty.Register(nameof(IsQuestion), typeof(bool), typeof(PopupHint), new PropertyMetadata(false));
     }
 
     public enum PopupArrowDirection

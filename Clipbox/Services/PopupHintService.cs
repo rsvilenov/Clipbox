@@ -5,8 +5,10 @@ using Clipbox.Services.Enums;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
 using Clipbox.Views;
+using Clipbox.Views.EventArgsClasses;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Threading;
@@ -82,61 +84,60 @@ namespace Clipbox.Services
                 && !_seenToolTips.IsInErrorState
                 && !_seenToolTips.Contains(popupName))
             {
-                anchorElement.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                    new Action(() =>
+                try
+                {
+                    PopupHintDefinition phDef = _popupInfoDictionary[popupName];
+                    string text = TranslationSourcePool.Instance
+                        .GetSource()
+                        .GetTranslation(phDef.MessageTranslationKey);
+
+                    if (_isHintPopupOpen)
                     {
-                        try
-                        {
-                            string text = TranslationSourcePool.Instance
-                                .GetSource()
-                                .GetTranslation(_popupInfoDictionary[popupName]);
+                        _currentPopupHint.IsOpen = false;
+                        _isHintPopupOpen = false;
+                    }
 
-                            if (_isHintPopupOpen)
-                            {
-                                _currentPopupHint.IsOpen = false;
-                                _isHintPopupOpen = false;
-                            }
+                    _isHintPopupOpen = true;
+                    _currentPopupHint = new PopupHint
+                    {
+                        AnchorElement = anchorElement,
+                        Text = text,
+                        Tag = popupName,
+                        StaysOpen = true,
+                        IsQuestion = phDef.IsQuestion
+                    };
 
-                            _isHintPopupOpen = true;
-                            _currentPopupHint = new PopupHint
-                            {
-                                AnchorElement = anchorElement,
-                                Text = text,
-                                Tag = popupName,
-                                StaysOpen = true
-                            };
+                    switch (arrowDirection)
+                    {
+                        case PopupHintArrowDirection.Top:
+                            _currentPopupHint.ArrowDirection = PopupArrowDirection.Top;
+                            break;
+                        case PopupHintArrowDirection.Left:
+                            _currentPopupHint.ArrowDirection = PopupArrowDirection.Left;
+                            break;
+                        case PopupHintArrowDirection.None:
+                            _currentPopupHint.ArrowDirection = PopupArrowDirection.None;
+                            break;
+                    }
 
-                            switch(arrowDirection)
-                            {
-                                case PopupHintArrowDirection.Top:
-                                    _currentPopupHint.ArrowDirection = PopupArrowDirection.Top;
-                                    break;
-                                case PopupHintArrowDirection.Left:
-                                    _currentPopupHint.ArrowDirection = PopupArrowDirection.Left;
-                                    break;
-                                case PopupHintArrowDirection.None:
-                                    _currentPopupHint.ArrowDirection = PopupArrowDirection.None;
-                                    break;
-                            }
+                    _currentPopupHint.Open();
 
-                            _currentPopupHint.Open();
-                            
-                            if (!_shownCount.ContainsKey(popupName))
-                            {
-                                _shownCount.Add(popupName, 0);
-                            }
+                    if (!_shownCount.ContainsKey(popupName))
+                    {
+                        _shownCount.Add(popupName, 0);
+                    }
 
-                            _shownCount[popupName]++;
-                        }
-                        catch
-                        {
-                            // TODO: ?
-                            return;
-                        }
+                    _shownCount[popupName]++;
+                }
+                catch
+                {
+                    // TODO: ?
+                    return false;
+                }
 
-                        _currentPopupHint.ClosedByUser += _currentPopupHint_ClosedByUser;
-                        _currentPopupHint.IsVisibleChanged += _currentPopupHint_IsVisibleChanged;
-                    }));
+                _currentPopupHint.ClosedByUser += _currentPopupHint_ClosedByUser;
+                _currentPopupHint.Closed += _currentPopupHint_Closed;
+
 
                 return true;
             }
@@ -144,53 +145,75 @@ namespace Clipbox.Services
             return false;
         }
 
+        private void _currentPopupHint_Closed(object sender, EventArgs e)
+        {
+            if (_isHintPopupOpen)
+            {
+                DestroyCurrentPopupHint();
+                _isHintPopupOpen = false;
+            }
+
+
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+            GC.Collect();
+        }
+
+        private void DestroyCurrentPopupHint()
+        {
+            if (_currentPopupHint != null)
+            {
+                _currentPopupHint.ClosedByUser -= _currentPopupHint_ClosedByUser;
+                _currentPopupHint.Closed -= _currentPopupHint_Closed;
+
+                _currentPopupHint.AnchorElement = null;
+                _currentPopupHint = null;
+            }
+        }
+
         public void HideHintPopup(bool setAsSeen = false)
         {
             if (_currentPopupHint != null)
             {
-                _currentPopupHint?.Dispatcher.BeginInvoke(DispatcherPriority.Normal,
-                    new Action(() =>
+                try
+                {
+                    string popupName = (string)_currentPopupHint.Tag;
+                    if (_currentPopupHint.IsOpen)
                     {
-                        try
-                        {
-                            string popupName = (string)_currentPopupHint.Tag;
-                            if (_currentPopupHint.IsOpen)
-                            {
-                                _currentPopupHint.Close();
-                            }
+                        _currentPopupHint.Close();
+                        _isHintPopupOpen = false;
+                    }
 
-                            bool maxShowLimitReached = _shownCount.ContainsKey(popupName)
-                                && _shownCount[popupName] >= MAX_SHOW_LIMIT;
-                            
-                            if (setAsSeen || maxShowLimitReached)
-                            {
-                                SetAsAlreadySeen(popupName);
-                            }
-                        }
-                        catch
-                        {
-                            // TODO: ?
-                        }
-                    }));
+                    DestroyCurrentPopupHint();
+
+                    bool maxShowLimitReached = _shownCount.ContainsKey(popupName)
+                        && _shownCount[popupName] >= MAX_SHOW_LIMIT;
+
+                    if (setAsSeen || maxShowLimitReached)
+                    {
+                        SetAsAlreadySeen(popupName);
+                    }
+                }
+                catch
+                {
+                    // TODO: ?
+                }
             }
         }
 
-        private void _currentPopupHint_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
-        {
-            if (!(bool)e.NewValue)
-            {
-                _currentPopupHint.ClosedByUser -= _currentPopupHint_ClosedByUser;
-                _currentPopupHint.IsVisibleChanged -= _currentPopupHint_IsVisibleChanged;
-                _isHintPopupOpen = false;
-            }
-        }
-
-        private void _currentPopupHint_ClosedByUser(object sender, EventArgs e)
+        private void _currentPopupHint_ClosedByUser(object sender, PopupHintResponseEventArgs e)
         {
             string popupName = (string)_currentPopupHint.Tag;
+            PopupHintResponseEventArgs.PopupHintResponse response = e.Response;
 
             Task.Run(() =>
             {
+                if (response != PopupHintResponseEventArgs.PopupHintResponse.Confirm
+                && popupName == PopupHintNames.PP_HINT_CONTINUE_SHOWING_HINTS_QUESTION)
+                {
+                    _settingsService.SetSetting(SettingsKeys.AreHintPopupsEnabled, false);
+                }
+
                 SetAsAlreadySeen(popupName);
             });
         }
@@ -215,12 +238,54 @@ namespace Clipbox.Services
             }
         }
 
-        private readonly Dictionary<string, string> _popupInfoDictionary = new Dictionary<string, string>()
+        private readonly Dictionary<string, PopupHintDefinition> _popupInfoDictionary = new Dictionary<string, PopupHintDefinition>()
         {
-            { PopupHintNames.PP_HINT_CHARGE_CLIPBOARD, "LBL_HINT_CHARGE_CLIPBOARD" },
-            { PopupHintNames.PP_HINT_UI_EXTENSIONS, "LBL_HINT_UI_EXTENSIONS" },
-            { PopupHintNames.PP_HINT_SELECT_MULTIPLE, "LBL_HINT_SELECT_MULTIPLE" },
-            { PopupHintNames.PP_HINT_FILTER_BAND, "LBL_HINT_FILTER_BAND" }
+            { 
+                PopupHintNames.PP_HINT_CHARGE_CLIPBOARD,
+                new PopupHintDefinition
+                {
+                    MessageTranslationKey = "LBL_HINT_CHARGE_CLIPBOARD",
+                    IsQuestion = false
+                }
+            },
+            { 
+                PopupHintNames.PP_HINT_UI_EXTENSIONS,
+                new PopupHintDefinition
+                {
+                    MessageTranslationKey = "LBL_HINT_UI_EXTENSIONS",
+                    IsQuestion = false
+                }
+            },
+            { 
+                PopupHintNames.PP_HINT_SELECT_MULTIPLE,
+                new PopupHintDefinition
+                {
+                    MessageTranslationKey = "LBL_HINT_SELECT_MULTIPLE",
+                    IsQuestion = false
+                }
+            },
+            { 
+                PopupHintNames.PP_HINT_FILTER_BAND,
+                new PopupHintDefinition
+                {
+                    MessageTranslationKey = "LBL_HINT_FILTER_BAND",
+                    IsQuestion = false
+                }
+            },
+            {
+                PopupHintNames.PP_HINT_CONTINUE_SHOWING_HINTS_QUESTION,
+                new PopupHintDefinition
+                {
+                    MessageTranslationKey = "LBL_HINT_CONTINUE_SHOWING_HINTS_QUESTION",
+                    IsQuestion = true
+                }
+            }
         };
+
+        private class PopupHintDefinition
+        {
+            public string MessageTranslationKey { get; set; }
+            public bool IsQuestion { get; set; }
+        }
     }
 }

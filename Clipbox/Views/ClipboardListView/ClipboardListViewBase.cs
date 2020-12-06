@@ -655,7 +655,7 @@ namespace Clipbox.Views.ClipboardListView
             public bool CancelLastSelection { get; set; }
         }
 
-        protected class ActionButtonsDataContextClass
+        protected class ActionButtonsDataContextClass : BindableObject
         {
             public ICommand DeleteClipboardEntry { get; set; }
 

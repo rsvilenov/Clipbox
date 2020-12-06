@@ -159,8 +159,18 @@ namespace Clipbox.Views
                 _lastShownHintPopupName = PopupHintNames.PP_HINT_UI_EXTENSIONS;
                 _popupHintService.TryShowHintPopup(PopupHintNames.PP_HINT_UI_EXTENSIONS, uiExtensionContainer, PopupHintArrowDirection.Top);
             }
+            else if (_popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_CHARGE_CLIPBOARD)
+                && _popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_UI_EXTENSIONS)
+                && !_popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_CONTINUE_SHOWING_HINTS_QUESTION)
+                && !setToClipboardBtn.IsVisible)
+            {
+                _lastShownHintPopupName = PopupHintNames.PP_HINT_CONTINUE_SHOWING_HINTS_QUESTION;
+                _popupHintService.TryShowHintPopup(PopupHintNames.PP_HINT_CONTINUE_SHOWING_HINTS_QUESTION, filterBand, PopupHintArrowDirection.None);
+            }
             else if (_popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_CHARGE_CLIPBOARD) 
                 && _popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_UI_EXTENSIONS)
+                && _popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_CONTINUE_SHOWING_HINTS_QUESTION)
+                && !_popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_SELECT_MULTIPLE)
                 && setToClipboardBtn.IsVisible)
             {
                 _lastShownHintPopupName = PopupHintNames.PP_HINT_SELECT_MULTIPLE;
@@ -168,12 +178,13 @@ namespace Clipbox.Views
             }
             else if (_popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_CHARGE_CLIPBOARD)
                 && _popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_UI_EXTENSIONS)
+                && _popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_CONTINUE_SHOWING_HINTS_QUESTION)
                 && _popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_SELECT_MULTIPLE)
+                && !_popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_FILTER_BAND)
                 && !setToClipboardBtn.IsVisible)
             {
                 _lastShownHintPopupName = PopupHintNames.PP_HINT_FILTER_BAND;
                 _popupHintService.TryShowHintPopup(PopupHintNames.PP_HINT_FILTER_BAND, filterBand, PopupHintArrowDirection.Left);
-
             }
         }
 
@@ -255,6 +266,10 @@ namespace Clipbox.Views
             if ((bool)e.NewValue)
             {
                 LoadContents(0, _maxNumOfItemsToLoadAtOnce);
+            }
+            else
+            {
+                try { _popupHintService.HideHintPopup(); } catch { /* TODO: ? */ }
             }
         }
 
@@ -403,6 +418,7 @@ namespace Clipbox.Views
 
         protected override void Dispose(bool disposing)
         {
+            Debug.WriteLine("MainClipboardContents DISPOSING DISPOSING DISPOSING");
             _isDisposing = true;
 
             _viewModel.RequestCloseOfMainWindow -= _viewModel_RequestCloseOfMainWindow;
