@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace Clipbox.Views
 {
@@ -157,15 +158,32 @@ namespace Clipbox.Views
                     switch (ArrowDirection)
                     {
                         case PopupArrowDirection.None:
-                            HorizontalOffset = relativePoint.X + AnchorElement.ActualWidth + 15;
-                            VerticalOffset = relativePoint.Y + (AnchorElement.ActualHeight / 2);
+                            if (PlacementRelativeToAnchor == PopupPlacementRelativeToAnchor.Right)
+                            {
+                                HorizontalOffset = relativePoint.X + AnchorElement.ActualWidth + 15;
+                                VerticalOffset = relativePoint.Y + AnchorElement.ActualHeight / 2;
+                            } 
+                            else if (PlacementRelativeToAnchor == PopupPlacementRelativeToAnchor.Bottom)
+                            {
+                                double halfWidthOfSelf = this.ActualWidth == double.NaN || this.ActualWidth == 0 ? this.Width : this.ActualWidth;
+                                HorizontalOffset = relativePoint.X + AnchorElement.ActualWidth / 2 - halfWidthOfSelf / 2;
+                                VerticalOffset = relativePoint.Y + AnchorElement.ActualHeight + 15;
+                            }
                             break;
                         case PopupArrowDirection.Left:
+                            if (PlacementRelativeToAnchor != PopupPlacementRelativeToAnchor.Right)
+                            {
+                                throw new InvalidOperationException("PlacementRelativeToAnchor should be Right when ArrowDirection is Left");
+                            }
                             HorizontalOffset = relativePoint.X + AnchorElement.ActualWidth;
-                            VerticalOffset = relativePoint.Y + (AnchorElement.ActualHeight / 2);
+                            VerticalOffset = relativePoint.Y + AnchorElement.ActualHeight / 2;
                             break;
                         case PopupArrowDirection.Top:
-                            HorizontalOffset = relativePoint.X + (AnchorElement.ActualWidth / 2) - (topArrowPointerPoint.X + topArrow.ActualWidth / 2);
+                            if (PlacementRelativeToAnchor != PopupPlacementRelativeToAnchor.Bottom)
+                            {
+                                throw new InvalidOperationException("PlacementRelativeToAnchor should be Bottom when ArrowDirection is Top");
+                            }
+                            HorizontalOffset = relativePoint.X + AnchorElement.ActualWidth / 2 - (topArrowPointerPoint.X + topArrow.ActualWidth / 2);
                             VerticalOffset = relativePoint.Y + AnchorElement.ActualHeight;
                             break;
                     }
@@ -200,7 +218,7 @@ namespace Clipbox.Views
             {
                 self.LayoutUpdated += self.AnchorElement_LayoutUpdated;
             }
-            self.AdjustPosition();
+            self.Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() => self.AdjustPosition()));
         }
 
 
@@ -223,6 +241,19 @@ namespace Clipbox.Views
 
         public static readonly DependencyProperty TextProperty =
             DependencyProperty.Register(nameof(Text), typeof(string), typeof(PopupHint), new PropertyMetadata(string.Empty));
+
+
+
+        public PopupPlacementRelativeToAnchor PlacementRelativeToAnchor
+        {
+            get { return (PopupPlacementRelativeToAnchor)GetValue(PlacementRelativeToAnchorProperty); }
+            set { SetValue(PlacementRelativeToAnchorProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for PlacementRelativeToAnchor.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty PlacementRelativeToAnchorProperty =
+            DependencyProperty.Register(nameof(PlacementRelativeToAnchor), typeof(PopupPlacementRelativeToAnchor), typeof(PopupHint), new PropertyMetadata(PopupPlacementRelativeToAnchor.Right));
+
 
 
         public PopupArrowDirection ArrowDirection
@@ -250,5 +281,11 @@ namespace Clipbox.Views
         None,
         Top,
         Left
+    }
+
+    public enum PopupPlacementRelativeToAnchor
+    {
+        Right,
+        Bottom
     }
 }

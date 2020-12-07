@@ -289,6 +289,9 @@
   <data name="LBL_HINT_CHARGE_CLIPBOARD" xml:space="preserve">
     <value>Кликнете този бутон, за да заредите избраните неща в системния клипборд. Можете след това да ги пейстнете, където си искате.</value>
   </data>
+  <data name="LBL_HINT_CLOSE_MAIN_WINDOW" xml:space="preserve">
+    <value>За да затворите този целоекранен прозорец, натиснете Esc или кликнете бутона 'X' в горния ляв ъгъл.</value>
+  </data>
   <data name="LBL_HINT_CONTINUE_SHOWING_HINTS_QUESTION" xml:space="preserve">
     <value>Искате ли да виждате още подсказки като тази?</value>
   </data>

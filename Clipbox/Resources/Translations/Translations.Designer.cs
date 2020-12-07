@@ -575,6 +575,15 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to To close this full screen view, press Esc or click the &quot;X&quot; button at the top-left corner..
+        /// </summary>
+        internal static string LBL_HINT_CLOSE_MAIN_WINDOW {
+            get {
+                return ResourceManager.GetString("LBL_HINT_CLOSE_MAIN_WINDOW", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Do you want to see more hints?.
         /// </summary>
         internal static string LBL_HINT_CONTINUE_SHOWING_HINTS_QUESTION {

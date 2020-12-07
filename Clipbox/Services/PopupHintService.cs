@@ -8,20 +8,13 @@ using Clipbox.Views;
 using Clipbox.Views.EventArgsClasses;
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Threading;
 
 namespace Clipbox.Services
 {
     public class PopupHintService : IPopupHintService
     {
-        /// <summary>
-        /// The maximum number of times the hint shows
-        /// </summary>
-        private const int MAX_SHOW_LIMIT = 2;
-
         private readonly ISettingsService _settingsService;
         private readonly object _lockHandle;
         private readonly SettingsStringCollection _seenToolTips;
@@ -73,7 +66,7 @@ namespace Clipbox.Services
                 || _seenToolTips.Contains(popupName);
         }
 
-        public bool TryShowHintPopup(string popupName, FrameworkElement anchorElement, PopupHintArrowDirection arrowDirection)
+        public bool TryShowHintPopup(string popupName, FrameworkElement anchorElement, PopupHintArrowDirection arrowDirection, PopupHintPlacementRelativeToAnchor placement)
         {
             if (!_popupInfoDictionary.ContainsKey(popupName))
             {
@@ -117,6 +110,16 @@ namespace Clipbox.Services
                             break;
                         case PopupHintArrowDirection.None:
                             _currentPopupHint.ArrowDirection = PopupArrowDirection.None;
+                            break;
+                    }
+
+                    switch (placement)
+                    {
+                        case PopupHintPlacementRelativeToAnchor.Right:
+                            _currentPopupHint.PlacementRelativeToAnchor = PopupPlacementRelativeToAnchor.Right;
+                            break;
+                        case PopupHintPlacementRelativeToAnchor.Bottom:
+                            _currentPopupHint.PlacementRelativeToAnchor = PopupPlacementRelativeToAnchor.Bottom;
                             break;
                     }
 
@@ -187,7 +190,7 @@ namespace Clipbox.Services
                     DestroyCurrentPopupHint();
 
                     bool maxShowLimitReached = _shownCount.ContainsKey(popupName)
-                        && _shownCount[popupName] >= MAX_SHOW_LIMIT;
+                        && _shownCount[popupName] >= _popupInfoDictionary[popupName].MaxShowTimes;
 
                     if (setAsSeen || maxShowLimitReached)
                     {
@@ -240,12 +243,22 @@ namespace Clipbox.Services
 
         private readonly Dictionary<string, PopupHintDefinition> _popupInfoDictionary = new Dictionary<string, PopupHintDefinition>()
         {
+            {
+                PopupHintNames.PP_HINT_CLOSE_MAIN_WINDOW,
+                new PopupHintDefinition
+                {
+                    MessageTranslationKey = "LBL_HINT_CLOSE_MAIN_WINDOW",
+                    IsQuestion = false,
+                    MaxShowTimes = 1
+                }
+            },
             { 
                 PopupHintNames.PP_HINT_CHARGE_CLIPBOARD,
                 new PopupHintDefinition
                 {
                     MessageTranslationKey = "LBL_HINT_CHARGE_CLIPBOARD",
-                    IsQuestion = false
+                    IsQuestion = false,
+                    MaxShowTimes = 2
                 }
             },
             { 
@@ -253,7 +266,8 @@ namespace Clipbox.Services
                 new PopupHintDefinition
                 {
                     MessageTranslationKey = "LBL_HINT_UI_EXTENSIONS",
-                    IsQuestion = false
+                    IsQuestion = false,
+                    MaxShowTimes = 2
                 }
             },
             { 
@@ -261,7 +275,8 @@ namespace Clipbox.Services
                 new PopupHintDefinition
                 {
                     MessageTranslationKey = "LBL_HINT_SELECT_MULTIPLE",
-                    IsQuestion = false
+                    IsQuestion = false,
+                    MaxShowTimes = 2
                 }
             },
             { 
@@ -269,7 +284,8 @@ namespace Clipbox.Services
                 new PopupHintDefinition
                 {
                     MessageTranslationKey = "LBL_HINT_FILTER_BAND",
-                    IsQuestion = false
+                    IsQuestion = false,
+                    MaxShowTimes = 2
                 }
             },
             {
@@ -277,7 +293,8 @@ namespace Clipbox.Services
                 new PopupHintDefinition
                 {
                     MessageTranslationKey = "LBL_HINT_CONTINUE_SHOWING_HINTS_QUESTION",
-                    IsQuestion = true
+                    IsQuestion = true,
+                    MaxShowTimes = 1
                 }
             }
         };
@@ -286,6 +303,11 @@ namespace Clipbox.Services
         {
             public string MessageTranslationKey { get; set; }
             public bool IsQuestion { get; set; }
+
+            /// <summary>
+            /// The maximum number of times the hint shows
+            /// </summary>
+            public int MaxShowTimes { get; set; }
         }
     }
 }

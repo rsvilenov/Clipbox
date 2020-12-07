@@ -289,6 +289,9 @@ from this window except the pinned ones.</value>
   <data name="LBL_HINT_CHARGE_CLIPBOARD" xml:space="preserve">
     <value>Press this button to put the selected items into the system clipboard. You can then paste them wherever you want.</value>
   </data>
+  <data name="LBL_HINT_CLOSE_MAIN_WINDOW" xml:space="preserve">
+    <value>To close this full screen view, press Esc or click the "X" button at the top-left corner.</value>
+  </data>
   <data name="LBL_HINT_CONTINUE_SHOWING_HINTS_QUESTION" xml:space="preserve">
     <value>Do you want to see more hints?</value>
   </data>

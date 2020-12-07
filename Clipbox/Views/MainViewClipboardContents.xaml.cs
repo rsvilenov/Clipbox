@@ -141,50 +141,64 @@ namespace Clipbox.Views
 
         private void ShowHintPopup()
         {
-            if (_lastShownHintPopupName != null)
+            if (_lastShownHintPopupName != null
+                && _lastShownHintPopupName != PopupHintNames.PP_HINT_CLOSE_MAIN_WINDOW 
+                && _lastShownHintPopupName != PopupHintNames.PP_HINT_CONTINUE_SHOWING_HINTS_QUESTION)
             {
-                // show just one tip on one openning of the window
+                // show just one tip on one openning of the window, except when the previous popup is the one showing how to close the window
+                // or the the one with the question question for showing more hings.
                 return;
             }
 
-            if (setToClipboardBtn.IsVisible
+            if (!_popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_CLOSE_MAIN_WINDOW))
+            {
+                _lastShownHintPopupName = PopupHintNames.PP_HINT_CLOSE_MAIN_WINDOW;
+                _popupHintService.TryShowHintPopup(PopupHintNames.PP_HINT_CLOSE_MAIN_WINDOW, TopBarGrid, PopupHintArrowDirection.None, PopupHintPlacementRelativeToAnchor.Bottom);
+            }
+            else if (setToClipboardBtn.IsVisible
+                && _popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_CLOSE_MAIN_WINDOW)
                 && !_popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_CHARGE_CLIPBOARD))
             {
                 _lastShownHintPopupName = PopupHintNames.PP_HINT_CHARGE_CLIPBOARD;
-                _popupHintService.TryShowHintPopup(PopupHintNames.PP_HINT_CHARGE_CLIPBOARD, setToClipboardBtn, PopupHintArrowDirection.Top);
+                _popupHintService.TryShowHintPopup(PopupHintNames.PP_HINT_CHARGE_CLIPBOARD, setToClipboardBtn, PopupHintArrowDirection.Top, PopupHintPlacementRelativeToAnchor.Bottom);
             }
             else if (uiExtensionContainer.IsVisible
-                && !_popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_UI_EXTENSIONS))
-            {
-                _lastShownHintPopupName = PopupHintNames.PP_HINT_UI_EXTENSIONS;
-                _popupHintService.TryShowHintPopup(PopupHintNames.PP_HINT_UI_EXTENSIONS, uiExtensionContainer, PopupHintArrowDirection.Top);
-            }
-            else if (_popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_CHARGE_CLIPBOARD)
-                && _popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_UI_EXTENSIONS)
-                && !_popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_CONTINUE_SHOWING_HINTS_QUESTION)
-                && !setToClipboardBtn.IsVisible)
+                && _popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_CLOSE_MAIN_WINDOW)
+                && _popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_CHARGE_CLIPBOARD)
+                && !_popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_CONTINUE_SHOWING_HINTS_QUESTION))
             {
                 _lastShownHintPopupName = PopupHintNames.PP_HINT_CONTINUE_SHOWING_HINTS_QUESTION;
-                _popupHintService.TryShowHintPopup(PopupHintNames.PP_HINT_CONTINUE_SHOWING_HINTS_QUESTION, filterBand, PopupHintArrowDirection.None);
+                _popupHintService.TryShowHintPopup(PopupHintNames.PP_HINT_CONTINUE_SHOWING_HINTS_QUESTION, TopBarGrid, PopupHintArrowDirection.None, PopupHintPlacementRelativeToAnchor.Bottom);
             }
-            else if (_popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_CHARGE_CLIPBOARD) 
-                && _popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_UI_EXTENSIONS)
+            else if (_popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_CLOSE_MAIN_WINDOW)
+                && _popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_CHARGE_CLIPBOARD)
                 && _popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_CONTINUE_SHOWING_HINTS_QUESTION)
                 && !_popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_SELECT_MULTIPLE)
-                && setToClipboardBtn.IsVisible)
+                && uiExtensionContainer.IsVisible)
             {
                 _lastShownHintPopupName = PopupHintNames.PP_HINT_SELECT_MULTIPLE;
-                _popupHintService.TryShowHintPopup(PopupHintNames.PP_HINT_SELECT_MULTIPLE, setToClipboardBtn, PopupHintArrowDirection.None);
+                _popupHintService.TryShowHintPopup(PopupHintNames.PP_HINT_SELECT_MULTIPLE, TopBarGrid, PopupHintArrowDirection.None, PopupHintPlacementRelativeToAnchor.Bottom);
             }
-            else if (_popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_CHARGE_CLIPBOARD)
-                && _popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_UI_EXTENSIONS)
+            else if (_popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_CLOSE_MAIN_WINDOW)
+                && _popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_CHARGE_CLIPBOARD)
                 && _popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_CONTINUE_SHOWING_HINTS_QUESTION)
                 && _popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_SELECT_MULTIPLE)
+                && !_popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_UI_EXTENSIONS)
+                && uiExtensionContainer.IsVisible)
+            {
+                _lastShownHintPopupName = PopupHintNames.PP_HINT_UI_EXTENSIONS;
+                _popupHintService.TryShowHintPopup(PopupHintNames.PP_HINT_UI_EXTENSIONS, uiExtensionContainer, PopupHintArrowDirection.Top, PopupHintPlacementRelativeToAnchor.Bottom);
+            }
+            else if (_popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_CLOSE_MAIN_WINDOW)
+                && _popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_CHARGE_CLIPBOARD)
+                && _popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_CONTINUE_SHOWING_HINTS_QUESTION)
+                && _popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_SELECT_MULTIPLE)
+                && _popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_UI_EXTENSIONS)
                 && !_popupHintService.HasPopupBeenSeen(PopupHintNames.PP_HINT_FILTER_BAND)
                 && !setToClipboardBtn.IsVisible)
             {
                 _lastShownHintPopupName = PopupHintNames.PP_HINT_FILTER_BAND;
-                _popupHintService.TryShowHintPopup(PopupHintNames.PP_HINT_FILTER_BAND, filterBand, PopupHintArrowDirection.Left);
+                _popupHintService.TryShowHintPopup(PopupHintNames.PP_HINT_FILTER_BAND, filterBand, PopupHintArrowDirection.Left, PopupHintPlacementRelativeToAnchor.Right);
             }
         }
 
