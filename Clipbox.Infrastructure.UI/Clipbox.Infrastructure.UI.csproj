@@ -72,6 +72,7 @@
     <Compile Include="Animations\WindowBoundsAnimation.cs" />
     <Compile Include="AsyncObservableCollection.cs" />
     <Compile Include="AttachedProperties\ListViewUnselectAllAttachedProperty.cs" />
+    <Compile Include="Automation\FakeAutomationPeer.cs" />
     <Compile Include="Behaviors\FrameworkElementDpiScalingBehavior.cs" />
     <Compile Include="BindableObject.cs" />
     <Compile Include="Converters\AndMultiValueConverter.cs" />

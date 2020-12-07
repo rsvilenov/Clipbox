@@ -2,6 +2,7 @@
 using Clipbox.Core.Extensibility.Contracts;
 using Clipbox.ExtendedClipboard.Interfaces;
 using Clipbox.Infrastructure.Extensibility.Containers;
+using Clipbox.Infrastructure.UI.Automation;
 using Clipbox.Infrastructure.UI.DataObjects;
 using Clipbox.Infrastructure.UI.ExtensionMethods;
 using Clipbox.Infrastructure.UI.Resources;
@@ -171,6 +172,17 @@ namespace Clipbox.Views
             KeyUp += MainWindow_KeyUp;
 
             AreFadeAnimationsEnabled = _settingsService.GetSetting<bool>(SettingsKeys.AreFadeAnimationsEnabled);
+        }
+
+        /// <summary>
+        /// Disable the automation peer support to prevent the strange behavior
+        /// of the memory management, memory leaks and performance issues,
+        /// which are caused by the automation support for WPF.
+        /// </summary>
+        /// <returns></returns>
+        protected override System.Windows.Automation.Peers.AutomationPeer OnCreateAutomationPeer()
+        {
+            return new FakeAutomationPeer(this);
         }
 
         public bool AreFadeAnimationsEnabled
