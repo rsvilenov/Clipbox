@@ -1,8 +1,8 @@
 ﻿using Clipbox.Core;
 using Clipbox.Infrastructure.RegistryAccess;
 using Clipbox.Infrastructure.UI.CustomControls;
+using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Windows;
 
 namespace Clipbox.Views
@@ -75,12 +75,14 @@ namespace Clipbox.Views
 
         private void ButtonFeedback_Click(object sender, RoutedEventArgs e)
         {
-            OpenUrl(ProductConstants.FEEDBACK_URL);
+            string versionString = $"{ProductConstants.PRODUCT_VERSION.Major }.{ProductConstants.PRODUCT_VERSION.Minor}.{ProductConstants.PRODUCT_VERSION.Build}";
+            OpenUrl($"{ProductConstants.FEEDBACK_URL}?version={versionString}&is64bit={Environment.Is64BitProcess}");
         }
 
         private void ButtonReportBug_Click(object sender, RoutedEventArgs e)
         {
-            OpenUrl(ProductConstants.REPORT_BUG_URL);
+            string versionString = $"{ProductConstants.PRODUCT_VERSION.Major }.{ProductConstants.PRODUCT_VERSION.Minor}.{ProductConstants.PRODUCT_VERSION.Build}";
+            OpenUrl($"{ProductConstants.REPORT_BUG_URL}?version={versionString}&is64bit={Environment.Is64BitProcess}");
         }
         private void OpenUrl(string url)
         {
