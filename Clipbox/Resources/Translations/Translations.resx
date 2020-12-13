@@ -558,6 +558,12 @@ Warning: more rows means more RAM usage!</value>
   <data name="LBL_SETTINGS_PREVIEW_GENERATION_TIMEOUT" xml:space="preserve">
     <value>Timeout in milliseconds for generating the clipboard item thumbnail image</value>
   </data>
+  <data name="LBL_SETTINGS_PUT_LAST_USED_QV_ITEMS_FIRST" xml:space="preserve">
+    <value>After pasting, reorder the items in the Quick View, so that the last pasted items come first in the list.</value>
+  </data>
+  <data name="LBL_SETTINGS_PUT_LAST_USED_QV_ITEMS_FIRST_HELP" xml:space="preserve">
+    <value>Only items, pasted directly by using the Quick View (the window that shows when you long-press Ctrl+V) will be reordered.</value>
+  </data>
   <data name="LBL_SETTINGS_SCREEN_HEIGHT_ITEM_HEIGT_RATIO" xml:space="preserve">
     <value>Ratio between screen height and preview item height</value>
   </data>

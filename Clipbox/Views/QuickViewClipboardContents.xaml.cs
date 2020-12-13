@@ -218,6 +218,11 @@ namespace Clipbox.Views
             _viewModel.SelectedClipboardViewItemWrappers.Clear();
         }
 
+        public void PutLastUsedItemsFirst(IEnumerable<string> lastUsedItemIds)
+        {
+            _viewModel.MoveItemsToStartOfList(lastUsedItemIds);
+        }
+
         private void ShowIncompatibilityErrorTextTemporarily(int visibleMilliseconds)
         {
             uiExtensionContainer.Visibility = Visibility.Collapsed;

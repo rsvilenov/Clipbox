@@ -325,6 +325,7 @@
     <Compile Include="Views\Settings\BuiltInExtensions\AdvancedBuiltInSettingsUIExtension.cs" />
     <Compile Include="Views\Settings\BuiltInExtensions\CloudBuiltInSettingsUIExtension.cs" />
     <Compile Include="Views\Settings\BuiltInExtensions\GeneralBuiltInSettingsUIExtension.cs" />
+    <Compile Include="Views\Settings\BuiltInExtensions\PastingBuildInSettingsUIExtension.cs" />
     <Compile Include="Views\Settings\BuiltInExtensions\PreviewsBuiltInSettingsUIExtension.cs" />
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\AreBaloonPopupsEnabledSettingUIPart.xaml.cs">
       <DependentUpon>AreBaloonPopupsEnabledSettingUIPart.xaml</DependentUpon>
@@ -434,6 +435,9 @@
     </Compile>
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\PreviewGenerationTimeoutSettingUIPart.xaml.cs">
       <DependentUpon>PreviewGenerationTimeoutSettingUIPart.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\BuiltInExtensions\UIParts\PutLastUsedQvItemsFirstSettingUIPart.xaml.cs">
+      <DependentUpon>PutLastUsedQvItemsFirstSettingUIPart.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\BuiltInExtensions\UIParts\ScreenHightItemHeightRatioSettingUIPart.xaml.cs">
       <DependentUpon>ScreenHightItemHeightRatioSettingUIPart.xaml</DependentUpon>
@@ -731,6 +735,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Settings\BuiltInExtensions\UIParts\PreviewGenerationTimeoutSettingUIPart.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\BuiltInExtensions\UIParts\PutLastUsedQvItemsFirstSettingUIPart.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

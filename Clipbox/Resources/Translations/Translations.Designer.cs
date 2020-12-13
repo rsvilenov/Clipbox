@@ -1378,6 +1378,24 @@ namespace Clipbox.Resources.Translations {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to After pasting, reorder the items in the Quick View, so that the last pasted items come first in the list..
+        /// </summary>
+        internal static string LBL_SETTINGS_PUT_LAST_USED_QV_ITEMS_FIRST {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_PUT_LAST_USED_QV_ITEMS_FIRST", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Only items, pasted directly by using the Quick View (the window that shows when you long-press Ctrl+V) will be reordered..
+        /// </summary>
+        internal static string LBL_SETTINGS_PUT_LAST_USED_QV_ITEMS_FIRST_HELP {
+            get {
+                return ResourceManager.GetString("LBL_SETTINGS_PUT_LAST_USED_QV_ITEMS_FIRST_HELP", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ratio between screen height and preview item height.
         /// </summary>
         internal static string LBL_SETTINGS_SCREEN_HEIGHT_ITEM_HEIGT_RATIO {

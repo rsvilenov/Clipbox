@@ -100,6 +100,11 @@ namespace Clipbox.Settings
         public static SettingKey<int> ClipboardOpenningTimeoutMs = new SettingKey<int>(nameof(ClipboardOpenningTimeoutMs), 500);
 
         /// <summary>
+        /// Reorder the items in the Quick View, so that the last pasted item comes first in the list.
+        /// </summary>
+        public static SettingKey<bool> PutLastUsedQvItemsFirst = new SettingKey<bool>(nameof(PutLastUsedQvItemsFirst), true);
+
+        /// <summary>
         /// Hint popups that are shown in the main window
         /// </summary>
         public static SettingKey<bool> AreHintPopupsEnabled = new SettingKey<bool>(nameof(AreHintPopupsEnabled), true);

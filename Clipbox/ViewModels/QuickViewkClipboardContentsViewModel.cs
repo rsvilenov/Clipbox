@@ -267,6 +267,19 @@ namespace Clipbox.ViewModels
             ClipboardItemsLoadingStage = ClipboardItemsLoadingStage.ViewItemsLoaded;
         }
 
+        public void MoveItemsToStartOfList(IEnumerable<string> clipboardItemIds)
+        {
+            List<ClipboardViewItemWrapper> itemsToMove = base.ClipboardViewItemWrappers.
+                Where(cw => clipboardItemIds.Any(id => id == cw.Id))
+                .ToList();
+
+            foreach (ClipboardViewItemWrapper w in itemsToMove)
+            {
+                base.ClipboardViewItemWrappers.Remove(w);
+                base.ClipboardViewItemWrappers.Insert(0, w);
+            }
+        }
+
         protected override void OnClipboardEntryWrapperRemoved(string clipboardItemId)
         {
             UpdateClearUnpinnedEntriesCanExecute();

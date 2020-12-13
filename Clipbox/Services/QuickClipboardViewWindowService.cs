@@ -12,6 +12,7 @@ using Clipbox.Win32;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Threading;
@@ -29,6 +30,8 @@ namespace Clipbox.Services
 
         // used for storing the original window's opacity when preloading the window (it gets shown with Opacity=0.0)
         private double _quickViewWindowOpacity;
+
+        private bool _shouldReorderLastUsedItems;
 
         public event EventHandler QVWindowShown;
 
@@ -82,6 +85,17 @@ namespace Clipbox.Services
             PreloadQuickViewWindow();
 
             LoadInitialContents();
+
+            _shouldReorderLastUsedItems = _settingsService.GetSetting(SettingsKeys.PutLastUsedQvItemsFirst);
+            _settingsService.SettingChanged += _settingsService_SettingChanged;
+        }
+
+        private void _settingsService_SettingChanged(object sender, SettingsEventArgs e)
+        {
+            if (e.Key == SettingsKeys.PutLastUsedQvItemsFirst)
+            {
+                _shouldReorderLastUsedItems = (bool)e.Value;
+            }
         }
 
         public IReadOnlyCollection<string> SelectedItemIds { get; set; }
@@ -161,12 +175,28 @@ namespace Clipbox.Services
                 SelectedItemIds = _previewControl.GetSelectedItemIds();
                 SelectedMultiItemIds = _previewControl.GetSelectedMultiItemsIds();
                 
-                // clear the state of the control and its collections
-                _previewControl.ResumeDefaultState();
+                
 
-                // wait for all controls to become idle (e.g. the listview should unselect all selected items) and then close
-                _previewControl.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => 
-                { _quickViewWindow.Hide(); }));
+                // hide the window as fast as possible by setting its opacity to 0, so it stays "visible" to the os and continues
+                // to receive redraw messages (if these messages are used by wpf at all...), so that we can make modifications
+                // to its contents, which modifications we can expect to take effect immediately.
+                _previewControl.Dispatcher.BeginInvoke(DispatcherPriority.Send, new Action(() => _quickViewWindow.Opacity = 0));
+
+                // do the modifications with a lower priority
+                _previewControl.Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
+                {
+                    // clear the state of the control and its collections
+                    _previewControl.ResumeDefaultState();
+                    
+                    // reorder the list so that the last selected items come first
+                    if (_shouldReorderLastUsedItems)
+                    {
+                        _previewControl.PutLastUsedItemsFirst(SelectedItemIds.Union(SelectedMultiItemIds.Keys));
+                    }
+
+                    // actually hide the window
+                    _quickViewWindow.Hide();
+                }));
 #if DEBUG
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
@@ -193,7 +223,9 @@ namespace Clipbox.Services
                     WorkAreaHeight = _currentMonitor.WorkingArea.Height,
                     WorkAreaWidth = _currentMonitor.WorkingArea.Width
                 });
-                
+
+                // the opacity was set to 0 when the window was hidden, so we have to reset it
+                _quickViewWindow.Opacity = 1;
                 _quickViewWindow.Show();
 
                 QVWindowShown?.Invoke(this, new EventArgs());
@@ -295,6 +327,7 @@ namespace Clipbox.Services
             // TODO: it looks like we do not need these
             _previewControl.CombinabilityCheckRequested -= _previewControl_CombinabilityCheckRequested;
             _previewControl.HousekeepingRequested -= _previewControl_HousekeepingRequested;
+            _settingsService.SettingChanged -= _settingsService_SettingChanged;
         }
     }
 }

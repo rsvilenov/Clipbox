@@ -558,6 +558,12 @@
   <data name="LBL_SETTINGS_PREVIEW_GENERATION_TIMEOUT" xml:space="preserve">
     <value>Таймаут за генериране на преглед на клипборд запис</value>
   </data>
+  <data name="LBL_SETTINGS_PUT_LAST_USED_QV_ITEMS_FIRST" xml:space="preserve">
+    <value>След пействане, пренареждай записите в Бързия преглед, така че последните пейстнати неща да излизат най-напред в списъка.</value>
+  </data>
+  <data name="LBL_SETTINGS_PUT_LAST_USED_QV_ITEMS_FIRST_HELP" xml:space="preserve">
+    <value>Само неща, пейстнати през Бързия преглед (този, който се показва при дълго натискане на Ctrl+V) ще бъдат пренареждани.</value>
+  </data>
   <data name="LBL_SETTINGS_SCREEN_HEIGHT_ITEM_HEIGT_RATIO" xml:space="preserve">
     <value>Съотношение между височината на екрана и височината на прегледите на клипборд записи</value>
   </data>
