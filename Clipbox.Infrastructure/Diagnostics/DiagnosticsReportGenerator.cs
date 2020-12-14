@@ -26,7 +26,7 @@ namespace Clipbox.Infrastructure.Diagnostics
             var report = new DiagnosticsReport
             {
                 FailureInfo = fi,
-                SystemState = GetSystemInfo()
+                SystemState = GetSystemState()
             };
 
             if (includeExtensionInfo)
@@ -69,7 +69,7 @@ namespace Clipbox.Infrastructure.Diagnostics
             }
         }
 
-        private static SystemState GetSystemInfo()
+        private static SystemState GetSystemState()
         {
             SystemState si = new SystemState
             {

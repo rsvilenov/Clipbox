@@ -1,8 +1,10 @@
 ﻿using Clipbox.Win32.Native;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using static Clipbox.Win32.Native.NativeStructures;
 
 namespace Clipbox.Win32
 {
@@ -49,6 +51,22 @@ namespace Clipbox.Win32
         {
             IntPtr foregroundWindowHwnd = User32.GetForegroundWindow();
             return GetByWindowHandle(foregroundWindowHwnd);
+        }
+
+        public static IEnumerable<DisplayMonitor> ListDisplayMonitors()
+        {
+            List<DisplayMonitor> monitors = new List<DisplayMonitor>();
+
+            User32.EnumDisplayMonitors(IntPtr.Zero, 
+                IntPtr.Zero,
+                delegate (IntPtr hMonitor, IntPtr hdcMonitor, ref NativeStructures.RECT lprcMonitor, IntPtr dwData)
+                {
+                    monitors.Add(GetDisplayMonitor(hMonitor));
+                    return true;
+                }, 
+                IntPtr.Zero);
+
+            return monitors;
         }
 
         private static DisplayMonitor GetDisplayMonitor(IntPtr hMonitor)

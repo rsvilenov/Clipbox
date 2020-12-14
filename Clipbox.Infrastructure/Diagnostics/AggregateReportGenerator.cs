@@ -2,6 +2,8 @@
 using Clipbox.Core.Diagnostics;
 using Clipbox.Win32;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Clipbox.Infrastructure.Diagnostics
 {
@@ -14,7 +16,6 @@ namespace Clipbox.Infrastructure.Diagnostics
         /// <returns></returns>
         public static AggregateReport CreateNewEmptyReport(Version productVersion)
         {
-
             OsVersionUtils.WindowsVersion osVersion;
             try { osVersion = OsVersionUtils.GetWindowsVersion(); }
             catch { osVersion = new OsVersionUtils.WindowsVersion(); }
@@ -26,10 +27,25 @@ namespace Clipbox.Infrastructure.Diagnostics
             }
             catch { }
 
+            List<DisplayInfo> displays = null;
+            try
+            {
+                displays = MonitorUtils.ListDisplayMonitors()
+                    .Select(dm => new DisplayInfo
+                    {
+                        Dpi = dm.Dpi,
+                        Height = dm.Bounds.Height,
+                        Width = dm.Bounds.Width
+                    })
+                    .ToList();
+            }
+            catch { }
+
             SystemInfo systemInfo = new SystemInfo
             {
                 CpuCount = Environment.ProcessorCount,
                 CpuName = cpuName,
+                Displays = displays,
                 WindowsVersionInfo = new WindowsVersionInfo
                 {
                     BuildNumber = osVersion.BuildNumber,

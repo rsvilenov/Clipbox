@@ -290,5 +290,10 @@ namespace Clipbox.Win32.Native
         [DllImport(ExternDll.User32)]
         internal static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
 
+        [DllImport(ExternDll.User32)]
+        internal static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip,
+            EnumMonitorsDelegate lpfnEnum, IntPtr dwData);
+
+        internal delegate bool EnumMonitorsDelegate(IntPtr hMonitor, IntPtr hdcMonitor, ref NativeStructures.RECT lprcMonitor, IntPtr dwData);
     }
 }

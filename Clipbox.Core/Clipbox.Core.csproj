@@ -74,6 +74,7 @@
     <Compile Include="Configuration\SettingObject.cs" />
     <Compile Include="Diagnostics\AggregateReport.cs" />
     <Compile Include="Diagnostics\DiagnosticsReport.cs" />
+    <Compile Include="Diagnostics\DisplayInfo.cs" />
     <Compile Include="Diagnostics\ExtensionInfo.cs" />
     <Compile Include="Diagnostics\FailureInfo.cs" />
     <Compile Include="Diagnostics\SystemInfo.cs" />
