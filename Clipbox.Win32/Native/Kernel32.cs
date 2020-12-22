@@ -59,5 +59,7 @@ namespace Clipbox.Win32.Native
         [DllImport(ExternDll.Kernel32, SetLastError = true)]
         public static extern bool CloseHandle(IntPtr hHandle);
 
+        [DllImport(ExternDll.Kernel32, SetLastError = true)]
+        internal static extern bool GetDevicePowerState(IntPtr hDevice, out bool pfOn);
     }
 }

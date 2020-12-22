@@ -90,5 +90,18 @@ namespace Clipbox.Win32
                 WorkingArea = monInfo.WorkArea.ToRectangle()
             };
         }
+
+        public static bool CheckIsMonitorOn(IntPtr hMonitor)
+        {
+            bool result = Kernel32.GetDevicePowerState(hMonitor, out bool isOn);
+            if (result)
+            {
+                return isOn;
+            }
+            else
+            {
+                throw new Win32Exception();
+            }
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Clipbox.Win32.Native;
+﻿using Clipbox.Win32;
+using Clipbox.Win32.Native;
 using ClipboxGuard.Services.Interfaces;
 using Microsoft.Win32;
 using System;
@@ -54,9 +55,13 @@ namespace ClipboxGuard.Services
             switch (e.Reason)
             {
                 case SessionSwitchReason.SessionLock:
+                case SessionSwitchReason.ConsoleDisconnect:
+                case SessionSwitchReason.RemoteDisconnect:
                     _isCheckingClipboardEnabled = false;
                     break;
                 case SessionSwitchReason.SessionUnlock:
+                case SessionSwitchReason.ConsoleConnect:
+                case SessionSwitchReason.RemoteConnect:
                     _isCheckingClipboardEnabled = true;
                     break;
             }
@@ -81,7 +86,14 @@ namespace ClipboxGuard.Services
             int numberOfFailedAttempts = 0;
             while (_isCheckingClipboardThreadEnabled)
             {
-                if (!_isCheckingClipboardEnabled)
+                // since the calls that are used by the methods that open the clupboard (not sure about that)
+                // and those that restart the main service rely on the disk/ssd/[other important devices] to be
+                // fully powered on, we should not attempt restarting the main process if this condition is not
+                // met. Usually (always?) the monitor goes off first and then the other devices,
+                // so we are generally safe relying on its state to decide whether to check the clipboard access.
+                TryCheckIsPrimaryMonitorOn(out bool isPrimaryMonitorOn);
+                
+                if (!(_isCheckingClipboardEnabled && isPrimaryMonitorOn))
                 {
                     Thread.Sleep(CHECK_CLIPBOARD_INTERVAL_MS);
                     continue;
@@ -100,16 +112,25 @@ namespace ClipboxGuard.Services
 
                 if (!clipboardOpenSuccess)
                 {
-                    if (numberOfFailedAttempts == NUMBER_OF_FAILED_ATTEMPTS_ALLOWED)
+                    if (TryCheckIsPrimaryMonitorOn(out isPrimaryMonitorOn) && isPrimaryMonitorOn)
                     {
-                        numberOfFailedAttempts = 0;
-                        _mainProcessKeeperService.RestartMainProcess();
-                        Thread.Sleep(CHECK_CLIPBOARD_INTERVAL_MS);
+                        if (numberOfFailedAttempts == NUMBER_OF_FAILED_ATTEMPTS_ALLOWED)
+                        {
+                            numberOfFailedAttempts = 0;
+                            _mainProcessKeeperService.RestartMainProcess();
+                            Thread.Sleep(CHECK_CLIPBOARD_INTERVAL_MS);
+                        }
+                        else
+                        {
+                            numberOfFailedAttempts++;
+                            Thread.Sleep(CHECK_CLIPBOARD_INTERVAL_WHEN_LOCKED_MS);
+                        }
                     }
                     else
                     {
-                        numberOfFailedAttempts++;
-                        Thread.Sleep(CHECK_CLIPBOARD_INTERVAL_WHEN_LOCKED_MS);
+                        numberOfFailedAttempts = 0;
+                        Thread.Sleep(CHECK_CLIPBOARD_INTERVAL_MS);
+                        continue;
                     }
                 }
                 else
@@ -121,6 +142,22 @@ namespace ClipboxGuard.Services
             }
 
             _clipboardCheckerWorkerStoppingMre.Set();
+        }
+
+        private static bool TryCheckIsPrimaryMonitorOn(out bool isOn)
+        {
+            try
+            {
+                isOn = MonitorUtils.CheckIsMonitorOn(MonitorUtils.GetPrimaryMonitor().Handle);
+                return true;
+            }
+            catch
+            {
+                // TODO: ?
+
+                isOn = false;
+                return false;
+            }
         }
 
         public void Dispose()
