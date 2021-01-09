@@ -46,7 +46,7 @@ namespace Clipbox.Extensions.BuiltIn.TextFormats.FormatSupport
             IntPtr hMemLocal = Marshal.StringToHGlobalUni(intermediateFormat.Text);
             try
             {
-                int size = intermediateFormat.Text.Length * 2 + 1;
+                int size = intermediateFormat.Text.Length * 2 + 2;
                 return MarshalExt.HMemToHGlobalMemMovable(hMemLocal, (uint)size);
             }
             finally
