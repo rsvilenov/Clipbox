@@ -59,18 +59,24 @@ namespace ClipboxGuard.Services
             _pipeServer = new NamedPipesServer($"{ProductConstants.GUARD_NAMED_PIPE_PREFIX}.{sessionId}");
             _pipeServer.GotMessage += (s, args) =>
             {
-                // when the guard recieves QUIT command, it should stop the main process as well
-                if (args.ReceivedMessage == ProductConstants.PIPE_COMMAND_QUIT)
+                switch (args.ReceivedMessage)
                 {
-                    StopMainProcess();
+                    // when the guard recieves QUIT command, it should stop the main process as well
+                    case ProductConstants.PIPE_COMMAND_QUIT:
+                        StopMainProcess();
 
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        Application.Current.Shutdown
-                          (
-                                   (int)ProcessExitCodes.Ok
-                          );
-                    });
+                        Application.Current.Dispatcher.Invoke(() =>
+                        {
+                            Application.Current.Shutdown
+                                (
+                                        (int)ProcessExitCodes.Ok
+                                );
+                        });
+                        break;
+
+                    case ProductConstants.PIPE_COMMAND_START_MAIN_PROCESS:
+                        StartMainProcess(stopFirstIfRunning: false);
+                        break;
                 }
             };
 
@@ -394,8 +400,6 @@ namespace ClipboxGuard.Services
         {
             if (!_isDisposed)
             {
-                _isDisposed = true;
-
                 try
                 {
                     StopMainProcess();
@@ -405,6 +409,10 @@ namespace ClipboxGuard.Services
                     _mainProcess.Dispose();
                 }
                 catch { }
+                finally
+                {
+                    _isDisposed = true;
+                }
             }
         }
 
@@ -531,9 +539,9 @@ namespace ClipboxGuard.Services
             {
                 if (!_isDisposed)
                 {
-                    _isDisposed = true;
                     Stop();
                     _stopMre.Dispose();
+                    _isDisposed = true;
                 }
             }
         }

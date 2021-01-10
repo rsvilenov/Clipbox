@@ -291,8 +291,6 @@ namespace ClipboxGuard.Services
         {
             if (!_isDisposed)
             {
-                _isDisposed = true;
-
                 try
                 {
                     StopSearchProcess();
@@ -309,6 +307,7 @@ namespace ClipboxGuard.Services
                 finally
                 {
                     _watcherMre.Dispose();
+                    _isDisposed = true;
                 }
             }
         }

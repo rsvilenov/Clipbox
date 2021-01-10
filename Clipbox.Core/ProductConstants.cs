@@ -64,6 +64,8 @@ namespace Clipbox.Core
 
         public const string PIPE_COMMAND_OPEN_MAIN_WINDOW = "OpenMainWindow";
 
+        public const string PIPE_COMMAND_START_MAIN_PROCESS = "StartMainProcess";
+
         public const string PIPE_COMMAND_OPEN_SETTINGS_WINDOW = "OpenSettingsWindow";
 
         public const string PIPE_COMMAND_DISABLE_TRACKING = "DisableTracking";

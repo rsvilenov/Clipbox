@@ -34,7 +34,7 @@ namespace ClipboxGuard
         private IPersistenceProvider _persistenceProvider;
         private MainProcessKeeperService _mainProcessKeeperService;
         private SearchProcessKeeperService _searchProcessKeeperService;
-        private IErrorWindowService _errorMessageWindowService;
+        private ErrorWindowService _errorMessageWindowService;
         private ISessionMonitorService _sessionMonitorService;
         private IReportAnalysisService _reportAnalysisService;
         private ReportSubmitterService _reportSubmitterService;
@@ -60,13 +60,17 @@ namespace ClipboxGuard
                     myPid = p.Id;
                 }
 
-                if (ProcessUtils.CheckProcessExistsInSession(Path.GetFileNameWithoutExtension(ProductConstants.GUARD_EXE_NAME), mySessionId, new int[] { myPid }))
+                if (ProcessUtils.CheckProcessExistsInSession(Path.GetFileNameWithoutExtension(ProductConstants.MAIN_PROCESS_EXE_NAME), mySessionId, new int[] { myPid }))
                 {
                     AskMainProcessToOpenMainWindow(mySessionId);
                 }
+                else if (ProcessUtils.CheckProcessExistsInSession(Path.GetFileNameWithoutExtension(ProductConstants.GUARD_EXE_NAME), mySessionId, new int[] { myPid }))
+                {
+                    AskGuardProcessToStartMainProcess(mySessionId);
+                }
                 else if (ProcessUtils.CheckProcessExists(Path.GetFileNameWithoutExtension(ProductConstants.SERVICE_EXE_NAME)))
                 {
-                    DemandStartFromService(mySessionId);
+                    AskServiceToStartGuardProcess(mySessionId);
                 }
                 else
                 {
@@ -231,14 +235,21 @@ namespace ClipboxGuard
                 TryDisposeObject(_searchProcessKeeperService);
                 TryDisposeObject(_clipboardCheckerService);
                 TryDisposeObject(_reportSubmitterService);
+                TryDisposeObject(_errorMessageWindowService);
             }
         }
 
-        private void DemandStartFromService(int mySessionId)
+        private void AskServiceToStartGuardProcess(int mySessionId)
         {
             // send message to the service to start us elevated
             NamedPipesClient npClient = new NamedPipesClient(ProductConstants.SERVICE_NAMED_PIPE);
             npClient.SendMessage(mySessionId.ToString());
+        }
+
+        private void AskGuardProcessToStartMainProcess(int sessionId)
+        {
+            NamedPipesClient npClient = new NamedPipesClient($"{ProductConstants.GUARD_NAMED_PIPE_PREFIX}.{sessionId}");
+            npClient.SendMessage(ProductConstants.PIPE_COMMAND_START_MAIN_PROCESS);
         }
 
         private void AskMainProcessToOpenMainWindow(int sessionId)
