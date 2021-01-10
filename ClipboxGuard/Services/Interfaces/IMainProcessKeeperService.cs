@@ -9,5 +9,6 @@ namespace ClipboxGuard.Services.Interfaces
         void StartExternalProcessManagement();
         void StopMainProcess();
         void RestartMainProcess();
+        int MainProcessPid { get; }
     }
 }

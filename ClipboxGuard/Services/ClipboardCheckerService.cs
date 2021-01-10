@@ -84,16 +84,10 @@ namespace ClipboxGuard.Services
             _isCheckingClipboardThreadEnabled = true;
             _isCheckingClipboardEnabled = true;
             int numberOfFailedAttempts = 0;
+
             while (_isCheckingClipboardThreadEnabled)
             {
-                // since the calls that are used by the methods that open the clupboard (not sure about that)
-                // and those that restart the main service rely on the disk/ssd/[other important devices] to be
-                // fully powered on, we should not attempt restarting the main process if this condition is not
-                // met. Usually (always?) the monitor goes off first and then the other devices,
-                // so we are generally safe relying on its state to decide whether to check the clipboard access.
-                TryCheckIsPrimaryMonitorOn(out bool isPrimaryMonitorOn);
-                
-                if (!(_isCheckingClipboardEnabled && isPrimaryMonitorOn))
+                if (!_isCheckingClipboardEnabled)
                 {
                     Thread.Sleep(CHECK_CLIPBOARD_INTERVAL_MS);
                     continue;
@@ -112,7 +106,7 @@ namespace ClipboxGuard.Services
 
                 if (!clipboardOpenSuccess)
                 {
-                    if (TryCheckIsPrimaryMonitorOn(out isPrimaryMonitorOn) && isPrimaryMonitorOn)
+                    if (GetClipboardOwnerPid() == _mainProcessKeeperService.MainProcessPid)
                     {
                         if (numberOfFailedAttempts == NUMBER_OF_FAILED_ATTEMPTS_ALLOWED)
                         {
@@ -144,20 +138,22 @@ namespace ClipboxGuard.Services
             _clipboardCheckerWorkerStoppingMre.Set();
         }
 
-        private static bool TryCheckIsPrimaryMonitorOn(out bool isOn)
+        private int GetClipboardOwnerPid()
         {
+            int pid = -1;
+
             try
             {
-                isOn = MonitorUtils.CheckIsMonitorOn(MonitorUtils.GetPrimaryMonitor().Handle);
-                return true;
-            }
-            catch
-            {
-                // TODO: ?
+                IntPtr clipboardOwnerHwnd = User32.GetClipboardOwner();
 
-                isOn = false;
-                return false;
+                if (clipboardOwnerHwnd != IntPtr.Zero)
+                {
+                    pid = WindowUtils.GetPidByHWnd(clipboardOwnerHwnd);
+                }
             }
+            catch { }
+
+            return pid;
         }
 
         public void Dispose()
@@ -169,7 +165,5 @@ namespace ClipboxGuard.Services
                 _clipboardCheckerWorkerStoppingMre.WaitOne();
             }
         }
-
-
     }
 }

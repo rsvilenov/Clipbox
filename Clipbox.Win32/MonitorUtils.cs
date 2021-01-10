@@ -91,6 +91,11 @@ namespace Clipbox.Win32
             };
         }
 
+        /// <summary>
+        /// This does not work with some monitors.
+        /// </summary>
+        /// <param name="hMonitor"></param>
+        /// <returns></returns>
         public static bool CheckIsMonitorOn(IntPtr hMonitor)
         {
             bool result = Kernel32.GetDevicePowerState(hMonitor, out bool isOn);

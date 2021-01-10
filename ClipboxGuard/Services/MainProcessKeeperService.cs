@@ -187,6 +187,7 @@ namespace ClipboxGuard.Services
             _mainProcess.PriorityClass = runWithHighPriority ?
                     ProcessPriorityClass.High
                     : ProcessPriorityClass.Normal;
+            MainProcessPid = _mainProcess.Id;
 
             _mainProcessPinger.Start();
         }
@@ -396,12 +397,16 @@ namespace ClipboxGuard.Services
             }
         }
 
+        public int MainProcessPid { get; private set; } = -1;
+
         public void Dispose()
         {
             if (!_isDisposed)
             {
                 try
                 {
+                    _pipeServer.Dispose();
+
                     StopMainProcess();
 
                     // request stopping of the ping thread to stop
