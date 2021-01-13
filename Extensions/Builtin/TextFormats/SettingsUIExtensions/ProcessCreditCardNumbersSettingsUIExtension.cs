@@ -7,24 +7,27 @@ using Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions.SettingUIParts
 
 namespace Clipbox.Extensions.BuiltIn.TextFormats.SettingsUIExtensions
 {
-    [ClipboxExtension(
-        description: "Setting UI extension for credit card number masking",
-        author: ProductConstants.PRODUCT_NAME,
-        version: "1.0",
-        minHostVersion: "1.0"
-    )]
-    public class ProcessCreditCardNumbersSettingsUIExtension : SettingsUIExtension
-    {
-        protected override SettingsCategory Category => SettingsCategory.Security;
+    // BUG: filters out all copied items from MS WORD
+    // TODO: find out why
 
-        protected override void RegisterSettings(IRegisteredSettingStore settingsStore)
-        {
-            settingsStore.Add<bool, ProcessCCNumbersFlowExtension>(ExtensionSettingNames.SkipMaskCreditCardNumbers, false);
-        }
+    //[ClipboxExtension(
+    //    description: "Setting UI extension for credit card number masking",
+    //    author: ProductConstants.PRODUCT_NAME,
+    //    version: "1.0",
+    //    minHostVersion: "1.0"
+    //)]
+    //public class ProcessCreditCardNumbersSettingsUIExtension : SettingsUIExtension
+    //{
+    //    protected override SettingsCategory Category => SettingsCategory.Security;
 
-        protected override void RegisterSettingUIParts(ISettingsUIBuilder builder)
-        {
-            builder.Add(ExtensionSettingNames.SkipMaskCreditCardNumbers, new ProcessCCNumbersSettingUIPart());
-        }
-    }
+    //    protected override void RegisterSettings(IRegisteredSettingStore settingsStore)
+    //    {
+    //        settingsStore.Add<bool, ProcessCCNumbersFlowExtension>(ExtensionSettingNames.SkipMaskCreditCardNumbers, false);
+    //    }
+
+    //    protected override void RegisterSettingUIParts(ISettingsUIBuilder builder)
+    //    {
+    //        builder.Add(ExtensionSettingNames.SkipMaskCreditCardNumbers, new ProcessCCNumbersSettingUIPart());
+    //    }
+    //}
 }
