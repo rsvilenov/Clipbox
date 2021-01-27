@@ -8,6 +8,12 @@ using System.Windows.Interop;
 
 namespace Clipbox.Services
 {
+    /// <summary>
+    /// This implementation of IClipboardEventProvider places a window in the clipboard chain.
+    /// This method is considered fragile. Sometimes after several days of running,
+    /// the window stops receiving WM_DRAWCLIPBOARD messages (I don't know why).
+    /// </summary>
+    [Obsolete("Use ClipboardFormatListenerService instead.")]
     public class ClipboardListenerService : IClipboardListenerService, IClipboardEventProvider, IDisposable
     {
         const int DRAWCLIPBOARD_WM_PREVENT_REPETITION_DELAY_MS = 20;

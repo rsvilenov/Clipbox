@@ -45,7 +45,7 @@ namespace Clipbox
         FlowController _flowController;
         LowLevelKeyboardService _keyboardService;
         IClipboardManager _clipboardManager;
-        ClipboardListenerService _clipboardListenerService;
+        ClipboardFormatListenerService _clipboardFormatListenerService;
         QuickClipboardViewWindowService _quickClipboardViewWindowService;
         FlowExtensionExecutorService _flowExtensionExecutorService;
         TrayIconService _trayService;
@@ -178,10 +178,10 @@ namespace Clipbox
             string appGuid = CreateOrGetAppGuid();
 
             // Initialize the clipboard listener
-            _clipboardListenerService = new ClipboardListenerService();
+            _clipboardFormatListenerService = new ClipboardFormatListenerService();
 
             // Initialize the clipboard manager
-            _clipboardManager = new ClipboardManager(_clipboardListenerService,
+            _clipboardManager = new ClipboardManager(_clipboardFormatListenerService,
                 _extensionLoader.FormatsContainer,
                 _extensionLoader.PersistenceSupportExtensionContainer,
                 _persistenceProvider,
@@ -407,7 +407,7 @@ namespace Clipbox
                 TryDisposeObject(_quickClipboardViewWindowService);
                 TryDisposeObject(_quickViewClipboardContents);
                 TryDisposeObject(_previewGenerationService);
-                TryDisposeObject(_clipboardListenerService);
+                TryDisposeObject(_clipboardFormatListenerService);
                 TryDisposeObject(_settingsWindowService);
                 TryDisposeObject(_trayService);
                 TryDisposeObject(_trayBandService);

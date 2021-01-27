@@ -14,6 +14,14 @@ namespace Clipbox.Win32.Native
         public static extern IntPtr GetClipboardOwner();
 
         [DllImport(ExternDll.User32, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool AddClipboardFormatListener(IntPtr hwnd);
+
+        [DllImport(ExternDll.User32, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool RemoveClipboardFormatListener(IntPtr hwnd);
+
+        [DllImport(ExternDll.User32, SetLastError = true)]
         public static extern IntPtr SetClipboardViewer(IntPtr hWndNewViewer);
 
         [DllImport(ExternDll.User32, SetLastError = true)]

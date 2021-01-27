@@ -19,6 +19,7 @@ namespace Clipbox.Win32.Native
             public const int WM_DESTROY = 0x2;
             public const int WM_DRAWCLIPBOARD = 0x308;
             public const int WM_CHANGECBCHAIN = 0x30d;
+            public const int WM_CLIPBOARDUPDATE = 0x031D;
             public const int WM_GETICON = 0x007f;
             public const int WM_DPICHANGED = 0x02E0;
             public const int WM_CLOSE = 0x10;
