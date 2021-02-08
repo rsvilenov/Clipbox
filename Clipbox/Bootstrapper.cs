@@ -18,6 +18,7 @@ using Clipbox.Infrastructure.Serialization;
 using Clipbox.Infrastructure.UI.Localization;
 using Clipbox.Infrastructure.UI.Localization.LozalizationProviders;
 using Clipbox.Infrastructure.UI.Theme;
+using Clipbox.Infrastructure.Versioning;
 using Clipbox.Services;
 using Clipbox.Services.Interfaces;
 using Clipbox.Settings;
@@ -97,6 +98,9 @@ namespace Clipbox
             // some functions such as registry access cannot work properly
             // if the program is not compiled for the appropriate platform
             EnsurePlatformMatch();
+
+            // verify that the product version constant matches the version string in the registry
+            ProductVersionHelper.EnsureVersionConsistency();
 
             string[] startupArgs = Environment.GetCommandLineArgs();
 

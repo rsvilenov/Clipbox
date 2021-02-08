@@ -90,7 +90,6 @@
     </Compile>
     <Compile Include="Services\ClipboardCheckerService.cs" />
     <Compile Include="Services\Common\ReportAnalysis.cs" />
-    <Compile Include="Services\Common\ProductVersionHelper.cs" />
     <Compile Include="Services\ErrorWindowService.cs" />
     <Compile Include="Services\EventArgsClasses\ReportStateEventArgs.cs" />
     <Compile Include="Services\EventArgsClasses\RestartFatalErrorEventArgs.cs" />

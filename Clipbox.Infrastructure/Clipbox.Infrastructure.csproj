@@ -128,6 +128,7 @@
     <Compile Include="Threading\StaUtils.cs" />
     <Compile Include="Threading\ThreadExecutor.cs" />
     <Compile Include="Threading\ThreadValidator.cs" />
+    <Compile Include="Versioning\ProductVersionHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Clipbox.Core\Clipbox.Core.csproj">

@@ -3,6 +3,7 @@ using Clipbox.Core.Diagnostics;
 using Clipbox.Infrastructure.Diagnostics;
 using Clipbox.Infrastructure.Persistence;
 using Clipbox.Infrastructure.Serialization;
+using Clipbox.Infrastructure.Versioning;
 using ClipboxGuard.Enums;
 using ClipboxGuard.Services.Common;
 using ClipboxGuard.Services.Interfaces;

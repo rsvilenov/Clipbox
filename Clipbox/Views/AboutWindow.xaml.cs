@@ -1,6 +1,7 @@
 ﻿using Clipbox.Core;
 using Clipbox.Infrastructure.RegistryAccess;
 using Clipbox.Infrastructure.UI.CustomControls;
+using Clipbox.Infrastructure.Versioning;
 using System;
 using System.Diagnostics;
 using System.Windows;
@@ -22,18 +23,10 @@ namespace Clipbox.Views
 
         private void AboutWindow_Shown(object sender, System.EventArgs e)
         {
-            string versionStr = RegistryUtils.GetProductVersion();
-            
-            string[] versionParts = versionStr.Split('.');
-            if (versionParts.Length == 4)
-            {
-                VersionString = $"{versionParts[0]}.{versionParts[1]}";
-                BuildNumberString = versionParts[2];
-            }
-            else
-            {
-                VersionString = versionStr;
-            }
+            Version version = ProductVersionHelper.GetFullProductVersion();
+
+            VersionString = $"{version.Major}.{version.Minor}";
+            BuildNumberString = version.Build.ToString();
         }
 
         public string VersionString
@@ -75,15 +68,23 @@ namespace Clipbox.Views
 
         private void ButtonFeedback_Click(object sender, RoutedEventArgs e)
         {
-            string versionString = $"{ProductConstants.PRODUCT_VERSION.Major }.{ProductConstants.PRODUCT_VERSION.Minor}.{ProductConstants.PRODUCT_VERSION.Build}";
+            string versionString = GetProductVersionString();
             OpenUrl($"{ProductConstants.FEEDBACK_URL}?version={versionString}&is64bit={Environment.Is64BitProcess}");
         }
 
         private void ButtonReportBug_Click(object sender, RoutedEventArgs e)
         {
-            string versionString = $"{ProductConstants.PRODUCT_VERSION.Major }.{ProductConstants.PRODUCT_VERSION.Minor}.{ProductConstants.PRODUCT_VERSION.Build}";
+            string versionString = GetProductVersionString();
             OpenUrl($"{ProductConstants.REPORT_BUG_URL}?version={versionString}&is64bit={Environment.Is64BitProcess}");
         }
+
+        private string GetProductVersionString()
+        {
+            Version version = ProductVersionHelper.GetFullProductVersion();
+            string versionString = $"{version.Major }.{version.Minor}.{version.Build}";
+            return versionString;
+        }
+
         private void OpenUrl(string url)
         {
             using (Process p = Process.Start(url)) { }

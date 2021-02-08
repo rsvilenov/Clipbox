@@ -7,7 +7,7 @@ namespace Clipbox.Core
     {
         public const string PRODUCT_NAME = "Clipbox";
 
-        public static readonly Version PRODUCT_VERSION = new Version(1,0,0);
+        public static readonly Version PRODUCT_VERSION = new Version(1,1,0);
 
         public const string PRODUCT_GUID = "95A2CB1E-AD54-41F4-B1F0-D1E7876A7437";
 

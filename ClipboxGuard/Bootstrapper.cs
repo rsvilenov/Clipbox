@@ -9,6 +9,7 @@ using Clipbox.Infrastructure.RegistryAccess;
 using Clipbox.Infrastructure.Serialization;
 using Clipbox.Infrastructure.UI.Localization;
 using Clipbox.Infrastructure.UI.Localization.LozalizationProviders;
+using Clipbox.Infrastructure.Versioning;
 using Clipbox.Win32;
 using Clipbox.Win32.Native;
 using ClipboxGuard.Enums;
