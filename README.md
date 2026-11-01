@@ -1,6 +1,8 @@
 Clipbox is a visual clipboard manager for Windows, which I wrote for fun some years ago. It features rich preview cards for the clipboard items, search functionality, Windows Shell integration, cloud support, AES encryption, advanced settings and localization.
 
-The UI is written in WPF, completely manually (no design framework). The backend mostly consists of WinAPI integration and orchestration services, dubiously architected.
+I wrote it in in C#, C++ and WPF, with extensive reliance on the Windows API, both via P/Invoke and directly in C++.
+
+The UI is mainly WPF, with home grown components (no design framework). The backend mostly consists of WinAPI integration and orchestration services, dubiously architected. The background service, search indexing (Lucine-based), persistence, encryption and configuration are all written in C#. The deskband is in C++. It communicates with the C# components via NamedPipes.
 
 The clipboard manager is accessed by pressing and holding Ctrl+V, as well as from the deskband in the taskbar. The deskband looks exactly like a tray icon, but it is never hidden by Windows.
 <br/><br/>
