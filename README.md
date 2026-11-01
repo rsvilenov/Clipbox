@@ -21,4 +21,4 @@ The clipboard manager is accessed by pressing and holding Ctrl+V, as well as fro
 
 
 > [!NOTE]  
-> Highlights information that users should take into account, even when skimming.The project is abandoned. There is a recent project of the same name in > Windows Store, which has nothing to do with this one here, and, frankly, looks vibe coded.
+> The project is abandoned. There is a recent project of the same name in > Windows Store, which has nothing to do with this one here, and, frankly, looks vibe coded.
